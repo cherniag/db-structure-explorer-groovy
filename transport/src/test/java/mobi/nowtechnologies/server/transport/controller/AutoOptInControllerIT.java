@@ -1,70 +1,36 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.gson.*;
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
+import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.enums.*;
-import org.junit.Before;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.test.web.server.ResultActions;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-
-import static mobi.nowtechnologies.server.shared.dto.OAuthProvider.*;
-import static mobi.nowtechnologies.server.shared.enums.Contract.*;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static mobi.nowtechnologies.server.shared.dto.OAuthProvider.NONE;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static org.junit.Assert.*;
+import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 /**
  * User: Titov Mykhaylo (titov)
+ * User: Kolpakov Alexsandr (akolpakov)
  * 05.09.13 15:44
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:transport-servlet-test.xml",
-        "classpath:META-INF/service-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/dao-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.EntityController", webapp = "classpath:.")
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class AutoOptInControllerIT {
-
-    @Autowired
-    private DispatcherServlet dispatcherServlet;
-    private Gson gson;
-    private JsonParser jsonParser;
-
-    @Before
-    public void setUp(){
-        gson = new Gson();
-        jsonParser = new JsonParser();
-    }
+public class AutoOptInControllerIT extends AbstractControllerTestIT{
 
     @Test
-    public void shouldAutoOptIn() throws ServletException, IOException {
+    public void shouldAutoOptInAndVersionMore40() throws Exception {
         //given
         String userName = "+447111111114";
-        String appVersion = "4.2";
-        String apiVersion = "4.2";
+        String appVersion = "6.0";
+        String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -72,32 +38,36 @@ public class AutoOptInControllerIT {
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String otac = null;
 
-        String url = "/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN";
+        //then
+        ResultActions resultActions = mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isOk());
 
-        MockHttpServletRequest httpServletRequestMock = new MockHttpServletRequest("POST", url);
-        httpServletRequestMock.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        httpServletRequestMock.addHeader("Accept", "application/json");
-        httpServletRequestMock.setPathInfo(url);
-
-        httpServletRequestMock.addParameter("APP_VERSION", appVersion);
-        httpServletRequestMock.addParameter("USER_NAME", userName);
-        httpServletRequestMock.addParameter("USER_TOKEN", userToken);
-        httpServletRequestMock.addParameter("TIMESTAMP", timestamp);
-        httpServletRequestMock.addParameter("DEVICE_UID", deviceUid);
-        httpServletRequestMock.addParameter("OTAC_TOKEN", otac);
-
-        MockHttpServletResponse httpServletResponseMock = new MockHttpServletResponse();
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultJson = aHttpServletResponse.getContentAsString();
+        JsonObject resultJsonObject = getAccCheckContent(resultJson);
+        assertTrue(resultJson.contains("\"hasPotentialPromoCodePromotion\":true"));
 
         //when
-        dispatcherServlet.service(httpServletRequestMock, httpServletResponseMock);
+        resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
 
-        //then
-        assertEquals(HttpStatus.OK.value(), httpServletResponseMock.getStatus());
+        aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
+        resultJson = resultJson.replaceAll("\"hasPotentialPromoCodePromotion\":true", "\"hasPotentialPromoCodePromotion\":false");
 
-        final JsonArray asJsonArrayResponseObjectMember = parseSuccessfulResponse(httpServletResponseMock.getContentAsString());
-        assertEquals(1, asJsonArrayResponseObjectMember.size());
+        assertTrue(resultAccCkeckJson.equals(resultJson));
 
-        AccountCheckDTO accountCheckDTO = gson.fromJson(asJsonArrayResponseObjectMember.get(0), AccountCheckDTO.class);
+        AccountCheckDTO accountCheckDTO = gson.fromJson(resultJsonObject, AccountCheckDTO.class);
 
         assertEquals(null, accountCheckDTO.displayName);
         assertEquals("SUBSCRIBED", accountCheckDTO.status);
@@ -143,16 +113,76 @@ public class AutoOptInControllerIT {
         assertEquals(null, accountCheckDTO.lastSubscribedPaymentSystem);
         assertEquals(null, accountCheckDTO.subscriptionChanged);
         assertEquals(false, accountCheckDTO.subjectToAutoOptIn);
-
     }
 
-    private JsonArray parseSuccessfulResponse(final String contentAsString) {
-        JsonElement jsonElement = jsonParser.parse(contentAsString);
+    @Test
+    public void applyInitPromo_whenUserUserNameIsWrong_then_401() throws Exception {
+        //given
+        String userName = "+447xxxxxxxxx";
+        String appVersion = "4.2";
+        String apiVersion = "4.2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "b88106713409e92622461a876abcd74b";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
 
-        final JsonObject asJsonObject = jsonElement.getAsJsonObject();
-        final JsonObject asJsonObjectResponse = asJsonObject.get("class mobi.nowtechnologies.server.persistence.domain.Response").getAsJsonObject();
-        final JsonElement jsonElementResponseObjectMember = asJsonObjectResponse.get("object");
-        final JsonArray asJsonArrayResponseObjectMember = jsonElementResponseObjectMember.getAsJsonArray();
-        return asJsonArrayResponseObjectMember;
+        //then
+        ResultActions resultActions = mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void applyInitPromo_whenUserUserNameIsWrong_then_400() throws Exception {
+        //given
+        String userName = "+447111111114";
+        String appVersion = "4.2";
+        String apiVersion = "4.2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "b88106713409e92622461a876abcd74b";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+
+        //then
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void applyInitPromo_whenUserUserNameIsWrong_then_404() throws Exception {
+        //given
+        String userName = "+447111111114";
+        String appVersion = "4.2";
+        String apiVersion = "3.5";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "b88106713409e92622461a876abcd74b";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+
+        //then
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isNotFound());
     }
 }

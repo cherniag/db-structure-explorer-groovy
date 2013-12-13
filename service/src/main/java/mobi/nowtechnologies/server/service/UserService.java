@@ -331,7 +331,6 @@ public class UserService {
         User user = findByNameAndCommunity(userName, communityName);
 
         if (user != null) {
-            checkActivationStatus(user);
 
             final String mobile = user.getMobile();
             final int id = user.getId();
@@ -342,13 +341,18 @@ public class UserService {
             String deviceUserToken = Utils.createTimestampToken(user.getTempToken(), timestamp);
             if (localUserToken.equalsIgnoreCase(userToken) || deviceUserToken.equalsIgnoreCase(userToken)) {
                 PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-                if (null == currentPaymentDetails && user.getStatus().getI() == UserStatusDao.getEulaUserStatus().getI())
+                if (null == currentPaymentDetails && user.getStatus().getI() == UserStatusDao.getEulaUserStatus().getI()) {
                     LOGGER.info("The user [{}] couldn't login in while he has no payment details and he is in status [{}]",
-                            new Object[] { user, UserStatus.EULA.name() });
-                else
+                            new Object[]{user, UserStatus.EULA.name()});
+                }
+                else {
+                    checkActivationStatus(user);
+
                     return user;
-            } else
+                }
+            } else {
                 LOGGER.info("Invalid user token. Expected {} but received {}", localUserToken, user.getToken());
+            }
         } else {
             String message = "Could not find user with userName [" + userName + "] and communityName [" + communityName + "] in the database";
             LOGGER.info(message);
@@ -1339,7 +1343,7 @@ public class UserService {
 
         final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
 
-        Community community = communityService.getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
+        Community community = communityService.getCommunityByUrl(userDeviceRegDetailsDto.getCommunityUri());
         User user = findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
 
         if (isNull(user)) {

@@ -22,7 +22,7 @@ public class AutoOptInController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/AUTO_OPT_IN"
+            "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
     })
     public ModelAndView autoOptIn(@RequestParam("USER_NAME") String userName,
                                   @RequestParam("USER_TOKEN") String userToken,

@@ -1,60 +1,96 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import com.google.gson.JsonObject;
+import mobi.nowtechnologies.server.persistence.domain.PromoCode;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
-import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
+import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.junit.Before;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:transport-servlet-test.xml",
-		"classpath:META-INF/service-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.ActivateVideoAudioFreeTrialController", webapp = "classpath:.")
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class ActivateVideoAudioFreeTrialControllerTestIT {
+public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
+    @Autowired
+    @Qualifier("promotionRepository")
+    protected PromotionRepository promotionRepository;
 
     @Autowired
-    private DispatcherServlet dispatcherServlet;
+    @Qualifier("promoCodeRepository")
+    protected PromoCodeRepository promoCodeRepository;
 
     @Test
-    public void testActivateVideoAudioFreeTrial_Success() throws Exception {
+    public void testActivateVideoAudioFreeTrial_WithAccCheckDetailsAndVersionMore50_Success() throws Exception {
+        String userName = "+447111111114";
+        String appVersion = "6.0";
+        String apiVersion = "6.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        user.setTariff(Tariff._4G);
+        user.setSegment(SegmentType.CONSUMER);
+        user.setVideoFreeTrialHasBeenActivated(false);
+        userService.updateUser(user);
+
+        int now = (int)(System.currentTimeMillis()/1000);
+        Promotion promotion = new Promotion();
+        promotion.setEndDate(now + 10000000);
+        promotion.setStartDate(now - 10000000);
+        promotion.setUserGroup(user.getUserGroup());
+        promotion.setMaxUsers(30);
+        promotion.setNumUsers(1);
+        promotion.setIsActive(true);
+        promotion.setType(Promotion.ADD_FREE_WEEKS_PROMOTION);
+        promotion = promotionRepository.save(promotion);
+
+        PromoCode promoCode = new PromoCode();
+        promoCode.setCode("o2.consumer.4g.paym.direct");
+        promoCode.setMediaType(MediaType.VIDEO_AND_AUDIO);
+        promoCode.setPromotion(promotion);
+        promoCode = promoCodeRepository.save(promoCode);
+        promotion.setPromoCode(promoCode);
+
+        ResultActions resultActions = mockMvc.perform(
+        post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultActivateVideoFreeTrialJson = aHttpServletResponse.getContentAsString();
+        JsonObject jsonObject = getAccCheckContent(resultActivateVideoFreeTrialJson);
+
+        resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultAccCkeckJson.contains(jsonObject.toString()));
+    }
+
+    @Test
+    public void testActivateVideoAudioFreeTrial_EmptyDeviceUIDAndNotEligableForVideo_Failure() throws Exception {
     	String userName = "+447111111114";
         String appVersion = "4.0";
 		String apiVersion = "4.0";
@@ -64,23 +100,100 @@ public class ActivateVideoAudioFreeTrialControllerTestIT {
         String deviceUid = "";
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        String url = "/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL";
+        ResultActions resultActions = mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isInternalServerError());
 
-        MockHttpServletRequest httpServletRequestMock = new MockHttpServletRequest("POST", url);
-        httpServletRequestMock.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        httpServletRequestMock.addHeader("Accept", "application/xml");
-        httpServletRequestMock.setPathInfo(url);
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
 
-        httpServletRequestMock.addParameter("APP_VERSION", appVersion);
-        httpServletRequestMock.addParameter("USER_NAME", userName);
-        httpServletRequestMock.addParameter("USER_TOKEN", userToken);
-        httpServletRequestMock.addParameter("TIMESTAMP", timestamp);
-        httpServletRequestMock.addParameter("DEVICE_UID", deviceUid);
+        assertTrue(resultXml.contains("<errorCode>5001</errorCode>"));
+    }
 
-        MockHttpServletResponse httpServletResponseMock = new MockHttpServletResponse();
+    @Test
+    public void testActivateVideoAudioFreeTrial_EmptyDeviceUIDAndNotEligableForVideo_JsonAndAdditionalUIDAndVersionMore50_Failure() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "6.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        dispatcherServlet.service(httpServletRequestMock, httpServletResponseMock);
+        ResultActions resultActions = mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isInternalServerError());
 
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), httpServletResponseMock.getStatus());
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("\"errorCode\":5001"));
+    }
+
+    @Test
+    public void testActivateVideoAudioFreeTrial_401_Failure() throws Exception {
+        String userName = "+447xxxxxxxxx";
+        String appVersion = "4.0";
+        String apiVersion = "4.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testActivateVideoAudioFreeTrial_400_Failure() throws Exception {
+        String userName = "+447xxxxxxxxx";
+        String appVersion = "4.0";
+        String apiVersion = "4.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isBadRequest());;
+    }
+
+    @Test
+    public void testActivateVideoAudioFreeTrial_404_Failure() throws Exception {
+        String userName = "+447xxxxxxxxx";
+        String appVersion = "4.0";
+        String apiVersion = "3.5";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isNotFound());
     }
 }

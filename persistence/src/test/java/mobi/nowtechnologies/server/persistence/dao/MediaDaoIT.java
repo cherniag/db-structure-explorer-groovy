@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
  * @author Titov Mykhaylo (titov)
  */
 @Ignore
-public class MediaDaoTestIT {
+public class MediaDaoIT {
 	private static MediaDao mediaDao;
 
 	@Test

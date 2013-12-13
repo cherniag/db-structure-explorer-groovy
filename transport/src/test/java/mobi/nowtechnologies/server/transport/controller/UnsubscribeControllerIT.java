@@ -53,7 +53,7 @@ import org.xml.sax.InputSource;
 @MockWebApplication(name = "transport.EntityController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class UnsubscribeControllerTestIT {
+public class UnsubscribeControllerIT {
 
 	private static final XPathExpression PHONE_NUMBER_XPATHEXPRESSION;
 	private static final XPathExpression OPERATOR_XPATHEXPRESSION;

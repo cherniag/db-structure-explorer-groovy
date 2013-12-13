@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
+import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -12,42 +11,16 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:transport-servlet-test.xml",
-		"classpath:META-INF/service-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class GetChartControllerTestIT {
-	
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ApplicationContext applicationContext;
+public class GetChartControllerTestIT extends AbstractControllerTestIT{
 	
 	@Autowired
 	private ChartRepository chartRepository;
@@ -61,9 +34,50 @@ public class GetChartControllerTestIT {
     @Autowired
 	private MediaFileRepository mediaFileRepository;
 
-    @Before
-    public void setUp() {
-        mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
+    @Test
+    public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        generateChartAllTypesForO2();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultJson = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultJson.contains("\"type\":\"VIDEO_CHART\""));
+        assertTrue(resultJson.contains("\"duration\":10000"));
+        assertTrue(!resultJson.contains("\"bonusTrack\""));
+        assertTrue(resultJson.contains("\"tracks\""));
+        assertTrue(resultJson.contains("\"playlists\""));
+        assertTrue(resultJson.contains("\"chart\""));
+        assertTrue(resultJson.contains("\"user\""));
+
+        JsonObject jsonObject = getAccCheckContent(resultJson);
+
+        resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultAccCkeckJson.contains(jsonObject.toString()));
     }
 
     @Test
@@ -184,6 +198,61 @@ public class GetChartControllerTestIT {
         assertTrue(!resultXml.contains("<type>FOURTH_CHART</type>"));
         assertTrue(!resultXml.contains("<type>FIFTH_CHART</type>"));
         assertTrue(resultXml.contains("<bonusTrack>"));
+    }
+
+    @Test
+    public void testGetChart_401_Failure() throws Exception {
+        String userName = "+447xxxxxxxxx";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "5.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testGetChart_400_Failure() throws Exception {
+        String userName = "+447xxxxxxxxx";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "5.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetChart_404_Failure() throws Exception {
+        String userName = "+447xxxxxxxxx";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "3.5";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isNotFound());
     }
     
     private void generateChartAllTypesForO2(){

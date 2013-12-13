@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.web.servlet.PlainTextModalAndView;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -34,50 +33,14 @@ import java.util.Map;
 public class FileController extends CommonController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class.getName());
 
-	private UserService userService;
 	private FileService fileService;
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
 
 	public void setFileService(FileService fileService) {
 		this.fileService = fileService;
 	}
 
-	
-	@RequestMapping(method = RequestMethod.POST, value = {"/GET_FILE", "*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/GET_FILE"})
-	public ModelAndView getFile(
-			@RequestParam("ID") final String mediaId,
-			@RequestParam("TYPE") String fileTypeName,
-			@RequestParam("APP_VERSION") String appVersion,
-			@RequestParam("API_VERSION") String apiVersion,
-			@RequestParam("COMMUNITY_NAME") String communityName,
-			@RequestParam("USER_NAME") final String userName,
-			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp,
-			@RequestParam(value = "RESOLUTION", required = false) String resolution,
-			final HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		User user = null;
-		Exception ex = null;
-		try {
-			LOGGER.info("command processing started");
-			user = checkCredentials(userName, userToken, timestamp, communityName);
-
-            FileType fileType = FileType.valueOf(fileTypeName);
-            return processGetFile(user, mediaId, fileType, resolution, request);
-		} catch (Exception e) {
-			ex = e;
-			throw e;
-		} finally {
-			logProfileData(null, communityName, null, null, user, ex);
-			LOGGER.info("command processing finished");
-		}
-	}
-
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/GET_FILE"
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/GET_FILE"
     })
     public ModelAndView getFile(
             @PathVariable("community") String community,

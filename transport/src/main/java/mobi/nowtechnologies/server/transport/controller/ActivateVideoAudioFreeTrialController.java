@@ -30,7 +30,7 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL"})
+            "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL"})
     public ModelAndView activateVideo(
                               @RequestParam("USER_NAME") String userName,
                               @RequestParam("USER_TOKEN") String userToken,
@@ -42,7 +42,12 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+            if (isValidDeviceUID(deviceUID)) {
+                user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+            }
+            else {
+                user = userService.checkCredentials(userName, userToken, timestamp, communityUri);
+            }
 
             user = promotionService.activateVideoAudioFreeTrial(user);
 

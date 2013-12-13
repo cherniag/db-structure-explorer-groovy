@@ -69,6 +69,9 @@
                                 <include>**/*IT.java</include>
                             </includes>
                             <excludes>
+                                <exclude>**/*TestIT.java</exclude>
+                            </excludes>
+                            <excludes>
                             </excludes>
                         </configuration>
                     </plugin>

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
@@ -35,7 +34,6 @@ public class AccCheckController extends CommonController {
 
     private final Logger SUCCESS_ACC_CHECK_LOGGER = LoggerFactory.getLogger("SUCCESS_ACC_CHECK_LOGGER");
 
-    private UserService userService;
     private ChartService chartService;
     private DeviceUserDataService deviceUserDataService;
 
@@ -73,19 +71,14 @@ public class AccCheckController extends CommonController {
         this.deviceUserDataService = deviceUserDataService;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     public void setChartService(ChartService chartService) {
         this.chartService = chartService;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community:o2}/{apiVersion:3\\.[0-8]{1,3}}/ACC_CHECK"
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/ACC_CHECK"
     })
     public ModelAndView accountCheckForO2Client(
-            @RequestParam("COMMUNITY_NAME") String communityName,
             @PathVariable("apiVersion") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
@@ -109,10 +102,10 @@ public class AccCheckController extends CommonController {
             }
 
             if (isValidDeviceUID(deviceUID)) {
-                user = userService.checkCredentials(userName, userToken, timestamp, communityName, deviceUID);
+                user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
             }
             else {
-                user = userService.checkCredentials(userName, userToken, timestamp, communityName);
+                user = userService.checkCredentials(userName, userToken, timestamp, community);
             }
             LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(user.getId()), pushNotificationToken, deviceType, transactionReceipt});
 
@@ -123,7 +116,7 @@ public class AccCheckController extends CommonController {
             }
 
             if (isNotBlank(xtifyToken)) {
-                user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, communityName, deviceUID);
+                user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, community, deviceUID);
             }
 
             if (deviceType != null && pushNotificationToken != null)
@@ -147,7 +140,36 @@ public class AccCheckController extends CommonController {
         }
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community:o2}/{apiVersion:3.9}/ACC_CHECK"
+    })
+    public ModelAndView accountCheckForO2Client_v3d9(
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
+            @PathVariable("community") String community) throws Exception {
+
+        // hack for IOS7 users that needs to remove it soon
+        User user = userService.findByNameAndCommunity(userName, community);
+        if(user != null && DeviceType.IOS.equals(user.getDeviceType().getName())){
+            user.setDeviceUID(deviceUID);
+            userService.updateUser(user);
+        }
+        ///
+
+        return accountCheckForO2Client(apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
+    }
+
     public AccountCheckDto processAccCheck(User user){
+
         user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         Community community = user.getUserGroup().getCommunity();
@@ -190,36 +212,6 @@ public class AccCheckController extends CommonController {
         }
 
         return precessRememberMeToken(new AccountCheckDto(accountCheckDTO));
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community:o2}/{apiVersion:3\\.9|[4-9]{1}\\.[0-9]{1,3}}/ACC_CHECK"
-    })
-    public ModelAndView accountCheckForO2Client_4d0(
-            HttpServletRequest httpServletRequest,
-            @RequestParam("COMMUNITY_NAME") String communityName,
-            @PathVariable("apiVersion") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa,
-            @PathVariable("community") String community) throws Exception {
-
-        // hack for IOS7 users that needs to remove it soon
-        User user = userService.findByNameAndCommunity(userName, community);
-        if(user != null && DeviceType.IOS.equals(user.getDeviceType().getName())){
-            user.setDeviceUID(deviceUID);
-            userService.updateUser(user);
-       }
-       ///
-
-       return accountCheckForO2Client(communityName, apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
     }
 
     private void logAboutSuccessfullAccountCheck() {

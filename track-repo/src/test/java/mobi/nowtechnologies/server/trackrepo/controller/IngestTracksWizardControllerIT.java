@@ -34,7 +34,7 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 @MockWebApplication(name = "trackrepo.IngestTracksWizardController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
 @Transactional
-public class IngestTracksWizardControllerTestIT extends TestCase {
+public class IngestTracksWizardControllerIT extends TestCase {
     private MockMvc mockMvc;
 
     @Autowired

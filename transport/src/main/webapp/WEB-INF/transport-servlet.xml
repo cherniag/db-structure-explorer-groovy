@@ -94,7 +94,9 @@
 		<list>
 		  <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
               <property name="objectMapper">
-                  <bean class="mobi.nowtechnologies.server.dto.transport.JSONObjectMapper" />
+                  <bean class="org.codehaus.jackson.map.ObjectMapper">
+                      <property name="serializationInclusion" value="NON_EMPTY"/>
+                  </bean>
               </property>
           </bean>
 		  <ref bean="transport.JaxbMarshallingView"/>

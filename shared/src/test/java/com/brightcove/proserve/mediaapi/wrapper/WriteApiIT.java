@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * Date: 7/22/13
  * Time: 9:18 AM
  */
-public class WriteApiTestIT {
+public class WriteApiIT {
     public static void main(String[] args) {
         if(args.length != 6){
             usage(new Exception("[ERR] Incorrect number of arguments."));
@@ -216,7 +216,7 @@ public class WriteApiTestIT {
     }
 
     public static void usage(Exception e, PrintStream out, Integer exitCode){
-        out.println("[USE] Usage: java com.brightcove.proserve.mediaapi.wrapper.WriteApiTestIT <Write Api Token> <Video Filename> <Account Publisher Id> <Thumbnail Filename> <Video Still Filename> <Child Account Id>");
+        out.println("[USE] Usage: java com.brightcove.proserve.mediaapi.wrapper.WriteApiIT <Write Api Token> <Video Filename> <Account Publisher Id> <Thumbnail Filename> <Video Still Filename> <Child Account Id>");
         e.printStackTrace(out);
         System.exit(exitCode);
     }

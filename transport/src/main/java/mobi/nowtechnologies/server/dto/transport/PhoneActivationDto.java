@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.server.dto.transport;
 
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import org.codehaus.jackson.annotate.JsonTypeName;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-
 @XmlRootElement(name="phoneActivation")
+@JsonTypeName("phoneActivation")
 public class PhoneActivationDto {
 	private ActivationStatus activation;
 	private String phoneNumber;

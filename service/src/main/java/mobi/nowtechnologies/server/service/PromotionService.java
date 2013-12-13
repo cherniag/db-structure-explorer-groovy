@@ -70,8 +70,7 @@ public class PromotionService {
 
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 
-		UserGroup userGroup = entityService.findByProperty(UserGroup.class,
-				UserGroup.Fields.communityId.toString(), community.getId());
+		UserGroup userGroup = entityService.findByProperty(UserGroup.class,	UserGroup.Fields.communityId.toString(), community.getId());
 
         Promotion promotion = promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
         return promotion;

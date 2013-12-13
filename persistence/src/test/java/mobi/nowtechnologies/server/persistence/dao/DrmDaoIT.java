@@ -19,7 +19,7 @@ import java.util.List;
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class DrmDaoTestIT {
+public class DrmDaoIT {
 
 	@Resource(name = "persistence.DrmDao")
 	private DrmDao drmDao;

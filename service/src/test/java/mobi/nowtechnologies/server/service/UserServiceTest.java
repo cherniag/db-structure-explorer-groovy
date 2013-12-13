@@ -1064,7 +1064,7 @@ public class UserServiceTest {
 		final Map<Integer, Operator> operatorMap = Collections.singletonMap(operatorId, new Operator());
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto();
 		userDeviceRegDetailsDto.setDEVICE_TYPE(deviceTypeName);
-		userDeviceRegDetailsDto.setCOMMUNITY_NAME(communityName);
+		userDeviceRegDetailsDto.setCommunityUri(communityName);
 		userDeviceRegDetailsDto.setDEVICE_UID(deviceUID);
 		userDeviceRegDetailsDto.setIpAddress(ipAddress);
 
@@ -1081,7 +1081,7 @@ public class UserServiceTest {
 		Mockito.when(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY()).thenReturn(userGroupMap);
 		Mockito.when(OperatorDao.getMapAsIds()).thenReturn(operatorMap);
 		Mockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(userStatus);
-		Mockito.when(communityServiceMock.getCommunityByName(anyString())).thenReturn(community);
+		Mockito.when(communityServiceMock.getCommunityByUrl(anyString())).thenReturn(community);
 		Mockito.when(countryServiceMock.findIdByFullName(anyString())).thenReturn(countryId);
 		PowerMockito.doReturn(notExistUser ? null : user).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(anyString(), any(Community.class));
 		whenNew(User.class).withNoArguments().thenReturn(user);
@@ -1099,12 +1099,12 @@ public class UserServiceTest {
     public void shouldDetectUserAccountWithSameDeviceAndDisableIt() throws Exception {
         //given
         final String deviceUID = "imei_357841034540704";
-        final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityName("chartsnow").withDeviceModel("");
+        final UserDeviceRegDetailsDto userDeviceRegDetailsDto = new UserDeviceRegDetailsDto().withDeviceUID(deviceUID).withCommunityUri("chartsnow").withDeviceModel("");
         User userAccountWithSameDevice = new User().withDeviceUID(deviceUID);
 
         Community community = new Community();
         User expectedUser = new User();
-        doReturn(community).when(communityServiceMock).getCommunityByName(userDeviceRegDetailsDto.getCommunityName());
+        doReturn(community).when(communityServiceMock).getCommunityByUrl(userDeviceRegDetailsDto.getCommunityUri());
         doReturn(null).when(userRepositoryMock).findUserWithUserNameAsPassedDeviceUID(userDeviceRegDetailsDto.getDeviceUID(), community);
         doReturn(userAccountWithSameDevice).when(userRepositoryMock).findByDeviceUIDAndCommunity(userDeviceRegDetailsDto.getDeviceUID(), community);
         doReturn(userAccountWithSameDevice).when(userRepositoryMock).save(userAccountWithSameDevice);
@@ -1173,7 +1173,7 @@ public class UserServiceTest {
 		assertEquals(user.getStatus().getName(), UserStatusDao.LIMITED);
 		assertEquals(user.getActivationStatus(), ActivationStatus.REGISTERED);
 
-		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
+		verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
 		verify(userRepositoryMock, times(2)).save(any(User.class));
 		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(anyInt());
@@ -1227,7 +1227,7 @@ public class UserServiceTest {
 		assertEquals(result.getToken(), user.getToken());
 		assertEquals(result.getUserName(), user.getUserName());
 
-		verify(communityServiceMock, times(1)).getCommunityByName(anyString());
+		verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
 		verify(countryServiceMock, times(0)).findIdByFullName(anyString());
 		verify(entityServiceMock, times(0)).saveEntity(any(User.class));
 		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(anyInt());

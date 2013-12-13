@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service.impl;
 
 import com.google.gson.Gson;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -69,7 +67,6 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
     }
 
     @Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public BasicResponse processInAppSubscription(int userId, String transactionReceipt) {
 		LOGGER.debug("input parameters userId, transactionReceipt: [{}], [{}]", userId, transactionReceipt);
 

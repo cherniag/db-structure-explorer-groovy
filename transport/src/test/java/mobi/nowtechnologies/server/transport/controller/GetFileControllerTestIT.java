@@ -1,71 +1,29 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
-import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:transport-servlet-test.xml",
-		"classpath:META-INF/service-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class GetFileControllerTestIT {
-	
-	private MockMvc mockMvc;
+public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
-	@Autowired
-	private ApplicationContext applicationContext;
-	
-	@Autowired
-	@Qualifier("service.UserService")
-	private UserService userService;
-	
 	@Autowired
 	private ChartDetailRepository chartDetailRepository;
 
-    @Autowired
-	private MediaFileRepository mediaFileRepository;
-
-    @Before
-    public void setUp() {
-        mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
-    }
-
     @Test
-    public void testGetChart_O2_v4d0_Success() throws Exception {
+    public void testGetFile_O2_v6d0_Success() throws Exception {
     	String userName = "+447111111114";
         String fileType = "VIDEO";
-		String apiVersion = "4.0";
+		String apiVersion = "6.0";
 		String communityUrl = "o2";
 		String timestamp = "2011_12_26_07_04_23";
 		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -91,8 +49,7 @@ public class GetFileControllerTestIT {
     }
 
     @Test
-    @Ignore
-    public void testGetChart_O2_v4d0_WindowsPhone_Success() throws Exception {
+    public void testGetFile_O2_v4d0_WindowsPhone_Success() throws Exception {
     	String userName = "+447111111114";
         String fileType = "VIDEO";
 		String apiVersion = "4.0";
@@ -101,7 +58,7 @@ public class GetFileControllerTestIT {
 		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        String mediaId = generateVideoMedia();
+        String mediaId = "VIDEO160822";
 
         DeviceType deviceType = new DeviceType();
         deviceType.setI((byte)7);
@@ -125,7 +82,71 @@ public class GetFileControllerTestIT {
 		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
 		String resultXml = aHttpServletResponse.getContentAsString();
 
-        assertTrue(resultXml.contains("o2Tracks.mp4"));
+        assertTrue(resultXml.contains("Signs.mp4"));
+    }
+
+    @Test
+    public void testGetFile_O2_v4d0_401_Failure() throws Exception {
+        String userName = "+447xxxxxxxxxxxx";
+        String fileType = "VIDEO";
+        String apiVersion = "4.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        String mediaId = "VIDEO160822";//generateVideoMedia();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("ID", mediaId)
+                        .param("TYPE", fileType)
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testGetFile_O2_v4d0_400_Failure() throws Exception {
+        String userName = "+447xxxxxxxxxxxx";
+        String fileType = "VIDEO";
+        String apiVersion = "4.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        String mediaId = "VIDEO160822";//generateVideoMedia();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("TYPE", fileType)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetFile_O2_v4d0_404_Failure() throws Exception {
+        String userName = "+447xxxxxxxxxxxx";
+        String fileType = "VIDEO";
+        String apiVersion = "3.5";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        String mediaId = "VIDEO160822";//generateVideoMedia();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("TYPE", fileType)
+        ).andExpect(status().isNotFound());
     }
     
     private String generateVideoMedia(){

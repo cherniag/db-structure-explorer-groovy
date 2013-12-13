@@ -33,9 +33,11 @@ public class UserDeviceRegDetailsDtoValidator extends BaseValidator {
 	public boolean customValidate(Object target, Errors errors) {
 		LOGGER.debug("input parameters target, errors: [{}], [{}]", target, errors);
 		UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) target;
+
+        String[] uriParts = request.getRequestURI().split("/");
+        String communityUrl = uriParts[uriParts.length-3];
 		
-		String communityName = userDeviceRegDetailsDto.getCommunityName();
-		Community community = communityService.getCommunityByName(communityName);
+		Community community = communityService.getCommunityByUrl(communityUrl);
 		
 		String remoteAddr = Utils.getIpFromRequest(request);
 		

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * Date: 7/22/13
  * Time: 9:14 AM
  */
-public class ReadApiTestIT {
+public class ReadApiIT {
     public static void main1(String[] args) {
         Logger log = Logger.getLogger("ApiTests");
 

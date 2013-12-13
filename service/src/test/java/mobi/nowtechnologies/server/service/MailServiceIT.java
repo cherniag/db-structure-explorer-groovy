@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -16,13 +13,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml",
 		"/META-INF/service-test.xml", "/META-INF/shared.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
-public class MailServiceTestIT {
+public class MailServiceIT {
 	
 	private MailService mailService;
 	

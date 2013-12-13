@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
-public class SignInControllerTestIT extends TestCase {
+public class SignInControllerIT extends TestCase {
 	@Autowired
 	private SignInController fixture;
 

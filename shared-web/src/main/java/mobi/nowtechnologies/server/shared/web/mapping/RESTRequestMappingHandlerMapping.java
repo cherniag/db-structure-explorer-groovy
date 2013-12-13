@@ -29,7 +29,7 @@ public class RESTRequestMappingHandlerMapping extends RequestMappingHandlerMappi
         }
 
         PatternsRequestCondition patternsRequestCondition = restPatternsRequestCondition.getMatchingCondition(request);
-        if (patterns == null) {
+        if (patternsRequestCondition == null) {
             return null;
         }
 

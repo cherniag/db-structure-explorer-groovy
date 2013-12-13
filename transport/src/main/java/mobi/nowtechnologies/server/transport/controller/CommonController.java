@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -61,7 +62,7 @@ public abstract class CommonController extends ProfileController implements Appl
     }
 
     protected ModelAndView buildModelAndView(Object ... objs){
-        return new ModelAndView(defaultViewName, "response", new Response(objs));
+        return new ModelAndView(defaultViewName, MODEL_NAME, new Response(objs));
     }
 
     public void setView(View view) {
@@ -100,26 +101,17 @@ public abstract class CommonController extends ProfileController implements Appl
 
     @ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception exception, HttpServletResponse response) {
-
-		final String localizedDisplayMessage = exception.getLocalizedMessage();
-		final String message = exception.getMessage();
-		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
-		LOGGER.error(message, exception);
-
-		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+		return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.BAD_REQUEST);
+    }
 	
 	@ExceptionHandler({InvalidPhoneNumberException.class, ActivationStatusException.class})
 	public ModelAndView handleException(ServiceException exception, HttpServletResponse response) {
-
-		final String localizedDisplayMessage = exception.getLocalizedMessage();
-		final String message = exception.getMessage();
-		final Integer errorCode = new Integer(exception.getErrorCodeForMessageLocalization());
-		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
-		
-		LOGGER.error(message, exception);
-
-		return sendResponse(errorMessage, HttpStatus.OK, response);
+        return sendResponse(exception, response, HttpStatus.OK);
 	}
 
 	@ExceptionHandler(ValidationException.class)
@@ -145,7 +137,7 @@ public abstract class CommonController extends ProfileController implements Appl
 		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
 		LOGGER.warn(message);
 
-		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+		return sendResponse(errorMessage, HttpStatus.BAD_REQUEST, response);
 	}
 
 	@ExceptionHandler(UserCredentialsException.class)
@@ -235,12 +227,27 @@ public abstract class CommonController extends ProfileController implements Appl
 
 	}
 
-	private ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
-		notNull(status , "The parameter httpStatus is null");
+    private ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
+        notNull(status , "The parameter httpStatus is null");
         notNull(errorMessage , "The parameter errorMessage is null");
-		response.setStatus(status.value());
+        response.setStatus(status.value());
 
         return buildModelAndView(errorMessage);
+    }
+
+	private ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status) {
+        final String localizedDisplayMessage = exception.getLocalizedMessage();
+        final String message = exception.getMessage();
+        Integer errorCode;
+        try {
+            errorCode = exception instanceof ServiceException ? new Integer(((ServiceException)exception).getErrorCodeForMessageLocalization()) : null;
+        } catch (NumberFormatException e) {
+            errorCode = null;
+        }
+        ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
+        LOGGER.error(message, exception);
+
+        return sendResponse(errorMessage, status, response);
 	}
 
 	/**
