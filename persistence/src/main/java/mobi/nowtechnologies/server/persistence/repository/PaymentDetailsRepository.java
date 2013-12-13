@@ -23,6 +23,7 @@ public interface PaymentDetailsRepository extends PagingAndSortingRepository<Pay
             "join FETCH ug.community c " +
             "where " +
             "pd.activated=false " +
+            "and pd.lastPaymentStatus<>'NONE' " +
             "and pd.madeRetries=pd.retriesOnError " +
             "and pd.lastFailedPaymentNotificationMillis is null " +
             "and c.rewriteUrlParameter = ?1")

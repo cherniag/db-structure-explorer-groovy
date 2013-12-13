@@ -115,7 +115,14 @@ public class PaymentDetailsRepositoryIT {
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
+        PaymentDetails paymentDetails1 = new O2PSMSPaymentDetails()
+                .withOwner(user)
+                .withActivated(false)
+                .withRetriesOnError(1)
+                .withMadeRetries(1)
+                .withLastFailedPaymentNotificationMillis(null);
+        paymentDetails1.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetails1);
 
         //when
         List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
@@ -124,6 +131,28 @@ public class PaymentDetailsRepositoryIT {
         assertNotNull(paymentDetailsList);
         assertThat(paymentDetailsList.size(), is(1));
         assertThat(paymentDetailsList.get(0).getI(), is(paymentDetails.getI()));
+    }
+
+    @Test
+    public void shouldNotFindFailurePaymentDetailsWithStatusNone(){
+        //given
+        UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
+        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        PaymentDetails paymentDetails1 = new O2PSMSPaymentDetails()
+                .withOwner(user)
+                .withActivated(false)
+                .withRetriesOnError(1)
+                .withMadeRetries(1)
+                .withLastFailedPaymentNotificationMillis(null);
+        paymentDetails1.setLastPaymentStatus(PaymentDetailsStatus.NONE);
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetails1);
+
+        //when
+        List<PaymentDetails> paymentDetailsList = paymentDetailsRepository.findFailedPaymentWithNoNotificationPaymentDetails(o2UserGroup.getCommunity().getRewriteUrlParameter(), new PageRequest(0, Integer.MAX_VALUE));
+
+        //then
+        assertNotNull(paymentDetailsList);
+        assertThat(paymentDetailsList.size(), is(0));
     }
 
     @Test
