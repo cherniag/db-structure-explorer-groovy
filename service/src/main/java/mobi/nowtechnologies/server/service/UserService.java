@@ -1746,7 +1746,7 @@ public class UserService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void saveWeeklyPayment(User user) throws Exception {
         if (user == null)
-            throw new ServiceException("T parameter user is null");
+            throw new ServiceException("The parameter user is null");
 
         final int subBalance = user.getSubBalance();
         if (subBalance <= 0) {
