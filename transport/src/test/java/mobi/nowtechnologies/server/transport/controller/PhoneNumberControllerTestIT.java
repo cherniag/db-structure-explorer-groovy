@@ -43,26 +43,9 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
 import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:transport-servlet-test.xml",
-		"classpath:META-INF/service-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/shared.xml",
-        "classpath:META-INF/smpp.xml"}, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-//@Transactional
-public class PhoneNumberControllerTestIT {
-	
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ApplicationContext applicationContext;
-
-	@Autowired
+public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
+    @Qualifier("vf_nz.service.SMPPProcessorContainer")
+    @Autowired
 	private SMSMessageProcessorContainer processorContainer;
 
     @Autowired
@@ -70,45 +53,17 @@ public class PhoneNumberControllerTestIT {
     private UserService vfUserService;
 
     @Autowired
-    @Qualifier("service.UserService")
-    private UserService userService;
-
-    @Autowired
-    private O2ProviderServiceImpl o2ProviderService;
-
-    @Autowired
-    private O2Service o2Service;
-
-    @Autowired
     @Qualifier("vf_nz.service.SmsProviderSpy")
     private VFNZSMSGatewayServiceImpl vfGatewayServiceSpy;
 
-    private O2ProviderServiceImpl o2ProviderServiceSpy;
-    private O2Service o2ServiceMock;
-
-    @Before
-    public void setUp() throws Exception {
-        mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
-
-        O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
-        o2ProviderServiceSpy = spy(o2ProviderServiceTarget);
-        o2ServiceMock = mock(O2Service.class);
-
-        o2ProviderServiceSpy.setO2Service(o2ServiceMock);
-        userService.setMobileProviderService(o2ProviderServiceSpy);
-
-        reset(vfGatewayServiceSpy);
-    }
-
     @After
     public void tireDown(){
-        o2ProviderService.setO2Service(o2Service);
-        userService.setMobileProviderService(o2ProviderService);
+        reset(vfGatewayServiceSpy);
     }
 
     @Test
     public void testActivatePhoneNumber_O2_Success() throws Exception {
-        String userName = "+447111111113";
+        String userName = "b88106713409e92622461a876abcd74a444";
         String phone = "+447111111113";
         String apiVersion = "4.0";
         String communityName = "o2";
@@ -128,7 +83,6 @@ public class PhoneNumberControllerTestIT {
 
         ResultActions resultActions = mockMvc.perform(
                 post("/some_key/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -160,7 +114,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_Promoted_O2_Success() throws Exception {
-        String userName = "+447111111114";
+        String userName = "b88106713409e92622461a876abcd74b444";
         String phone = "+447111111114";
         String apiVersion = "4.0";
         String communityName = "o2";
@@ -180,7 +134,6 @@ public class PhoneNumberControllerTestIT {
 
         ResultActions resultActions = mockMvc.perform(
                 post("/some_key/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -197,7 +150,6 @@ public class PhoneNumberControllerTestIT {
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
-                        .param("COMMUNITY_NAME", communityName)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -212,7 +164,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_NZ_VF_Success() throws Exception {
-    	String userName = "+642102247311";
+    	String userName = "b88106713409e92622461a876abcd74b";
     	String phone = "+642102247311";
 		String apiVersion = "5.0";
 		String communityName = "vf_nz";
@@ -243,7 +195,6 @@ public class PhoneNumberControllerTestIT {
 
 		ResultActions resultActions = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -268,7 +219,6 @@ public class PhoneNumberControllerTestIT {
 
         resultActions = mockMvc.perform(
                 post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
-                        .param("COMMUNITY_NAME", communityName)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -285,7 +235,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testActivatePhoneNumber_NZ_NON_VF_Success() throws Exception {
-        String userName = "+64279000456";
+        String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+64279000456";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
@@ -299,7 +249,6 @@ public class PhoneNumberControllerTestIT {
 
         ResultActions resultActions = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -321,8 +270,7 @@ public class PhoneNumberControllerTestIT {
         processorContainer.processInboundMessage(deliverSm, message);
 
         resultActions = mockMvc.perform(
-                post("/someid/"+communityUrl+"/"+apiVersion+"/ACC_CHECK")
-                        .param("COMMUNITY_NAME", communityName)
+                post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -338,7 +286,7 @@ public class PhoneNumberControllerTestIT {
 
     @Test
     public void testResendPinOnActivatePhoneNumber() throws Exception {
-        String userName = "+64279000456";
+        String userName = "b88106713409e92622461a876abcd74a";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
         String communityUrl = "vf_nz";
@@ -367,7 +315,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberNZ_VF_NotPresentUserWithoutMobile() throws Exception {
-        String userName = "+64279000456";
+        String userName = "b88106713409e92622461a876abcd74a";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
         String communityUrl = "vf_nz";
@@ -389,7 +337,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberNZ_VF_EmptyUserWithoutMobile() throws Exception {
-        String userName = "+64279000456";
+        String userName = "b88106713409e92622461a876abcd74a";
         String phone = "";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
@@ -413,7 +361,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberNZ_VF_NotPresentUserWithMobile() throws Exception {
-        String userName = "+64279000456";
+        String userName = "b88106713409e92622461a876abcd74a";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
         String communityUrl = "vf_nz";
@@ -434,7 +382,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberNZ_VF_EmptyUserWithMobile() throws Exception {
-        String userName = "+64279000456";
+        String userName = "b88106713409e92622461a876abcd74a";
         String phone = "";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
@@ -455,7 +403,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberO2_NotPresentUserWithoutMobile() throws Exception {
-        String userName = "+447111111114";
+        String userName = "b88106713409e92622461a876abcd74b444";
         String apiVersion = "4.0";
         String communityName = "o2";
         String communityUrl = "o2";
@@ -477,7 +425,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberO2_EmptyUserWithoutMobile() throws Exception {
-        String userName = "+447111111114";
+        String userName = "b88106713409e92622461a876abcd74b444";
         String phone = "";
         String apiVersion = "4.0";
         String communityName = "o2";
@@ -501,7 +449,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberO2_NotPresentUserWithMobile() throws Exception {
-        String userName = "+447111111114";
+        String userName = "b88106713409e92622461a876abcd74b444";
         String apiVersion = "4.0";
         String communityName = "o2";
         String communityUrl = "o2";
@@ -522,7 +470,7 @@ public class PhoneNumberControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberO2_EmptyUserWithMobile() throws Exception {
-        String userName = "+447111111114";
+        String userName = "b88106713409e92622461a876abcd74b444";
         String phone = "";
         String apiVersion = "4.0";
         String communityName = "o2";
@@ -538,6 +486,92 @@ public class PhoneNumberControllerTestIT {
                         .param("TIMESTAMP", timestamp)
                         .param("PHONE", phone)
         ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+    }
+
+    @Test
+    public void testActivatePhoneNumber_v6d0_Json_Success() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74a";
+        String phone = "+64279000456";
+        String apiVersion = "6.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultXml.contains("{\"response\":{\"data\":" +
+                "[{\"phoneActivation\":" +
+                "{\"activation\":\"ENTERED_NUMBER\",\"phoneNumber\":\"+64279000456\"}" +
+                "}]}}"));
+    }
+
+    @Test
+    public void testActivatePhoneNumber_401_Failure() throws Exception {
+        String userName = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        String phone = "+6xxxxxxxxxxxxxx";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testActivatePhoneNumber_400_Failure() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74a";
+        String phone = "+6xxxxxxxxxxxxxx";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("USER_NAME", userName)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testActivatePhoneNumber_404_Failure() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74a";
+        String phone = "+6xxxxxxxxxxxxxx";
+        String apiVersion = "3.5";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("USER_NAME", userName)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isNotFound());
     }
 
     private void resetMobile(String userName) {
