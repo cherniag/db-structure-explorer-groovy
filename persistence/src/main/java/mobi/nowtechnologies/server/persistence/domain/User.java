@@ -306,9 +306,6 @@ public class User implements Serializable {
     @Transient
     private boolean isAutoOptInEnabled = true;
 
-    @Transient
-    private boolean hasPromo;
-
 	public User() {
 		setDisplayName("");
 		setTitle("");
@@ -329,14 +326,6 @@ public class User implements Serializable {
 		setUserType(UserType.UNDEFINED);
 		setAmountOfMoneyToUserNotification(BigDecimal.ZERO);
         setTariff(_3G);
-    }
-
-    public boolean isHasPromo() {
-        return hasPromo;
-    }
-
-    public void setHasPromo(boolean hasPromo) {
-        this.hasPromo = hasPromo;
     }
 
     public boolean isO24GConsumer() {
