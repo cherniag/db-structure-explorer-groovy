@@ -29,4 +29,11 @@
 	</bean>
 	
     <bean id="throttlingService" class="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl"/>
+
+    <bean id="urlsProducer" class="mobi.nowtechnologies.server.httpinvoker.UrlsProducer"/>
+    <bean id="restTemplate"  class="org.springframework.web.client.RestTemplate" />
+    <bean id="videoAudioFreeTrialUrlStrategy" class="mobi.nowtechnologies.server.httpinvoker.VideoAudioFreeTrialUrlStrategy"/>
+    <bean id="reporter" class="mobi.nowtechnologies.server.httpinvoker.Reporter">
+        <property name="dir" value="classpath:http_invoker_report" />
+    </bean>
 </beans>
