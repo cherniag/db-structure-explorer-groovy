@@ -1791,7 +1791,6 @@ public class UserNotificationServiceImplTest {
         user.setPin("0000");
 
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
-
         final ArgumentMatcher<String[]> matcher = new ArgumentMatcher<String[]>() {
 
             @Override
@@ -1812,8 +1811,7 @@ public class UserNotificationServiceImplTest {
         };
 
         doReturn(true).when(userNotificationImplSpy).sendSMSWithUrl(eq(user),
-                eq("sms.activation.pin.text"), argThat(matcher));
-
+                eq("sms.activation.pin.text.for.nowtop40"), argThat(matcher));
         Future<Boolean> result = userNotificationImplSpy.sendActivationPinSMS(user);
 
         assertNotNull(result);
@@ -1821,7 +1819,7 @@ public class UserNotificationServiceImplTest {
 
         verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
         verify(userNotificationImplSpy, times(1)).sendSMSWithUrl(eq(user),
-                eq("sms.activation.pin.text"), argThat(matcher));
+                eq("sms.activation.pin.text.for.nowtop40"), argThat(matcher));
     }
 
     @Test
@@ -1844,7 +1842,6 @@ public class UserNotificationServiceImplTest {
     public void testSendActivationPinSMS_NotHasAllDetails_Success() throws Exception {
         User user = UserFactory.createUser();
         user.setProvider(null);
-
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
 
         Future<Boolean> result = userNotificationImplSpy.sendActivationPinSMS(user);
@@ -1852,7 +1849,7 @@ public class UserNotificationServiceImplTest {
         assertNotNull(result);
         assertEquals(false, result.get());
 
-        verify(userNotificationImplSpy, times(0)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
+        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
         verify(userNotificationImplSpy, times(0)).sendSMSWithUrl(eq(user),
                 eq("sms.activation.pin.text"), any(String[].class));
     }

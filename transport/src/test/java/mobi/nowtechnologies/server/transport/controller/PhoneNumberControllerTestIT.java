@@ -61,7 +61,7 @@ public class PhoneNumberControllerTestIT {
 
 	@Autowired
 	private ApplicationContext applicationContext;
-	
+
 	@Autowired
 	private SMSMessageProcessorContainer processorContainer;
 
@@ -94,9 +94,10 @@ public class PhoneNumberControllerTestIT {
         o2ProviderServiceSpy = spy(o2ProviderServiceTarget);
         o2ServiceMock = mock(O2Service.class);
 
-
         o2ProviderServiceSpy.setO2Service(o2ServiceMock);
         userService.setMobileProviderService(o2ProviderServiceSpy);
+
+        reset(vfGatewayServiceSpy);
     }
 
     @After
@@ -219,6 +220,9 @@ public class PhoneNumberControllerTestIT {
 		String timestamp = "2011_12_26_07_04_23";
 		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
 		String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        user.setProvider(null);
+        vfUserService.updateUser(user);
 
         doAnswer(new Answer<SMSResponse>() {
             @Override
@@ -251,7 +255,7 @@ public class PhoneNumberControllerTestIT {
 
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642102247311</phoneNumber></phoneActivation></response>"));
 
-        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        user = vfUserService.findByNameAndCommunity(userName, communityName);
         assertEquals(null, user.getProvider());
 
         DeliverSm deliverSm = new DeliverSm();
@@ -289,6 +293,9 @@ public class PhoneNumberControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        user.setProvider(null);
+        vfUserService.updateUser(user);
 
         ResultActions resultActions = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
@@ -304,7 +311,7 @@ public class PhoneNumberControllerTestIT {
 
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
 
-        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        user = vfUserService.findByNameAndCommunity(userName, communityName);
         assertEquals(null, user.getProvider());
 
         DeliverSm deliverSm = new DeliverSm();
@@ -326,6 +333,35 @@ public class PhoneNumberControllerTestIT {
 
         assertTrue(resultXml.contains("<provider>non-vf</provider>"));
         assertTrue(resultXml.contains("<hasAllDetails>true</hasAllDetails>"));
+        verify(vfGatewayServiceSpy, times(1)).send(eq("+64279000456"), anyString(), eq("4003"));
+    }
+
+    @Test
+    public void testResendPinOnActivatePhoneNumber() throws Exception {
+        String userName = "+64279000456";
+        String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        User user = vfUserService.findByNameAndCommunity(userName, communityName);
+        user.setProvider(null);
+        vfUserService.updateUser(user);
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
+        user = vfUserService.findByNameAndCommunity(userName, communityName);
+        assertEquals(null, user.getProvider());
+        verify(vfGatewayServiceSpy, times(1)).send(eq("+64279000456"), anyString(), eq("4003"));
     }
 
     @Test

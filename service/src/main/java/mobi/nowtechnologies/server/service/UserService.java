@@ -36,6 +36,7 @@ import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserRegDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -53,12 +54,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
@@ -70,6 +73,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
+import static mobi.nowtechnologies.server.shared.util.EmailValidator.isEmail;
 import static mobi.nowtechnologies.server.shared.util.EmailValidator.isEmail;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.Validate.notNull;
@@ -117,6 +121,9 @@ public class UserService {
 
     private UserDetailsUpdater userDetailsUpdater;
     private MobileProviderService mobileProviderService;
+
+    private boolean sendActivationSMS = false;
+    private UserNotificationService userNotificationService;
 
     private User checkAndMerge(User user, User mobileUser) {
         if (mobileUser.getId() != user.getId()) {
@@ -1315,6 +1322,42 @@ public class UserService {
         return user;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AccountCheckDTO updateUserFacebookDetails(UserFacebookDetailsDto userFacebookDetailsDto) {
+        LOGGER.debug("input parameters userFacebookDetailsDto: [{}]", userFacebookDetailsDto);
+
+        final String deviceUID = userFacebookDetailsDto.getDeviceUID();
+        final String storedToken = userFacebookDetailsDto.getStoredToken();
+        final String passedCommunityName = userFacebookDetailsDto.getCommunityName();
+        Community community = communityService.getCommunityByName(passedCommunityName);
+
+        UserCredentions userCredentions = facebookService.getUserCredentions(passedCommunityName, userFacebookDetailsDto.getFacebookToken());
+
+        User userByDeviceUID = checkUserDetailsBeforeUpdate(deviceUID, storedToken, community);
+
+        User user = findByFacebookId(userCredentions.getId(), passedCommunityName);
+
+        if (user == null) {
+            user = findByNameAndCommunity(userCredentions.getEmail(), passedCommunityName);
+        }
+
+        if (user != null && userByDeviceUID != null && user.getId() != userByDeviceUID.getId()) {
+            user.setFacebookId(userCredentions.getId());
+            user = mergeUser(user, userByDeviceUID);
+        } else {
+            user = userByDeviceUID;
+            user.setUserName(userCredentions.getEmail() != null ? userCredentions.getEmail() : userCredentions.getId());
+            user.setFacebookId(userCredentions.getId());
+            user.setFirstUserLoginMillis(getEpochMillis());
+
+            updateUser(user);
+        }
+
+        AccountCheckDTO accountCheckDTO = proceessAccountCheckCommandForAuthorizedUser(user.getId(), null, null, null);
+        LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
+        return accountCheckDTO;
+    }
+
     private User checkUserDetailsBeforeUpdate(final String deviceUID, final String storedToken, final Community community) {
         LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[] { deviceUID, storedToken, community });
 
@@ -1689,12 +1732,23 @@ public class UserService {
 
         user.setMobile(result.getPhoneNumber());
         user.setActivationStatus(ENTERED_NUMBER);
-        if(result.getPin() != null)
+        if(result.getPin() != null){
             user.setPin(result.getPin());
-
+        }
         userRepository.save(user);
+        sendActivationPin(user);
         LOGGER.info("PHONE_NUMBER user[{}] changed activation status to [{}]", phoneNumber, ENTERED_NUMBER);
         return user;
+    }
+
+    private void sendActivationPin(User user) {
+        if (sendActivationSMS){
+            try {
+                userNotificationService.sendActivationPinSMS(user);
+            } catch (UnsupportedEncodingException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
     }
 
     public void populateSubscriberData(final User user) {
@@ -1936,6 +1990,7 @@ public class UserService {
     @Transactional(propagation = Propagation.REQUIRED)
     public User autoOptIn(User user, String otac) {
         LOGGER.info("Attempt to auto opt in");
+        User user = checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
 
         if(!user.isSubjectToAutoOptIn()) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
 
@@ -1963,5 +2018,13 @@ public class UserService {
         if ( userInTransaction.isSubjectToAutoOptIn() ) {
             paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
         }
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
+    }
+
+    public void setSendActivationSMS(boolean sendActivationSMS) {
+        this.sendActivationSMS = sendActivationSMS;
     }
 }

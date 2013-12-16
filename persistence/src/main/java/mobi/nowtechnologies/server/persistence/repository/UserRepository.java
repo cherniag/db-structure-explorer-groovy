@@ -235,6 +235,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
     int deleteUser(int userId);
 
     @Query(value="select u from User u "
-            + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%'")
+            + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%' and u.deviceUID not like '%_wipe'")
     List<User> findByMobile(String phoneNumber);
 }
