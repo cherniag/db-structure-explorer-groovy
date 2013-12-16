@@ -143,6 +143,7 @@
                         <manifestEntries>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Implementation-Build>${buildNumber}-${bambooBuildNumber}</Implementation-Build>
+                            <Branch>${bambooBranchName}</Branch>
                         </manifestEntries>
                     </archive>
                 </configuration>
