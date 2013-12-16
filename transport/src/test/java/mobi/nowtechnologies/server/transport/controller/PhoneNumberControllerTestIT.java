@@ -269,6 +269,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         MOMessage message = new MOMessage("5804", "64279000456", "OffNet", Message.MessageEncodings.ENC8BIT);
         processorContainer.processInboundMessage(deliverSm, message);
 
+        Thread.sleep(1000);
+
         resultActions = mockMvc.perform(
                 post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
                         .param("USER_NAME", userName)
@@ -309,6 +311,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
         user = vfUserService.findByNameAndCommunity(userName, communityName);
         assertEquals(null, user.getProvider());
+
+        Thread.sleep(1000);
+
         verify(vfGatewayServiceSpy, times(1)).send(eq("+64279000456"), anyString(), eq("4003"));
     }
 
