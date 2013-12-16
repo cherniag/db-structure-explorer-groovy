@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -18,6 +17,8 @@ import org.springframework.test.web.server.ResultActions;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
@@ -64,29 +65,21 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         promoCode = promoCodeRepository.save(promoCode);
         promotion.setPromoCode(promoCode);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
         post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
 
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultActivateVideoFreeTrialJson = aHttpServletResponse.getContentAsString();
-        JsonObject jsonObject = getAccCheckContent(resultActivateVideoFreeTrialJson);
-
-        resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
 
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultAccCkeckJson.contains(jsonObject.toString()));
     }
 
     @Test
@@ -188,7 +181,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -196,4 +189,5 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("DEVICE_UID", deviceUid)
         ).andExpect(status().isNotFound());
     }
+
 }
