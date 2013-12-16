@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
 import mobi.nowtechnologies.server.service.vodafone.VFNZProviderService;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
                 normalizedPhoneNumber = phoneValidator.validate(phoneNumber);
             }
 
-            if(normalizedPhoneNumber == null){
+            if (StringUtils.isEmpty(normalizedPhoneNumber)) {
                 throw new ServiceException("Invalid phone number");
             }
 
