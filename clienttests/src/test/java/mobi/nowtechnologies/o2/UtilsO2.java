@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.persistence.repository.UserLogRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2TariffServiceImpl;
@@ -28,28 +29,34 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 
+
+/**
+ *
+ * Nothing fancy - just creates the objects we are using to access O2 services
+ *
+ */
 public class UtilsO2 {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UtilsO2.class);
 
-	public static O2ServiceImpl createO2ServiceImpl(String o2ServerUrl) throws Exception {
+	public static O2ServiceImpl createO2ServiceImpl(O2Config config) throws Exception {
 
 		O2ServiceImpl res = new O2ServiceImpl();
-		res.setO2TariffService(createO2TariffImpl(o2ServerUrl));
+		res.setO2TariffService(createO2TariffImpl(config));
 		return res;
 	}
 
-	public static O2TariffServiceImpl createO2TariffImpl(String o2ServerUrl) throws Exception {
+	public static O2TariffServiceImpl createO2TariffImpl(O2Config config) throws Exception {
 		O2TariffServiceImpl impl = new O2TariffServiceImpl();
 
-		WebServiceGateway webServiceGateway = createWSGateway(getJaxBPackagesForTariff());
+		WebServiceGateway webServiceGateway = createWSGateway(O2Config.QA, getJaxBPackagesForTariff());
 
 		impl.setWebServiceGateway(webServiceGateway);
-		impl.setManagePostpayTariffEndpoint(o2ServerUrl + "ManagePostpayTariff_2_0");
-		impl.setManagePrepayTariffEndpoint(o2ServerUrl + "ManagePrepayTariff_2_0");
-		impl.setManagePostpayBoltonEndpoint(o2ServerUrl + "ManagePostpayBoltons_2_0");
-		impl.setSubscriberEndpoint(o2ServerUrl + "Subscriber_2_0");
-		impl.setManageOrderEndpoint(o2ServerUrl + "ManageOrder_2_0");
+		impl.setManagePostpayTariffEndpoint(config.getServerUrl() + "ManagePostpayTariff_2_0");
+		impl.setManagePrepayTariffEndpoint(config.getServerUrl() + "ManagePrepayTariff_2_0");
+		impl.setManagePostpayBoltonEndpoint(config.getServerUrl() + "ManagePostpayBoltons_2_0");
+		impl.setSubscriberEndpoint(config.getServerUrl() + "Subscriber_2_0");
+		impl.setManageOrderEndpoint(config.getServerUrl() + "ManageOrder_2_0");
 
 		return impl;
 	}
@@ -61,9 +68,9 @@ public class UtilsO2 {
 
 	}
 
-	public static O2ProviderServiceImpl createO2ClientService(String o2ProxyUrl, String o2ServerUrl) throws Exception {
+	public static O2ProviderServiceImpl createO2ClientService(O2Config config) throws Exception {
 
-		LOGGER.info("o2ProxyUrl: " + o2ProxyUrl + " ServerUrl=" + o2ServerUrl);
+		LOGGER.info("o2ProxyUrl: " + config.getProxyUrl() + " ServerUrl=" + config.getServerUrl());
 		//ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "db2mine-application.xml" });
 
 		//      SessionFactory sessionFactory = context.getBean(SessionFactory.class);
@@ -72,31 +79,35 @@ public class UtilsO2 {
 		//
 		//      GenericService genericService = context.getBean(GenericService.class);
 
-		WebServiceGateway webServiceGateway = createWSGateway("uk.co.o2.soa.chargecustomerdata",
+		WebServiceGateway webServiceGateway = createWSGateway(config, "uk.co.o2.soa.chargecustomerdata",
 				"uk.co.o2.soa.subscriberdata");
 
 		O2ProviderServiceImpl impl = new O2ProviderServiceImpl();
 		impl.setWebServiceGateway(webServiceGateway);
 
-		impl.setServerO2Url(o2ProxyUrl);
-		impl.setPromotedServerO2Url(o2ProxyUrl);
-		impl.setRedeemPromotedServerO2Url(o2ProxyUrl);
+		impl.setServerO2Url(config.getProxyUrl());
+		impl.setPromotedServerO2Url(config.getProxyUrl());
+		impl.setRedeemPromotedServerO2Url(config.getProxyUrl());
 
 		impl.setRestTemplate(new RestTemplate());
 
 		impl.setLimitValidatePhoneNumber(1000);
 
-		impl.setChargeCustomerEndpoint(o2ServerUrl + "ChargeCustomer_1_0");
-		impl.setSubscriberEndpoint(o2ServerUrl + "Subscriber_2_0");
-		impl.setSendMessageEndpoint(o2ServerUrl + "SendMessage_1_1");
+		impl.setChargeCustomerEndpoint(config.getServerUrl() + "ChargeCustomer_1_0");
+		impl.setSubscriberEndpoint(config.getServerUrl() + "Subscriber_2_0");
+		impl.setSendMessageEndpoint(config.getServerUrl() + "SendMessage_1_1");
 
 		impl.setDeviceService(getDeviceService());
 		impl.setCommunityService(getCommunityService());
 		impl.setUserLogRepository(getUserLogRepository());
+		
+		impl.setUserService(getUserService());
+		impl.setO2Service( null );
+		
 		return impl;
 	}
-
-	public static WebServiceGateway createWSGateway(String... jaxbPackagees) throws Exception {
+	
+	public static WebServiceGateway createWSGateway(O2Config o2Config,String... jaxbPackagees) throws Exception {
 		WebServiceGateway webServiceGateway = new WebServiceGateway();
 
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
@@ -109,14 +120,14 @@ public class UtilsO2 {
 		webServiceMessageHandler.setSoaConsumerTransactionID("0000111122223333:musicqubed.test");
 		webServiceMessageHandler.setUsername("musicQubed_1001");
 
-		webServiceMessageHandler.setPassword("BA4sWteQ");
+		webServiceMessageHandler.setPassword(o2Config.getTokenPassword());
 		webServiceGateway.setDefaultWebServiceMessageHandler(webServiceMessageHandler);
 
-		File keyStoreFile = new File("../service/src/main/resources/META-INF/keystore.jks");//resource.toURI());
+		File keyStoreFile = new File(o2Config.getKeystoreFile());//resource.toURI());
 		Assert.assertTrue("Keystore file not found " + keyStoreFile.getAbsolutePath(), keyStoreFile.exists());
 
 		webServiceGateway.setKeystoreLocation(new FileSystemResource(keyStoreFile));
-		webServiceGateway.setKeystorePassword("Fb320p007++");
+		webServiceGateway.setKeystorePassword(o2Config.getKeystorePassword());
 
 		SaajSoapMessageFactory factory = createMessageFactory();
 		webServiceGateway.setMessageFactory(factory);
@@ -167,6 +178,14 @@ public class UtilsO2 {
 		};
 	}
 
+	private static UserService getUserService() {
+		return new UserService(){
+			public boolean isPromotedDevice(String phoneNumber, Community community) {
+				return false;
+			}
+		};
+	}
+	
 	private static UserLogRepository getUserLogRepository() {
 		return new UserLogRepository() {
 

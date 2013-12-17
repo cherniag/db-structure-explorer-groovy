@@ -1462,6 +1462,7 @@ public class User implements Serializable {
                 .add("contractChannel", contractChannel)
                 .add("lastPromoId", getLastPromoId())
                 .add("contract", contract)
+                .add("hasPromo", hasPromo)
                 .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
     }
 }
