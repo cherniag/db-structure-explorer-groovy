@@ -37,6 +37,7 @@ public class UserDeviceRegDetailsDtoValidatorTest {
 
     @Before
     public void before() {
+        request.setRequestURI("/o2/3.9/SING_UP_DEVICE");
         validator = new UserDeviceRegDetailsDtoValidator(request, userService, communityService);
         dto = new UserDeviceRegDetailsDto();
         errors = new BeanPropertyBindingResult(dto, "");
@@ -45,7 +46,7 @@ public class UserDeviceRegDetailsDtoValidatorTest {
     @Test
     public void testCountryIsNotSupported() {
         Community community = new Community();
-        when(communityService.getCommunityByName(anyString())).thenReturn(community);
+        when(communityService.getCommunityByUrl(anyString())).thenReturn(community);
         when(userService.isCommunitySupportByIp(anyString(), anyString(), anyString())).thenReturn(false);
         validator.customValidate(dto, errors);
         assertTrue(errors.hasErrors());
@@ -55,7 +56,7 @@ public class UserDeviceRegDetailsDtoValidatorTest {
     @Test
     public void testCountryIsSupported() {
         Community community = new Community();
-        when(communityService.getCommunityByName(anyString())).thenReturn(community);
+        when(communityService.getCommunityByUrl(anyString())).thenReturn(community);
         when(userService.isCommunitySupportByIp(anyString(), anyString(), anyString())).thenReturn(true);
         validator.customValidate(dto, errors);
         assertNull(errors.getFieldError("ipAddress"));
