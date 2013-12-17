@@ -37,6 +37,7 @@ public class UserDeviceRegDetailsDtoValidatorTest {
 
     @Before
     public void before() {
+        request.setRequestURI("/o2/3.9/SING_UP_DEVICE");
         validator = new UserDeviceRegDetailsDtoValidator(request, userService, communityService);
         dto = new UserDeviceRegDetailsDto();
         request.setRequestURI("o2/transport/service");
