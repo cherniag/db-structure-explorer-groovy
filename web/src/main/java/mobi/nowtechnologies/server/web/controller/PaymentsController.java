@@ -96,6 +96,7 @@ public class PaymentsController extends CommonController {
         paymentsPage.setUserCanGetVideo( user.is4G() );
         paymentsPage.setUserIsOptedInToVideo( user.is4G() && user.isVideoFreeTrialHasBeenActivated() );
         paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(isBusinessUser(user)) );
+        paymentsPage.setFreeTrialPeriod( user.isOnFreeTrial() );
 
         SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);

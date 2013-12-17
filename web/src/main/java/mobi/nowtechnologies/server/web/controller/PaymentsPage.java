@@ -27,6 +27,7 @@ public class PaymentsPage {
 	private boolean userIsOptedInToVideo;
 	private boolean appleIOSAndNotBusiness;
 	private PaymentPageData paymentPageData;
+	private boolean freeTrialPeriod;
 
 	public String getMobilePhoneNumber() {
 		return mobilePhoneNumber;
@@ -132,4 +133,13 @@ public class PaymentsPage {
 	public boolean isPaymentDetailsActivated() {
 		return paymentDetails!=null && paymentDetails.isActivated();
 	}
+
+	public boolean isFreeTrialPeriod() {
+		return freeTrialPeriod;
+	}
+
+	public void setFreeTrialPeriod(boolean freeTrialPeriod) {
+		this.freeTrialPeriod = freeTrialPeriod;
+	}
+
 }
