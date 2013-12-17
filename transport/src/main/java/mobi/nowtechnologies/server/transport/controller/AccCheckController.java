@@ -79,7 +79,6 @@ public class AccCheckController extends CommonController {
             "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/ACC_CHECK"
     })
     public ModelAndView accountCheckForO2Client(
-            @PathVariable("apiVersion") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
@@ -89,11 +88,12 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa,
-            @PathVariable("community") String community) throws Exception {
+            @RequestParam(required = false, value = "IDFA") String idfa
+            ) throws Exception {
 
         User user = null;
         Exception ex = null;
+        String community = getCurrentCommunityUri();
         try {
             LOGGER.info("command processing started");
 
@@ -165,7 +165,7 @@ public class AccCheckController extends CommonController {
         }
         ///
 
-        return accountCheckForO2Client(apiVersion, userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, community);
+        return accountCheckForO2Client(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa);
     }
 
     public AccountCheckDto processAccCheck(User user){

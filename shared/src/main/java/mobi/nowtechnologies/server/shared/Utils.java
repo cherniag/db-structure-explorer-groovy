@@ -35,7 +35,7 @@ public class Utils {
     public static final int DAY_MILLISECONDS = 86400000;
     public static final int PIN_LENGTH = 4;
 
-    private static Pattern MAJOR_VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+)\\..*");
+    private static Pattern VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+)\\.((?:\\d+\\.{0,1})+)");
 
     public static int truncatedToSeconds(Date date){
         return (int)(date.getTime()/1000);
@@ -201,7 +201,7 @@ public class Utils {
 
     public static int getMajorVersionNumber(String version){
         int majorVersionNumber;
-        Matcher matcher = MAJOR_VERSION_NUMBER_PATTERN.matcher(version);
+        Matcher matcher = VERSION_NUMBER_PATTERN.matcher(version);
 
         if(matcher.matches()){
             majorVersionNumber = Integer.valueOf(matcher.group(1));
@@ -212,9 +212,26 @@ public class Utils {
         return majorVersionNumber;
     }
 
+    public static BigDecimal getVersionNumber(String version){
+        BigDecimal versionNumber;
+        Matcher matcher = VERSION_NUMBER_PATTERN.matcher(version);
+
+        if(matcher.matches()){
+            versionNumber = new BigDecimal(matcher.group(1)+"."+matcher.group(2).replaceAll("\\.", ""));
+        }else{
+            throw new IllegalArgumentException("Couldn't get version number for [" + version +"] version");
+        }
+
+        return versionNumber;
+    }
+
     public static boolean isMajorVersionNumberLessThan(int majorVersionNumber, String version){
         int parsedMajorVersionNumber = Utils.getMajorVersionNumber(version);
         return parsedMajorVersionNumber < majorVersionNumber;
+    }
+
+    public static int compareVersions(String version1, String version2){
+        return getVersionNumber(version1).compareTo(getVersionNumber(version2));
     }
 
     public static String replacePathSegmentInUrl(String url, int index, String newValue) {

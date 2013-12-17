@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.NewsDto;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,13 +43,12 @@ public class GetNewsController extends CommonController {
 			@RequestParam("USER_TOKEN") String userToken,
 			@RequestParam("TIMESTAMP") String timestamp,
 			@RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
-			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-			@PathVariable("community") String community,
-			@PathVariable("apiVersion") String apiVersion
+			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID
             ) throws Exception {
 
 		User user = null;
 		Exception ex = null;
+        String community = getCurrentCommunityUri();
 		try {
 			LOGGER.info("command processing started");
             if (isValidDeviceUID(deviceUID)) {
