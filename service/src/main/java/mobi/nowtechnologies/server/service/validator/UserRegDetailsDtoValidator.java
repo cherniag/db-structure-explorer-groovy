@@ -58,7 +58,7 @@ public class UserRegDetailsDtoValidator extends BaseValidator {
 		
 		// Checking whether user are in right country in order to register in community
 		if (!userService.isCommunitySupportByIp(email, communityName, remoteAddr)) {
-			errors.rejectValue("ipAddress", "Incorrect.ipAddress", "We don't support your counrty");
+			errors.rejectValue("ipAddress", "Incorrect.ipAddress", "We don't support your country");
 		}
 		
 		if (StringUtils.hasText(userRegDetailsDto.getPromotionCode())) {

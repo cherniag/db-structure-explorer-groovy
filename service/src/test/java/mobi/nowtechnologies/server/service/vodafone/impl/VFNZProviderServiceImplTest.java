@@ -16,6 +16,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -58,7 +62,7 @@ public class VFNZProviderServiceImplTest {
         Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String)null))).thenReturn(false);
         PowerMockito.mockStatic(Utils.class);
 
-        Mockito.when(Utils.generateRandomPIN()).thenReturn(1000);
+        Mockito.when(Utils.generateRandom4DigitsPIN()).thenReturn("1000");
 
         PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
 
@@ -68,7 +72,7 @@ public class VFNZProviderServiceImplTest {
         Mockito.verify(mockNzCellNumberValidator, Mockito.times(1)).validateAndNormalize(eq(phoneNumber));
         verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null));
         PowerMockito.verifyStatic(times(1));
-        Utils.generateRandomPIN();
+        Utils.generateRandom4DigitsPIN();
     }
 
     @Test
@@ -79,7 +83,7 @@ public class VFNZProviderServiceImplTest {
         Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String)null))).thenReturn(true);
         PowerMockito.mockStatic(Utils.class);
 
-        Mockito.when(Utils.generateRandomPIN()).thenReturn(1000);
+        Mockito.when(Utils.generateRandom4DigitsPIN()).thenReturn("1000");
 
         PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
 
@@ -89,7 +93,7 @@ public class VFNZProviderServiceImplTest {
         Mockito.verify(mockNzCellNumberValidator, Mockito.times(0)).validateAndNormalize(eq(phoneNumber));
         verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null));
         PowerMockito.verifyStatic(times(1));
-        Utils.generateRandomPIN();
+        Utils.generateRandom4DigitsPIN();
     }
 
     @Test
@@ -112,4 +116,26 @@ public class VFNZProviderServiceImplTest {
         Mockito.verify(gatewayService, Mockito.times(1)).send(eq(phoneNumber), eq("GET_PROVIDER"), eq(fixture.providerNumber));
         Mockito.verify(processor, Mockito.times(1)).process(any(VFNZSubscriberData.class));
     }
+
+    @Test
+    public void testValidatePhoneNumberPinCodeNotStartsWith7Constantly() {
+        String phoneNumber = "+642102247311";
+        Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null))).thenReturn(true);
+
+        int num = 10;
+        List<String> codes = new ArrayList<String>(num);
+        for (int i = 0; i < num; i++) {
+            PhoneNumberValidationData result = fixture.validatePhoneNumber(phoneNumber);
+            codes.add(result.getPin());
+        }
+
+        int numOfCodesStartWith7 = 0;
+        for (String code : codes) {
+            if (code.startsWith("7")) {
+                numOfCodesStartWith7++;
+            }
+        }
+        assertFalse("All codes start with '7'", num == numOfCodesStartWith7);
+    }
+
 }

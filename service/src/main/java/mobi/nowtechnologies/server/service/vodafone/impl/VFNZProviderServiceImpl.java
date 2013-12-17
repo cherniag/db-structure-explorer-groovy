@@ -42,7 +42,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
                 throw new ServiceException("Invalid phone number");
             }
 
-            String pin = Utils.generateRandomPIN().toString();
+            String pin = Utils.generateRandom4DigitsPIN();
 
             result = new PhoneNumberValidationData()
                     .withPhoneNumber(normalizedPhoneNumber)
