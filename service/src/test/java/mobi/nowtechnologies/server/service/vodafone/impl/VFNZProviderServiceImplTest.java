@@ -54,7 +54,7 @@ public class VFNZProviderServiceImplTest {
     public void testValidatePhoneNumber_Success() throws Exception {
         String phoneNumber = "2111111111";
 
-        Mockito.when(mockNzCellNumberValidator.validate(eq(phoneNumber))).thenReturn("+642111111111");
+        Mockito.when(mockNzCellNumberValidator.validateAndNormalize(eq(phoneNumber))).thenReturn("+642111111111");
         Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String)null))).thenReturn(false);
         PowerMockito.mockStatic(Utils.class);
 
@@ -65,7 +65,7 @@ public class VFNZProviderServiceImplTest {
         Assert.assertEquals("+642111111111", result.getPhoneNumber());
         Assert.assertEquals("1000", result.getPin());
 
-        Mockito.verify(mockNzCellNumberValidator, Mockito.times(1)).validate(eq(phoneNumber));
+        Mockito.verify(mockNzCellNumberValidator, Mockito.times(1)).validateAndNormalize(eq(phoneNumber));
         verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null));
         PowerMockito.verifyStatic(times(1));
         Utils.generateRandomPIN();
@@ -75,7 +75,7 @@ public class VFNZProviderServiceImplTest {
     public void testValidatePhoneNumber_PromotedPhone_Success() throws Exception {
         String phoneNumber = "2111111111";
 
-        Mockito.when(mockNzCellNumberValidator.validate(eq(phoneNumber))).thenReturn("+642111111111");
+        Mockito.when(mockNzCellNumberValidator.validateAndNormalize(eq(phoneNumber))).thenReturn("+642111111111");
         Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String)null))).thenReturn(true);
         PowerMockito.mockStatic(Utils.class);
 
@@ -86,7 +86,7 @@ public class VFNZProviderServiceImplTest {
         Assert.assertEquals("2111111111", result.getPhoneNumber());
         Assert.assertEquals("1000", result.getPin());
 
-        Mockito.verify(mockNzCellNumberValidator, Mockito.times(0)).validate(eq(phoneNumber));
+        Mockito.verify(mockNzCellNumberValidator, Mockito.times(0)).validateAndNormalize(eq(phoneNumber));
         verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null));
         PowerMockito.verifyStatic(times(1));
         Utils.generateRandomPIN();

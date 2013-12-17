@@ -17,7 +17,7 @@ public abstract class AbstractCellNumberValidator {
 
     private Pattern pattern = Pattern.compile("(00"+getNationalCode()+"|\\+"+getNationalCode()+"|"+getLocalCodePattern()+"){0,1}("+getLocalPhonePattern()+")");
 
-	public String validate(String target) {
+	public String validateAndNormalize(String target) {
 		LOGGER.debug("input parameters target, errors: [{}], [{}]", target);
 
         if(target == null)

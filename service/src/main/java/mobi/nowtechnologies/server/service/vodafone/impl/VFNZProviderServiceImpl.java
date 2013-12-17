@@ -35,7 +35,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
         try {
             String normalizedPhoneNumber = phoneNumber;
             if(!deviceService.isPromotedDevicePhone(vfnzCommunity, phoneNumber, null)){
-                normalizedPhoneNumber = phoneValidator.validate(phoneNumber);
+                normalizedPhoneNumber = phoneValidator.validateAndNormalize(phoneNumber);
             }
 
             if (StringUtils.isEmpty(normalizedPhoneNumber)) {

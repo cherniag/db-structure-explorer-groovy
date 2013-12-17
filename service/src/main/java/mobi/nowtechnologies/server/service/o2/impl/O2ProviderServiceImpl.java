@@ -171,9 +171,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		String serverO2Url = getServerO2Url(phoneNumber);
 		String url = serverO2Url + VALIDATE_PHONE_REQ;
 
-		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-
-		String result = handleValidatePhoneNumber(phoneNumber, url, request);
+		String result = handleValidatePhoneNumber(phoneNumber, url);
 
 		return new PhoneNumberValidationData().withPhoneNumber(result);
 	}
@@ -186,14 +184,14 @@ public class O2ProviderServiceImpl implements O2ProviderService {
         processor.process(data);
     }
 
-    private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
+    private String handleValidatePhoneNumber(String phoneNumber, String url) {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
 
         UserLog userLog = null;
         String validatedPhoneNumber = null;
         try {
             Long curDay = new Long(Utils.getEpochDays());
-            validatedPhoneNumber = gbCellNumberValidator.validate(phoneNumber);
+            validatedPhoneNumber = gbCellNumberValidator.validateAndNormalize(phoneNumber);
             if(validatedPhoneNumber == null)
                 throw new InvalidPhoneNumberException(phoneNumber);
 
@@ -206,6 +204,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
                 userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
             }
 
+            MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
             request.add("phone_number", validatedPhoneNumber);
             DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
 			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
