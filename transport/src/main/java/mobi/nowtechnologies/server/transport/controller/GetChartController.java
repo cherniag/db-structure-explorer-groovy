@@ -4,7 +4,6 @@ import com.google.common.base.CharMatcher;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.ThrottlingService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.*;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.springframework.stereotype.Controller;
@@ -31,17 +30,12 @@ import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
 @Controller
 public class GetChartController extends CommonController {
 
-    private UserService userService;
     private ChartService chartService;
     private ThrottlingService throttlingService;
     private AccCheckController accCheckController;
 
     public void setAccCheckController(AccCheckController accCheckController) {
         this.accCheckController = accCheckController;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     public void setChartService(ChartService chartService) {

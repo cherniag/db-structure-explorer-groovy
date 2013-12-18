@@ -50,6 +50,9 @@ public class ChartServiceTest {
 	private ChartRepository mockChartRepository;
 
 	@Mock
+	private DrmService mockDrmService;
+
+	@Mock
 	private ChartDetailRepository mockChartDetailRepository;
 	
 	@Mock
@@ -412,6 +415,37 @@ public class ChartServiceTest {
 		verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
 		verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
 	}
+
+    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
+    public void testProcessGetChartCommand_UserIsNull_Failure() throws Exception {
+        User user = null;
+        String communityName = "o2";
+
+        fixture.processGetChartCommand(user, communityName, true, true);
+    }
+
+    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
+    public void testProcessGetChartCommand_DrmPolicyIsNull_Failure() throws Exception {
+
+        User user = new User();
+        user.setUserGroup(new UserGroup().withId(1));
+        String communityName = "o2";
+
+        fixture.processGetChartCommand(user, communityName, true, true);
+    }
+
+    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
+    public void testProcessGetChartCommand_DrmTypeIsNull_Failure() throws Exception {
+
+        User user = new User();
+        DrmPolicy drmPolicy = new DrmPolicy();
+        final UserGroup userGroup = new UserGroup().withId(1);
+        userGroup.setDrmPolicy(drmPolicy);
+        user.setUserGroup(userGroup);
+        String communityName = "o2";
+
+        fixture.processGetChartCommand(user, communityName, true, true);
+    }
 	
 	@Test
 	public void testProcessGetChartCommand_Success()
@@ -452,12 +486,12 @@ public class ChartServiceTest {
         videoChartDetail.getMedia().setHeaderFile(null);
 
 		doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1, videoChart3)).when(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(1), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(2), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(3), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(4), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(5), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
-		when(mockChartDetailService.findChartDetailTree(any(User.class), eq(6), any(Date.class), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(videoChartDetail));
+		when(mockChartDetailService.findChartDetailTree(eq(1), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
+		when(mockChartDetailService.findChartDetailTree(eq(2), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
+		when(mockChartDetailService.findChartDetailTree(eq(3), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
+		when(mockChartDetailService.findChartDetailTree(eq(4), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
+		when(mockChartDetailService.findChartDetailTree(eq(5), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
+		when(mockChartDetailService.findChartDetailTree(eq(6), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(videoChartDetail));
 		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
 		
 		ChartDto result = fixture.processGetChartCommand(testUser, communityName, true, true);
@@ -494,11 +528,11 @@ public class ChartServiceTest {
 		assertEquals(otherChart2.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
 		
 		verify(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(5), any(Date.class), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(2), any(Date.class), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq(3), any(Date.class), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService, times(0)).findChartDetailTree(any(User.class), eq(1), any(Date.class), anyBoolean(), anyBoolean());
-		verify(mockChartDetailService).findChartDetailTree(any(User.class), eq(4), any(Date.class), anyBoolean(), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(eq(5), any(Date.class), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(eq(2), any(Date.class), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(eq(3), any(Date.class), anyBoolean());
+		verify(mockChartDetailService, times(0)).findChartDetailTree(eq(1), any(Date.class), anyBoolean());
+		verify(mockChartDetailService).findChartDetailTree(eq(4), any(Date.class), anyBoolean());
 	}
 	
 	@Test
@@ -787,6 +821,11 @@ public class ChartServiceTest {
 		
 		testUser = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("kyiv")));
 		testUser.setId(1);
+        DrmType drmType = new DrmType();
+        DrmPolicy drmPolicy = new DrmPolicy();
+        drmPolicy.setDrmType(drmType);
+        testUser.getUserGroup().setDrmPolicy(drmPolicy);
+
 
 		when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
 
@@ -799,6 +838,7 @@ public class ChartServiceTest {
 		fixture.setChartDetailService(mockChartDetailService);
 		fixture.setCloudFileService(mockCloudFileService);
 		fixture.setChartDetailRepository(mockChartDetailRepository);
+		fixture.setDrmService(mockDrmService);
 	}
 
 	@After

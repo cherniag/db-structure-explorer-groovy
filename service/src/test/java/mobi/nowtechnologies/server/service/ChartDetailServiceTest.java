@@ -310,37 +310,6 @@ public class ChartDetailServiceTest {
 		fixtureChartDetailService.delete(chartItemId);
 	}
 
-	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-	public void testFindChartDetailTreeAndUpdateDrm_UserIsNull_Failure() throws Exception {
-		User user = null;
-		Integer chartId = 1;
-
-		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
-	}
-
-	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-	public void testFindChartDetailTreeAndUpdateDrm_DrmPolicyIsNull_Failure() throws Exception {
-
-		User user = new User();
-		user.setUserGroup(new UserGroup().withId(1));
-		Integer chartId = 1;
-
-		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(),  true, true);
-	}
-
-	@Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-	public void testFindChartDetailTreeAndUpdateDrm_DrmTypeIsNull_Failure() throws Exception {
-
-		User user = new User();
-		DrmPolicy drmPolicy = new DrmPolicy();
-		final UserGroup userGroup = new UserGroup().withId(1);
-		userGroup.setDrmPolicy(drmPolicy);
-		user.setUserGroup(userGroup);
-		Integer chartId = 1;
-
-		fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
-	}
-
 	@Test
 	public void testFindChartDetailTreeAndUpdateDrm_Success() throws Exception {
 
@@ -365,7 +334,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(chartId, new Date(), true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -378,9 +347,6 @@ public class ChartDetailServiceTest {
 			Media actualMedia = actualChartDetail.getMedia();
 			assertNotNull(actualMedia);
 			assertEquals(originalChartDetails.get(i).getMedia(), actualMedia);
-			List<Drm> actualDrms = actualMedia.getDrms();
-			assertNotNull(actualDrms);
-			assertEquals(1, actualDrms.size());
 		}
 	}
 	
@@ -416,7 +382,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 		
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, false);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(chartId, new Date(), false);
 		
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -429,9 +395,6 @@ public class ChartDetailServiceTest {
 			Media actualMedia = actualChartDetail.getMedia();
 			assertNotNull(actualMedia);
 			assertEquals(originalChartDetails.get(i).getMedia(), actualMedia);
-			List<Drm> actualDrms = actualMedia.getDrms();
-			assertNotNull(actualDrms);
-			assertEquals(1, actualDrms.size());
 		}
 		
 		verify(mockChartDetailRepository, times(1)).findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
@@ -470,7 +433,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(chartId, new Date(), true);
 
 		assertNotNull(actualChartDetails);
 		assertEquals(originalChartDetails, actualChartDetails);
@@ -483,9 +446,6 @@ public class ChartDetailServiceTest {
 			Media actualMedia = actualChartDetail.getMedia();
 			assertNotNull(actualMedia);
 			assertEquals(originalChartDetails.get(i).getMedia(), actualMedia);
-			List<Drm> actualDrms = actualMedia.getDrms();
-			assertNotNull(actualDrms);
-			assertEquals(1, actualDrms.size());
 		}
 	}
 
@@ -521,7 +481,7 @@ public class ChartDetailServiceTest {
 		Mockito.when(mockChartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis)).thenReturn(
 				originalChartDetails);
 
-		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(user, chartId, new Date(), true, true);
+		List<ChartDetail> actualChartDetails = fixtureChartDetailService.findChartDetailTree(chartId, new Date(), true);
 
 		assertNotNull(actualChartDetails);
 		assertTrue(actualChartDetails.isEmpty());
@@ -1568,11 +1528,9 @@ public class ChartDetailServiceTest {
 	public void setUp() throws Exception {
 		fixtureChartDetailService = new ChartDetailService();
 		mockDrmService = PowerMockito.mock(DrmService.class);
-		fixtureChartDetailService.setDrmService(mockDrmService);
 		mockChartDetailRepository = PowerMockito.mock(ChartDetailRepository.class);
 		fixtureChartDetailService.setChartDetailRepository(mockChartDetailRepository);
 		mockEntityService = PowerMockito.mock(EntityService.class);
-		fixtureChartDetailService.setEntityService(mockEntityService);
 		mockChartDetailDao = PowerMockito.mock(ChartDetailDao.class);
 		fixtureChartDetailService.setChartDetailDao(mockChartDetailDao);
 		mockMediaService = PowerMockito.mock(MediaService.class);

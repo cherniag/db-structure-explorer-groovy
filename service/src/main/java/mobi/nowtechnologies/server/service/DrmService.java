@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.DrmRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import org.hibernate.LazyInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -56,14 +57,18 @@ public class DrmService {
 			throw new IllegalArgumentException("The parameter media is null");
 
 		Drm drm = null;
-		if(media.getI() != null){
+		if(createDrmIfNotExists && media.getI() != null){
 			if (user.getDrms() != null) {
-				for(Drm drmOfUser : user.getDrms()){
-					if(drmOfUser.getMediaId() == media.getI().intValue()){
-						drm = drmOfUser;
-						break;
-					}
-				}
+                try{
+                    for(Drm drmOfUser : user.getDrms()){
+                        if(drmOfUser.getMediaId() == media.getI().intValue()){
+                            drm = drmOfUser;
+                            break;
+                        }
+                    }
+                } catch (LazyInitializationException e){
+                    drm = null;
+                }
 			} else {
 				drm = drmRepository.findByUserAndMedia(user.getId(), media.getI());
 			}
