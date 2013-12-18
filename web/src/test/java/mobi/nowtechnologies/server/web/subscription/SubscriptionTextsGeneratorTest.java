@@ -106,8 +106,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		// TODO reenable
-//		Assert.assertEquals("Youve got " + DAYS + " days of free music left and then its only &pound;1 a week.", r.getNextBillingText());
+		Assert.assertEquals("<br />You&#39;ve got " + DAYS + " days of free music left and then it&#39;s only &pound;1 a week.", r.getNextBillingText());
 		Assert.assertEquals("Subscribed", r.getFutureText());
 	}
 
@@ -123,8 +122,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Subscribed", r.getStatusText());
-		// TODO reenable
-//		Assert.assertEquals("Youve got " + DAYS + " days of free music left and then its only &pound;1 a week.", r.getNextBillingText());
+		Assert.assertEquals("<br />You&#39;ve got " + DAYS + " days of free music left and then it&#39;s only &pound;1 a week.", r.getNextBillingText());
 		Assert.assertEquals("Subscribed", r.getFutureText());
 	}
 
