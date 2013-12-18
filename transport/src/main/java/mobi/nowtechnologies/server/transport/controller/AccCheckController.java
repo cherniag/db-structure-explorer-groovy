@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
 import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
@@ -9,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.*;
-import mobi.nowtechnologies.server.shared.dto.web.ContentOfferDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,8 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
-import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
-import static mobi.nowtechnologies.server.shared.enums.TransactionType.OFFER_PURCHASE;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
@@ -34,6 +32,7 @@ public class AccCheckController extends CommonController {
 
     private final Logger SUCCESS_ACC_CHECK_LOGGER = LoggerFactory.getLogger("SUCCESS_ACC_CHECK_LOGGER");
 
+    private AccountCheckDTOAsm accountCheckDTOAsm;
     private ChartService chartService;
     private DeviceUserDataService deviceUserDataService;
 
@@ -42,6 +41,10 @@ public class AccCheckController extends CommonController {
     private ITunesService iTunesService;
     private DeviceService deviceService;
     private PaymentPolicyService paymentPolicyService;
+
+    public void setAccountCheckDTOAsm(AccountCheckDTOAsm accountCheckDTOAsm) {
+        this.accountCheckDTOAsm = accountCheckDTOAsm;
+    }
 
     public void setAccountLogService(AccountLogService accountLogService) {
         this.accountLogService = accountLogService;
@@ -175,11 +178,10 @@ public class AccCheckController extends CommonController {
         Community community = user.getUserGroup().getCommunity();
 
         List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user));
+        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user));
 
         accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
         accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
-
 
         user = userService.getUserWithSelectedCharts(user.getId());
         List<ChartDetail> chartDetails = chartService.getLockedChartItems(user);
@@ -189,29 +191,6 @@ public class AccCheckController extends CommonController {
         accountCheck.playlists = SelectedPlaylistDto.fromChartList(user.getSelectedCharts());
 
         return precessRememberMeToken(accountCheck);
-    }
-
-    public AccountCheckDto processAccCheckBeforeO2Releases(User user){
-        user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
-
-        Community community = user.getUserGroup().getCommunity();
-
-        List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user));
-
-        accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
-        accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
-
-        List<Integer> relatedMediaUIDsByLogTypeList = accountLogService.getRelatedMediaUIDsByLogType(user.getId(), OFFER_PURCHASE);
-
-        accountCheckDTO.hasOffers = false;
-        if (relatedMediaUIDsByLogTypeList.isEmpty()) {
-            List<ContentOfferDto> contentOfferDtos = offerService.getContentOfferDtos(user.getId());
-            if (contentOfferDtos != null && contentOfferDtos.size() > 0)
-                accountCheckDTO.hasOffers = true;
-        }
-
-        return precessRememberMeToken(new AccountCheckDto(accountCheckDTO));
     }
 
     private void logAboutSuccessfullAccountCheck() {

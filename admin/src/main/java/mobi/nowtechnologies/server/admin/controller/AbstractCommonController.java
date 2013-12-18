@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
@@ -27,10 +25,7 @@ public abstract class AbstractCommonController implements MessageSourceAware{
 	
 	protected static final String URL_DATE_FORMAT = "yyyy-MM-dd";
 	protected static final String URL_DATE_TIME_FORMAT = "yyyy-MM-dd_HH:mm:ss";
-	
-	protected DateFormat dateFormat = new SimpleDateFormat(URL_DATE_FORMAT);
-	protected DateFormat dateTimeFormat = new SimpleDateFormat(URL_DATE_TIME_FORMAT);
-	
+
 	protected MessageSource messageSource;
 
 	@Override

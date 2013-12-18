@@ -1410,6 +1410,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // TODO: PERFORMANCE: could be improved by avoiding unneeded queries basing on the condition
     private boolean canBePromoted(Community community, String deviceUID, String deviceModel) {
         boolean existsInPromotedList = deviceService.existsInPromotedList(community, deviceUID);
         boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
