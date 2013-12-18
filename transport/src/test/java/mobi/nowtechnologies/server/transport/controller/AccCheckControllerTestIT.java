@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
@@ -24,6 +25,7 @@ import java.util.List;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
 
@@ -255,7 +257,8 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isUnauthorized());
+        ).andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("user login/pass check failed for [+6421xxxxxxxx] username and community [vf_nz]"));;
     }
 
     @Test
@@ -271,17 +274,18 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 .withUserName(userName)
                 .withDeviceUID("b88106713409e92822461a876abcd74c")
                 .withDeviceUID("d")
-                .withMobile("+447111111112")
+                .withMobile("+447111111118")
                 .withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId()));
         entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
-        entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte)10));
+        entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte) 10));
         entity.setDevice("");
-        entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte)5));
+        entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte) 5));
         entity.setDeviceString("IOS");
         entity.setLastDeviceLogin(1893448800);
         entity.setLastWebLogin(1893448800);
         entity.setTempToken("f701af8d07e5c95d3f5cf3bd9a62344d");
         entity.setOperator(1);
+        entity.setActivationStatus(ActivationStatus.ACTIVATED);
         entity.setLastSubscribedPaymentSystem("iTunesSubscription");
 
         userRepository.save(entity);

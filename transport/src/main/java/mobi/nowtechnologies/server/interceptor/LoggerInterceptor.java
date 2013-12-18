@@ -1,23 +1,19 @@
 package mobi.nowtechnologies.server.interceptor;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
+import mobi.nowtechnologies.server.transport.controller.CommonController;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.log.LogUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.web.util.WebUtils;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class LoggerInterceptor extends HandlerInterceptorAdapter {
 	
@@ -27,12 +23,12 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 			request.getParameterMap();
 		}
 		request = new RequestCachingRequestWrapper(request);
-		
-		String remoteAddr = Utils.getIpFromRequest(request);
+
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
+        CommonController controller = (CommonController)handlerMethod.getBean();
 		
-		LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), request.getParameter("COMMUNITY_NAME"), request.getPathInfo().replaceFirst("/", ""), handlerMethod.getBean().getClass(), remoteAddr);
-		
+		LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), controller.getCurrentCommunityUri(), request.getPathInfo().replaceFirst("/", ""), handlerMethod.getBean().getClass(), controller.getCurrentRemoteAddr());
+
 		return super.preHandle(request, response, handler);
 	}
 	

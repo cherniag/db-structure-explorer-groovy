@@ -327,7 +327,6 @@ public class UserService {
         return  false;
     }
 
-    @Deprecated
     public User checkCredentials(String userName, String userToken, String timestamp, String communityName) {
         notNull(userName, "The parameter userName is null");
         notNull(userToken, "The parameter userToken is null");
@@ -387,7 +386,6 @@ public class UserService {
         }
     }
 
-    @Deprecated
     public User checkCredentials(String userName, String userToken, String timestamp, String communityName, String deviceUID) {
         LOGGER.debug("input parameters userName, userToken, timestamp, communityName, deviceUID: [{}], [{}], [{}], [{}], [{}]", new Object[] { userName, userToken, timestamp, communityName,
                 deviceUID });

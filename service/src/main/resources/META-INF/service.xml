@@ -175,6 +175,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="mediaService" ref="service.MediaService" />
+		<property name="drmService" ref="service.DrmService" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -182,9 +183,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
-		<property name="entityService" ref="service.EntityService" />
 		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
-		<property name="drmService" ref="service.DrmService" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="mediaService" ref="service.MediaService" />
 	</bean>

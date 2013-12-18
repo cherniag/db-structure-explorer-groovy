@@ -38,6 +38,7 @@ public abstract class CommonController extends ProfileController implements Appl
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
 	public static final String MODEL_NAME = "response";
 	public static final int VERSION_4 = 4;
+	public static final String VERSION_5 = "5.0";
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -48,13 +49,48 @@ public abstract class CommonController extends ProfileController implements Appl
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
     private UserRepository userRepository;
-    protected String defaultViewName = "default";
-    protected ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    private String defaultViewName = "default";
+    private ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> communityUriThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> remoteAddrThreadLocal = new ThreadLocal<String>();
     protected ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    public void setCurrentCommandName(String commandName) {
+        this.commandNameThreadLocal.set(commandName);
+    }
+
+    public void setCurrentRemoteAddr(String remoteAddr) {
+        this.remoteAddrThreadLocal.set(remoteAddr);
+    }
+
+    public void setCurrentApiVersion(String apiVersion) {
+        this.apiVersionThreadLocal.set(apiVersion);
+    }
+
+    public void setCurrentCommunityUri(String communityUri) {
+        this.communityUriThreadLocal.set(communityUri);
+    }
+
+    public String getCurrentRemoteAddr() {
+        return this.remoteAddrThreadLocal.get();
+    }
+
+    public String getCurrentCommandName() {
+        return this.commandNameThreadLocal.get();
+    }
+
+    public String getCurrentApiVersion() {
+        return this.apiVersionThreadLocal.get();
+    }
+
+    public String getCurrentCommunityUri() {
+        return this.communityUriThreadLocal.get();
     }
 
     protected boolean isValidDeviceUID(String deviceUID){
@@ -109,10 +145,16 @@ public abstract class CommonController extends ProfileController implements Appl
         return sendResponse(exception, response, HttpStatus.BAD_REQUEST);
     }
 	
-	@ExceptionHandler({InvalidPhoneNumberException.class, ActivationStatusException.class})
-	public ModelAndView handleException(ServiceException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.OK);
+	@ExceptionHandler({InvalidPhoneNumberException.class})
+	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5);
+        return sendResponse(exception, response, versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
 	}
+
+    @ExceptionHandler({ActivationStatusException.class})
+    public ModelAndView handleException(ActivationStatusException exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
+    }
 
 	@ExceptionHandler(ValidationException.class)
 	public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {

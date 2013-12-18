@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,12 +36,12 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("OTAC_TOKEN") String token,
-            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID,
-            @PathVariable("community") String community,
-            @PathVariable("apiVersion") String apiVersion) {
+            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID) {
     	
     	Exception ex = null;
- 		User user = null; 
+ 		User user = null;
+        String community = getCurrentCommunityUri();
+        String apiVersion = getCurrentApiVersion();
         try {
             LOGGER.info("APPLY_INIT_PROMO Started for user[{}] in community[{}] otac_token[{}]", userName, community, token);
 
