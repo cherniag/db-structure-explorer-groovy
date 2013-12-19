@@ -569,9 +569,6 @@ public abstract class DDEXParser extends IParser {
         List<DropData> result = new ArrayList<DropData>();
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
-        for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder [{}]", result.get(i));
-        }
         return result;
     }
 

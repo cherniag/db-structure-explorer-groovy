@@ -80,6 +80,7 @@ public class AbsoluteParser extends DDEXParser {
         boolean processed = false;
         for (File file : content) {
             if (isDirectory(file)) {
+                LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
             } else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
@@ -95,6 +96,7 @@ public class AbsoluteParser extends DDEXParser {
             drop.name = folder.getAbsolutePath();
             drop.date = new Date(folder.lastModified());
 
+            LOGGER.info("The drop was found: [{}]", drop.name);
             result.add(drop);
         }
         return result;
