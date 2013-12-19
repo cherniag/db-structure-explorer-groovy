@@ -14,8 +14,11 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 /**
@@ -46,27 +49,11 @@ public class AutoOptInControllerIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultJson = aHttpServletResponse.getContentAsString();
         JsonObject resultJsonObject = getAccCheckContent(resultJson);
-        assertTrue(resultJson.contains("\"hasPotentialPromoCodePromotion\":true"));
-
-        //when
-        resultActions = mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
-        resultJson = resultJson.replaceAll("\"hasPotentialPromoCodePromotion\":true", "\"hasPotentialPromoCodePromotion\":false");
-
-        assertTrue(resultAccCkeckJson.equals(resultJson));
-
         AccountCheckDTO accountCheckDTO = gson.fromJson(resultJsonObject, AccountCheckDTO.class);
 
         assertEquals(null, accountCheckDTO.displayName);
@@ -113,13 +100,23 @@ public class AutoOptInControllerIT extends AbstractControllerTestIT{
         assertEquals(null, accountCheckDTO.lastSubscribedPaymentSystem);
         assertEquals(null, accountCheckDTO.subscriptionChanged);
         assertEquals(false, accountCheckDTO.subjectToAutoOptIn);
+
+
+        //when
+        mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+
+
     }
 
     @Test
     public void applyInitPromo_whenUserUserNameIsWrong_then_401() throws Exception {
         //given
         String userName = "+447xxxxxxxxx";
-        String appVersion = "4.2";
         String apiVersion = "4.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -129,7 +126,7 @@ public class AutoOptInControllerIT extends AbstractControllerTestIT{
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
 
         //then
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -142,8 +139,6 @@ public class AutoOptInControllerIT extends AbstractControllerTestIT{
     @Test
     public void applyInitPromo_whenUserUserNameIsWrong_then_400() throws Exception {
         //given
-        String userName = "+447111111114";
-        String appVersion = "4.2";
         String apiVersion = "4.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -153,7 +148,7 @@ public class AutoOptInControllerIT extends AbstractControllerTestIT{
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
 
         //then
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -176,7 +171,7 @@ public class AutoOptInControllerIT extends AbstractControllerTestIT{
         String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
 
         //then
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
