@@ -24,7 +24,7 @@ public class AutoOptInExemptPhoneNumberRepositoryIT {
 	public void testFindByUserName(){
         final String userNameInDb = "+447111111111";
 
-        AutoOptInExemptPhoneNumber saved = autoOptInExemptPhoneNumberRepository.findByUserName(userNameInDb);
+        AutoOptInExemptPhoneNumber saved = autoOptInExemptPhoneNumberRepository.findOne(userNameInDb);
 
 		assertNotNull(saved);
 	}

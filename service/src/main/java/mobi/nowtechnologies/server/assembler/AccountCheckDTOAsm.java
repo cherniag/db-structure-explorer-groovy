@@ -117,7 +117,7 @@ public class AccountCheckDTOAsm {
     }
 
     private boolean calcSubjectToAutoOptIn(User user) {
-        AutoOptInExemptPhoneNumber byUserName = autoOptInExemptPhoneNumberRepository.findByUserName(user.getUserName());
+        AutoOptInExemptPhoneNumber byUserName = autoOptInExemptPhoneNumberRepository.findOne(user.getUserName());
 
         if(byUserName != null) {
             return false;

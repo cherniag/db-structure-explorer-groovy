@@ -280,4 +280,4 @@ insert into offer_items ( offer_id, item_id) values (1, 50);
 insert into offer_items ( offer_id, item_id) values (2, 49);
 insert into offer_items ( offer_id, item_id) values (2, 50);
 
-insert into auto_opt_in_exempt_ph_number values(1, '+447111111111');
+insert into auto_opt_in_exempt_ph_number values('+447111111111');
