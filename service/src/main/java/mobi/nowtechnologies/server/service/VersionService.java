@@ -1,16 +1,11 @@
 package mobi.nowtechnologies.server.service;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import mobi.nowtechnologies.server.dto.VersionDto;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -38,13 +33,10 @@ public class VersionService {
         Assert.notNull(attributes);
     }
 
-    public void setManifest(Resource manifest) throws FileNotFoundException, IOException {
-        String text = Files.toString(manifest.getFile(), Charsets.UTF_8);
-
-        Manifest mf = new Manifest();
-        mf.read(new ReaderInputStream(new StringReader(text)));
+    public void setManifest(Resource manifest) throws IOException {
+        Assert.isTrue(manifest.exists());
+        Manifest mf = new Manifest(manifest.getInputStream());
         attributes = mf.getMainAttributes();
-
     }
 
 }
