@@ -42,9 +42,6 @@ public class EmiParser extends DDEXParser {
         List<DropData> result = new ArrayList<DropData>();
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
-        for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder [{}]", result.get(i));
-        }
         return result;
     }
 
@@ -57,6 +54,7 @@ public class EmiParser extends DDEXParser {
         for (File file : content) {
             try {
                 if (isDirectory(file)) {
+                    LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                     result.addAll(getDrops(file, auto));
                 } else if (INGEST_ACK.equals(file.getName())) {
                     processed = true;
@@ -79,6 +77,7 @@ public class EmiParser extends DDEXParser {
             drop.name = folder.getAbsolutePath();
             drop.date = new Date(folder.lastModified());
 
+            LOGGER.info("The drop was found: [{}]", drop.name);
             result.add(drop);
         }
         return result;

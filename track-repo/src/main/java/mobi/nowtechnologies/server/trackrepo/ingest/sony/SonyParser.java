@@ -283,6 +283,7 @@ public class SonyParser extends IParser {
 		LOGGER.info("Checking manifests in " + root + "/manifests");
 		File[] manifestFiles = manifests.listFiles();
 		for (File manifest : manifestFiles) {
+            LOGGER.info("Scanning manifest [{}]", manifest.getAbsolutePath());
 			String logFileName = manifest.getName().replace("manifest", "log");
 			File logFile = new File(root + "/logs/" + logFileName);
 			if (!auto) {
@@ -304,6 +305,8 @@ public class SonyParser extends IParser {
         DropData drop = new DropData();
         drop.name = manifest.getName();
         drop.date = new Date(manifest.lastModified());
+
+        LOGGER.info("The drop was found: [{}]", drop.name);
         result.add(drop);
     }
 

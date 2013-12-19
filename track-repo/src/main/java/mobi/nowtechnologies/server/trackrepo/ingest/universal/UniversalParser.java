@@ -310,6 +310,7 @@ public class UniversalParser extends IParser {
         LOGGER.info("Checking manifests in " + root + "/Delivery_Messages");
         File[] fulfillmentFiles = deliveries.listFiles();
         for (File file : fulfillmentFiles) {
+            LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
             if (file.getName().startsWith("delivery") && file.getName().endsWith(".xml")) {
                 String order = file.getName().substring(file.getName().indexOf('_') + 1, file.getName().lastIndexOf('.'));
                 File ackManual = new File(root + "/Delivery_Messages/" + order + ".ack");
@@ -318,6 +319,8 @@ public class UniversalParser extends IParser {
                         DropData drop = new DropData();
                         drop.name = order;
                         drop.date = new Date(file.lastModified());
+
+                        LOGGER.info("The drop was found: [{}]", drop.name);
                         result.add(drop);
                     }
                 } else {
@@ -326,6 +329,8 @@ public class UniversalParser extends IParser {
                         DropData drop = new DropData();
                         drop.name = order;
                         drop.date = new Date(file.lastModified());
+
+                        LOGGER.info("The drop was found: [{}]", drop.name);
                         result.add(drop);
                     }
                 }

@@ -61,5 +61,5 @@ public abstract class IParser{
 
     public abstract Map<String, DropTrack> ingest(DropData drop);
 
-    public abstract List<DropData> getDrops(boolean auto);
+    public abstract List<DropData> getDrops(boolean auto) throws IOException;
 }

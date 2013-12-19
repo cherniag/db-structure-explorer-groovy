@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import net.sf.saxon.s9api.SaxonApiException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -22,10 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.google.common.primitives.Ints.checkedCast;
-import static java.io.File.*;
+import static java.io.File.separator;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.*;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
@@ -430,13 +429,14 @@ public abstract class DDEXParser extends IParser {
         return root + "/resources/" + fileName;
     }
 
-    protected List<DropData> getDrops(File folder, boolean auto) {
+    protected List<DropData> getDrops(File folder, boolean auto){
         List<DropData> result = new ArrayList<DropData>();
         File[] content = folder.listFiles();
         boolean deliveryComplete = false;
         boolean processed = false;
         for (File file : content) {
             if (isDirectory(file)) {
+                LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
             } else if (file.getName().startsWith("BatchComplete")) {
                 deliveryComplete = true;
@@ -451,6 +451,7 @@ public abstract class DDEXParser extends IParser {
             DropData drop = new DropData();
             drop.name = folder.getAbsolutePath();
             drop.date = new Date(folder.lastModified());
+            LOGGER.info("The drop was found: [{}]", drop.name);
 
             result.add(drop);
         }
@@ -564,7 +565,7 @@ public abstract class DDEXParser extends IParser {
     }
 
     @Override
-    public List<DropData> getDrops(boolean auto) {
+    public List<DropData> getDrops(boolean auto){
         List<DropData> result = new ArrayList<DropData>();
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));

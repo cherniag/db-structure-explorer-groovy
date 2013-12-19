@@ -43,9 +43,7 @@ public class WarnerParser extends DDEXParser {
 		List<DropData> result = new ArrayList<DropData>();
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
-		for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder [{}]", result.get(i));
-		}
+
 		return result;
 	}
 
@@ -56,6 +54,7 @@ public class WarnerParser extends DDEXParser {
 		boolean processed = false;
 		for (File file : content) {
 			if (isDirectory(file)) {
+                LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
 				result.addAll(getDrops(file, auto));
 			} else if (DELIVERY_COMPLETE.equals(file.getName())) {
 				deliveryComplete = true;
@@ -71,6 +70,7 @@ public class WarnerParser extends DDEXParser {
 			drop.name = folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());
 
+            LOGGER.info("The drop was found: [{}]", drop.name);
 			result.add(drop);
 		}
 		return result;
