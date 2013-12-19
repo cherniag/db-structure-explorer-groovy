@@ -13,6 +13,7 @@
 <link rel="stylesheet" th:href="@{/assets/css/ui-lightness/jquery-ui-1.8.21.custom.css}" />
 <link rel="stylesheet" th:href="@{/assets/css/jquery.ui.timepicker.css}" />
 <link rel="stylesheet" th:href="@{/assets/css/bootstrap-toggle-buttons.css}"/>
+<link rel="stylesheet" th:href="@{/assets/css/audiojs.css}"/>
 
 <style type="text/css">
 section {
@@ -34,6 +35,15 @@ section {
 <script type="text/javascript" th:src="@{/assets/js/bootstrap-affix.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/bootstrap-combobox.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/jquery.toggle.buttons.js}"></script>
+<!--<script type="text/javascript" th:src="@{/assets/js/audiojs/jquery.js}"></script>-->
+<script type="text/javascript" th:src="@{/assets/js/audiojs/audio.js}"></script>
+    <script>
+        var a = audiojs;
+        a.events.ready(function() {
+            var a1 = a.createAll();
+        });
+    </script>
+
 
 <!-- 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-transition.js}"></script> -->
 <!-- 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-modal.js}"></script> -->
@@ -199,7 +209,19 @@ section {
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         </div>
-        <audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>
+        <!--<audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>-->
+        <!--<embed class="audio" height="50" width="100" th:attr="src=${mediaSrc}" src="horse.mp3" autoplay="false"/>-->
+        <!--<object class="audio" height="50" width="100" th:attr="data=${mediaSrc}" data="horse.mp3" autoplay="false" type="audio/mpeg"></object>-->
+        <!--<audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>-->
+        <audio class="audio" src="test.mp3" th:attr="src=${mediaSrc}" preload="none"></audio>
+    </div>
+
+    <div th:fragment="audioPlayer2" th:if="${!isVideo}">
+        <!--<audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>-->
+        <!--<embed class="audio" height="50" width="100" th:attr="src=${mediaSrc}" src="horse.mp3" autoplay="false"/>-->
+        <!--<object class="audio" height="50" width="100" th:attr="data=${mediaSrc}" data="horse.mp3" autoplay="false" type="audio/mpeg"></object>-->
+        <!--<audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>-->
+        <audio class="audio" src="test.mp3" th:attr="src=${mediaSrc}" preload="none"></audio>
     </div>
 
     <div th:fragment="videoPlayer" th:if="${isVideo}" class="modal hide videoContainer" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog">
