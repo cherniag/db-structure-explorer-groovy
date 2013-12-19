@@ -30,7 +30,7 @@ public abstract class AbstractCommonController {
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ModelAndView handleException(Exception exception, HttpServletRequest request, HttpServletResponse response) {
-		LOGGER.error("input handleException, request: [{}], [{}]", exception, request);
+		LOGGER.error("input handleException, request: [{}]", request, exception);
 
 		ModelAndView modelAndView = new ModelAndView();
 		final String errorMsg = exception.getMessage();
