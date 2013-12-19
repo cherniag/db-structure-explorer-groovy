@@ -8,6 +8,8 @@ import org.springframework.test.web.server.ResultActions;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class GetNewsControllerTestIT extends AbstractControllerTestIT{
@@ -28,14 +30,12 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists()).
+                andExpect(jsonPath("$.response..news").exists()).
+                andExpect(jsonPath("$.response..user").exists());
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultJson.contains("\"items\""));
-        assertTrue(resultJson.contains("\"news\""));
-        assertTrue(resultJson.contains("\"user\""));
 
         JsonObject jsonObject = getAccCheckContent(resultJson);
 
@@ -62,7 +62,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -73,7 +73,6 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testGetNews_400_Failure() throws Exception {
-        String userName = "+447xxxxxxxxx";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "5.0";
         String communityUrl = "o2";
@@ -81,7 +80,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -91,7 +90,6 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testGetNews_404_Failure() throws Exception {
-        String userName = "+447xxxxxxxxx";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "3.5";
         String communityUrl = "o2";
@@ -99,7 +97,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
