@@ -60,7 +60,7 @@ public class SubscriptionTextsGeneratorTest {
 		s.setDaysToNextBillingDate(DAYS);
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("You have " + DAYS + " days left on your free trial", r.getNextBillingText());
+		Assert.assertEquals("<br />You have " + DAYS + " days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 
 	}
@@ -77,7 +77,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("You have 10 days left on your free trial", r.getNextBillingText());
+		Assert.assertEquals("<br />You have 10 days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -92,7 +92,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("You have 10 days left on your free trial", r.getNextBillingText());
+		Assert.assertEquals("<br />You have 10 days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -257,7 +257,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Unsubscribed", r.getStatusText());
-		Assert.assertEquals("It's only &pound;1 a week to keep the music coming. Choose an option below. Don't miss out.", r.getNextBillingText());
+		Assert.assertEquals("<br />It's only &pound;1 a week to keep the music coming. Choose an option below. Don't miss out.", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -269,7 +269,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Unsubscribed", r.getStatusText());
-		Assert.assertEquals("It's only &pound;1 a week to keep the music coming. Choose an option below. Don't miss out.", r.getNextBillingText());
+		Assert.assertEquals("<br />It's only &pound;1 a week to keep the music coming. Choose an option below. Don't miss out.", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 }
