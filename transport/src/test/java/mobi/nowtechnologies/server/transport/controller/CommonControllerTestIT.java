@@ -36,10 +36,10 @@ public class CommonControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void shouldInvalidPhoneNumberGivenVersionMore5() throws Exception {
+    public void shouldInvalidPhoneNumberGivenVersionMore5d2() throws Exception {
         String userName = "b88106713409e92622461a876abcd74a444";
         String phone = "+44711111xxxxx";
-        String apiVersion = "5.1";
+        String apiVersion = "5.3";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -56,7 +56,7 @@ public class CommonControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void shouldInvalidPhoneNumberGivenVersionLessOrEqual5() throws Exception {
+    public void shouldInvalidPhoneNumberGivenVersionLessOrEqual5d2() throws Exception {
         String userName = "b88106713409e92622461a876abcd74a444";
         String phone = "+44711111xxxxx";
         String apiVersion = "4.0";

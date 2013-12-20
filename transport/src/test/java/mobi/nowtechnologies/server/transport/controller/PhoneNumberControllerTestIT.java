@@ -557,6 +557,25 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_NAME", userName)
                         .param("TIMESTAMP", timestamp)
                         .param("PHONE", phone)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testActivatePhoneNumberV5d3_400_Failure() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74a";
+        String phone = "+6xxxxxxxxxxxxxx";
+        String apiVersion = "5.3";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("USER_NAME", userName)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
         ).andExpect(status().isBadRequest());
     }
 

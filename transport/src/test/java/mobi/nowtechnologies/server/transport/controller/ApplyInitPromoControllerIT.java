@@ -302,10 +302,31 @@ public class ApplyInitPromoControllerIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void applyInitPromo_whenUserUserNameIsWrong_then_400() throws Exception {
+    public void applyInitPromo_whenUserUserNameIsWrongV3d9_then_400() throws Exception {
         //given
         String userName = "+447766666666";
         String apiVersion = "3.9";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "";
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        //then
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void applyInitPromo_whenUserUserNameIsWrongV5d3_then_400() throws Exception {
+        //given
+        String userName = "+447766666666";
+        String apiVersion = "5.3";
         String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";

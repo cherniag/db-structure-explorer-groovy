@@ -76,6 +76,8 @@ public abstract class AbstractControllerTestIT {
         o2ProviderService.setO2Service(o2Service);
         userService.setMobileProviderService(o2ProviderService);
         applyInitPromoController.setUpdateO2UserTask(updateO2UserTaskSpy);
+
+        cleanDynamicTestData();
     }
 
     @Before
@@ -94,6 +96,16 @@ public abstract class AbstractControllerTestIT {
         userService.setO2ClientService(o2ProviderServiceSpy);
         otacValidationService.setO2ProviderService(o2ProviderServiceSpy);
         applyInitPromoController.setUpdateO2UserTask(updateO2UserTaskSpy);
+
+        prepareDynamicTestData();
+    }
+
+    protected void prepareDynamicTestData(){
+
+    }
+
+    protected void cleanDynamicTestData(){
+
     }
 
     protected JsonObject getAccCheckContent(final String contentAsString) {

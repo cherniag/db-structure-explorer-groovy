@@ -112,6 +112,26 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("TYPE", fileType)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testGetFile_O2_v5d3_400_Failure() throws Exception {
+        String userName = "+447xxxxxxxxxxxx";
+        String fileType = "VIDEO";
+        String apiVersion = "5.3";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("TYPE", fileType)
         ).andExpect(status().isBadRequest());
     }
 

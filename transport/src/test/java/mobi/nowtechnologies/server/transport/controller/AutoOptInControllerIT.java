@@ -154,6 +154,27 @@ public class AutoOptInControllerIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
                         .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void applyInitPromo_whenUserUserNameIsWrongV5d3_then_400() throws Exception {
+        //given
+        String apiVersion = "5.3";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "b88106713409e92622461a876abcd74b";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+
+        //then
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+                        .param("DEVICE_UID", deviceUid)
         ).andExpect(status().isBadRequest());
     }
 

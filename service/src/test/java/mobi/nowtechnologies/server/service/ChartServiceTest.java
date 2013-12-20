@@ -20,6 +20,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -426,23 +428,25 @@ public class ChartServiceTest {
 
     @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
     public void testProcessGetChartCommand_DrmPolicyIsNull_Failure() throws Exception {
-
         User user = new User();
         user.setUserGroup(new UserGroup().withId(1));
         String communityName = "o2";
+
+        when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(user);
 
         fixture.processGetChartCommand(user, communityName, true, true);
     }
 
     @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
     public void testProcessGetChartCommand_DrmTypeIsNull_Failure() throws Exception {
-
         User user = new User();
         DrmPolicy drmPolicy = new DrmPolicy();
         final UserGroup userGroup = new UserGroup().withId(1);
         userGroup.setDrmPolicy(drmPolicy);
         user.setUserGroup(userGroup);
         String communityName = "o2";
+
+        when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(user);
 
         fixture.processGetChartCommand(user, communityName, true, true);
     }
@@ -476,6 +480,8 @@ public class ChartServiceTest {
 		videoChart3.getChart().setI(6);
 		
 		testUser.setSelectedCharts(Arrays.asList(otherChart2.getChart(), basicChart1.getChart()));
+
+        when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(testUser);
 		
 		ChartDetail basicChartDetail = getChartDetailInstance(0, 1, media, basicChart.getChart());
 		ChartDetail basicChartDetail1 = getChartDetailInstance(0, 1, media, basicChart1.getChart());
@@ -492,6 +498,14 @@ public class ChartServiceTest {
 		when(mockChartDetailService.findChartDetailTree(eq(4), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail2));
 		when(mockChartDetailService.findChartDetailTree(eq(5), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail1));
 		when(mockChartDetailService.findChartDetailTree(eq(6), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(videoChartDetail));
+		when(mockDrmService.findDrmByUserAndMedia(any(User.class), any(Media.class), any(DrmPolicy.class), anyBoolean())).thenAnswer(new Answer<Drm>() {
+            @Override
+            public Drm answer(InvocationOnMock invocation) throws Throwable {
+                Media media = (Media)invocation.getArguments()[1];
+
+                return media.getDrms().get(0);
+            }
+        });
 		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
 		
 		ChartDto result = fixture.processGetChartCommand(testUser, communityName, true, true);
@@ -826,6 +840,7 @@ public class ChartServiceTest {
         drmPolicy.setDrmType(drmType);
         testUser.getUserGroup().setDrmPolicy(drmPolicy);
 
+        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
 
 		when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
 

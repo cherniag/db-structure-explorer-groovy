@@ -24,7 +24,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 
 
 
-<bean id="persistence.EntityManagerFactory"
+    <bean id="persistence.EntityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="persistence.DataSource" />
 		<property name="jpaVendorAdapter">

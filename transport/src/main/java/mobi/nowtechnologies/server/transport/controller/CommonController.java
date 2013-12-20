@@ -151,9 +151,9 @@ public abstract class CommonController extends ProfileController implements Appl
 	@ExceptionHandler({InvalidPhoneNumberException.class})
 	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.OK;
         if(versionPriority > 0){
-            status = HttpStatus.OK;
+            status = HttpStatus.BAD_REQUEST;
             exception.setLocalizedMessage("Invalid phone number format");
         }
 
