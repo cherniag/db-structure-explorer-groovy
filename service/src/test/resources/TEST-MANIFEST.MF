@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Implementation-Version: 3.5.5-SNAPSHOT
+Build-Jdk: 1.7.0_05
+Built-By: dmytro
+Created-By: Maven Integration for Eclipse
+Implementation-Build: ${buildNumber}-${bambooBuildNumber}
+
