@@ -28,8 +28,9 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * Created by oar on 12/20/13.
@@ -69,8 +70,13 @@ public class FailedSmsAfterFailedPaymentForO2IT {
     @Value("${mig.freeSMSURL}")
     private String smsUrl;
 
+    @Resource
+    private PostsSaverPostService postsSaverPostService;
+
     @Test
     public void test() throws Exception {
+        PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
+
         final long time = new Date().getTime();
         List<PendingPayment> createPendingPayments = pendingPaymentService.createPendingPayments();
         User currentUser = userRepository.findOne(1);
@@ -86,7 +92,7 @@ public class FailedSmsAfterFailedPaymentForO2IT {
         pendingPayment.setPaymentSystem("o2Psms");
         expirePendingPaymentsJob.execute();
 
-        Thread.sleep(5000);
+        monitor.waitToComplete(5000);
 
         File smsFile = getLastSmsFile(time);
         List<String> smsText = Files.readLines(smsFile, Charsets.UTF_8);
