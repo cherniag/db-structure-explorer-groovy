@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -25,17 +24,12 @@ import java.util.List;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
 	@Autowired
 	private ChartRepository chartRepository;
-
-    @Autowired
-	private UserRepository userRepository;
 
 	@Autowired
 	private ChartDetailRepository chartDetailRepository;

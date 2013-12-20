@@ -12,7 +12,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 public class VersionControllerIT extends AbstractControllerTestIT{
 
     @Test
-    public void testActivateVideoAudioFreeTrial_WithAccCheckDetailsAndVersionMore50_Success() throws Exception {
+    public void testVersion_Success() throws Exception {
         mockMvc.perform(
                 get("/version")
         ).andExpect(status().isOk()).andDo(print());

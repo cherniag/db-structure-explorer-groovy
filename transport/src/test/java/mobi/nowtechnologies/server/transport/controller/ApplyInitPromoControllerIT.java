@@ -3,15 +3,12 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.annotation.Resource;
 
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
@@ -24,9 +21,6 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.j
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class ApplyInitPromoControllerIT extends AbstractControllerTestIT{
-
-    @Resource(name = "userRepository")
-    UserRepository userRepository;
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_thenBigPromotionSetAndAccCheckInfo() throws Exception {

@@ -4,6 +4,8 @@ import com.google.gson.*;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
 import mobi.nowtechnologies.server.service.o2.O2Service;
@@ -36,8 +38,7 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.controller", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public abstract class AbstractControllerTestIT {
+public class AbstractControllerTestIT {
 	
 	protected MockMvc mockMvc;
 
@@ -71,16 +72,24 @@ public abstract class AbstractControllerTestIT {
 	@Qualifier("service.UserService")
 	protected UserService userService;
 
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
+    private SQLTestInitializer sqlTestInitializer;
+
     @After
+    @Transactional
     public void tireDown(){
         o2ProviderService.setO2Service(o2Service);
         userService.setMobileProviderService(o2ProviderService);
         applyInitPromoController.setUpdateO2UserTask(updateO2UserTaskSpy);
-
-        cleanDynamicTestData();
+;
+        sqlTestInitializer.cleanDynamicTestData();
     }
 
     @Before
+    @Transactional
     public void setUp() throws Exception {
         mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
         gson = new Gson();
@@ -97,15 +106,7 @@ public abstract class AbstractControllerTestIT {
         otacValidationService.setO2ProviderService(o2ProviderServiceSpy);
         applyInitPromoController.setUpdateO2UserTask(updateO2UserTaskSpy);
 
-        prepareDynamicTestData();
-    }
-
-    protected void prepareDynamicTestData(){
-
-    }
-
-    protected void cleanDynamicTestData(){
-
+        sqlTestInitializer.prepareDynamicTestData();
     }
 
     protected JsonObject getAccCheckContent(final String contentAsString) {
