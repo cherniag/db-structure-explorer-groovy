@@ -167,7 +167,9 @@ public abstract class CommonController extends ProfileController implements Appl
 
 	@ExceptionHandler(ValidationException.class)
 	public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
-			
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+
 		ServerMessage serverMessage = validationException.getServerMessage();
 		String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
 		
@@ -188,7 +190,7 @@ public abstract class CommonController extends ProfileController implements Appl
 		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
 		LOGGER.warn(message);
 
-		return sendResponse(errorMessage, HttpStatus.BAD_REQUEST, response);
+		return sendResponse(errorMessage, status, response);
 	}
 
 	@ExceptionHandler(UserCredentialsException.class)

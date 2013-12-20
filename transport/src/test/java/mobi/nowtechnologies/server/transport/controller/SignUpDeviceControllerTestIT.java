@@ -61,6 +61,19 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
         ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
                         .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testSignUpDeviceV5d3_400_Failure() throws Exception {
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String deviceType = "ANDROID";
+        String apiVersion = "5.3";
+        String communityUrl = "o2";
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isBadRequest());
     }
 
