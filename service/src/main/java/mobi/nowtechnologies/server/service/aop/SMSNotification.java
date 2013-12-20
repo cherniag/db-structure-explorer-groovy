@@ -41,7 +41,7 @@ public class SMSNotification {
 	protected void startPayPalPayment() {
 	}
 
-	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.O2PaymentServiceImpl.startPayment(..))")
+	@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.startPayment(..))")
 	protected void startO2PSMSPayment() {
 	}
 
