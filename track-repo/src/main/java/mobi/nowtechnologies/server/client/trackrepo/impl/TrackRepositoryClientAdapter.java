@@ -45,9 +45,9 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     }
 
     @Override
-    public IngestWizardDataDto getDrops(){
+    public IngestWizardDataDto getDrops(String... ingestors){
         try {
-            return ingestTracksWizardController.getDrops();
+            return ingestTracksWizardController.getDrops(ingestors);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.trackrepo.ingest.universal;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -78,7 +79,8 @@ public class UniversalParser extends IParser {
         Date startDate = parseStartDate(releaseDate);
         String year = parseYear(startDate);
 
-        List<Element> tracks = product.getChild("tracks").getChildren("track");
+        @SuppressWarnings("unchecked")
+		List<Element> tracks = product.getChild("tracks").getChildren("track");
         for (Element track : tracks) {
             String isrc = track.getAttributeValue("isrc");
 
@@ -164,6 +166,7 @@ public class UniversalParser extends IParser {
     }
 
     private String parseArtist(Element track) {
+    	@SuppressWarnings("unchecked")
         List<Element> artists = track.getChild("track_contributors").getChildren("artist_name");
         boolean firstArtist = true;
         String artist = "";
@@ -191,7 +194,8 @@ public class UniversalParser extends IParser {
             try {
                 Document document = (Document) builder.build(fulfillment);
                 Element rootNode = document.getRootElement();
-
+                
+                @SuppressWarnings("unchecked")
                 List<Element> products = rootNode.getChild("products").getChildren("product");
                 for (Element product : products) {
                     result.putAll(parseProduct(drop.name, product));
@@ -208,6 +212,7 @@ public class UniversalParser extends IParser {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, DropTrack> parseProduct(String dropId, Element product) {
         String code = product.getChildText("upc");
         String base = getResourceBase(code, dropId);
@@ -307,7 +312,12 @@ public class UniversalParser extends IParser {
     public List<DropData> getDrops(boolean auto) {
         List<DropData> result = new ArrayList<DropData>();
         File deliveries = new File(root + "/Delivery_Messages");
-        LOGGER.info("Checking manifests in " + root + "/Delivery_Messages");
+        if(!deliveries.exists()){
+        	LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", deliveries.getAbsolutePath());
+        	return result;
+        }
+        LOGGER.info("Checking manifests in " + root + "/Delivery_Messages: found " + deliveries.listFiles().length);
+        
         File[] fulfillmentFiles = deliveries.listFiles();
         for (File file : fulfillmentFiles) {
             LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());

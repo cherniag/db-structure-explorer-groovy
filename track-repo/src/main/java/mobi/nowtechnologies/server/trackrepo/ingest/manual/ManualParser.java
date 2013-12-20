@@ -34,6 +34,10 @@ public class ManualParser extends IParser {
 		if (auto)
 			return result;
 		File rootFolder = new File(root);
+		if (!rootFolder.exists()) {
+			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", rootFolder.getAbsolutePath());
+			return result;
+		}
 		for (File file: rootFolder.listFiles()) {
 			if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());

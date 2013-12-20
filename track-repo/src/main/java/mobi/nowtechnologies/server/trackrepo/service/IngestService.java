@@ -17,6 +17,8 @@ public interface IngestService {
      * @return IngestWizardData drop data without drop tracks
      */
 	IngestWizardData getDrops(String ingestor) throws Exception;
+	
+	IngestWizardData getDrops(String... ingestors) throws Exception;
 
     /**
      * Select drops which needs to commit.

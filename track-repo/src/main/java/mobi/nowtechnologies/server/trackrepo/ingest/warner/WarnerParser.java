@@ -49,7 +49,12 @@ public class WarnerParser extends DDEXParser {
 
 	public List<DropData> getDrops(File folder, boolean auto) {
 		List<DropData> result = new ArrayList<DropData>();
-		File[] content = folder.listFiles();
+		if(!folder.exists()){
+			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
+			return result;
+		}
+		
+		File[] content = folder.listFiles();		
 		boolean deliveryComplete = false;
 		boolean processed = false;
 		for (File file : content) {

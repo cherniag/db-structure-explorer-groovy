@@ -3,33 +3,7 @@
  */
 package mobi.nowtechnologies.server.trackrepo.impl;
 
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import mobi.nowtechnologies.server.shared.dto.PageListDto;
-import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
-import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
-import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
-import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
-import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
-import org.apache.http.*;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.bouncycastle.util.encoders.Base64;
-import org.slf4j.Logger;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
+import static org.springframework.util.StringUtils.hasText;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,6 +12,7 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -50,7 +25,49 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.springframework.util.StringUtils.hasText;
+import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.web.util.WebUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -196,19 +213,28 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
     * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#getDrops (java.lang.String)
     */
     @Override
-    public IngestWizardDataDto getDrops() {
+    public IngestWizardDataDto getDrops(String... ingestors) {
         IngestWizardDataDto data = new IngestWizardDataDto();
         data.setDrops(Collections.<DropDto>emptyList());
         try {
-                HttpGet query = new HttpGet(trackRepoUrl.concat("drops.json"));
-                query.setHeaders(getSecuredHeaders());
-                query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
-                HttpResponse response = getHttpClient().execute(query);
-                if (200 == response.getStatusLine().getStatusCode()) {
-                    Type type = new TypeToken<IngestWizardDataDto>() {
-                    }.getType();
-                    data = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
-                }
+            
+        	String uri = trackRepoUrl.concat("drops.json");
+        	if(ingestors != null && ingestors.length > 0){
+        		List<NameValuePair> params = new ArrayList<NameValuePair>();
+        		for(String ing: ingestors)
+        			params.add(new BasicNameValuePair("ingestors", ing));
+        		uri += "?" + URLEncodedUtils.format(params, "utf-8");
+        	}
+        	
+        	HttpGet query = new HttpGet(uri);
+            query.setHeaders(getSecuredHeaders());
+            query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+            HttpResponse response = getHttpClient().execute(query);
+            if (200 == response.getStatusLine().getStatusCode()) {
+                Type type = new TypeToken<IngestWizardDataDto>() {
+                }.getType();
+                data = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+            }
         } catch (ClientProtocolException e) {
             LOGGER.error("Cannot search drops. {}", e);
         } catch (IOException e) {

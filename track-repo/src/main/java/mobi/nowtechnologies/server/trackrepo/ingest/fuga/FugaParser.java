@@ -49,6 +49,11 @@ public class FugaParser extends DDEXParser {
 	public List<DropData> getDrops(File folder, boolean auto) {
 
 		List<DropData> result = new ArrayList<DropData>();
+		if(!folder.exists()){
+			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
+			return result;
+		}
+		
 		File[] content = folder.listFiles();
 		boolean deliveryComplete = false;
 		boolean processed = false;

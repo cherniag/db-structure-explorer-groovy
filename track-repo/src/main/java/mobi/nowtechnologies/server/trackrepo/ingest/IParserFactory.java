@@ -1,8 +1,24 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.ABSOLUTE;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.CI;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.EMI;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.EMI_UMG;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.FUGA;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.IODA;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.MANUAL;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.SONY;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.SONY_DDEX;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.UNIVERSAL;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.WARNER;
+import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.WARNER_OLD;
+
+import java.io.FileNotFoundException;
+
 import mobi.nowtechnologies.server.trackrepo.ingest.absolute.AbsoluteParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.ci.CiParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.emi.EmiParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.emi.EmiUmgParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.fuga.FugaParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.ioda.IodaParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.manual.ManualParser;
@@ -12,16 +28,13 @@ import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
 
-import java.io.FileNotFoundException;
-
-import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.*;
-
 public class IParserFactory {
     private String sonyRoot;
     private String warnerOldRoot;
     private String universalRoot;
     private String fugaRoot;
     private String emiRoot;
+    private String emiUmgRoot;
     private String iodaRoot;
     private String ciRoot;
     private String manualRoot;
@@ -40,6 +53,8 @@ public class IParserFactory {
             return new FugaParser(fugaRoot);
         } else if (EMI == name) {
             return new EmiParser(emiRoot);
+        } else if (EMI_UMG == name) {
+            return new EmiUmgParser(emiUmgRoot);
         } else if (IODA == name) {
             return new IodaParser(iodaRoot);
         } else if (CI == name) {
@@ -86,6 +101,10 @@ public class IParserFactory {
     public void setEmiRoot(String emiRoot) {
         this.emiRoot = emiRoot;
     }
+    
+	public void setEmiUmgRoot(String emiUmgRoot) {
+		this.emiUmgRoot = emiUmgRoot;
+	}
 
     public void setIodaRoot(String iodaRoot) {
         this.iodaRoot = iodaRoot;
@@ -111,5 +130,6 @@ public class IParserFactory {
         this.absoluteRoot = absoluteRoot;
     }
 
-    public enum Ingestors {SONY, WARNER_OLD, WARNER, FUGA, UNIVERSAL, EMI, IODA, CI, MANUAL, SONY_DDEX, ABSOLUTE}
+    public enum Ingestors {SONY, WARNER_OLD, WARNER, FUGA, UNIVERSAL, EMI, EMI_UMG, IODA, CI, MANUAL, SONY_DDEX, ABSOLUTE}
+
 }

@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -45,7 +46,7 @@ public interface TrackRepoService {
      *
      * @return IngestWizardData drop data without drop tracks
      */
-    IngestWizardDataDto getDrops();
+    IngestWizardDataDto getDrops(String... ingestors);
 
     /**
      * Select drops which needs to commit.

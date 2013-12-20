@@ -1,16 +1,21 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.emi;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import mobi.nowtechnologies.server.trackrepo.ingest.DDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+
 import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
 
 public class EmiParser extends DDEXParser {
     protected static final Logger LOGGER = LoggerFactory.getLogger(EmiParser.class);
@@ -48,6 +53,11 @@ public class EmiParser extends DDEXParser {
     public List<DropData> getDrops(File folder, boolean auto) {
 
         List<DropData> result = new ArrayList<DropData>();
+        if(!folder.exists()){
+			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
+			return result;
+		}
+        
         File[] content = folder.listFiles();
         boolean deliveryComplete = false;
         boolean processed = false;
@@ -97,19 +107,32 @@ public class EmiParser extends DDEXParser {
 
     @Override
     public void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
-        String id = release.getChild("ReleaseId").getChildText("ProprietaryId");
+        String id = parseProprietaryId(release.getChild("ReleaseId").getChildText("ProprietaryId"));
         for (DropAssetFile file : files) {
             if (file.isrc != null) {
                 track.isrc = file.isrc;
             }
         }
+        LOGGER.info("getIds -> ID = {}", id);
+        
         track.productCode = id;
         track.physicalProductId = id;
         track.productId = id;
+        
+    }
+    
+    /**
+     * Callback method for customization id parsing in hierarchy of EMI like parsers - override and customize. 
+     * @param proprietaryId
+     * @return
+     */
+    protected String parseProprietaryId(String proprietaryId){
+    	return proprietaryId;
     }
 
     public void setUpc(DropTrack track, String upc) {
-        if (upc != null) {
+    	LOGGER.info("setUpc -> upc = {}", upc);
+    	if (upc != null) {
             track.productCode = upc;
         }
     }
