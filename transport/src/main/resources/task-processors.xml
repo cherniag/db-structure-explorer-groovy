@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="task.ProcessorContainer" class="mobi.nowtechnologies.server.job.task.ProcessorContainer">
+        <property name="processorMap">
+            <map>
+                <entry key="SendChargeNotificationTask" value-ref="task.SendChargeNotificationTaskProcessor"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Task processors config -->
+    <bean id="task.AbstractTaskProcessor" class="mobi.nowtechnologies.server.job.task.AbstractTaskProcessor" abstract="true">
+        <property name="taskService" ref="task.TaskService"/>
+    </bean>
+
+    <bean id="task.SendChargeNotificationTaskProcessor" class="mobi.nowtechnologies.server.job.task.SendChargeNotificationTaskProcessor" parent="task.AbstractTaskProcessor">
+        <property name="userNotificationService" ref="service.UserNotificationService"/>
+    </bean>
+    <!-- End task processors config -->
+
+</beans>
