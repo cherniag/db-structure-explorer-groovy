@@ -38,7 +38,7 @@ public abstract class CommonController extends ProfileController implements Appl
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
 	public static final String MODEL_NAME = "response";
 	public static final int VERSION_4 = 4;
-	public static final String VERSION_5 = "5.0";
+	public static final String VERSION_5_2 = "5.2";
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -142,13 +142,22 @@ public abstract class CommonController extends ProfileController implements Appl
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.BAD_REQUEST);
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+
+        return sendResponse(exception, response, status);
     }
 	
 	@ExceptionHandler({InvalidPhoneNumberException.class})
 	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
-        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5);
-        return sendResponse(exception, response, versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if(versionPriority > 0){
+            status = HttpStatus.OK;
+            exception.setLocalizedMessage("Invalid phone number format");
+        }
+
+        return sendResponse(exception, response, status);
 	}
 
     @ExceptionHandler({ActivationStatusException.class})
@@ -197,7 +206,8 @@ public abstract class CommonController extends ProfileController implements Appl
 			message = localizedDisplayMessage;
 		}else{
 			errorCode = null;
-			localizedDisplayMessage=exception.getMessage();
+            int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+			localizedDisplayMessage= versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
 			message=localizedDisplayMessage;
 		}
 

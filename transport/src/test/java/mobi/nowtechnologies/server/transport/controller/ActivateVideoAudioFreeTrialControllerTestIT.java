@@ -118,7 +118,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isInternalServerError()).andDo(print()).andExpect(jsonPath("response.data[0].ErrorMessage.errorCode").value(5001));
+        ).andExpect(status().isInternalServerError()).andDo(print()).andExpect(jsonPath("response.data[0].errorMessage.errorCode").value(5001));
     }
 
     @Test

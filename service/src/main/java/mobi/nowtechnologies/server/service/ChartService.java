@@ -93,6 +93,8 @@ public class ChartService {
         if (user == null)
             throw new ServiceException("The parameter user is null");
 
+        user = userService.getUserWithSelectedCharts(user.getId());
+
         UserGroup userGroup = user.getUserGroup();
         if (userGroup == null)
             throw new ServiceException("The parameter userGroup is null");
@@ -132,8 +134,6 @@ public class ChartService {
 
 		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
-		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(user.getUserGroup().getCommunity(), chartDetails, defaultAmazonUrl);
-
         for (ChartDetail chartDetail : chartDetails) {
             Media media = chartDetail.getMedia();
 
@@ -141,6 +141,8 @@ public class ChartService {
 
             media.setDrms(Collections.singletonList(drmForCurrentUser));
         }
+
+        List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(user.getUserGroup().getCommunity(), chartDetails, defaultAmazonUrl);
 
 		ChartDto chartDto = new ChartDto();
 		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));

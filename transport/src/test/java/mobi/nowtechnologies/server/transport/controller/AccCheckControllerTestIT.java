@@ -43,7 +43,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "3.9";
+        String apiVersion = "4.0";
         String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -70,7 +70,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void testAccountCheckForO2Client_WithLockedTracks_Success() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "3.9";
+        String apiVersion = "4.0";
         String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -95,7 +95,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         ).andExpect(status().isOk()).
                 andDo(print()).
                 andExpect(xpath("/response/user/lockedTrack[1]/media").string("US-UM7-11-00061"));
-
     }
 
     @Test
@@ -108,6 +107,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
+
+        User user = userService.findByNameAndCommunity(userName, communityName);
+
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
                         .param("COMMUNITY_NAME", communityName)

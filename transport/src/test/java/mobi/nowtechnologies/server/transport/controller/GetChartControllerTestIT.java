@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.NotTransactional;
 import org.springframework.test.web.server.ResultActions;
 
 import static org.junit.Assert.assertTrue;
@@ -169,6 +170,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
+    @NotTransactional
     public void testGetChart_O2_v3d6_Success() throws Exception {
     	String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
