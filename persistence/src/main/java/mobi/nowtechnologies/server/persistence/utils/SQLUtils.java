@@ -50,7 +50,7 @@ public class SQLUtils {
 
                             LOGGER.debug(sqlQuery.toString());
 
-                            Query query = entityManager.createNativeQuery(trimmedLine);
+                            Query query = entityManager.createNativeQuery(sqlQuery.toString());
                             query.executeUpdate();
 
                             sqlQuery = new StringBuilder();
