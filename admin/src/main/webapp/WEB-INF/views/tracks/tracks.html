@@ -42,6 +42,9 @@
 		</div>
 		<div class="rel">
 			<div class="input-prepend">
+				<span class="add-on">Territory</span><input type="text" id="territory" name="territory" th:value="${param.territory!=null ? param.territory[0] : ''}" />
+			</div>
+			<div class="input-prepend">
 				<span class="add-on">Label</span><input type="text" id="label" name="label" th:value="${param.label!=null ? param.label[0] : ''}" />
 			</div>
 			<div class="input-prepend">

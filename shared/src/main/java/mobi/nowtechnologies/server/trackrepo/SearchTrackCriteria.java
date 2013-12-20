@@ -31,4 +31,6 @@ public interface SearchTrackCriteria {
     boolean isWithTerritories();
 
     boolean isWithFiles();
+	
+    String getTerritory();
 }
