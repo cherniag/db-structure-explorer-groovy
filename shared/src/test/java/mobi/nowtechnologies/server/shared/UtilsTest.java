@@ -1,18 +1,18 @@
 package mobi.nowtechnologies.server.shared;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -566,6 +566,21 @@ public class UtilsTest {
     @Test
     public void shouldReturnMajorVersionNumberIsLess(){
         assertTrue(isMajorVersionNumberLessThan(4, "3.9"));
+    }
+
+    @Test
+    public void shouldReturnMajorVersionPriority(){
+        assertEquals(1, compareVersions("3.9", "3.8.1"));
+    }
+
+    @Test
+    public void shouldReturnMinorVersionPriority(){
+        assertEquals(-1, compareVersions("3.8", "3.8.1"));
+    }
+
+    @Test
+    public void shouldReturnEqualVersionPriority(){
+        assertEquals(0, compareVersions("4.0", "4.0.0"));
     }
 
     @Test

@@ -38,6 +38,7 @@ public abstract class CommonController extends ProfileController implements Appl
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
 	public static final String MODEL_NAME = "response";
 	public static final int VERSION_4 = 4;
+	public static final String VERSION_5_2 = "5.2";
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -48,13 +49,48 @@ public abstract class CommonController extends ProfileController implements Appl
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
     private UserRepository userRepository;
-    protected String defaultViewName = "default";
-    protected ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    private String defaultViewName = "default";
+    private ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> communityUriThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> remoteAddrThreadLocal = new ThreadLocal<String>();
     protected ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    public void setCurrentCommandName(String commandName) {
+        this.commandNameThreadLocal.set(commandName);
+    }
+
+    public void setCurrentRemoteAddr(String remoteAddr) {
+        this.remoteAddrThreadLocal.set(remoteAddr);
+    }
+
+    public void setCurrentApiVersion(String apiVersion) {
+        this.apiVersionThreadLocal.set(apiVersion);
+    }
+
+    public void setCurrentCommunityUri(String communityUri) {
+        this.communityUriThreadLocal.set(communityUri);
+    }
+
+    public String getCurrentRemoteAddr() {
+        return this.remoteAddrThreadLocal.get();
+    }
+
+    public String getCurrentCommandName() {
+        return this.commandNameThreadLocal.get();
+    }
+
+    public String getCurrentApiVersion() {
+        return this.apiVersionThreadLocal.get();
+    }
+
+    public String getCurrentCommunityUri() {
+        return this.communityUriThreadLocal.get();
     }
 
     protected boolean isValidDeviceUID(String deviceUID){
@@ -106,17 +142,34 @@ public abstract class CommonController extends ProfileController implements Appl
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.BAD_REQUEST);
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+
+        return sendResponse(exception, response, status);
     }
 	
-	@ExceptionHandler({InvalidPhoneNumberException.class, ActivationStatusException.class})
-	public ModelAndView handleException(ServiceException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.OK);
+	@ExceptionHandler({InvalidPhoneNumberException.class})
+	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if(versionPriority <= 0){
+            status = HttpStatus.OK;
+            exception.setLocalizedMessage("Invalid phone number format");
+        }
+
+        return sendResponse(exception, response, status);
 	}
+
+    @ExceptionHandler({ActivationStatusException.class})
+    public ModelAndView handleException(ActivationStatusException exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
+    }
 
 	@ExceptionHandler(ValidationException.class)
 	public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
-			
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+
 		ServerMessage serverMessage = validationException.getServerMessage();
 		String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
 		
@@ -137,25 +190,27 @@ public abstract class CommonController extends ProfileController implements Appl
 		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
 		LOGGER.warn(message);
 
-		return sendResponse(errorMessage, HttpStatus.BAD_REQUEST, response);
+		return sendResponse(errorMessage, status, response);
 	}
 
 	@ExceptionHandler(UserCredentialsException.class)
 	public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
 		ServerMessage serverMessage = exception.getServerMessage();
 		
-		final String localizedDisplayMessage;
+		String localizedDisplayMessage;
 		final String message;
 		final Integer errorCode;
-		
-		if(serverMessage!=null){
-			errorCode = serverMessage.getErrorCode();
 
-			localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
-			message = localizedDisplayMessage;
-		}else{
-			errorCode = null;
-			localizedDisplayMessage=exception.getMessage();
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        if(serverMessage!=null){
+            errorCode = serverMessage.getErrorCode();
+
+            localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
+            localizedDisplayMessage = versionPriority > 0 ? localizedDisplayMessage : "Bad user credentials";
+            message = localizedDisplayMessage;
+        }else{
+            errorCode = null;
+			localizedDisplayMessage= versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
 			message=localizedDisplayMessage;
 		}
 

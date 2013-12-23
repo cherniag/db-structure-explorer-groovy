@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,10 +34,10 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
                               @RequestParam("USER_NAME") String userName,
                               @RequestParam("USER_TOKEN") String userToken,
                               @RequestParam("TIMESTAMP") String timestamp,
-                              @RequestParam("DEVICE_UID") String deviceUID,
-                              @PathVariable("communityUri") String communityUri) throws Exception {
+                              @RequestParam("DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
+        String communityUri = getCurrentCommunityUri();
         try {
             LOGGER.info("command processing started");
 

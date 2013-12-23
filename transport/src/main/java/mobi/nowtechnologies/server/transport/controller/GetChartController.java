@@ -4,11 +4,9 @@ import com.google.common.base.CharMatcher;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.ThrottlingService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.*;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,17 +30,12 @@ import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
 @Controller
 public class GetChartController extends CommonController {
 
-    private UserService userService;
     private ChartService chartService;
     private ThrottlingService throttlingService;
     private AccCheckController accCheckController;
 
     public void setAccCheckController(AccCheckController accCheckController) {
         this.accCheckController = accCheckController;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     public void setChartService(ChartService chartService) {
@@ -62,10 +55,10 @@ public class GetChartController extends CommonController {
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @PathVariable("community") String community) throws Exception {
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
+        String community = getCurrentCommunityUri();
         try {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
@@ -92,14 +85,14 @@ public class GetChartController extends CommonController {
     })
     public ModelAndView getChart_O2_v3d7(
             HttpServletRequest request,
-            @PathVariable("apiVersion") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @PathVariable("community") String community) throws Exception {
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
+        String community = getCurrentCommunityUri();
+        String apiVersion = getCurrentApiVersion();
         try {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
@@ -129,11 +122,11 @@ public class GetChartController extends CommonController {
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @PathVariable("apiVersion") String apiVersion,
-            @PathVariable("community") String community) throws Exception {
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
+        String community = getCurrentCommunityUri();
+        String apiVersion = getCurrentApiVersion();
         try {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
@@ -163,12 +156,12 @@ public class GetChartController extends CommonController {
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
-            @PathVariable("community") String community,
-            @PathVariable("apiVersion") String apiVersion,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
         User user = null;
         Exception ex = null;
+        String community = getCurrentCommunityUri();
+        String apiVersion = getCurrentApiVersion();
         try {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);

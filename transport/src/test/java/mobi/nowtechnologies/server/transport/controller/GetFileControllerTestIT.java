@@ -1,23 +1,17 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.server.ResultActions;
 
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class GetFileControllerTestIT extends AbstractControllerTestIT {
-
-	@Autowired
-	private ChartDetailRepository chartDetailRepository;
 
     @Test
     public void testGetFile_O2_v6d0_Success() throws Exception {
@@ -40,12 +34,9 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
                         .param("TYPE", fileType)
                         .header("Content-Type", "text/xml").
                         header("Content-Length", "0")
-        ).andExpect(status().isOk());
-		
-		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-		String resultXml = aHttpServletResponse.getContentAsString();
-		
-        assertTrue(resultXml.startsWith("http://c.brightcove.com/services/mobile/streaming/index/master.m3u8"));
+        ).andExpect(status().isOk()).andDo(print());
+        assertEquals(resultActions.andReturn().getResponse().getContentAsString(),
+                "http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId=2599461121001&pubId=2368678501001");
     }
 
     @Test
@@ -77,12 +68,9 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
                         .param("TYPE", fileType)
                         .header("Content-Type", "text/xml").
                         header("Content-Length", "0")
-        ).andExpect(status().isOk());
-
-		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-		String resultXml = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultXml.contains("Signs.mp4"));
+        ).andExpect(status().isOk()).andDo(print());
+        assertEquals(resultActions.andReturn().getResponse().getContentAsString(),
+                "http://brightcove.vo.llnwd.net/e1/uds/pd/2368678501001/2368678501001_2599463153001_Signs.mp4");
     }
 
     @Test
@@ -97,7 +85,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         String mediaId = "VIDEO160822";//generateVideoMedia();
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -117,9 +105,28 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        String mediaId = "VIDEO160822";//generateVideoMedia();
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("TYPE", fileType)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testGetFile_O2_v5d3_400_Failure() throws Exception {
+        String userName = "+447xxxxxxxxxxxx";
+        String fileType = "VIDEO";
+        String apiVersion = "5.3";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -138,9 +145,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        String mediaId = "VIDEO160822";//generateVideoMedia();
-
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -149,9 +154,4 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isNotFound());
     }
     
-    private String generateVideoMedia(){
-        ChartDetail chartDetail = chartDetailRepository.findOne(22);
-
-        return chartDetail.getMedia().getIsrc();
-    }
 }

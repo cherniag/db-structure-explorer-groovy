@@ -7,8 +7,8 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
@@ -24,16 +24,12 @@ import java.util.List;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
 	@Autowired
 	private ChartRepository chartRepository;
-
-    @Autowired
-	private UserRepository userRepository;
 
 	@Autowired
 	private ChartDetailRepository chartDetailRepository;
@@ -41,7 +37,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "3.9";
+        String apiVersion = "4.0";
         String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -68,7 +64,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void testAccountCheckForO2Client_WithLockedTracks_Success() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "3.9";
+        String apiVersion = "4.0";
         String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -93,7 +89,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         ).andExpect(status().isOk()).
                 andDo(print()).
                 andExpect(xpath("/response/user/lockedTrack[1]/media").string("US-UM7-11-00061"));
-
     }
 
     @Test
@@ -106,6 +101,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
+
+        User user = userService.findByNameAndCommunity(userName, communityName);
+
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
                         .param("COMMUNITY_NAME", communityName)
@@ -222,9 +220,27 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void testAccountCheck_400_Failure() throws Exception {
+    public void testAccountCheckv4d0_400_Failure() throws Exception {
         String userName = "+642102247311";
         String apiVersion = "4.0";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        mockMvc.perform(
+                post("/AUID/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testAccountCheckv5d3_400_Failure() throws Exception {
+        String userName = "+642102247311";
+        String apiVersion = "5.3";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -240,7 +256,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void testAccountCheck_401_Failure() throws Exception {
+    public void testAccountCheckV4d0_401_Failure() throws Exception {
         String userName = "+6421xxxxxxxx";
         String apiVersion = "4.0";
         String communityUrl = "vf_nz";
@@ -255,7 +271,28 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isUnauthorized());
+        ).andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Bad user credentials"));;
+    }
+
+    @Test
+    public void testAccountCheck_401_Failure() throws Exception {
+        String userName = "+6421xxxxxxxx";
+        String apiVersion = "5.3";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        mockMvc.perform(
+                post("/AUID/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("user login/pass check failed for [+6421xxxxxxxx] username and community [vf_nz]"));;
     }
 
     @Test
@@ -271,17 +308,18 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 .withUserName(userName)
                 .withDeviceUID("b88106713409e92822461a876abcd74c")
                 .withDeviceUID("d")
-                .withMobile("+447111111112")
+                .withMobile("+447111111118")
                 .withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId()));
         entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
-        entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte)10));
+        entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte) 10));
         entity.setDevice("");
-        entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte)5));
+        entity.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get((byte) 5));
         entity.setDeviceString("IOS");
         entity.setLastDeviceLogin(1893448800);
         entity.setLastWebLogin(1893448800);
         entity.setTempToken("f701af8d07e5c95d3f5cf3bd9a62344d");
         entity.setOperator(1);
+        entity.setActivationStatus(ActivationStatus.ACTIVATED);
         entity.setLastSubscribedPaymentSystem("iTunesSubscription");
 
         userRepository.save(entity);

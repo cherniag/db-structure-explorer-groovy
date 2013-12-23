@@ -24,7 +24,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 
 
 
-<bean id="persistence.EntityManagerFactory"
+    <bean id="persistence.EntityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="persistence.DataSource" />
 		<property name="jpaVendorAdapter">
@@ -49,4 +49,14 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
         <property name="driverClassName" value="org.h2.Driver"/>
     </bean>
 
+    <bean id="persistence.SQLUtils" class="mobi.nowtechnologies.server.persistence.utils.SQLUtils" />
+
+    <bean id="persistence.SQLTestInitializer" class="mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer">
+        <property name="sqlUtils" ref="persistence.SQLUtils" />
+        <property name="userRepository" ref="userRepository" />
+        <property name="drmRepository" ref="drmRepository" />
+        <property name="paymentDetailsRepository" ref="paymentDetailsRepository" />
+        <property name="chartRepository" ref="chartRepository" />
+        <property name="chartDetailRepository" ref="chartDetailRepository" />
+    </bean>
 </beans>

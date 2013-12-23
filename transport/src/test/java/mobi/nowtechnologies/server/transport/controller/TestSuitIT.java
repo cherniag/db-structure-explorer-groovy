@@ -8,14 +8,15 @@ import org.junit.runners.Suite;
 {
         AccCheckControllerTestIT.class,
         ActivateVideoAudioFreeTrialControllerTestIT.class,
-        ApplyInitPromoControllerIT.class,
-        AutoOptInControllerIT.class,
+        ApplyInitPromoControllerTestIT.class,
+        AutoOptInControllerTestIT.class,
         CommonControllerTestIT.class,
         GetChartControllerTestIT.class,
         GetFileControllerTestIT.class,
         PhoneNumberControllerTestIT.class,
         GetNewsControllerTestIT.class,
-        SignUpDeviceControllerTestIT.class
+        SignUpDeviceControllerTestIT.class,
+        VersionControllerTestIT.class
 })
 public class TestSuitIT {
 }

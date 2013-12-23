@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,7 +42,6 @@ public class FileController extends CommonController {
             "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/GET_FILE"
     })
     public ModelAndView getFile(
-            @PathVariable("community") String community,
             @RequestParam("ID") final String mediaId,
             @RequestParam("TYPE") String fileTypeName,
             @RequestParam("USER_NAME") final String userName,
@@ -54,6 +52,7 @@ public class FileController extends CommonController {
             final HttpServletRequest request) throws Exception {
         User user = null;
         Exception ex = null;
+        String community = getCurrentCommunityUri();
         try {
             LOGGER.info("command processing started");
 

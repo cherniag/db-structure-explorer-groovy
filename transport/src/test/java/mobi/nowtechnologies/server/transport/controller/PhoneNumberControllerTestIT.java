@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.apache.commons.lang3.StringUtils;
 import org.jsmpp.bean.DeliverSm;
 import org.junit.After;
@@ -58,6 +59,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
     @After
     public void tireDown(){
+        super.tireDown();
+
         reset(vfGatewayServiceSpy);
     }
 
@@ -295,9 +298,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        User user = vfUserService.findByNameAndCommunity(userName, communityName);
-        user.setProvider(null);
-        vfUserService.updateUser(user);
+
         ResultActions resultActions = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
                         .param("COMMUNITY_NAME", communityName)
@@ -309,8 +310,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultXml = aHttpServletResponse.getContentAsString();
         assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
-        user = vfUserService.findByNameAndCommunity(userName, communityName);
-        assertEquals(null, user.getProvider());
+
+        verify(vfGatewayServiceSpy, times(0)).send(eq("+64279000456"), anyString(), eq("5804"));
 
         Thread.sleep(1000);
 
@@ -546,6 +547,25 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+6xxxxxxxxxxxxxx";
         String apiVersion = "5.0";
+        String communityName = "vf_nz";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("USER_NAME", userName)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testActivatePhoneNumberV5d3_400_Failure() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74a";
+        String phone = "+6xxxxxxxxxxxxxx";
+        String apiVersion = "5.3";
         String communityName = "vf_nz";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";

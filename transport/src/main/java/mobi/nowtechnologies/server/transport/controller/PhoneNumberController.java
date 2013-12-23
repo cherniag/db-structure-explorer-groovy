@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.dto.transport.PhoneActivationDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,13 +25,14 @@ public class PhoneNumberController extends CommonController {
 			@RequestParam(value = "PHONE", required = false) String phone,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp,
-			@PathVariable("community") String community,
-			@PathVariable("apiVersion") String apiVersion) throws Exception {
+			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+
+        String community = getCurrentCommunityUri();
+        String apiVersion = getCurrentApiVersion();
 		LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
 		
 		Exception ex = null;
-		User user = null; 
+		User user = null;
 		try {
 			user = userService.checkCredentials(userName, userToken, timestamp, community);
 			
@@ -61,13 +61,13 @@ public class PhoneNumberController extends CommonController {
             @RequestParam(value = "PHONE", required = false) String phone,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @PathVariable("community") String community,
-            @PathVariable("apiVersion") String apiVersion) throws Exception {
-        LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName, community);
+            @RequestParam("TIMESTAMP") String timestamp) throws Exception {
+        LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName);
 
         Exception ex = null;
         User user = null;
+        String community = getCurrentCommunityUri();
+        String apiVersion = getCurrentApiVersion();
         try {
             UserService userService = getUserService(community);
 

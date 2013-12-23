@@ -6,10 +6,6 @@
     
     <import resource="/WEB-INF/transport-servlet.xml" />
 
-    <bean id="service.VersionService" class="java.lang.Object" />
-    <bean id="admin.VersionController" class="java.lang.Object" />
-    <bean id="controller.VersionController" class="java.lang.Object" />
-
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
