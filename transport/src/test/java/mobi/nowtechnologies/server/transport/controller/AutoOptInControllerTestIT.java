@@ -26,7 +26,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
  * User: Kolpakov Alexsandr (akolpakov)
  * 05.09.13 15:44
  */
-public class AutoOptInControllerIT extends AbstractControllerTestIT{
+public class AutoOptInControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void shouldAutoOptInAndVersionMore40() throws Exception {

@@ -20,7 +20,7 @@ import static org.springframework.test.web.server.result.MockMvcResultHandlers.p
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
-public class ApplyInitPromoControllerIT extends AbstractControllerTestIT{
+public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_thenBigPromotionSetAndAccCheckInfo() throws Exception {

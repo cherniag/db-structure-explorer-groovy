@@ -9,7 +9,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 /**
  * Created by oar on 12/18/13.
  */
-public class VersionControllerIT extends AbstractControllerTestIT{
+public class VersionControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testVersion_Success() throws Exception {
