@@ -16,6 +16,11 @@
 	</c:if>
 </c:forEach>
 
+<c:if test="${paymentsPage.freeTrialPeriod eq true}">
+<%--if IOS user is on free trial, we display the message with losing FT --%>
+	<div class="itunesheaderText" style="margin: 0 5px 10px;"><s:message code='pays.page.header.txt.itunes.before.FT.expires' /></div>
+</c:if>
+
 <div class="itunespaymentheader">
 	<input class="button-turquoise no-margin pie ${disabledStyle}" title="${iTunesUrl}" type="button" ${disabledAttrib} onClick="location.href=this.title"	value="<s:message code='pays.page.header.txt.itunes.paynowbutton' />" />
 </div>

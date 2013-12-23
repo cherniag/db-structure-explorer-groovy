@@ -16,7 +16,7 @@
                     <s:message var="nextSubPaymentMillisFormat" code='paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillisFormat' />
                     <script>
                         var nextSubPaymentDate = new Date(${paymentsPage.paymentPageData.subscriptionTexts.nextSubPaymentMillis});
-                        document.write(nextSubPaymentDate.format('${nextSubPaymentMillisFormat}'));
+                        document.write("&nbsp;" + nextSubPaymentDate.format('${nextSubPaymentMillisFormat}'));
                     </script>
                 </c:if>
 			</c:if>
