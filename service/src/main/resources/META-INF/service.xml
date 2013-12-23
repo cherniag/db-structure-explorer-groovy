@@ -41,6 +41,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="userService" ref="service.UserService" />
     </bean>
 
+    <bean id="accountCheckDTOAsm" class="mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm" />
+
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="deviceTypeService" ref="service.DeviceTypeService" />
@@ -144,12 +146,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="service.DrmService" class="mobi.nowtechnologies.server.service.DrmService">
 		<property name="drmDao" ref="persistence.DrmDao" />
-		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
 		<property name="entityService" ref="service.EntityService" />
 		<property name="mediaService" ref="service.MediaService" />
-		<property name="accountLogService" ref="service.AccountLogService" />
-		<property name="userService" ref="service.UserService" />
-		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="drmRepository" ref="drmRepository" />
 	</bean>
 
@@ -182,6 +180,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="mediaService" ref="service.MediaService" />
+		<property name="drmService" ref="service.DrmService" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
@@ -189,9 +188,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
-		<property name="entityService" ref="service.EntityService" />
 		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
-		<property name="drmService" ref="service.DrmService" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="mediaService" ref="service.MediaService" />
 	</bean>

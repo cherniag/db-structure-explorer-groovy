@@ -232,7 +232,6 @@ public class DrmServiceTest {
 		throws Exception {
 		
 		fixture = new DrmService();
-		fixture.setChartDetailService(chartDetailService);
 		fixture.setDrmRepository(drmRepository);
 	}
 

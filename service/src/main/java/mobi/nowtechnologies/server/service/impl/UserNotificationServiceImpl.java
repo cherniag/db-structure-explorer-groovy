@@ -375,6 +375,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
     @Override
     public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) {
         try{
+            LOGGER.info("Start send payment fail SMS: {}", pendingPayment);
             PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
             User user = pendingPayment.getUser();
 

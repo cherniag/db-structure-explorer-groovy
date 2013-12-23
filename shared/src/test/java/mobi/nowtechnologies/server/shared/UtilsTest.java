@@ -1,16 +1,18 @@
 package mobi.nowtechnologies.server.shared;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -53,22 +55,6 @@ public class UtilsTest {
 		String result = createTimestampToken(token, timestamp);
 
 		assertEquals("4320fb73e5deb16a98f78bec9e522d36", result);
-	}
-
-	@Test
-	@Ignore
-	public void testGenerateRandomPIN_1() throws Exception {
-
-		Integer result = generateRandomPIN();
-
-		assertNotNull(result);
-		assertEquals("7113", result.toString());
-		assertEquals((byte) -55, result.byteValue());
-		assertEquals(7113.0, result.doubleValue(), 1.0);
-		assertEquals(7113.0f, result.floatValue(), 1.0f);
-		assertEquals(7113, result.intValue());
-		assertEquals(7113L, result.longValue());
-		assertEquals((short) 7113, result.shortValue());
 	}
 
 	@Test
@@ -583,6 +569,21 @@ public class UtilsTest {
     }
 
     @Test
+    public void shouldReturnMajorVersionPriority(){
+        assertEquals(1, compareVersions("3.9", "3.8.1"));
+    }
+
+    @Test
+    public void shouldReturnMinorVersionPriority(){
+        assertEquals(-1, compareVersions("3.8", "3.8.1"));
+    }
+
+    @Test
+    public void shouldReturnEqualVersionPriority(){
+        assertEquals(0, compareVersions("4.0", "4.0.0"));
+    }
+
+    @Test
     public void shouldReturnMajorVersionNumberIsMore(){
         assertFalse(isMajorVersionNumberLessThan(2, "3.9"));
     }
@@ -614,5 +615,15 @@ public class UtilsTest {
 
         //then
         assertThat(amountString, is("6"));
+    }
+
+    @Test
+    public void testGenerateRandom4DigitsPIN() {
+        Set<String> codes = new HashSet<String>(7);
+        for (int i = 0; i < 7; i++) {
+            codes.add(Utils.generateRandom4DigitsPIN());
+        }
+        // if strings are all the same then hashset will contain only 1 string
+        assertTrue("There are the same codes", codes.size() > 1);
     }
 }

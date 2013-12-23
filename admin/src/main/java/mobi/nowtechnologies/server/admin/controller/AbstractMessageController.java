@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -77,7 +78,7 @@ public abstract class AbstractMessageController extends AbstractCommonController
 	
 	protected Date validateSelectedPublishDate(String selectedPublishDate) {
 		try {
-			Date choosedPublishDate = dateFormat.parse(selectedPublishDate);
+			Date choosedPublishDate = new SimpleDateFormat(URL_DATE_FORMAT).parse(selectedPublishDate);
 			return choosedPublishDate;
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage(), e);

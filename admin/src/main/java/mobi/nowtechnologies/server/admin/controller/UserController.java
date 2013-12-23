@@ -10,8 +10,6 @@ import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import org.apache.http.HttpStatus;
-import org.joda.time.DateTime;
-import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -24,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -39,7 +36,6 @@ public class UserController extends AbstractCommonController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	private UserService userService;
-	protected DateFormat userManagedateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
@@ -47,7 +43,7 @@ public class UserController extends AbstractCommonController {
 
 	@InitBinder( { UserDto.USER_DTO })
 	public void initNewsBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(userManagedateTimeFormat, true));
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"), true));
 		binder.setValidator(new UserDtoValidator());
 	}
 

@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -62,7 +63,7 @@ public class ChartController extends AbstractCommonController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateTimeFormat, true));
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(URL_DATE_TIME_FORMAT), true));
 	}
 
 	@InitBinder( { ChartItemDto.CHART_ITEM_DTO})
@@ -133,24 +134,26 @@ public class ChartController extends AbstractCommonController {
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartItems);
 		ChartDto chartDto = ChartAsm.toChartDto(chartDetail);
 
-		final String selectedPublishDateString;
-		if (chartItemDtos.isEmpty()) {
-			selectedPublishDateString = dateTimeFormat.format(selectedPublishDateTime);
-		} else {
-			selectedPublishDateString = dateTimeFormat.format(chartItemDtos.get(0).getPublishTime());
-		}
-
         return new ModelAndView(viewByChartType.get(chart.getType().name()))
 		.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos)
-		.addObject("selectedPublishDateTime", selectedPublishDateString)
+		.addObject("selectedPublishDateTime", getSelectedPublishDateAsString(selectedPublishDateTime, chartItemDtos))
 		.addObject("selectedDateTime", selectedPublishDateTime)
 		.addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId))
 		.addObject("filesURL", filesURL)
 		.addObject("chartFilesURL", chartFilesURL)
 		.addObject("chart", chartDto);
 	}
-	
-	/**
+
+    private String getSelectedPublishDateAsString(Date selectedPublishDateTime, List<ChartItemDto> chartItemDtos) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(URL_DATE_TIME_FORMAT);
+        if (chartItemDtos.isEmpty()) {
+            return simpleDateFormat.format(selectedPublishDateTime);
+        } else {
+            return simpleDateFormat.format(chartItemDtos.get(0).getPublishTime());
+        }
+    }
+
+    /**
 	 * Delete chart items for selected date
 	 * 
 	 * @param request

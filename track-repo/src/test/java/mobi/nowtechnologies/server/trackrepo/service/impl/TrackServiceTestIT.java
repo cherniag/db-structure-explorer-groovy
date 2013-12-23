@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = { "classpath:META-INF/shared.xml", "classpath:META-INF/trackrepo-dao-test.xml", "classpath:META-INF/trackrepo-services-test.xml" })
 @TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
 @Transactional
-public class TrackServiceIT {
+public class TrackServiceTestIT {
 	private final String DEFAULT_FILE_NAME = "work/APPCASTP.m4a";
 
 	@Autowired

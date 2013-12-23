@@ -329,7 +329,6 @@ public class UserService {
         return  false;
     }
 
-    @Deprecated
     public User checkCredentials(String userName, String userToken, String timestamp, String communityName) {
         notNull(userName, "The parameter userName is null");
         notNull(userToken, "The parameter userToken is null");
@@ -389,7 +388,6 @@ public class UserService {
         }
     }
 
-    @Deprecated
     public User checkCredentials(String userName, String userToken, String timestamp, String communityName, String deviceUID) {
         LOGGER.debug("input parameters userName, userToken, timestamp, communityName, deviceUID: [{}], [{}], [{}], [{}], [{}]", new Object[] { userName, userToken, timestamp, communityName,
                 deviceUID });
@@ -1416,6 +1414,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // TODO: PERFORMANCE: could be improved by avoiding unneeded queries basing on the condition
     private boolean canBePromoted(Community community, String deviceUID, String deviceModel) {
         boolean existsInPromotedList = deviceService.existsInPromotedList(community, deviceUID);
         boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);

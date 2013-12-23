@@ -35,14 +35,14 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
         try {
             String normalizedPhoneNumber = phoneNumber;
             if(!deviceService.isPromotedDevicePhone(vfnzCommunity, phoneNumber, null)){
-                normalizedPhoneNumber = phoneValidator.validate(phoneNumber);
+                normalizedPhoneNumber = phoneValidator.validateAndNormalize(phoneNumber);
             }
 
             if (StringUtils.isEmpty(normalizedPhoneNumber)) {
                 throw new ServiceException("Invalid phone number");
             }
 
-            String pin = Utils.generateRandomPIN().toString();
+            String pin = Utils.generateRandom4DigitsPIN();
 
             result = new PhoneNumberValidationData()
                     .withPhoneNumber(normalizedPhoneNumber)

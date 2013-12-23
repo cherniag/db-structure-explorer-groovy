@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Controller
@@ -38,7 +39,7 @@ public class TrackRepoController extends AbstractCommonController{
 	@InitBinder()
 	public void initBinder(WebDataBinder binder) {
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(URL_DATE_FORMAT), true));
 	}
 
 	@RequestMapping(value = "/tracks/list", method = RequestMethod.GET)

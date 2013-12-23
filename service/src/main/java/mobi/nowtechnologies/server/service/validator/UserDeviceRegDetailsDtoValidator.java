@@ -4,13 +4,10 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.Errors;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -18,14 +15,18 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class UserDeviceRegDetailsDtoValidator extends BaseValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserRegDetailsDtoValidator.class);
-	
-	private CommunityService communityService;
+
+    private final String communityUri;
+    private final String remoteAddr;
+
+    private CommunityService communityService;
 	private UserService userService;
-	private HttpServletRequest request;
-	
-	public UserDeviceRegDetailsDtoValidator(HttpServletRequest request, UserService userService, CommunityService communityService) {
+
+	public UserDeviceRegDetailsDtoValidator(String communityUri, String remoteAddr, UserService userService, CommunityService communityService) {
 		this.userService = userService;
-		this.request = request;
+		this.communityService = communityService;
+		this.communityUri = communityUri;
+		this.remoteAddr = remoteAddr;
 		this.communityService = communityService;
 	}
 
@@ -34,16 +35,11 @@ public class UserDeviceRegDetailsDtoValidator extends BaseValidator {
 		LOGGER.debug("input parameters target, errors: [{}], [{}]", target, errors);
 		UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) target;
 
-        String[] uriParts = request.getRequestURI().split("/");
-        String communityUrl = uriParts[uriParts.length-3];
-		
-		Community community = communityService.getCommunityByUrl(communityUrl);
-		
-		String remoteAddr = Utils.getIpFromRequest(request);
-		
+		Community community = communityService.getCommunityByUrl(communityUri);
+
 		// Checking whether user are in right country in order to register in community
 		if (!userService.isCommunitySupportByIp(null, community.getName(), remoteAddr)) {
-			errors.rejectValue("ipAddress", "Incorrect.ipAddress", "We don't support your counrty");
+			errors.rejectValue("ipAddress", "Incorrect.ipAddress", "We don't support your country");
 		}
 		
 		final boolean hasErrors = errors.hasErrors();

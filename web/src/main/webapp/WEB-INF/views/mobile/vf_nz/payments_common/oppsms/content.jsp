@@ -32,8 +32,8 @@
         </div>
         
         <div class="rel" style="margin: 10px 6px 10px; padding:6px 0;">
-            <input class="button-white no-margin left pie" title="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>.html" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.oppsms.cansel.button"/>" />
-            <input class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/oppsms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="location.href=this.title" value="<s:message code="pays.page.options.note.oppsms.ok.button"/>" />
+            <input id="cancelButtonId" class="button-white no-margin left pie" title="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>.html" type="button" onClick="goToLocationAndDisableButtons(this.title)" value="<s:message code="pays.page.options.note.oppsms.cansel.button"/>" />
+            <input id="submitButtonId" class="button-turquoise no-margin right pie" title="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/oppsms_confirm.html?paymentPolicyId=${paymentPolicyId}" type="button" onClick="goToLocationAndDisableButtons(this.title)" value="<s:message code="pays.page.options.note.oppsms.ok.button"/>" />
             <div style="clear: both;"></div>
         </div>
     </div>
@@ -48,3 +48,18 @@
     </div>
     
 </div>
+
+<script type="text/javascript">
+function goToLocationAndDisableButtons(lctn) {
+	try {
+		var sbmt = $("#submitButtonId");
+		var cncl = $("#cancelButtonId");
+		sbmt.addClass("disabled");
+		sbmt.attr("disabled","disabled");
+		cncl.addClass("disabled");
+		cncl.attr("disabled","disabled");
+	} catch (exceptionOgnored) {}
+	
+	document.location.href = lctn;
+}
+</script>

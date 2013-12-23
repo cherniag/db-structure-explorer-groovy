@@ -4,14 +4,16 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.validator.UserDeviceRegDetailsDtoValidator;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +40,7 @@ public class SignUpDeviceController extends CommonController {
 
 	@InitBinder(UserDeviceRegDetailsDto.NAME)
 	public void initUserDeviceRegDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
-		binder.setValidator(new UserDeviceRegDetailsDtoValidator(request, userService, communityService));
+		binder.setValidator(new UserDeviceRegDetailsDtoValidator(getCurrentCommunityUri(), getCurrentRemoteAddr(), userService, communityService));
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = 
@@ -46,8 +48,8 @@ public class SignUpDeviceController extends CommonController {
 			"**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"
 		})
 	public ModelAndView signUpDevice(HttpServletRequest request,
-			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result,
-			@PathVariable("community") String community) {
+			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
+        String community = getCurrentCommunityUri();
 		LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]",userDeviceDetailsDto, community);
 		
 		User user = null;
@@ -60,9 +62,7 @@ public class SignUpDeviceController extends CommonController {
 		                throw ValidationException.getInstance(objectError.getDefaultMessage());
 		            }
 		        }
-
-		        String remoteAddr = Utils.getIpFromRequest(request);
-		        userDeviceDetailsDto.setIpAddress(remoteAddr);
+		        userDeviceDetailsDto.setIpAddress(getCurrentRemoteAddr());
                 userDeviceDetailsDto.setCommunityUri(community);
 
 		        user = userService.registerUser(userDeviceDetailsDto, false);

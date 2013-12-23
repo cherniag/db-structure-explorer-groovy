@@ -1,7 +1,9 @@
-package mobi.nowtechnologies.o2;
+package mobi.nowtechnologies.o2.stub;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import mobi.nowtechnologies.o2.O2Config;
+import mobi.nowtechnologies.o2.UtilsO2;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
@@ -16,18 +18,15 @@ import org.slf4j.LoggerFactory;
 public class O2StubTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(O2StubTest.class);
-	private static final String SERVER_URL = "http://localhost:8998";
-	private static final String O2_PROXY_URL = SERVER_URL;
-	private static final String O2_SERVER_FULL_URL = SERVER_URL + "/services/";
 
 	private static O2ProviderServiceImpl o2ClientService;
 	private static O2ServiceImpl o2Service;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		o2ClientService = UtilsO2.createO2ClientService(O2_PROXY_URL, O2_SERVER_FULL_URL);
+		o2ClientService = UtilsO2.createO2ClientService(O2Config.LOCAL_STUB);
 
-		o2Service = UtilsO2.createO2ServiceImpl(O2_SERVER_FULL_URL);
+		o2Service = UtilsO2.createO2ServiceImpl(O2Config.LOCAL_STUB);
 	}
 
 	@Test

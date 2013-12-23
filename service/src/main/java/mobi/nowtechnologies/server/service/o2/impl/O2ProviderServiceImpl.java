@@ -132,7 +132,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 	public String getServerO2Url(String phoneNumber) {
 		Community o2Community = communityService.getCommunityByName(O2_COMMUNITY_REWRITE_URL);
 
-		String serverO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null)
+		String serverO2Url = (isPromoted(phoneNumber, o2Community) || isOtacPromoted(phoneNumber, o2Community))
 				? this.promotedServerO2Url
 				: this.serverO2Url;
 
@@ -143,11 +143,19 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 	public String getRedeemServerO2Url(String phoneNumber) {
 		Community o2Community = communityService.getCommunityByUrl(O2_COMMUNITY_REWRITE_URL);
 
-		String redeemServerO2Url = deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null)
+		String redeemServerO2Url = (isPromoted(phoneNumber, o2Community) || isOtacPromoted(phoneNumber, o2Community))
 				? this.redeemPromotedServerO2Url
 				: this.redeemServerO2Url;
 
 		return redeemServerO2Url;
+	}
+
+	private boolean isOtacPromoted(String phoneNumber, Community o2Community) {
+		return deviceService.isOtacPromotedDevicePhone(o2Community, phoneNumber, null);
+	}
+	
+	private boolean isPromoted(String phoneNumber, Community o2Community) {
+		return deviceService.isPromotedDevicePhone(o2Community, phoneNumber, null);
 	}
 
 	public void setRedeemServerO2Url(String redeemServerO2Url) {
@@ -171,9 +179,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		String serverO2Url = getServerO2Url(phoneNumber);
 		String url = serverO2Url + VALIDATE_PHONE_REQ;
 
-		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-
-		String result = handleValidatePhoneNumber(phoneNumber, url, request);
+		String result = handleValidatePhoneNumber(phoneNumber, url);
 
 		return new PhoneNumberValidationData().withPhoneNumber(result);
 	}
@@ -186,14 +192,14 @@ public class O2ProviderServiceImpl implements O2ProviderService {
         processor.process(data);
     }
 
-    private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
+    private String handleValidatePhoneNumber(String phoneNumber, String url) {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
 
         UserLog userLog = null;
         String validatedPhoneNumber = null;
         try {
             Long curDay = new Long(Utils.getEpochDays());
-            validatedPhoneNumber = gbCellNumberValidator.validate(phoneNumber);
+            validatedPhoneNumber = gbCellNumberValidator.validateAndNormalize(phoneNumber);
             if(validatedPhoneNumber == null)
                 throw new InvalidPhoneNumberException(phoneNumber);
 
@@ -206,6 +212,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
                 userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
             }
 
+            MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
             request.add("phone_number", validatedPhoneNumber);
             DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
 			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
