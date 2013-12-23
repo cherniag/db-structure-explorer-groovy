@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +41,8 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/service-test.xml", "/META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:task-processors.xml", "classpath:jobs-test.xml"})
-//@Transactional
-//@TransactionConfiguration(transactionManager = "persistence.TransactionManager",defaultRollback = true)
-public class BusinessTaskJobTestIT {
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager")
+public class BusinessTaskJobTestIT extends AbstractTransactionalJUnit4SpringContextTests{
     @Autowired
     private BusinessTaskJob businessTaskJob;
 
@@ -70,6 +70,7 @@ public class BusinessTaskJobTestIT {
         smppService = mock(SMPPServiceImpl.class);
         when(smppService.sendMessage(any(MTMessage.class))).thenReturn(true);
         smsGatewayService.setSmppService(smppService);
+        taskRepository.deleteAll();
     }
 
     @Test
@@ -79,6 +80,7 @@ public class BusinessTaskJobTestIT {
         userGroup.setId(8);
         User user = UserFactory.createUser();
         user.setId(0);
+        user.setUserName("+64598720352");
         user.setUserGroup(userGroup);
         user.setProvider(ProviderType.VF);
         SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
@@ -101,6 +103,7 @@ public class BusinessTaskJobTestIT {
         userGroup.setId(8);
         User user = UserFactory.createUser();
         user.setId(0);
+        user.setUserName("+6459336695");
         user.setUserGroup(userGroup);
         user.setProvider(ProviderType.VF);
         SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();

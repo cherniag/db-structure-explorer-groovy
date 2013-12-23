@@ -30,6 +30,7 @@ public abstract class UserTask extends Task {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
                 .append("user_id", user != null ? user.getId() : null)
+                .append("user_name", user != null ? user.getUserName() : null)
                 .append("user_mobile", user != null ? user.getMobile() : null)
                 .append("user_deviceUID", user != null ? user.getDeviceUID() : null)
                 .append("user_group", user != null ? user.getUserGroupId() : null)
