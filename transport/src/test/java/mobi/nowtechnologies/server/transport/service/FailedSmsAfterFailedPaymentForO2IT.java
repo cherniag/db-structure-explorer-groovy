@@ -17,6 +17,8 @@ import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +51,7 @@ import static org.junit.Assert.assertTrue;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class FailedSmsAfterFailedPaymentForO2IT {
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
     private CleanExpirePendingPaymentsJob expirePendingPaymentsJob;
@@ -78,6 +82,7 @@ public class FailedSmsAfterFailedPaymentForO2IT {
         PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
 
         final long time = new Date().getTime();
+        logger.info("Start time {}", time);
         List<PendingPayment> createPendingPayments = pendingPaymentService.createPendingPayments();
         User currentUser = userRepository.findOne(1);
         currentUser.getUserGroup().setCommunity(communityRepository.findByRewriteUrlParameter("o2"));
@@ -103,9 +108,17 @@ public class FailedSmsAfterFailedPaymentForO2IT {
     private File getLastSmsFile(long time) {
         String[] list = smsTemporaryFolder.list(new AgeFileFilter(time, false));
 
+        debug(smsTemporaryFolder);
+
         Assert.assertEquals(1, list.length);
 
         return new File(smsTemporaryFolder, list[0]);
+    }
+
+    private void debug(File smsTemporaryFolder) {
+        logger.info("#######" + smsTemporaryFolder.getAbsolutePath());
+
+        logger.info(Arrays.toString(smsTemporaryFolder.listFiles()));
     }
 
 
