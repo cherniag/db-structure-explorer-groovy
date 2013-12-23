@@ -5,5 +5,5 @@ package mobi.nowtechnologies.server.persistence.domain.enums;
  * Date: 12/16/13
  */
 public enum TaskStatus {
-    ACTIVE, RETRY;
+    ACTIVE, RETRY, INACTIVE;
 }
