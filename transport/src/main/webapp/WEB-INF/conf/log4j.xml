@@ -347,8 +347,8 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 	</logger>
 	
-	<logger name="org.hibernate">
-		<level value="TRACE"></level>
+	<logger name="org.hibernate.SQL">
+		<level value="INFO"></level>
 		<appender-ref ref="paymentExecutionAppender" />
 		<appender-ref ref="pendingPaymentJobAppender" />
 		<appender-ref ref="weeklyUpdateServiceFile" />
@@ -357,8 +357,8 @@
 		<appender-ref ref="userSMSNotificationAppender" />
         <appender-ref ref="businessTaskJobAppender" />
 	</logger>
-	<!--<logger name="org.hibernate.type">
-		<level value="TRACE"></level>
+	<logger name="org.hibernate.type">
+		<level value="INFO"></level>
 		<appender-ref ref="paymentExecutionAppender" />
 		<appender-ref ref="pendingPaymentJobAppender" />
 		<appender-ref ref="weeklyUpdateServiceFile" />
@@ -366,7 +366,7 @@
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
         <appender-ref ref="businessTaskJobAppender" />
-	</logger>-->
+	</logger>
 	<logger name="org.hibernate.cache">
 		<level value="INFO"></level>
 		<appender-ref ref="pendingPaymentJobAppender" />
