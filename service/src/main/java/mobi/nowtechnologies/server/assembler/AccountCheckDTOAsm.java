@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
@@ -24,8 +23,11 @@ import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATE
 public class AccountCheckDTOAsm {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckDTOAsm.class);
 
-    @Resource
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
+
+    public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
+        this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
+    }
 
     public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial){
         LOGGER.debug("user=[{}]", user);

@@ -39,7 +39,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="userService" ref="service.UserService" />
     </bean>
 
-    <bean id="accountCheckDTOAsm" class="mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm" />
+    <bean id="accountCheckDTOAsm" class="mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm">
+        <property name="autoOptInExemptPhoneNumberRepository" ref="autoOptInExemptPhoneNumberRepository" />
+    </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
