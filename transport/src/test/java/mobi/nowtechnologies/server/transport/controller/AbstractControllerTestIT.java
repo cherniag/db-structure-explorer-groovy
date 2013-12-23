@@ -38,7 +38,7 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
 		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.controller", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-public class AbstractControllerTestIT {
+public abstract class AbstractControllerTestIT {
 	
 	protected MockMvc mockMvc;
 

@@ -197,18 +197,19 @@ public abstract class CommonController extends ProfileController implements Appl
 	public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
 		ServerMessage serverMessage = exception.getServerMessage();
 		
-		final String localizedDisplayMessage;
+		String localizedDisplayMessage;
 		final String message;
 		final Integer errorCode;
-		
-		if(serverMessage!=null){
-			errorCode = serverMessage.getErrorCode();
 
-			localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
-			message = localizedDisplayMessage;
-		}else{
-			errorCode = null;
-            int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        if(serverMessage!=null){
+            errorCode = serverMessage.getErrorCode();
+
+            localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
+            localizedDisplayMessage = versionPriority > 0 ? localizedDisplayMessage : "Bad user credentials";
+            message = localizedDisplayMessage;
+        }else{
+            errorCode = null;
 			localizedDisplayMessage= versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
 			message=localizedDisplayMessage;
 		}
