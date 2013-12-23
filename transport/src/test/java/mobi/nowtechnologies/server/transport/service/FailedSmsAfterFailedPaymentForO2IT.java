@@ -14,7 +14,6 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
-import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -106,20 +104,14 @@ public class FailedSmsAfterFailedPaymentForO2IT {
    }
 
     private File getLastSmsFile(long time) {
-        String[] list = smsTemporaryFolder.list(new AgeFileFilter(time, false));
-
-        debug(smsTemporaryFolder);
+        File[] list = smsTemporaryFolder.listFiles(new TimestampExtFileNameFileter(time));
 
         Assert.assertEquals(1, list.length);
 
-        return new File(smsTemporaryFolder, list[0]);
+        return list[0];
     }
 
-    private void debug(File smsTemporaryFolder) {
-        logger.info("#######" + smsTemporaryFolder.getAbsolutePath());
 
-        logger.info(Arrays.toString(smsTemporaryFolder.listFiles()));
-    }
 
 
 }

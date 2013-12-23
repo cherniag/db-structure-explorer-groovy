@@ -72,7 +72,7 @@ public class PostsSaverPostService extends PostService {
     }
 
     private void saveDataToFile(String url, List<NameValuePair> nameValuePairs, String body) throws IOException {
-        File smsFile = new File(smsTemporaryFolder, "smsInTime_" + System.currentTimeMillis());
+        File smsFile = new File(smsTemporaryFolder, "smsInTime." + System.currentTimeMillis());
         List<String> lines = new ArrayList<String>();
         lines.add("URL: " + url);
         lines.add("Body: " + body);
