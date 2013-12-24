@@ -38,6 +38,7 @@ public class AccountCheckDTOAsmTest {
     private UserStatus userStatus;
     @Mock
     private DeviceType deviceType;
+    private String mobile = "+447111111111";
 
     @Before
     public void setUp() throws Exception {
@@ -45,6 +46,7 @@ public class AccountCheckDTOAsmTest {
         when(user.getUserGroup()).thenReturn(userGroup);
         when(user.getStatus()).thenReturn(userStatus);
         when(user.getDeviceType()).thenReturn(deviceType);
+        when(user.getMobile()).thenReturn(mobile);
         when(userGroup.getChart()).thenReturn(chart);
         when(userGroup.getDrmPolicy()).thenReturn(drmPolicy);
         when(drmPolicy.getDrmType()).thenReturn(drmType);
@@ -52,7 +54,7 @@ public class AccountCheckDTOAsmTest {
 
     @Test
     public void testToAccountCheckDTOWhenUserIsInDatabase() throws Exception {
-        when(autoOptInExemptPhoneNumberRepository.findOne("username")).thenReturn(autoOptInExemptPhoneNumber);
+        when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(autoOptInExemptPhoneNumber);
 
         AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false);
 
@@ -61,7 +63,7 @@ public class AccountCheckDTOAsmTest {
 
     @Test
     public void testToAccountCheckDTOWhenUserIsInNotDatabase() throws Exception {
-        when(autoOptInExemptPhoneNumberRepository.findOne("username")).thenReturn(null);
+        when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
 
         boolean isSubjectToAutoOptIn = true;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);

@@ -119,11 +119,15 @@ public class AccountCheckDTOAsm {
     }
 
     private boolean calcSubjectToAutoOptIn(User user) {
-        AutoOptInExemptPhoneNumber byUserName = autoOptInExemptPhoneNumberRepository.findOne(user.getUserName());
+        LOGGER.info("Checking for availability in database for mobile phone: " + user.getMobile());
+
+        AutoOptInExemptPhoneNumber byUserName = autoOptInExemptPhoneNumberRepository.findOne(user.getMobile());
 
         if(byUserName != null) {
+            LOGGER.info("Found in database auto-opt-in record for mobile: " + user.getMobile());
             return false;
         } else {
+            LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
             return user.isSubjectToAutoOptIn();
         }
     }
