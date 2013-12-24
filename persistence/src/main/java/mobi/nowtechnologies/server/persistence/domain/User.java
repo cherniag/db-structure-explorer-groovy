@@ -467,6 +467,12 @@ public class User implements Serializable {
         return null;
     }
 
+    public String getCommunityRewriteUrl(){
+        Community community = getUserGroup() != null ? getUserGroup().getCommunity() : null;
+        String communityRewriteUrl = community != null ? community.getRewriteUrlParameter() : null;
+        return communityRewriteUrl;
+    }
+
     public List<Chart> getSelectedCharts() {
         return selectedCharts;
     }

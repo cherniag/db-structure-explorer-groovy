@@ -7,6 +7,8 @@ http://www.springframework.org/schema/task http://www.springframework.org/schema
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+    <import resource="task.xml"/>
+
 	<!-- Application properties -->
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -79,6 +81,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="otacValidationService" ref="service.OtacValidationService" />
         <property name="userGroupRepository" ref="userGroupRepository" />
         <property name="userNotificationService" ref="service.UserNotificationService" />
+        <property name="taskService" ref="task.TaskService"/>
         <property name="sendActivationSMS" value="false"/>
 	</bean>
 

@@ -59,7 +59,7 @@ public class Community implements Serializable {
 		return this.id;
 	}
 
-	void setId(Integer id) {
+    public void setId(Integer id) {
 		this.id = id;
 	}
 
