@@ -24,6 +24,8 @@ public interface UserNotificationService {
 
 	Future<Boolean> sendSmsOnFreeTrialExpired(User user) throws UnsupportedEncodingException;
 
+	Future<Boolean> sendChargeNotificationReminder(User user) throws UnsupportedEncodingException;
+
 	Future<Boolean> sendLowBalanceWarning(User user) throws UnsupportedEncodingException;
 
 	Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException;
