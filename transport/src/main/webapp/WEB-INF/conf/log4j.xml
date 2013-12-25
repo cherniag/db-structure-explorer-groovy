@@ -132,7 +132,7 @@
 		</filter>
 	</appender>
 
-    <!-- Sms According To Law Job -->
+    <!-- Business Task Job -->
     <appender name="businessTaskJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/jobs-businessTask.log" />
         <param name="encoding" value="UTF-8" />
