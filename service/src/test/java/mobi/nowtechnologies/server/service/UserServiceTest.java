@@ -3802,6 +3802,7 @@ public class UserServiceTest {
         User user = Mockito.mock(User.class);
         PowerMockito.when(user.getActivationStatus()).thenReturn(ACTIVATED);
         PowerMockito.when(user.hasAllDetails()).thenReturn(true);
+        PowerMockito.when(user.isActivatedUserName()).thenReturn(true);
         PowerMockito.when(user.getUserName()).thenReturn("+4400000000000");
         PowerMockito.when(user.getMobile()).thenReturn("+4400000000000");
 
@@ -3809,8 +3810,8 @@ public class UserServiceTest {
 
         verify(user, times(1)).getActivationStatus();
         verify(user, times(1)).hasAllDetails();
-        verify(user, times(1)).getUserName();
-        verify(user, times(1)).getMobile();
+        verify(user, times(0)).getUserName();
+        verify(user, times(0)).getMobile();
     }
 
     @Test
@@ -3818,21 +3819,29 @@ public class UserServiceTest {
         User user = Mockito.mock(User.class);
         PowerMockito.when(user.getActivationStatus()).thenReturn(ENTERED_NUMBER);
         PowerMockito.when(user.hasAllDetails()).thenReturn(true);
+        PowerMockito.when(user.isTempUserName()).thenReturn(true);
+        PowerMockito.when(user.isLimited()).thenReturn(true);
+        PowerMockito.when(user.hasPhoneNumber()).thenReturn(true);
         PowerMockito.when(user.getUserName()).thenReturn("afdfsdfsdfsdfsdfsdfsd");
         PowerMockito.when(user.getMobile()).thenReturn("+4400000000000");
 
         userServiceSpy.checkActivationStatus(user);
 
         verify(user, times(1)).getActivationStatus();
-        verify(user, times(1)).hasAllDetails();
-        verify(user, times(1)).getUserName();
-        verify(user, times(1)).getMobile();
+        verify(user, times(1)).hasPhoneNumber();
+        verify(user, times(1)).isTempUserName();
+        verify(user, times(0)).hasAllDetails();
+        verify(user, times(0)).getUserName();
+        verify(user, times(0)).getMobile();
     }
 
     @Test
     public void shouldReturn_OnCheckActivationStatus_BecauseUserIsRegistered(){
         User user = Mockito.mock(User.class);
         PowerMockito.when(user.getActivationStatus()).thenReturn(REGISTERED);
+        PowerMockito.when(user.isTempUserName()).thenReturn(true);
+        PowerMockito.when(user.isLimited()).thenReturn(true);
+        PowerMockito.when(user.hasPhoneNumber()).thenReturn(false);
         PowerMockito.when(user.getUserName()).thenReturn("afdfsdfsdfsdfsdfsdfsd");
         PowerMockito.when(user.getDeviceUID()).thenReturn("afdfsdfsdfsdfsdfsdfsd");
         PowerMockito.when(user.hasAllDetails()).thenReturn(false);
@@ -3841,8 +3850,61 @@ public class UserServiceTest {
 
         verify(user, times(1)).getActivationStatus();
         verify(user, times(1)).hasAllDetails();
-        verify(user, times(1)).getUserName();
+        verify(user, times(1)).isLimited();
+        verify(user, times(1)).hasPhoneNumber();
+        verify(user, times(1)).isTempUserName();
+        verify(user, times(0)).getUserName();
         verify(user, times(0)).getMobile();
+    }
+
+    @Test
+    public void shouldReturnTrue_OnIsTempUserName_WhenEqualUsernameAndDeviceUID(){
+        User user = UserFactory.createUser();
+        user.setUserName(user.getDeviceUID());
+
+        boolean result = user.isTempUserName();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldReturnTrue_OnIsActivatedUserName_WhenEqualUsernameAndMobile(){
+        User user = UserFactory.createUser();
+        user.setUserName(user.getMobile());
+
+        boolean result = user.isActivatedUserName();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldReturnTrue_OnHasPhoneNumber_WhenMobileNotNUll(){
+        User user = UserFactory.createUser();
+        user.setMobile("+4440000000001");
+
+        boolean result = user.hasPhoneNumber();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldReturnFalse_OnHasPhoneNumber_WhenMobileNUll(){
+        User user = UserFactory.createUser();
+        user.setMobile(null);
+
+        boolean result = user.hasPhoneNumber();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void shouldReturnFalse_OnHasPhoneNumber_WhenMobileEmpty(){
+        User user = UserFactory.createUser();
+        user.setMobile(null);
+
+        boolean result = user.hasPhoneNumber();
+
+        assertFalse(result);
     }
 
     @Test(expected = UserCredentialsException.class)

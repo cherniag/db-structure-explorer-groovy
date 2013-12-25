@@ -101,12 +101,7 @@ public class AccCheckController extends CommonController {
                 pushNotificationToken = iphoneToken;
             }
 
-            if (isValidDeviceUID(deviceUID)) {
-                user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-            }
-            else {
-                user = userService.checkCredentials(userName, userToken, timestamp, community);
-            }
+            user = checkUser(userName, userToken, timestamp, deviceUID);
             LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(user.getId()), pushNotificationToken, deviceType, transactionReceipt});
 
             logAboutSuccessfullAccountCheck();

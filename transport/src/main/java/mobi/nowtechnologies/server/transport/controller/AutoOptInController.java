@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +34,7 @@ public class AutoOptInController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            user = userService.checkCredentials(userName, userToken, timestamp, getCurrentCommunityUri(), deviceUID);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ENTERED_NUMBER, ActivationStatus.ACTIVATED);
 
             user = userService.autoOptIn(user, otac);
 

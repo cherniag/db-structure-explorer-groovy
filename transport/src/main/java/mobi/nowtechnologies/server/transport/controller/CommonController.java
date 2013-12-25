@@ -5,12 +5,14 @@ import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -327,6 +329,21 @@ public abstract class CommonController extends ProfileController implements Appl
 		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
 		return rememberMeToken;
 	}
+
+    public User checkUser(String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses){
+        User user = null;
+        String community = getCurrentCommunityUri();
+        if (isValidDeviceUID(deviceUID)) {
+            user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+        }
+        else {
+            user = userService.checkCredentials(userName, userToken, timestamp, community);
+        }
+
+        userService.checkActivationStatus(user, activationStatuses);
+
+        return user;
+    }
 
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {
         try {

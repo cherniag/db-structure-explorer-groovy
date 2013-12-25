@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,12 +48,7 @@ public class ApplyInitPromoController extends CommonController {
 
             boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            if (isValidDeviceUID(deviceUID)) {
-                user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-            }
-            else {
-                user = userService.checkCredentials(userName, userToken, timestamp, community);
-            }
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ENTERED_NUMBER);
 
             user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4);
 

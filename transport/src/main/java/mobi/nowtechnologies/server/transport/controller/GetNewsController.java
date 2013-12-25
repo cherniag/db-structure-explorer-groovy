@@ -2,9 +2,9 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.MessageService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.NewsDto;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,17 +18,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class GetNewsController extends CommonController {
 
-	private UserService userService;
 	private MessageService messageService;
     private AccCheckController accCheckController;
 
     public void setAccCheckController(AccCheckController accCheckController) {
         this.accCheckController = accCheckController;
     }
-
-    public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
 
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
@@ -51,12 +46,8 @@ public class GetNewsController extends CommonController {
         String community = getCurrentCommunityUri();
 		try {
 			LOGGER.info("command processing started");
-            if (isValidDeviceUID(deviceUID)) {
-                user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-            }
-            else {
-                user = userService.checkCredentials(userName, userToken, timestamp, community);
-            }
+
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
 			NewsDto newsDto= messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
 

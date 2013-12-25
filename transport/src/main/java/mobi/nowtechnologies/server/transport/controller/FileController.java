@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.web.servlet.PlainTextModalAndView;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -56,12 +57,7 @@ public class FileController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            if (isValidDeviceUID(deviceUID)) {
-                user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-            }
-            else {
-                user = userService.checkCredentials(userName, userToken, timestamp, community);
-            }
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
             FileType fileType = FileType.valueOf(fileTypeName);
             if(fileType == FileType.VIDEO){

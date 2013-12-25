@@ -3,12 +3,15 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
@@ -21,6 +24,9 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.j
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
+
+    @Autowired
+    private UserStatusRepository userStatusRepository;
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_thenBigPromotionSetAndAccCheckInfo() throws Exception {
@@ -159,7 +165,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     public void givenValidO2Token_whenUserReInstallAppWithOldPhoneNumber_then_ReturnAUserWithOldPhoneNumberAndAppliedPromo() throws Exception {
         //given
         String userName = "+447111111111";
-        String oldUserName = "+447888888888";
+        String oldUserName = "b88106713409e92622461a876abcd74c";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
         String communityName = "o2";
@@ -229,18 +235,18 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isForbidden());
 
         //when
         user = userService.findByName(userName);
         Assert.assertEquals(user.getUserName(), "+447733333333");
-        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());;
+        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
     }
 
     @Test
     public void applyInitPromo_whenUserReInstallAppWithNewPhoneNumber_then_ReturnAUserWithNewPhoneNumber() throws Exception {
     	//given
-        String userName = "+447766666666";
+        String userName = "999a72f8864fd5c23957beef9d99656568";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
         String communityName = "o2";
@@ -368,6 +374,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         user.setContract(Contract.PAYG);
         user.setTariff(Tariff._3G);
         user.setContractChannel(ContractChannel.DIRECT);
+
+        UserStatus userStatus = userStatusRepository.findByName(UserStatus.LIMITED);
+        user.setStatus(userStatus);
 
         return userService.updateUser(user);
     }

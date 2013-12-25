@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.ThrottlingService;
 import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +64,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, true, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);

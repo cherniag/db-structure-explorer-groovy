@@ -93,7 +93,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT{
         assertEquals(0, accountCheckDTO.graceCreditSeconds);
         assertEquals(true, accountCheckDTO.canGetVideo);
         assertEquals(false, accountCheckDTO.canPlayVideo);
-        assertEquals(false, accountCheckDTO.hasAllDetails);
+        assertEquals(true, accountCheckDTO.hasAllDetails);
         assertEquals(true, accountCheckDTO.showFreeTrial);
         assertEquals(false, accountCheckDTO.canActivateVideoTrial);
         assertEquals(false, accountCheckDTO.eligibleForVideo);

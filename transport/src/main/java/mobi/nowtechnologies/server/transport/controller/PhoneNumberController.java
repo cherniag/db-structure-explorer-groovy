@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.dto.transport.PhoneActivationDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,7 +26,8 @@ public class PhoneNumberController extends CommonController {
 			@RequestParam(value = "PHONE", required = false) String phone,
 			@RequestParam("USER_NAME") String userName,
 			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp) throws Exception {
+			@RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
 
         String community = getCurrentCommunityUri();
         String apiVersion = getCurrentApiVersion();
@@ -34,7 +36,7 @@ public class PhoneNumberController extends CommonController {
 		Exception ex = null;
 		User user = null;
 		try {
-			user = userService.checkCredentials(userName, userToken, timestamp, community);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
 			
 			boolean populateO2SubscriberData = !isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 			user = userService.activatePhoneNumber(user, phone);
@@ -61,7 +63,8 @@ public class PhoneNumberController extends CommonController {
             @RequestParam(value = "PHONE", required = false) String phone,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp) throws Exception {
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         LOGGER.info("PHONE_NUMBER Started for user[{}] community[{}]", userName);
 
         Exception ex = null;
@@ -71,7 +74,7 @@ public class PhoneNumberController extends CommonController {
         try {
             UserService userService = getUserService(community);
 
-            user = userService.checkCredentials(userName, userToken, timestamp, community);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
 
             user = userService.activatePhoneNumber(user, phone);
 

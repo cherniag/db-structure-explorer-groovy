@@ -451,6 +451,18 @@ public class User implements Serializable {
         return isO2User() && !isO2Consumer();
     }
 
+    public boolean isTempUserName(){
+        return getUserName().equals(getDeviceUID());
+    }
+
+    public boolean isActivatedUserName(){
+        return getUserName().equals(getMobile());
+    }
+
+    public boolean hasPhoneNumber(){
+        return !StringUtils.isEmpty(getMobile());
+    }
+
     public void addPaymentDetails(PaymentDetails paymentDetails) {
         if (null != paymentDetails) {
             this.paymentDetailsList.add(paymentDetails);

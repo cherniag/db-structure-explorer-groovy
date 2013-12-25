@@ -50,10 +50,11 @@ public class SQLTestInitializer {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void prepareDynamicTestData() throws Exception{
-        if(userRepository.count() == 0){
-            sqlUtils.importScript("classpath:META-INF/dynamic-test-data.sql");
+        if(userRepository.count() != 0){
+            cleanDynamicTestData();
         }
 
+        sqlUtils.importScript("classpath:META-INF/dynamic-test-data.sql");
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -78,5 +79,7 @@ public class SQLTestInitializer {
 
         drmRepository.deleteAll();
         userRepository.deleteAll();
+
+        userRepository.flush();
     }
 }

@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,16 +38,10 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
                               @RequestParam("DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
-        String communityUri = getCurrentCommunityUri();
         try {
             LOGGER.info("command processing started");
 
-            if (isValidDeviceUID(deviceUID)) {
-                user = userService.checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
-            }
-            else {
-                user = userService.checkCredentials(userName, userToken, timestamp, communityUri);
-            }
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
             user = promotionService.activateVideoAudioFreeTrial(user);
 
@@ -57,7 +52,7 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
             ex = e;
             throw e;
         } finally {
-            logProfileData(deviceUID, communityUri, null, null, user, ex);
+            logProfileData(deviceUID, getCurrentCommunityUri(), null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }

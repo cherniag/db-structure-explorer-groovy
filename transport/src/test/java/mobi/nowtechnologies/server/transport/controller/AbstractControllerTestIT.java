@@ -21,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.web.server.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.Mockito.mock;
@@ -79,7 +78,6 @@ public abstract class AbstractControllerTestIT {
     private SQLTestInitializer sqlTestInitializer;
 
     @After
-    @Transactional
     public void tireDown(){
         o2ProviderService.setO2Service(o2Service);
         userService.setMobileProviderService(o2ProviderService);
@@ -89,7 +87,6 @@ public abstract class AbstractControllerTestIT {
     }
 
     @Before
-    @Transactional
     public void setUp() throws Exception {
         mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
         gson = new Gson();

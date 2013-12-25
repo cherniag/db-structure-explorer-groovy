@@ -349,8 +349,6 @@ public class UserService {
                             new Object[]{user, UserStatus.EULA.name()});
                 }
                 else {
-                    checkActivationStatus(user);
-
                     return user;
                 }
             } else {
@@ -368,21 +366,56 @@ public class UserService {
         throw new UserCredentialsException(serverMessage);
     }
 
-    public void checkActivationStatus(User user){
+    public void checkActivationStatus(User user, ActivationStatus... availableActivationStatuses){
         ActivationStatus activationStatus = user.getActivationStatus();
-        if(!user.hasAllDetails() && user.getUserName().equals(user.getDeviceUID())){
-            if(activationStatus != REGISTERED){
-                LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have status ["+REGISTERED+"]");
-                throw new ActivationStatusException(activationStatus, REGISTERED);
+        if(availableActivationStatuses != null && availableActivationStatuses.length > 0){
+            List<ActivationStatus> statusList = Arrays.asList(availableActivationStatuses);
+            if(!statusList.contains(activationStatus)){
+                LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have one of activation statuses" + statusList);
+                throw new ActivationStatusException(activationStatus, availableActivationStatuses[0]);
             }
-        } else if(!user.getUserName().equals(user.getMobile())) {
-            if(activationStatus != ENTERED_NUMBER){
-                LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have status ["+ENTERED_NUMBER+"]");
-                throw new ActivationStatusException(activationStatus, ENTERED_NUMBER);
+        }
+
+        String message = null;
+        String messageCode = null;
+        if(activationStatus == REGISTERED){
+            if(!user.isTempUserName()){
+                message = "User activation status [REGISTERED] is invalid. User must have temp userName";
+                messageCode = "error.604.activation.status.REGISTERED.invalid.userName";
+            } else if(user.hasAllDetails()){
+                message = "User activation status [REGISTERED] is invalid. User can't have all details";
+                messageCode = "error.604.activation.status.REGISTERED.invalid.userDetails";
+            } else if(!user.isLimited()){
+                message = "User activation status [REGISTERED] is invalid. User must have limit status";
+                messageCode = "error.604.activation.status.REGISTERED.invalid.status";
+            } else if(user.hasPhoneNumber()){
+                message = "User activation status [REGISTERED] is invalid. User can't have phoneNumber";
+                messageCode = "error.604.activation.status.REGISTERED.invalid.phoneNumber";
             }
-        } else if(activationStatus != ACTIVATED){
-            LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have status ["+ACTIVATED+"]");
-            throw new ActivationStatusException(activationStatus, ACTIVATED);
+        } else if(activationStatus == ENTERED_NUMBER) {
+            if(!user.isTempUserName()){
+                message = "User activation status [ENTERED_NUMBER] is invalid. User must have temp userName";
+                messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.userName";
+            } else if(!user.isLimited()){
+                message = "User activation status [ENTERED_NUMBER] is invalid. User must have limit status";
+                messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.status";
+            } else if(!user.hasPhoneNumber()){
+                message = "User activation status [ENTERED_NUMBER] is invalid. User must have phoneNumber";
+                messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.phoneNumber";
+            }
+        } else if(activationStatus == ACTIVATED){
+            if(!user.isActivatedUserName()){
+                message = "User activation status [ACTIVATED] is invalid. User must have activated userName";
+                messageCode = "error.604.activation.status.ACTIVATED.invalid.userName";
+            } else if(!user.hasAllDetails()){
+                message = "User activation status [ACTIVATED] is invalid. User must have all user details";
+                messageCode = "error.604.activation.status.ACTIVATED.invalid.status";
+            }
+        }
+
+        if(message != null){
+            LOGGER.error(message);
+            throw new ActivationStatusException(message, messageCode);
         }
     }
 
@@ -405,6 +438,8 @@ public class UserService {
         LOGGER.info("Output parameter user=[{}]", user);
         return user;
     }
+
+
 
     public UserBanned getUserBanned(Integer userId) {
         return userBannedRepository.findOne(userId);
@@ -1376,7 +1411,6 @@ public class UserService {
             setPotentialPromoByPromoCode(user, promotionCode);
         }
 
-        user.setActivationStatus(REGISTERED);
         userRepository.save(user);
         LOGGER.info("REGISTER_USER user[{}] changed activation_status to[{}]", user.getUserName(), REGISTERED);
         return user;

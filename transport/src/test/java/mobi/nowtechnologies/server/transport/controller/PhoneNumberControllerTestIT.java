@@ -337,7 +337,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+        ).andExpect(status().isForbidden()).andExpect(xpath("/response/errorMessage/errorCode").string("604"));
     }
 
     @Test
@@ -361,7 +361,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+        ).andExpect(status().isForbidden()).andExpect(xpath("/response/errorMessage/errorCode").string("604"));
     }
 
     @Test
@@ -455,7 +455,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
     @Test
     @Transactional
     public void testActivatePhoneNumberO2_NotPresentUserWithMobile() throws Exception {
-        String userName = "b88106713409e92622461a876abcd74b444";
+        String userName = "b88106713409e92622461a876abcd74a444";
         String apiVersion = "4.0";
         String communityName = "o2";
         String communityUrl = "o2";

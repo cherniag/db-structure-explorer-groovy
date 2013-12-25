@@ -5,13 +5,11 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -304,6 +302,8 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 .withSegment(SegmentType.CONSUMER)
                 .withContract(Contract.PAYM)
                 .withProvider(ProviderType.O2)
+                .withContractChannel(ContractChannel.DIRECT)
+                .withTariff(Tariff._3G)
                 .withNextSubPayment(new Date(1000L * 1988143200))
                 .withUserName(userName)
                 .withDeviceUID("b88106713409e92822461a876abcd74c")
