@@ -184,6 +184,7 @@ public class TaskRepositoryTestIT extends AbstractTransactionalJUnit4SpringConte
     private User createAndSaveUser() {
         User user = UserFactory.createUser();
         user.setUserName(UUID.randomUUID().toString());
+        user.setDeviceUID(user.getUserName());
         return userRepository.save(user);
     }
 
