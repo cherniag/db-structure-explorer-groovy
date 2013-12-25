@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.job;
 import mobi.nowtechnologies.server.job.task.ProcessorContainer;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.service.TaskService;
+import mobi.nowtechnologies.server.shared.log.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -24,21 +25,26 @@ public class BusinessTaskJob {
     private int tasksCount = 100;
 
     public void execute() {
-        LOGGER.info("About to start BusinessTaskJob...");
-        long now = System.currentTimeMillis();
-        List<Task> tasksListForExecution = taskService.getTasksForExecution(now, tasksCount);
-        LOGGER.info("{} tasks found, max count={}", tasksListForExecution.size(), tasksCount);
-        if (tooManyTasks(tasksListForExecution.size())) {
-            warnAboutTooManyTasks(now);
-        }
-        for (Task task : tasksListForExecution) {
-            try {
-                executor.execute(new ExecutableTask(task));
-            } catch (RejectedExecutionException e) {
-                LOGGER.error("Can't execute ExecutableTask({})", task.toString(), e);
+        try {
+            LogUtils.putClassNameMDC(this.getClass());
+            LOGGER.info("About to start BusinessTaskJob...");
+            long now = System.currentTimeMillis();
+            List<Task> tasksListForExecution = taskService.getTasksForExecution(now, tasksCount);
+            LOGGER.info("{} tasks found, max count={}", tasksListForExecution.size(), tasksCount);
+            if (tooManyTasks(tasksListForExecution.size())) {
+                warnAboutTooManyTasks(now);
             }
+            for (Task task : tasksListForExecution) {
+                try {
+                    executor.execute(new ExecutableTask(task));
+                } catch (RejectedExecutionException e) {
+                    LOGGER.error("Can't execute ExecutableTask({})", task.toString(), e);
+                }
+            }
+            LOGGER.info("BusinessTaskJob completed.");
+        } finally {
+            LogUtils.removeClassNameMDC();
         }
-        LOGGER.info("BusinessTaskJob completed.");
     }
 
     private void warnAboutTooManyTasks(long now) {
