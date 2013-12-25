@@ -122,6 +122,8 @@ public class UserService {
     private boolean sendActivationSMS = false;
     private UserNotificationService userNotificationService;
 
+    private TaskService taskService;
+
     private User checkAndMerge(User user, User mobileUser) {
         if (mobileUser.getId() != user.getId()) {
             user = mergeUser(mobileUser, user);
@@ -814,10 +816,9 @@ public class UserService {
     public User unsubscribeUser(User user, final String reason) {
         LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
         notNull(user, "The parameter user is null");
-
         user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
-
         user = entityService.updateEntity(user);
+        taskService.cancelSendChargeNotificationTask(user);
         LOGGER.info("Output parameter user=[{}]", user);
         return user;
     }
@@ -1046,9 +1047,13 @@ public class UserService {
             user.setNextSubPayment(Utils.getNewNextSubPayment(oldNextSubPayment));
         }
 
+        if(paymentSystem.equals(PaymentDetails.VF_PSMS_TYPE)){
+            taskService.createSendChargeNotificationTask(user);
+        }
+
 		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), CARD_TOP_UP));
 		// The main idea is that we do pre-payed service, this means that
-		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
+		// in case of first payment or after LIMITED status kwe need to decrease subBalance of user immediately
 		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
 			if (!user.isSMSActivatedUser() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
 				user.setSubBalance(user.getSubBalance() - 1);
@@ -1063,6 +1068,7 @@ public class UserService {
 
         LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
     }
+
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User updateUserBalance(User user, byte intSubBalance) {
@@ -1442,6 +1448,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // TODO: PERFORMANCE: could be improved by avoiding unneeded queries basing on the condition
     private boolean canBePromoted(Community community, String deviceUID, String deviceModel) {
         boolean existsInPromotedList = deviceService.existsInPromotedList(community, deviceUID);
         boolean promotedDeviceModel = deviceService.isPromotedDeviceModel(community, deviceModel);
@@ -2018,5 +2025,9 @@ public class UserService {
 
     public void setSendActivationSMS(boolean sendActivationSMS) {
         this.sendActivationSMS = sendActivationSMS;
+    }
+
+    public void setTaskService(TaskService taskService) {
+        this.taskService = taskService;
     }
 }

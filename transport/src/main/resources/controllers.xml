@@ -18,6 +18,7 @@
 	</bean>
 
 	<bean id="transport.AccCheckController" class="mobi.nowtechnologies.server.transport.controller.AccCheckController" parent="transport.CommonController">
+		<property name="accountCheckDTOAsm" ref="accountCheckDTOAsm" />
 		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
 		<property name="chartService" ref="service.ChartService" />
 		<property name="userDeviceDetailsService" ref="service.UserDeviceDetailsService" />

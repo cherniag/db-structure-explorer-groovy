@@ -301,6 +301,33 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
     }
 
+    @Override
+    public Future<Boolean> sendChargeNotificationReminder(User user) throws UnsupportedEncodingException {
+        LOGGER.info("Start sending charge notification reminder for user id={} userName={} mobile={}", user.getId(), user.getUserName(), user.getMobile());
+        Community community = user.getUserGroup().getCommunity();
+        Future<Boolean> futureResult = null;
+        try {
+            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
+            if (!rejectDevice(user, "sms.notification.charge.reminder.not.for.device.type")){
+                boolean result = sendSMSWithUrl(user, "sms.charge.reminder.text", null);
+                if(result){
+                    LOGGER.info("Charge notification reminder has been sent");
+                    futureResult = new AsyncResult<Boolean>(Boolean.TRUE);
+                }else {
+                    LOGGER.warn("Charge notification reminder was failed");
+                }
+            }else{
+                LOGGER.warn("Charge notification reminder was rejected for device type {}", user.getDeviceTypeIdString());
+            }
+        } catch (RuntimeException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        } finally {
+            LogUtils.removeGlobalMDC();
+        }
+        return futureResult != null ? futureResult : new AsyncResult<Boolean>(Boolean.FALSE);
+    }
+
     @Async
     @Override
     public Future<Boolean> sendLowBalanceWarning(User user) throws UnsupportedEncodingException {

@@ -61,7 +61,7 @@ public class VFNZSMSGatewayServiceImplTest {
         SMSResponse result = fixture.send(dest, msg, source);
 
         Assert.assertEquals(true, result.isSuccessful());
-        Assert.assertEquals("Sms was sent successfully from 4003 to +64212345678 with message Test", result.getMessage());
+        Assert.assertEquals("Sms was sent successfully from [4003] to [+64212345678] with message [Test]", result.getMessage());
 
         Mockito.verify(smppServiceMock, Mockito.times(1)).sendMessage(Matchers.argThat(msgMatcher));
     }
@@ -90,7 +90,7 @@ public class VFNZSMSGatewayServiceImplTest {
         SMSResponse result = fixture.send(dest, msg, source);
 
         Assert.assertEquals(false, result.isSuccessful());
-        Assert.assertEquals("Sms was sent unsuccessfully from 4003 to +64212345678 with message Test", result.getMessage());
+        Assert.assertEquals("Sms was sent unsuccessfully from [4003] to [+64212345678] with message [Test]", result.getMessage());
 
         Mockito.verify(smppServiceMock, Mockito.times(1)).sendMessage(Matchers.argThat(msgMatcher));
     }
