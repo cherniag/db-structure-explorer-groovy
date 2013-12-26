@@ -98,7 +98,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);
@@ -132,7 +132,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, true);
             chartDto = convertToOldVersion(chartDto, apiVersion);
@@ -167,7 +167,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, true);
 
