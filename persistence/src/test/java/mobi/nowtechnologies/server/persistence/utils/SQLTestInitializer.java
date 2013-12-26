@@ -49,12 +49,12 @@ public class SQLTestInitializer {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void prepareDynamicTestData() throws Exception{
+    public void prepareDynamicTestData(String... scripts) throws Exception{
         if(userRepository.count() != 0){
             cleanDynamicTestData();
         }
 
-        sqlUtils.importScript("classpath:META-INF/dynamic-test-data.sql");
+        sqlUtils.importScript(scripts);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

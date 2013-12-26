@@ -104,7 +104,7 @@ public abstract class AbstractControllerTestIT {
         otacValidationService.setO2ProviderService(o2ProviderServiceSpy);
         applyInitPromoController.setUpdateO2UserTask(updateO2UserTaskSpy);
 
-        sqlTestInitializer.prepareDynamicTestData();
+        sqlTestInitializer.prepareDynamicTestData("classpath:META-INF/dynamic-test-data.sql");
     }
 
     protected JsonObject getAccCheckContent(final String contentAsString) {
