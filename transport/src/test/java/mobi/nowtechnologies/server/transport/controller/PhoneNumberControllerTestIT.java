@@ -290,7 +290,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
-    public void testResendPinOnActivatePhoneNumber() throws Exception {
+    public void testResendPinOnActivatePhoneNumber_VFNZ() throws Exception {
         String userName = "b88106713409e92622461a876abcd74a";
         String apiVersion = "5.0";
         String communityName = "vf_nz";
@@ -316,6 +316,29 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         Thread.sleep(1000);
 
         verify(vfGatewayServiceSpy, times(1)).send(eq("+64279000456"), anyString(), eq("4003"));
+    }
+
+    @Test
+    public void testResendPinOnActivatePhoneNumber_O2() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74b555";
+        String apiVersion = "3.6";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultXml = aHttpServletResponse.getContentAsString();
+        assertTrue(resultXml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl>https://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
     }
 
     @Test
