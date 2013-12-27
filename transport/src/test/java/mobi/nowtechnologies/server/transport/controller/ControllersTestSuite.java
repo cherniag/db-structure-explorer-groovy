@@ -18,5 +18,5 @@ import org.junit.runners.Suite;
         SignUpDeviceControllerTestIT.class,
         VersionControllerTestIT.class
 })
-public class TestSuitIT {
+public class ControllersTestSuite {
 }
