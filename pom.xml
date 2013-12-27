@@ -48,6 +48,7 @@
                             <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
                             <excludes>
                                 <exclude>**/*IT.java</exclude>
+                                <exclude>**/*Suite.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
@@ -68,9 +69,6 @@
                             <includes>
                                 <include>**/*IT.java</include>
                             </includes>
-                            <excludes>
-                                <exclude>**/*TestIT.java</exclude>
-                            </excludes>
                             <excludes>
                             </excludes>
                         </configuration>
