@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -72,6 +73,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         Assert.assertEquals(O2, user.getProvider());
         Assert.assertEquals(PAYM, user.getContract());
+        Assert.assertEquals(CONSUMER, user.getSegment());
+        Assert.assertEquals(ContractChannel.DIRECT, user.getContractChannel());
 
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
         verify(updateO2UserTaskSpy, times(1)).handleUserUpdate(any(User.class));
@@ -126,6 +129,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         Assert.assertEquals(O2, user.getProvider());
         Assert.assertEquals(PAYG, user.getContract());
+        Assert.assertEquals(CONSUMER, user.getSegment());
+        Assert.assertEquals(ContractChannel.DIRECT, user.getContractChannel());
 
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
         verify(updateO2UserTaskSpy, times(1)).handleUserUpdate(any(User.class));
@@ -435,7 +440,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
         user.setProvider(ProviderType.O2);
-        user.setSegment(SegmentType.CONSUMER);
+        user.setSegment(CONSUMER);
         user.setContract(Contract.PAYG);
         user.setTariff(Tariff._3G);
         user.setContractChannel(ContractChannel.DIRECT);

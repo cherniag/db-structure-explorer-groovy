@@ -69,6 +69,12 @@ public class O2SubscriberData extends SubscriberData {
 		return providerO2;
 	}
 
+    public O2SubscriberData withProviderO2(boolean providerO2) {
+        setProviderO2(providerO2);
+
+        return this;
+    }
+
 	public void setProviderO2(boolean providerO2) {
 		this.providerO2 = providerO2;
 	}
@@ -76,6 +82,12 @@ public class O2SubscriberData extends SubscriberData {
 	public boolean isContractPostPayOrPrePay() {
 		return contractPostPayOrPrePay;
 	}
+
+    public O2SubscriberData withContractPostPayOrPrePay(boolean contractPostPayOrPrePay) {
+        setContractPostPayOrPrePay(contractPostPayOrPrePay);
+
+        return this;
+    }
 
 	public void setContractPostPayOrPrePay(boolean contractPostPayOrPrePay) {
 		this.contractPostPayOrPrePay = contractPostPayOrPrePay;
@@ -93,6 +105,12 @@ public class O2SubscriberData extends SubscriberData {
 		return directOrIndirect4GChannel;
 	}
 
+    public O2SubscriberData withDirectOrIndirect4GChannel(boolean directOrIndirect4GChannel) {
+        setDirectOrIndirect4GChannel(directOrIndirect4GChannel);
+
+        return this;
+    }
+
 	public void setDirectOrIndirect4GChannel(boolean directOrIndirect4GChannel) {
 		this.directOrIndirect4GChannel = directOrIndirect4GChannel;
 	}
@@ -100,6 +118,12 @@ public class O2SubscriberData extends SubscriberData {
 	public boolean isBusinessOrConsumerSegment() {
 		return businessOrConsumerSegment;
 	}
+
+    public O2SubscriberData withBusinessOrConsumerSegment(boolean businessOrConsumerSegment) {
+        setBusinessOrConsumerSegment(businessOrConsumerSegment);
+
+        return this;
+    }
 
 	public void setBusinessOrConsumerSegment(boolean businessOrConsumerSegment) {
 		this.businessOrConsumerSegment = businessOrConsumerSegment;
