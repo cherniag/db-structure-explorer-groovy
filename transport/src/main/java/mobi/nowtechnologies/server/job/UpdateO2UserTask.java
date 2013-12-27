@@ -56,7 +56,7 @@ public class UpdateO2UserTask {
         O2SubscriberData o2SubscriberData;
         if ( userService.isPromotedDevice(u.getMobile(), u.getUserGroup().getCommunity()) ) {
 			o2SubscriberData = o2UserDetailsUpdater.getDefaultSubscriberData();
-            LOG.info("[promoted device] skipping subscriber data for [{}]", u.getMobile());
+            LOG.info("[promoted device] default subscriber data for [{}]", u.getMobile());
 		}else{
             o2SubscriberData = o2Service.getSubscriberData(u.getMobile());
         }
