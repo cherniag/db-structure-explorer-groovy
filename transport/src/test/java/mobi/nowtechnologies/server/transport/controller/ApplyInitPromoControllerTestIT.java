@@ -11,9 +11,12 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -27,6 +30,60 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
     @Autowired
     private UserStatusRepository userStatusRepository;
+
+    @Test
+    public void givenValidO2Token_whenAPPLY_PROMO_v3d6_PromoPhoneNumber() throws Exception {
+        //given
+        String userName = "imei_351722057812750";
+        User user = prepareUserForApplyInitPromo(userName);
+        String apiVersion = "3.6";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = user.getToken();
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                User user = (User)invocation.getArguments()[0];
+                junit.framework.Assert.assertNotNull(user);
+
+                return null;
+            }
+        }).when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
+
+        //then
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
+
+        //when
+        user = userService.findByName(user.getMobile());
+        Assert.assertEquals(13, days(user.getNextSubPayment()));
+        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+        Assert.assertEquals(O2, user.getProvider());
+        Assert.assertEquals(PAYM, user.getContract());
+
+        verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
+        verify(updateO2UserTaskSpy, times(1)).handleUserUpdate(any(User.class));
+
+        mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", user.getMobile())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+
+    }
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_thenBigPromotionSetAndAccCheckInfo() throws Exception {
@@ -44,7 +101,15 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         providerUserDetails.withContract("PAYG").withOperator("o2");
         doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
-        doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                User user = (User)invocation.getArguments()[0];
+                junit.framework.Assert.assertNotNull(user);
+
+                return null;
+            }
+        }).when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
 
         //then
         mockMvc.perform(
