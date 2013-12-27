@@ -56,8 +56,6 @@ public class ApplyInitPromoController extends CommonController {
 
             accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
 
-            user = (User) accountCheckDTO.user;
-
             if (isMajorApiVersionNumberLessThan4) {
                 updateO2UserTask.handleUserUpdate(user);
             }
@@ -73,7 +71,7 @@ public class ApplyInitPromoController extends CommonController {
             throw re;
         }finally {
         	logProfileData(null, community, null, null, user, ex);
-           LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
+            LOGGER.info("APPLY_INIT_PROMO Finished for user[{}] in community[{}] otac_token[{}]", userName, community, token);
         }
     }
 }
