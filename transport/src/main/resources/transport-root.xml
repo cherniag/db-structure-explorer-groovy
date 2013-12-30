@@ -9,6 +9,6 @@
     <import resource="classpath:META-INF/shared.xml"/>
     <import resource="classpath:META-INF/soap.xml"/>
     <import resource="classpath:META-INF/smpp.xml"/>
-
+    <import resource="task-processors.xml"/>
 
 </beans>

@@ -131,7 +131,24 @@
 			<param name="acceptOnMatch" value="true" />
 		</filter>
 	</appender>
-	
+
+    <!-- Business Task Job -->
+    <appender name="businessTaskJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/jobs-businessTask.log" />
+        <param name="encoding" value="UTF-8" />
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/jobs-businessTask_%d{yyyy-ww}.gz" />
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c - %m%n" />
+        </layout>
+        <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
+            <param name="contextKey" value="class" />
+            <param name="classNames" value="mobi.nowtechnologies.server.job.BusinessTaskJob" />
+            <param name="acceptOnMatch" value="true" />
+        </filter>
+    </appender>
+
 	<!-- Payment Appenders -->
 	<appender name="pendingPaymentJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
 		<param name="File" value="${catalina.base}/logs/jobs-create-pending-payment.log" />
@@ -294,6 +311,7 @@
 		<appender-ref ref="paymentRetryJobAppender" />
 		<appender-ref ref="cleanExpiredPaymentJobAppender" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />
+        <appender-ref ref="businessTaskJobAppender" />
 	</logger>
 
 
@@ -310,6 +328,7 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
+        <appender-ref ref="businessTaskJobAppender" />
 	</logger>
 	<logger name="org.springframework.transaction">
 		<level value="INFO" />
@@ -318,6 +337,7 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
+        <appender-ref ref="businessTaskJobAppender" />
 	</logger>
 	
 	<logger name="mobi.nowtechnologies.server.service.payment">
@@ -335,6 +355,7 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
+        <appender-ref ref="businessTaskJobAppender" />
 	</logger>
 	<logger name="org.hibernate.type">
 		<level value="INFO"></level>
@@ -344,6 +365,7 @@
 		<appender-ref ref="smsAccordingToLawJobAppender" />
 		<appender-ref ref="userNotificationAppender" />
 		<appender-ref ref="userSMSNotificationAppender" />
+        <appender-ref ref="businessTaskJobAppender" />
 	</logger>
 	<logger name="org.hibernate.cache">
 		<level value="INFO"></level>
