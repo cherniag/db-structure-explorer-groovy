@@ -45,6 +45,7 @@
                         <version>2.16</version>
                         <configuration>
                             <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                         </configuration>
                         <executions>
                             <execution>
