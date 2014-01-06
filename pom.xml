@@ -34,43 +34,26 @@
     </properties>
 
     <profiles>
-        <profile>
-            <id>no_integration_testing</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.16</version>
-                        <configuration>
-                            <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
-                            <excludes>
-                                <exclude>**/*IT.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <!-- mvn -Pit test -->
         <profile>
             <id>it</id>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
                         <version>2.16</version>
                         <configuration>
-                            <forkCount>0</forkCount>
-                            <argLine>-Xms800m -Xmx1024m -XX:MaxPermSize=1024m -XX:-UseSplitVerifier</argLine>
-                            <includes>
-                                <include>**/*IT.java</include>
-                            </includes>
-                            <excludes>
-                            </excludes>
+                            <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -80,6 +63,13 @@
     <build>
         <finalName>server</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
