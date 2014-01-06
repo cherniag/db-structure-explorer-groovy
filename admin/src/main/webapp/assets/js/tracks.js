@@ -1,3 +1,7 @@
+$(document).ready(function() {
+    $('.selectpicker').selectpicker();
+});
+
 var Tracks = {};
 
 function onShownTrackDetails(detailsEl) {
@@ -285,4 +289,135 @@ function onPullFail(data, x, e, trackId) {
     }
     $(encodetrackButtonId+".btn-primary").removeAttr("disabled");
     $(pulltrackButtonId+".btn-primary").button("original");
+}
+
+function preEncodeAll(){
+
+    var fl = false;
+    var labels = $(".for-encode");
+    for (var i = 0; i < labels.size(); i++) {
+        var label = $(labels[i]);
+        if (label.find('[name=isEncoded]').attr("checked") == "checked") {
+            fl=true;
+            break;
+        }
+    }
+
+    if (fl==false){
+        alert("No tracks have been selected");
+        return;
+    }
+
+    clearErrList();
+    $("#header-label").text("Encode");
+    var dialog=$("#encode-finished");
+    $("#btnEncodeAllOk").click(toEncode);
+    dialog.find("div.controls").show();
+    dialog.modal("show");
+}
+
+function toEncode(){
+    var tracks =[];
+    var labels = $(".for-encode");
+    var resolution = $("#encode-finished").find("input[name='isHighRate']").attr('checked') ? "RATE_96" : "RATE_48";
+    var license = $("#encode-finished").find("input[name='licensed']").attr('checked') ? "on" : "off";
+
+    for (var i = 0; i < labels.size(); i++) {
+        var label = $(labels[i]);
+        if (label.find('[name=isEncoded]').attr("checked") == "checked") {
+            var data = {
+                id: label.find('[name=encId]').val(),
+                isrc: label.find('[name=encIsrc]').val(),
+                resolution: resolution,
+                license: license
+            };
+            onEncodeStart(label.find('[name=encId]').val());
+            tracks.push(data);
+        }
+    }
+
+    var jsobj = null;
+
+    jsobj = {TRACK_DTO:tracks};
+    $.ajax({
+        url: "/jadmin/tracks/encode2.json",
+        type: "post",
+        dataType: "json",
+        data: jsobj,
+        success: function (data) {
+            clearErrList();
+            var obj = $("#errList");
+
+            //pure win !
+            if ((data.success.length!=0) && (data.fail.length==0)){
+                $("#header-label").text("Encoding successful");
+                obj.append("<div>All tracks have been encoded</div>");
+            } else {
+            //with fails
+                $("#header-label").text("Track(s) encoding failed");
+                for (i=0; i<data.fail.length; i++){
+                    obj.append("<div>"+"id="+data.fail[i].id+" isrc="+data.fail[i].isrc+"</div>");
+                }
+            }
+
+            //set fields and buttons
+            if (data.success.length != 0) {
+                for (var i = 0; i < data.success.length; i++) {
+                    var trackId = data.success[i].id;
+
+                    var pulltrackButtonId = "#pulltrackButton_" + trackId;
+                    var encodetrackButtonId = "#encodetrackButton_" + trackId;
+                    var publishTitleDivId = "#publishTitleDiv_" + trackId;
+                    var publishArtistDivId = "#publishArtistDiv_" + trackId;
+                    var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+                    var infoDivId = "#infoDiv_" + trackId;
+
+                    $(encodetrackButtonId + ".btn-primary").button('retry');
+                    $(pulltrackButtonId + ".btn-primary").removeAttr("disabled");
+
+                    $(publishTitleDivId).text(data.success[i].publishTitle);
+                    $(publishArtistDivId).text(data.success[i].publishArtist);
+                    $(iTunesDivId).text(data.success[i].itunesUrl);
+                    $(infoDivId).text(data.success[i].info);
+                }
+            }
+
+            if (data.fail.length!=0){
+                for (var i = 0; i < data.fail.length; i++) {
+                    var encodeTrackButtonId = "#encodetrackButton_" + data.fail[i].id;
+                    $(encodeTrackButtonId+".btn-primary").button('original');
+                }
+            }
+
+            var dialog=$("#encode-finished");
+            $("#btnEncodeAllOk").off("click");
+            dialog.find("div.controls").hide();
+            dialog.modal("show");
+        }
+    }).fail(function (data) {
+            var error = $.parseJSON(data.responseText);
+            if (error != null) {
+                if (error.external_error)
+                    alert(error.external_error);
+                else if (error.internal_error)
+                    alert(error.internal_error);
+            }
+        });
+}
+
+function checkAll(){
+    var labels = $(".for-encode");
+    var etalon = $('[name=allEnc]');
+
+    var fl = etalon.attr("checked") == "checked";
+    for (var i = 0; i < labels.size(); i++) {
+      var  label = $(labels[i]);
+        label.find('[name=isEncoded]').attr("checked", fl);
+    }
+}
+
+function clearErrList(){
+   var obj = $("#errList");
+   obj.find('div').remove();
+
 }

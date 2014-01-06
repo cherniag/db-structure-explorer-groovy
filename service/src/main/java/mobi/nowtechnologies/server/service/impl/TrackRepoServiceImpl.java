@@ -389,4 +389,43 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			}
 		}
 	}
+
+    @Override
+    public Map<String, List<TrackDto>> encodeTracks(List<TrackDto> tracks) {
+        Map<String, List<TrackDto>> result = new HashMap<String, List<TrackDto>>();
+
+        List<TrackDto> fails = new ArrayList<TrackDto>();
+        List<TrackDto> successes = new ArrayList<TrackDto>();
+
+        for (int i = 0; i < tracks.size(); i++) {
+
+            TrackDto track = tracks.get(i);
+            try {
+                if (track == null || track.getId() == null) {
+                    throw new IllegalArgumentException("Given track is illegal");
+                }
+
+                Media media = mediaRepository.getByIsrc(track.getIsrc());
+                if (media != null) {
+                    media.setPublishDate(0);
+                    mediaRepository.save(media);
+                }
+
+                track = client.encodeTrack(track.getId(), track.getResolution() == AudioResolution.RATE_96 ? true : false, track.getLicensed());
+                track.setPublishArtist(track.getArtist());
+                track.setPublishTitle(track.getTitle());
+                track.setInfo(getArtistInfo(track.getArtist()));
+                successes.add(track);
+            } catch (Exception e) {
+                LOGGER.error("Encoding track failed! [TrackId=" + track.getId() + "] Title=[" + track.getTitle() + "]", e);
+                fails.add(track);
+            }
+
+        }
+
+        result.put("success", successes);
+        result.put("fail", fails);
+
+        return result;
+    }
 }

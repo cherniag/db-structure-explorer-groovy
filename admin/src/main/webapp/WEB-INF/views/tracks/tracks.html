@@ -55,7 +55,19 @@
 			<div class="form-actions">
 				<button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco" type="button">Search</button>
                 <a th:text="#{tracks.ingest.page.form.commit}" class="btn btn-primary btn-deco" th:href="@{/drops}">Ingest</a>
+
+                <!--<button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-primary btn-deco" type="button" onclick="toEncode()">encode all</button>-->
+                <button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-primary btn-deco" type="button" onclick="preEncodeAll()">encode all</button>
 			</div>
+            <div>
+                <select name="page.size" class="selectpicker">
+                    <option value="2">10</option>
+                    <option value="10">50</option>
+                    <option value="100">100</option>
+                    <option value="1000">1000</option>
+                    <option value="3000">3000</option>
+                </select>
+            </div>
 		</form>
 		<div th:if="${#lists.isEmpty(PAGE_LIST_DTO.list)}"  th:text="#{users.management.page.users.hasEmptyList}" class="well_center white largeText">
 			No Search Results
@@ -72,6 +84,9 @@
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.releaseDate}">Release Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.publishDate}">Publish Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
+                    <div class="repo_columns_check">
+                    <input type="checkbox" name="allEnc" onchange="checkAll()"/>
+                    </div>
 				</li>
 				<li class="content popover-selector"
                     onShownPopover="onShownTrackDetails"
@@ -184,6 +199,13 @@
 					<div class="repo_columns" th:id="${'publishDateDiv_'+trackDto.id}"  th:text="${trackDto.publishDate != null ? #dates.format(trackDto.publishDate, '__#{tracks.datetime.format}__') : ''}">Publish
 						Date</div>
 					<div class="repo_columns" th:text="${trackDto.territoryCodes}">Territories</div>
+                    <div class="repo_columns_check">
+                        <label class="for-encode">
+                            <input type="hidden" name="encId" th:value="${trackDto.id}"/>
+                            <input type="hidden" name="encIsrc" th:value="${trackDto.isrc}"/>
+                            <input type="checkbox" name="isEncoded"/>
+                        </label>
+                    </div>
 				</li>
 			</ul>
 		</div>
@@ -251,6 +273,31 @@
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 		</div>
 	</div>
+
+    <div id="encode-finished" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="header-label">Pull Track</h3>
+        </div>
+        <div id="errList" class="modal-body" style="width:530px">
+
+        </div>
+
+        <div class="controls">
+            <label class="checkbox">
+                <input type="checkbox" name="isHighRate" />
+                <span th:text="#{tracks.page.encode.dialog.item.isHighRate}">96 kbs</span>
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" name="licensed" />
+                <span th:text="#{tracks.page.encode.dialog.item.licensed}">Licensed</span>
+            </label>
+        </div>
+
+        <div class="modal-footer">
+            <button id="btnEncodeAllOk" class="btn" data-dismiss="modal" aria-hidden="true">Ok</button>
+        </div>
+    </div>
 
 	<script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
         var encodeUrl = /*[[@{'/tracks/encode.json'}]]*/"";
