@@ -1,9 +1,28 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.sony;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
-import mobi.nowtechnologies.server.trackrepo.ingest.*;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import mobi.nowtechnologies.server.trackrepo.ingest.IParser;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -11,11 +30,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class SonyParser extends IParser {
 
@@ -281,8 +295,14 @@ public class SonyParser extends IParser {
 		List<DropData> result = new ArrayList<DropData>();
 		File manifests = new File(root + "/manifests");
 		LOGGER.info("Checking manifests in " + root + "/manifests");
+		if(!manifests.exists()){
+			LOGGER.warn("Skipping drops scanning: manifest folder [{}] does not exists!", manifests.getAbsolutePath());
+			return result;
+		}
+		
 		File[] manifestFiles = manifests.listFiles();
 		for (File manifest : manifestFiles) {
+            LOGGER.info("Scanning manifest [{}]", manifest.getAbsolutePath());
 			String logFileName = manifest.getName().replace("manifest", "log");
 			File logFile = new File(root + "/logs/" + logFileName);
 			if (!auto) {
@@ -304,6 +324,8 @@ public class SonyParser extends IParser {
         DropData drop = new DropData();
         drop.name = manifest.getName();
         drop.date = new Date(manifest.lastModified());
+
+        LOGGER.info("The drop was found: [{}]", drop.name);
         result.add(drop);
     }
 

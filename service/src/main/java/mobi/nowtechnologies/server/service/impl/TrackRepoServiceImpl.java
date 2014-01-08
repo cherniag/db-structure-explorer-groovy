@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -69,10 +70,10 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     @Override
-    public IngestWizardDataDto getDrops() {
-        LOGGER.debug("input getDrops()");
+    public IngestWizardDataDto getDrops(String... ingestors) {
+        LOGGER.debug("input getDrops({})", Arrays.toString(ingestors));
 
-        IngestWizardDataDto data = client.getDrops();
+        IngestWizardDataDto data = client.getDrops(ingestors);
 
         LOGGER.debug("output getDrops(): [{}]", data);
         return data;

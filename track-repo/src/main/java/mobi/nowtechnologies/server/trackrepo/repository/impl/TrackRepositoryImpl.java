@@ -81,6 +81,8 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             setParamLike("title", trackCriteria.getTitle(), query);
             setParamLike("label", trackCriteria.getLabel(), query);
             setParamLike("ingestor", trackCriteria.getIngestor(), query);
+            setParamLike("territory", trackCriteria.getTerritory(), query);
+
 
             setParam("isrc", trackCriteria.getIsrc(), query);
             setParam("from", trackCriteria.getIngestFrom(), query);
@@ -128,6 +130,9 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
                 addCriteria(criteria, " t.ingestionDate <= :to");
             if (trackCriteria.getIngestor() != null && !trackCriteria.getIngestor().isEmpty())
                 addCriteria(criteria, " lower(t.ingestor) like :ingestor");
+            if (trackCriteria.getTerritory() != null && !trackCriteria.getTerritory().isEmpty())
+                addCriteria(criteria, " lower(t.territoryCodes) like :territory");
+
         }
 
         String suffixQuery = join.toString() + buildWhereCause(" WHERE ", criteria);

@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.trackrepo.ingest.manual;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +34,13 @@ public class ManualParser extends IParser {
 		if (auto)
 			return result;
 		File rootFolder = new File(root);
+		if (!rootFolder.exists()) {
+			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", rootFolder.getAbsolutePath());
+			return result;
+		}
 		for (File file: rootFolder.listFiles()) {
 			if (isDirectory(file)) {
+                LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
 				result.addAll(getDrops(file));
 			}
 		}
@@ -65,6 +68,7 @@ public class ManualParser extends IParser {
 				LOGGER.error("getDrops failed "+e.getMessage());
 			}
 			result.add(data);
+            LOGGER.info("The drop was found: [{}]", data.name);
 		}
 
 		return result;

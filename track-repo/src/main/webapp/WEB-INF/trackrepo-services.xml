@@ -45,6 +45,7 @@
         <property name="fugaRoot" value="${trackRepo.ingest.fuga.root}" />
         <property name="ciRoot" value="${trackRepo.ingest.ci.root}" />
         <property name="emiRoot" value="${trackRepo.ingest.emi.root}" />
+        <property name="emiUmgRoot" value="${trackRepo.ingest.emi_umg.root}" />
         <property name="iodaRoot" value="${trackRepo.ingest.ioda.root}" />
         <property name="manualRoot" value="${trackRepo.ingest.manual.root}" />
         <property name="absoluteRoot" value="${trackRepo.ingest.absolute.root}" />

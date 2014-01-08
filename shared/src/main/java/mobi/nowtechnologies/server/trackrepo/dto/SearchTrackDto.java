@@ -36,6 +36,7 @@ public class SearchTrackDto implements SearchTrackCriteria{
     private String genre;
     private boolean withTerritories;
     private boolean withFiles;
+    private String territory;
     
     private List<Integer> trackIds;
 	
@@ -140,9 +141,17 @@ public class SearchTrackDto implements SearchTrackCriteria{
         this.withFiles = withFiles;
     }
 
+    public String getTerritory() {
+		return territory;
+	}
+
+	public void setTerritory(String territory) {
+		this.territory = territory;
+	}
+
     @Override
 	public int hashCode() {
-        return hash(artist, ingestFrom, ingestTo, ingestor, isrc, label, releaseFrom, releaseTo, title);
+        return hash(artist, ingestFrom, ingestTo, ingestor, isrc, label, releaseFrom, releaseTo, title, territory);
 	}
 
     private <T> int hash(T... params){
@@ -213,13 +222,19 @@ public class SearchTrackDto implements SearchTrackCriteria{
 				return false;
 		} else if (!title.equals(other.title))
 			return false;
+		if (territory == null) {
+			if (other.territory != null)
+				return false;
+		} else if (!territory.equals(other.territory))
+			return false;
+
 		return true;
 	}
 
     @Override
 	public String toString() {
 		return "SearchTrackDto [isrc=" + isrc + ", artist=" + artist + ", album=" + album + ", genre=" + genre + ", title=" + title + ", ingestor=" + ingestor + ", label=" + label + ", ingestFrom="
-				+ ingestFrom + ", ingestTo=" + ingestTo + ", releaseFrom=" + releaseFrom + ", releaseTo=" + releaseTo + "]";
+				+ ingestFrom + ", ingestTo=" + ingestTo + ", releaseFrom=" + releaseFrom + ", releaseTo=" + releaseTo + ", territory=" + territory + "]";
 	}
 
     

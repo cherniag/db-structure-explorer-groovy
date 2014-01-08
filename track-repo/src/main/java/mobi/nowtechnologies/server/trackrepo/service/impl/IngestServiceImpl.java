@@ -1,27 +1,48 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import mobi.nowtechnologies.server.trackrepo.domain.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.DropContent;
+import mobi.nowtechnologies.server.trackrepo.domain.IngestionLog;
+import mobi.nowtechnologies.server.trackrepo.domain.Territory;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
-import mobi.nowtechnologies.server.trackrepo.ingest.*;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropsData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData.Drop;
+import mobi.nowtechnologies.server.trackrepo.ingest.IParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors;
+import mobi.nowtechnologies.server.trackrepo.ingest.IngestData;
+import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
+import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
 import mobi.nowtechnologies.server.trackrepo.repository.IngestionLogRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
 import mobi.nowtechnologies.server.trackrepo.utils.NullAwareBeanUtilsBean;
+
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropsData.*;
-import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.*;
 
 public class IngestServiceImpl implements IngestService{
 
@@ -49,51 +70,51 @@ public class IngestServiceImpl implements IngestService{
 
     @Override
 	public IngestWizardData getDrops(String parserName) throws Exception {
-
-        LOGGER.debug("formBackingObject [{}]", parserName);
+        LOGGER.debug("getDrops [parserName:{}]", parserName);
+		return getDrops(parserName);
+	}
+    
+    @Override
+	public IngestWizardData getDrops(String... ingestors) throws Exception {
+        LOGGER.debug("getDrops [ingestors:{}]", Arrays.toString(ingestors));
 		IngestWizardData result = updateIngestData(null, false);
+		List<Ingestors> ingObjs = new ArrayList<Ingestors>();		
+		
+		if(ingestors != null && ingestors.length > 0)
+			for(String ingStr: ingestors)
+				ingObjs.add(Ingestors.valueOf(ingStr));
+		
+		if(ingObjs.isEmpty())
+			ingObjs.addAll(Arrays.asList(Ingestors.values()));
+		
+		
+		result.setDropdata(getDropsData(ingObjs));
+		return result;
+	}
+    
+    private DropsData getDropsData(List<Ingestors> ingestors) throws Exception {
+		DropsData drops = new DropsData();
+		drops.setDrops(new ArrayList<Drop>());
 
-		if (parserName != null) {
-			Ingestors ingestor = Ingestors.valueOf(parserName);
+		for (Ingestors ingestor : ingestors){
+			LOGGER.info("Getting drops for [{}]", ingestor);
 			IParser parser = parserFactory.getParser(ingestor);
-			DropsData drops = new DropsData();
-			result.setDropdata(drops);
-			drops.setDrops(new ArrayList<DropsData.Drop>());
 
 			List<DropData> parserDrops = parser.getDrops(false);
 			if (parserDrops != null && parserDrops.size() > 0) {
 				for (DropData drop : parserDrops) {
 					DropsData.Drop data = drops.new Drop();
 					data.setName(drop.name);
-					data.setIngestor(ingestor);
 					data.setParser(parser);
+					data.setIngestor(ingestor);
 					data.setDrop(drop);
 					drops.getDrops().add(data);
 				}
 			}
-		} else {
-			DropsData drops = new DropsData();
-			drops.setDrops(new ArrayList<DropsData.Drop>());
-			result.setDropdata(drops);
-			for (Ingestors ingestor : Ingestors.values()) {
-                LOGGER.info("Getting drops for [{}]", ingestor);
-				IParser parser = parserFactory.getParser(ingestor);
-
-				List<DropData> parserDrops = parser.getDrops(false);
-				if (parserDrops != null && parserDrops.size() > 0) {
-					for (DropData drop : parserDrops) {
-						DropsData.Drop data = drops.new Drop();
-						data.setName(drop.name);
-						data.setParser(parser);
-						data.setIngestor(ingestor);
-						data.setDrop(drop);
-						drops.getDrops().add(data);
-					}
-				}
-			}
 		}
-		return result;
-	}
+								
+		return drops;
+    }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -271,12 +292,13 @@ public class IngestServiceImpl implements IngestService{
 						command.setSize(command.getSize() + 1);
 					} else {
 						command.setSize(command.getSize() + 1);
-                        LOGGER.info("Checking ISRC in cn [{}]", value.isrc);
+                        LOGGER.info("Checking Track in cn [ISRC:{}, productCode:{}, ingestor: {}]", value.isrc, value.productCode, drop.getIngestor());
 						Track track = trackRepository.findByKey(value.isrc, value.productCode, parserFactory.getName(drop.getIngestor()));
 						if (track == null) { // Try to find old keys for Fuga
 							track = trackRepository.findByKey(value.isrc, value.isrc, parserFactory.getName(drop.getIngestor()));
 						}
 						if (track == null) {
+							LOGGER.info("Track not found: [ISRC:{}, productCode:{}, ingestor: {}]", value.isrc, value.productCode, drop.getIngestor());
 							if (!value.hasAnyMediaResources()){
                                 it.remove();
                                 continue; // Skip empty insert
@@ -293,6 +315,7 @@ public class IngestServiceImpl implements IngestService{
 						data.getData().add(dataTrack);
 					}
 				}
+				LOGGER.info("Drop {} tracks to ingest: ", drop.getName(), drop.getIngestdata().getData().size());
 			}
             return command;
 	}
@@ -493,5 +516,5 @@ public class IngestServiceImpl implements IngestService{
 		log.setDropName(drop.name);
 		ingestionLogRepository.save(log);
 	}
-
+	
 }

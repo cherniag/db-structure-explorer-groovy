@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -28,6 +29,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -177,10 +180,10 @@ public class TrackRepoController extends AbstractCommonController{
 	}
 
 	@RequestMapping(value = "/drops", method = RequestMethod.GET)
-	public ModelAndView getDrops() {
-		LOGGER.debug("input getDrops() request");
+	public ModelAndView getDrops(@RequestParam(value="ingestors", required=false) String[] ingestors) {
+		LOGGER.debug("input getDrops({}) request", Arrays.toString(ingestors));
 
-		IngestWizardDataDto data = trackRepoService.getDrops();
+		IngestWizardDataDto data = trackRepoService.getDrops(ingestors);
 
 		ModelAndView modelAndView = new ModelAndView("tracks/drops");
 		modelAndView.addObject(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO, data);

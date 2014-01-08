@@ -184,19 +184,22 @@ public class IodaParser extends IParser {
 		List<DropData> result = new ArrayList<DropData>();
 		File rootFolder = new File(root);
 		result.addAll(getDrops(rootFolder, auto));
-		for (int i = 0; i < result.size(); i++) {
-            LOGGER.info("Drop folder " + result.get(i));
-		}
 		return result;
 	}
 
 	public List<DropData> getDrops(File folder, boolean auto) {
 		List<DropData> result = new ArrayList<DropData>();
+		 if(!folder.exists()){
+				LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
+				return result;
+			}
+		
 		File[] content = folder.listFiles();
 		boolean processed = false;
 		boolean valid = false;
 		for (File file : content) {
 			if (isDirectory(file)) {
+                LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
 				result.addAll(getDrops(file, auto));
 			} else if (INGEST_ACK.equals(file.getName())) {
 				processed = true;
@@ -212,6 +215,8 @@ public class IodaParser extends IParser {
 			DropData drop = new DropData();
 			drop.name = folder.getAbsolutePath();
 			drop.date = new Date(folder.lastModified());
+
+            LOGGER.info("The drop was found: [{}]", drop.name);
 			result.add(drop);
 		}
 		return result;

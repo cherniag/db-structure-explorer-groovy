@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+//import net.sf.saxon.s9api.*;
+
 public class AbsoluteParser extends DDEXParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParser.class);
@@ -73,11 +75,17 @@ public class AbsoluteParser extends DDEXParser {
     @Override
     protected List<DropData> getDrops(File folder, boolean auto) {
         List<DropData> result = new ArrayList<DropData>();
+        if(!folder.exists()){
+			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
+			return result;
+		}
+        
         File[] content = folder.listFiles();
         boolean deliveryComplete = false;
         boolean processed = false;
         for (File file : content) {
             if (isDirectory(file)) {
+                LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
             } else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
@@ -93,6 +101,7 @@ public class AbsoluteParser extends DDEXParser {
             drop.name = folder.getAbsolutePath();
             drop.date = new Date(folder.lastModified());
 
+            LOGGER.info("The drop was found: [{}]", drop.name);
             result.add(drop);
         }
         return result;
