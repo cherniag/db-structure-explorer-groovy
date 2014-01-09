@@ -40,20 +40,20 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.16</version>
-                        <configuration>
-                            <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
-                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                        </configuration>
                         <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
+                           <execution>
+                              <phase>integration-test</phase>
+                              <goals>
+                                   <goal>test</goal>
+                              </goals>
+                               <configuration>
+                                   <includes>
+                                       <include>**/*IT.java</include>
+                                   </includes>
+                               </configuration>
+                           </execution>
                         </executions>
                     </plugin>
                 </plugins>
