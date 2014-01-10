@@ -27,7 +27,13 @@ $(function() {
            return popoverContent.html();
         },
         html : true
-    });
+    }).click(function(e){
+
+            var el = $(e.target)
+
+            if (el.is('input')) {return};
+            $(this).popover('toggle');
+        });
     popoverSelector.each(function () {
         var $this = $(this);
         $this.on("shown", function(){
