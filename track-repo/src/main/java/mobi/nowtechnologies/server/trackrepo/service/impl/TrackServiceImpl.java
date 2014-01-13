@@ -93,7 +93,7 @@ public class TrackServiceImpl implements TrackService {
 
 	@Override
 	public Track encode(Long trackId, Boolean isHighRate, Boolean licensed) {
-		LOGGER.debug("input encode(trackId, isHighRate): [{}], [{}]", new Object[] { trackId, isHighRate });
+		LOGGER.info("encode(trackId:{}, isHighRate:{})", trackId, isHighRate );
 
 		Track track = trackRepository.findOneWithCollections(trackId);
 
@@ -131,8 +131,10 @@ public class TrackServiceImpl implements TrackService {
 			thread.addParam(privateKey.getFile().getAbsolutePath());
 			thread.addParam(isHighRate != null && isHighRate ? AudioResolution.RATE_96.getSuffix() : AudioResolution.RATE_48.getSuffix());
 			thread.run();
-			if (thread.getExitCode() != 0) {
-				throw new RuntimeException("Cannot encode track files or create zip package.");
+			
+			if (thread.getExitCode() != 0){
+				LOGGER.error("Cannot encode track {} files or create zip package: execution of {} returned exit code {}", trackId, encodeScript.getFile(), thread.getExitCode());
+				throw new RuntimeException("Cannot encode track files or create zip package: execution of " + encodeScript.getFile() + " returned exit code " + thread.getExitCode());
 			}
 
 			track.setItunesUrl(getITunesUrl(track.getArtist(), track.getTitle()));
@@ -140,17 +142,17 @@ public class TrackServiceImpl implements TrackService {
 			track.setResolution(isHighRate != null && isHighRate ? AudioResolution.RATE_96 : AudioResolution.RATE_48);
 			track.setLicensed(licensed);
 			trackRepository.save(track);
+
+			LOGGER.info("Track {} is encoded", trackId);
+			return track;
 		} catch (Exception e) {
 			track.setStatus(TrackStatus.NONE);
 			track.setResolution(AudioResolution.RATE_ORIGINAL);
 			trackRepository.save(track);
 
-			LOGGER.error("Cannot encode track files or create zip package.", e);
-			throw new RuntimeException(e.getMessage(), e);
+			LOGGER.error("Cannot encode track {} files or create zip package: " + e.getMessage(), trackId, e);
+			throw new RuntimeException("Cannot encode track files or create zip package: " + e.getMessage(), e);
 		}
-
-		LOGGER.info("output encode(trackId, isHighRate): [{}]", new Object[] { track });
-		return track;
 	}
 
     @Override

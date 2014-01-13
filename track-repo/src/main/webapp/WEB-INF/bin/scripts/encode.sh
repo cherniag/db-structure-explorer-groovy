@@ -130,11 +130,11 @@ echo "***** Generating Download Audio *****"
 		"MP3") 
 #	cp "${FULL_AUDIO}" "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1; } ;;
 # Make sure we have an ID3 tag in the track (Warner tracks does not have it)
-			${FFMPEG} -i "${FULL_AUDIO}" -y -acodec copy "./files/purchased/${ISRC}.mp3"|| { echo "command failed"; exit 1; } ;;
+			${FFMPEG} -i "${FULL_AUDIO}" -y -acodec copy "./files/purchased/${ISRC}.mp3"|| { echo "command failed"; exit 1001; } ;;
 		"AAC") 
-			faad -o - "${FULL_AUDIO}" | lame - -b 256 "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1; } ;;
+			faad -o - "${FULL_AUDIO}" | lame - -b 256 "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1002; } ;;
 		"WAV") 
-			lame -b 256 "${FULL_AUDIO}" "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1; } ;;
+			lame -b 256 "${FULL_AUDIO}" "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1003; } ;;
 	esac
 # Add temporary UITS header to the MP3
 	java -jar ${CP}/uits-4.0-SNAPSHOT.jar ${PRIVATE_KEY} "./files/purchased/${ISRC}.mp3" "./${ISRC}.mp3"    || { echo "command failed"; exit 1; }

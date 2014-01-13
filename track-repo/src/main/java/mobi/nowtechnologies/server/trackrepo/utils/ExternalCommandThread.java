@@ -37,7 +37,7 @@ public class ExternalCommandThread implements Callable<String> {
 			InputStream stderr = null;
 			InputStream stdout = null;
 			String line;
-			System.out.println("Executing " + (String[]) command.toArray(new String[command.size()]));
+			System.out.println("Executing " + command);
 			Process p = Runtime.getRuntime().exec(command.toArray(new String[command.size()]));
 			stdout = p.getInputStream();
 			stderr = p.getErrorStream();
