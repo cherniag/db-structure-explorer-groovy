@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -398,6 +399,53 @@ public abstract class DDEXParser extends IParser {
                 }
             }
         }
+
+        //sony video
+        if (this.getClass() == SonyDDEXParser.class) {
+
+            List<Element> videoList = rootNode.getChild("ResourceList").getChildren("Video");
+
+            for (Element node : videoList) {
+                Element details = node.getChild("VideoDetailsByTerritory");
+                String reference = node.getChildText("ResourceReference");
+                DropTrack resourceDetail = new DropTrack();
+                resourceDetail.isrc = node.getChild("VideoId").getChildText("ISRC");
+                String parentalWarningType = details.getChildText("ParentalWarningType");
+                resourceDetail.explicit = "Explicit".equals(parentalWarningType);
+                Element genreElement = details.getChild("Genre");
+                if (isNotNull(genreElement)) {
+                    resourceDetail.genre = genreElement.getChildText("GenreText");
+                }
+                resourceDetails.put(reference, resourceDetail);
+                if (details.getChild("PLine") != null) {
+                    resourceDetail.copyright = details.getChild("PLine").getChildText("PLineText");
+                    resourceDetail.year = details.getChild("PLine").getChildText("Year");
+                }
+                List<Element> techDetails = details.getChildren("TechnicalVideoDetails");
+                for (Element techDetail : techDetails) {
+                    String fileName = techDetail.getChild("File").getChildText("FileName");
+                    DropAssetFile assetFile = new DropAssetFile();
+                    assetFile.file = getAssetFile(fileRoot, fileName);
+                    assetFile.isrc = resourceDetail.isrc;
+                    assetFile.type = getFileType(techDetail);
+                    assetFile.duration = getDuration(node.getChildText("Duration"));
+                    List<DropAssetFile> resourceFiles = files.get(node.getChildText("ResourceReference"));
+                    if (resourceFiles == null) {
+                        resourceFiles = new ArrayList<DropAssetFile>();
+                        files.put(reference, resourceFiles);
+                    }
+                    resourceFiles.add(assetFile);
+                    Element hash = techDetail.getChild("File").getChild("HashSum");
+                    if (hash != null) {
+                        if ("MD5".equals(hash.getChildText("HashSumAlgorithmType"))) {
+                            assetFile.md5 = hash.getChildText("HashSum");
+                        }
+                    }
+                }
+
+            }
+        }
+
         return files;
     }
 
@@ -473,7 +521,7 @@ public abstract class DDEXParser extends IParser {
     }
 
     protected boolean checkAlbum(String type) {
-        if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type)) {
+        if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type) || "VideoSingle".equals(type))  {
             LOGGER.info("Album for [{}]", type);
             return true;
         }
@@ -486,6 +534,12 @@ public abstract class DDEXParser extends IParser {
         String isPreview = techDetail.getChildText("IsPreview");
         if (isEmpty(isPreview) || "false".equals(isPreview)) {
             String audioCodecType = techDetail.getChildText("AudioCodecType");
+            String videoCodecType = techDetail.getChildText("VideoCodecType");
+
+            if (isNotNull(videoCodecType)){
+                return FileType.VIDEO;
+            }
+
             if (isNull(audioCodecType)
                     || audioCodecType.equals("MP3")
                     || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))) {
