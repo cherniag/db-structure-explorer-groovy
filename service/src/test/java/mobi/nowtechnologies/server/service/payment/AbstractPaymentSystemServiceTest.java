@@ -107,7 +107,7 @@ public class AbstractPaymentSystemServiceTest {
 		};
 		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
-		Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
+		Mockito.when(mockUserService.unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, response);
 
@@ -122,7 +122,7 @@ public class AbstractPaymentSystemServiceTest {
 		Mockito.verify(mockApplicationEventPublisher, times(1)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
-		Mockito.verify(mockUserService, times(0)).unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
+		Mockito.verify(mockUserService, times(0)).unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), response.getDescriptionError());
 	}
 	
 	@Test
@@ -168,7 +168,7 @@ public class AbstractPaymentSystemServiceTest {
 		};
 		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
-		Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
+		Mockito.when(mockUserService.unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, response);
 
@@ -183,7 +183,7 @@ public class AbstractPaymentSystemServiceTest {
 		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
-		Mockito.verify(mockUserService, times(0)).unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
+		Mockito.verify(mockUserService, times(0)).unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), response.getDescriptionError());
 	}
 
 	@Test
@@ -230,7 +230,7 @@ public class AbstractPaymentSystemServiceTest {
 		};
 		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
-		Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
+		Mockito.when(mockUserService.unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), response.getDescriptionError())).thenReturn(user);
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, response);
 
@@ -246,7 +246,7 @@ public class AbstractPaymentSystemServiceTest {
 		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
-		Mockito.verify(mockUserService, times(1)).unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
+		Mockito.verify(mockUserService, times(1)).unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), response.getDescriptionError());
 	}
 	
 	@Test
@@ -295,7 +295,7 @@ public class AbstractPaymentSystemServiceTest {
 		};
 		Mockito.doNothing().when(mockApplicationEventPublisher).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.doNothing().when(mockEntityService).removeEntity(PendingPayment.class, pendingPayment.getI());
-		Mockito.when(mockUserService.unsubscribeUser(paymentDetails.getOwner(), mockPaymentSystemResponse.getDescriptionError())).thenReturn(user);
+		Mockito.when(mockUserService.unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), mockPaymentSystemResponse.getDescriptionError())).thenReturn(user);
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
@@ -316,7 +316,9 @@ public class AbstractPaymentSystemServiceTest {
 		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
-		Mockito.verify(mockUserService, times(0)).unsubscribeUser(paymentDetails.getOwner(), mockPaymentSystemResponse.getDescriptionError());
+		Mockito.verify(mockUserService, times(0)).unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), mockPaymentSystemResponse.getDescriptionError());
 	}
+
+
 
 }
