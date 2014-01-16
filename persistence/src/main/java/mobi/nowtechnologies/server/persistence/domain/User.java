@@ -458,6 +458,15 @@ public class User implements Serializable {
     public boolean isActivatedUserName(){
         return getUserName().equals(getMobile());
     }
+    public String getCommunityRewriteUrl(){
+        Community community = getUserGroup() != null ? getUserGroup().getCommunity() : null;
+        String communityRewriteUrl = community != null ? community.getRewriteUrlParameter() : null;
+        return communityRewriteUrl;
+    }
+
+	public List<Chart> getSelectedCharts() {
+		return selectedCharts;
+	}
 
     public boolean hasPhoneNumber(){
         return !StringUtils.isEmpty(getMobile());
