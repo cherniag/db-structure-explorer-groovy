@@ -48,7 +48,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
 		LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
 		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
-
+		
 		final User user = pendingPayment.getUser();
 		final int epochSeconds = Utils.getEpochSeconds();
 		
@@ -77,26 +77,26 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		if (submittedPayment.getExternalTxId() == null) {
 			submittedPayment.setExternalTxId("");
 		}
-
+		
 		// Store submitted payment
 		submittedPayment.setStatus(status);
 		paymentDetails.setLastPaymentStatus(status);
-		submittedPayment = entityService.updateEntity(submittedPayment);
+		submittedPayment = entityService.updateEntity(submittedPayment); 
 		entityService.updateEntity(paymentDetails);
 		LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
-
+		
 		// Send sync-event about committed payment
 		if(submittedPayment.getStatus() == PaymentDetailsStatus.SUCCESSFUL)
 			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
         else if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError() && epochSeconds > user.getNextSubPayment()) {
-            userService.unsubscribeUserAfterFailedPayment(paymentDetails.getOwner(), response.getDescriptionError());
+            userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
         }
-
+		
 		// Deleting pending payment
 		entityService.removeEntity(PendingPayment.class, pendingPayment.getI());
 
 		LOGGER.info("Commit process for payment with tx:{} has been finished with status {}.", submittedPayment.getInternalTxId(), submittedPayment.getStatus());
-
+		
 		return submittedPayment;
 	}
 

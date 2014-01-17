@@ -780,7 +780,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
-        LOGGER.info("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
+        LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
 
 		List<PaymentDetails> paymentDetails = paymentDetailsService.findActivatedPaymentDetails(operatorName, phoneNumber);
 		LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
@@ -801,37 +801,26 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User unsubscribeUser(int userId, UnsubscribeDto dto) {
-		LOGGER.info("input parameters userId, dto: [{}], [{}]", userId, dto);
+		LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
 		User user = entityService.findById(User.class, userId);
 		String reason = dto.getReason();
 		if (!StringUtils.hasText(reason)) {
 			reason = "Unsubscribed by user manually via web portal";
 		}
 		user = unsubscribeUser(user, reason);
+		LOGGER.info("Output parameter user=[{}]", user);
 		return user;
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
-        LOGGER.info("input parameters user, reason: [{}], [{}]", user, reason);
+        LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
         notNull(user, "The parameter user is null");
         user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
         user = entityService.updateEntity(user);
         taskService.cancelSendChargeNotificationTask(user);
         LOGGER.info("Output parameter user=[{}]", user);
         return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User unsubscribeUserAfterFailedPayment(User user, String reason) {
-        LOGGER.info("Unsubscribe user because of failed payment");
-        User unsubscribedUser = unsubscribeUser(user, reason);
-        try {
-            userNotificationService.sendUnsubscribeAfterSMS(user);
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return unsubscribedUser;
     }
 
 	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
