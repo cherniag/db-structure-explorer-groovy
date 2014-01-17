@@ -83,7 +83,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="userNotificationService" ref="service.UserNotificationService" />
         <property name="taskService" ref="task.TaskService"/>
         <property name="sendActivationSMS" value="false"/>
-        <property name="userNotificationService" ref="service.UserNotificationService" />
 	</bean>
 
     <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">
