@@ -60,6 +60,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
@@ -123,6 +124,7 @@ public class UserService {
     private UserNotificationService userNotificationService;
 
     private TaskService taskService;
+    private UserNotificationService userNotificationService;
 
     private User checkAndMerge(User user, User mobileUser) {
         if (mobileUser.getId() != user.getId()) {
@@ -780,7 +782,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
-        LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
+        LOGGER.info("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
 
 		List<PaymentDetails> paymentDetails = paymentDetailsService.findActivatedPaymentDetails(operatorName, phoneNumber);
 		LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
@@ -801,26 +803,37 @@ public class UserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User unsubscribeUser(int userId, UnsubscribeDto dto) {
-		LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
+		LOGGER.info("input parameters userId, dto: [{}], [{}]", userId, dto);
 		User user = entityService.findById(User.class, userId);
 		String reason = dto.getReason();
 		if (!StringUtils.hasText(reason)) {
 			reason = "Unsubscribed by user manually via web portal";
 		}
 		user = unsubscribeUser(user, reason);
-		LOGGER.info("Output parameter user=[{}]", user);
 		return user;
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
-        LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
+        LOGGER.info("input parameters user, reason: [{}], [{}]", user, reason);
         notNull(user, "The parameter user is null");
         user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
         user = entityService.updateEntity(user);
         taskService.cancelSendChargeNotificationTask(user);
         LOGGER.info("Output parameter user=[{}]", user);
         return user;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User unsubscribeUserAfterFailedPayment(User user, String reason) {
+        LOGGER.info("Unsubscribe user because of failed payment");
+        User unsubscribedUser = unsubscribeUser(user, reason);
+        try {
+            userNotificationService.sendUnsubscribeAfterSMS(user);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return unsubscribedUser;
     }
 
 	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
@@ -2028,5 +2041,9 @@ public class UserService {
 
     public void setTaskService(TaskService taskService) {
         this.taskService = taskService;
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
     }
 }

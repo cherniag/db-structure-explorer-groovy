@@ -338,7 +338,7 @@ public class O2PaymentServiceImplTest {
 
         doNothing().when(mockApplicationEventPublisher).publishEvent(argThat(matcher));
 
-        when(userServiceMock.unsubscribeUser(user, o2Response.getDescriptionError())).thenReturn(user);
+        when(userServiceMock.unsubscribeUserAfterFailedPayment(user, o2Response.getDescriptionError())).thenReturn(user);
 
         o2PaymentServiceImplSpy.startPayment(pendingPayment);
 
@@ -350,7 +350,7 @@ public class O2PaymentServiceImplTest {
         verify(mockEntityService, times(1)).updateEntity(pendingPayment);
         verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
-        verify(userServiceMock, times(1)).unsubscribeUser(user, o2Response.getDescriptionError());
+        verify(userServiceMock, times(1)).unsubscribeUserAfterFailedPayment(user, o2Response.getDescriptionError());
 
     }
 
