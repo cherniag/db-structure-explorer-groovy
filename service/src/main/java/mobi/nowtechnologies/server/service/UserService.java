@@ -60,7 +60,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
-import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
@@ -124,7 +123,6 @@ public class UserService {
     private UserNotificationService userNotificationService;
 
     private TaskService taskService;
-    private UserNotificationService userNotificationService;
 
     private User checkAndMerge(User user, User mobileUser) {
         if (mobileUser.getId() != user.getId()) {
@@ -2041,9 +2039,5 @@ public class UserService {
 
     public void setTaskService(TaskService taskService) {
         this.taskService = taskService;
-    }
-
-    public void setUserNotificationService(UserNotificationService userNotificationService) {
-        this.userNotificationService = userNotificationService;
     }
 }
