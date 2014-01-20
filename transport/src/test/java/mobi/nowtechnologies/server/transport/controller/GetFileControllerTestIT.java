@@ -4,11 +4,10 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
-import org.springframework.test.web.server.ResultActions;
 
-import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class GetFileControllerTestIT extends AbstractControllerTestIT {
@@ -25,7 +24,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         String mediaId = "VIDEO160822";//generateVideoMedia();
 		
-		ResultActions resultActions = mockMvc.perform(
+		mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -34,9 +33,8 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
                         .param("TYPE", fileType)
                         .header("Content-Type", "text/xml").
                         header("Content-Length", "0")
-        ).andExpect(status().isOk()).andDo(print());
-        assertEquals(resultActions.andReturn().getResponse().getContentAsString(),
-                "http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId=2599461121001&pubId=2368678501001");
+        ).andExpect(status().isOk()).andDo(print()).andExpect(content().
+                string("http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId=2599461121001&pubId=2368678501001"));
     }
 
     @Test
@@ -59,7 +57,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         user.setDeviceType(deviceType);
         userService.updateUser(user);
 
-		ResultActions resultActions = mockMvc.perform(
+		mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -68,9 +66,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
                         .param("TYPE", fileType)
                         .header("Content-Type", "text/xml").
                         header("Content-Length", "0")
-        ).andExpect(status().isOk()).andDo(print());
-        assertEquals(resultActions.andReturn().getResponse().getContentAsString(),
-                "http://brightcove.vo.llnwd.net/e1/uds/pd/2368678501001/2368678501001_2599463153001_Signs.mp4");
+        ).andExpect(status().isOk()).andDo(print()).andExpect(content().string("http://brightcove.vo.llnwd.net/e1/uds/pd/2368678501001/2368678501001_2599463153001_Signs.mp4"));
     }
 
     @Test

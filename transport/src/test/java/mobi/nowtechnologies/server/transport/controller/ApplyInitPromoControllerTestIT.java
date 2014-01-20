@@ -84,7 +84,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_NAME", user.getMobile())
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+        ).andExpect(status().isOk()).andDo(print()).
+                andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
 
     }
 

@@ -12,8 +12,6 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.server.ResultActions;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -186,16 +184,13 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         user.setProvider(NON_VF);
         userService.updateUser(user);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/AUID/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk());
-
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
     }
 
     @Test

@@ -58,7 +58,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
         String apiVersion = "5.0";
         String communityUrl = "o2";
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isInternalServerError());
@@ -71,7 +71,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
         String apiVersion = "5.3";
         String communityUrl = "o2";
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isBadRequest());
@@ -84,7 +84,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
         String apiVersion = "3.5";
         String communityUrl = "o2";
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
                         .param("DEVICE_TYPE", deviceType)
                         .param("DEVICE_UID", deviceUID)

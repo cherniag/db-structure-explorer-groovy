@@ -12,13 +12,10 @@ import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.web.server.ResultActions;
 
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
     @Autowired
@@ -152,7 +149,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -171,7 +168,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)

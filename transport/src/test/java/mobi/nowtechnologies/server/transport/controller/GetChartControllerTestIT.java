@@ -19,6 +19,7 @@ import org.springframework.test.web.server.ResultActions;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
 
@@ -70,7 +71,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
         JsonObject jsonObject = getAccCheckContent(resultJson);
 
         resultActions = mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -94,20 +95,16 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
         generateChartAllTypesForO2();
 		
-		ResultActions resultActions = mockMvc.perform(
+		mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-		
-		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-		String resultXml = aHttpServletResponse.getContentAsString();
-		
-        assertTrue(resultXml.contains("<type>VIDEO_CHART</type>"));
-        assertTrue(resultXml.contains("<duration>10000</duration>"));
-        assertTrue(!resultXml.contains("<bonusTrack>"));
+        ).andExpect(status().isOk()).andDo(print()).
+                andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists())
+        .andExpect(xpath("/response/chart/track[duration=10000]").exists())
+                .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
     @Test
@@ -122,7 +119,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
         generateChartAllTypesForO2();
 
-		ResultActions resultActions = mockMvc.perform(
+		mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -130,13 +127,9 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
                         .param("DEVICE_UID", deviceUID)
                         .param("APP_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
-        ).andExpect(status().isOk());
-
-		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-		String resultXml = aHttpServletResponse.getContentAsString();
-
-        assertTrue(!resultXml.contains("<type>VIDEO_CHART</type>"));
-        assertTrue(!resultXml.contains("<bonusTrack>"));
+        ).andExpect(status().isOk())
+                .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
+                .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
     @Test
@@ -151,7 +144,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
         generateChartAllTypesForO2();
 
-		ResultActions resultActions = mockMvc.perform(
+		mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -159,15 +152,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
                         .param("DEVICE_UID", deviceUID)
                         .param("APP_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
-        ).andExpect(status().isOk());
-
-		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-		String resultXml = aHttpServletResponse.getContentAsString();
-
-        assertTrue(!resultXml.contains("<type>VIDEO_CHART</type>"));
-        assertTrue(!resultXml.contains("<type>FOURTH_CHART</type>"));
-        assertTrue(!resultXml.contains("<type>FIFTH_CHART</type>"));
-        assertTrue(!resultXml.contains("<bonusTrack>"));
+        ).andExpect(status().isOk())
+                .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
+                .andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
+                .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist())
+                .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
     @Test
@@ -183,7 +172,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
         generateChartAllTypesForO2();
 
-		ResultActions resultActions = mockMvc.perform(
+		mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -192,15 +181,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
                         .param("APP_VERSION", apiVersion)
                         .param("API_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
-        ).andExpect(status().isOk());
-
-		MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-		String resultXml = aHttpServletResponse.getContentAsString();
-
-        assertTrue(!resultXml.contains("<type>VIDEO_CHART</type>"));
-        assertTrue(!resultXml.contains("<type>FOURTH_CHART</type>"));
-        assertTrue(!resultXml.contains("<type>FIFTH_CHART</type>"));
-        assertTrue(resultXml.contains("<bonusTrack>"));
+        ).andExpect(status().isOk()).andDo(print())
+                .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
+                .andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
+                .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist())
+                .andExpect(xpath("/response/chart/bonusTrack").exists());
     }
 
     @Test
@@ -213,7 +198,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -232,7 +217,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -250,7 +235,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -288,7 +273,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
