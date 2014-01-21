@@ -201,7 +201,7 @@ public class TrackServiceTest {
 		assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
 		assertEquals(track.getStatus(), TrackStatus.ENCODED);
 		
-		verify(command, times(22)).addParam(anyString());
+		verify(command, times(23)).addParam(anyString());
 		verify(command, times(1)).addParam(eq(ID_VALUE.toString()));
 		
 	}

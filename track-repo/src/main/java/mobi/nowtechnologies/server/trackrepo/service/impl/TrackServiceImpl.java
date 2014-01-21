@@ -140,7 +140,7 @@ public class TrackServiceImpl implements TrackService {
 			thread.addParam(licensed != null && licensed ? "NO" : "YES");
 			thread.addParam(privateKey.getFile().getAbsolutePath());
 			thread.addParam(isHighRate != null && isHighRate ? AudioResolution.RATE_96.getSuffix() : AudioResolution.RATE_48.getSuffix());
-			//thread.addParam(track.getFile(AssetFile.FileType.VIDEO) == null ? "320" : "640");
+			thread.addParam(track.getFile(AssetFile.FileType.VIDEO) == null ? "200" : "640");
 			thread.run();
 			
 			if (thread.getExitCode() != 0){
@@ -420,8 +420,8 @@ public class TrackServiceImpl implements TrackService {
 			
 		} catch (Exception e) {
 			
-			LOGGER.error("GET_AMAZON_URL error_msg[{}] for isrc[{}]", isrc);
-			return "";
+			LOGGER.error("GET_AMAZON_URL error_msg[{}] for isrc=" + isrc, e);
+			return null;
 		}
 	}
 

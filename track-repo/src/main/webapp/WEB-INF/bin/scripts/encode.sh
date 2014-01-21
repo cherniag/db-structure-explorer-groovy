@@ -26,6 +26,7 @@ TRACK_ID=${17}
 PREVIEW_ONLY=${18}
 PRIVATE_KEY=${19}
 BIT_RATE=${20}
+IMG_SIZE=${21}
 
 echo "********** PARAMS"
 echo $AUDIO_FILE
@@ -85,7 +86,7 @@ echo "***** Generating thumbnails *****"
 	IMAGE_COVER="files/image/${ISRC}_cover.png"
 
 	convert "${IMAGE}" -resize 70x70 "./files/image/$IMAGE_SMALL"	|| { echo "command failed"; exit 1; } 
-	convert "$IMAGE" -resize 200x200 "files/image/$IMAGE_LARGE"|| { echo "command failed"; exit 1; } 
+	convert "$IMAGE" -resize "${IMG_SIZE}x${IMG_SIZE}" "files/image/$IMAGE_LARGE"|| { echo "command failed"; exit 1; } 
 	cp files/image/$IMAGE_LARGE "files/image/${ISRC}_22.jpg"|| { echo "command failed"; exit 1; } 
 
 	convert "$IMAGE" -resize 90x90 "files/image/${ISRC}_21.jpg"|| { echo "command failed"; exit 1; } 
