@@ -1,22 +1,35 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.transport.service.PostsSaverPostService;
+import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFileter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -26,9 +39,10 @@ import static org.mockito.Mockito.*;
  * Date: 12/19/13
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/service-test.xml", "/META-INF/dao-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"/META-INF/service-test.xml", "/META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:post-service-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+//TODO: Rebuild test not to use mocks.
 public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
@@ -37,6 +51,14 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
     @Autowired
     @Qualifier("vf_nz.service.SmsProviderSpy")
     private VFNZSMSGatewayServiceImpl smsGatewayService;
+
+
+    @Resource
+    private PostsSaverPostService postsSaverPostService;
+
+
+    @Value("${sms.temporaryFolder}")
+    private File smsTemporaryFolder;
 
     @Before
     public void setUp() throws Exception {
@@ -57,12 +79,18 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
 
     @Test
     public void checkSendChargeNotificationReminderShouldBeSentWithDefaultSMSText() throws Exception {
+        final long time = new Date().getTime();
+        PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
         User user = UserFactory.createUser();
         user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
         user.setProvider(ProviderType.O2);
         user.setMobile("+44789654123");
         userNotificationService.sendChargeNotificationReminder(user);
-        verify(smsGatewayService).send(eq("+44789654123"), eq("You are charged for 28 days continuously default text"), eq("4003"));
+        monitor.waitToComplete(5000);
+
+        File smsFile = getLastSmsFile(time);
+        List<String> smsText = Files.readLines(smsFile, Charsets.UTF_8);
+        assertTrue(smsText.contains("Parameter: BODY..Value: You are charged for 28 days continuously default text" ));
     }
 
     @Test
@@ -99,6 +127,14 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
         user.setMobile("+64789654123");
         userNotificationService.sendChargeNotificationReminder(user);
         verify(smsGatewayService, never()).send(anyString(), anyString(), anyString());
+    }
+
+    private File getLastSmsFile(long time) {
+        File[] list = smsTemporaryFolder.listFiles(new TimestampExtFileNameFileter(time));
+
+        Assert.assertEquals(1, list.length);
+
+        return list[0];
     }
 
 }
