@@ -44,6 +44,7 @@ import static org.junit.Assert.assertTrue;
         "classpath:META-INF/dao-test.xml",
         "classpath:META-INF/soap.xml",
         "classpath:META-INF/shared.xml",
+        "classpath:task-processors.xml",
         "classpath:post-service-test.xml"}, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
