@@ -45,7 +45,7 @@ public class SMSNotification {
 	protected void startO2PSMSPayment() {
 	}
 
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.BasicPSMSPaymentServiceImpl.commitPayment(..))")
+    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.PaymentSystemService.commitPayment(..))")
     protected void startVFPSMSPayment() {
     }
 
