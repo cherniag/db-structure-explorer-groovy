@@ -106,11 +106,11 @@ public abstract class AbstractControllerTestIT {
         sqlTestInitializer.prepareDynamicTestData("classpath:META-INF/dynamic-test-data.sql");
     }
 
-    protected net.minidev.json.JSONObject getAccCheckContent(final String contentAsString) {
+    private net.minidev.json.JSONObject getAccCheckContent(final String contentAsString) {
         return jsonPath.read(contentAsString);
     }
 
-    private net.minidev.json.JSONObject getAccCheckContent(final ResultActions resultActions) throws UnsupportedEncodingException {
+    protected net.minidev.json.JSONObject getAccCheckContent(final ResultActions resultActions) throws UnsupportedEncodingException {
         return getAccCheckContent(resultActions.andReturn().getResponse().getContentAsString());
     }
 

@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.shared.Utils;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.server.ResultActions;
 
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
@@ -24,22 +23,18 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_TYPE", deviceType)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk());
-
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
-        JSONObject jsonObject = getAccCheckContent(resultJson);
-
+        JSONObject jsonObject = getAccCheckContent(resultActions);
         String storedToken = (String)jsonObject.get("userToken");
         String userName = (String)jsonObject.get("userName");
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions1 = mockMvc.perform(
+        ResultActions accountCheckCall = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk());
-        checkAccountCheck(resultActions, resultActions1);
+        checkAccountCheck(resultActions, accountCheckCall);
     }
 
     @Test

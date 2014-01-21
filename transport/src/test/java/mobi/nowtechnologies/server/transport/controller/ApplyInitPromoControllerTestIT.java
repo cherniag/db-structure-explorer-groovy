@@ -367,9 +367,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void applyInitPromo_whenUserUserNameIsWrongV3d9_then_400() throws Exception {
         //given
-        String userName = "+447766666666";
         String apiVersion = "3.9";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "";

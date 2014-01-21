@@ -67,13 +67,13 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         assertTrue(resultJson.contains("\"chart\""));
         assertTrue(resultJson.contains("\"user\""));
 
-        ResultActions resultActions1 = mockMvc.perform(
+        ResultActions accountCheckCall = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk());
-        checkAccountCheck(resultActions, resultActions1);
+        checkAccountCheck(resultActions, accountCheckCall);
     }
 
     @Test

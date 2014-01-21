@@ -32,13 +32,13 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                 andExpect(jsonPath("$.response..user").exists());
 
 
-        ResultActions resultActions1 = mockMvc.perform(
+        ResultActions accountCheckCall = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk()).andDo(print());
-        checkAccountCheck(resultActions, resultActions1);
+        checkAccountCheck(resultActions, accountCheckCall);
     }
 
     @Test

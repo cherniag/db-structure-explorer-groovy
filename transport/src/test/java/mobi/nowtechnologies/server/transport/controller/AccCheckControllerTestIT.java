@@ -263,7 +263,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Bad user credentials"));;
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Bad user credentials"));
     }
 
     @Test
@@ -283,7 +283,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("user login/pass check failed for [+6421xxxxxxxx] username and community [vf_nz]"));;
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("user login/pass check failed for [+6421xxxxxxxx] username and community [vf_nz]"));
     }
 
     @Test
