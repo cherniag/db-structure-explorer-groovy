@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,7 +40,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -52,14 +50,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.web.util.WebUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -342,43 +337,66 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	 */
 	@Override
     public TrackDto pullTrack(final Long id) throws Exception{
-        final QueryTask<TrackDto> pullTask = new QueryTask<TrackDto>(){
-            @Override
-            synchronized public void run() {
-                TrackDto trackDto = null;
-                try {
-                    if (id != null) {
-                        HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
-                        pull.setHeaders(getSecuredHeaders());
-                        HttpResponse response = getHttpClient().execute(pull);
-                        if (200 == response.getStatusLine().getStatusCode()) {
-                            trackDto = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), TrackDto.class);
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.error("Cannot pull the track by id {} from repository. {}", id, e);
-                    this.setFailure(e);
-                }
-
-                this.setData(trackDto);
-
-                if(this.getFailure() != null || this.getData() == null || this.getData().getPublishDate() != null){
-                    this.stop();
-                }
-            }
-        };
-
-        ScheduledFuture<?> future = queryScheduler.scheduleWithFixedDelay(
-                pullTask, 0, 1, TimeUnit.SECONDS
-        );
-        pullTask.start(future);
-
-        if(pullTask.getFailure() != null){
-            throw (Exception) pullTask.getFailure();
-        }
-
-        return pullTask.getData();
+//        final QueryTask<TrackDto> pullTask = new QueryTask<TrackDto>(){
+//            @Override
+//            synchronized public void run() {
+//            	LOGGER.info("Start pullTask: trackId {}", id);
+//                TrackDto trackDto = null;
+//                try {
+//                    if (id != null) {
+//                        HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
+//                        pull.setHeaders(getSecuredHeaders());
+//                        HttpResponse response = getHttpClient().execute(pull);
+//                        if (200 == response.getStatusLine().getStatusCode()) {
+//                            trackDto = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), TrackDto.class);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    LOGGER.error("Cannot pull the track by id {} from repository. {}", id, e);
+//                    this.setFailure(e);
+//                }
+//
+//                this.setData(trackDto);
+//                LOGGER.info("Received data: {}", trackDto);
+//
+//                if(this.getFailure() != null || this.getData() == null || this.getData().getPublishDate() != null){
+//                	LOGGER.info("Stop pullTask schedule: trackId {}", id);
+//                	this.stop();
+//                }
+//            }
+//        };
+//
+//        ScheduledFuture<?> future = queryScheduler.scheduleWithFixedDelay(
+//                pullTask, 0, 1, TimeUnit.SECONDS
+//        );
+//        pullTask.start(future);
+//
+//        if(pullTask.getFailure() != null){
+//            throw (Exception) pullTask.getFailure();
+//        }
+//
+//        return pullTask.getData();
+		return sendPullRequest(id);
     }
+	
+	private TrackDto sendPullRequest(final Long id) throws Exception {
+		LOGGER.info("callPull(id:{})", id);
+		try {
+			HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
+			pull.setHeaders(getSecuredHeaders());
+			HttpResponse response = getHttpClient().execute(pull);
+			if (response.getStatusLine().getStatusCode() != 200) {
+				LOGGER.error("Server responded on Pull request for track with ID {} with error status code: {}", id, response.getStatusLine().getStatusCode());
+				throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
+			}
+			TrackDto trackDto = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), TrackDto.class);
+			LOGGER.info("Received data: {}", trackDto);
+			return trackDto;
+		} catch (Exception e) {
+			LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
+			throw e;
+		}
+	}
 
 	/*
 	 * (non-Javadoc)

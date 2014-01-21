@@ -85,10 +85,12 @@ public class TrackController extends AbstractCommonController{
 	
 	@RequestMapping(value = "/tracks/{trackId}/pull", method = RequestMethod.GET)
 	public @ResponseBody WebAsyncTask<TrackDto> pull(final @PathVariable("trackId")Long trackId) {
+		LOGGER.info("pull(trackId:{})", trackId);
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
                 try {
+                	LOGGER.info("Start WebAsyncTask: pullig track with id {}", trackId);
                     Track track = trackService.pull(trackId);
                     TrackDtoMapper trackDto = new TrackDtoMapper(track);
 
@@ -100,10 +102,12 @@ public class TrackController extends AbstractCommonController{
                         }
                     }
 
+                    LOGGER.info("Finish WebAsyncTask: pullig track with id {}", trackId);
                     return trackDto;
                 } catch (Exception e) {
-                    LOGGER.error("Cannot pull encoded track.", e);
-                    throw new RuntimeException(e.getMessage());
+                    LOGGER.error("Error while pulling track with ID " + trackId + ": " + e.getMessage(), e);
+                    //throw new RuntimeException(e.getMessage());
+                    return null;
                 }
             }
         });

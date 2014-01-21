@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rackspacecloud.client.cloudfiles.FilesClient;
+import com.rackspacecloud.client.cloudfiles.FilesException;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -136,8 +137,8 @@ public class CloudFileServiceImpl implements CloudFileService {
 
 	@Override
 	public synchronized boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName) {
-		LOGGER.info("Copy file {} from one cloud container to other container {}", new Object[]{destFileName, destContainerName, srcFileName, srcContainerName});
-
+		LOGGER.info("Copy file on cloud [srcFileName:"+srcFileName+", srcContainerName:"+srcContainerName+", destFileName:"+destFileName+" ,destContainerName:" + destContainerName + "]");
+		
 		boolean copied = false;
 
 		login();
@@ -145,9 +146,12 @@ public class CloudFileServiceImpl implements CloudFileService {
 		try {
 			filesClient.copyObject(srcContainerName, srcFileName, destContainerName, destFileName);
 			copied = true;
+		} catch (FilesException e) {
+			LOGGER.error("Couldn't copy file on cloud [srcFileName:"+srcFileName+", srcContainerName:"+srcContainerName+", destFileName:"+destFileName+" ,destContainerName:" + destContainerName + "]: HttpStatusMessage: "+e.getHttpStatusMessage()+", HttpHeaders -> " + e.getHttpHeadersAsString() , e);
+			throw new ExternalServiceException("Couldn't copy file on cloud [srcFileName:"+srcFileName+", srcContainerName:"+srcContainerName+", destFileName:"+destFileName+" ,destContainerName:" + destContainerName + "]: " + e.getMessage(), e);
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ExternalServiceException("cloudFile.service.externalError.couldnotcopyfile", "Couldn't copy file on cloud");
+			LOGGER.error("Couldn't copy file on cloud [srcFileName:"+srcFileName+", srcContainerName:"+srcContainerName+", destFileName:"+destFileName+" ,destContainerName:" + destContainerName + "]: " + e.getMessage(), e);
+			throw new ExternalServiceException("Couldn't copy file on cloud [srcFileName:"+srcFileName+", srcContainerName:"+srcContainerName+", destFileName:"+destFileName+" ,destContainerName:" + destContainerName + "]: " + e.getMessage(), e);
 		}
 
 		return copied;
