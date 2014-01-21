@@ -38,6 +38,7 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
 		this.setLicensed(track.getLicensed());
 		this.setResolution(track.getResolution());
 		this.setItunesUrl(track.getItunesUrl());
+		this.setAmazonUrl(track.getAmazonUrl());
         this.setPublishDate(track.getPublishDate());
 
 		this.setTerritoryCodes(track.getTerritoryCodes());

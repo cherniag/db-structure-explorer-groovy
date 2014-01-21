@@ -40,6 +40,7 @@ public class FileController extends AbstractCommonController{
 	public void file(@RequestParam("id") Long id, HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			AssetFile file = fileService.getFile(id);
+//			LOGGER.info("file [id:{}, assetFile:{}]", id, file);
 			if (file == null)
 				return;
 			File respFile = new File(file.getPath());

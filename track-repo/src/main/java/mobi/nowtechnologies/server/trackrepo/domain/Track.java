@@ -100,6 +100,7 @@ public class Track extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	protected AudioResolution resolution; 
 	protected String itunesUrl;
+	protected String amazonUrl;
 
     @Basic(optional=true)
     @Column(name="territoryCodes", length=1024)
@@ -308,6 +309,14 @@ public class Track extends AbstractEntity {
 
 	public void setItunesUrl(String itunesUrl) {
 		this.itunesUrl = itunesUrl;
+	}
+
+	public String getAmazonUrl() {
+		return amazonUrl;
+	}
+
+	public void setAmazonUrl(String amazonUrl) {
+		this.amazonUrl = amazonUrl;
 	}
 
 	public String getFileName(AssetFile.FileType type) {
