@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
@@ -12,6 +13,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.DOWNLOAD;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.MOBILE;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.PREVIEW;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 //import net.sf.saxon.s9api.*;
 
@@ -138,5 +146,65 @@ public class AbsoluteParser extends DDEXParser {
         }
         track.physicalProductId = isrc;
         track.productId = isrc;
+    }
+
+    @Override
+    public Map<String, DropTrack> ingest(DropData drop) {
+        Map<String, DropTrack> tracks = new HashMap<String, DropTrack>();
+        try {
+            File folder = new File(drop.name);
+            File[] content = folder.listFiles();
+            for (File file : content) {
+                if (!(file.getName().contains("_meta") && file.getName().endsWith(".xml"))){
+                    continue;
+                }
+
+                Map<String, DropTrack> result = loadXml(file);
+
+                if (result != null) {
+                    tracks.putAll(result);
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Ingest failed: [{}]", e.getMessage(), e);
+        }
+        return tracks;
+    }
+
+//    @Override
+//    protected AssetFile.FileType getFileType(Element techDetail) {
+//        AssetFile.FileType fileType;
+//        String isPreview = techDetail.getChildText("IsPreview");
+//        if (isEmpty(isPreview) || "false".equals(isPreview)) {
+//            String audioCodecType = techDetail.getChildText("AudioCodecType");
+////            String videoCodecType = techDetail.getChildText("VideoCodecType");
+//
+////            if (isNotNull(videoCodecType)){
+////                return AssetFile.FileType.VIDEO;
+////            }
+//
+//            if (isNull(audioCodecType)
+//                    || audioCodecType.equals("MP3")
+//                    || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))
+//                    || (audioCodecType.equals("UserDefined") && "wav".equals(getUserDefinedValue(techDetail)))) {
+//                fileType = DOWNLOAD;
+//            } else {
+//                fileType = MOBILE;
+//            }
+//        } else {
+//            fileType = PREVIEW;
+//        }
+//        return fileType;
+//    }
+
+    private String getUserDefinedValue(Element techDetail) {
+        return techDetail.getChild("AudioCodecType").getAttributeValue(
+                "UserDefinedValue");
+    }
+
+    @Override
+    protected String getAssetFile(String root, String fileName) {
+        return root + "/" + fileName;
     }
 }
