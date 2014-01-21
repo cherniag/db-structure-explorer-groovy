@@ -98,7 +98,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        userService.findByNameAndCommunity(userName, communityName);
 
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
@@ -214,7 +214,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testAccountCheckv4d0_400_Failure() throws Exception {
-        String userName = "+642102247311";
         String apiVersion = "4.0";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
@@ -232,7 +231,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testAccountCheckv5d3_400_Failure() throws Exception {
-        String userName = "+642102247311";
         String apiVersion = "5.3";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";

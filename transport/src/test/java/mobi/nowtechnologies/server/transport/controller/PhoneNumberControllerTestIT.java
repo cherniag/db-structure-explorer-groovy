@@ -116,7 +116,6 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String userName = "b88106713409e92622461a876abcd74b444";
         String phone = "+447111111114";
         String apiVersion = "4.0";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -488,7 +487,6 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+64279000456";
         String apiVersion = "6.0";
-        String communityName = "vf_nz";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -511,8 +509,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String userName = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
         String phone = "+6xxxxxxxxxxxxxx";
         String apiVersion = "5.0";
-        String communityName = "vf_nz";
-        String communityUrl = "vf_nz";
+         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -531,11 +528,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+6xxxxxxxxxxxxxx";
         String apiVersion = "5.0";
-        String communityName = "vf_nz";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
@@ -550,11 +544,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+6xxxxxxxxxxxxxx";
         String apiVersion = "5.3";
-        String communityName = "vf_nz";
-        String communityUrl = "vf_nz";
+         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
@@ -569,11 +560,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+6xxxxxxxxxxxxxx";
         String apiVersion = "3.5";
-        String communityName = "vf_nz";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
