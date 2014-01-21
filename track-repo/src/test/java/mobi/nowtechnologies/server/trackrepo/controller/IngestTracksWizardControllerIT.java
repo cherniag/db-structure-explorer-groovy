@@ -21,6 +21,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
@@ -47,14 +49,9 @@ public class IngestTracksWizardControllerIT extends TestCase {
 
 	@Test
 	public void testGetDrops_Success() throws Exception {
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 get("/drops.json")
-        ).andExpect(status().isOk());
-
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultJson.contains("suid"));
+        ).andExpect(status().isOk()).andExpect(jsonPath("$.suid").exists());
 	}
 
     @Test
@@ -67,18 +64,14 @@ public class IngestTracksWizardControllerIT extends TestCase {
         String resultJson = aHttpServletResponse.getContentAsString();
         resultJson = resultJson.replaceAll("\"selected\":false", "\"selected\":true");
 
-        resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/drops/select.json").
                      body(resultJson.getBytes()).
                      accept(MediaType.APPLICATION_JSON).
                      contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        resultJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultJson.contains("suid"));
-        assertTrue(resultJson.contains("\"tracks\":[{\"productCode\""));
+        ).andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath("$.suid").exists())
+                .andExpect(jsonPath("$.drops[0].tracks[0].productCode").exists());;
     }
 
     @Test
