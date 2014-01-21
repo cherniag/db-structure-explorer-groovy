@@ -46,6 +46,7 @@ import org.xml.sax.InputSource;
 @RunWith(Theories.class)
 @ContextConfiguration(locations = {
 		"classpath:transport-servlet-test.xml",
+        "classpath:task-processors.xml",
 		"classpath:META-INF/soap.xml",
 		"classpath:META-INF/service-test.xml",
 		"classpath:META-INF/dao-test.xml",

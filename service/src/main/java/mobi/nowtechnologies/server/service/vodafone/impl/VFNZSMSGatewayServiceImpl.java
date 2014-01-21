@@ -48,7 +48,8 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
             private MTMessage mtMessage;
             @Override
             public String getMessage() {
-                return String.format("Sms was sent %ssuccessfully from %s to %s with message %s", resultPrefix, message.getOriginatingAddress(), message.getDestinationAddress(), message.getContent());
+                return String.format("Sms was sent %ssuccessfully from [%s] to [%s] with message [%s]",
+                        resultPrefix, message.getOriginatingAddress(), message.getDestinationAddress(), message.getContent());
             }
 
             @Override
