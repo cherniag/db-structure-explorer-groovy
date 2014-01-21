@@ -1,12 +1,9 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.server.ResultActions;
 
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
@@ -34,22 +31,14 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                 andExpect(jsonPath("$.response..news").exists()).
                 andExpect(jsonPath("$.response..user").exists());
 
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
 
-        JsonObject jsonObject = getAccCheckContent(resultJson);
-
-        resultActions = mockMvc.perform(
+        ResultActions resultActions1 = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultAccCkeckJson.contains(jsonObject.toString()));
+        ).andExpect(status().isOk()).andDo(print());
+        checkAccountCheck(resultActions, resultActions1);
     }
 
     @Test

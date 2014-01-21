@@ -1,17 +1,15 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.server.ResultActions;
 
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
-public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
+public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpDevice_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
@@ -20,9 +18,6 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
         String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
-        String storedToken = null;
-        String userToken = null;
-        String userName = null;
 
         ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
@@ -32,29 +27,24 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
 
         MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
         String resultJson = aHttpServletResponse.getContentAsString();
-        JsonObject jsonObject = getAccCheckContent(resultJson);
-        AccountCheckDTO accountCheckDTO = gson.fromJson(jsonObject, AccountCheckDTO.class);
-        storedToken = accountCheckDTO.userToken;
-        userName = accountCheckDTO.userName;
-        userToken = Utils.createTimestampToken(storedToken, timestamp);
+        JSONObject jsonObject = getAccCheckContent(resultJson);
 
-        resultActions = mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+        String storedToken = (String)jsonObject.get("userToken");
+        String userName = (String)jsonObject.get("userName");
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions1 = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultAccCkeckJson.contains(jsonObject.toString()));
+        checkAccountCheck(resultActions, resultActions1);
     }
 
     @Test
     public void testSignUpDevice_400_Failure() throws Exception {
         String deviceUID = "b88106713409e92622461a876abcd74b";
-        String deviceType = "ANDROID";
         String apiVersion = "5.0";
         String communityUrl = "o2";
 
@@ -67,7 +57,6 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void testSignUpDeviceV5d3_400_Failure() throws Exception {
         String deviceUID = "b88106713409e92622461a876abcd74b";
-        String deviceType = "ANDROID";
         String apiVersion = "5.3";
         String communityUrl = "o2";
 
