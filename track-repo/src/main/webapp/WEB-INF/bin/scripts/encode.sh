@@ -238,6 +238,7 @@ fi
 
 	for i in files/image/${ISRC}*
     do
+		echo "Upload image file to the cloud: " ${i}
         curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
     done
 

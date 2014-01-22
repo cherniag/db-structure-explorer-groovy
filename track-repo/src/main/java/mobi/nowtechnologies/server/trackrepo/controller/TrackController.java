@@ -98,6 +98,7 @@ public class TrackController extends AbstractCommonController{
                         trackDto.setFiles(resourceFileDtoBuilder.build(track));
                         Territory publishTerritory = track.getValidTerritory(Territory.GB_TERRITORY);
                         if (publishTerritory != null) {
+                        	LOGGER.info("Change publishDate to Terrytory StartDate: {}", publishTerritory.getStartDate());
                             trackDto.setPublishDate(publishTerritory.getStartDate());
                         }
                     }

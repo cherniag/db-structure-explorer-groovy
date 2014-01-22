@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 
 import org.apache.http.HttpException;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,7 +81,7 @@ public class CloudFileServiceImpl implements CloudFileService {
 	}
 
 	public boolean init() throws IOException, HttpException {
-		DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(new PoolingClientConnectionManager());
 		filesClient = new FilesClient(defaultHttpClient, userName, password, authenticationURL, account, connectionTimeOutMilliseconds);
 		if (userAgent != null)
 			filesClient.setUserAgent(userAgent);
@@ -99,15 +100,15 @@ public class CloudFileServiceImpl implements CloudFileService {
 		try {
 			isLogged = filesClient.login();
 		} catch (IllegalStateException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.error("On java.lang.IllegalStateException: Invalid use of SingleClientConnManager: connection still allocated! " + e.getMessage(), e);
 			isLogged = true;// On java.lang.IllegalStateException: Invalid use of SingleClientConnManager: connection still allocated.
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
+			LOGGER.error("Error while login to files cloud: " + e.getMessage(), e);
+			throw new ExternalServiceException("Error while login to files cloud: " + e.getMessage(), e);
 		}
 
 		if (!isLogged)
-			throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
+			throw new ExternalServiceException("Could not login to files cloud. Please check credentials!");
 
 		return isLogged;
 	}

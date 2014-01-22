@@ -31,6 +31,7 @@ import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -389,8 +390,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 				LOGGER.error("Server responded on Pull request for track with ID {} with error status code: {}", id, response.getStatusLine().getStatusCode());
 				throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
 			}
-			TrackDto trackDto = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), TrackDto.class);
-			LOGGER.info("Received data: {}", trackDto);
+			String resJson = IOUtils.toString(response.getEntity().getContent()); 
+			LOGGER.info("Received json: {}", resJson);
+			TrackDto trackDto = gson.fromJson(resJson, TrackDto.class);
 			return trackDto;
 		} catch (Exception e) {
 			LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
