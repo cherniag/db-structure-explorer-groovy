@@ -56,26 +56,36 @@
 		</div>
 		<div class="clear"></div>
 			<div class="form-actions">
-				<button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco" type="button">Search</button>
-                <a th:text="#{tracks.ingest.page.form.commit}" class="btn btn-primary btn-deco" th:href="@{/drops}">Ingest</a>
-
-                <!--<button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-primary btn-deco" type="button" onclick="toEncode()">encode all</button>-->
-                <button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-primary btn-deco" type="button" style="position: absolute; right: 65px" onclick="preEncodeAll()">Encode all</button>
-			</div>
+                <div class="span3" style="width:auto; margin-left:0px;">
+                    <button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco pull-left" type="button">Search</button>    
+                </div>
+                <div class="span2" >
+                    <label style="display:inline-block;font-size: 13px;margin-right: 10px;vertical-align: baseline;position: relative;top: -14px;">Tracks per page: </label>
+                    <select name="page.size" class="selectpicker" data-width="75px" data-style="position:relative; top:0px;">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="10000">all</option>
+                    </select>
+                    <input id="searchSize" type="hidden" value="aaa" th:attr="value=${PAGE_LIST_DTO.size}"/>
+                </div>
+                <div class="span5" style="float:right;">
+                    <button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-deco pull-right" type="button"  onclick="preEncodeAll()">Encode all</button>
+                    <a th:text="#{tracks.ingest.page.form.commit}" class="btn btn-default btn-deco pull-right" th:href="@{/drops}" style="margin-right:8px">Ingest</a>
+                    <!--<button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-primary btn-deco" type="button" onclick="toEncode()">encode all</button>-->
+                </div>
+            </div>
             <div>
-                <select name="page.size" class="selectpicker" data-width="75px">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="10000">all</option>
-                </select>
-                <input id="searchSize" type="hidden" value="aaa" th:attr="value=${PAGE_LIST_DTO.size}"/>
+                
             </div>
 		</form>
 		<div th:if="${#lists.isEmpty(PAGE_LIST_DTO.list)}"  th:text="#{users.management.page.users.hasEmptyList}" class="well_center white largeText">
 			No Search Results
 		</div>
+
+        <div th:substituteby="tpl::paginationBar"></div>
+
 		<div class="newsListWide" style="width: 100%">
 			<ul class="table" id="tracksTable" th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}">
 				<li class="title">
@@ -314,7 +324,7 @@
         var defaultEncodeErrorMsg = /*[[#{tracks.encode.error}]]*/ 'Encode is unsuccessful';
         var defaultPullErrorMsg = /*[[#{tracks.pull.error}]]*/ 'Pull is unsuccessful';
         var encodeCheckDelay = 1000;
-        var pullCheckDelay = 1000;
-	/*]]>*/</script>
+        var pullCheckDelay = 1000;	/*]]>*/
+    </script>
 </body>
 </html>

@@ -15,6 +15,7 @@
 <link rel="stylesheet" th:href="@{/assets/css/bootstrap-toggle-buttons.css}"/>
 <link rel="stylesheet" th:href="@{/assets/css/audiojs.css}"/>
 <link rel="stylesheet" th:href="@{/assets/css/bootstrap-select.min.css}"/>
+<!-- <link rel="stylesheet" th:href="@{/assets/css/mediaelementplayer.min.css}"/> -->
 
 <style type="text/css">
 section {
@@ -22,6 +23,7 @@ section {
 }
 </style>
 
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->
 <script type="text/javascript" th:src="@{/assets/js/jquery-1.7.2.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/jquery-ui-1.8.21.custom.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/bootstrap.min.js}"></script>
@@ -39,11 +41,17 @@ section {
 <script type="text/javascript" th:src="@{/assets/js/bootstrap-select.min.js}"></script>
 <!--<script type="text/javascript" th:src="@{/assets/js/audiojs/jquery.js}"></script>-->
 <script type="text/javascript" th:src="@{/assets/js/audiojs/audio.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/swfobject.js}"></script>
+<script th:src="@{/assets/js/flowplayer-3.2.13.min.js}"></script>
+<!-- <script type="text/javascript" th:src="@{/assets/js/mediaelementplayer.min.js}"></script> -->
     <script>
         var a = audiojs;
         a.events.ready(function() {
             var a1 = a.createAll();
         });
+
+        
+
     </script>
 
 
@@ -230,7 +238,10 @@ section {
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         </div>
-        <video class="video" controls="controls" th:attr="src=${mediaSrc}"/>
+        <video width="320" height="240" class="video video-js vjs-default-skin" controls="controls">
+        	<source type="video/mp4" th:attr="src=${mediaSrc}" />
+	        <embed width="320" height="240" name="plugin" th:attr="src=${mediaSrc}" type="video/mp4" />
+        </video>
     </div>
 
     <div class="busy">

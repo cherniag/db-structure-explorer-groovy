@@ -321,7 +321,7 @@ public abstract class DDEXParser extends IParser {
             List<Element> useTypes = usage.getChildren("UseType");
             for (Element useType : useTypes) {
                 if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText())
-                        || "PermanentDownload".equals(useType.getText())) {
+                        || "PermanentDownload".equals(useType.getText()) || "ConditionalDownload".equals(useType.getText())) {
                     LOGGER.info("Found valid usage, [{}] ", useType.getText());
                     validUseType = true;
                     break;
