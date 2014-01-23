@@ -172,31 +172,31 @@ public class AbsoluteParser extends DDEXParser {
         return tracks;
     }
 
-//    @Override
-//    protected AssetFile.FileType getFileType(Element techDetail) {
-//        AssetFile.FileType fileType;
-//        String isPreview = techDetail.getChildText("IsPreview");
-//        if (isEmpty(isPreview) || "false".equals(isPreview)) {
-//            String audioCodecType = techDetail.getChildText("AudioCodecType");
-////            String videoCodecType = techDetail.getChildText("VideoCodecType");
-//
-////            if (isNotNull(videoCodecType)){
-////                return AssetFile.FileType.VIDEO;
-////            }
-//
-//            if (isNull(audioCodecType)
-//                    || audioCodecType.equals("MP3")
-//                    || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))
-//                    || (audioCodecType.equals("UserDefined") && "wav".equals(getUserDefinedValue(techDetail)))) {
-//                fileType = DOWNLOAD;
-//            } else {
-//                fileType = MOBILE;
+    @Override
+    protected AssetFile.FileType getFileType(Element techDetail) {
+        AssetFile.FileType fileType;
+        String isPreview = techDetail.getChildText("IsPreview");
+        if (isEmpty(isPreview) || "false".equals(isPreview)) {
+            String audioCodecType = techDetail.getChildText("AudioCodecType");
+//            String videoCodecType = techDetail.getChildText("VideoCodecType");
+
+//            if (isNotNull(videoCodecType)){
+//                return AssetFile.FileType.VIDEO;
 //            }
-//        } else {
-//            fileType = PREVIEW;
-//        }
-//        return fileType;
-//    }
+
+            if (isNull(audioCodecType)
+                    || audioCodecType.equals("MP3")
+                    || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))
+                    || (audioCodecType.equals("UserDefined") && "wav".equals(getUserDefinedValue(techDetail)))) {
+                fileType = DOWNLOAD;
+            } else {
+                fileType = MOBILE;
+            }
+        } else {
+            fileType = PREVIEW;
+        }
+        return fileType;
+    }
 
     private String getUserDefinedValue(Element techDetail) {
         return techDetail.getChild("AudioCodecType").getAttributeValue(

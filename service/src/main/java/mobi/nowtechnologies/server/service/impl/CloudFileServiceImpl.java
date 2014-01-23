@@ -146,8 +146,10 @@ public class CloudFileServiceImpl implements CloudFileService {
 			filesClient.copyObject(srcContainerName, srcFileName, destContainerName, destFileName);
 			copied = true;
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ExternalServiceException("cloudFile.service.externalError.couldnotcopyfile", "Couldn't copy file on cloud");
+//			LOGGER.error(e.getMessage(), e);
+//			throw new ExternalServiceException("cloudFile.service.externalError.couldnotcopyfile", "Couldn't copy file on cloud");
+            LOGGER.error(e.getMessage(), "Couldn't copy file on cloud [srcFileName:"+srcFileName+", srcContainerName:"+srcContainerName+", destFileName:"+destFileName+" ,destContainerName:" + destContainerName + "]: " + e.getMessage(), e);
+            throw new ExternalServiceException("Couldn't copy file on cloud [srcFileName:"+srcFileName+", srcContainerName:"+srcContainerName+", destFileName:"+destFileName+" ,destContainerName:" + destContainerName + "]: " + e.getMessage(), e);
 		}
 
 		return copied;

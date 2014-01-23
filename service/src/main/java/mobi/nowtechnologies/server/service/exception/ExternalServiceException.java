@@ -12,6 +12,10 @@ public class ExternalServiceException extends ServiceException {
 		super(code, defaultMessage);
 	}
 
+    public ExternalServiceException(String message, Throwable e) {
+        super(message, e);
+    }
+
 	@Override
 	public String toString() {
 		return "ExternalServiceException [toString()=" + super.toString() + "]";
