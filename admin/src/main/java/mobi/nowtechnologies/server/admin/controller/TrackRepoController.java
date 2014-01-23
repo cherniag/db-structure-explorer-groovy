@@ -163,7 +163,15 @@ public class TrackRepoController extends AbstractCommonController{
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                return trackRepoService.pull(track);
+            	try{
+            		LOGGER.info("Start WebAsyncTask: pullig track with id {}", track.getId());
+            		TrackDto ret = trackRepoService.pull(track);
+            		LOGGER.info("Finish WebAsyncTask: pullig track with id {}", track.getId());
+            		return ret;
+            	}catch(Exception e){
+            		LOGGER.error("Error while pulling track with ID " + track.getId() + ": " + e.getMessage(), e);
+            		return null;
+            	}
             }
         });
         pullTask.onTimeout(new Callable<TrackDto>() {
