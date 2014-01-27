@@ -170,7 +170,7 @@ public class TrackRepoController extends AbstractCommonController{
             		return ret;
             	}catch(Exception e){
             		LOGGER.error("Error while pulling track with ID " + track.getId() + ": " + e.getMessage(), e);
-            		return null;
+            		throw e;
             	}
             }
         });
