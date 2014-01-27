@@ -21,6 +21,13 @@ public class SubscriptionTextsGenerator {
 	public SubscriptionTexts generate(SubscriptionState state) {
 		SubscriptionTexts data = new SubscriptionTexts();
 
+		if ( state.hasPendingPayment() ) {
+			data.setStatusText(getMessage("subscription.text.pending"));
+			data.setNextBillingText(getMessage("subscription.text.nextBilling_pending"));
+			data.setFutureText(null);
+			return data;
+		}
+		
 		if (state.isPreviewMode()) {
 			data.setStatusText(getMessage("subscription.text.previewMode"));
 			data.setNextBillingText(getMessage("subscription.text.nextBilling_previewMode"));
@@ -80,21 +87,25 @@ public class SubscriptionTextsGenerator {
 			data.setFutureText(getMessage("subscription.text.subscription_future.expiring"));
 			data.setNextBillingText(getMessage("subscription.text.subscription_next_bill.expiring",
 					getLongDate(state.getNextBillingDate())));
+            data.setNextSubPaymentMillis(state.getNextBillingDate().getTime());
 			return data;
 		}
 
 		if (state.isUpgradingToVideo()) {
 			data.setNextBillingText(getMessage("subscription.text.subscription_next_bill.upgradeVideo",
 					getLongDate(state.getNextBillingDate())));
+            data.setNextSubPaymentMillis(state.getNextBillingDate().getTime());
 			data.setFutureText(getMessage("subscription.text.subscription_future.upgrading"));
 		} else if (state.isDowngradingToAudioOnly()) {
 			data.setNextBillingText(getMessage("subscription.text.subscription_next_bill.downgradeVideo",
 					getLongDate(state.getNextBillingDate())));
+            data.setNextSubPaymentMillis(state.getNextBillingDate().getTime());
 			data.setFutureText(getMessage("subscription.text.subscription_future.downgrading"));
 
 		} else {
 			data.setNextBillingText(getMessage("subscription.text.subscription_next_bill.ongoing",
 					getLongDate(state.getNextBillingDate())));
+            data.setNextSubPaymentMillis(state.getNextBillingDate().getTime());
 			data.setFutureText(getMessage("subscription.text.subscription_future.ongoing"));
 		}
 		return data;

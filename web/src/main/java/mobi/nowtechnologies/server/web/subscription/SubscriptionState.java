@@ -21,6 +21,7 @@ public class SubscriptionState implements java.io.Serializable {
 	private boolean downgradingToAudioOnly;
 	
 	private boolean expiringSubscription;
+	private boolean pendingPayment;
 
 	public boolean isPreviewMode() {
 		return !(isFreeTrial() || isPaySubscription());
@@ -120,6 +121,14 @@ public class SubscriptionState implements java.io.Serializable {
 
 	public void setDowngradingToAudioOnly(boolean downgradingToAudioOnly) {
 		this.downgradingToAudioOnly = downgradingToAudioOnly;
+	}
+
+	public void setPendingPayment(boolean pendingPayment) {
+		this.pendingPayment = pendingPayment;
+	}
+	
+	public boolean hasPendingPayment() {
+		return this.pendingPayment;
 	}
 
 }

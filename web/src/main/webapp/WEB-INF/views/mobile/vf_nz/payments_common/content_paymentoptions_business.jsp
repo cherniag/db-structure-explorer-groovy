@@ -14,15 +14,20 @@ function submitPaypal() {
 <c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 	<c:if test="${paymentPolicy.paymentType != 'iTunesSubscription'}">
 		<c:set var="paymentPage"><%=request.getParameter("callingPage")%></c:set>
-		<c:set var="paypalUrl" value="${pageContext.request.contextPath}/${paymentPage}/paypal.html?paymentPolicyId=${paymentPolicy.id}" />
+		<c:set var="paypalUrl" value="${pageContext.request.contextPath}/${paymentPage}/paypal.html" />
 		<c:set var="paymentPolicyId" value="${paymentPolicy.id}" />
+        <c:if test="${paymentsPage.awaitingPaymentStatus}">
+            <c:set var="disabledAttrib">disabled="true"</c:set>
+            <c:set var="disabledStyle">disabled</c:set>
+            <c:set var="paypalUrl" value="" />
+        </c:if>
 	</c:if>
 </c:forEach>
 
 <div class="paypalpaymentsButton">
-	<input class="button-turquoise no-margin pie" <%--title="${paypalUrl}"--%>title="javascript:submitPaypal()" type="button" onClick="location.href=this.title"	value="<s:message code='pays.page.header.txt.itunes.paynowbutton' />" />
+	<input class="button-turquoise no-margin pie ${disabledStyle}" <%--title="${paypalUrl}"--%>title="javascript:submitPaypal()" ${disabledAttrib} type="button" onClick="location.href=this.title"	value="<s:message code='pays.page.header.txt.itunes.paynowbutton' />" />
 
-	<form:form modelAttribute="payPalDto" action="/web/${paymentPage}/paypal.html" method="post">
+	<form:form modelAttribute="payPalDto" action="${paypalUrl}" method="post">
 		<input type="hidden" name="paymentPolicyId" value="${paymentPolicyId}"/>
 	</form:form>
 </div>

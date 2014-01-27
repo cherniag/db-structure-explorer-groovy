@@ -175,7 +175,13 @@
 		<definition name="payments_inapp/notimplemented" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/notimplemented/content.jsp"/>
 		</definition>
-		
+
+    <definition name="errors/can_not_change_payment_options" extends="mainTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/errors/headSection.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/errors/header.jsp"/>
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_common/can_not_change_payment_options.jsp"/>
+    </definition>
+
  <definition name="contact_us" extends="mainTemplate" preparer="web.CommunityViewPreparer">
   	<put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/contact_us/headSection.jsp"/>
 	<put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>

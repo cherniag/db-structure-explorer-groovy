@@ -1,12 +1,16 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,14 +28,13 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -40,12 +43,12 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PaymentDetailsService.class)
 public class PaymentDetailsServiceTest {
-
     @Mock
-    public PaymentPolicyService paymentPolicyServiceMock;
-
+    private PaymentPolicyService paymentPolicyServiceMock;
     @Mock
-    public PaymentDetailsRepository paymentDetailsRepositoryMock;
+    private UserService userService;
+    @Mock
+    private PaymentDetailsRepository paymentDetailsRepositoryMock;
 
     private PaymentDetailsService paymentDetailsServiceSpy;
     private PaymentPolicy defaultPaymentPolicy;
@@ -55,9 +58,14 @@ public class PaymentDetailsServiceTest {
 
     @Before
     public void setUp() {
+        user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
+
+        userService.setPaymentPolicyService(paymentPolicyServiceMock);
+
         paymentDetailsServiceSpy = PowerMockito.spy(new PaymentDetailsService());
-        paymentDetailsServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
         paymentDetailsServiceSpy.setPaymentDetailsRepository(paymentDetailsRepositoryMock);
+        paymentDetailsServiceSpy.setUserService(userService);
+        paymentDetailsServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
 
         o2PsmsPaymentDetailsDtoMatcher = new ArgumentMatcher<PaymentDetailsDto>() {
             @Override
@@ -73,9 +81,59 @@ public class PaymentDetailsServiceTest {
     }
 
     @Test
+    public void shouldNotTryToDeactivateCurrentPaymentDetailsIfOneExistWhenDetailsIsNull() throws Exception {
+        String reason = "reason";
+
+        when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
+
+        paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
+
+        verify(paymentDetailsServiceSpy, times(0)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(userService, times(0)).updateUser(user);
+        verify(userService).setToZeroSmsAccordingToLawAttributes(user);
+    }
+
+    @Test
+    public void shouldTryToDeactivateCurrentPaymentDetailsIfOneExistWhenDetailsStatusIsNotAwaiting() throws Exception {
+        String reason = "reason";
+
+        PaymentDetails paymentDetails = mock(PaymentDetails.class);
+        when(paymentDetails.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.NONE);
+
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
+        when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
+
+        paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
+
+        verify(paymentDetailsServiceSpy, times(1)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(userService).updateUser(user);
+        verify(userService).setToZeroSmsAccordingToLawAttributes(user);
+    }
+
+    @Test(expected = CanNotDeactivatePaymentDetailsException.class)
+    public void shouldNotTryToDeactivateCurrentPaymentDetailsIfOneExistWhenDetailsStatusIsAwaiting() throws Exception {
+        String reason = "reason";
+
+        PaymentDetails paymentDetails = mock(PaymentDetails.class);
+        when(paymentDetails.getLastPaymentStatus()).thenReturn(PaymentDetailsStatus.AWAITING);
+
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
+        when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
+
+        paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
+
+        verify(paymentDetailsServiceSpy, times(0)).disablePaymentDetails(any(PaymentDetails.class), eq(reason));
+        verify(userService, times(0)).updateUser(user);
+        verify(userService).setToZeroSmsAccordingToLawAttributes(user);
+    }
+
+    @Test
     public void shouldCreateDefaultO2PsmsPaymentDetails() throws ServiceException {
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
         defaultPaymentPolicy = new PaymentPolicy().withId(Integer.MAX_VALUE);
         expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
 
@@ -96,7 +154,6 @@ public class PaymentDetailsServiceTest {
     @Test(expected = ServiceException.class)
     public void shouldDoNotCreateDefaultO2PsmsPaymentDetails() throws ServiceException {
         //given
-        user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
         defaultPaymentPolicy = null;
         expectedO2PSMSPaymentDetails = new O2PSMSPaymentDetails();
 

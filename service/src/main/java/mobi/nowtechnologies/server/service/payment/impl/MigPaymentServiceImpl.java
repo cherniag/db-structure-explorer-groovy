@@ -105,7 +105,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 			paymentDetails.setActivated(false);
 			paymentDetails.setOwner(user);
 		// Storing pin to user
-		String pin = Utils.generateRandomPIN().toString();
+		String pin = Utils.generateRandom4DigitsPIN();
 		user.setPin(pin);
 		
 		paymentDetails = (MigPaymentDetails) getPaymentDetailsRepository().save(paymentDetails);

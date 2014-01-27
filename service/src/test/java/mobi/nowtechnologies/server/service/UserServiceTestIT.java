@@ -4,6 +4,10 @@ import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
+import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
+import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -11,6 +15,7 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -21,6 +26,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.service.MatchUtils.getUserIdAndUserNameMatcher;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 /**
@@ -41,6 +50,9 @@ public class UserServiceTestIT {
 	
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
 	@Test
 	public void testUserService()
@@ -288,4 +300,45 @@ public class UserServiceTestIT {
 		assertEquals(1, users.size());
 	}
 
+    @Test
+    public void checkCreationNotificationTaskWhenProcessSubBalanceCommand() throws Exception {
+        User user = UserFactory.createUser();
+        Community community = CommunityFactory.createCommunity();
+        community.setRewriteUrlParameter("vf_nz");
+        UserGroup userGroup = UserGroupFactory.createUserGroup();
+        userGroup.setCommunity(community);
+        user.setUserGroup(userGroup);
+        entityDao.saveEntity(userGroup);
+        entityDao.saveEntity(user);
+        SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
+        submittedPayment.setPaymentSystem(PaymentDetails.VF_PSMS_TYPE);
+        submittedPayment.setNextSubPayment((int) ((System.currentTimeMillis() + 1000 * 60 * 60) / 1000));
+        entityDao.saveEntity(submittedPayment);
+        userService.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
+        List<UserTask> taskList = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
+        assertThat(taskList.size(), is(1));
+        assertThat(taskList.get(0), instanceOf(SendChargeNotificationTask.class));
+        assertThat(taskList.get(0).getUser(), getUserIdAndUserNameMatcher(user));
+        assertThat(taskList.get(0).getExecutionTimestamp(), greaterThan(System.currentTimeMillis()));
+    }
+
+    @Test
+    public void checkCancelNotificationTaskWhenUserUnsubscribes() throws Exception {
+        User user = UserFactory.createUser();
+        Community community = CommunityFactory.createCommunity();
+        community.setRewriteUrlParameter("vf_nz");
+        UserGroup userGroup = UserGroupFactory.createUserGroup();
+        userGroup.setCommunity(community);
+        user.setUserGroup(userGroup);
+        entityDao.saveEntity(userGroup);
+        entityDao.saveEntity(user);
+        SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
+        sendChargeNotificationTask.setUser(user);
+        taskRepository.save(sendChargeNotificationTask);
+        List<UserTask> taskList = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
+        assertThat(taskList.size(), is(1));
+        userService.unsubscribeUser(user, "test");
+        taskList = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
+        assertThat(taskList.size(), is(0));
+    }
 }
