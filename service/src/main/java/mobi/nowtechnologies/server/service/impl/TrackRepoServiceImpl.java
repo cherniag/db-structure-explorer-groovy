@@ -345,14 +345,16 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	protected void fillTracks(PageListDto<TrackDto> tracks) {
 		Map<String, TrackDto> map = new HashMap<String, TrackDto>();
 		for (TrackDto track : tracks.getList()) {
-				if (pullingTrackSet.contains(track.getId()))
-					track.setStatus(TrackStatus.PUBLISHING);
-				else if (track.getStatus() == TrackStatus.ENCODED) {
-					track.setInfo(getArtistInfo(track.getArtist()));
-					track.setPublishArtist(track.getArtist());
-					track.setPublishTitle(track.getTitle());
-					map.put(track.getIsrc(), track);
-				}
+				
+			track.setInfo(getArtistInfo(track.getArtist()));
+			track.setPublishArtist(track.getArtist());
+			track.setPublishTitle(track.getTitle());
+
+			if (pullingTrackSet.contains(track.getId()))
+				track.setStatus(TrackStatus.PUBLISHING);
+			else if (track.getStatus() == TrackStatus.ENCODED || track.getStatus() == TrackStatus.PUBLISHED)
+				map.put(track.getIsrc(), track);
+
 		}
 
 		if (map.size() > 0)
