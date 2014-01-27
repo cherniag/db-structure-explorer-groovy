@@ -123,6 +123,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public TrackDto pull(TrackDto config) {
 		LOGGER.debug("input pull(track): [{}]", config);
 
@@ -172,7 +173,6 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 		return track;
 	}
 
-    @Transactional(propagation = Propagation.REQUIRED)
     protected Media createOrUpdateMedia(TrackDto track, TrackDto config){
         Media media = mediaRepository.getByIsrc(track.getIsrc());
 

@@ -127,6 +127,7 @@ public class TrackRepoController extends AbstractCommonController{
 
                 List<TrackDto> fails = rez.get("fail");
                 List<TrackDto> successes = rez.get("success");
+                //FIXME: remove serialization to JSON. It is performed automatically with @ResponseBody
                 JSONObject result = new JSONObject();
                 JSONArray jsonArray = new JSONArray();
 
