@@ -382,13 +382,16 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	
 	private TrackDto sendPullRequest(final Long id) throws Exception {
 		LOGGER.info("callPull(id:{})", id);
+		if (id == null)
+			return null;
 		try {
 			HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
 			pull.setHeaders(getSecuredHeaders());
 			HttpResponse response = getHttpClient().execute(pull);
 			if (response.getStatusLine().getStatusCode() != 200) {
 				LOGGER.error("Server responded on Pull request for track with ID {} with error status code: {}", id, response.getStatusLine().getStatusCode());
-				throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
+				//throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
+				return null;
 			}
 			String resJson = IOUtils.toString(response.getEntity().getContent()); 
 			LOGGER.info("Received json: {}", resJson);
