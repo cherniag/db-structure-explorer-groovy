@@ -45,7 +45,11 @@ public class FileController extends AbstractCommonController{
 				return;
 			File respFile = new File(file.getPath());
 //			File respFile = new File(mockFile(file));
-			stream(respFile, AssetFileDto.toFileType(file.getType()).getMime(), req, resp);
+
+            String contentType = file.getPath().endsWith("wav") ? "audio/wav" : AssetFileDto.toFileType(file.getType()).getMime();
+
+            stream(respFile, contentType, req, resp);
+//			stream(respFile, AssetFileDto.toFileType(file.getType()).getMime(), req, resp);
 		} catch (Exception e) {
 			LOGGER.error("Can't send file", e);
 		}

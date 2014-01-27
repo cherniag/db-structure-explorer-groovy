@@ -17,6 +17,7 @@ $.fn.descendantOf = function(element) {
 //---------------------------------------------------//
 $(function() {
     //------------------Popover Dialogs----------------//
+
     var popoverSelector = $(".popover-selector").popover({
         title : function(){
             var popoverTitle = $(this).find(".popover-title");
@@ -32,19 +33,63 @@ $(function() {
             var el = $(e.target)
 
             if (el.is('input')) {return};
+            
+
+            $(".popover-selector").each(function (){
+              $(this).css({ marginBottom: 10 }); 
+            });
+           
             $(this).popover('toggle');
+            
         });
+
     popoverSelector.each(function () {
         var $this = $(this);
         $this.on("shown", function(){
              window[$this.attr("onShownPopover")]($this);
+             var popover$ = $(this).parent().find('.popover');
+             height = popover$.height() || 0;
+             height = height > 0 ? height + 25 : 0;
+
+            $(this).css({ marginBottom: 10 + height});
         });
         $this.on("hidden", function(){
             window[$this.attr("onHiddenPopover")]($this);
+            $(this).css({ marginBottom: 10 });
         });
     });
     //------------------Play Video and Audio-----------//
     var player = null;
+
+    $(document).ready(function(){       
+      // debugger; 
+
+      if($.browser && ($.browser.mozilla || $.browser.opera)) {
+        
+        $.each( $('video'), function(idx, item){
+          var item$ = $(item);
+          // debugger;
+          // item$.after('<div class="video" id="sfw-object-video-'+idx+'"></div>');
+          // var s = new SWFObject(/*'@{/assets/utils/hdplayer.swf}'*/ '/jadmin/assets/utils/hdplayer.swf','player','320','240','9');
+          // s.addParam('allowfullscreen','true');
+          // s.addParam('allowscriptaccess','always');
+          // s.addParam('wmode','transparent');
+          var src = item$.children('source').attr('src');
+          item$.after('<a class="swf-video" href="'+src+'" style="display:block;width:320px;height:240px;" id="sfw-object-video-'+idx+'"></a>');
+          // s.addVariable('file', src);
+          // s.write('sfw-object-video-' + idx);
+          flowplayer('sfw-object-video-' + idx, /*'@{/assets/utils/flowplayer-3.2.18.swf}'*/ '/jadmin/assets/utils/flowplayer-3.2.18.swf', {
+            clip:  {
+                  autoPlay: false,
+                  autoBuffering: true
+              }
+            });
+        });
+        
+        $('video').remove();
+      }
+    });
+
     $(".play").mouseover(function(){
         var that = $(this);
         var parent = $(this).parent();
@@ -63,7 +108,7 @@ $(function() {
                    hideIfNotPlay(that, modalEl, e);
                });
 
-               var videoEl = modalEl.find("video, audio");
+               var videoEl = modalEl.find("video, audio, .swf-video");
                var closeEl = modalEl.find(".close");
                closeEl.hide();
                closeEl.click(function(){
@@ -84,9 +129,18 @@ $(function() {
     });
 
     var hideIfNotPlay = function(playArea, playEl, e){
+
         var visibleNow = playEl.is(':visible');
         var containedPlayArea = playArea.containsPoint(e) || playEl.containsPoint(e);
         var notPlayer = player == null || player[0] !== playEl[0];
+
+        if($.browser && ($.browser.mozilla || $.browser.opera)){
+          var id = $(playEl).find('.swf-video').attr('id');
+          if (id){
+            notPlayer = !$f(id).isPlaying();
+          }
+        }
+
         if(visibleNow && !containedPlayArea && notPlayer){
             playEl.modal("hide");
         }
@@ -109,14 +163,15 @@ $(function() {
     });
 
     var setAbsPlayerPosition = function (el, offset) {
-            var audio = el.find("audio");
-            var pos = offset;
-            pos.top = pos.top - $(window).scrollTop();
-            pos.left = pos.left - $(window).scrollLeft();
-            var offX = 280;
-            var offY = audio ? 234+el.parent().height()-audio.height() : 234 ;
-            el.css("top",pos.top+offY);
-            el.css("left",pos.left+offX);
+            // debugger;
+            // var audio = el.find("audio");
+            // var pos = offset;
+            // pos.top = pos.top - $(window).scrollTop();
+            // pos.left = pos.left - $(window).scrollLeft();
+            // var offX = 280;
+            // var offY = audio ? 234+el.parent().height()-audio.height() : 234 ;
+            // el.css("top",pos.top+offY);
+            // el.css("left",pos.left+offX);
     }
 
     //-----------------Select All Checkbox------------//
