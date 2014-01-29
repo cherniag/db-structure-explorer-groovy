@@ -371,6 +371,21 @@ public class TrackDto {
     public void setMediaType(FileType mediaType) {
         this.mediaType = mediaType;
     }
+    
+    public String getFormattedDuration() {
+    	
+    	if (files == null) {
+    		return "";
+    	}
+    	
+    	for (ResourceFileDto file : files) {
+    		if (file.getDuration() != null && file.getDuration() > 0) {
+    			return "" + (file.getDuration() / 60000) + ":" + String.format("%02d", (file.getDuration() / 1000) % 60);
+    		}
+    	}
+    	
+    	return "";
+    }
 
     @Override
 	public int hashCode() {

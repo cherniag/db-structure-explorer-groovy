@@ -8,6 +8,7 @@
     <div class="container">
 		<h1 class="head" th:text="#{tracks.pages.title}">Track Repository</h1>
 		<form id="searchTrackDto" name="searchTrackDto" action="#" th:action="@{/tracks/list}" th:object="${searchTrackDto}" method="get" accept-charset="UTF-8" class="well">
+		<input type="hidden" id="withFiles" name="withFiles" value="true"/>
 		<div class="rel">
 			<div class="input-prepend">
 				<span class="add-on">Artist</span><input type="text" id="artist" name="artist" th:value="${param.artist!=null ? param.artist[0] : ''}" />
@@ -88,6 +89,7 @@
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.title}">Title</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.subtitle}">SubTitle</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.artist}">Artist</div>
+					<div class="repo_columns" th:text="#{tracks.page.trackList.head.duration}">Duration</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.releaseDate}">Release Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.publishDate}">Publish Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
@@ -155,6 +157,8 @@
                             <span class="details-value" th:text="${trackDto.year}">Year</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.genre}">Genre:</strong></label>
                             <span class="details-value" th:text="${trackDto.genre}">Genre</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.duration}">Duration:</strong></label>
+                            <span class="details-value" th:text="${trackDto.formattedDuration}">Duration</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.copyright}">Copyright:</strong></label>
                             <span class="details-value" th:text="${trackDto.copyright}">Copyright</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.isrc}">ISRC:</strong></label>
@@ -165,6 +169,8 @@
                             <span class="details-value" th:text="${trackDto.productId}">Product Id</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.ingestor}">Ingestor:</strong></label>
                             <span class="details-value" th:text="${trackDto.ingestor}">Ingestor</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.amazonUrl}">Amazon URL:</strong></label>
+                            <a class="details-value" th:href="${trackDto.amazonUrl}" rel="tooltip" th:text="${trackDto.amazonUrl}" target="_blank"></a>
                         </div>
                         <ul class="table trackFiles">
                             <li class="title">
@@ -207,6 +213,7 @@
 					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
 					<div class="repo_columns" th:text="${trackDto.explicit != null and trackDto.explicit ? (trackDto.subTitle == null ? '' : trackDto.subTitle) + ' (EXPLICIT)' : trackDto.subTitle}">SubTitle</div>
 					<div class="repo_columns" th:id="${'artistDiv_'+trackDto.id}" th:text="${trackDto.artist}">Artist</div>
+					<div class="repo_columns" th:text="${trackDto.formattedDuration}">Duration</div>
 					<div class="repo_columns" th:text="${trackDto.releaseDate != null ? #dates.format(trackDto.releaseDate, '__#{tracks.date.format}__') : ''}">Release Date</div>
 					<div class="repo_columns" th:id="${'publishDateDiv_'+trackDto.id}"  th:text="${trackDto.publishDate != null ? #dates.format(trackDto.publishDate, '__#{tracks.datetime.format}__') : ''}">Publish
 						Date</div>

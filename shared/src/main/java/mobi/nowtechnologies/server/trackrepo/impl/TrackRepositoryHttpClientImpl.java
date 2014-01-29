@@ -485,6 +485,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                         Type type = new TypeToken<PageListDto<TrackDto>>() {
                         }.getType();
                         tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+                        tracks.setPage(page.getPageNumber() + 1);
                     }
                 }
 			}
@@ -503,7 +504,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 
     private void addQParam(String param, String key, List<NameValuePair> queryParams) {
         if (hasText(param))
-        	queryParams.add(new BasicNameValuePair(key, param));
+        	queryParams.add(new BasicNameValuePair(key, param.trim()));
     }
 
     protected List<NameValuePair> buildPageParams(Pageable page, List<NameValuePair>... paramsArr){
