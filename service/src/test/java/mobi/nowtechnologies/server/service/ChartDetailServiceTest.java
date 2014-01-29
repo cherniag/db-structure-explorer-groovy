@@ -217,6 +217,10 @@ public class ChartDetailServiceTest {
 		MediaFile mediaFile = new MediaFile();
 		mediaFile.setI(1);
 		mediaFile.setFilename("Some filename");
+
+		MediaFile audioFile = new MediaFile();
+		audioFile.setI(2);
+		audioFile.setFilename("Another filename");
 		
 		Artist artist = new Artist();
 		artist.setI(1);
@@ -225,6 +229,8 @@ public class ChartDetailServiceTest {
 		Media media = new Media();
 		media.setArtist(artist);
 		media.setImageFileSmall(mediaFile);
+		
+		media.setAudioFile(audioFile);
 		
 		media.setI(i);
 		return media;
