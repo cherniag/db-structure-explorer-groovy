@@ -475,7 +475,7 @@ public class Track extends AbstractEntity {
                 ", explicit=" + explicit +
                 ", ingestionUpdateDate=" + ingestionUpdateDate +
                 ", publishDate=" + publishDate +
-                ", xml=" + Arrays.toString(xml) +
+//                ", xml=" + Arrays.toString(xml) +
                 ", resolution=" + resolution +
                 ", itunesUrl='" + itunesUrl + '\'' +
                 ", territoryCodes='" + territoryCodes + '\'' +

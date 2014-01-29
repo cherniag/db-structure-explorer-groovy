@@ -1,19 +1,18 @@
 package com.musicqubed.cloudassets;
 
-import java.io.File;
-
+import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.xstream.XStream;
+import java.io.File;
 
 public class AssetUploader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AssetUploader.class);
 
 	public static void main(String[] args) throws Exception {
 		if(args.length!=1){
-			LOGGER.error("Expecting one parameter - xml file with configuration, see cloudAssetSettings.xml ");
-			return;
+            String fileName = AssetUploader.class.getClassLoader().getResource("cloudAssetSettings.xml").getPath();
+			args = new String[]{fileName};
 		}
 		
 		int numThreads = 30;

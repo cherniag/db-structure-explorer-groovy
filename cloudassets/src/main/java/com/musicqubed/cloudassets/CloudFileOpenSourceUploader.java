@@ -1,11 +1,7 @@
 package com.musicqubed.cloudassets;
 
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.musicqubed.cloudassets.uploader.FileUploader;
+import com.musicqubed.cloudassets.uploader.FileWithName;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -14,8 +10,12 @@ import org.jclouds.blobstore.options.PutOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.musicqubed.cloudassets.uploader.FileUploader;
-import com.musicqubed.cloudassets.uploader.FileWithName;
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 public class CloudFileOpenSourceUploader implements FileUploader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CloudFileOpenSourceUploader.class);

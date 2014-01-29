@@ -197,7 +197,7 @@ public class TrackServiceImpl implements TrackService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	protected Track pull(Track track) {
-		LOGGER.info("start pull process: [{}]", new Object[] { track.getIsrc() });
+		LOGGER.info("start pull process: [trackId:{}, isrc:{}]", track.getId(), track.getIsrc());
 
 		try {
 			
@@ -210,6 +210,8 @@ public class TrackServiceImpl implements TrackService {
 						isrc+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt(),
 						isrc+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()
 					};
+			
+			LOGGER.info("files to pull: {}", Arrays.toString(pullFiles));
 			
 			for (int i = 0; i < pullFiles.length; i++) {
                 if(pullFiles[i] != null)

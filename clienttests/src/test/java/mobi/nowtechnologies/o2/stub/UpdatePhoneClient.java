@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.o2;
+package mobi.nowtechnologies.o2.stub;
 
 import java.net.URL;
 import java.util.List;

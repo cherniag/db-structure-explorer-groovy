@@ -76,7 +76,7 @@ public class TrackRepoController extends AbstractCommonController{
                                    BindingResult bindingResult,
                                    @PageableDefaults(pageNumber = 0, value = 10) Pageable pageable) {
 		LOGGER.debug("input findTracks(query, searchTrackDto): [{}]", new Object[] { searchTrackDto });
-		
+
 		ModelAndView modelAndView = new ModelAndView("tracks/tracks");
 		if (bindingResult.hasErrors()) {
             modelAndView.getModelMap().put(SearchTrackDto.SEARCH_TRACK_DTO, searchTrackDto);
@@ -127,6 +127,7 @@ public class TrackRepoController extends AbstractCommonController{
 
                 List<TrackDto> fails = rez.get("fail");
                 List<TrackDto> successes = rez.get("success");
+                //FIXME: remove serialization to JSON. It is performed automatically with @ResponseBody
                 JSONObject result = new JSONObject();
                 JSONArray jsonArray = new JSONArray();
 
@@ -163,7 +164,15 @@ public class TrackRepoController extends AbstractCommonController{
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                return trackRepoService.pull(track);
+            	try{
+            		LOGGER.info("Start WebAsyncTask: pullig track with id {}", track.getId());
+            		TrackDto ret = trackRepoService.pull(track);
+            		LOGGER.info("Finish WebAsyncTask: pullig track with id {}", track.getId());
+            		return ret;
+            	}catch(Exception e){
+            		LOGGER.error("Error while pulling track with ID " + track.getId() + ": " + e.getMessage(), e);
+            		throw e;
+            	}
             }
         });
         pullTask.onTimeout(new Callable<TrackDto>() {

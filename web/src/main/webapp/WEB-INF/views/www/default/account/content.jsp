@@ -36,8 +36,13 @@
 									<s:message code='account.page.leftPart.trialEndingDate' />
 								</div>
 								<div class="valueCell pink">
-									<fmt:formatDate value="${accountDto.timeOfMovingToLimitedStatus}"
-										pattern="dd/MM/yyyy" />
+                                    <s:message var="trialEndingDateFormat" code='account.page.leftPart.trialEndingDateFormat' />
+                                    <div class="bold pink">
+                                        <script>
+                                            var timeOfMovingToLimitedStatusDate = new Date(${accountDto.timeOfMovingToLimitedStatus});
+                                            document.write(timeOfMovingToLimitedStatusDate.format('${trialEndingDateFormat}'));
+                                        </script>
+                                    </div>
 								</div>
 							</div>
 						</c:if>

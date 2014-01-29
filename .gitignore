@@ -10,3 +10,4 @@ atlassian-ide-plugin.xml
 .DS_Store
 track-repo/src/main/java/rebel-remote.xml
 track-repo/src/main/java/rebel.xml
+deploy-preprod.sh

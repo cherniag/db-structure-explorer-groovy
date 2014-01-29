@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
@@ -7,15 +8,18 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Locale.*;
 import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
 /**
@@ -29,6 +33,7 @@ public class Utils {
 	private static final String charset = "0123456789";
 	public static final int WEEK_SECONDS = 7 * 86400;
     public static final int DAY_MILLISECONDS = 86400000;
+    public static final int PIN_LENGTH = 4;
 
     private static Pattern MAJOR_VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+)\\..*");
 
@@ -90,9 +95,9 @@ public class Utils {
 		return 10000000 + new Random().nextInt(9999999);
 	}
 
-	public static Integer generateRandomPIN() {
-		return 7000 + new Random().nextInt(999);
-	}
+    public static String generateRandom4DigitsPIN() {
+        return RandomStringUtils.randomNumeric(PIN_LENGTH);
+    }
 
 	public static Date getDateFromInt(int intDate) {
 		return new Date(((long) intDate) * 1000L);
@@ -232,5 +237,25 @@ public class Utils {
         return queryParams.get(parameterName);
     }
 
+    public static String preFormatCurrency(BigDecimal amount) {
+        String moneyString = formatCurrencyWithoutCurrencySymbol(amount);
+        return removeZerosFromRoundedAmount(moneyString);
+    }
+
+    private static String formatCurrencyWithoutCurrencySymbol(BigDecimal amount) {
+        DecimalFormat fmt = (DecimalFormat) NumberFormat.getCurrencyInstance(ENGLISH);
+        DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+        symbols.setCurrencySymbol("");
+        fmt.setDecimalFormatSymbols(symbols);
+        return fmt.format(amount);
+    }
+
+    private static String removeZerosFromRoundedAmount(String moneyString) {
+        int centsIndex = moneyString.lastIndexOf(".00");
+        if (centsIndex != -1) {
+            moneyString = moneyString.substring(0, centsIndex);
+        }
+        return moneyString;
+    }
 
 }

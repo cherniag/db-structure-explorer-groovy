@@ -456,6 +456,12 @@ public class User implements Serializable {
 		return null;
 	}
 
+    public String getCommunityRewriteUrl(){
+        Community community = getUserGroup() != null ? getUserGroup().getCommunity() : null;
+        String communityRewriteUrl = community != null ? community.getRewriteUrlParameter() : null;
+        return communityRewriteUrl;
+    }
+
 	public List<Chart> getSelectedCharts() {
 		return selectedCharts;
 	}
@@ -964,7 +970,7 @@ public class User implements Serializable {
 
 		accountDto.setSubscription(subscription);
 
-		accountDto.setTimeOfMovingToLimitedStatus(new Date(getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L));
+		accountDto.setTimeOfMovingToLimitedStatus(getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L);
 		if (potentialPromotion != null)
 			accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
 		LOGGER.debug("Output parameter accountDto=[{}]", accountDto);

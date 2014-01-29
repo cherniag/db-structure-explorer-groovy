@@ -71,7 +71,7 @@ function onFetchTrackTerritories(data, view){
         $(columns[4]).text(data[i].currency ? data[i].currency : "");
         $(columns[5]).text(data[i].price ? data[i].price : "");
         $(columns[6]).text(data[i].priceCode ? data[i].priceCode : "");
-        $(columns[7]).text(data[i].startDate ? data[i].startDate : "");
+        $(columns[7]).text(data[i].startDate ? formatStartDate(data[i].startDate) : "");
         $(columns[8]).text(data[i].reportingId ? data[i].reportingId : "");
         $(columns[9]).text(data[i].deleted ? data[i].deleted : "false");
 
@@ -424,5 +424,18 @@ function checkAll(){
 function clearErrList(){
    var obj = $("#errList");
    obj.find('div').remove();
+
+}
+
+function formatStartDate(startDate){
+    var st = new Date(startDate);
+    var curr_date = st.getDate();
+    var curr_month = st.getMonth() + 1; //Months are zero based
+    var curr_year = st.getFullYear();
+
+    if (curr_date.length<2)  curr_date="0"+curr_date;
+    if (curr_month.length<2)  curr_month="0"+curr_month;
+
+    return curr_date+"/"+curr_month+"/"+curr_year;
 
 }

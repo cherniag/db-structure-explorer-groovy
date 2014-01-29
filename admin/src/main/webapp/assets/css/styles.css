@@ -1027,3 +1027,23 @@ ul.table li div.path_asset_columns {
     height: 40px;
     float: right;
 }
+
+.newsListWide ul.table li div.image_repo_columns{
+  overflow: visible;
+  position: relative;
+}
+
+.newsListWide ul.table li div.image_repo_columns .videoContainer{
+  position: absolute;
+  left: 0px;
+  top: 100%;
+  margin: -22px 0 0;
+  padding-bottom:20px;
+}
+
+.newsListWide ul.table li div.image_repo_columns .audioContainer{
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin: -23px 0;
+}
