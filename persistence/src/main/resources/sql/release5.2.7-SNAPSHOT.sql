@@ -45,3 +45,16 @@ INSERT INTO tb_promotions (i, description, numUsers, maxUsers, startDate, endDat
 update tb_promotions ps, tb_promoCode pc
 set pc.promotionId = 56
 where pc.promotionId = ps.i and pc.code='o2.consumer.4g.payg' and ps.userGroup = 10  and ps.freeWeeks = 8  and ps.isActive = 0;
+
+
+update tb_paymentPolicy
+set is_default = false
+where communityID=10 and is_default = true  and media_type='AUDIO' and subWeeks = 1 and tariff='_3G';
+
+
+update tb_paymentPolicy
+set is_default = true
+where communityID=10 and is_default = false  and media_type='AUDIO' and subWeeks = 2  and tariff='_3G';
+
+
+
