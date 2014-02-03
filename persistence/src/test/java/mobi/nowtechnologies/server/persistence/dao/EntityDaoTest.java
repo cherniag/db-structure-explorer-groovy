@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class EntityDaoTest  {
 	
 	@Resource(name = "persistence.EntityDao")
@@ -74,7 +73,7 @@ public class EntityDaoTest  {
 	@Test
 	public void testFind() {
 		User user = entityDao.findById(User.class, 1);
-		assertEquals("Nigel", user.getFirstName());
+		assertEquals("", user.getFirstName());
 	}
 	
 	@Test
@@ -102,14 +101,6 @@ public class EntityDaoTest  {
 //	}
 	
 	@Test
-	@Ignore
-	public void testFindChartByAppVersion() {
-		Chart chart = entityDao.findByCommunity(Chart.class, "CN Commercial Beta");
-		assertEquals(Byte.valueOf("3"), chart.getI());
-	}
-	
-	@Test
-	@Ignore
 	public void testSaveAccountLog() {
 		entityDao.saveEntity(new AccountLog(98708, null, (byte) 8, null));
 	}
@@ -128,7 +119,7 @@ public class EntityDaoTest  {
 	public void testFindByProperty_SuccessOrConditions() {
 		Class<Media> entityClass = Media.class;
 		String fieldName = Media.Fields.isrc.toString();
-		String fieldValue = "USJAY1100032";
+		String fieldValue = "US-UM7-11-00061";
 		Media media = entityDao.findByProperty(entityClass, fieldName,
 				fieldValue);
 		assertNotNull(media);
@@ -166,8 +157,8 @@ public class EntityDaoTest  {
 	public void testFindByProperties() {
 		Class<Media> entityClass = Media.class;
 		Map<String, Object> fieldNameValueMap = new HashMap<String, Object>();
-		fieldNameValueMap.put(Media.Fields.i.toString(), 48);
-		fieldNameValueMap.put(Media.Fields.isrc.toString(), "USAT21001886");
+		fieldNameValueMap.put(Media.Fields.i.toString(), 50);
+		fieldNameValueMap.put(Media.Fields.isrc.toString(), "US-UM7-11-00061");
 		
 		Media media=entityDao.findByProperties(entityClass, fieldNameValueMap);
 		assertNotNull(media);
