@@ -117,7 +117,7 @@ public class FileService{
 		File fileName;
 		if (fileType.equals(FileType.IMAGE_RESOLUTION)) {
 			notNull(resolution, "The parameter fileResolution is null");
-			isTrue(containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
+			isTrue(!containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
 
 			StringBuilder builder = new StringBuilder(mediaFileName);
 			builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE

@@ -28,7 +28,7 @@ public class FileServiceIT {
 			.getLogger(FileServiceIT.class.getName());
 
     @Autowired
-    FileService service;
+    private FileService service;
 
 	private static FileService fileService;
 	
@@ -46,16 +46,15 @@ public class FileServiceIT {
     }
 
 
-	@Test(expected = ServiceException.class)
-    @Ignore
+	@Test
 	public void testGetFile_WhenImageExists()
 		throws Exception {
-		String mediaId = "47";
-		FileService.FileType fileType = FileService.FileType.IMAGE_LARGE;
+		String mediaId = "US-UM7-11-00061";
+		FileService.FileType fileType = FileService.FileType.IMAGE_RESOLUTION;
 		int userId = 1;
 		String fileResolution = "fileResolution";
 
-		File result = fileService.getFile(mediaId, fileType, fileResolution, user);
+		File result = service.getFile(mediaId, fileType, fileResolution, user);
 		assertNotNull(result);
 		assertTrue(result.exists());
 	}
