@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/service-test.xml", "/META-INF/dao-test.xml", "/META-INF/shared.xml" })
+@Ignore
 public class O2PostpayChannelServiceIT {
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(O2PostpayChannelServiceIT.class);
