@@ -38,7 +38,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userName = "imei_351722057812750";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.6";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -95,7 +94,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userName = "imei_351722057812748";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -151,7 +149,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userName = "imei_351722057812748";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "6.0";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -196,7 +193,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userName = "imei_351722057812749";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -239,7 +235,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String oldUserName = "b88106713409e92622461a876abcd74c";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -284,7 +279,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userName = "+447733333333";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -320,7 +314,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userName = "999a72f8864fd5c23957beef9d99656568";
         User user = prepareUserForApplyInitPromo(userName);
         String apiVersion = "3.9";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -354,7 +347,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         String userName = "+447766666666";
         String apiVersion = "3.9";
         User user = prepareUserForApplyInitPromo(userName);
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -375,9 +367,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void applyInitPromo_whenUserUserNameIsWrongV3d9_then_400() throws Exception {
         //given
-        String userName = "+447766666666";
         String apiVersion = "3.9";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "";
@@ -396,9 +386,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     @Test
     public void applyInitPromo_whenUserUserNameIsWrongV5d3_then_400() throws Exception {
         //given
-        String userName = "+447766666666";
         String apiVersion = "5.3";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "";
@@ -419,7 +407,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         //given
         String userName = "+447766666666";
         String apiVersion = "3.5";
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "";

@@ -31,7 +31,6 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
     @Test
     public void testActivateVideoAudioFreeTrial_WithAccCheckDetailsAndVersionMore50_Success() throws Exception {
         String userName = "+447111111114";
-        String appVersion = "6.0";
         String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -83,7 +82,6 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
     @Test
     public void testActivateVideoAudioFreeTrial_EmptyDeviceUIDAndNotEligableForVideo_Failure() throws Exception {
     	String userName = "+447111111114";
-        String appVersion = "4.0";
 		String apiVersion = "4.0";
 		String communityUrl = "o2";
 		String timestamp = "2011_12_26_07_04_23";
@@ -123,7 +121,6 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
     @Test
     public void testActivateVideoAudioFreeTrial_401_Failure() throws Exception {
         String userName = "+447xxxxxxxxx";
-        String appVersion = "4.0";
         String apiVersion = "4.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -142,8 +139,6 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
 
     @Test
     public void testActivateVideoAudioFreeTrialv4d0_400_Failure() throws Exception {
-        String userName = "+447xxxxxxxxx";
-        String appVersion = "4.0";
         String apiVersion = "4.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -156,13 +151,11 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isInternalServerError());;
+        ).andExpect(status().isInternalServerError());
     }
 
     @Test
     public void testActivateVideoAudioFreeTrialv5d2_400_Failure() throws Exception {
-        String userName = "+447xxxxxxxxx";
-        String appVersion = "4.0";
         String apiVersion = "5.3";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -175,13 +168,12 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isBadRequest());;
+        ).andExpect(status().isBadRequest());
     }
 
     @Test
     public void testActivateVideoAudioFreeTrial_404_Failure() throws Exception {
         String userName = "+447xxxxxxxxx";
-        String appVersion = "4.0";
         String apiVersion = "3.5";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";

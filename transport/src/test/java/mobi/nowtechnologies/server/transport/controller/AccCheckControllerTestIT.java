@@ -100,7 +100,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
 
-        User user = userService.findByNameAndCommunity(userName, communityName);
+        userService.findByNameAndCommunity(userName, communityName);
 
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
@@ -216,7 +216,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testAccountCheckv4d0_400_Failure() throws Exception {
-        String userName = "+642102247311";
         String apiVersion = "4.0";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
@@ -234,7 +233,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testAccountCheckv5d3_400_Failure() throws Exception {
-        String userName = "+642102247311";
         String apiVersion = "5.3";
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
@@ -267,7 +265,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Bad user credentials"));;
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Bad user credentials"));
     }
 
     @Test
@@ -287,7 +285,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("user login/pass check failed for [+6421xxxxxxxx] username and community [vf_nz]"));;
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("user login/pass check failed for [+6421xxxxxxxx] username and community [vf_nz]"));
     }
 
     @Test

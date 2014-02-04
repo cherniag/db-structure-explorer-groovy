@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -23,19 +22,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-public class GetChartControllerTestIT extends AbstractControllerTestIT{
-	
-	@Autowired
-	private ChartRepository chartRepository;
-
-	@Autowired
-	private ChartDetailRepository chartDetailRepository;
+public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
     @Autowired
-	private CommunityRepository communityRepository;
+    private ChartRepository chartRepository;
 
     @Autowired
-	private MediaFileRepository mediaFileRepository;
+    private ChartDetailRepository chartDetailRepository;
+
+    @Autowired
+    private CommunityRepository communityRepository;
+
+    @Autowired
+    private MediaFileRepository mediaFileRepository;
 
     @Test
     public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
@@ -68,34 +67,28 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
         assertTrue(resultJson.contains("\"chart\""));
         assertTrue(resultJson.contains("\"user\""));
 
-        JsonObject jsonObject = getAccCheckContent(resultJson);
-
-        resultActions = mockMvc.perform(
+        ResultActions accountCheckCall = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultAccCkeckJson.contains(jsonObject.toString()));
+        checkAccountCheck(resultActions, accountCheckCall);
     }
 
     @Test
     public void testGetChart_O2_v4d0_Success() throws Exception {
-    	String userName = "+447111111114";
+        String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-		String apiVersion = "4.0";
-		String communityUrl = "o2";
-		String timestamp = "2011_12_26_07_04_23";
-		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String apiVersion = "4.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         generateChartAllTypesForO2();
-		
-		mockMvc.perform(
+
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -103,23 +96,23 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk()).andDo(print()).
                 andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists())
-        .andExpect(xpath("/response/chart/track[duration=10000]").exists())
+                .andExpect(xpath("/response/chart/track[duration=10000]").exists())
                 .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
     @Test
     public void testGetChart_O2_v3d8_Success() throws Exception {
-    	String userName = "+447111111114";
+        String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-		String apiVersion = "3.8";
-		String communityUrl = "o2";
-		String timestamp = "2011_12_26_07_04_23";
-		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String apiVersion = "3.8";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         generateChartAllTypesForO2();
 
-		mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -134,17 +127,17 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testGetChart_O2_v3d7_Success() throws Exception {
-    	String userName = "+447111111114";
+        String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-		String apiVersion = "3.7";
-		String communityUrl = "o2";
-		String timestamp = "2011_12_26_07_04_23";
-		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String apiVersion = "3.7";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         generateChartAllTypesForO2();
 
-		mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -162,17 +155,17 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
     @Test
     @NotTransactional
     public void testGetChart_O2_v3d6_Success() throws Exception {
-    	String userName = "+447111111114";
+        String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-		String apiVersion = "3.6";
-		String communityUrl = "o2";
-		String timestamp = "2011_12_26_07_04_23";
-		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String apiVersion = "3.6";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         generateChartAllTypesForO2();
 
-		mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
@@ -209,7 +202,6 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testGetChart_400_Failure() throws Exception {
-        String userName = "+447xxxxxxxxx";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "5.0";
         String communityUrl = "o2";
@@ -227,7 +219,6 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testGetChartV5d3_400_Failure() throws Exception {
-        String userName = "+447xxxxxxxxx";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "5.3";
         String communityUrl = "o2";
@@ -254,7 +245,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
-                post("/some_key/"+communityUrl+"/"+apiVersion+"/PHONE_NUMBER")
+                post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -265,7 +256,6 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testGetChart_404_Failure() throws Exception {
-        String userName = "+447xxxxxxxxx";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "3.5";
         String communityUrl = "o2";
@@ -280,8 +270,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT{
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isNotFound());
     }
-    
-    private void generateChartAllTypesForO2(){
+
+    private void generateChartAllTypesForO2() {
         Community o2Community = communityRepository.findOne(7);
         Chart chart = chartRepository.findOne(5);
 

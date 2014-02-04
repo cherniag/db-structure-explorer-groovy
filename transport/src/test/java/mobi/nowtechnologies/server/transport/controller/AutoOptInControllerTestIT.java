@@ -1,20 +1,8 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.ResultActions;
-import static mobi.nowtechnologies.server.shared.dto.OAuthProvider.NONE;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,7 +19,6 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT{
     public void shouldAutoOptInAndVersionMore40() throws Exception {
         //given
         String userName = "+447111111114";
-        String appVersion = "6.0";
         String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -41,65 +28,58 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT{
         String otac = null;
 
         //then
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
-
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
-        JsonObject resultJsonObject = getAccCheckContent(resultJson);
-        AccountCheckDTO accountCheckDTO = gson.fromJson(resultJsonObject, AccountCheckDTO.class);
-
-        assertEquals(null, accountCheckDTO.displayName);
-        assertEquals("SUBSCRIBED", accountCheckDTO.status);
-        assertEquals(userName, accountCheckDTO.userName);
-        assertEquals("b88106713409e92622461a876abcd74b", accountCheckDTO.deviceUID);
-        assertEquals(storedToken, accountCheckDTO.userToken);
-        assertEquals("IOS", accountCheckDTO.deviceType);
-        assertNotNull(accountCheckDTO.rememberMeToken);
-        assertEquals("O2_PSMS", accountCheckDTO.paymentType);
-        assertEquals("+447111111114", accountCheckDTO.phoneNumber);
-        assertEquals(0, accountCheckDTO.subBalance);
-        assertEquals(null, accountCheckDTO.paymentStatus);
-        assertEquals(new Integer(1), accountCheckDTO.operator);
-        assertEquals(true, accountCheckDTO.paymentEnabled);
-        assertEquals("PLAYS", accountCheckDTO.drmType);
-        assertEquals(100, accountCheckDTO.drmValue);
-        assertEquals(PaymentDetailsStatus.NONE, accountCheckDTO.lastPaymentStatus);
-        assertEquals(false, accountCheckDTO.promotedDevice);
-        assertEquals(true, accountCheckDTO.freeTrial);
-        assertEquals(1321452650, accountCheckDTO.chartTimestamp);
-        assertEquals(21, accountCheckDTO.chartItems);
-        assertEquals(1317300123, accountCheckDTO.newsTimestamp);
-        assertEquals(10, accountCheckDTO.newsItems);
-        assertEquals(null, accountCheckDTO.promotionLabel);
-        assertEquals(true, accountCheckDTO.fullyRegistred);
-        assertEquals(2, accountCheckDTO.promotedWeeks);
-        assertEquals(NONE, accountCheckDTO.oAuthProvider);
-        assertEquals(true, accountCheckDTO.hasPotentialPromoCodePromotion);
-        assertEquals(false, accountCheckDTO.hasOffers);
-        assertEquals(ActivationStatus.ACTIVATED, accountCheckDTO.activation);
-        assertEquals("com.musicqubed.o2.autorenew.test", accountCheckDTO.appStoreProductId);
-        assertEquals(O2.getKey(), accountCheckDTO.provider);
-        assertEquals(PAYM, accountCheckDTO.contract);
-        assertEquals(CONSUMER, accountCheckDTO.segment);
-        assertEquals(_3G, accountCheckDTO.tariff);
-        assertEquals(0, accountCheckDTO.graceCreditSeconds);
-        assertEquals(true, accountCheckDTO.canGetVideo);
-        assertEquals(false, accountCheckDTO.canPlayVideo);
-        assertEquals(true, accountCheckDTO.hasAllDetails);
-        assertEquals(true, accountCheckDTO.showFreeTrial);
-        assertEquals(false, accountCheckDTO.canActivateVideoTrial);
-        assertEquals(false, accountCheckDTO.eligibleForVideo);
-        assertEquals(null, accountCheckDTO.lastSubscribedPaymentSystem);
-        assertEquals(null, accountCheckDTO.subscriptionChanged);
-        assertEquals(false, accountCheckDTO.subjectToAutoOptIn);
-
+        ).andExpect(status().isOk()).andDo(print()).andExpect(
+                jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.displayName").doesNotExist())
+                .andExpect(jsonPath("$.response.data[0].user.status").value("SUBSCRIBED"))
+                .andExpect(jsonPath("$.response.data[0].user.deviceUID").value("b88106713409e92622461a876abcd74b"))
+                .andExpect(jsonPath("$.response.data[0].user.userToken").value(storedToken))
+                .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
+                .andExpect(jsonPath("$.response.data[0].user.rememberMeToken").exists())
+                .andExpect(jsonPath("$.response.data[0].user.paymentType").value("O2_PSMS"))
+                .andExpect(jsonPath("$.response.data[0].user.phoneNumber").value("+447111111114"))
+                .andExpect(jsonPath("$.response.data[0].user.subBalance").value(0))
+                .andExpect(jsonPath("$.response.data[0].user.paymentStatus").doesNotExist())
+                .andExpect(jsonPath("$.response.data[0].user.operator").value(1))
+                .andExpect(jsonPath("$.response.data[0].user.paymentEnabled").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.drmType").value("PLAYS"))
+                .andExpect(jsonPath("$.response.data[0].user.drmValue").value(100))
+                .andExpect(jsonPath("$.response.data[0].user.promotedDevice").value(false))
+                .andExpect(jsonPath("$.response.data[0].user.freeTrial").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.chartTimestamp").value(1321452650))
+                .andExpect(jsonPath("$.response.data[0].user.chartItems").value(21))
+                .andExpect(jsonPath("$.response.data[0].user.newsTimestamp").value(1317300123))
+                .andExpect(jsonPath("$.response.data[0].user.newsItems").value(10))
+                .andExpect(jsonPath("$.response.data[0].user.promotionLabel").doesNotExist())
+                .andExpect(jsonPath("$.response.data[0].user.fullyRegistred").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.promotedWeeks").value(2))
+                .andExpect(jsonPath("$.response.data[0].user.oAuthProvider").value("NONE"))
+                .andExpect(jsonPath("$.response.data[0].user.hasPotentialPromoCodePromotion").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.hasOffers").value(false))
+                .andExpect(jsonPath("$.response.data[0].user.activation").value("ACTIVATED"))
+                .andExpect(jsonPath("$.response.data[0].user.appStoreProductId").value("com.musicqubed.o2.autorenew.test"))
+                .andExpect(jsonPath("$.response.data[0].user.provider").value(ProviderType.O2.getKey()))
+                .andExpect(jsonPath("$.response.data[0].user.contract").value("PAYM"))
+                .andExpect(jsonPath("$.response.data[0].user.segment").value("CONSUMER"))
+                .andExpect(jsonPath("$.response.data[0].user.tariff").value("_3G"))
+                .andExpect(jsonPath("$.response.data[0].user.graceCreditSeconds").value(0))
+                .andExpect(jsonPath("$.response.data[0].user.canGetVideo").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.canPlayVideo").value(false))
+                .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.showFreeTrial").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.canActivateVideoTrial").value(false))
+                .andExpect(jsonPath("$.response.data[0].user.eligibleForVideo").value(false))
+                .andExpect(jsonPath("$.response.data[0].user.lastSubscribedPaymentSystem").doesNotExist())
+                .andExpect(jsonPath("$.response.data[0].user.subscriptionChanged").doesNotExist())
+                .andExpect(jsonPath("$.response.data[0].user.subjectToAutoOptIn").value(false))
+                .andExpect(jsonPath("$.response.data[0].user.userName").value(userName));
 
         //when
         mockMvc.perform(
@@ -181,7 +161,6 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT{
     public void applyInitPromo_whenUserUserNameIsWrong_then_404() throws Exception {
         //given
         String userName = "+447111111114";
-        String appVersion = "4.2";
         String apiVersion = "3.5";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
