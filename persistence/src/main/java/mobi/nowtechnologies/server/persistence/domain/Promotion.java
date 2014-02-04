@@ -1,14 +1,13 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.*;
-
-import static mobi.nowtechnologies.server.shared.ObjectUtils.*;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 @Entity
 @Table(name = "tb_promotions")

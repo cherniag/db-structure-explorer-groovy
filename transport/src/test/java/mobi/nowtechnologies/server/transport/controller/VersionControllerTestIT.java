@@ -2,9 +2,10 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import org.junit.Test;
 
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 /**
  * Created by oar on 12/18/13.

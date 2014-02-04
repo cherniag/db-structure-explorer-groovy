@@ -1,28 +1,22 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Operator;
+import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.enums.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
-
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Operator;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-
-import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
 @Entity
 @Table(name = "tb_paymentPolicy")

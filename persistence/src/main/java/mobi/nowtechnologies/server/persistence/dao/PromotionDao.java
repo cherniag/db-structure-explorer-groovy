@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * @author Titov Mykhaylo (titov)

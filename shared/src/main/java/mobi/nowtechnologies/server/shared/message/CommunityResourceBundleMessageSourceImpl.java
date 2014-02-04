@@ -8,7 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.trim;
+
 
 public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
     private static Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);

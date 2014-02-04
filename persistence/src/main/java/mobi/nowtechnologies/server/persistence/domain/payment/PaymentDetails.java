@@ -1,16 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
-import java.util.List;
-
-import javax.persistence.*;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

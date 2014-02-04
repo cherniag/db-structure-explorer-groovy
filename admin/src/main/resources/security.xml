@@ -32,7 +32,7 @@
 
 	</sec:http>
 
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="securityDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${admin.db.driverClassName}" />
 		<property name="url" value="${admin.db.url}" />
 		<property name="username" value="${admin.db.username}" />
@@ -61,7 +61,7 @@
 	<bean id="adminPasswordEncoder" class="mobi.nowtechnologies.server.admin.security.utils.AdminPasswordEncoder" />
 
 	<bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.admin.security.service.impl.AdminDetailsServiceImpl">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="securityDataSource" />
 	</bean>
 
 	<bean id="communityResolverFilter" class="mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter" />

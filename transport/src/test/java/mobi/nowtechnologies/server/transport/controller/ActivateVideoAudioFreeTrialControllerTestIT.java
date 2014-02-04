@@ -13,9 +13,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
     @Autowired

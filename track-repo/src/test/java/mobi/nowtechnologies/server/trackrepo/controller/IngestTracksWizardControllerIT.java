@@ -14,15 +14,16 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.server.MockMvc;
-import org.springframework.test.web.server.ResultActions;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 /**
  * @author Alexander Kolpakov (akolpakov)
@@ -42,7 +43,7 @@ public class IngestTracksWizardControllerIT extends TestCase {
 
     @Before
     public void setUp() {
-        mockMvc = webApplicationContextSetup((WebApplicationContext)applicationContext).build();
+        mockMvc = webAppContextSetup((WebApplicationContext) applicationContext).build();
     }
 
 	@Test
@@ -69,7 +70,7 @@ public class IngestTracksWizardControllerIT extends TestCase {
 
         resultActions = mockMvc.perform(
                 post("/drops/select.json").
-                     body(resultJson.getBytes()).
+                     content(resultJson.getBytes()).
                      accept(MediaType.APPLICATION_JSON).
                      contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
@@ -94,7 +95,7 @@ public class IngestTracksWizardControllerIT extends TestCase {
 
         resultActions = mockMvc.perform(
                 post("/drops/select.json").
-                        body(resultJson.getBytes()).
+                        content(resultJson.getBytes()).
                         accept(MediaType.APPLICATION_JSON).
                         contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
@@ -105,7 +106,7 @@ public class IngestTracksWizardControllerIT extends TestCase {
 
         resultActions = mockMvc.perform(
                 post("/drops/tracks/select.json").
-                        body(resultJson.getBytes()).
+                        content(resultJson.getBytes()).
                         accept(MediaType.APPLICATION_JSON).
                         contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
@@ -130,7 +131,7 @@ public class IngestTracksWizardControllerIT extends TestCase {
 
         resultActions = mockMvc.perform(
                 post("/drops/select.json").
-                        body(resultJson.getBytes()).
+                        content(resultJson.getBytes()).
                         accept(MediaType.APPLICATION_JSON).
                         contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
@@ -141,7 +142,7 @@ public class IngestTracksWizardControllerIT extends TestCase {
 
         resultActions = mockMvc.perform(
                 post("/drops/commit.json").
-                        body(resultJson.getBytes()).
+                        content(resultJson.getBytes()).
                         accept(MediaType.APPLICATION_JSON).
                         contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());

@@ -23,25 +23,30 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
  <!--</bean> -->
 
 
+    <bean id="abstract.EntityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" abstract="true">
+        <property name="dataSource" ref="persistence.DataSource" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="showSql" value="true" />
+                <property name="generateDdl" value="false" />
+                <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
+                <!--<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />-->
+            </bean>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.import_files">/META-INF/init-test.sql</prop>
+            </props>
+        </property>
+    </bean>
+
+
 
     <bean id="persistence.EntityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="persistence.DataSource" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="showSql" value="true" />
-				<property name="generateDdl" value="false" />
-				<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
- 				<!--<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />-->
-			</bean>
-		</property>
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
-				<prop key="hibernate.show_sql">false</prop>
-				<prop key="hibernate.hbm2ddl.import_files">/META-INF/init-test.sql</prop>
-			</props>
-		</property>
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" parent="abstract.EntityManagerFactory">
 	</bean>
 
     <bean id="persistence.DataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -59,4 +64,5 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
         <property name="chartRepository" ref="chartRepository" />
         <property name="chartDetailRepository" ref="chartDetailRepository" />
     </bean>
+
 </beans>

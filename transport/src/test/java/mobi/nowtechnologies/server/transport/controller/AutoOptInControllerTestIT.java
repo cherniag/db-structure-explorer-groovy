@@ -7,8 +7,7 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.server.ResultActions;
-
+import org.springframework.test.web.servlet.ResultActions;
 import static mobi.nowtechnologies.server.shared.dto.OAuthProvider.NONE;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
@@ -16,10 +15,10 @@ import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * User: Titov Mykhaylo (titov)

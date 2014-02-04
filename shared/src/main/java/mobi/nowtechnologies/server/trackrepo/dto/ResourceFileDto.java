@@ -4,7 +4,7 @@ import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 

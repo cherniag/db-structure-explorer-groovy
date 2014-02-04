@@ -4,13 +4,12 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import java.math.BigDecimal;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
 
 @XmlRootElement(name="PaymentPolicy")
 @XmlAccessorType(XmlAccessType.PROPERTY)

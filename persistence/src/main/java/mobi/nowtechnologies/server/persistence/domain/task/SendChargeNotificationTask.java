@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.task;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

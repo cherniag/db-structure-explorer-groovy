@@ -27,7 +27,7 @@
     </scm>
 
     <properties>
-        <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
+        <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
         <org.springframework.security-version>3.1.0.RELEASE</org.springframework.security-version>
         <spring-social.version>1.0.1.RELEASE</spring-social.version>
         <chartsnow-version>5.3-SNAPSHOT</chartsnow-version>
@@ -407,12 +407,6 @@
                 <classifier>tests</classifier>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test-mvc</artifactId>
-                <version>1.0.0.M2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>bouncycastle</groupId>
                 <artifactId>bcprov-jdk15</artifactId>
                 <version>140</version>
@@ -698,7 +692,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-asm</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>3.1.4.RELEASE</version>
             </dependency>
 
             <dependency>

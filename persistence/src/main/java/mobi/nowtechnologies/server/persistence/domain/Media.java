@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ItemType;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.io.Serializable;
