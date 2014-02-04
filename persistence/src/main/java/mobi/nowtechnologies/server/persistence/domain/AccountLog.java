@@ -1,7 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
+import mobi.nowtechnologies.server.shared.enums.TransactionType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,29 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlTransient;
-
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
-import mobi.nowtechnologies.server.shared.enums.TransactionType;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 
 @Entity
 @Table(name="tb_accountLog")

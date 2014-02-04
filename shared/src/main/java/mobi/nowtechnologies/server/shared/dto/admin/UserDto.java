@@ -3,8 +3,7 @@ package mobi.nowtechnologies.server.shared.dto.admin;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.joda.time.DateTime;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 import java.util.Date;

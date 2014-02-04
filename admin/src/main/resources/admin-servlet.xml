@@ -74,7 +74,7 @@
 	</bean>
 	
 	<bean id="adminUserService" class="mobi.nowtechnologies.server.service.impl.AdminUserServiceImpl">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="securityDataSource" />
 	</bean>
 	
 	<mvc:interceptors>

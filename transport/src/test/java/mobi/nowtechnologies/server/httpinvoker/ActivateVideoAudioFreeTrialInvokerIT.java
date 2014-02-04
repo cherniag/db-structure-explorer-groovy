@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.httpinvoker;
 
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -28,8 +27,8 @@ import java.util.Map;
         "classpath:META-INF/soap.xml",
         "classpath:META-INF/dao-test.xml",
         "classpath:META-INF/soap.xml",
-        "classpath:META-INF/shared.xml"}, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.ActivateVideoAudioFreeTrialController", webapp = "classpath:.")
+        "classpath:META-INF/shared.xml"})
+@WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class ActivateVideoAudioFreeTrialInvokerIT {

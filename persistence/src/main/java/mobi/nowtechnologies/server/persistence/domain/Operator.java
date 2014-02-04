@@ -1,17 +1,11 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "tb_operators")

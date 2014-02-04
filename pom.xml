@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>server</artifactId>
-    <version>5.3-SNAPSHOT</version>
+    <version>5.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Now Technologies Java Server</name>
 
@@ -27,35 +27,13 @@
     </scm>
 
     <properties>
-        <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
+        <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
         <org.springframework.security-version>3.1.0.RELEASE</org.springframework.security-version>
         <spring-social.version>1.0.1.RELEASE</spring-social.version>
-        <chartsnow-version>5.3-SNAPSHOT</chartsnow-version>
+        <chartsnow-version>5.3.1-SNAPSHOT</chartsnow-version>
     </properties>
 
     <profiles>
-        <profile>
-            <id>no_integration_testing</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.16</version>
-                        <configuration>
-                            <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
-                            <excludes>
-                                <exclude>**/*IT.java</exclude>
-                                <exclude>**/*Suite.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <!-- mvn -Pit test -->
         <profile>
             <id>it</id>
             <build>
@@ -63,15 +41,19 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.16</version>
-                        <configuration>
-                            <forkCount>0</forkCount>
-                            <argLine>-Xms800m -Xmx1024m -XX:MaxPermSize=1024m -XX:-UseSplitVerifier</argLine>
-                            <includes>
-                                <include>**/*IT.java</include>
-                            </includes>
-                            <excludes>
-                            </excludes>
-                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*IT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -81,6 +63,13 @@
     <build>
         <finalName>server</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -407,12 +396,6 @@
                 <classifier>tests</classifier>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test-mvc</artifactId>
-                <version>1.0.0.M2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>bouncycastle</groupId>
                 <artifactId>bcprov-jdk15</artifactId>
                 <version>140</version>
@@ -698,7 +681,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-asm</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>3.1.4.RELEASE</version>
             </dependency>
 
             <dependency>

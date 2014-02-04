@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
-import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -41,8 +40,7 @@ import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOW
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"deviceUID", "userGroup"}), @UniqueConstraint(columnNames = {"userName", "userGroup"})})
@@ -469,7 +467,7 @@ public class User implements Serializable {
 	}
 
     public boolean hasPhoneNumber(){
-        return !StringUtils.isEmpty(getMobile());
+        return !isEmpty(getMobile());
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {

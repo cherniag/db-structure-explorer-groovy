@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import junit.framework.TestCase;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.factory.admin.ChartItemFactory;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
@@ -13,7 +12,6 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -37,7 +36,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith( PowerMockRunner.class )
 @PrepareForTest(ChartDetailsAsm.class)
-public class ChartItemControllerTest extends TestCase {
+public class ChartItemControllerTest{
 	
 	private ChartItemController fixture;
 	@Mock
@@ -226,8 +225,7 @@ public class ChartItemControllerTest extends TestCase {
 	@Before
 	public void setUp()
 		throws Exception {
-		super.setUp();
-		
+
 		mockStatic( ChartDetailsAsm.class );
 
 		Map<String, String> viewByChartType = new HashMap<String, String>();
@@ -246,9 +244,4 @@ public class ChartItemControllerTest extends TestCase {
 		fixture.messageSource = mock(MessageSource.class);
 	}
 
-	@After
-	public void tearDown()
-		throws Exception {
-		super.tearDown();
-	}
 }

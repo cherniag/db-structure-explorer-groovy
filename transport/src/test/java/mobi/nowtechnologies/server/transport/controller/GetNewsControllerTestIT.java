@@ -1,16 +1,13 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.gson.JsonObject;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.server.ResultActions;
+import org.springframework.test.web.servlet.ResultActions;
 
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GetNewsControllerTestIT extends AbstractControllerTestIT{
 
@@ -34,22 +31,14 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                 andExpect(jsonPath("$.response..news").exists()).
                 andExpect(jsonPath("$.response..user").exists());
 
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
 
-        JsonObject jsonObject = getAccCheckContent(resultJson);
-
-        resultActions = mockMvc.perform(
+        ResultActions accountCheckCall = mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultAccCkeckJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultAccCkeckJson.contains(jsonObject.toString()));
+        ).andExpect(status().isOk()).andDo(print());
+        checkAccountCheck(resultActions, accountCheckCall);
     }
 
     @Test
@@ -114,7 +103,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-         mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)

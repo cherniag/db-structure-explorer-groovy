@@ -1,9 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain.task;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * User: gch
