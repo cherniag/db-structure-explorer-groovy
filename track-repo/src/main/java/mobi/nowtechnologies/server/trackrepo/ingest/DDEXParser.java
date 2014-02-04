@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -400,10 +401,9 @@ public abstract class DDEXParser extends IParser {
             }
         }
 
-        //sony video
-        if (this.getClass() == SonyDDEXParser.class) {
-
-            List<Element> videoList = rootNode.getChild("ResourceList").getChildren("Video");
+        //check for video content
+        List<Element> videoList = rootNode.getChild("ResourceList").getChildren("Video");
+        if (videoList != null) {
 
             for (Element node : videoList) {
                 Element details = node.getChild("VideoDetailsByTerritory");
