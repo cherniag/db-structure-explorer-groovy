@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/service-test-ws.xml" })
-@Ignore
+@ContextConfiguration(locations = { "/META-INF/service-test.xml", "/META-INF/dao-test.xml", "/META-INF/shared.xml" })
 public class O2PostpayChannelServiceIT {
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(O2PostpayChannelServiceIT.class);
