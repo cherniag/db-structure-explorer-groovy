@@ -8,10 +8,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.service.MatchUtils.getUserIdAndUserNameMatcher;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -48,8 +44,8 @@ public class UserServiceTIT {
 	
 	@Resource(name="service.UserService")
 	private UserService userService;
-	
-	@Resource(name = "persistence.EntityDao")
+
+    @Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;
 
     @Autowired
@@ -62,12 +58,11 @@ public class UserServiceTIT {
 	}
 
 	@Test
-    @Ignore
 	public void testCheckCredentialsAndStatus_Success()
 		throws Exception {
 		
 		String userName = "test@test.com";
-		String password="";
+        String password="";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String timestamp = sdf.format(Calendar.getInstance().getTime());
 		//String storredToken = userService.getStoredToken(userName, password);
@@ -76,7 +71,7 @@ public class UserServiceTIT {
 		@SuppressWarnings("deprecation")
 		User result = userService.checkCredentials(
 				userName, Utils.createTimestampToken(storedToken, timestamp), 
-				timestamp, "CN Commercial Beta");
+				timestamp, "Now Music");
 
 		assertEquals(1, result.getId());
 	}

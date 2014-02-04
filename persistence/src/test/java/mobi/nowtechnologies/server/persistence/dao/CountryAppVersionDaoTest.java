@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
  * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
-@Ignore
 public class CountryAppVersionDaoTest {
 	private static CountryAppVersionDao countryAppVersionDao;
 

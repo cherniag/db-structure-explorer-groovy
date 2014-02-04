@@ -3,9 +3,13 @@ package mobi.nowtechnologies.server.persistence.dao;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -26,46 +30,11 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class PaymentPolicyDaoTest {
 	
 	@Resource(name = "persistence.PaymentPolicyDao")
 	private PaymentPolicyDao paymentPolicyDao;
 
-	@Test
-	public void testGetPaymentPoliciesGroupdeByPaymentType_paymentPoliciesExsist() throws Exception {
-        Community community = new Community().withRewriteUrl("Now Music");
-
-		List<PaymentPolicy> paymentPolicies = paymentPolicyDao.getPaymentPoliciesGroupdeByPaymentType(community);
-		assertNotNull(paymentPolicies);
-		
-		Set<String> paymentTypes = new HashSet<String>();
-		
-		for (PaymentPolicy paymentPolicy : paymentPolicies) {
-			String paymetType= paymentPolicy.getPaymentType();
-			
-			assertTrue(!paymentTypes.contains(paymetType));
-			paymentTypes.add(paymetType);
-		}
-	}
-
-	@Test
-	public void testGetPaymentPolicy_1() throws Exception {
-		
-		Integer operatorId=1;
-		Integer communityId=5;
-		String paymentSystem = "Mig";
-		
-		String paymentType = UserRegInfo.PaymentType.PREMIUM_USER;
-		
-		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, communityId);
-		assertNotNull(paymentPolicy);
-		
-		assertEquals(communityId, paymentPolicy.getCommunityId());
-		assertEquals(paymentSystem, paymentPolicy.getPaymentType());
-		assertEquals(operatorId, paymentPolicy.getOperatorId());
-	}
-	
 	@Test
 	public void testGetPaymentPolicy_2() throws Exception {
 		
@@ -77,7 +46,7 @@ public class PaymentPolicyDaoTest {
 		assertNotNull(paymentPolicy);
 		
 		assertEquals(communityId, paymentPolicy.getCommunityId());
-		assertEquals(paymentSystem, paymentPolicy.getPaymentType());
+		assertEquals(UserRegInfo.PaymentType.PAY_PAL, paymentPolicy.getPaymentType());
 		assertEquals(null, paymentPolicy.getOperatorId());
 	}
 	
@@ -92,7 +61,7 @@ public class PaymentPolicyDaoTest {
 		assertNotNull(paymentPolicy);
 		
 		assertEquals(communityId, paymentPolicy.getCommunityId());
-		assertEquals(paymentSystem, paymentPolicy.getPaymentType());
+		assertEquals(UserRegInfo.PaymentType.CREDIT_CARD, paymentPolicy.getPaymentType());
 		assertEquals(null, paymentPolicy.getOperatorId());
 	}
 
