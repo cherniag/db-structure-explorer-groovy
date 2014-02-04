@@ -1,22 +1,20 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import junit.framework.TestCase;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,42 +26,45 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:security.xml",
-		"classpath:web-test.xml",
-		"classpath:META-INF/service-test.xml",
-		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/shared.xml" })
 @WebAppConfiguration
+@ContextHierarchy({
+        @ContextConfiguration(locations = { "classpath:security.xml",
+                "classpath:META-INF/service-test.xml",
+                "classpath:META-INF/dao-test.xml",
+                "classpath:META-INF/shared.xml" }),
+        @ContextConfiguration(locations = {
+                "classpath:web-test.xml"
+                })
+})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
-public class PaymentsControllerIT extends TestCase {
+public class PaymentsControllerIT{
 
-	@Autowired
-	private ApplicationContext wac;
+	@Resource
+	private WebApplicationContext wac;
 
 	private MockMvc mockMvc;
 
-	protected static final String URL_DATE_TIME_FORMAT = "yyyy-MM-dd_HH:mm:ss";
+    @Resource
+    private UserRepository userRepository;
 
-	protected DateFormat dateTimeFormat = new SimpleDateFormat(URL_DATE_TIME_FORMAT);
-
-	/**
+    /**
 	 * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
 	 * 
 	 */
@@ -78,20 +79,17 @@ public class PaymentsControllerIT extends TestCase {
 		ResultActions resultActions = mockMvc.perform(
 				get("/payments.html")
 					.cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))	
-				.andExpect(status().isOk());
+				.andExpect(status().isOk()).andDo(print());
 
 		ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
 		ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
 
 		String viewName = modelAndView.getViewName();
-		String paymentPoliciesNote = (String) modelMap.get("paymentPoliciesNote");
-		List<PaymentPolicyDto> paymentPolicies = (List<PaymentPolicyDto>) modelMap.get("paymentsPage.paymentPolicies");
+		PaymentsPage paymentsPage = (PaymentsPage)modelMap.get("paymentsPage");
+		List<PaymentPolicyDto> paymentPolicies = paymentsPage.getPaymentPolicies();
 
 		assertEquals("payments", viewName);
-		assertNotNull(paymentPolicies);
-		assertEquals(4, paymentPolicies.size());
-		assertEquals("<b>Instant access to new music every day.<br>Just &pound;4.99 a month.</b><br>Keep your free days. <br><br>Switch plans. No contract.<br>Your music. Your choice.<br>Choose how to play below:<br><br><i>iPhone users: Use your iTunes account to subscribe at the end of your trial.</i>", paymentPoliciesNote);
-		assertNull(modelMap.get("paymentDetailsType"));
+		assertEquals(6, paymentPolicies.size());
 	}
 
 	/**
@@ -114,14 +112,14 @@ public class PaymentsControllerIT extends TestCase {
 		ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
 		ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
 
-		String viewName = modelAndView.getViewName();
-		String paymentPoliciesNote = (String) modelMap.get("paymentPoliciesNote");
-		List<PaymentPolicyDto> paymentPolicies = (List<PaymentPolicyDto>) modelMap.get("paymentPolicies");
 
-		assertEquals("payments", viewName);
-		assertNotNull(paymentPolicies);
-		assertEquals(1, paymentPolicies.size());
-		assertEquals("<strong>You are on a free trial and have full access to O2 Tracks.</strong><br /><br />We want you to get the most out of your trial so there's no need to upgrade yet.<br /><br />Don't worry, we'll let you know when it's time.", paymentPoliciesNote);
+        String viewName = modelAndView.getViewName();
+        PaymentsPage paymentsPage = (PaymentsPage)modelMap.get("paymentsPage");
+        List<PaymentPolicyDto> paymentPolicies = paymentsPage.getPaymentPolicies();
+
+        assertEquals("payments", viewName);
+        assertEquals(2, paymentPolicies.size());
+
 	}
 	
 	/**
@@ -145,35 +143,32 @@ public class PaymentsControllerIT extends TestCase {
 		ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
 
 		String viewName = modelAndView.getViewName();
-		String paymentPoliciesNote = (String) modelMap.get("paymentPoliciesNote");
-		List<PaymentPolicyDto> paymentPolicies = (List<PaymentPolicyDto>) modelMap.get("paymentPolicies");
+        PaymentsPage paymentsPage = (PaymentsPage)modelMap.get("paymentsPage");
+        List<PaymentPolicyDto> paymentPolicies = paymentsPage.getPaymentPolicies();
+
 
 		assertEquals("payments", viewName);
-		assertNotNull(paymentPolicies);
 		assertEquals(1, paymentPolicies.size());
-		assertEquals("<strong>You are on a free trial and have full access to O2 Tracks.</strong><br /><br />We want you to get the most out of your trial so there's no need to upgrade yet.<br /><br />Don't worry, we'll let you know when it's time.", paymentPoliciesNote);
 	}
 
 
 	@Before
 	public void setUp()
 			throws Exception {
-		super.setUp();
-
-		mockMvc = MockMvcBuilders.webAppContextSetup((WebApplicationContext) this.wac).build();
+			mockMvc = MockMvcBuilders.webAppContextSetup( this.wac).build();
 	}
 
 	/**
 	 * generate test data
 	 */
 	private SecurityContext createSecurityContext(int userId) {
-		User user = new User();
-		user.setId(userId);
+        User user = userRepository.findOne(userId);
 		if ( userId == 101 ) {
-			user.setProvider(O2);
+            user.setProvider(O2);
 			user.setContract(PAYM);
 			user.setSegment(CONSUMER);
 		}
+        user.setFreeTrialExpiredMillis(System.currentTimeMillis());
 		Authentication authentication = new RememberMeAuthenticationToken("test", new UserDetailsImpl(user, true), null);
 		SecurityContext securityContext = new SecurityContextImpl();
 		securityContext.setAuthentication(authentication);
