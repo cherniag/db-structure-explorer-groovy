@@ -8,8 +8,8 @@ public class SubscriptionTexts implements java.io.Serializable {
 	private String statusText;// freeTrial/preview/subscribed
 	private String futureText;// Ongoing/expiring/upgrading/downgrading
 	private String nextBillingText;// Next billing cycle 12 August 2013/etc
-	
-	//************************************************************
+	private long nextSubPaymentMillis;
+
 	public String getStatusText() {
 		return statusText;
 	}
@@ -34,4 +34,11 @@ public class SubscriptionTexts implements java.io.Serializable {
 		this.nextBillingText = nextBillingText;
 	}
 
+    public long getNextSubPaymentMillis() {
+        return nextSubPaymentMillis;
+    }
+
+    public void setNextSubPaymentMillis(long nextSubPaymentMillis) {
+        this.nextSubPaymentMillis = nextSubPaymentMillis;
+    }
 }

@@ -113,18 +113,6 @@
 
     <bean id="communityResolverFilter" class="mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter" />
 
-    <!-- Overriding PayPal request -->
-    <bean id="request.payPalRequest" class="mobi.nowtechnologies.server.service.payment.request.PayPalRequest">
-        <property name="user" value="${paypal.user}" />
-        <property name="password" value="${paypal.password}" />
-        <property name="signature" value="${paypal.signature}" />
-        <property name="apiVersion" value="${paypal.apiVersion}" />
-        <property name="amountFormat" value="${paypal.amountFormat}" />
-        <property name="btnSource" value="${paypal.btnSource}" />
-        <property name="returnURL" value="${paypal.successfulRedirectURL}" />
-        <property name="cancelURL" value="${paypal.failRedirectURL}" />
-    </bean>
-
     <bean id="afterRememberMeFilter" class="mobi.nowtechnologies.server.shared.web.security.filter.AfterRememberMeFilter">
         <property name="nowTechTokenBasedRememberMeServices"  ref="nowTechBasedRememberMeServices"/>
     </bean>

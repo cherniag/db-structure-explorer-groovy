@@ -1,6 +1,3 @@
-
-      p { clear: both; }
-
       .audiojs { height: 22px; background: #404040;
         background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #444), color-stop(0.5, #555), color-stop(0.51, #444), color-stop(1, #444));
         background-image: -moz-linear-gradient(center top, #444 0%, #555 50%, #444 51%, #444 100%);

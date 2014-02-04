@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.web.view;
 
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import org.apache.tiles.Attribute;
 import org.apache.tiles.AttributeContext;
+import org.apache.tiles.Expression;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.springframework.mobile.device.Device;
@@ -11,12 +13,13 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -40,6 +43,8 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 
 	private static final Map<Boolean, String> deviceMap;
 	private static final String IS_MOBILE_REQUEST = "isMobileRequest";
+
+    private final Pattern VIEW_PATH_ACCORDING_TO_DEVICE_PATTERN = Pattern.compile("DEFAULT:$\\{"+VIEW_PATH_ACCORDING_TO_DEVICE+"\\}/(.+)");
 	
 	private ServletContext servletContext;
 	private Properties cdnProperties;
@@ -70,8 +75,8 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 					deviceFolderName = MOBILE_FOLDER_NAME;
 				else
 					deviceFolderName = WWW_FOLDER_NAME;
-				
-				String path = getViewPath(isMobile, communityName);
+
+				String path = getViewPath(isMobile, communityName, attributeContext);
 				
 				Map<String, Object> requestScopeMap = tilesContext.getRequestScope();
 				requestScopeMap.put(MOBILE_PATH_PARAM, path);
@@ -119,14 +124,30 @@ public class CommunityViewPreparer implements ViewPreparer, ServletContextAware 
 		// if no assets CDN is specified, we use the assets from the web application - this is done for backward compatibility if no CND property is specified
 		return webAppContext;
 	}
-	
-	protected String getViewPath(boolean isMobile, String communityName){
+
+    //TODO Finish this
+	protected String getViewPath(boolean isMobile, String communityName, AttributeContext attributeContext){
 		String path = deviceMap.get(isMobile);
 		
 		String viewPath = path + File.separator + communityName;
 		File viewDir = new File(servletContext.getRealPath(viewPath));
 		if(!viewDir.exists())
 			viewPath = path + File.separator + DEFAULT_COMMUNITY;
+
+        for(String attrName : attributeContext.getLocalAttributeNames()){
+            Attribute attribute = attributeContext.getAttribute(attrName);
+            Expression expression = attribute.getExpressionObject();
+            if(expression != null){
+                String expressionValue = expression.getExpression();
+                String value = "DEFAULT:${requestScope.viewPathAccordingToDevice}/payments/oppsms/content.jsp";
+                final String pattern = "DEFAULT:$\\{requestScope.viewPathAccordingToDevice\\}/(.+)";
+                Matcher matcher = VIEW_PATH_ACCORDING_TO_DEVICE_PATTERN.matcher(expressionValue);
+
+                if(matcher.matches()){
+                    value = viewPath + matcher.group(1);
+                }
+            }
+        }
 		
 		return viewPath;
 	}

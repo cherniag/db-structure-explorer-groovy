@@ -1,9 +1,12 @@
-package mobi.nowtechnologies.o2;
+package mobi.nowtechnologies.o2.stub;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import mobi.nowtechnologies.server.dto.O2UserDetails;
-import mobi.nowtechnologies.server.service.o2.impl.O2ClientServiceImpl;
+import mobi.nowtechnologies.o2.O2Config;
+import mobi.nowtechnologies.o2.UtilsO2;
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
+import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 
@@ -15,18 +18,15 @@ import org.slf4j.LoggerFactory;
 public class O2StubTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(O2StubTest.class);
-	private static final String SERVER_URL = "http://localhost:8998";
-	private static final String O2_PROXY_URL = SERVER_URL;
-	private static final String O2_SERVER_FULL_URL = SERVER_URL + "/services/";
 
-	private static O2ClientServiceImpl o2ClientService;
+	private static O2ProviderServiceImpl o2ClientService;
 	private static O2ServiceImpl o2Service;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		o2ClientService = UtilsO2.createO2ClientService(O2_PROXY_URL, O2_SERVER_FULL_URL);
+		o2ClientService = UtilsO2.createO2ClientService(O2Config.LOCAL_STUB);
 
-		o2Service = UtilsO2.createO2ServiceImpl(O2_SERVER_FULL_URL);
+		o2Service = UtilsO2.createO2ServiceImpl(O2Config.LOCAL_STUB);
 	}
 
 	@Test
@@ -47,16 +47,16 @@ public class O2StubTest {
 	private void checkPhone(String phone, boolean o2, boolean monthlyContract, boolean segmentBusiness, boolean tariff4G) {
 		LOGGER.info("start " + phone);
 
-		String validatedPhone = o2ClientService.validatePhoneNumber(phone);
-		LOGGER.info("validated = " + validatedPhone);
-		assertTrue(validatedPhone.startsWith("+44"));
+		PhoneNumberValidationData validationData = o2ClientService.validatePhoneNumber(phone);
+		LOGGER.info("validated = " + validationData.getPhoneNumber());
+		assertTrue(validationData.getPhoneNumber().startsWith("+44"));
 
-		O2UserDetails details = o2ClientService.getUserDetails(validatedPhone, validatedPhone);
-		LOGGER.info("details oper: " + details.getOperator() + "  tariff: " + details.getTariff());
-		assertEquals(details.getOperator(), o2 ? "o2" : "non-o2");
-		assertEquals(details.getTariff(), (monthlyContract) ? "PAYM" : "PAYG");
+		ProviderUserDetails details = o2ClientService.getUserDetails(validationData.getPhoneNumber(), validationData.getPhoneNumber(), null);
+		LOGGER.info("details oper: " + details.operator + "  tariff: " + details.contract);
+		assertEquals(details.operator, o2 ? "o2" : "non-o2");
+		assertEquals(details.contract, (monthlyContract) ? "PAYM" : "PAYG");
 
-		O2SubscriberData data = o2Service.getSubscriberData(validatedPhone);
+		O2SubscriberData data = o2Service.getSubscriberData(validationData.getPhoneNumber());
 		LOGGER.info("data " + data);
 		assertEquals(data.isBusinessOrConsumerSegment(), segmentBusiness);
 		assertEquals(data.isProviderO2(), o2);
