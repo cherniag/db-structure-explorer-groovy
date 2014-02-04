@@ -2,8 +2,6 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import com.jayway.jsonpath.JsonPath;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
 import mobi.nowtechnologies.server.service.UserService;
@@ -20,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
@@ -39,8 +38,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         "classpath:META-INF/soap.xml",
         "classpath:META-INF/dao-test.xml",
         "classpath:META-INF/smpp.xml",
-        "classpath:META-INF/shared.xml"}, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.controller", webapp = "classpath:.")
+        "classpath:META-INF/shared.xml"})
+@WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public abstract class AbstractControllerTestIT {
 

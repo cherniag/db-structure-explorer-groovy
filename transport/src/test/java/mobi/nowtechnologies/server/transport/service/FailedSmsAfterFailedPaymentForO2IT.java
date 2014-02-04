@@ -5,8 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import junit.framework.Assert;
 import mobi.nowtechnologies.server.job.CleanExpirePendingPaymentsJob;
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
@@ -22,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -45,8 +44,8 @@ import static org.junit.Assert.assertTrue;
         "classpath:META-INF/soap.xml",
         "classpath:META-INF/shared.xml",
         "classpath:task-processors.xml",
-        "classpath:post-service-test.xml"}, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
+        "classpath:post-service-test.xml"})
+@WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class FailedSmsAfterFailedPaymentForO2IT {

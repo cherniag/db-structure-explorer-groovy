@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import junit.framework.TestCase;
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -21,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -48,8 +47,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		"classpath:web-test.xml",
 		"classpath:META-INF/service-test.xml",
 		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "web.PaymentsController")
+		"classpath:META-INF/shared.xml" })
+@WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 @Ignore
