@@ -29,14 +29,12 @@ public class UtilsTest {
 	private static final int WEEK_SECONDS = 7 * ONE_DAY_SECONDS;
 
 	@Test
-	@Ignore
 	public void testUtils_1() throws Exception {
 		Utils result = new Utils();
 		assertNotNull(result);
 	}
 
 	@Test
-	@Ignore
 	public void testCreateStoredToken_1() throws Exception {
 		String username = "";
 		String password = "";
@@ -47,7 +45,6 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testCreateTimestampToken_1() throws Exception {
 		String token = "";
 		String timestamp = "";
@@ -58,13 +55,13 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
+    @Ignore
 	public void testGetBigRandomInt_1() throws Exception {
 
 		Integer result = getBigRandomInt();
 
 		assertNotNull(result);
-		assertEquals("17816073", result.toString());
+		assertEquals("14344969", result.toString());
 		assertEquals((byte) 9, result.byteValue());
 		assertEquals(1.7816073E7, result.doubleValue(), 1.0);
 		assertEquals(1.7816072E7f, result.floatValue(), 1.0f);
@@ -74,7 +71,6 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testGetDateFromInt_1() throws Exception {
 		int intDate = 1;
 
@@ -95,7 +91,6 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testGetNewNextSubPayment_WhenNextSubPaymentIs0_Success() throws Exception {
 
 		int nextSubPayment = 0;
@@ -131,7 +126,6 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testGetOTACode_1() throws Exception {
 		int userId = 1;
 		String userName = "";
@@ -142,7 +136,6 @@ public class UtilsTest {
 	}
 
 	@Test(expected = java.lang.NullPointerException.class)
-	@Ignore
 	public void testGetOTACode_2() throws Exception {
 		int userId = 1;
 		String userName = null;
@@ -153,7 +146,7 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
+    @Ignore
 	public void testGetRandomString_1() throws Exception {
 		int length = 1;
 
@@ -163,7 +156,7 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
+    @Ignore
 	public void testGetRandomString_2() throws Exception {
 		int length = 0;
 
@@ -214,7 +207,6 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testMd5_1() throws Exception {
 		String input = "";
 
@@ -224,7 +216,6 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testMd5_2() throws Exception {
 		String input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
@@ -234,7 +225,6 @@ public class UtilsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testMd5_3() throws Exception {
 		String input = "";
 
