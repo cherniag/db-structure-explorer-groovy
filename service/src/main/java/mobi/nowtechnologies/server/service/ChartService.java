@@ -73,22 +73,7 @@ public class ChartService {
 		this.messageSource = messageSource;
 	}
 
-    protected Date getCurrentTime(Community community){
-       String[] timezones = TimeZone.getAvailableIDs();
-       String[] timezonesbyOffset = TimeZone.getAvailableIDs(13*3600000);
-
-        Date date = new Date(System.currentTimeMillis()+24*3600000);
-        for (int i = 0; i < timezones.length; i++) {
-            String s = timezones[i];
-            TimeZone tz = TimeZone.getTimeZone(s);
-            if(tz.useDaylightTime())
-                System.out.println(tz);
-        }
-
-       return null;
-    }
-
-	@Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
 	public ChartDto processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
         if (user == null)
             throw new ServiceException("The parameter user is null");

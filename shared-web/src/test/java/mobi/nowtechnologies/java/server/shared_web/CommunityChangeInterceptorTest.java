@@ -1,27 +1,25 @@
 package mobi.nowtechnologies.java.server.shared_web;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.shared.web.interceptor.CommunityChangeInterceptor;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import mobi.nowtechnologies.server.shared.web.interceptor.CommunityChangeInterceptor;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
-
-@Ignore
 public class CommunityChangeInterceptorTest {
 	
 	private static final String TEST_COMMUNITY_NAME = "samsung";
@@ -43,6 +41,8 @@ public class CommunityChangeInterceptorTest {
     	};
 		response = new MockHttpServletResponse();
 		interceptor = new CommunityChangeInterceptor();
+        LocaleResolver localeResolver = new CookieLocaleResolver();
+        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
 	}
 	
 	@Test

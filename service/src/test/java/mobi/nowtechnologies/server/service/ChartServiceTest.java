@@ -16,7 +16,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -73,16 +72,6 @@ public class ChartServiceTest {
 	private User testUser;
 
     @Test
-    @Ignore
-    public void testGetCurrentTime_Success(){
-        Community community = CommunityFactory.createCommunity();
-
-        Date result = fixture.getCurrentTime(community);
-
-        assertNotNull(result);
-    }
-
-	@Test
 	public void testSelectChartByType_NotNullChartNotNullUserNotNullSelectedCharts_Success()
 			throws Exception {
 		List<Chart> charts = Arrays.asList(ChartFactory.createChart(), ChartFactory.createChart());
