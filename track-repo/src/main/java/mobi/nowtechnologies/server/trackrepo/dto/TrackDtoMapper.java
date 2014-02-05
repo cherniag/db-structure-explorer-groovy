@@ -57,6 +57,7 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
 
                     fileDto.setFilename(file.getPath());
                     fileDto.setType(file.getType().name());
+                    fileDto.setDuration(file.getDuration());
 
                     files.add(fileDto);
                 }

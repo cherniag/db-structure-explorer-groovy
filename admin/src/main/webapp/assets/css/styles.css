@@ -688,7 +688,7 @@ img {
 
 ul.table li div.repo_columns {
   width: 9%;
-  border: none;
+	border: none;
 }
 
 ul.table li div.repo_columns_check {
@@ -1005,7 +1005,7 @@ ul.table li .audioContainer div.modal-header .close{
 
 .details-label {
     display: inline-block;
-    width: 10%;
+    width: 8%;
 }
 
 .details-value {

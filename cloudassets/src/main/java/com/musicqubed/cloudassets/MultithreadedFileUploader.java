@@ -1,17 +1,18 @@
 package com.musicqubed.cloudassets;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.musicqubed.cloudassets.uploader.FileDirUtils;
 import com.musicqubed.cloudassets.uploader.FileUploader;
 import com.musicqubed.cloudassets.uploader.FileUploaderFactory;
 import com.musicqubed.cloudassets.uploader.FileWithName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ResourceUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class MultithreadedFileUploader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MultithreadedFileUploader.class);
@@ -30,9 +31,19 @@ public class MultithreadedFileUploader {
 		this.numThreads = Math.max(1, Math.min(numThreads, list.size()));
 	}
 
-	public static void uploadFiles(int numThreads, CloudAssetsSettings cloudAssetsSettings) {
-		uploadFiles(numThreads, new File(cloudAssetsSettings.getDir()), cloudAssetsSettings.getPrefix(), cloudAssetsSettings.getSettings());
+	public static void uploadFiles(int numThreads, CloudAssetsSettings cloudAssetsSettings) throws IOException {
+        uploadFiles(numThreads, new File(getPath(cloudAssetsSettings.getDir())), cloudAssetsSettings.getPrefix(), cloudAssetsSettings.getSettings());
 	}
+
+    public static String getPath(String dir) throws IOException {
+        if(dir.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)){
+            String relativePath = dir.substring(ResourceUtils.CLASSPATH_URL_PREFIX.length());
+            String classPath = ResourceUtils.getURL(ResourceUtils.CLASSPATH_URL_PREFIX+".").getPath();
+            dir = new File(classPath + relativePath).getCanonicalPath();
+        }
+
+        return dir;
+    }
 
 	public static void uploadFiles(int numThreads, File dir, String prefix, final CloudFileSettings settings) {
 		LOGGER.info("start ");

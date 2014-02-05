@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -140,24 +141,20 @@ public class SagePayPaymentServiceImplTest {
 	}
 	
 	private SagePayResponse getFailSagePayResponse() {
-		return new SagePayResponse(new BasicResponse(){
-			@Override public String getMessage() { return "VPSProtocol=2.23\nStatus=INVALID\nStatusDetail=4022 : The Card Type selected does not match card number.,"; };
-			@Override public int getStatusCode() { return HttpServletResponse.SC_OK; }
-		});
+        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                "VPSProtocol=2.23\nStatus=INVALID\nStatusDetail=4022 : The Card Type selected does not match card number.,"));
 	}
 	
 	private SagePayResponse getHttpFailSagePayResponse() {
-		return new SagePayResponse(new BasicResponse(){
-			@Override public String getMessage() { return "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>"; };
-			@Override public int getStatusCode() { return HttpServletResponse.SC_INTERNAL_SERVER_ERROR; }
-		});
+        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>")
+        );
 	}
 
 	private SagePayResponse getSuccesfulSagePayResponse() {
-		return new SagePayResponse(new BasicResponse(){
-			@Override public String getMessage() { return "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo="+txAuthNo+"\nAVSCV2=SECURITY CODE MATCH ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId="+vpsTxId+"\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey="+securityKey+"\nVPSProtocol=2.23"; };
-			@Override public int getStatusCode() { return HttpServletResponse.SC_OK; }
-		});
+        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+                "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo="+txAuthNo+"\nAVSCV2=SECURITY CODE MATCH ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId="+vpsTxId+"\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey="+securityKey+"\nVPSProtocol=2.23")
+        );
 	}
 	
 	private PaymentDetailsDto getPaymentDto() {
@@ -203,9 +200,8 @@ public class SagePayPaymentServiceImplTest {
 	}
 
 	private SagePayResponse getSagePayPayResponseSuccessful() {
-		return new SagePayResponse(new BasicResponse(){
-			@Override public String getMessage() { return "VPSProtocol=2.23\nStatus=OK\nStatusDetail=2004 : The Release was Successful."; };
-			@Override public int getStatusCode() { return HttpServletResponse.SC_OK; }
-		});
+		return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
+            "VPSProtocol=2.23\nStatus=OK\nStatusDetail=2004 : The Release was Successful.")
+        );
 	}
 }

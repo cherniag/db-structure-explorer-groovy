@@ -16,7 +16,7 @@ public class AccountDto {
 	@Pattern(regexp="^(07(\\d ?){9})$")
 	private String phoneNumber;
 	
-	private Date timeOfMovingToLimitedStatus;
+	private long timeOfMovingToLimitedStatus;
 	
 	private String email;
 	
@@ -70,11 +70,11 @@ public class AccountDto {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public Date getTimeOfMovingToLimitedStatus() {
+	public long getTimeOfMovingToLimitedStatus() {
 		return timeOfMovingToLimitedStatus;
 	}
 
-	public void setTimeOfMovingToLimitedStatus(Date timeOfMovingToLimitedStatus) {
+	public void setTimeOfMovingToLimitedStatus(long timeOfMovingToLimitedStatus) {
 		this.timeOfMovingToLimitedStatus = timeOfMovingToLimitedStatus;
 	}
 

@@ -159,9 +159,9 @@ function showPullDialog(trackId) {
     itunesLink.text(iTunesUrl);
     itunesLink.attr('href', iTunesUrl);
     pullForm.find("input[name='amazonUrl']").val(amazonUrl);
-    var itunesLink = pullForm.find("a[name='amazonLink']");
-    itunesLink.text(amazonUrl);
-    itunesLink.attr('href', amazonUrl);
+    var amazonLink = pullForm.find("a[name='amazonLink']");
+    amazonLink.text(amazonUrl);
+    amazonLink.attr('href', amazonUrl);
 
     $("#pull-dialog").modal("show");
 };
@@ -218,6 +218,7 @@ function onEncodeSuccess(data, trackId){
         var publishTitleDivId = "#publishTitleDiv_" + trackId;
         var publishArtistDivId = "#publishArtistDiv_" + trackId;
         var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+        var amazonDivId = "#amazonUrlDiv_" + trackId;
         var infoDivId = "#infoDiv_" + trackId;
 
         $(encodetrackButtonId+".btn-primary").button('retry');
@@ -226,6 +227,7 @@ function onEncodeSuccess(data, trackId){
         $(publishTitleDivId).text(data.publishTitle);
         $(publishArtistDivId).text(data.publishArtist);
         $(iTunesDivId).text(data.itunesUrl);
+        $(amazonDivId).text(data.amazonUrl);
         $(infoDivId).text(data.info);
     } else if(status == "ENCODING"){
         setTimeout(function(){
@@ -413,6 +415,7 @@ function toEncode(){
                     var publishTitleDivId = "#publishTitleDiv_" + trackId;
                     var publishArtistDivId = "#publishArtistDiv_" + trackId;
                     var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+                    var amazonDivId = "#amazonUrlDiv_" + trackId;
                     var infoDivId = "#infoDiv_" + trackId;
 
                     $(encodetrackButtonId + ".btn-primary").button('retry');
@@ -421,6 +424,7 @@ function toEncode(){
                     $(publishTitleDivId).text(data.success[i].publishTitle);
                     $(publishArtistDivId).text(data.success[i].publishArtist);
                     $(iTunesDivId).text(data.success[i].itunesUrl);
+                    $(amazonDivId).text(data.success[i].amazonUrl);
                     $(infoDivId).text(data.success[i].info);
                 }
             }

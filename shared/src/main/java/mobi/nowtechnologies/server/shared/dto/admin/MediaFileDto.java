@@ -15,6 +15,8 @@ public class MediaFileDto {
 	private FileType fileType;
 
 	private int size;
+	
+	private int duration;
 
 	public int getId() {
 		return id;
@@ -46,6 +48,22 @@ public class MediaFileDto {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+	
+	public String getFormattedDuration() {
+		if (duration > 0) {
+			return "" + (duration / 60000) + ":" + String.format("%02d", (duration / 1000) % 60);
+		}
+		
+		return "0:00";
 	}
 
 	@Override

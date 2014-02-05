@@ -58,6 +58,7 @@
 	<script src="${requestScope.assetsPathWithoutCommunity}scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
 	<script src="${requestScope.assetsPathWithoutCommunity}scripts/jquery.simplemodal.1.4.2.min.js" type="text/javascript"></script>
 	<script src="${requestScope.assetsPathWithoutCommunity}scripts/main.js" type="text/javascript"></script>
+	<script src="${requestScope.assetsPathWithoutCommunity}scripts/date.js" type="text/javascript"></script>
 	<tiles:insertAttribute name="headSection" />
 </head>
 <body>

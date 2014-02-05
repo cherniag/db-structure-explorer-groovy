@@ -1,8 +1,11 @@
 package mobi.nowtechnologies.server.shared;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,15 +15,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static mobi.nowtechnologies.server.shared.Utils.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
- * The class <code>UtilsTest</code> contains tests for the class
- * <code>{@link Utils}</code>.
- * 
- * @generatedBy CodePro at 02.03.12 11:51
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Utils.class)
@@ -56,22 +55,6 @@ public class UtilsTest {
 		String result = createTimestampToken(token, timestamp);
 
 		assertEquals("4320fb73e5deb16a98f78bec9e522d36", result);
-	}
-
-	@Test
-	@Ignore
-	public void testGenerateRandomPIN_1() throws Exception {
-
-		Integer result = generateRandomPIN();
-
-		assertNotNull(result);
-		assertEquals("7113", result.toString());
-		assertEquals((byte) -55, result.byteValue());
-		assertEquals(7113.0, result.doubleValue(), 1.0);
-		assertEquals(7113.0f, result.floatValue(), 1.0f);
-		assertEquals(7113, result.intValue());
-		assertEquals(7113L, result.longValue());
-		assertEquals((short) 7113, result.shortValue());
 	}
 
 	@Test
@@ -593,5 +576,39 @@ public class UtilsTest {
     @Test
     public void shouldReturnMajorVersionNumberIsLess2(){
         assertFalse(isMajorVersionNumberLessThan(4, "4.0"));
+    }
+
+    @Test
+    public void shouldPrueFormatCurrencyWithCents(){
+       //given
+        BigDecimal amount = new BigDecimal("1.5");
+
+        //when
+        String amountString = Utils.preFormatCurrency(amount);
+
+        //then
+        assertThat(amountString, is("1.50"));
+    }
+
+    @Test
+    public void shouldPrueFormatCurrencyWithOutCents(){
+        //given
+        BigDecimal amount = new BigDecimal("6");
+
+        //when
+        String amountString = Utils.preFormatCurrency(amount);
+
+        //then
+        assertThat(amountString, is("6"));
+    }
+
+    @Test
+    public void testGenerateRandom4DigitsPIN() {
+        Set<String> codes = new HashSet<String>(7);
+        for (int i = 0; i < 7; i++) {
+            codes.add(Utils.generateRandom4DigitsPIN());
+        }
+        // if strings are all the same then hashset will contain only 1 string
+        assertTrue("There are the same codes", codes.size() > 1);
     }
 }

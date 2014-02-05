@@ -31,8 +31,6 @@ import com.sentaca.spring.smpp.jsmpp.SMPPSession;
 import com.sentaca.spring.smpp.mo.MessageReceiver;
 import com.sentaca.spring.smpp.monitoring.SMPPMonitoringAgent;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.SMPPConstant;
@@ -42,75 +40,41 @@ import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SessionStateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.smslib.*;
 import org.smslib.OutboundMessage.FailureCauses;
 import org.smslib.OutboundMessage.MessageStatuses;
-import org.smslib.helper.Logger;
+import org.smslib.smpp.AbstractSMPPGateway;
+import org.smslib.smpp.BindAttributes;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 /**
  * A gateway that supports SMPP through JSMPP (http://code.google.com/p/jsmpp/).
  *
  * @author Bassam Al-Sarori
- *
  */
 public class SMPPGateway extends JSMPPGateway {
 
-    class JSMPPSessionStateListener implements SessionStateListener {
-
-        public void onStateChange(SessionState newState, SessionState oldState, Object source) {
-            if (logger.isInfoEnabled()) {
-                logger.info("#onStateChange: " + getGatewayId() + ": " + oldState.name() + " to " + newState.name() + ".");
-            }
-
-            if (newState.isBound()) {
-                if (!getStatus().equals(GatewayStatuses.STARTED)) {
-                    try {
-                        if (logger.isInfoEnabled()) {
-                            logger.info("#onStateChange: starting gateway " + getGatewayId() + ".");
-                        }
-
-                        SMPPGateway.super.startGateway();
-
-                        if (logger.isInfoEnabled()) {
-                            logger.info("#onStateChange: gateway " + getGatewayId() + " started.");
-                        }
-
-                    } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
-                        smppMonitoringAgent.onGatewayStartupError(SMPPGateway.this.getGatewayId(), e);
-                    }
-                }
-            } else if (newState.equals(SessionState.CLOSED) || newState.equals(SessionState.UNBOUND)) {
-                if (getStatus().equals(GatewayStatuses.STARTED)) {
-                    SMPPGateway.super.setStatus(GatewayStatuses.RESTART);
-                }
-            }
-        }
-    }
-
-    private static Log logger = LogFactory.getLog(SMPPGateway.class);
     private static final int PDU_PROCESSOR_DEGREE = 10;
-
     private static final long TRANSACTION_TIMER = 6000L;
+    private static Logger logger = LoggerFactory.getLogger(SMPPGateway.class);
 
+    private AbstractSMPPGateway agateway;
     private MessageReceiver messageReceiver;
-
     private SMPPSession session = null;
     private SessionStateListener stateListener = new JSMPPSessionStateListener();
     private BindType bindType;
     private TypeOfNumber bindTypeOfNumber;
     private NumberingPlanIndicator bindNumberingPlanIndicator;
-
-    private final BindConfiguration smscConfig;
     private SMPPMonitoringAgent smppMonitoringAgent;
     private boolean useUdhi;
 
     /**
-     *
      * @param smscConfig
      * @param messageReceiver
      * @param smppMonitoringAgent
@@ -118,7 +82,6 @@ public class SMPPGateway extends JSMPPGateway {
      */
     public SMPPGateway(BindConfiguration smscConfig, MessageReceiver messageReceiver, SMPPMonitoringAgent smppMonitoringAgent, boolean useUdhi) {
         super(smscConfig, messageReceiver, smppMonitoringAgent, useUdhi);
-        this.smscConfig = smscConfig;
         this.messageReceiver = messageReceiver;
         this.smppMonitoringAgent = smppMonitoringAgent;
         this.useUdhi = useUdhi;
@@ -147,7 +110,7 @@ public class SMPPGateway extends JSMPPGateway {
         Calendar cDate = Calendar.getInstance();
         cDate.clear();
         cDate.set(Calendar.YEAR, 0);
-        cDate.add(Calendar.SECOND, timeInMillis/1000);
+        cDate.add(Calendar.SECOND, timeInMillis / 1000);
 
         int years = cDate.get(Calendar.YEAR) - cDate.getMinimum(Calendar.YEAR);
         int months = cDate.get(Calendar.MONTH);
@@ -164,10 +127,6 @@ public class SMPPGateway extends JSMPPGateway {
         String secondsString = (seconds < 10) ? "0" + seconds : seconds + "";
 
         return yearsString + monthsString + daysString + hoursString + minutedString + secondsString + "000R";
-    }
-
-    public BindConfiguration getSmscConfig() {
-        return smscConfig;
     }
 
     private void init() {
@@ -189,14 +148,23 @@ public class SMPPGateway extends JSMPPGateway {
                 break;
             default:
                 IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Unknown BindType " + bindAttributes.getBindType());
-                Logger.getInstance().logError(illegalArgumentException.getMessage(), illegalArgumentException, getGatewayId());
+                org.smslib.helper.Logger.getInstance().logError(illegalArgumentException.getMessage(), illegalArgumentException, getGatewayId());
                 throw illegalArgumentException;
         }
 
         bindTypeOfNumber = TypeOfNumber.valueOf(bindAttributes.getBindAddress().getTypeOfNumber().value());
         bindNumberingPlanIndicator = NumberingPlanIndicator.valueOf(bindAttributes.getBindAddress().getNumberingPlanIndicator().value());
 
-        initSession();
+        initGateway();
+    }
+
+    private void initGateway() {
+        BindConfiguration smscConfig = getSmscConfig();
+        if(agateway == null){
+            agateway = new AbstractSMPPGateway(smscConfig.getHost() + ":" + smscConfig.getPort() + ":" + smscConfig.getSystemId(), smscConfig.getHost(), smscConfig.getPort(), new BindAttributes(
+                    smscConfig.getSystemId(), smscConfig.getPassword(), smscConfig.getSystemType(), org.smslib.smpp.BindAttributes.BindType.TRANSCEIVER)) {
+            };
+        }
     }
 
     private void initSession() {
@@ -206,7 +174,7 @@ public class SMPPGateway extends JSMPPGateway {
             logger.trace("#initSession with " + stateListener + " and " + messageReceiver + ".");
         }
 
-        session = new SMPPSession(smscConfig);
+        session = new SMPPSession(getSmscConfig());
         session.setPduProcessorDegree(PDU_PROCESSOR_DEGREE);
         session.setTransactionTimer(TRANSACTION_TIMER);
 
@@ -217,7 +185,7 @@ public class SMPPGateway extends JSMPPGateway {
 
     @Override
     public boolean sendMessage(OutboundMessage message) throws TimeoutException, GatewayException, IOException, InterruptedException {
-        SMPPOutboundMessage msg = (SMPPOutboundMessage)message;
+        SMPPOutboundMessage msg = (SMPPOutboundMessage) message;
 
         Alphabet encoding = Alphabet.ALPHA_DEFAULT;
 
@@ -303,9 +271,9 @@ public class SMPPGateway extends JSMPPGateway {
      * @throws TimeoutException
      */
     protected boolean submitShortMessage(OutboundMessage msg, GeneralDataCoding dataCoding, final RegisteredDelivery registeredDelivery, byte[] binaryContentPart,
-                                       ESMClass esmClass) throws IOException, TimeoutException {
+                                         ESMClass esmClass) throws IOException, TimeoutException {
         try {
-            String msgId = session.submitShortMessage(smscConfig.getServiceType(), TypeOfNumber.valueOf(sourceAddress.getTypeOfNumber().value()),
+            String msgId = session.submitShortMessage(getSmscConfig().getServiceType(), TypeOfNumber.valueOf(sourceAddress.getTypeOfNumber().value()),
                     NumberingPlanIndicator.valueOf(sourceAddress.getNumberingPlanIndicator().value()), (msg.getFrom() != null) ? msg.getFrom() : getFrom(),
                     TypeOfNumber.valueOf(destinationAddress.getTypeOfNumber().value()),
                     NumberingPlanIndicator.valueOf(destinationAddress.getNumberingPlanIndicator().value()), msg.getRecipient(), esmClass, (byte) 0,
@@ -315,6 +283,8 @@ public class SMPPGateway extends JSMPPGateway {
             msg.setDispatchDate(new Date());
             msg.setGatewayId(getGatewayId());
             msg.setMessageStatus(MessageStatuses.SENT);
+
+            logger.debug(getGatewayId() + " : Message was sent successfully: " + msg);
             incOutboundMessageCount();
 
         } catch (PDUException e) {
@@ -338,7 +308,7 @@ public class SMPPGateway extends JSMPPGateway {
 
     @Override
     public void setEnquireLink(int enquireLink) {
-        super.setEnquireLink(enquireLink);
+        agateway.setEnquireLink(enquireLink);
         if (session != null) {
             session.setEnquireLinkTimer(enquireLink);
         }
@@ -354,7 +324,7 @@ public class SMPPGateway extends JSMPPGateway {
             session.connectAndBind(host, port, new BindParameter(bindType, bindAttributes.getSystemId(), bindAttributes.getPassword(),
                     bindAttributes.getSystemType(), bindTypeOfNumber, bindNumberingPlanIndicator, null));
         } else {
-            Logger.getInstance().logWarn("SMPP session already bound.", null, getGatewayId());
+            org.smslib.helper.Logger.getInstance().logWarn("SMPP session already bound.", null, getGatewayId());
         }
         smppMonitoringAgent.onGatewayStartupSuccess(getGatewayId());
     }
@@ -364,10 +334,173 @@ public class SMPPGateway extends JSMPPGateway {
         if (session != null && session.getSessionState().isBound()) {
             closeSession();
         } else {
-            Logger.getInstance().logWarn("SMPP session not bound.", null, getGatewayId());
+            org.smslib.helper.Logger.getInstance().logWarn("SMPP session not bound.", null, getGatewayId());
         }
-        super.stopGateway();
+        agateway.stopGateway();
         smppMonitoringAgent.onGatewayShutdown(getGatewayId());
     }
 
+    //============================================ Delegation abstract implementation ==============================================================================//
+
+    public int getAttributes() {
+        return agateway.getAttributes();
+    }
+
+    public String getHost() {
+        return agateway.getHost();
+    }
+
+    public int getPort() {
+        return agateway.getPort();
+    }
+
+    public BindAttributes getBindAttributes() {
+        return agateway.getBindAttributes();
+    }
+
+    public int getEnquireLink() {
+        return agateway.getEnquireLink();
+    }
+
+    public org.smslib.smpp.Address getSourceAddress() {
+        return agateway.getSourceAddress();
+    }
+
+    public void setSourceAddress(org.smslib.smpp.Address sourceAddress) {
+        agateway.setSourceAddress(sourceAddress);
+    }
+
+    public org.smslib.smpp.Address getDestinationAddress() {
+        return agateway.getDestinationAddress();
+    }
+
+    public void setDestinationAddress(org.smslib.smpp.Address destinationAddress) {
+        agateway.setDestinationAddress(destinationAddress);
+    }
+
+    public void setAttributes(int myAttributes) {
+        initGateway();
+
+        agateway.setAttributes(myAttributes);
+    }
+
+    public AGateway getMyself() {
+        return agateway.getMyself();
+    }
+
+    public boolean isInbound() {
+        return agateway.isInbound();
+    }
+
+    public void setInbound(boolean value) {
+        agateway.setInbound(value);
+    }
+
+    public boolean isOutbound() {
+        return agateway.isOutbound();
+    }
+
+    public void setOutbound(boolean value) {
+        agateway.setOutbound(value);
+    }
+
+    public Protocols getProtocol() {
+        return agateway.getProtocol();
+    }
+
+    public void setProtocol(Protocols myProtocoll) {
+        agateway.setProtocol(myProtocoll);
+    }
+
+    public String getGatewayId() {
+        return agateway.getGatewayId();
+    }
+
+    public GatewayStatuses getStatus() {
+        return agateway.getStatus();
+    }
+
+    public void setStatus(GatewayStatuses myStatus) {
+        agateway.setStatus(myStatus);
+    }
+
+    public int getInboundMessageCount() {
+        return agateway.getInboundMessageCount();
+    }
+
+    public void incInboundMessageCount() {
+        agateway.incInboundMessageCount();
+    }
+
+    public int getOutboundMessageCount() {
+        return agateway.getOutboundMessageCount();
+    }
+
+    public void incOutboundMessageCount() {
+        agateway.incOutboundMessageCount();
+    }
+
+    public String getFrom() {
+        return agateway.getFrom();
+    }
+
+    public void setFrom(String myFrom) {
+        agateway.setFrom(myFrom);
+    }
+
+    public int sendMessages(Collection<OutboundMessage> msgList) throws TimeoutException, GatewayException, IOException, InterruptedException {
+        int cnt = 0;
+        for (OutboundMessage msg : msgList)
+            if (sendMessage(msg)) cnt++;
+        return cnt;
+    }
+
+    public StatusReportMessage.DeliveryStatuses queryMessage(OutboundMessage msg) throws TimeoutException, GatewayException, IOException, InterruptedException {
+        return queryMessage(msg.getRefNo());
+    }
+
+    public int getDeliveryErrorCode() {
+        return agateway.getDeliveryErrorCode();
+    }
+
+    public void setDeliveryErrorCode(int error) {
+        agateway.setDeliveryErrorCode(error);
+    }
+
+    public int getRestartCount() {
+        return agateway.getRestartCount();
+    }
+
+    class JSMPPSessionStateListener implements SessionStateListener {
+
+        public void onStateChange(SessionState newState, SessionState oldState, Object source) {
+            if (logger.isInfoEnabled()) {
+                logger.info("#onStateChange: " + getGatewayId() + ": " + oldState.name() + " to " + newState.name() + ".");
+            }
+
+            if (newState.isBound()) {
+                if (!getStatus().equals(GatewayStatuses.STARTED)) {
+                    try {
+                        if (logger.isInfoEnabled()) {
+                            logger.info("#onStateChange: starting gateway " + getGatewayId() + ".");
+                        }
+
+                        agateway.startGateway();
+
+                        if (logger.isInfoEnabled()) {
+                            logger.info("#onStateChange: gateway " + getGatewayId() + " started.");
+                        }
+
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                        smppMonitoringAgent.onGatewayStartupError(SMPPGateway.this.getGatewayId(), e);
+                    }
+                }
+            } else if (newState.equals(SessionState.CLOSED) || newState.equals(SessionState.UNBOUND)) {
+                if (getStatus().equals(GatewayStatuses.STARTED)) {
+                    agateway.setStatus(GatewayStatuses.RESTART);
+                }
+            }
+        }
+    }
 }
