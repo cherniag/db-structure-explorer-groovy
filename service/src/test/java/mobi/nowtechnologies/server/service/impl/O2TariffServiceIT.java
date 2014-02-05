@@ -5,70 +5,84 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import javax.xml.bind.JAXBElement;
 
-import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import static mobi.nowtechnologies.server.service.impl.o2.PhoneNumbers.*;
+import static org.mockito.Mockito.*;
 
-import org.junit.Ignore;
+import mobi.nowtechnologies.server.service.o2.impl.O2TariffServiceImpl;
+import mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltons;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltonsResponse;
+import uk.co.o2.soa.managepostpayboltonsdata_2.MyCurrentBoltonsType;
+import uk.co.o2.soa.managepostpaytariffdata_2.GetContract;
 import uk.co.o2.soa.managepostpaytariffdata_2.GetContractResponse;
+import uk.co.o2.soa.managepostpaytariffdata_2.ServiceContractType;
 import uk.co.o2.soa.pscommonpostpaydata_2.ProductType;
 
 
 /**
  * lach : 17/07/2013 : 11:41
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/service-test-ws.xml" })
+@RunWith(MockitoJUnitRunner.class)
+@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class O2TariffServiceIT {
 
-	
-	@Resource(name = "service.O2TariffService")
-    private O2TariffService o2TariffService;
+    @Mock
+    private WebServiceGateway webServiceGateway;
+
+    private O2TariffServiceImpl o2TariffService;
 
     @Test
     public void testGetManagePostpayContractDirectToO2TestServer() throws Exception {
+
+        mockGetContract("4G_VOICE", O2_4G_CONTRACT);
 
         GetContractResponse contractResponse = o2TariffService.getManagePostpayContract(O2_4G_CONTRACT);
 
         assertEquals("4G_VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
 
+        mockGetContract("4G_VOICE", O2_4G_CONTRACT2);
+
         contractResponse = o2TariffService.getManagePostpayContract(O2_4G_CONTRACT2);
 
         assertEquals("4G_VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
 
-        contractResponse = o2TariffService.getManagePostpayContract(O2_3G_CONTRACT);
-
-        assertEquals("VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
+        mockGetContract("VOICE", O2_3G_CONTRACT);
 
         contractResponse = o2TariffService.getManagePostpayContract(O2_3G_CONTRACT);
 
         assertEquals("VOICE", contractResponse.getCurrentContract().getTariff().getProductClassification());
-
-
     }
 
     @Test
     public void testGetManagePostpayCurrentBoltonsDirectToO2TestServer() throws Exception {
 
+        mockGetCurrentBoltons("Data Option", O2_4G_CONTRACT);
+
         GetCurrentBoltonsResponse getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_4G_CONTRACT);
 
         assertEquals("Data Option", getProductClassification(getCurrentBoltonsResponse));
 
+        mockGetCurrentBoltons("4G Bolt On", O2_4G_BOLTON);
+
         getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_4G_BOLTON);
 
         assertEquals("4G Bolt On", getProductClassification(getCurrentBoltonsResponse));
+
+        mockGetCurrentBoltons("Data Option", O2_3G_CONTRACT);
 
         getCurrentBoltonsResponse = o2TariffService.getManagePostpayCurrentBoltons(O2_3G_CONTRACT);
 
@@ -84,5 +98,43 @@ public class O2TariffServiceIT {
             productClassification = productType.getProductClassification();
         }
         return productClassification;
+    }
+
+    private void mockGetContract(final String productClassification, final String phone) {
+        GetContractResponse response = new GetContractResponse();
+        ServiceContractType contractType = new ServiceContractType();
+        ProductType productType = new ProductType();
+        productType.setProductClassification(productClassification);
+        contractType.setTariff(productType);
+        response.setCurrentContract(contractType);
+
+        when(webServiceGateway.sendAndReceive(anyString(), argThat(new ArgumentMatcher<JAXBElement<GetContract>>() {
+            public boolean matches(Object argument) {
+                return argument != null && ((JAXBElement<GetContract>) argument).getValue().getCustomerId().getMsisdn()
+                        .equals(phone);
+            }
+        }))).thenReturn(response);
+    }
+
+    private void mockGetCurrentBoltons(final String productClassification, final String phone) {
+        GetCurrentBoltonsResponse response = new GetCurrentBoltonsResponse();
+        MyCurrentBoltonsType currentBoltons = new MyCurrentBoltonsType();
+        ProductType productType = new ProductType();
+        currentBoltons.getBolton().add(productType);
+        productType.setProductClassification(productClassification);
+        response.setMyCurrentBoltons(currentBoltons);
+
+        when(webServiceGateway.sendAndReceive(anyString(), argThat(new ArgumentMatcher<Object>() {
+            public boolean matches(Object argument) {
+                return argument != null && ((JAXBElement<GetCurrentBoltons>) argument).getValue().getCustomerId().getMsisdn()
+                        .equals(phone);
+            }
+        }))).thenReturn(response);
+    }
+
+    @Before
+    public void setUp() {
+        o2TariffService = new O2TariffServiceImpl();
+        o2TariffService.setWebServiceGateway(webServiceGateway);
     }
 }
