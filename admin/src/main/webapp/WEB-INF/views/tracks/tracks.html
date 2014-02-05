@@ -60,15 +60,6 @@
                     <button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco pull-left" type="button">Search</button>    
                 </div>
                 <div class="span2" >
-                    <label style="display:inline-block;font-size: 13px;margin-right: 10px;vertical-align: baseline;position: relative;top: -14px;">Tracks per page: </label>
-                    <select name="page.size" class="selectpicker" data-width="75px" data-style="position:relative; top:0px;">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="10000">all</option>
-                    </select>
-                    <input id="searchSize" type="hidden" value="aaa" th:attr="value=${PAGE_LIST_DTO.size}"/>
                 </div>
                 <div class="span5" style="float:right;">
                     <button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-deco pull-right" type="button"  onclick="preEncodeAll()">Encode all</button>
@@ -84,7 +75,22 @@
 			No Search Results
 		</div>
 
-        <div th:substituteby="tpl::paginationBar"></div>
+        <div class="row">
+            <div class="span12 l-paging-wrapper">
+                <form th:action="@{/tracks/list}" th:object="${searchTrackDto}" method="get" accept-charset="UTF-8" class="b-per-page-form">
+                    <select name="page.size" class="selectpicker" data-width="75px" data-style="position:relative; top:0px;">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="10000">all</option>
+                    </select>
+                    <input id="searchSize" type="hidden" value="aaa" th:attr="value=${PAGE_LIST_DTO.size}"/>
+                </form>
+                <div th:substituteby="tpl::paginationBar"></div>
+            </div>
+        </div>
+        
 
 		<div class="newsListWide" style="width: 100%">
 			<ul class="table" id="tracksTable" th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}">
@@ -225,11 +231,25 @@
 				</li>
 			</ul>
 		</div>
+
+        <div class="row">
+            <div class="span12 l-paging-wrapper">
+                <form th:action="@{/tracks/list}" th:object="${searchTrackDto}" method="get" accept-charset="UTF-8" class="b-per-page-form">
+                    <select name="page.size" class="selectpicker" data-width="75px" data-style="position:relative; top:0px;">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="10000">all</option>
+                    </select>
+                    <input id="searchSize" type="hidden" value="aaa" th:attr="value=${PAGE_LIST_DTO.size}"/>
+                </form>
+                <div th:substituteby="tpl::paginationBar"></div>
+            </div>
+        </div>
 	</div>
-
-	<div th:substituteby="tpl::paginationBar"></div>
-
-	<div id="pull-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
+    
+    <div id="pull-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 id="myModalLabel">Pull Track</h3>

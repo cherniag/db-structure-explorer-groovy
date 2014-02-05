@@ -4,12 +4,50 @@ $(document).ready(function() {
     $('.selectpicker option[value="'+sel_val+'"]').attr("selected", "selected");
     $('.selectpicker').selectpicker();
 
+    var trackSerachForm = $('#searchTrackDto');
+    var perPageForms = $('.b-per-page-form');
+
+    var searchFormRedirect = function (params){
+        var path = [
+            window.location.origin, 
+            window.location.pathname,
+            '?',
+            params].join('');
+
+        return path;
+    }
+
+    perPageForms.on('change', function(e){
+        e.preventDefault();
+        var paramsStr = $(this).serialize();
+
+        if(trackSerachForm.length > 0){
+            paramsStr += '&'+trackSerachForm.serialize();
+        }
+
+        window.location.href = searchFormRedirect(paramsStr);
+        return false;
+    });
+
+    trackSerachForm.on('submit', function(e){
+        e.preventDefault();
+        var paramsStr = $(this).serialize(); 
+
+        if(perPageForms.length > 0){
+            paramsStr += '&'+ $(perPageForms[0]).serialize();
+        }
+
+        window.location.href = searchFormRedirect(paramsStr);
+        return false;
+    });
+
+
 
 });
 
 var Tracks = {};
 
-function onShownTrackDetails(detailsEl) {
+function onShownTrackDetails(detailsEl, cb) {
     if(Tracks.details){
         Tracks.details.hide();
     }
@@ -23,9 +61,9 @@ function onShownTrackDetails(detailsEl) {
         var popoverContent = popover.tip();
         var trackFilesTable = popoverContent.find(".trackFiles");
         var trackTerritoriesTable = popoverContent.find(".trackTerritories");
-
         onFetchTrackFiles(track, track.files, trackFilesTable);
         onFetchTrackTerritories(track.territories, trackTerritoriesTable);
+        cb(detailsEl);
     }, true, true);
 };
 

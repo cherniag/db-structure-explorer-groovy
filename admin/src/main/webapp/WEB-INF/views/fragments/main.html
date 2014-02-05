@@ -15,7 +15,7 @@
 <link rel="stylesheet" th:href="@{/assets/css/bootstrap-toggle-buttons.css}"/>
 <link rel="stylesheet" th:href="@{/assets/css/audiojs.css}"/>
 <link rel="stylesheet" th:href="@{/assets/css/bootstrap-select.min.css}"/>
-<!-- <link rel="stylesheet" th:href="@{/assets/css/mediaelementplayer.min.css}"/> -->
+<link rel="stylesheet" th:href="@{/assets/css/mediaelements/mediaelementplayer.css}"/>
 
 <style type="text/css">
 section {
@@ -43,12 +43,12 @@ section {
 <script type="text/javascript" th:src="@{/assets/js/audiojs/audio.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/swfobject.js}"></script>
 <script th:src="@{/assets/js/flowplayer-3.2.13.min.js}"></script>
-<!-- <script type="text/javascript" th:src="@{/assets/js/mediaelementplayer.min.js}"></script> -->
+<script type="text/javascript" th:src="@{/assets/js/mediaelementplayer.min.js}"></script>
     <script>
-        var a = audiojs;
-        a.events.ready(function() {
-            var a1 = a.createAll();
-        });
+        // var a = audiojs;
+        // a.events.ready(function() {
+        //     var a1 = a.createAll();
+        // });
 
         
 
@@ -223,7 +223,13 @@ section {
         <!--<embed class="audio" height="50" width="100" th:attr="src=${mediaSrc}" src="horse.mp3" autoplay="false"/>-->
         <!--<object class="audio" height="50" width="100" th:attr="data=${mediaSrc}" data="horse.mp3" autoplay="false" type="audio/mpeg"></object>-->
         <!--<audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>-->
-        <audio class="audio" src="test.mp3" th:attr="src=${mediaSrc}" preload="none"></audio>
+        <!-- <audio class="audio" src="test.mp3" th:attr="src=${mediaSrc}" preload="none"></audio> -->
+        <audio controls="controls" class="audio">
+          <source th:attr="src=${mediaSrc}" type="audio/wav" />
+          <source th:attr="src=${mediaSrc}" type="audio/mpeg" />
+          <source th:attr="src=${mediaSrc}" type="audio/mp3" />
+        </audio>
+        <!-- <a class="audio media-track" th:attr="href=${mediaSrc}" style="display:block;width:320px;height:240px;"></a> -->
     </div>
 
     <div th:fragment="audioPlayer2" th:if="${!isVideo}">
@@ -238,10 +244,16 @@ section {
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         </div>
-        <video width="320" height="240" class="video video-js vjs-default-skin" controls="controls">
+        <video width="420" height="315" class="video video-js vjs-default-skin" controls="controls">
         	<source type="video/mp4" th:attr="src=${mediaSrc}" />
-	        <embed width="320" height="240" name="plugin" th:attr="src=${mediaSrc}" type="video/mp4" />
+	        <object width="420" height="315" type="application/x-shockwave-flash" th:attr="data=@{/assets/swf/flashmediaelement.swf}">
+            <param name="movie" th:attr="data=@{/assets/swf/flashmediaelement.swf}" />
+            <param name="flashvars" th:attr="value='controls=true&file=${mediaSrc}'" />
+            <!-- Image as a last resort -->
+            <!-- <img src="myvideo.jpg" width="420" height="315" title="No video playback capabilities" /> -->
+        </object>
         </video>
+        <!-- <a class="video media-track" th:attr="href=${mediaSrc}" style="display:block;width:420px;height:315px;"></a> -->
     </div>
 
     <div class="busy">
