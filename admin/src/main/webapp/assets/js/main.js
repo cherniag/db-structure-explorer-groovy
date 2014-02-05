@@ -61,19 +61,20 @@ $(function() {
 
     $(document).ready(function(){       
 
-      // $.each( $('.media-track'), function(idx, item){
-      //   var item$ = $(item);
-      //   item$.attr('id', 'sfw-object-mt-'+ idx);
-      //   $f('sfw-object-mt-' + idx, '@{/assets/swf/flowplayer-3.2.18.swf}' '/jadmin/assets/swf/flowplayer-3.2.18.swf', {
-      //     clip:  {
-      //           autoPlay: false,
-      //           autoBuffering: true
-      //       }
-      //     });
-      // });
+       $.each( $('.media-track'), function(idx, item){
+        var item$ = $(item);
+        item$.attr('id', 'sfw-object-mt-'+ idx);
+        $f('sfw-object-mt-' + idx, '/jadmin/assets/swf/flowplayer-3.2.18.swf', {
+          clip:  {
+                autoPlay: false,
+                autoBuffering: true
+            }
+          });
+      });
 
       $('audio').mediaelementplayer({
-        audioWidth: '100%',
+        audioWidth: 335,
+        autosizeProgress: false,
         features: ['playpause','progress','tracks','volume']
       });
         

@@ -39,20 +39,9 @@ section {
 <script type="text/javascript" th:src="@{/assets/js/bootstrap-combobox.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/jquery.toggle.buttons.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/bootstrap-select.min.js}"></script>
-<!--<script type="text/javascript" th:src="@{/assets/js/audiojs/jquery.js}"></script>-->
-<script type="text/javascript" th:src="@{/assets/js/audiojs/audio.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/swfobject.js}"></script>
 <script th:src="@{/assets/js/flowplayer-3.2.13.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/mediaelementplayer.min.js}"></script>
-    <script>
-        // var a = audiojs;
-        // a.events.ready(function() {
-        //     var a1 = a.createAll();
-        // });
-
-        
-
-    </script>
+<script type="text/javascript" th:src="@{/assets/js/mediaelement-and-player.min.js}"></script>
+    
 
 
 <!-- 		<script type="text/javascript" th:src="@{/assets/js/bootstrap-transition.js}"></script> -->
@@ -244,16 +233,7 @@ section {
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         </div>
-        <video width="420" height="315" class="video video-js vjs-default-skin" controls="controls">
-        	<source type="video/mp4" th:attr="src=${mediaSrc}" />
-	        <object width="420" height="315" type="application/x-shockwave-flash" th:attr="data=@{/assets/swf/flashmediaelement.swf}">
-            <param name="movie" th:attr="data=@{/assets/swf/flashmediaelement.swf}" />
-            <param name="flashvars" th:attr="value='controls=true&file=${mediaSrc}'" />
-            <!-- Image as a last resort -->
-            <!-- <img src="myvideo.jpg" width="420" height="315" title="No video playback capabilities" /> -->
-        </object>
-        </video>
-        <!-- <a class="video media-track" th:attr="href=${mediaSrc}" style="display:block;width:420px;height:315px;"></a> -->
+        <a class="video media-track" th:attr="href=${mediaSrc}" style="display:block;width:420px;height:315px;"></a>
     </div>
 
     <div class="busy">
