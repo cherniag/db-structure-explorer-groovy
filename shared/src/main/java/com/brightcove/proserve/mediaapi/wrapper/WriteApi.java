@@ -10,6 +10,7 @@ import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.WrapperException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.WrapperExceptionCode;
 import com.brightcove.proserve.mediaapi.wrapper.json.JSONUtils;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,6 +26,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
@@ -127,7 +129,7 @@ public class WriteApi {
 	 * <p>Called by constructors to initialize variables.</p>
 	 */
 	private void init(){
-		log       = null;
+		log       = Logger.getLogger(this.getClass().getName());
 		charSet   = "UTF-8";
 		httpAgent = new DefaultHttpClient();
 		
@@ -152,12 +154,10 @@ public class WriteApi {
 	 * </ul>
 	 */
 	private JSONObject executeCommand(JSONObject json, File file) throws BrightcoveException {
-		if(log != null){
-			log.info("JSON Command to execute: '" + json + "'.");
-			
-			if(file != null){
-				log.info("File to upload: '" + file.getAbsolutePath() + "'.");
-			}
+		log.info("JSON Command to execute: '" + json + "'.");
+		
+		if(file != null){
+			log.info("File to upload: '" + file.getAbsolutePath() + " [" + file.length() + " B / " + (file.length()/1024) + "MB]'.");
 		}
 		
 		URI uri = null;
@@ -209,9 +209,7 @@ public class WriteApi {
 		HttpEntity entity = response.getEntity();
 		String     buffer = JSONUtils.parseHttpEntity(entity);
 		
-		if(log != null){
-			log.info("Raw response from server: '" + buffer + "'.");
-		}
+		log.info("Raw response from server: '" + buffer + "'.");
 		
 		// Certain responses from the cache don't really return useful
 		// JSON - e.g. an invalid reference id in a find_video_by_reference_id
@@ -259,34 +257,32 @@ public class WriteApi {
 	 * </ul>
 	 */
 	public Long CreateVideo(String writeToken, Video video, String filename, TranscodeEncodeToEnum encodeTo, Boolean createMultipleRenditions, Boolean preserveSourceRendition, Boolean h264NoProcessing) throws BrightcoveException {
-		if(log != null){
-			if(video.getCreationDate() != null){
-				log.warning("Field \"Creation Date\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getFlvUrl() != null){
-				log.warning("Field \"FLV URL\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getLastModifiedDate() != null){
-				log.warning("Field \"Last Modified Date\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getLength() != null){
-				log.warning("Field \"Length\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getPlaysTotal() != null){
-				log.warning("Field \"Plays Total\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getPlaysTrailingWeek() != null){
-				log.warning("Field \"Plays Trailing Week\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getPublishedDate() != null){
-				log.warning("Field \"Published Date\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getThumbnailUrl() != null){
-				log.warning("Field \"Thumbnail URL\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(video.getVideoStillUrl() != null){
-				log.warning("Field \"Video Still URL\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
+		if(video.getCreationDate() != null){
+			log.warning("Field \"Creation Date\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getFlvUrl() != null){
+			log.warning("Field \"FLV URL\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getLastModifiedDate() != null){
+			log.warning("Field \"Last Modified Date\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getLength() != null){
+			log.warning("Field \"Length\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getPlaysTotal() != null){
+			log.warning("Field \"Plays Total\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getPlaysTrailingWeek() != null){
+			log.warning("Field \"Plays Trailing Week\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getPublishedDate() != null){
+			log.warning("Field \"Published Date\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getThumbnailUrl() != null){
+			log.warning("Field \"Thumbnail URL\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(video.getVideoStillUrl() != null){
+			log.warning("Field \"Video Still URL\" is set on the video, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
 		}
 		
 		if(video.getCuePoints() != null){
@@ -724,22 +720,21 @@ public class WriteApi {
 	 * </ul>
 	 */
 	public Long CreatePlaylist(String writeToken, Playlist playlist) throws BrightcoveException {
-		if(log != null){
-			if(playlist.getAccountId() != null){
-				log.warning("Field \"Account Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(playlist.getId() != null){
-				log.warning("Field \"Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(playlist.getThumbnailUrl() != null){
-				log.warning("Field \"Thumbnail URL\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(playlist.getVideoIds() != null){
-				log.warning("Field \"Video Ids\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(playlist.getVideos() != null){
-				log.warning("Field \"Videos\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
+
+		if(playlist.getAccountId() != null){
+			log.warning("Field \"Account Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(playlist.getId() != null){
+			log.warning("Field \"Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(playlist.getThumbnailUrl() != null){
+			log.warning("Field \"Thumbnail URL\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(playlist.getVideoIds() != null){
+			log.warning("Field \"Video Ids\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(playlist.getVideos() != null){
+			log.warning("Field \"Videos\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
 		}
 		
 		File file    = null;
@@ -788,19 +783,17 @@ public class WriteApi {
 	 * </ul>
 	 */
 	public Playlist UpdatePlaylist(String writeToken, Playlist playlist) throws BrightcoveException {
-		if(log != null){
-			if(playlist.getAccountId() != null){
-				log.warning("Field \"Account Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(playlist.getId() != null){
-				log.warning("Field \"Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(playlist.getThumbnailUrl() != null){
-				log.warning("Field \"Thumbnail URL\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
-			if(playlist.getVideos() != null){
-				log.warning("Field \"Videos\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
-			}
+		if(playlist.getAccountId() != null){
+			log.warning("Field \"Account Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(playlist.getId() != null){
+			log.warning("Field \"Id\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(playlist.getThumbnailUrl() != null){
+			log.warning("Field \"Thumbnail URL\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
+		}
+		if(playlist.getVideos() != null){
+			log.warning("Field \"Videos\" is set on the playlist, but this can not be set by the Media API.  This will be passed through to the Media API, but it will be ignored.");
 		}
 		
 		File file    = null;
