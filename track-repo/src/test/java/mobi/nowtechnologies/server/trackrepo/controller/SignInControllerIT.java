@@ -1,29 +1,19 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
-import junit.framework.TestCase;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:META-INF/application-test.xml",
-		"file:src/main/webapp/WEB-INF/trackrepo-servlet.xml"})
-@TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
-@Transactional
-@Ignore
-public class SignInControllerIT extends TestCase {
-	@Autowired
+public class SignInControllerIT extends AbstractTrackRepoITTest {
+	@Resource
 	private SignInController fixture;
 
 	@Test
