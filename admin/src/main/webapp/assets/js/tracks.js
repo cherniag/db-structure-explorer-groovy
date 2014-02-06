@@ -139,9 +139,9 @@ function showPullDialog(trackId) {
     var id = $("#idDiv_" + trackId).text();
     var isrc = $("#isrcDiv_" + trackId).text();
     var title = $("#publishTitleDiv_" + trackId).text();
-    title = title.length > 50 ? title.substring(0, 49).replace('&', ' ') : title.replace('&', ' ');
+    title = title.length > 50 ? title.substring(0, 49) : title;
     var artist = $("#publishArtistDiv_" + trackId).text();
-    artist = artist.length > 40 ? artist.substring(0, 39).replace('&', ' ') : artist.replace('&', ' ');
+    artist = artist.length > 40 ? artist.substring(0, 39) : artist;
     var info = $("#infoDiv_" + trackId).text();
     var iTunesUrl = $("#iTunesUrlDiv_" + trackId).text();
     var amazonUrl = $("#amazonUrlDiv_" + trackId).text();
