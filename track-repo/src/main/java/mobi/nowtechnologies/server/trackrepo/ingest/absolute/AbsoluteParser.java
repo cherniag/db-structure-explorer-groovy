@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.DOWNLOAD;
 import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.MOBILE;
@@ -207,4 +206,12 @@ public class AbsoluteParser extends DDEXParser {
     protected String getAssetFile(String root, String fileName) {
         return root + "/" + fileName;
     }
+
+    @Override
+    protected boolean isWrongAlbum(Element release) {
+        //as all tracks should have "isrc" check for it
+        Element isrcElem = release.getChild("ReleaseId").getChild("ISRC");
+        return isrcElem == null;
+    }
+
 }

@@ -49,6 +49,10 @@ public abstract class DDEXParser extends IParser {
 
             boolean isAlbum = checkAlbum(type);
 
+            if (isAlbum == false){
+                isAlbum = isWrongAlbum(release);
+            }
+
             if (!isAlbum) {
                 DropTrack track = parseTrack(distributor, action, deals, files, resourceDetails, imageFile, release);
 
@@ -629,6 +633,10 @@ public abstract class DDEXParser extends IParser {
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
         return result;
+    }
+
+    protected boolean isWrongAlbum(Element release){
+      return false;
     }
 
 }
