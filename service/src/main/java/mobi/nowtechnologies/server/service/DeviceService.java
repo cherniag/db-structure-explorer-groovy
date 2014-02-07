@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
 /**
  * 
  * @author Alexander Kolpakov (akolpakov)
@@ -76,7 +78,7 @@ public class DeviceService {
 	}
 	
 	public boolean isPromotedDevicePhone(Community community, String phoneNumber, String promoCode, String propertyName) {
-		if (null!=phoneNumber) {
+		if (!isEmpty(phoneNumber)) {
 			
 			String[] msgCodes = new String[3];
 			msgCodes[0] = propertyName;

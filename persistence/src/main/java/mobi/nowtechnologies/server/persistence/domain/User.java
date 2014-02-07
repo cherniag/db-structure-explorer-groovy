@@ -238,6 +238,9 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Drm> drms;
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private FBDetails fbDetails;
+
     private String facebookId;
 
     @Column(nullable = true)
@@ -1414,6 +1417,11 @@ public class User implements Serializable {
     public User withIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
         return this;
+    }
+
+
+    public FBDetails getFbDetails() {
+        return fbDetails;
     }
 
     @Override

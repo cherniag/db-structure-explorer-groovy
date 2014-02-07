@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -2497,7 +2498,7 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false);
+        User result = userServiceSpy.applyInitPromo(user, otac, false, false);
 
         //then
         assertNotNull(result);
@@ -2537,7 +2538,7 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false);
+        User result = userServiceSpy.applyInitPromo(user, otac, false, false);
 
         //then
         assertNotNull(result);
@@ -2575,7 +2576,7 @@ public class UserServiceTest {
 		
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 		
-		User result = userServiceSpy.applyInitPromo(user, otac, true);
+		User result = userServiceSpy.applyInitPromo(user, otac, true, false);
 		
 		assertNotNull(result);
 		assertEquals(user, result);
@@ -2612,7 +2613,7 @@ public class UserServiceTest {
 		AccountCheckDTO accountCheckDTO = AccountCheckDTOFactory.createAccountCheckDTO();
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
-		User result = userServiceSpy.applyInitPromo(user, otac, true);
+		User result = userServiceSpy.applyInitPromo(user, otac, true, false);
 		
 		assertNotNull(result);
 		assertEquals(user, result);

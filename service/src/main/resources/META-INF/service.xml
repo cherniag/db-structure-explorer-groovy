@@ -243,13 +243,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="entityService" ref="service.EntityService" />
 	</bean>
 
-	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.FacebookService">
-		<property name="postService" ref="shared.PostService" />
-		<property name="messageSource" ref="serviceMessageSource" />
-
-		<property name="fbAppId" value="${facebook.connect.fbAppId}" />
-		<property name="fbAppSecret" value="${facebook.connect.fbAppSecret}" />
-	</bean>
+	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.facebook.FacebookService"/>
 
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userService" ref="service.UserService" />

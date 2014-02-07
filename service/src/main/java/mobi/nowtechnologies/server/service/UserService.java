@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.*;
+import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -147,9 +148,8 @@ public class UserService {
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
-    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
-        ProviderUserDetails providerUserDetails = otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
-
+    private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isApplyingWithoutEnterPhone){
+        ProviderUserDetails providerUserDetails = isApplyingWithoutEnterPhone ? null: otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
                 user.getContract(), user.getMobile(),
                 user.getOperator());
@@ -157,8 +157,14 @@ public class UserService {
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
-        } else if (ENTERED_NUMBER.equals(user.getActivationStatus())  && !isEmail(user.getUserName())) {
-            hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
+        } else {
+            boolean validationFromPhone = (ENTERED_NUMBER.equals(user.getActivationStatus())) &&
+                    (!isEmail(user.getUserName()));
+            boolean startApply = isApplyingWithoutEnterPhone ? true : validationFromPhone;
+           if (startApply){
+                 hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
+             }
+
         }
 
         if(updateContractAndProvider && !user.isVFNZCommunityUser()) updateContractAndProvider(user, providerUserDetails);
@@ -1782,12 +1788,12 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public User applyInitPromo(User user, String otac, boolean updateContractAndProvider) {
+    public User applyInitPromo(User user, String otac, boolean updateContractAndProvider, boolean isApplyingWithoutEnterPhone) {
         LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
-        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider);
+        boolean hasPromo = applyInitPromo(user, mobileUser, otac, updateContractAndProvider, isApplyingWithoutEnterPhone);
 
         user = !ActivationStatus.ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
 
@@ -1967,7 +1973,7 @@ public class UserService {
         o2UserDetailsUpdater.setUserFieldsFromSubscriberData(user, o2SubscriberData);
         return userRepository.save(user);
     }
-    
+
     public boolean isPromotedDevice(String phoneNumber, Community community) {
 		boolean isPromoted = false;
 		try {
@@ -1996,7 +2002,7 @@ public class UserService {
 
         boolean isPromotionApplied;
         if(isNotBlank(otac)){
-            isPromotionApplied = applyInitPromo(user, mobileUser, otac, false);
+            isPromotionApplied = applyInitPromo(user, mobileUser, otac, false, false);
         }else{
             isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
         }
