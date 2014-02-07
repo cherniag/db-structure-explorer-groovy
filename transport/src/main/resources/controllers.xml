@@ -76,4 +76,10 @@
         <property name="accCheckController" ref="transport.AccCheckController"/>
     </bean>
 
+    <bean id="transport.EmailRegistrationController" class="mobi.nowtechnologies.server.transport.controller.EmailRegistrationController" parent="transport.CommonController">
+        <property name="communityService" ref="service.communityService" />
+        <property name="mailService" ref="service.MailService" />
+        <property name="messageSource" ref="serviceMessageSource" />
+    </bean>
+
 </beans>

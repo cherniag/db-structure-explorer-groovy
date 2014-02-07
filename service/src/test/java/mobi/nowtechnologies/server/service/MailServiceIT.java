@@ -46,7 +46,7 @@ public class MailServiceIT {
 		Map<String, String> model = new HashMap<String, String>();
 			model.put("username", username);
 			model.put("product_name", productName);
-		String processedString = mailService.processTemplateString(templateString, model);
+		String processedString = MailTemplateProcessor.processTemplateString(templateString, model);
 		
 		Assert.assertEquals(finalString, processedString);
 	}
@@ -58,7 +58,7 @@ public class MailServiceIT {
 		
 		Map<String, String> model = new HashMap<String, String>();
 			model.put("username", username);
-		String processedString = mailService.processTemplateString(templateString, model);
+		String processedString = MailTemplateProcessor.processTemplateString(templateString, model);
 		
 		Assert.assertEquals(finalString, processedString);
 	}
@@ -74,7 +74,7 @@ public class MailServiceIT {
 		Map<String, String> model = new HashMap<String, String>();
 			model.put("username", username);
 			model.put("product_name", productName);
-		String processedString = mailService.processTemplateString(templateString, model);
+		String processedString = MailTemplateProcessor.processTemplateString(templateString, model);
 		
 		Assert.assertEquals(finalString, processedString);
 	}
