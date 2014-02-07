@@ -137,14 +137,37 @@ public class AbsoluteParser extends DDEXParser {
 
     @Override
     protected void getIds(Element release, DropTrack track, List<DropAssetFile> files) {
+        //Old version of getting IDs
+//        String isrc = release.getChild("ReleaseId").getChildText("ISRC");
+//        try {
+//            track.productCode = getProprietaryId(isrc);
+//        } catch (SaxonApiException e) {
+//            LOGGER.error(e.getMessage());
+//        }
+//        track.physicalProductId = isrc;
+//        track.productId = isrc;
+
         String isrc = release.getChild("ReleaseId").getChildText("ISRC");
         try {
-            track.productCode = getProprietaryId(isrc);
+            track.physicalProductId = getProprietaryId(isrc);
         } catch (SaxonApiException e) {
             LOGGER.error(e.getMessage());
         }
-        track.physicalProductId = isrc;
-        track.productId = isrc;
+
+        List<Element> releaseList = release.getParentElement().getChildren("Release");
+
+
+        for (int i = 0; i < releaseList.size(); i++) {
+            Element rel = releaseList.get(i);
+            Element icpnEl = rel.getChild("ReleaseId").getChild("ICPN");
+            if (icpnEl != null){
+                track.productCode = icpnEl.getValue();
+                break;
+            }
+        }
+
+        track.productId = track.physicalProductId;
+
     }
 
     @Override
@@ -214,4 +237,8 @@ public class AbsoluteParser extends DDEXParser {
         return isrcElem == null;
     }
 
+    @Override
+    protected Integer getDuration(String duration) {
+        return super.getDuration(duration) * 1000;
+    }
 }

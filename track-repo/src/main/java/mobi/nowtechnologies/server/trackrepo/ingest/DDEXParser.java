@@ -357,6 +357,8 @@ public abstract class DDEXParser extends IParser {
                     }
                 }
             }
+            if (isPriorityImage(node))
+                return imageFile;
         }
         return imageFile;
     }
@@ -637,6 +639,10 @@ public abstract class DDEXParser extends IParser {
 
     protected boolean isWrongAlbum(Element release){
       return false;
+    }
+
+    protected boolean isPriorityImage (Element node){
+        return false;
     }
 
 }
