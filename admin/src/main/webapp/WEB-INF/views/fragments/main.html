@@ -213,7 +213,7 @@ section {
         <!--<object class="audio" height="50" width="100" th:attr="data=${mediaSrc}" data="horse.mp3" autoplay="false" type="audio/mpeg"></object>-->
         <!--<audio class="audio" controls="controls" th:attr="src=${mediaSrc}"/>-->
         <!-- <audio class="audio" src="test.mp3" th:attr="src=${mediaSrc}" preload="none"></audio> -->
-        <audio controls="controls" class="audio">
+        <audio controls="controls" class="audio" preload="none">
           <source th:attr="src=${mediaSrc}" type="audio/wav" />
           <source th:attr="src=${mediaSrc}" type="audio/mpeg" />
           <source th:attr="src=${mediaSrc}" type="audio/mp3" />

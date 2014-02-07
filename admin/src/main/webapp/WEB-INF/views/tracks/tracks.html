@@ -239,7 +239,7 @@
 			</ul>
 		</div>
 
-        <div class="row">
+        <div class="row" th:unless="${#lists.isEmpty(PAGE_LIST_DTO.list)}">
             <div class="span12 l-paging-wrapper">
                 <form th:action="@{/tracks/list}" th:object="${searchTrackDto}" method="get" accept-charset="UTF-8" class="b-per-page-form">
                     <select name="page.size" class="selectpicker" data-width="75px" data-style="position:relative; top:0px;">
