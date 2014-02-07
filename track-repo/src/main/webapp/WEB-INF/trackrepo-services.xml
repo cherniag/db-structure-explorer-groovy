@@ -34,6 +34,7 @@
 		<property name="sevenDigitalApiUrl" value="${trackrepo.7digital.url}" />
 		<property name="sevenDigitalApiKey" value="${trackrepo.7digital.key}" />
 		<property name="restTemplate" ref="service.RestTemplate" />
+		<property name="encodeManager" ref="service.encode.manager"/>
 	</bean>
 
     <bean id="trackRepo.TrackServiceStub" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceStub" parent="trackRepo.TrackService">
@@ -70,4 +71,115 @@
 	</bean>
 	
 	<bean id="service.RestTemplate"  class="org.springframework.web.client.RestTemplate" />
+	
+	<bean id="service.encode.imageGenerator" class="mobi.nowtechnologies.server.trackrepo.utils.image.ShellImageGeneratorImpl">
+		<property name="imagesDir" value="${trackRepo.encode.workdir}/files/image/"/>
+		<property name="commandResizeImage" ref="service.encode.resizeImage"/>
+		<property name="convertPath" value="${trackrepo.encode.convertPath}"/>
+		<property name="thumbnails">
+			<list>
+				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
+					<property name="fileNameTail" value="S"/>
+					<property name="imageSize" value="70"/>
+				</bean>
+				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
+					<property name="fileNameTail" value="_22"/>
+					<property name="imageSizeForAudio" value="200"/>
+					<property name="imageSizeForVideo" value="640"/>
+				</bean>
+				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
+					<property name="fileNameTail" value="_21"/>
+					<property name="imageSize" value="90"/>
+				</bean>
+				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
+					<property name="fileNameTail" value="_3"/>
+					<property name="imageSize" value="240"/>
+				</bean>
+				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
+					<property name="fileNameTail" value="_6"/>
+					<property name="imageSize" value="60"/>
+				</bean>
+				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
+					<property name="fileNameTail" value="_cover"/>
+					<property name="imageSize" value="150"/>
+					<property name="fileExtension" value="png"/>
+					<property name="additionalParams" value="-depth 8 -quality 00"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="service.encode.manager" class="mobi.nowtechnologies.server.trackrepo.utils.EncodeManager">
+		<property name="commandGetEncoding" ref="service.encode.getEncoding"/>
+		<property name="commandEncodeUnknown" ref="service.encode.encodeUnknown"/>
+		<property name="commandEncodeMP3" ref="service.encode.encodeMP3"/>
+		<property name="commandEncodeACC" ref="service.encode.encodeACC"/>
+		<property name="commandEncodeWAV" ref="service.encode.encodeWAV"/>
+		<property name="commandDecodeMP3" ref="service.encode.decodeMP3"/>
+		<property name="commandEncodeMobileAudio" ref="service.encode.encodeMobileAudio"/>
+		<property name="commandEncodePreviewAudio" ref="service.encode.encodePreviewAudio"/>
+		<property name="commandAddTag" ref="service.encode.addTag"/>
+		<property name="imageGenerator" ref="service.encode.imageGenerator"/>
+		<property name="commandUITS" ref="service.encode.uitsAdapter"></property>
+		<property name="workDir" value="${trackRepo.encode.workdir}/"/>
+		<property name="purchasedDir" value="${trackRepo.encode.workdir}/files/purchased/"/>
+		<property name="imageDir" value="${trackRepo.encode.workdir}/files/image/"/>
+		<property name="headerDir" value="${trackRepo.encode.workdir}/files/header/"/>
+		<property name="audioDir" value="${trackRepo.encode.workdir}/files/audio/"/>
+		<property name="encodedDir" value="${trackRepo.encode.workdir}/files/encoded/"/>
+		<property name="previewDir" value="${trackRepo.encode.workdir}/files/preview/"/>
+		<property name="neroHome" value="${trackRepo.encode.nero.home}"/>
+		<property name="cloudUploadFileManager" ref="service.encode.cloudUploadFileManager"/>
+	</bean>
+	
+	<bean id="service.encode.getEncoding" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/get_encoding.sh"/>
+	</bean>
+	<bean id="service.encode.encodeUnknown" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_unknown.sh"/>
+	</bean>
+	<bean id="service.encode.encodeMP3" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_mp3.sh"/>
+	</bean>
+	<bean id="service.encode.encodeACC" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_acc.sh"/>
+	</bean>
+	<bean id="service.encode.encodeWAV" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_wav.sh"/>
+	</bean>
+	<bean id="service.encode.decodeMP3" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/decode_mp3.sh"/>
+	</bean>
+	<bean id="service.encode.encodeMobileAudio" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_mobile_audio.sh"/>
+	</bean>
+	<bean id="service.encode.addTag" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/add_tag.sh"/>
+	</bean>
+	<bean id="service.encode.encodePreviewAudio" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_preview_audio.sh"/>
+	</bean>
+	<bean id="service.encode.resizeImage" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/resize_image.sh"/>
+	</bean>
+	
+	<bean id="service.encode.uitsAdapter" class="mobi.nowtechnologies.server.trackrepo.utils.UITSCommandAdapter">
+		<property name="privateKey" value="${trackRepo.encode.privkey}"/>
+	</bean>
+	
+	<bean id="service.encode.cloudUploadFileManager" class="mobi.nowtechnologies.server.trackrepo.utils.UploadToCloudFileManager">
+		<property name="dataContainerName" value="${trackrepo.pull.cdn.container.scr}"/>
+		<property name="privateContainerName" value="${trackrepo.pull.cdn.container.dest}"/>
+		<property name="cloudService" ref="trackRepo.CloudFileService"/>
+		<property name="fileExtensionToContentTypeMap">
+			<map>
+				<entry key="mp3" value="audio/mpeg"/>
+				<entry key="m4a" value="audio/x-m4a"/>
+				<entry key="jpg" value="image/jpeg"/>
+				<entry key="png" value="image/png"/>
+			</map>
+		</property>
+		<property name="defaultContentType" value="application/octet-stream"/>
+	</bean>
+	
 </beans>

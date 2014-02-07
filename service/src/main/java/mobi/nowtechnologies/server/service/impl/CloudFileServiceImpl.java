@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -125,6 +127,28 @@ public class CloudFileServiceImpl implements CloudFileService {
 
 			try {
 				filesClient.storeStreamedObject(containerName, file.getInputStream(), "application/octet-stream", fileName, Collections.EMPTY_MAP);
+				uploaded = true;
+				LOGGER.info("Done updating file on cloud. File was successfully uploaded {}", uploaded);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+				throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
+			}
+		}
+
+		return uploaded;
+	}
+	
+	@Override
+	public synchronized boolean uploadFile(File file, String fileName, String contentType, String destinationContainer) {
+		LOGGER.info("Updating file {} on cloud with name {}", file.getAbsolutePath(), fileName);
+
+		boolean uploaded = false;
+		if (file != null && file.exists()) {
+
+			login();
+
+			try {
+				filesClient.storeStreamedObject(destinationContainer, new FileInputStream(file), contentType, fileName, Collections.EMPTY_MAP);
 				uploaded = true;
 				LOGGER.info("Done updating file on cloud. File was successfully uploaded {}", uploaded);
 			} catch (Exception e) {
