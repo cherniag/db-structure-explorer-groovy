@@ -497,6 +497,13 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	
 	<bean id="service.RestTemplate"  class="org.springframework.web.client.RestTemplate" />
 
+    <bean id="service.ActivationEmailService" class="mobi.nowtechnologies.server.service.ActivationEmailServiceImpl">
+        <property name="activationEmailRepository" ref="activationEmailRepository"/>
+        <property name="mailService" ref="service.MailService"/>
+        <property name="messageSource" ref="serviceMessageSource"/>
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
 	<import resource="payment.xml" />
 
 	<import resource="smpp-stub.xml" />

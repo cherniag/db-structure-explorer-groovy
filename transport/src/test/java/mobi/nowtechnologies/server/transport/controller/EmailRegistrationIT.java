@@ -5,9 +5,11 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
+import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MailTemplateProcessor;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
@@ -35,9 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
@@ -64,6 +64,9 @@ public class EmailRegistrationIT {
     @Autowired
     @Qualifier("serviceMessageSource")
     private CommunityResourceBundleMessageSource messageSource;
+
+    @Autowired
+    private ActivationEmailRepository activationEmailRepository;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -96,8 +99,8 @@ public class EmailRegistrationIT {
         String email = "a@gmail.com";
         mockMvc.perform(post("/o2/4.0/EMAIL_GENERATE")
                 .param("EMAIL", email)
-                .param("USER_NAME", "htc1")
-                .param("DEVICE_UID", "HTC1")).andExpect(status().isOk());
+                .param("USER_NAME", user.getUserName())
+                .param("DEVICE_UID", user.getDeviceUID())).andExpect(status().isOk());
 
         String community = "o2";
 
@@ -112,6 +115,9 @@ public class EmailRegistrationIT {
         assertTrue(text.contains("to: " + email));
         assertTrue(text.contains("subject: " + MailTemplateProcessor.processTemplateString(subject, params)));
         assertTrue(text.contains("body: " + MailTemplateProcessor.processTemplateString(body, params)));
+
+        ActivationEmail activationEmail = activationEmailRepository.findByUserAndEmailAndDeviceUID(user, email, user.getDeviceUID());
+        assertFalse(activationEmail.isActivated());
     }
 
     @Before

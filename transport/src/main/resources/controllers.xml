@@ -77,9 +77,7 @@
     </bean>
 
     <bean id="transport.EmailRegistrationController" class="mobi.nowtechnologies.server.transport.controller.EmailRegistrationController" parent="transport.CommonController">
-        <property name="communityService" ref="service.communityService" />
-        <property name="mailService" ref="service.MailService" />
-        <property name="messageSource" ref="serviceMessageSource" />
+        <property name="activationEmailService" ref="service.ActivationEmailService"/>
     </bean>
 
 </beans>
