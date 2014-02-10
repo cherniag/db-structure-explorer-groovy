@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 public abstract class UserTask extends Task {
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "user_id")
     private User user;
 
