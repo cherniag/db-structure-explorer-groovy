@@ -209,7 +209,7 @@
 					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
 				</li>
 			</ul>
-			<ul class="table table_up" id="chartItemsSortable" style="min-height: 55px;">
+			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
 				<li th:each="chartItemDto, it: ${CHART_ITEM_DTO_LIST}">
 					<div class="id_chartItem" style="display:none" th:text="${chartItemDto.id}">id</div>
 					<div class="mediaId_chartItem" style="display:none" th:text="${chartItemDto.mediaDto.id}">mediaId</div>
@@ -224,7 +224,6 @@
 						Брати Гадюкіни - Звьоздочка Моя
 					</div>
 					<div class="info_chartItem" style="display:inline-block;">
-						<b><span style="word-wrap:break-word;" th:text="'(' + ${chartItemDto.mediaDto.audioFileDto.formattedDuration} + ')'"></span></b><br/>
 						<span style="word-wrap:break-word;" th:text="${chartItemDto.info}">Пісня Братів Гадюкіних з альбому Всьо Чьотко!</span>
 					</div>
 					<div class="locked_chartItem toggleButton">
