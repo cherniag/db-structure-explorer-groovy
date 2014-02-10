@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
@@ -42,7 +43,6 @@ import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPG
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"deviceUID", "userGroup"}), @UniqueConstraint(columnNames = {"userName", "userGroup"})})
@@ -239,7 +239,7 @@ public class User implements Serializable {
     private List<Drm> drms;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private FBDetails fbDetails;
+    private FBUserInfo fbDetails;
 
     private String facebookId;
 
@@ -1420,7 +1420,7 @@ public class User implements Serializable {
     }
 
 
-    public FBDetails getFbDetails() {
+    public FBUserInfo getFbDetails() {
         return fbDetails;
     }
 

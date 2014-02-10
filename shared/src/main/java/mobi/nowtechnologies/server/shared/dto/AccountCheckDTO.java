@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.shared.dto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -77,6 +78,9 @@ public class AccountCheckDTO {
     public SubscriptionDirection subscriptionChanged;
     public boolean subjectToAutoOptIn;
 
+    @JsonProperty("facebookInfo")
+    private FBUserInfoDto fbUserInfoDTO;
+
     public transient Object user;
 
     public AccountCheckDTO(){
@@ -135,7 +139,7 @@ public class AccountCheckDTO {
         this.eligibleForVideo = accountCheckDTO.eligibleForVideo;
         this.subjectToAutoOptIn = accountCheckDTO.subjectToAutoOptIn;
         this.tariff = accountCheckDTO.tariff;
-
+        this.setFbUserInfoDTO(accountCheckDTO.getFbUserInfoDTO());
         accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
 	}
 
@@ -148,6 +152,15 @@ public class AccountCheckDTO {
         this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
         return this;
     }
+
+    public FBUserInfoDto getFbUserInfoDTO() {
+        return fbUserInfoDTO;
+    }
+
+    public void setFbUserInfoDTO(FBUserInfoDto fbUserInfoDTO) {
+        this.fbUserInfoDTO = fbUserInfoDTO;
+    }
+
 
     @Override
     public String toString() {

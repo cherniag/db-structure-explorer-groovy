@@ -4,9 +4,11 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
+import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.FBUserInfoDto;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -115,7 +117,23 @@ public class AccountCheckDTOAsm {
         }
 
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
+        accountCheckDTO.setFbUserInfoDTO(buildFBInfo(user));
         return accountCheckDTO;
+    }
+
+    private FBUserInfoDto buildFBInfo(User user) {
+        FBUserInfoDto result = null;
+        FBUserInfo details = user.getFbDetails();
+        if (details != null){
+            result = new FBUserInfoDto();
+            result.setUserName(details.getUserName());
+            result.setFirstName(details.getFirstName());
+            result.setSurname(details.getSurname());
+            result.setEmail(details.getEmail());
+            result.setProfileUrl(details.getProfileUrl());
+            result.setFacebookId(details.getFacebookId());
+        }
+        return result;
     }
 
     private boolean calcSubjectToAutoOptIn(User user) {

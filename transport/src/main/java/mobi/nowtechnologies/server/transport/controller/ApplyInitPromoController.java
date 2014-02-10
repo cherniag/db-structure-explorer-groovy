@@ -99,8 +99,8 @@ public class ApplyInitPromoController extends CommonController {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
             user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
             FacebookProfile facebookProfile = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
-            user.setUserName(facebookProfile.getEmail());
-            //user.setMobile(userName);
+            //MOBILE_IS_SET BECAUSE MERGE IS POSSIBLE
+            user.setMobile(facebookProfile.getEmail());
             user = userService.applyInitPromo(user, null, false, true);
             facebookService.saveFacebookInfoForUser(user, facebookProfile);
             AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
