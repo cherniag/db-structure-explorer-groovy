@@ -75,29 +75,36 @@
 	<bean id="service.encode.imageGenerator" class="mobi.nowtechnologies.server.trackrepo.utils.image.ShellImageGeneratorImpl">
 		<property name="imagesDir" value="${trackRepo.encode.workdir}/files/image/"/>
 		<property name="commandResizeImage" ref="service.encode.resizeImage"/>
+		<property name="commandCoverPreviewImage" ref="service.encode.coverPreviewImage"/>
 		<property name="convertPath" value="${trackrepo.encode.convertPath}"/>
+		<property name="compositePath" value="${trackrepo.encode.compositePath}"/>
 		<property name="thumbnails">
 			<list>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="S"/>
 					<property name="imageSize" value="70"/>
+					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-70.png"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_22"/>
 					<property name="imageSizeForAudio" value="200"/>
 					<property name="imageSizeForVideo" value="640"/>
+					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-200.png"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_21"/>
 					<property name="imageSize" value="90"/>
+					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-90.png"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_3"/>
 					<property name="imageSize" value="240"/>
+					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-240.png"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_6"/>
 					<property name="imageSize" value="60"/>
+					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-60.png"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_cover"/>
@@ -162,14 +169,17 @@
 	<bean id="service.encode.resizeImage" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
 		<property name="command" value="${trackrepo.encode.scriptDir}/resize_image.sh"/>
 	</bean>
+	<bean id="service.encode.coverPreviewImage" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
+		<property name="command" value="${trackrepo.encode.scriptDir}/cover_preview_image.sh"/>
+	</bean>
 	
 	<bean id="service.encode.uitsAdapter" class="mobi.nowtechnologies.server.trackrepo.utils.UITSCommandAdapter">
 		<property name="privateKey" value="${trackRepo.encode.privkey}"/>
 	</bean>
 	
 	<bean id="service.encode.cloudUploadFileManager" class="mobi.nowtechnologies.server.trackrepo.utils.UploadToCloudFileManager">
-		<property name="dataContainerName" value="${trackrepo.pull.cdn.container.scr}"/>
-		<property name="privateContainerName" value="${trackrepo.pull.cdn.container.dest}"/>
+		<property name="dataContainerName" value="${trackRepo.pull.cdn.container.dest}"/>
+		<property name="privateContainerName" value="${trackRepo.pull.cdn.container.src}"/>
 		<property name="cloudService" ref="trackRepo.CloudFileService"/>
 		<property name="fileExtensionToContentTypeMap">
 			<map>

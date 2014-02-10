@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
+import mobi.nowtechnologies.server.trackrepo.utils.EncodeManager;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
 
 import org.apache.commons.io.FileUtils;
@@ -77,6 +78,8 @@ public class TrackServiceImpl implements TrackService {
     private ReadApi brightcoveReadService;
 	private RestTemplate restTemplate;
 
+	private EncodeManager encodeManager;
+	
 	public void setCloudFileService(CloudFileService cloudFileService) {
 		this.cloudFileService = cloudFileService;
 	}
@@ -117,36 +120,7 @@ public class TrackServiceImpl implements TrackService {
 
 			licensed = licensed == null ? track.getLicensed() : licensed;
 
-			File encodeScriptFile = encodeScript.getFile();
-			ExternalCommandThread thread = new ExternalCommandThread();
-			thread.setCommand(encodeScriptFile.getAbsolutePath());
-			thread.addParam(isHighRate != null && isHighRate ? "" : emptyNull(track.getFileName(AssetFile.FileType.MOBILE)));
-			thread.addParam("");
-			thread.addParam(emptyNull(track.getFileName(AssetFile.FileType.DOWNLOAD)));
-			thread.addParam(emptyNull(track.getFileName(AssetFile.FileType.IMAGE)));
-			thread.addParam(emptyNull(track.getTitle()));
-			thread.addParam(emptyNull(track.getArtist()));
-			thread.addParam(emptyNull(track.getAlbum()));
-			thread.addParam(emptyNull(track.getGenre()));
-			thread.addParam("");
-			thread.addParam(emptyNull(track.getYear()));
-			thread.addParam(emptyNull(track.getCopyright()));
-			thread.addParam(emptyNull(track.getIsrc()));
-			thread.addParam(publishDir.getFile().getAbsolutePath());
-			thread.addParam(classpath.getFile().getAbsolutePath());
-			thread.addParam(neroHome.getFile().getAbsolutePath());
-			thread.addParam(workDir.getFile().getAbsolutePath());
-			thread.addParam(emptyNull(track.getId()));
-			thread.addParam(licensed != null && licensed ? "NO" : "YES");
-			thread.addParam(privateKey.getFile().getAbsolutePath());
-			thread.addParam(isHighRate != null && isHighRate ? AudioResolution.RATE_96.getSuffix() : AudioResolution.RATE_48.getSuffix());
-			thread.addParam(track.getFile(AssetFile.FileType.VIDEO) == null ? "200" : "640");
-			thread.run();
-			
-			if (thread.getExitCode() != 0){
-				LOGGER.error("Cannot encode track {} files or create zip package: execution of {} returned exit code {}", trackId, encodeScript.getFile(), thread.getExitCode());
-				throw new RuntimeException("Cannot encode track files or create zip package: execution of " + encodeScript.getFile() + " returned exit code " + thread.getExitCode());
-			}
+			encodeManager.encode(track, isHighRate, licensed);
 
 			track.setItunesUrl(getITunesUrl(track.getArtist(), track.getTitle()));
 			track.setAmazonUrl(getAmazonUrl(track.getIsrc()));
@@ -270,13 +244,6 @@ public class TrackServiceImpl implements TrackService {
 
 		LOGGER.info("output find(searchTrackDto, page): [{}]", new Object[] { pagelist });
 		return pagelist;
-	}
-
-	private String emptyNull(Object str) {
-		if (str == null) {
-			return "";
-		}
-		return str.toString();
 	}
 	
 	private void moveFiles(File srcDir, File destDir) {
@@ -489,5 +456,9 @@ public class TrackServiceImpl implements TrackService {
 	
 	public void setRestTemplate(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
+	}
+
+	public void setEncodeManager(EncodeManager encodeManager) {
+		this.encodeManager = encodeManager;
 	}
 }

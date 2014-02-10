@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -44,7 +45,7 @@ public class EncodeManager {
 	private Resource neroHome;
 	private UploadToCloudFileManager cloudUploadFileManager;
 	
-	public void encode(Track track) throws IOException, InterruptedException {
+	public void encode(Track track, Boolean isHighRate, Boolean licensed) throws IOException, InterruptedException {
 		
 		boolean isVideo = track.getFile(AssetFile.FileType.VIDEO) != null;
 		
@@ -53,9 +54,16 @@ public class EncodeManager {
 		
 		//Thumbnails generation
 		try {
-			filesToPrivate.addAll(imageGenerator.generateThumbnails(track.getFileName(AssetFile.FileType.IMAGE), 
-											  						track.getIsrc(), 
-											  						isVideo));
+			
+			if (licensed) {
+				filesToPrivate.addAll(imageGenerator.generateThumbnails(track.getFileName(AssetFile.FileType.IMAGE), 
+												  						track.getIsrc(), 
+												  						isVideo));
+			} else {
+				filesToPrivate.addAll(imageGenerator.generateThumbnailsWithWatermark(track.getFileName(AssetFile.FileType.IMAGE), 
+  																					 track.getIsrc(), 
+  																					 isVideo));
+			}
 		} catch (Exception e) {
 			LOGGER.error("Image generating failed", e);
 		}
@@ -145,7 +153,6 @@ public class EncodeManager {
 											 emptyNull(track.getAlbum()),
 											 emptyNull(track.getGenre()),
 											 emptyNull(track.getYear()),
-											 emptyNull(track.getArtist()),
 											 "",
 											 emptyNull(track.getCopyright()),
 											 emptyNull(track.getIsrc()),
@@ -162,18 +169,36 @@ public class EncodeManager {
 				LOGGER.debug("Header file is " + getWorkDir() + hdrFileName + " and exists: " + new File(getWorkDir() + hdrFileName).exists());
 				LOGGER.debug("Encoded file is " + getWorkDir() + encFileName + " and exists: " + new File(getWorkDir() + encFileName).exists());
 				
-				moveFile(getWorkDir() + audFileName, getAudioDir() + audFileName);
-				filesToPrivate.add(getAudioDir() + audFileName);
+				String targetAudFileName = getAudioDir() + audFileName;
+				String targetHdrFileName = getHeaderDir() + hdrFileName;
+				String targetEncFileName = getEncodedDir() + encFileName;
 				
-				moveFile(getWorkDir() + hdrFileName, getHeaderDir() + hdrFileName);
-				filesToPrivate.add(getHeaderDir() + hdrFileName);
+				moveFile(getWorkDir() + audFileName, targetAudFileName);
+				filesToPrivate.add(targetAudFileName);
+				
+				moveFile(getWorkDir() + hdrFileName, targetHdrFileName);
+				filesToPrivate.add(targetHdrFileName);
 
-				moveFile(getWorkDir() + encFileName, getEncodedDir() + encFileName);
-				filesToPrivate.add(getEncodedDir() + encFileName);
+				moveFile(getWorkDir() + encFileName, targetEncFileName);
+				filesToPrivate.add(targetEncFileName);
+				
+				LOGGER.debug("Audio file is moved to " + targetAudFileName + " and exists: " + new File(targetAudFileName).exists());
+				LOGGER.debug("Header file is moved to " + targetHdrFileName + " and exists: " + new File(targetHdrFileName).exists());
+				LOGGER.debug("Encoded file is moved to " + targetEncFileName + " and exists: " + new File(targetEncFileName).exists());
 
-				LOGGER.debug("Audio file is moved to " + getAudioDir() + audFileName + " and exists: " + new File(getAudioDir() + audFileName).exists());
-				LOGGER.debug("Header file is moved to " + getHeaderDir() + hdrFileName + " and exists: " + new File(getHeaderDir() + hdrFileName).exists());
-				LOGGER.debug("Encoded file is moved to " + getEncodedDir() + encFileName + " and exists: " + new File(getEncodedDir() + encFileName).exists());
+				if (isHighRate == (bitrate == "96")){
+				
+					String targetAudFileNameNoBitrate = getAudioDir() + track.getIsrc() + ".aud";
+					String targetEncFileNameNoBitrate = getEncodedDir() + track.getIsrc() + ".enc";
+					
+					FileUtils.copyFile(new File(targetAudFileName),  new File(targetAudFileNameNoBitrate));
+					filesToPrivate.add(targetAudFileNameNoBitrate);
+					LOGGER.debug("Audio file is copied to " + targetAudFileNameNoBitrate + " and copy exists: " + new File(targetAudFileNameNoBitrate).exists());
+					
+					FileUtils.copyFile(new File(targetEncFileName),  new File(targetEncFileNameNoBitrate));
+					LOGGER.debug("Encoded file is copied to " + targetEncFileNameNoBitrate + " and copy exists: " + new File(targetEncFileNameNoBitrate).exists());
+					filesToPrivate.add(targetEncFileNameNoBitrate);
+				}
 			}
 			
 			//Generating preview audio
@@ -189,7 +214,6 @@ public class EncodeManager {
 					 					 emptyNull(track.getAlbum()),
 					 					 emptyNull(track.getGenre()),
 					 					 emptyNull(track.getYear()),
-					 					 emptyNull(track.getArtist()),
 					 					 "",
 					 					 emptyNull(track.getCopyright()),
 					 					 emptyNull(track.getIsrc()),

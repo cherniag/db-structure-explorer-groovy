@@ -7,5 +7,5 @@ public interface ImageGenerator {
 
 	List<String> generateThumbnails(String sourceFilePath, String isrc, boolean isVideo) throws IOException, InterruptedException;
 	
-	List<String> generateThumbnailsWithWatermark(String isrc);
+	List<String> generateThumbnailsWithWatermark(String sourceFilePath, String isrc, boolean isVideo) throws IOException, InterruptedException;
 }

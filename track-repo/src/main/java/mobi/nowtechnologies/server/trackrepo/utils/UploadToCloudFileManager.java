@@ -22,7 +22,7 @@ public class UploadToCloudFileManager {
 			File file = new File(fileName);
 			if (file.exists()) {
 				String contentType = getContentTypeByExtensioin(fileName);
-				cloudService.uploadFile(file, track.getIsrc() + "_" + file.getName(), contentType, privateContainerName);
+				cloudService.uploadFile(file, track.getId() + "_" + file.getName(), contentType, privateContainerName);
 			}
 		}
 
@@ -31,7 +31,7 @@ public class UploadToCloudFileManager {
 			File file = new File(fileName);
 			if (file.exists()) {
 				String contentType = getContentTypeByExtensioin(fileName);
-				cloudService.uploadFile(file, fileName, contentType, dataContainerName);
+				cloudService.uploadFile(file, file.getName(), contentType, dataContainerName);
 			}
 		}
 	}

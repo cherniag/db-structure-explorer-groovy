@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.utils.image;
 
+import org.springframework.core.io.Resource;
+
 public class ThumbnailType {
 
 	private static final String DEFAULT_FILE_EXTENSION = "jpg";
@@ -8,6 +10,7 @@ public class ThumbnailType {
 	private int imageSizeForAudio;
 	private int imageSizeForVideo;
 	private String additionalParams;
+	private Resource coverFilePath;
 	private String fileExtension = DEFAULT_FILE_EXTENSION;
 	
 	public String getFileNameTail() {
@@ -39,6 +42,12 @@ public class ThumbnailType {
 	}
 	public void setAdditionalParams(String additionalParams) {
 		this.additionalParams = additionalParams;
+	}
+	public Resource getCoverFilePath() {
+		return coverFilePath;
+	}
+	public void setCoverFilePath(Resource coverFilePath) {
+		this.coverFilePath = coverFilePath;
 	}
 	
 	public void setImageSize(int imageSize) {
