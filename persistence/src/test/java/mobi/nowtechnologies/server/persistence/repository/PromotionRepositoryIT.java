@@ -6,20 +6,14 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static mobi.nowtechnologies.server.persistence.dao.UserGroupDao.*;
-import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.*;
+import static junit.framework.Assert.*;
+import static mobi.nowtechnologies.server.persistence.dao.UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY;
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_SUBBALANCE_PROMOTION;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -28,11 +22,8 @@ import static org.junit.Assert.assertThat;
  * 02.08.13 15:20
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class PromotionRepositoryIT {
+
+public class PromotionRepositoryIT  extends AbstractRepositoryIT{
 
     @Resource(name = "promotionRepository")
     PromotionRepository promotionRepository;

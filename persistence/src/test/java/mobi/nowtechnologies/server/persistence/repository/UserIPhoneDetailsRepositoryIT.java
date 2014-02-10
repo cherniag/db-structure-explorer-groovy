@@ -1,36 +1,22 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetails;
-import mobi.nowtechnologies.server.persistence.domain.UserIPhoneDetailsFactory;
-
+import mobi.nowtechnologies.server.persistence.domain.*;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class UserIPhoneDetailsRepositoryIT {
+
+public class UserIPhoneDetailsRepositoryIT  extends AbstractRepositoryIT{
 	
 	@Resource(name="userIPhoneDetailsRepository")
 	private UserIPhoneDetailsRepository userIPhoneDetailsRepository;

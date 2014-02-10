@@ -2,11 +2,6 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -16,11 +11,8 @@ import java.util.List;
 /**
  * @author Titov Mykhaylo (titov)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class FilterWithCriteriaRepositoryIT {
+
+public class FilterWithCriteriaRepositoryIT extends AbstractRepositoryIT {
 	
 	@Resource(name="filterWithCriteriaRepository")
 	private FilterWithCriteriaRepository filterWithCriteriaRepository;

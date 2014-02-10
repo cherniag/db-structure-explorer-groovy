@@ -5,11 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -26,11 +21,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
  * User: Titov Mykhaylo (titov)
  * 12.07.13 10:08
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class PaymentPolicyRepositoryIT {
+public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
 
     @Resource(name = "paymentPolicyRepository")
     PaymentPolicyRepository paymentPolicyRepository;

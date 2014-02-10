@@ -7,10 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.annotation.Resource;
 
@@ -22,10 +18,8 @@ import javax.annotation.Resource;
  * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(defaultRollback = true)
-public class MessageRepositoryTest {
+
+public class MessageRepositoryTest extends AbstractRepositoryIT {
 	
 	@Resource(name = "messageRepository")
 	private MessageRepository messageRepository;

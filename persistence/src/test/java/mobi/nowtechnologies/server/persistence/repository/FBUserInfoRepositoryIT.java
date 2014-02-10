@@ -4,12 +4,7 @@ import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -20,11 +15,7 @@ import static junit.framework.Assert.assertEquals;
 /**
  * Created by oar on 2/10/14.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class FBUserInfoRepositoryIT {
+public class FBUserInfoRepositoryIT extends AbstractRepositoryIT {
     @Resource(name = "userRepository")
     private UserRepository userRepository;
 
@@ -35,7 +26,7 @@ public class FBUserInfoRepositoryIT {
     private DataSource dataSource;
 
     @Test
-    public void testMapping(){
+    public void testMapping() {
         FBUserInfo fbUserInfo = new FBUserInfo();
         fbUserInfo.setUser(findUser());
         fbUserInfo.setFirstName("AA");
