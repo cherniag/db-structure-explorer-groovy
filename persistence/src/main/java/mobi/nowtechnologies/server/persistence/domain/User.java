@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -1424,7 +1425,7 @@ public class User implements Serializable {
 
 
     public FBUserInfo getFbInfo() {
-        if (!(getSocialInfo().isEmpty())) {
+        if (!CollectionUtils.isEmpty(getSocialInfo())) {
             for (AbstractSocialInfo socialInfo : getSocialInfo()) {
                 if (socialInfo instanceof FBUserInfo) {
                     return (FBUserInfo) socialInfo;
