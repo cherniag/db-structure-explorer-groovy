@@ -44,6 +44,21 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
     @Resource
     private FacebookService facebookService;
 
+    private FacebookTemplateCustomizer getTemplateCustomizer(final String facebookUserId, final String facebookEmail) {
+        return new FacebookTemplateCustomizer() {
+            @Override
+            public void customize(FacebookTemplate template) {
+                RestTemplate mock = Mockito.mock(RestTemplate.class);
+                FacebookProfile profile = new FacebookProfile(facebookUserId, "username", "name", "firstName", "lastName", "gender", null);
+                ReflectionTestUtils.setField(profile, "email", facebookEmail);
+                URI uri = URIBuilder.fromUri("https://graph.facebook.com/me").build();
+                Mockito.when(mock.getForObject(Mockito.eq(uri), Mockito.eq(FacebookProfile.class))).thenReturn(profile);
+                ReflectionTestUtils.setField(template, "restTemplate", mock);
+            }
+        };
+    }
+
+
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSucess() throws Exception {
         String deviceUID = "b88106713409e92622461a876abcd74b";
@@ -52,18 +67,9 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         final String facebookUserId = "1";
+        final String facebookEmail =  "ol@ukr.net";
 
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizer() {
-            @Override
-            public void customize(FacebookTemplate template) {
-                RestTemplate mock = Mockito.mock(RestTemplate.class);
-                FacebookProfile profile = new FacebookProfile(facebookUserId, "username", "name", "firstName", "lastName", "gender", null);
-                ReflectionTestUtils.setField(profile, "email", "ol@ukr.net");
-                URI uri = URIBuilder.fromUri("https://graph.facebook.com/me").build();
-                Mockito.when(mock.getForObject(Mockito.eq(uri), Mockito.eq(FacebookProfile.class))).thenReturn(profile);
-                ReflectionTestUtils.setField(template, "restTemplate", mock);
-            }
-        });
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
 
         ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
@@ -87,9 +93,8 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
-        assertEquals(fbDetails.getEmail(), "ol@ukr.net");
+        assertEquals(fbDetails.getEmail(), facebookEmail);
     }
-
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookIdSucess() throws Exception {
@@ -99,18 +104,9 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         final String facebookUserId = "1";
+        final String email = "ol@ukr.net";
         final String invalidFacebookUserId = "2";
-        ReflectionTestUtils.setField(facebookService, "templateCustomizer", new FacebookTemplateCustomizer() {
-            @Override
-            public void customize(FacebookTemplate template) {
-                RestTemplate mock = Mockito.mock(RestTemplate.class);
-                FacebookProfile profile = new FacebookProfile(facebookUserId, "username", "name", "firstName", "lastName", "gender", null);
-                ReflectionTestUtils.setField(profile, "email", "ol@ukr.net");
-                URI uri = URIBuilder.fromUri("https://graph.facebook.com/me").build();
-                Mockito.when(mock.getForObject(Mockito.eq(uri), Mockito.eq(FacebookProfile.class))).thenReturn(profile);
-                ReflectionTestUtils.setField(template, "restTemplate", mock);
-            }
-        });
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
 
         ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
@@ -150,18 +146,7 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
 
         final String otherFacebookEmail = "o2@ukr.net";
 
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizer() {
-            @Override
-            public void customize(FacebookTemplate template) {
-                RestTemplate mock = Mockito.mock(RestTemplate.class);
-                FacebookProfile profile = new FacebookProfile(facebookUserId, "username", "name", "firstName", "lastName", "gender", null);
-                ReflectionTestUtils.setField(profile, "email", firstEmail);
-                URI uri = URIBuilder.fromUri("https://graph.facebook.com/me").build();
-                Mockito.when(mock.getForObject(Mockito.eq(uri), Mockito.eq(FacebookProfile.class))).thenReturn(profile);
-                ReflectionTestUtils.setField(template, "restTemplate", mock);
-            }
-        });
-
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, firstEmail));
         ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
                         .param("DEVICE_TYPE", deviceType)
@@ -196,18 +181,7 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk());
 
-
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizer() {
-            @Override
-            public void customize(FacebookTemplate template) {
-                RestTemplate mock = Mockito.mock(RestTemplate.class);
-                FacebookProfile profile = new FacebookProfile(otherFacebookUserId, "username1", "name1", "firstName1", "lastName", "gender", null);
-                ReflectionTestUtils.setField(profile, "email",otherFacebookEmail);
-                URI uri = URIBuilder.fromUri("https://graph.facebook.com/me").build();
-                Mockito.when(mock.getForObject(Mockito.eq(uri), Mockito.eq(FacebookProfile.class))).thenReturn(profile);
-                ReflectionTestUtils.setField(template, "restTemplate", mock);
-            }
-        });
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(otherFacebookUserId, otherFacebookEmail));
 
         jsonObject = getAccCheckContent(resultActions);
         storedToken = (String) jsonObject.get("userToken");
@@ -240,18 +214,9 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         final String facebookUserId = "1";
+        final String email = "ol@ukr.net";
 
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizer() {
-            @Override
-            public void customize(FacebookTemplate template) {
-                RestTemplate mock = Mockito.mock(RestTemplate.class);
-                FacebookProfile profile = new FacebookProfile(facebookUserId, "username", "name", "firstName", "lastName", "gender", null);
-                ReflectionTestUtils.setField(profile, "email", "ol@ukr.net");
-                URI uri = URIBuilder.fromUri("https://graph.facebook.com/me").build();
-                Mockito.when(mock.getForObject(Mockito.eq(uri), Mockito.eq(FacebookProfile.class))).thenReturn(profile);
-                ReflectionTestUtils.setField(template, "restTemplate", mock);
-            }
-        });
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
 
         ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
@@ -311,19 +276,10 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
+        final String facebookEmail = "ol@ukr.net";
         final String facebookUserId = "1";
 
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizer() {
-            @Override
-            public void customize(FacebookTemplate template) {
-                RestTemplate mock = Mockito.mock(RestTemplate.class);
-                FacebookProfile profile = new FacebookProfile(facebookUserId, "username", "name", "firstName", "lastName", "gender", null);
-                ReflectionTestUtils.setField(profile, "email", "ol@ukr.net");
-                URI uri = URIBuilder.fromUri("https://graph.facebook.com/me").build();
-                Mockito.when(mock.getForObject(Mockito.eq(uri), Mockito.eq(FacebookProfile.class))).thenReturn(profile);
-                ReflectionTestUtils.setField(template, "restTemplate", mock);
-            }
-        });
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
 
         ResultActions resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
@@ -347,7 +303,7 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
-        assertEquals(fbDetails.getEmail(), "ol@ukr.net");
+        assertEquals(fbDetails.getEmail(), facebookEmail);
 
 
         resultActions = mockMvc.perform(
@@ -359,7 +315,6 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         jsonObject = getAccCheckContent(resultActions);
         storedToken = (String) jsonObject.get("userToken");
         userToken = Utils.createTimestampToken(storedToken, timestamp);
-        facebookToken = "AA";
 
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
@@ -369,10 +324,10 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_TYPE", deviceType)
                         .param("FACEBOOK_USER_ID", facebookUserId)
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk()).andDo(print());
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         fbDetails = fbDetailsRepository.findForUser(user);
-        assertEquals(fbDetails.getEmail(), "ol@ukr.net");
+        assertEquals(fbDetails.getEmail(), facebookEmail);
     }
 
 
