@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service.facebook;
 
 import com.google.common.annotations.VisibleForTesting;
-import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.FBUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -30,9 +30,10 @@ public class FacebookService {
     @Transactional
     public void saveFacebookInfoForUser(User user, FacebookProfile profile) {
         fbDetailsRepository.deleteForUser(user);
-        FBUserInfo details = buildUserDetailsFromProfile(user, profile);
-        assignProviderInfo(user, profile);
-        userRepository.save(user);
+        User refreshedUser = userRepository.findOne(user.getId());
+        FBUserInfo details = buildUserDetailsFromProfile(refreshedUser, profile);
+        assignProviderInfo(refreshedUser, profile);
+        userRepository.save(refreshedUser);
         fbDetailsRepository.save(details);
     }
 

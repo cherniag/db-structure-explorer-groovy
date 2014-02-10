@@ -123,7 +123,7 @@ public class AccountCheckDTOAsm {
 
     private FacebookUserInfoDto buildFBInfo(User user) {
         FacebookUserInfoDto result = null;
-        FBUserInfo details = user.getFbDetails();
+        FBUserInfo details = user.getFbInfo();
         if (details != null){
             result = new FacebookUserInfoDto();
             result.setUserName(details.getUserName());

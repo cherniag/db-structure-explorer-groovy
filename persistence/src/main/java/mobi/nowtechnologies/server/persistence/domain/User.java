@@ -5,11 +5,11 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.social.AbstractSocialInfo;
 import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
-import mobi.nowtechnologies.server.shared.enums.PaymentType;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -19,9 +19,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
@@ -238,8 +236,8 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Drm> drms;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private FBUserInfo fbDetails;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private Set<AbstractSocialInfo> socialInfo;
 
     private String facebookId;
 
@@ -454,24 +452,25 @@ public class User implements Serializable {
         return isO2User() && !isO2Consumer();
     }
 
-    public boolean isTempUserName(){
+    public boolean isTempUserName() {
         return getUserName().equals(getDeviceUID());
     }
 
-    public boolean isActivatedUserName(){
+    public boolean isActivatedUserName() {
         return getUserName().equals(getMobile());
     }
-    public String getCommunityRewriteUrl(){
+
+    public String getCommunityRewriteUrl() {
         Community community = getUserGroup() != null ? getUserGroup().getCommunity() : null;
         String communityRewriteUrl = community != null ? community.getRewriteUrlParameter() : null;
         return communityRewriteUrl;
     }
 
-	public List<Chart> getSelectedCharts() {
-		return selectedCharts;
-	}
+    public List<Chart> getSelectedCharts() {
+        return selectedCharts;
+    }
 
-    public boolean hasPhoneNumber(){
+    public boolean hasPhoneNumber() {
         return !StringUtils.isEmpty(getMobile());
     }
 
@@ -1419,9 +1418,20 @@ public class User implements Serializable {
         return this;
     }
 
+    public Collection<AbstractSocialInfo> getSocialInfo() {
+        return socialInfo;
+    }
 
-    public FBUserInfo getFbDetails() {
-        return fbDetails;
+
+    public FBUserInfo getFbInfo() {
+        if (!(getSocialInfo().isEmpty())) {
+            for (AbstractSocialInfo socialInfo : getSocialInfo()) {
+                if (socialInfo instanceof FBUserInfo) {
+                    return (FBUserInfo) socialInfo;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

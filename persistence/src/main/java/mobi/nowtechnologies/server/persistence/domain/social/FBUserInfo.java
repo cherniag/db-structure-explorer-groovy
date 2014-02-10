@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain.social;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
-
 import javax.persistence.*;
 
 /**
@@ -9,14 +7,10 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorValue("FB")
-@Table(name = "tb_fbUserInfo", uniqueConstraints = {@UniqueConstraint(columnNames = {"userUID"})})
+@DiscriminatorValue("Facebook")
+@Table(name = "tb_fbUserInfo")
 public class FBUserInfo extends AbstractSocialInfo{
     private static final long serialVersionUID = 2546198857668889092L;
-
-    @JoinColumn(name = "userUID", nullable = false)
-    @OneToOne
-    private User user;
 
     @Column(name="email",columnDefinition="char(30)", nullable = false)
     private String email;
@@ -36,14 +30,6 @@ public class FBUserInfo extends AbstractSocialInfo{
 
     @Column(name="userName",columnDefinition="char(300)", nullable = false)
     private String userName;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public String getEmail() {
         return email;
