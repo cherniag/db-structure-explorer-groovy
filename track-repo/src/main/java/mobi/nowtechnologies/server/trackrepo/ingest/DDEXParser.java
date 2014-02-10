@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -47,6 +48,10 @@ public abstract class DDEXParser extends IParser {
             LOGGER.info("release type [{}]", type);
 
             boolean isAlbum = checkAlbum(type);
+
+            if (isAlbum == false){
+                isAlbum = isWrongAlbum(release);
+            }
 
             if (!isAlbum) {
                 DropTrack track = parseTrack(distributor, action, deals, files, resourceDetails, imageFile, release);
@@ -352,6 +357,8 @@ public abstract class DDEXParser extends IParser {
                     }
                 }
             }
+            if (isPriorityImage(node))
+                return imageFile;
         }
         return imageFile;
     }
@@ -400,10 +407,9 @@ public abstract class DDEXParser extends IParser {
             }
         }
 
-        //sony video
-        if (this.getClass() == SonyDDEXParser.class) {
-
-            List<Element> videoList = rootNode.getChild("ResourceList").getChildren("Video");
+        //check for video content
+        List<Element> videoList = rootNode.getChild("ResourceList").getChildren("Video");
+        if (videoList != null) {
 
             for (Element node : videoList) {
                 Element details = node.getChild("VideoDetailsByTerritory");
@@ -629,6 +635,14 @@ public abstract class DDEXParser extends IParser {
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
         return result;
+    }
+
+    protected boolean isWrongAlbum(Element release){
+      return false;
+    }
+
+    protected boolean isPriorityImage (Element node){
+        return false;
     }
 
 }

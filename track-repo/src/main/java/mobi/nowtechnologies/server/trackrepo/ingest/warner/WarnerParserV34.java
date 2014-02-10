@@ -33,4 +33,14 @@ public class WarnerParserV34 extends DDEXParser {
 		if (GRid != null)
 			track.productCode = GRid;
 	}
+
+    @Override
+    protected Integer getDuration(String duration) {
+        return super.getDuration(duration) * 1000;
+    }
+
+    @Override
+    protected boolean isPriorityImage(Element node) {
+        return ("VideoScreenCapture").equals(node.getChild("ImageType").getValue());
+    }
 }
