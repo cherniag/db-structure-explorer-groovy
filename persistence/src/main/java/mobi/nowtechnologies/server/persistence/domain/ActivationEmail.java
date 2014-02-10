@@ -5,16 +5,12 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "activation_emails",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "email", "deviceUID", "token"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "deviceUID", "token"})})
 public class ActivationEmail {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @Column(name = "email", nullable = false)
     private String email;
@@ -28,8 +24,7 @@ public class ActivationEmail {
     @Column(name = "activated", columnDefinition = "bit default 0")
     private boolean activated;
 
-    public ActivationEmail(User user, String email, String deviceUID, String token) {
-        this.user = user;
+    public ActivationEmail(String email, String deviceUID, String token) {
         this.email = email;
         this.deviceUID = deviceUID;
         this.token = token;
@@ -48,14 +43,6 @@ public class ActivationEmail {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getEmail() {
