@@ -8,7 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.FBUserInfoDto;
+import mobi.nowtechnologies.server.shared.dto.FacebookUserInfoDto;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -121,11 +121,11 @@ public class AccountCheckDTOAsm {
         return accountCheckDTO;
     }
 
-    private FBUserInfoDto buildFBInfo(User user) {
-        FBUserInfoDto result = null;
+    private FacebookUserInfoDto buildFBInfo(User user) {
+        FacebookUserInfoDto result = null;
         FBUserInfo details = user.getFbDetails();
         if (details != null){
-            result = new FBUserInfoDto();
+            result = new FacebookUserInfoDto();
             result.setUserName(details.getUserName());
             result.setFirstName(details.getFirstName());
             result.setSurname(details.getSurname());

@@ -79,7 +79,7 @@ public class AccountCheckDTO {
     public boolean subjectToAutoOptIn;
 
     @JsonProperty("facebookInfo")
-    private FBUserInfoDto fbUserInfoDTO;
+    private FacebookUserInfoDto fbUserInfoDTO;
 
     public transient Object user;
 
@@ -153,11 +153,11 @@ public class AccountCheckDTO {
         return this;
     }
 
-    public FBUserInfoDto getFbUserInfoDTO() {
+    public FacebookUserInfoDto getFbUserInfoDTO() {
         return fbUserInfoDTO;
     }
 
-    public void setFbUserInfoDTO(FBUserInfoDto fbUserInfoDTO) {
+    public void setFbUserInfoDTO(FacebookUserInfoDto fbUserInfoDTO) {
         this.fbUserInfoDTO = fbUserInfoDTO;
     }
 

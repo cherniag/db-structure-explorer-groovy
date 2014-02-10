@@ -3,9 +3,10 @@ package mobi.nowtechnologies.server.shared.dto;
 /**
  * Created by oar on 2/10/14.
  */
-public class FBUserInfoDto {
+public class FacebookUserInfoDto {
 
     private String email;
+
 
     private String firstName;
 
