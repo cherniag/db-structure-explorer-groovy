@@ -21,7 +21,6 @@ public class ActivationEmailRepostoryIT extends AbstractRepositoryIT {
         User user = userRepository.findByMobile("+64279000456").get(0);
 
         ActivationEmail activationEmail = new ActivationEmail();
-        activationEmail.setUser(user);
         activationEmail.setToken(Utils.getRandomString(10));
     }
 }

@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,21 +31,35 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
         activationEmailRepository.save(activationEmail);
     }
 
-    public void sendEmail(String email, String userName, String deviceUID, String community) {
+    @Override
+    public void activate(Long id, String email) {
+        ActivationEmail activationEmail = activationEmailRepository.findOne(id);
+        Assert.isTrue(!activationEmail.isActivated());
+        Assert.isTrue(email.equals(activationEmail.getEmail()));
+        activationEmail.setActivated(true);
+
+        save(activationEmail);
+    }
+
+    public ActivationEmail sendEmail(String email, String userName, String deviceUID, String community) {
+        ActivationEmail activationEmail = null;
         if (EmailValidator.isEmail(email)) {
             User user = userService.findByNameAndCommunity(userName, community);
             String token = ActivationEmail.generateToken(email, user);
 
+            activationEmail = new ActivationEmail(email, deviceUID, token);
+            save(activationEmail);
+
             Map<String, String> params = new HashMap<String, String>();
+            params.put("mid", activationEmail.getId().toString());
             String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
             String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
             String body = messageSource.getMessage(community, "activation.email.body", null, null, null);
             mailService.sendMail(from, new String[]{email}, subject, body, params);
-
-            save(new ActivationEmail(user, email, deviceUID, token));
         } else {
             throw new ValidationException("Email " + email + " is not valid!");
         }
+        return activationEmail;
     }
 
     public void setActivationEmailRepository(ActivationEmailRepository activationEmailRepository) {

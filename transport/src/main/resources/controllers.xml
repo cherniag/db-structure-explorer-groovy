@@ -31,6 +31,7 @@
 
 	<bean id="transport.ApplyInitPromoController" class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >
         <property name="updateO2UserTask" ref="job.UpdateO2UserTask"/>
+        <property name="userPromoService" ref="service.UserPromoService"/>
         <property name="accCheckController" ref="transport.AccCheckController"/>
     </bean>
 

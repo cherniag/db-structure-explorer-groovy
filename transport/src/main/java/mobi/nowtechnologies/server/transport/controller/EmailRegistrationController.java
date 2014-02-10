@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 
+import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.service.ActivationEmailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,9 +22,9 @@ public class EmailRegistrationController extends CommonController {
                                               @RequestParam(value = "DEVICE_UID") String deviceUID,
                                               @PathVariable(value = "community") String community) {
         LOGGER.info("EMAIL_GENERATE started for userName: [{}], email: [{}], community: [{}]", userName, email, community);
-        activationEmailService.sendEmail(email, userName, deviceUID, community);
+        ActivationEmail activationEmail = activationEmailService.sendEmail(email, userName, deviceUID, community);
         LOGGER.info("EMAIL_GENERATE finished");
-        return buildModelAndView(null);
+        return buildModelAndView(activationEmail.getId());
     }
 
     public void setActivationEmailService(ActivationEmailService activationEmailService) {
