@@ -192,7 +192,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "and c = ?2")
     User findByDeviceUIDAndCommunity(String deviceUID, Community community);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query(value = "update User u " +
             "set u.deviceUID=CONCAT(u.deviceUID,'_disabled_at_', CURRENT_TIMESTAMP()) " +
             "where " +

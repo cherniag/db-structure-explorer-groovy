@@ -31,6 +31,8 @@ import org.springframework.test.web.server.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -67,6 +69,9 @@ public class EmailRegistrationIT {
 
     @Autowired
     private ActivationEmailRepository activationEmailRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -148,6 +153,8 @@ public class EmailRegistrationIT {
         String storedToken = signUpDevice(DEVICE_UID_1);
 
         checkUserAfterSignupDevice(DEVICE_UID_1);
+        // it's needed to update user
+        entityManager.clear();
 
         User activatedUser = userRepository.findOne(user.getUserName(), Community.O2_COMMUNITY_REWRITE_URL);
         assertTrue(activatedUser.getDeviceUID().contains(DISABLED));
