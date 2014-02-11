@@ -116,10 +116,10 @@ public class EmailRegistrationIT {
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        applyInitPromo(activationEmail, timestamp, userToken);
+        applyInitPromoError(activationEmail, timestamp, userToken);
 
         user = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
-        checkActivatedUser(user, EMAIL_1);
+        assertNull(user);
     }
 
     private void registerFirstUserOnAnotherDevice(User user) throws Exception {
@@ -256,6 +256,16 @@ public class EmailRegistrationIT {
         assertEquals(deviceUID, user.getUserName());
         assertEquals(Community.O2_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
         return user;
+    }
+
+    private void applyInitPromoError(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
+        mockMvc.perform(post("/o2/4.0/EMAIL_CONFIRM_APPLY_INIT_PROMO")
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("EMAIL_ID", activationEmail.getId().toString())
+                .param("EMAIL", EMAIL_2)
+                .param("TOKEN", "ttt")
+                .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isInternalServerError());
     }
 
     private void checkActivatedUser(User user, String firstUserEmail) {
