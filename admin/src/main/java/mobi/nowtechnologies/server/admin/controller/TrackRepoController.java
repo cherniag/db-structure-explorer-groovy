@@ -84,6 +84,7 @@ public class TrackRepoController extends AbstractCommonController{
 			PageListDto<TrackDto> tracks =  query != null ? trackRepoService.find(query, pageable) : trackRepoService.find(searchTrackDto, pageable);
 
 			modelAndView.addObject(PageListDto.PAGE_LIST_DTO, tracks);
+            modelAndView.addObject("mediaType", searchTrackDto.getMediaType());
 			modelAndView.addObject(TRACK_REPO_FILES_URL, trackRepoFilesURL);
 		}
 

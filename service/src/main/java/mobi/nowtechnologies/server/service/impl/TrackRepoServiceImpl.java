@@ -149,7 +149,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
             Media media = createOrUpdateMedia(track, config);
 
-            track.setPublishDate(new Date(media.getPublishDate()*1000));
+            track.setPublishDate(new Date(media.getPublishDate() * 1000L));
             track.setPublishArtist(media.getArtistName());
             track.setTitle(media.getTitle());
             track.setPublishTitle(track.getTitle());

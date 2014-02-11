@@ -55,10 +55,22 @@
                 <span class="add-on">Genre</span><input type="text" id="genre" name="genre" th:value="${param.genre!=null ? param.genre[0] : ''}" />
             </div>
 		</div>
+            <div class="rel">
+                <div class="input-prepend">
+                    <span class="add-on" style="vertical-align:top">Media Type</span>
+                    <select name="mediaType" class="selectpicker" data-width="225px">
+                        <option value="">All</option>
+                        <option value="DOWNLOAD">Audio</option>
+                        <option value="VIDEO">Video</option>
+                    </select>
+                    <input id="mediaTypeValue" type="hidden" value="aaa" th:attr="value=${mediaType}"/>
+                </div>
+
+            </div>
 		<div class="clear"></div>
 			<div class="form-actions">
                 <div class="span3" style="width:auto; margin-left:0px;">
-                    <button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco pull-left" type="button">Search</button>    
+                    <button id="searchByPageButton" th:text="#{tracks.page.search}" class="btn btn-primary btn-deco pull-left" type="button">Search</button>
                 </div>
                 <div class="span2" >
                 </div>
@@ -69,7 +81,7 @@
                 </div>
             </div>
             <div>
-                
+
             </div>
 		</form>
 		<div th:if="${#lists.isEmpty(PAGE_LIST_DTO.list)}"  th:text="#{users.management.page.users.hasEmptyList}" class="well_center white largeText">
@@ -91,7 +103,7 @@
                 <div th:substituteby="tpl::paginationBar"></div>
             </div>
         </div>
-        
+
 
 		<div class="newsListWide" style="width: 100%">
 			<ul class="table" id="tracksTable" th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}">
@@ -217,6 +229,10 @@
                             <input type="hidden" name="encId" th:value="${trackDto.id}"/>
                             <input type="hidden" name="encIsrc" th:value="${trackDto.isrc}"/>
                             <input type="checkbox" name="isEncoded"/>
+                            <!--<span style="font-size:10px;position:relative;top:10px" th:text="${trackDto.mediaType}">media</span>-->
+                            <span style="font-size:10px;position:relative;top:10px"  th:if="${trackDto.mediaType.name() == 'VIDEO'}" >Video</span>
+                            <span style="font-size:10px;position:relative;top:10px"  th:if="${trackDto.mediaType.name() == 'DOWNLOAD'}" >Audio</span>
+
                         </label>
                     </div>
 					<div class="product_id_repo_columns" th:text="${trackDto.ingestor != null ? trackDto.ingestor : '' }+' / '+${trackDto.label != null ? trackDto.label : ''}">Ingestor/Label</div>
@@ -255,7 +271,7 @@
             </div>
         </div>
 	</div>
-    
+
     <div id="pull-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -264,19 +280,19 @@
 		<div class="modal-body" style="width:530px">
 			<form id="pull-form">
 				<div class="control-group">
-					<input type="hidden" name="id"/> 
+					<input type="hidden" name="id"/>
 					<input type="hidden" name="isrc"/>
-					<label><strong th:text="#{tracks.page.pull.dialog.item.title}">Title:</strong></label> 
+					<label><strong th:text="#{tracks.page.pull.dialog.item.title}">Title:</strong></label>
 					<input type="text" name="title" style="width:98%;"/>
-					<label><strong th:text="#{tracks.page.pull.dialog.item.artist}">Artist:</strong></label> 
+					<label><strong th:text="#{tracks.page.pull.dialog.item.artist}">Artist:</strong></label>
 					<input type="text" name="artist" style="width:98%;"/>
-					<label><strong th:text="#{tracks.page.pull.dialog.item.info}">Artist Info:</strong></label> 
+					<label><strong th:text="#{tracks.page.pull.dialog.item.info}">Artist Info:</strong></label>
 					<input type="text" name="info" style="width:98%;"/>
 					<label><strong th:utext="#{tracks.page.pull.dialog.item.iTunesUrl}">iTunes Link:</strong></label>
-					<a target="_blank" name="itunesLink"></a> 
+					<a target="_blank" name="itunesLink"></a>
 					<input type="text" name="itunesUrl" style="width:98%;"/>
 					<label><strong th:utext="#{tracks.page.pull.dialog.item.amazonUrl}">Amazon Link:</strong></label>
-					<a target="_blank" name="amazonLink"></a> 
+					<a target="_blank" name="amazonLink"></a>
 					<input type="text" name="amazonUrl" style="width:98%;"/>
 					<label><strong th:utext="#{tracks.page.pull.dialog.item.areArtistUrls}">Are artist URLs:</strong></label>
 					<input type="checkbox" name="areArtistUrls" style="width:98%;"/>
@@ -288,7 +304,7 @@
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 		</div>
 	</div>
-	
+
 	<div id="encode-dialog" class="modal hide fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" style="display: none;">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -296,7 +312,7 @@
 		</div>
 		<div class="modal-body" style="width:530px">
 			<form id="encode-form">
-				<input type="hidden" name="id"/> 
+				<input type="hidden" name="id"/>
 				<input type="hidden" name="isrc"/>
 				<input type="hidden" name="resolution"/>
 				<div class="controls">
