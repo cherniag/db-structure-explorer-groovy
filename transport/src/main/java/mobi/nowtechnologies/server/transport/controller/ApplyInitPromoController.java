@@ -2,13 +2,11 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.ActivationEmailService;
 import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -135,6 +133,7 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("EMAIL_ID") Long activationEmailId,
             @RequestParam("EMAIL") String email,
+            @RequestParam("TOKEN") String token,
             @RequestParam("DEVICE_UID") String deviceUID) {
         Exception ex = null;
         User user = null;
@@ -144,8 +143,7 @@ public class ApplyInitPromoController extends CommonController {
                     activationEmailId, email, deviceUID);
             user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
 
-            user.setMobile(email);
-            user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email);
+            user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 
             AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
 

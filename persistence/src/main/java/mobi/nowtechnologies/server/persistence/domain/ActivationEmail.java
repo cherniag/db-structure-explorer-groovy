@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.Utils;
+
 import javax.persistence.*;
 
 
@@ -7,6 +9,9 @@ import javax.persistence.*;
 @Table(name = "activation_emails",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "deviceUID", "token"})})
 public class ActivationEmail {
+
+    public static final String ID = "mid";
+    public static final String TOKEN = "token";
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -34,7 +39,7 @@ public class ActivationEmail {
     }
 
     public static String generateToken(String email, User user) {
-        return "test";
+        return Utils.md5(email + System.currentTimeMillis());
     }
 
     public Long getId() {

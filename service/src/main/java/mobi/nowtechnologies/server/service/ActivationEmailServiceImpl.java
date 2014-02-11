@@ -7,6 +7,8 @@ import mobi.nowtechnologies.server.persistence.repository.ActivationEmailReposit
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -26,19 +28,24 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
 
     private CommunityResourceBundleMessageSource messageSource;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActivationEmailServiceImpl.class);
+
     @Override
     public void save(ActivationEmail activationEmail) {
         activationEmailRepository.save(activationEmail);
     }
 
     @Override
-    public void activate(Long id, String email) {
+    public void activate(Long id, String email, String token) {
+        LOGGER.info("Activating email with id: [{}], email: [{}], token: []", id, email, token);
         ActivationEmail activationEmail = activationEmailRepository.findOne(id);
-        Assert.isTrue(!activationEmail.isActivated());
-        Assert.isTrue(email.equals(activationEmail.getEmail()));
+        Assert.isTrue(!activationEmail.isActivated(), "ActivationEmail must not be activated");
+        Assert.isTrue(activationEmail.getToken().equals(token), "Wrong token");
+        Assert.isTrue(email.equals(activationEmail.getEmail()), "Wrong email");
         activationEmail.setActivated(true);
 
         save(activationEmail);
+        LOGGER.info("Email activated");
     }
 
     public ActivationEmail sendEmail(String email, String userName, String deviceUID, String community) {
@@ -51,7 +58,8 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
             save(activationEmail);
 
             Map<String, String> params = new HashMap<String, String>();
-            params.put("mid", activationEmail.getId().toString());
+            params.put(ActivationEmail.ID, activationEmail.getId().toString());
+            params.put(ActivationEmail.TOKEN, token);
             String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
             String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
             String body = messageSource.getMessage(community, "activation.email.body", null, null, null);

@@ -98,14 +98,38 @@ public class EmailRegistrationIT {
     public void testSameEmailOnDifferentDevice() throws Exception {
         User user = registerFirstUserOnDevice();
 
-        MvcResult mvcResult = signUpDevice(DEVICE_UID_2);
-        String storedToken = getUserToken(mvcResult);
+        registerFirstUserOnAnotherDevice(user);
+    }
+
+    @Test
+    public void testNewUserWrongEmailActivation() throws Exception {
+        String storedToken = signUpDevice(DEVICE_UID_1);
+
+        User user = checkUserAfterSignupDevice(DEVICE_UID_1);
+
+        long time = System.currentTimeMillis();
+
+        MvcResult mvcResult = emailGenerate(user, EMAIL_1);
+        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
+                .getObject()[0], time, EMAIL_1);
+
+        String timestamp = "2011_12_26_07_04_23";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        applyInitPromoError(activationEmail, timestamp, userToken);
+
+        user = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
+        assertNull(user);
+    }
+
+    private void registerFirstUserOnAnotherDevice(User user) throws Exception {
+        String storedToken = signUpDevice(DEVICE_UID_2);
         User userOnAnotherDevice = checkUserAfterSignupDevice(DEVICE_UID_2);
         user = userRepository.findOne(user.getId());
         checkActivatedUser(user, EMAIL_1);
 
         long time = System.currentTimeMillis();
-        mvcResult = emailGenerate(userOnAnotherDevice, EMAIL_1);
+        MvcResult mvcResult = emailGenerate(userOnAnotherDevice, EMAIL_1);
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0]), time, EMAIL_1);
 
@@ -121,9 +145,7 @@ public class EmailRegistrationIT {
     }
 
     private void registerSecondUserOnDevice(User user) throws Exception {
-        MvcResult mvcResult = signUpDevice(DEVICE_UID_1);
-
-        String storedToken = getUserToken(mvcResult);
+        String storedToken = signUpDevice(DEVICE_UID_1);
 
         checkUserAfterSignupDevice(DEVICE_UID_1);
 
@@ -132,7 +154,7 @@ public class EmailRegistrationIT {
 
         long time = System.currentTimeMillis();
 
-        mvcResult = emailGenerate(user, EMAIL_2);
+        MvcResult mvcResult = emailGenerate(user, EMAIL_2);
 
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0]), time, EMAIL_2);
@@ -151,15 +173,13 @@ public class EmailRegistrationIT {
     }
 
     private User registerFirstUserOnDevice() throws Exception {
-        MvcResult mvcResult = signUpDevice(DEVICE_UID_1);
+        String storedToken = signUpDevice(DEVICE_UID_1);
 
         User user = checkUserAfterSignupDevice(DEVICE_UID_1);
 
-        String storedToken = getUserToken(mvcResult);
-
         long time = System.currentTimeMillis();
 
-        mvcResult = emailGenerate(user, EMAIL_1);
+        MvcResult mvcResult = emailGenerate(user, EMAIL_1);
         ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0], time, EMAIL_1);
 
@@ -181,7 +201,8 @@ public class EmailRegistrationIT {
         String body = messageSource.getMessage(community, "activation.email.body", null, null, null);
         Map<String, String> params = new HashMap<String, String>();
         ActivationEmail activationEmail = activationEmailRepository.findOne(activationEmailId);
-        params.put("mid", activationEmail.getId().toString());
+        params.put(ActivationEmail.ID, activationEmail.getId().toString());
+        params.put(ActivationEmail.TOKEN, activationEmail.getToken());
 
         File file = temporaryFolder.listFiles(new TimestampExtFileNameFileter(time))[0];
         List<String> text = Files.readLines(file, Charsets.UTF_8);
@@ -194,13 +215,14 @@ public class EmailRegistrationIT {
         return activationEmail;
     }
 
-    private MvcResult signUpDevice(String deviceUID) throws Exception {
-        return mockMvc.perform(post("/o2/6.0/SIGN_UP_DEVICE")
-                    .param("DEVICE_TYPE", DeviceType.ANDROID)
-                    .param("DEVICE_UID", deviceUID))
-                    .andExpect(status().isOk())
-                    .andExpect(xpath("/response/user/status").string(UserStatus.LIMITED.name()))
-                    .andExpect(xpath("/response/user/deviceType").string(DeviceType.ANDROID)).andReturn();
+    private String signUpDevice(String deviceUID) throws Exception {
+        MvcResult mvcResult = mockMvc.perform(post("/o2/6.0/SIGN_UP_DEVICE")
+                .param("DEVICE_TYPE", DeviceType.ANDROID)
+                .param("DEVICE_UID", deviceUID))
+                .andExpect(status().isOk())
+                .andExpect(xpath("/response/user/status").string(UserStatus.LIMITED.name()))
+                .andExpect(xpath("/response/user/deviceType").string(DeviceType.ANDROID)).andReturn();
+        return getUserToken(mvcResult);
     }
 
     private String getUserToken(MvcResult mvcResult) {
@@ -215,6 +237,7 @@ public class EmailRegistrationIT {
                 .param("TIMESTAMP", timestamp)
                 .param("EMAIL_ID", activationEmail.getId().toString())
                 .param("EMAIL", activationEmail.getEmail())
+                .param("TOKEN", activationEmail.getToken())
                 .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isOk());
     }
 
@@ -233,6 +256,16 @@ public class EmailRegistrationIT {
         assertEquals(deviceUID, user.getUserName());
         assertEquals(Community.O2_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
         return user;
+    }
+
+    private void applyInitPromoError(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
+        mockMvc.perform(post("/o2/4.0/EMAIL_CONFIRM_APPLY_INIT_PROMO")
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("EMAIL_ID", activationEmail.getId().toString())
+                .param("EMAIL", EMAIL_2)
+                .param("TOKEN", "ttt")
+                .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isInternalServerError());
     }
 
     private void checkActivatedUser(User user, String firstUserEmail) {
