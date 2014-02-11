@@ -144,7 +144,6 @@ public class ApplyInitPromoController extends CommonController {
                     activationEmailId, email, deviceUID);
             user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
 
-            user.setMobile(email);
             user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email);
 
             AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);

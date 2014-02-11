@@ -98,14 +98,17 @@ public class EmailRegistrationIT {
     public void testSameEmailOnDifferentDevice() throws Exception {
         User user = registerFirstUserOnDevice();
 
-        MvcResult mvcResult = signUpDevice(DEVICE_UID_2);
-        String storedToken = getUserToken(mvcResult);
+        registerFirstUserOnAnotherDevice(user);
+    }
+
+    private void registerFirstUserOnAnotherDevice(User user) throws Exception {
+        String storedToken = signUpDevice(DEVICE_UID_2);
         User userOnAnotherDevice = checkUserAfterSignupDevice(DEVICE_UID_2);
         user = userRepository.findOne(user.getId());
         checkActivatedUser(user, EMAIL_1);
 
         long time = System.currentTimeMillis();
-        mvcResult = emailGenerate(userOnAnotherDevice, EMAIL_1);
+        MvcResult mvcResult = emailGenerate(userOnAnotherDevice, EMAIL_1);
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0]), time, EMAIL_1);
 
@@ -121,9 +124,7 @@ public class EmailRegistrationIT {
     }
 
     private void registerSecondUserOnDevice(User user) throws Exception {
-        MvcResult mvcResult = signUpDevice(DEVICE_UID_1);
-
-        String storedToken = getUserToken(mvcResult);
+        String storedToken = signUpDevice(DEVICE_UID_1);
 
         checkUserAfterSignupDevice(DEVICE_UID_1);
 
@@ -132,7 +133,7 @@ public class EmailRegistrationIT {
 
         long time = System.currentTimeMillis();
 
-        mvcResult = emailGenerate(user, EMAIL_2);
+        MvcResult mvcResult = emailGenerate(user, EMAIL_2);
 
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0]), time, EMAIL_2);
@@ -151,15 +152,13 @@ public class EmailRegistrationIT {
     }
 
     private User registerFirstUserOnDevice() throws Exception {
-        MvcResult mvcResult = signUpDevice(DEVICE_UID_1);
+        String storedToken = signUpDevice(DEVICE_UID_1);
 
         User user = checkUserAfterSignupDevice(DEVICE_UID_1);
 
-        String storedToken = getUserToken(mvcResult);
-
         long time = System.currentTimeMillis();
 
-        mvcResult = emailGenerate(user, EMAIL_1);
+        MvcResult mvcResult = emailGenerate(user, EMAIL_1);
         ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0], time, EMAIL_1);
 
@@ -194,13 +193,14 @@ public class EmailRegistrationIT {
         return activationEmail;
     }
 
-    private MvcResult signUpDevice(String deviceUID) throws Exception {
-        return mockMvc.perform(post("/o2/6.0/SIGN_UP_DEVICE")
-                    .param("DEVICE_TYPE", DeviceType.ANDROID)
-                    .param("DEVICE_UID", deviceUID))
-                    .andExpect(status().isOk())
-                    .andExpect(xpath("/response/user/status").string(UserStatus.LIMITED.name()))
-                    .andExpect(xpath("/response/user/deviceType").string(DeviceType.ANDROID)).andReturn();
+    private String signUpDevice(String deviceUID) throws Exception {
+        MvcResult mvcResult = mockMvc.perform(post("/o2/6.0/SIGN_UP_DEVICE")
+                .param("DEVICE_TYPE", DeviceType.ANDROID)
+                .param("DEVICE_UID", deviceUID))
+                .andExpect(status().isOk())
+                .andExpect(xpath("/response/user/status").string(UserStatus.LIMITED.name()))
+                .andExpect(xpath("/response/user/deviceType").string(DeviceType.ANDROID)).andReturn();
+        return getUserToken(mvcResult);
     }
 
     private String getUserToken(MvcResult mvcResult) {
