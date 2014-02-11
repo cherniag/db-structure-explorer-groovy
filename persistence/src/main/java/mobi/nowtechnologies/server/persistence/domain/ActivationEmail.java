@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.shared.Utils;
+
 import javax.persistence.*;
 
 
@@ -37,7 +39,7 @@ public class ActivationEmail {
     }
 
     public static String generateToken(String email, User user) {
-        return "test";
+        return Utils.md5(email + System.currentTimeMillis());
     }
 
     public Long getId() {
