@@ -34,6 +34,7 @@ public class FBUserInfoRepositoryIT extends AbstractRepositoryIT {
         fbUserInfo.setUserName("userName");
         fbUserInfo.setEmail("AA@ukr.net");
         fbUserInfoRepository.save(fbUserInfo);
+        fbUserInfoRepository.flush();
         JdbcTemplate template = new JdbcTemplate(dataSource);
         assertEquals(1, template.queryForInt("select count(*) from tb_abstractSocialInfo"));
         assertEquals(1, template.queryForInt("select count(*) from tb_fbUserInfo"));

@@ -7,7 +7,6 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorValue("Facebook")
 @Table(name = "tb_fbUserInfo")
 public class FBUserInfo extends AbstractSocialInfo{
     private static final long serialVersionUID = 2546198857668889092L;
@@ -79,7 +78,7 @@ public class FBUserInfo extends AbstractSocialInfo{
         this.userName = userName;
     }
 
-    @Override
+      @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
