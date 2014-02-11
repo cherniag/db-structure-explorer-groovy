@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus.SUCCESS;
@@ -44,6 +46,9 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 
 	@Resource(name = "paymentPolicyRepository")
 	private PaymentPolicyRepository paymentPolicyRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
     public void testFindByMobile(){
@@ -484,6 +489,8 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
         Integer id = user.getId();
         int count = userRepository.detectUserAccountWithSameDeviceAndDisableIt(user.getDeviceUID(), user.getUserGroup());
         assertEquals(1, count);
+
+        entityManager.clear();
         User newUser = userRepository.findOne(id);
         assertTrue(newUser.getDeviceUID().contains("disabled"));
 
