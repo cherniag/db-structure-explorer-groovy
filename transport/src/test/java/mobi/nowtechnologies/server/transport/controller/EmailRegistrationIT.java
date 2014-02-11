@@ -101,6 +101,27 @@ public class EmailRegistrationIT {
         registerFirstUserOnAnotherDevice(user);
     }
 
+    @Test
+    public void testNewUserWrongEmailActivation() throws Exception {
+        String storedToken = signUpDevice(DEVICE_UID_1);
+
+        User user = checkUserAfterSignupDevice(DEVICE_UID_1);
+
+        long time = System.currentTimeMillis();
+
+        MvcResult mvcResult = emailGenerate(user, EMAIL_1);
+        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
+                .getObject()[0], time, EMAIL_1);
+
+        String timestamp = "2011_12_26_07_04_23";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        applyInitPromo(activationEmail, timestamp, userToken);
+
+        user = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
+        checkActivatedUser(user, EMAIL_1);
+    }
+
     private void registerFirstUserOnAnotherDevice(User user) throws Exception {
         String storedToken = signUpDevice(DEVICE_UID_2);
         User userOnAnotherDevice = checkUserAfterSignupDevice(DEVICE_UID_2);
@@ -180,7 +201,8 @@ public class EmailRegistrationIT {
         String body = messageSource.getMessage(community, "activation.email.body", null, null, null);
         Map<String, String> params = new HashMap<String, String>();
         ActivationEmail activationEmail = activationEmailRepository.findOne(activationEmailId);
-        params.put("mid", activationEmail.getId().toString());
+        params.put(ActivationEmail.ID, activationEmail.getId().toString());
+        params.put(ActivationEmail.TOKEN, activationEmail.getToken());
 
         File file = temporaryFolder.listFiles(new TimestampExtFileNameFileter(time))[0];
         List<String> text = Files.readLines(file, Charsets.UTF_8);
@@ -215,6 +237,7 @@ public class EmailRegistrationIT {
                 .param("TIMESTAMP", timestamp)
                 .param("EMAIL_ID", activationEmail.getId().toString())
                 .param("EMAIL", activationEmail.getEmail())
+                .param("TOKEN", activationEmail.getToken())
                 .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isOk());
     }
 

@@ -8,6 +8,9 @@ import javax.persistence.*;
         uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "deviceUID", "token"})})
 public class ActivationEmail {
 
+    public static final String ID = "mid";
+    public static final String TOKEN = "token";
+
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;

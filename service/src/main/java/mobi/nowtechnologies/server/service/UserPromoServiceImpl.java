@@ -12,9 +12,9 @@ public class UserPromoServiceImpl implements UserPromoService {
     private UserService userService;
 
     @Override
-    public User applyInitPromoByEmail(User user, Long activationEmailId, String email) {
+    public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         user.setMobile(email);
-        activationEmailService.activate(activationEmailId, email);
+        activationEmailService.activate(activationEmailId, email, token);
 
         user = userService.applyInitPromo(user, null, false, true);
 
