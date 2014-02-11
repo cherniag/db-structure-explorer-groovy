@@ -12,23 +12,23 @@ import javax.persistence.*;
 public class FBUserInfo extends AbstractSocialInfo{
     private static final long serialVersionUID = 2546198857668889092L;
 
-    @Column(name="email",columnDefinition="char(30)", nullable = false)
+    @Column(name="email",columnDefinition="char(100)", nullable = false)
     private String email;
 
-    @Column(name="firstName",columnDefinition="char(30)")
+    @Column(name="firstName",columnDefinition="char(100)")
     private String firstName;
 
-    @Column(name="surname",columnDefinition="char(30)")
+    @Column(name="surname",columnDefinition="char(100)")
     private String surname;
 
     @Column(name="profileUrl",columnDefinition="char(200)")
     private String profileUrl;
 
-    @Column(name="fbId",columnDefinition="char(30)", nullable = false)
+    @Column(name="fbId",columnDefinition="char(100)", nullable = false)
     private String facebookId;
 
 
-    @Column(name="userName",columnDefinition="char(300)", nullable = false)
+    @Column(name="userName",columnDefinition="char(100)", nullable = false)
     private String userName;
 
     public String getEmail() {

@@ -1,3 +1,4 @@
+
 CREATE TABLE `tb_abstractSocialInfo` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `userUID` int(10) unsigned DEFAULT NULL,
@@ -12,8 +13,9 @@ CREATE TABLE `tb_fbUserInfo` (
   `email` varchar(100) NOT NULL,
   `firstName` varchar(100),
   `surname` varchar(100),
-  `profileUrl` varchar(100),
+  `profileUrl` varchar(200),
   `fbId` varchar(100),
   `userName` varchar(100),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `tb_abstractSocialInfo_id` FOREIGN KEY (`id`) REFERENCES `tb_abstractSocialInfo` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
