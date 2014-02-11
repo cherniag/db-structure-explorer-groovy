@@ -1,12 +1,13 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import mobi.nowtechnologies.server.shared.dto.social.AbstractSocialInfoDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collection;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -78,8 +79,7 @@ public class AccountCheckDTO {
     public SubscriptionDirection subscriptionChanged;
     public boolean subjectToAutoOptIn;
 
-    @JsonProperty("facebookInfo")
-    private FacebookUserInfoDto fbUserInfoDTO;
+    private Collection<AbstractSocialInfoDto> socialInfo;
 
     public transient Object user;
 
@@ -139,7 +139,7 @@ public class AccountCheckDTO {
         this.eligibleForVideo = accountCheckDTO.eligibleForVideo;
         this.subjectToAutoOptIn = accountCheckDTO.subjectToAutoOptIn;
         this.tariff = accountCheckDTO.tariff;
-        this.setFbUserInfoDTO(accountCheckDTO.getFbUserInfoDTO());
+        this.setSocialInfo(accountCheckDTO.getSocialInfo());
         accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
 	}
 
@@ -148,17 +148,18 @@ public class AccountCheckDTO {
         return this;
     }
 
+
+    public Collection<AbstractSocialInfoDto> getSocialInfo() {
+        return socialInfo;
+    }
+
+    public void setSocialInfo(Collection<AbstractSocialInfoDto> socialInfo) {
+        this.socialInfo = socialInfo;
+    }
+
     public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
         this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
         return this;
-    }
-
-    public FacebookUserInfoDto getFbUserInfoDTO() {
-        return fbUserInfoDTO;
-    }
-
-    public void setFbUserInfoDTO(FacebookUserInfoDto fbUserInfoDTO) {
-        this.fbUserInfoDTO = fbUserInfoDTO;
     }
 
 
