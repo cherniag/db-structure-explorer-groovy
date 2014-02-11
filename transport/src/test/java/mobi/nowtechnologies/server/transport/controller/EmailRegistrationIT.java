@@ -115,7 +115,7 @@ public class EmailRegistrationIT {
 
         MvcResult mvcResult = emailGenerate(user, EMAIL_1);
         ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0], time, EMAIL_1);
+                .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -135,7 +135,7 @@ public class EmailRegistrationIT {
         long time = System.currentTimeMillis();
         MvcResult mvcResult = emailGenerate(userOnAnotherDevice, EMAIL_1);
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0]), time, EMAIL_1);
+                .getObject()[0]), time, EMAIL_1, user.getDeviceType().getName());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -163,7 +163,7 @@ public class EmailRegistrationIT {
         MvcResult mvcResult = emailGenerate(user, EMAIL_2);
 
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0]), time, EMAIL_2);
+                .getObject()[0]), time, EMAIL_2, activatedUser.getDeviceType().getName());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -187,7 +187,7 @@ public class EmailRegistrationIT {
 
         MvcResult mvcResult = emailGenerate(user, EMAIL_1);
         ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
-                .getObject()[0], time, EMAIL_1);
+                .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -199,12 +199,12 @@ public class EmailRegistrationIT {
         return user;
     }
 
-    private ActivationEmail checkEmail(Long activationEmailId, long time, String email) throws IOException {
+    private ActivationEmail checkEmail(Long activationEmailId, long time, String email, String deviceType) throws IOException {
         String community = "o2";
 
         String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
         String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
-        String body = messageSource.getMessage(community, "activation.email.body", null, null, null);
+        String body = messageSource.getMessage(community, deviceType + ".activation.email.body", null, null, null);
         Map<String, String> params = new HashMap<String, String>();
         ActivationEmail activationEmail = activationEmailRepository.findOne(activationEmailId);
         params.put(ActivationEmail.ID, activationEmail.getId().toString());

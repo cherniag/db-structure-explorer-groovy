@@ -63,7 +63,8 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
             params.put(ActivationEmail.TOKEN, token);
             String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
             String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
-            String body = messageSource.getMessage(community, "activation.email.body", null, null, null);
+            String body = messageSource.getMessage(community, user.getDeviceType().getName()
+                    + ".activation.email.body", null, null, null);
             mailService.sendMail(from, new String[]{email}, subject, body, params);
             LOGGER.info("Email sent");
         } else {
