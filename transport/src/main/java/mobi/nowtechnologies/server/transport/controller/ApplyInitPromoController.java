@@ -105,8 +105,7 @@ public class ApplyInitPromoController extends CommonController {
             FacebookProfile facebookProfile = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
             //MOBILE_IS_SET BECAUSE MERGE IS POSSIBLE
             user.setMobile(facebookProfile.getEmail());
-            user = userService.applyInitPromo(user, null, false, true);
-            facebookService.saveFacebookInfoForUser(user, facebookProfile);
+            user = userPromoService.applyInitPromoByFacebook(user, facebookProfile);
             return buildModelAndView(getAccountCheckDTOAfterApplyPromo(user));
         } catch (UserCredentialsException ce) {
             ex = ce;
