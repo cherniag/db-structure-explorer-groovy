@@ -1,9 +1,9 @@
-package mobi.nowtechnologies.server.shared.dto;
+package mobi.nowtechnologies.server.shared.dto.social;
 
 /**
  * Created by oar on 2/10/14.
  */
-public class FacebookUserInfoDto {
+public class FacebookUserInfoDto extends AbstractSocialInfoDto{
 
     private String email;
 
@@ -67,4 +67,8 @@ public class FacebookUserInfoDto {
     }
 
 
+    @Override
+    public SocialInfoType getSocialInfoType() {
+        return SocialInfoType.Facebook;
+    }
 }

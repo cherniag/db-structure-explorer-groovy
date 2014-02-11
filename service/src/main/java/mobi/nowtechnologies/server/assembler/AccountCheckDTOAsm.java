@@ -4,18 +4,23 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
+import mobi.nowtechnologies.server.persistence.domain.social.AbstractSocialInfo;
 import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.FacebookUserInfoDto;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
+import mobi.nowtechnologies.server.shared.dto.social.AbstractSocialInfoDto;
+import mobi.nowtechnologies.server.shared.dto.social.FacebookUserInfoDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
@@ -31,7 +36,7 @@ public class AccountCheckDTOAsm {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
     }
 
-    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial){
+    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial) {
         LOGGER.debug("user=[{}]", user);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
@@ -117,22 +122,31 @@ public class AccountCheckDTOAsm {
         }
 
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
-        accountCheckDTO.setFbUserInfoDTO(buildFBInfo(user));
+        accountCheckDTO.setSocialInfo(buildSocialInfo(user));
         return accountCheckDTO;
     }
 
-    private FacebookUserInfoDto buildFBInfo(User user) {
-        FacebookUserInfoDto result = null;
-        FBUserInfo details = user.getFbInfo();
-        if (details != null){
-            result = new FacebookUserInfoDto();
-            result.setUserName(details.getUserName());
-            result.setFirstName(details.getFirstName());
-            result.setSurname(details.getSurname());
-            result.setEmail(details.getEmail());
-            result.setProfileUrl(details.getProfileUrl());
-            result.setFacebookId(details.getFacebookId());
+    private Collection<AbstractSocialInfoDto> buildSocialInfo(User user) {
+        if (!CollectionUtils.isEmpty(user.getSocialInfo())) {
+            Collection<AbstractSocialInfoDto> result = new ArrayList<AbstractSocialInfoDto>((user.getSocialInfo().size()));
+            for (AbstractSocialInfo currentInfo : user.getSocialInfo()) {
+                if (currentInfo instanceof FBUserInfo) {
+                    result.add(convertFacebookInfoToDTO((FBUserInfo) currentInfo));
+                }
+            }
+            return result;
         }
+        return null;
+    }
+
+    private FacebookUserInfoDto convertFacebookInfoToDTO(FBUserInfo details) {
+        FacebookUserInfoDto result = new FacebookUserInfoDto();
+        result.setUserName(details.getUserName());
+        result.setFirstName(details.getFirstName());
+        result.setSurname(details.getSurname());
+        result.setEmail(details.getEmail());
+        result.setProfileUrl(details.getProfileUrl());
+        result.setFacebookId(details.getFacebookId());
         return result;
     }
 
@@ -141,7 +155,7 @@ public class AccountCheckDTOAsm {
 
         AutoOptInExemptPhoneNumber byUserName = autoOptInExemptPhoneNumberRepository.findOne(user.getMobile());
 
-        if(byUserName != null) {
+        if (byUserName != null) {
             LOGGER.info("Found in database auto-opt-in record for mobile: " + user.getMobile());
             return false;
         } else {

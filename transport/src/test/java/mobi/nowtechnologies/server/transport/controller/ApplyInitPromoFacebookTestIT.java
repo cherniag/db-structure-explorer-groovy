@@ -157,7 +157,7 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String storedToken = (String) jsonObject.get("userToken");
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String facebookToken = "AA";
-
+        String facebookElementJsonPath = "$.response.data[0].user.socialInfo[0]";
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
                         .param("ACCESS_TOKEN", facebookToken)
@@ -166,14 +166,16 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_TYPE", deviceType)
                         .param("FACEBOOK_USER_ID", facebookUserId)
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.response.data[0].user.facebookInfo.facebookId").value(facebookUserId))
-                .andExpect(jsonPath("$.response.data[0].user.facebookInfo.email").value("ol@ukr.net"))
-                .andExpect(jsonPath("$.response.data[0].user.facebookInfo.firstName").value("firstName"))
-                .andExpect(jsonPath("$.response.data[0].user.facebookInfo.surname").value("lastName"))
-                .andExpect(jsonPath("$.response.data[0].user.facebookInfo.profileUrl").value("https://graph.facebook.com/username/picture"))
-                .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true))
-                .andExpect(jsonPath("$.response.data[0].user.facebookInfo.userName").value("username"));
+        ).andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath(facebookElementJsonPath + ".socialInfoType").value("Facebook"))
+                .andExpect(jsonPath(facebookElementJsonPath + ".facebookId").value(facebookUserId))
+                .andExpect(jsonPath(facebookElementJsonPath + ".email").value("ol@ukr.net"))
+                .andExpect(jsonPath(facebookElementJsonPath + ".firstName").value("firstName"))
+                .andExpect(jsonPath(facebookElementJsonPath + ".surname").value("lastName"))
+                .andExpect(jsonPath(facebookElementJsonPath+ ".userName").value("username"))
+                .andExpect(jsonPath(facebookElementJsonPath + ".profileUrl").value("https://graph.facebook.com/username/picture"))
+                .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true));
+
 
         resultActions = mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")

@@ -1424,17 +1424,6 @@ public class User implements Serializable {
     }
 
 
-    public FBUserInfo getFbInfo() {
-        if (!CollectionUtils.isEmpty(getSocialInfo())) {
-            for (AbstractSocialInfo socialInfo : getSocialInfo()) {
-                if (socialInfo instanceof FBUserInfo) {
-                    return (FBUserInfo) socialInfo;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
