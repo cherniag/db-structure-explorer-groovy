@@ -66,9 +66,7 @@ public class ApplyInitPromoController extends CommonController {
 
             user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4, false);
 
-            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
-
-            accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
+            AccountCheckDTO accountCheckDTO = getAccountCheckDTOAfterApplyPromo(user);
 
             if (isMajorApiVersionNumberLessThan4) {
                 updateO2UserTask.handleUserUpdate(user);
@@ -109,9 +107,7 @@ public class ApplyInitPromoController extends CommonController {
             user.setMobile(facebookProfile.getEmail());
             user = userService.applyInitPromo(user, null, false, true);
             facebookService.saveFacebookInfoForUser(user, facebookProfile);
-            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
-            accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
-            return buildModelAndView(accountCheckDTO);
+            return buildModelAndView(getAccountCheckDTOAfterApplyPromo(user));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK can not find deviceUID[{}] in community[{}]", deviceUID, community);
@@ -145,11 +141,7 @@ public class ApplyInitPromoController extends CommonController {
 
             user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 
-            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
-
-            accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
-
-            return buildModelAndView(accountCheckDTO);
+           return buildModelAndView(getAccountCheckDTOAfterApplyPromo(user));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("EMAIL_CONFIRM_APPLY_INIT_PROMO can not find deviceUID: [{}] in community: [{}]", deviceUID, community);
@@ -165,5 +157,12 @@ public class ApplyInitPromoController extends CommonController {
                     deviceUID, community, activationEmailId);
         }
     }
+
+    private AccountCheckDTO getAccountCheckDTOAfterApplyPromo(User user) {
+        AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
+        accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
+        return accountCheckDTO;
+    }
+
 
 }
