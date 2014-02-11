@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -74,7 +73,7 @@ public class EmailRegistrationIT {
     private EntityManager entityManager;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private WebApplicationContext applicationContext;
 
     private MockMvc mockMvc;
 
@@ -283,7 +282,7 @@ public class EmailRegistrationIT {
 
     @Before
     public void setUp() {
-        mockMvc = webApplicationContextSetup((WebApplicationContext) applicationContext).build();
+        mockMvc = webApplicationContextSetup(applicationContext).build();
     }
 
     @After
