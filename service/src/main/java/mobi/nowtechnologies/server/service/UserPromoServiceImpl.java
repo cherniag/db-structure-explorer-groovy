@@ -34,6 +34,8 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Override
     public User applyInitPromoByFacebook(User user, FacebookProfile facebookProfile) {
+        //MOBILE_IS_SET BECAUSE MERGE IS POSSIBLE
+        user.setMobile(facebookProfile.getEmail());
         user = userService.applyInitPromo(user, null, false, true);
         facebookService.saveFacebookInfoForUser(user, facebookProfile);
         return user;
