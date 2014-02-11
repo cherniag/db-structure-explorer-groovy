@@ -103,8 +103,6 @@ public class ApplyInitPromoController extends CommonController {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
             user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
             FacebookProfile facebookProfile = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
-            //MOBILE_IS_SET BECAUSE MERGE IS POSSIBLE
-            user.setMobile(facebookProfile.getEmail());
             user = userPromoService.applyInitPromoByFacebook(user, facebookProfile);
             return buildModelAndView(getAccountCheckDTOAfterApplyPromo(user));
         } catch (UserCredentialsException ce) {
