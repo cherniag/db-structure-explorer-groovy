@@ -77,7 +77,7 @@
         <property name="accCheckController" ref="transport.AccCheckController"/>
     </bean>
 
-    <bean id="transport.EmailRegistrationController" class="mobi.nowtechnologies.server.transport.controller.EmailRegistrationController" parent="transport.CommonController">
+    <bean id="transport.EmailGenerationController" class="mobi.nowtechnologies.server.transport.controller.EmailGenerationController" parent="transport.CommonController">
         <property name="activationEmailService" ref="service.ActivationEmailService"/>
     </bean>
 
