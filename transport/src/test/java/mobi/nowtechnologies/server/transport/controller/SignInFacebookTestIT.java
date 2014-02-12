@@ -36,7 +36,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 /**
  * Created by oar on 2/6/14.
  */
-public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
+public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
     @Resource
     private FBUserInfoRepository fbDetailsRepository;
@@ -64,7 +64,7 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
 
     private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions resultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws UnsupportedEncodingException {
         String userToken = getUserToken(resultActions, timestamp);
-        return post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
+        return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_FACEBOOK.json")
                 .param("ACCESS_TOKEN", facebookToken)
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
