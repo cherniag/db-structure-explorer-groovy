@@ -1,15 +1,56 @@
 $(document).ready(function() {
 
     var sel_val = parseInt($("#searchSize").val());
-    $('.selectpicker option[value="'+sel_val+'"]').attr("selected", "selected");
+    $('select[name="page.size"] option[value="'+sel_val+'"]').attr("selected", "selected");
+
+    $('select[name="mediaType"] option[value='+$("#mediaTypeValue").val()+']').attr("selected", "selected");
+
     $('.selectpicker').selectpicker();
+
+    var trackSerachForm = $('#searchTrackDto');
+    var perPageForms = $('.b-per-page-form');
+
+    var searchFormRedirect = function (params){
+        var path = [
+            window.location.origin, 
+            window.location.pathname,
+            '?',
+            params].join('');
+
+        return path;
+    }
+
+    perPageForms.on('change', function(e){
+        e.preventDefault();
+        var paramsStr = $(this).serialize();
+
+        if(trackSerachForm.length > 0){
+            paramsStr += '&'+trackSerachForm.serialize();
+        }
+
+        window.location.href = searchFormRedirect(paramsStr);
+        return false;
+    });
+
+    trackSerachForm.on('submit', function(e){
+        e.preventDefault();
+        var paramsStr = $(this).serialize(); 
+
+        if(perPageForms.length > 0){
+            paramsStr += '&'+ $(perPageForms[0]).serialize();
+        }
+
+        window.location.href = searchFormRedirect(paramsStr);
+        return false;
+    });
+
 
 
 });
 
 var Tracks = {};
 
-function onShownTrackDetails(detailsEl) {
+function onShownTrackDetails(detailsEl, cb) {
     if(Tracks.details){
         Tracks.details.hide();
     }
@@ -23,9 +64,9 @@ function onShownTrackDetails(detailsEl) {
         var popoverContent = popover.tip();
         var trackFilesTable = popoverContent.find(".trackFiles");
         var trackTerritoriesTable = popoverContent.find(".trackTerritories");
-
         onFetchTrackFiles(track, track.files, trackFilesTable);
         onFetchTrackTerritories(track.territories, trackTerritoriesTable);
+        cb(detailsEl);
     }, true, true);
 };
 
@@ -101,9 +142,9 @@ function showPullDialog(trackId) {
     var id = $("#idDiv_" + trackId).text();
     var isrc = $("#isrcDiv_" + trackId).text();
     var title = $("#publishTitleDiv_" + trackId).text();
-    title = title.length > 50 ? title.substring(0, 49).replace('&', ' ') : title.replace('&', ' ');
+    title = title.length > 50 ? title.substring(0, 49) : title;
     var artist = $("#publishArtistDiv_" + trackId).text();
-    artist = artist.length > 40 ? artist.substring(0, 39).replace('&', ' ') : artist.replace('&', ' ');
+    artist = artist.length > 40 ? artist.substring(0, 39) : artist;
     var info = $("#infoDiv_" + trackId).text();
     var iTunesUrl = $("#iTunesUrlDiv_" + trackId).text();
     var amazonUrl = $("#amazonUrlDiv_" + trackId).text();
@@ -121,9 +162,9 @@ function showPullDialog(trackId) {
     itunesLink.text(iTunesUrl);
     itunesLink.attr('href', iTunesUrl);
     pullForm.find("input[name='amazonUrl']").val(amazonUrl);
-    var itunesLink = pullForm.find("a[name='amazonLink']");
-    itunesLink.text(amazonUrl);
-    itunesLink.attr('href', amazonUrl);
+    var amazonLink = pullForm.find("a[name='amazonLink']");
+    amazonLink.text(amazonUrl);
+    amazonLink.attr('href', amazonUrl);
 
     $("#pull-dialog").modal("show");
 };
@@ -180,6 +221,7 @@ function onEncodeSuccess(data, trackId){
         var publishTitleDivId = "#publishTitleDiv_" + trackId;
         var publishArtistDivId = "#publishArtistDiv_" + trackId;
         var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+        var amazonDivId = "#amazonUrlDiv_" + trackId;
         var infoDivId = "#infoDiv_" + trackId;
 
         $(encodetrackButtonId+".btn-primary").button('retry');
@@ -188,6 +230,7 @@ function onEncodeSuccess(data, trackId){
         $(publishTitleDivId).text(data.publishTitle);
         $(publishArtistDivId).text(data.publishArtist);
         $(iTunesDivId).text(data.itunesUrl);
+        $(amazonDivId).text(data.amazonUrl);
         $(infoDivId).text(data.info);
     } else if(status == "ENCODING"){
         setTimeout(function(){
@@ -375,6 +418,7 @@ function toEncode(){
                     var publishTitleDivId = "#publishTitleDiv_" + trackId;
                     var publishArtistDivId = "#publishArtistDiv_" + trackId;
                     var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+                    var amazonDivId = "#amazonUrlDiv_" + trackId;
                     var infoDivId = "#infoDiv_" + trackId;
 
                     $(encodetrackButtonId + ".btn-primary").button('retry');
@@ -383,6 +427,7 @@ function toEncode(){
                     $(publishTitleDivId).text(data.success[i].publishTitle);
                     $(publishArtistDivId).text(data.success[i].publishArtist);
                     $(iTunesDivId).text(data.success[i].itunesUrl);
+                    $(amazonDivId).text(data.success[i].amazonUrl);
                     $(infoDivId).text(data.success[i].info);
                 }
             }

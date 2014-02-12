@@ -1,118 +1,118 @@
 .table_width, .nav_width, .edit_width { width: 50%; margin: 10px;}
 
 .hasError{
-	color:red;
+  color:red;
 }
 
 .iframe {
-	display: none;
-	wight: 1px;
-	height: 1px;
+  display: none;
+  wight: 1px;
+  height: 1px;
 }
 
 .table_margin {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 
 .label_ANDROID {
-	background-color: #468847;
+  background-color: #468847;
 }
 
 .label_BLACKBERRY {
-	background-color: #F89406;
+  background-color: #F89406;
 }
 
 
 .label_FREE_TRIAL {
-	background-color: #B94A48;
+  background-color: #B94A48;
 }
 
 .label_PAYMENT_ERROR {
-	background-color: #3A87AD;
+  background-color: #3A87AD;
 }
 
 .label_IOS {
-	background-color: #333333;
+  background-color: #333333;
 }
 
 .label_J2ME {
-	background-color: #8825c6;
+  background-color: #8825c6;
 }
 
 .label_ONE_MONTH_PROMO {
-	background-color: #94be39;
+  background-color: #94be39;
 }
 
 .label_NOT_ACTIVE_PAYMENT_DETAILS_OR_NO_PAYMENT_DETAILS {
-	background-color: #ff8a00;
+  background-color: #ff8a00;
 }
 
 .textColor_ANDROID {
-	color: #468847;
+  color: #468847;
 }
 
 .textColor_BLACKBERRY {
-	color: #F89406;
+  color: #F89406;
 }
 
 
 .textColor_FREE_TRIAL {
-	color: #B94A48;
+  color: #B94A48;
 }
 
 .textColor_PAYMENT_ERROR {
-	color: #3A87AD;
+  color: #3A87AD;
 }
 
 .textColor_IOS {
-	color: #333333;
+  color: #333333;
 }
 
 .textColor_J2ME {
-	color: #8825c6;
+  color: #8825c6;
 }
 
 .textColor_ONE_MONTH_PROMO {
-	color: #94be39;
+  color: #94be39;
 }
 
 .textColor_NOT_ACTIVE_PAYMENT_DETAILS_OR_NO_PAYMENT_DETAILS {
-	color: #ff8a00;
+  color: #ff8a00;
 }
 
 .header_deco {
-	text-decoration: none;
+  text-decoration: none;
 }
  
 .datepicker {
-	padding: 12px 0 0 20px; 
+  padding: 12px 0 0 20px; 
 }
 
 /*UL for sort*/
 
 ul.table {
-	list-style-type: none;
+  list-style-type: none;
 }
 
 ul.table_up {
-	margin-top: -20px;
+  margin-top: -20px;
 }
 
 ul.table li.title, thead.header {
-	padding-bottom: 5px;
-	background: url("../img/calendar_bg.png") repeat;
-	border: 8px solid transparent;
+  padding-bottom: 5px;
+  background: url("../img/calendar_bg.png") repeat;
+  border: 8px solid transparent;
 }
 
 ul.table li {
-	background-color: #ffffff;
-	border: none;
-	border-bottom: 1px solid #dddddd;
-	border-top: 1px solid #dddddd;
-	border-left: 1px solid #dddddd;
-	border-right: 1px solid #dddddd;
-	margin-top: -1px;
+  background-color: #ffffff;
+  border: none;
+  border-bottom: 1px solid #dddddd;
+  border-top: 1px solid #dddddd;
+  border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
+  margin-top: -1px;
 }
 
 .newsListWide ul.table li.drops {
@@ -176,383 +176,383 @@ ul.table li div.existing_track {
 }
 
 ul.table li:hover {
-	background-color: #f9f9f9;
-	cursor: n-resize;
+  background-color: #f9f9f9;
+  cursor: n-resize;
 }
 
 ul.table li div {
-	display: inline-block;
-	border: none;
-	height: 100%;
-	vertical-align: top;
+  display: inline-block;
+  border: none;
+  height: 100%;
+  vertical-align: top;
 }
 
 ul.table li div.number {
-	width: 5%;
+  width: 5%;
 }
 
 ul.table li div.body {
-	width: 65%;
+  width: 65%;
 }
 
 ul.table li div.filters {
-	width: 15%;
+  width: 15%;
 }
 
 ul.table li div.online {
-	width: 5%;
+  width: 5%;
 }
 
 ul.table li div.date {
-	width: 10%;
-	border: none;
+  width: 10%;
+  border: none;
 }
 
 ul.table li div {
-	padding: 5px 4px;
-	overflow: hidden;
+  padding: 5px 4px;
+  overflow: hidden;
 }
 
 ul.table li div.number_news {
-	width: 25px;
+  width: 25px;
 }
 
 ul.table li div.image_news {
-	width: 60px;
+  width: 60px;
 }
 .px50{
     width: 50px;
 }
 ul.table li div.body_news {
-	width: 250px;
+  width: 250px;
 }
 
 ul.table li div.filters_news {
-	width: 180px;
+  width: 180px;
 }
 
 ul.table li div.online_news {
-	width: 40px;
+  width: 40px;
 }
 
 ul.table li div.date_news {
-	width: 100px;
-	border: none;
+  width: 100px;
+  border: none;
 }
 
 ul.table li div.numberStore {
-	width: 5%;
+  width: 5%;
 } 
 
 ul.table li div.imageStore {
-	width: 13%;
+  width: 13%;
 } 
 
 ul.table li div.titleStore {
-	width: 30%;
+  width: 30%;
 }
 
 ul.table li div.priceStore {
-	width: 10%;
+  width: 10%;
 }
 
 ul.table li div.currencyStore {
-	width: 10%;
+  width: 10%;
 }
 
 ul.table li div.filtersStore {
-	width: 15%;
+  width: 15%;
 }
 
 
 /*CHarts*/
 
 ul.table li div.position_chartItem {
-	width: 20px;
-	font-size: 9px;
-	font-weight: bold;
-	padding-left: 4px;
+  width: 20px;
+  font-size: 9px;
+  font-weight: bold;
+  padding-left: 4px;
 }
 
 ul.table li div.prev_position_chartItem {
-	width: 30px;
-	height:60px!important;
-	font-size: 9px;
-	font-weight: bold;
+  width: 30px;
+  height:60px!important;
+  font-size: 9px;
+  font-weight: bold;
 }
 
 ul.table li div.change_position_chartItem {
-	width: 100px;
-	font-size: 9px;
-	font-weight: bold;
+  width: 100px;
+  font-size: 9px;
+  font-weight: bold;
 }
 
 ul.table li div.locked_chartItem {
-	width: 100px;
-	font-size: 9px;
-	font-weight: bold;
+  width: 100px;
+  font-size: 9px;
+  font-weight: bold;
 }
 
 ul.table li div.image_chartItem {
-	width: 60px;
-	font-size: 10px;
+  width: 60px;
+  font-size: 10px;
 }
 
 ul.table li div.channel_chartItem {
-	width: 100px;
-	height:60px!important;
-	font-size: 9px;
-	font-weight: bold;
+  width: 100px;
+  height:60px!important;
+  font-size: 9px;
+  font-weight: bold;
 }
 
 ul.table li div.ArtistTitle_chartItem {
-	width: 150px;
-	font-size: 9px;
-	font-weight: bold;
+  width: 150px;
+  font-size: 9px;
+  font-weight: bold;
 }
 
 ul.table li div.info_chartItem {
-	width: 100px;
-	height:60px!important;
-	overflow:hidden;
-	font-size: 10px;
+  width: 100px;
+  height:60px!important;
+  overflow:hidden;
+  font-size: 10px;
 }
 
 ul.table li div.publishDate_chartItem {
-	width: 100px;
-	font-size: 10px;
+  width: 100px;
+  font-size: 10px;
 }
 
 ul.table li.title div {
-	font-size: 12px!important;
-	font-wieght: bold;
+  font-size: 12px!important;
+  font-wieght: bold;
 }
 
 
 form#deleteMessageForm, form#deleteNewsForm, form#addNew, form#cloneNewsForm, form#updateNewsPositionsForm, form#deleteOfferForm  {
-	display: inline-table;
-	vertical-align: bottom;
+  display: inline-table;
+  vertical-align: bottom;
 }
 
 p.datepicker span, p.datepicker input {
-	display: none;
+  display: none;
 }
 
 h1.head {
-	padding: 20px 0;
+  padding: 20px 0;
 }
 
 .container {
-	position: relative;
+  position: relative;
 }
 
 .newsList {
-	width: 810px;
-	float: left;
+  width: 810px;
+  float: left;
 }
 
 .newsListWide {
-	width: 900px;
-	float: left;
+  width: 900px;
+  float: left;
 }
 
 .chartListWide {
-	width: 100%;
-	float: left;
+  width: 100%;
+  float: left;
 }
 
 .newsCalendar {
-	margin-left: 820px;
-	background-color: #CCCCCC;
-	background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
-	border: 8px solid transparent;
+  margin-left: 820px;
+  background-color: #CCCCCC;
+  background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+  border: 8px solid transparent;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
 }
 
 .navButtons {
-	margin-left: 920px;
-	background-color: #CCCCCC;
-	background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
-	border: 8px solid transparent;
+  margin-left: 920px;
+  background-color: #CCCCCC;
+  background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+  border: 8px solid transparent;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
 }
 
 .updateButton {
-	padding-left: 20px;
-	margin: 20px 0;
+  padding-left: 20px;
+  margin: 20px 0;
 }
 
 .newsList ul.table, .newsList ul.table li, .newsListWide ul.table, .newsListWide ul.table li   {
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .newsList ul.table li, .newsListWide ul.table li {
-	margin: 0 0 10px 0;
+  margin: 0 0 10px 0;
 }
 
 ul.dropdown-menu li{
-	border: none!important;
-	margin: 0px!important;
+  border: none!important;
+  margin: 0px!important;
 }
 
 li.title div {
-	font-size: 11px;
-	font-weight: bold;
+  font-size: 11px;
+  font-weight: bold;
 }
 
 .nav li a {
-	font-weight: bold;
-	font-size: 12px;
-	color: #ffffff;
+  font-weight: bold;
+  font-size: 12px;
+  color: #ffffff;
 }
 
 .filtersSelect {
-	padding: 7px;
-	background-color: #ffffff;
+  padding: 7px;
+  background-color: #ffffff;
 }
 
 .addedImage {
-	border: 8px solid transparent;
+  border: 8px solid transparent;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
 }
 
 .classname {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #ffffff) );
-	background:-moz-linear-gradient( center top, #ffffff 5%, #ffffff 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ffffff');
-	background-color:#ffffff;
-	display:inline-block;
-	color:#777777;
-	font-family:arial;
-	font-size:15px;
-	font-weight:normal;
-	padding:0px 0px;
-	text-decoration:none;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #ffffff) );
+  background:-moz-linear-gradient( center top, #ffffff 5%, #ffffff 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ffffff');
+  background-color:#ffffff;
+  display:inline-block;
+  color:#777777;
+  font-family:arial;
+  font-size:15px;
+  font-weight:normal;
+  padding:0px 0px;
+  text-decoration:none;
 }.classname:hover {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #ffffff) );
-	background:-moz-linear-gradient( center top, #ffffff 5%, #ffffff 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ffffff');
-	background-color:#ffffff;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #ffffff) );
+  background:-moz-linear-gradient( center top, #ffffff 5%, #ffffff 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ffffff');
+  background-color:#ffffff;
 }.classname:active {
-	position:relative;
-	top:1px;
+  position:relative;
+  top:1px;
 }
 
 /*--- DROPDOWN ---*/
 #nav ul{
-	background:#fff; /* Adding a background makes the dropdown work properly in IE7+. Make this as close to your page's background as possible (i.e. white page == white background). */
-	background:rgba(255,255,255,0); /* But! Let's make the background fully transparent where we can, we don't actually want to see it if we can help it... */
-	list-style:none;
-	position:absolute;
-	left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
+  background:#fff; /* Adding a background makes the dropdown work properly in IE7+. Make this as close to your page's background as possible (i.e. white page == white background). */
+  background:rgba(255,255,255,0); /* But! Let's make the background fully transparent where we can, we don't actually want to see it if we can help it... */
+  list-style:none;
+  position:absolute;
+  left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
 }
 #nav ul li{
-	padding-top:1px; /* Introducing a padding between the li and the a give the illusion spaced items */
-	float:none;
+  padding-top:1px; /* Introducing a padding between the li and the a give the illusion spaced items */
+  float:none;
 }
 #nav ul a{
-	white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
+  white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
 }
 #nav li:hover ul{ /* Display the dropdown on hover */
-	left:0; /* Bring back on-screen when needed */
+  left:0; /* Bring back on-screen when needed */
 }
 #nav li:hover a{ /* These create persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
-	background:#6b0c36;
-	text-decoration:underline;
+  background:#6b0c36;
+  text-decoration:underline;
 }
 #nav li:hover ul a{ /* The persistent hover state does however create a global style for links even before they're hovered. Here we undo these effects. */
-	text-decoration:none;
+  text-decoration:none;
 }
 #nav li:hover ul li a:hover{ /* Here we define the most explicit hover states--what happens when you hover each individual link. */
-	background:#333;
+  background:#333;
 }
 
 .highlight a {background:#d4f8b5!important;}
 
 .newsCalendar h2, .newsCalendar p, .newsCalendar input {
-	padding-left: 22px;
+  padding-left: 22px;
     padding-top: 10px;
 }
 .newsCalendar input {
-	margin-left: 22px;
+  margin-left: 22px;
 }
  
 /*Add new chart*/
 .cover_addnew_chart {
-	width: 6%;
-	font-size: 11px;
+  width: 6%;
+  font-size: 11px;
 }
 
 .isrc_addnew_chart {
-	width: 7%;
-	font-size: 11px;
+  width: 7%;
+  font-size: 11px;
 }
 
 .title_addnew_chart {
-	width: 10%;
-	font-size: 11px;
+  width: 10%;
+  font-size: 11px;
 }
 
 .artist_addnew_chart {
-	width: 10%;
-	font-size: 11px;
+  width: 10%;
+  font-size: 11px;
 }
 
 .price_addnew_chart {
-	width: 3%;
-	font-size: 11px; 
+  width: 3%;
+  font-size: 11px; 
 }
 
 .currency_addnew_chart {
-	width: 4%;
-	font-size: 11px;
+  width: 4%;
+  font-size: 11px;
 }
 
 .itunes_url_addnew_chart {
-	width: 21%;
-	font-size: 11px;
-	overflow: hidden;
+  width: 21%;
+  font-size: 11px;
+  overflow: hidden;
 }
 
 .info_addnew_chart {
-	width: 17%;
-	font-size: 11px;
+  width: 17%;
+  font-size: 11px;
 }
 
 .label_addnew_chart {
-	width: 6%;
-	font-size: 11px;
+  width: 6%;
+  font-size: 11px;
 }
 
 .publish_date_addnew_chart {
-	width: 3%;
-	font-size: 11px;
+  width: 3%;
+  font-size: 11px;
 }
 
 .updatesList {
-	padding: 10px 80px;
+  padding: 10px 80px;
 }
 
 input.hasTimepicker {
-	margin-bottom: 0px!important;
+  margin-bottom: 0px!important;
 }
 
 button.s_btn, button.u_btn, button.m_btn {
-	padding: 6px 10px;
+  padding: 6px 10px;
 }
 
 form.paddingTop {
-	padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 form.del_btn {
-	height: 30px;
-	display: inline-table;
+  height: 30px;
+  display: inline-table;
 }
 
 form.edit_btn {
-	display: inline-table;
+  display: inline-table;
 }
 
 input.m {
@@ -560,11 +560,11 @@ input.m {
 }
 
 .dname_user {
-	width: 15%;
+  width: 15%;
 }
 
 .uname_user {
-	width: 15%;
+  width: 15%;
 }
 
 .subbalance_user {
@@ -572,7 +572,7 @@ input.m {
 }
 
 .ustatus_user {
-	width: 15%;
+  width: 15%;
 }
 
 .subpayment_user {
@@ -580,7 +580,7 @@ input.m {
 }
 
 .payment_enabled {
-	margin-left: 40px;
+  margin-left: 40px;
     width: 10%;
 }
 
@@ -616,17 +616,17 @@ input.m {
 }
 
 .id_user {
-	width: 8%;
+  width: 8%;
 }
 
 .red {
-	color: #ff0000;
+  color: #ff0000;
 }
 
 
 .largeText {
-	font-family: Verdana, serif;
-	font-size:22px;
+  font-family: Verdana, serif;
+  font-size:22px;
 }
 
 .well_center {
@@ -641,52 +641,53 @@ input.m {
 }
 
 .bold {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .subpayment_user input {
-	width: 100px!important;
+  width: 100px!important;
 }
 
 .utype_user select, .ustatus_user select {
-	width: 175px!important;
+  width: 175px!important;
 }
 
 .rel {
-	float: left;
-	position: relative;
-	margin-right: 30px;
+  float: left;
+  position: relative;
+  margin-right: 30px;
 }
 
 .clear {
-	clear: both;
+  clear: both;
 }
 
 .input-prepend input {
-	width: 220px!important;
+  width: 220px!important;
 }
 
 .input-prepend .add-on, .input-append .add-on, .input-prepend .btn, .input-append .btn {
-	width: 100px;
+  width: 100px;
 }
 
 .btn-deco {
-	padding: 10px 40px!important;
-	font-size: 16px;
+  padding: 10px 40px!important;
+  font-size: 16px;
 }
 
 .form-actions {
-	padding: 17px 0 18px!important;
-	background-color: #F5F5F5;
+  padding: 17px 0 0px!important;
+  /*background-color: #F5F5F5;*/
+  background-color: transparent;
 }
 
 img {
-	max-width: none!important;
+  max-width: none!important;
 }
 
 
 ul.table li div.repo_columns {
-	width: 8%;
+  width: 8%;
 	border: none;
 }
 
@@ -702,66 +703,66 @@ ul.table li div.territory_columns {
 
 ul.table li div.image_repo_columns {
     position: relative;
-	width: 100px;
-	border: none;
+  width: 100px;
+  border: none;
 }
 
 ul.table li div.product_id_repo_columns {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 ul.table li div.buttons_repo_columns {
-	border: none;
+  border: none;
 }
 
 
 ul.table li.title div, ul.table li.content div {
-	display: inline-block;
-	border: none;
-	height: 100%;
-	vertical-align: top;
+  display: inline-block;
+  border: none;
+  height: 100%;
+  vertical-align: top;
 }
 
 .in-line {
-	display: inline-table;
-	vertical-align: top;
+  display: inline-table;
+  vertical-align: top;
 }
 
 ul#tracksTable li:hover {
-	background-color: #f9f9f9;
-	cursor: pointer;
+  background-color: #f9f9f9;
+  cursor: pointer;
 }
 
 .busy {
     text-align: center;
-	width: 100%;
-	height: 100%;
-	position: fixed;
-	left: 0;
-	top: 0;
-	opacity: 0.8;
-	background-color: #000000;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  opacity: 0.8;
+  background-color: #000000;
     display: none;
 }
 
 .loading-container {
-	text-align: center;
-	display: none;
+  text-align: center;
+  display: none;
 }
 
 .center {
-	 text-align: center;
+   text-align: center;
     margin:20% auto;
     width: 300px;
 }
 
 .center p.loadingLarge {
-	text-align: center;
-	width: 100px;
+  text-align: center;
+  width: 100px;
     height: 100px;
     margin-left: 90px;
-	background: url("../img/loading-thumb.gif");
+  background: url("../img/loading-thumb.gif");
 }
 
 p.loadingSmall {
@@ -774,94 +775,94 @@ p.loadingSmall {
 }
 
 .center p.message {
-	text-align: center;
-	color: #ffffff;
-	font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .th_id {
-	width: 15%;
-	border: none;
+  width: 15%;
+  border: none;
 }
 
 .th_date {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 .th_type {
-	width: 25%;
-	border: none;
+  width: 25%;
+  border: none;
 }
 
 .th_gateway {
-	width: 21%;
-	border: none;
+  width: 21%;
+  border: none;
 }
 
 .th_amount {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 .th_newBalance {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 .th_isrc {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 .pt_id {
-	width: 25%;
-	border: none;
+  width: 25%;
+  border: none;
 }
 
 .pt_date {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 .pt_gateway {
-	width: 21%;
-	border: none;
+  width: 21%;
+  border: none;
 }
 
 .pt_amount {
-	width: 17%;
-	border: none;
+  width: 17%;
+  border: none;
 }
 
 .pt_numretries {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 .ft_id {
-	width: 25%;
-	border: none;
+  width: 25%;
+  border: none;
 }
 
 .ft_date {
-	width: 11%;
-	border: none;
+  width: 11%;
+  border: none;
 }
 
 .ft_gateway {
-	width: 21%;
-	border: none;
+  width: 21%;
+  border: none;
 }
 
 .ft_amount {
-	width: 17%;
-	border: none;
+  width: 17%;
+  border: none;
 }
 
 .ft_error {
-	width: 17%;
-	border: none;
+  width: 17%;
+  border: none;
 }
 
 .hor-minimalist-a {
@@ -884,7 +885,7 @@ table.hor-minimalist-a td {
 
 .hor-minimalist-a th {
     background: url("../img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
-	border: 8px solid transparent;
+  border: 8px solid transparent;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
     color: #333333;
     font-size: 14px;
@@ -910,8 +911,8 @@ table.hor-minimalist-a td {
 #simplemodal-container a.modalCloseImg {background:url(../img/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
 
 .ads_table {
-	border-bottom: 1px solid #DDDDDD!important;
-	border-top: none!important;
+  border-bottom: 1px solid #DDDDDD!important;
+  border-top: none!important;
 }
 
 .nav-pills > li > a {
@@ -1037,6 +1038,8 @@ ul.table li div.path_asset_columns {
   position: absolute;
   left: 0px;
   top: 100%;
+  width: 420px;
+  height: 315px;
   margin: -22px 0 0;
   padding-bottom:20px;
 }
@@ -1045,5 +1048,22 @@ ul.table li div.path_asset_columns {
   position: absolute;
   left: 0;
   top: 100%;
+  width: 335px;
   margin: -23px 0;
+  overflow: visible;
+}
+
+.newsListWide ul.table li div.image_repo_columns .audioContainer div{
+  overflow: visible;
+  padding: 0px;
+}
+
+.l-paging-wrapper{
+  position: relative;
+}
+
+.l-paging-wrapper .b-per-page-form{
+  position: absolute;
+  right: 0;
+  top:35px;
 }

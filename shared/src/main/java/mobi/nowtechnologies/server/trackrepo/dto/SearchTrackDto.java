@@ -3,6 +3,7 @@
  */
 package mobi.nowtechnologies.server.trackrepo.dto;
 
+import mobi.nowtechnologies.server.shared.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -39,7 +40,9 @@ public class SearchTrackDto implements SearchTrackCriteria{
     private String territory;
     
     private List<Integer> trackIds;
-	
+
+    private String mediaType;
+
 	public SearchTrackDto() {
 	}
 
@@ -148,6 +151,14 @@ public class SearchTrackDto implements SearchTrackCriteria{
 	public void setTerritory(String territory) {
 		this.territory = territory;
 	}
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
 
     @Override
 	public int hashCode() {

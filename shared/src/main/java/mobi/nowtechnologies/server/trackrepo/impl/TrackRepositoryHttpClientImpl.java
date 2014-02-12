@@ -497,6 +497,10 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 if(queryParams.size() > 0){
                     addQParam(String.valueOf(criteria.isWithTerritories()), "withTerritories", queryParams);
                     addQParam(String.valueOf(criteria.isWithFiles()), "withFiles", queryParams);
+
+                    if (!("".equals(criteria.getMediaType())))
+                        addQParam(criteria.getMediaType(), "mediaType", queryParams);
+
                     buildPageParams(page, queryParams);
 
                     String url = trackRepoUrl.concat("tracks.json?").concat(buildHttpQuery(queryParams));

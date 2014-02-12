@@ -140,6 +140,6 @@ public class TrackController extends AbstractCommonController{
 	 * Don't like it? Fell free to implement proper solution!
 	 */
 	private Date fixDateJson(Date date){
-		return new java.sql.Date(date.getTime());
+		return date == null? null: new java.sql.Date(date.getTime());
 	}
 }
