@@ -37,7 +37,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
 
     @Override
     public void activate(Long id, String email, String token) {
-        LOGGER.info("Activating email with id: [{}], email: [{}], token: []", id, email, token);
+        LOGGER.info("Activating email with id: [{}], email: [{}], token: [{}]", id, email, token);
         ActivationEmail activationEmail = activationEmailRepository.findOne(id);
         Assert.isTrue(!activationEmail.isActivated(), "ActivationEmail must not be activated");
         Assert.isTrue(activationEmail.getToken().equals(token), "Wrong token");
