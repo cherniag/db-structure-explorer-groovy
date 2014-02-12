@@ -9,22 +9,17 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance( strategy = InheritanceType.JOINED )
-@DiscriminatorColumn(name = "source")
-@Table(name="tb_abstractSocialInfo", uniqueConstraints = {@UniqueConstraint(columnNames = {"userUID", "infoSource"})})
+@Table(name="tb_abstractSocialInfo")
 public abstract class AbstractSocialInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "id")
     private Long id;
 
     @JoinColumn(name = "userUID", nullable = false)
     @ManyToOne
     private User user;
-
-
-    @Column(name = "infoSource")
-    private SocialInfoType sourceType;
 
 
     public Long getId() {
@@ -38,7 +33,6 @@ public abstract class AbstractSocialInfo {
     public void setUser(User user) {
         this.user = user;
     }
-
 
     @Override
     public boolean equals(Object o) {
