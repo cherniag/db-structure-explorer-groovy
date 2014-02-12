@@ -16,7 +16,7 @@ public class EmailRegistrationController extends CommonController {
     private ActivationEmailService activationEmailService;
 
     @RequestMapping(method = RequestMethod.POST,
-            value = "**/{community:o2}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/EMAIL_GENERATE")
+            value = "**/{community}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/EMAIL_GENERATE")
     public ModelAndView sendConfirmationEmail(@RequestParam(value = "EMAIL") String email,
                                               @RequestParam(value = "USER_NAME") String userName,
                                               @RequestParam(value = "DEVICE_UID") String deviceUID,
