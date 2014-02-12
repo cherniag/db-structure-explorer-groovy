@@ -16,9 +16,11 @@ import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.support.URIBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.server.ResultActions;
+import org.springframework.test.web.server.request.MockHttpServletRequestBuilder;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import static junit.framework.Assert.assertEquals;
@@ -44,6 +46,27 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
     @Resource
     private FacebookService facebookService;
 
+    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions resultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws UnsupportedEncodingException {
+        JSONObject jsonObject = getAccCheckContent(resultActions);
+        String storedToken = (String) jsonObject.get("userToken");
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        return post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
+                .param("ACCESS_TOKEN", facebookToken)
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("DEVICE_TYPE", deviceType)
+                .param("FACEBOOK_USER_ID", facebookUserId)
+                .param("DEVICE_UID", deviceUID);
+    }
+
+    private ResultActions signupDevice(String deviceUID, String deviceType, String apiVersion, String communityUrl) throws Exception {
+        return mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+    }
+
     private FacebookTemplateCustomizer getTemplateCustomizer(final String facebookUserId, final String facebookEmail) {
         return new FacebookTemplateCustomizer() {
             @Override
@@ -68,33 +91,17 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         final String facebookUserId = "1";
         final String facebookEmail =  "ol@ukr.net";
-
-        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
-
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        String storedToken = (String) jsonObject.get("userToken");
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String facebookToken = "AA";
-
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
+        ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", facebookUserId)
-                        .param("DEVICE_UID", deviceUID)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
     }
+
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookIdSucess() throws Exception {
@@ -106,27 +113,11 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         final String facebookUserId = "1";
         final String email = "ol@ukr.net";
         final String invalidFacebookUserId = "2";
-        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
-
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        String storedToken = (String) jsonObject.get("userToken");
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String facebookToken = "AA";
-
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
+        ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", invalidFacebookUserId)
-                        .param("DEVICE_UID", deviceUID)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId,  facebookToken)
         ).andExpect(status().isInternalServerError());
     }
 
@@ -137,35 +128,17 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
-
         final String facebookUserId = "user1";
-
         final String firstEmail = "ol@ukr.net";
-
         final String otherFacebookUserId = "user2";
-
         final String otherFacebookEmail = "o2@ukr.net";
-
-        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, firstEmail));
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        String storedToken = (String) jsonObject.get("userToken");
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String facebookToken = "AA";
         String facebookElementJsonPath = "$.response.data[0].user.socialInfo[0]";
+
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, firstEmail));
+        ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", facebookUserId)
-                        .param("DEVICE_UID", deviceUID)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath(facebookElementJsonPath + ".socialInfoType").value("Facebook"))
                 .andExpect(jsonPath(facebookElementJsonPath + ".facebookId").value(facebookUserId))
@@ -176,28 +149,10 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath(facebookElementJsonPath + ".profileUrl").value("https://graph.facebook.com/username/picture"))
                 .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true));
 
-
-        resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-
+        resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         facebookService.setTemplateCustomizer(getTemplateCustomizer(otherFacebookUserId, otherFacebookEmail));
-
-        jsonObject = getAccCheckContent(resultActions);
-        storedToken = (String) jsonObject.get("userToken");
-        userToken = Utils.createTimestampToken(storedToken, timestamp);
-        facebookToken = "AA";
-
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", otherFacebookUserId)
-                        .param("DEVICE_UID", deviceUID)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId,  facebookToken)
         ).andExpect(status().isOk()).andDo(print());
 
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
@@ -217,56 +172,23 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         final String facebookUserId = "1";
         final String email = "ol@ukr.net";
-
-        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
-
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        String storedToken = (String) jsonObject.get("userToken");
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String facebookToken = "AA";
-
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
+        ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", facebookUserId)
-                        .param("DEVICE_UID", deviceUID)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
-        assertEquals(fbDetails.getEmail(), "ol@ukr.net");
+        assertEquals(fbDetails.getEmail(), email);
 
-        resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", otherDeviceUID)
-        ).andExpect(status().isOk());
-
-        jsonObject = getAccCheckContent(resultActions);
-        storedToken = (String) jsonObject.get("userToken");
-        userToken = Utils.createTimestampToken(storedToken, timestamp);
-        facebookToken = "AA";
-
+        resultActions = signupDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", facebookUserId)
-                        .param("DEVICE_UID", otherDeviceUID)
+                buildApplyFacebookPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         user = userRepository.findByDeviceUIDAndCommunity(otherDeviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         fbDetails = fbDetailsRepository.findForUser(user);
-        assertEquals(fbDetails.getEmail(), "ol@ukr.net");
+        assertEquals(fbDetails.getEmail(), email);
     }
 
 
@@ -280,52 +202,18 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         final String facebookEmail = "ol@ukr.net";
         final String facebookUserId = "1";
-
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
-
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        String storedToken = (String) jsonObject.get("userToken");
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String facebookToken = "AA";
-
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", facebookUserId)
-                        .param("DEVICE_UID", deviceUID)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
-
-
-        resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-
-        jsonObject = getAccCheckContent(resultActions);
-        storedToken = (String) jsonObject.get("userToken");
-        userToken = Utils.createTimestampToken(storedToken, timestamp);
-
+        resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO_FACEBOOK.json")
-                        .param("ACCESS_TOKEN", facebookToken)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("FACEBOOK_USER_ID", facebookUserId)
-                        .param("DEVICE_UID", deviceUID)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk()).andDo(print());
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         fbDetails = fbDetailsRepository.findForUser(user);
