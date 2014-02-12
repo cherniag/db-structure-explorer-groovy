@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.repository.*;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class SQLTestInitializer {
     protected PaymentDetailsRepository paymentDetailsRepository;
     protected ChartRepository chartRepository;
     protected ChartDetailRepository chartDetailRepository;
+
+    @Resource
+    private ActivationEmailRepository activationEmailRepository;
 
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
@@ -79,7 +83,7 @@ public class SQLTestInitializer {
 
         drmRepository.deleteAll();
         userRepository.deleteAll();
-
+        activationEmailRepository.deleteAll();
         userRepository.flush();
     }
 }
