@@ -46,6 +46,15 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
     @Resource
     private FacebookService facebookService;
 
+    private final String deviceUID = "b88106713409e92622461a876abcd74b";
+    private final String deviceType = "ANDROID";
+    private final String apiVersion = "6.0";
+    private final String communityUrl = "o2";
+    private final String timestamp = "2011_12_26_07_04_23";
+    private final String facebookUserId = "1";
+    private final String facebookEmail =  "ol@ukr.net";
+    private final String facebookToken = "AA";
+
     private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions resultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws UnsupportedEncodingException {
         JSONObject jsonObject = getAccCheckContent(resultActions);
         String storedToken = (String) jsonObject.get("userToken");
@@ -84,14 +93,6 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSucess() throws Exception {
-        String deviceUID = "b88106713409e92622461a876abcd74b";
-        String deviceType = "ANDROID";
-        String apiVersion = "6.0";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        final String facebookUserId = "1";
-        final String facebookEmail =  "ol@ukr.net";
-        String facebookToken = "AA";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
@@ -105,16 +106,8 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookIdSucess() throws Exception {
-        String deviceUID = "b88106713409e92622461a876abcd74b";
-        String deviceType = "ANDROID";
-        String apiVersion = "6.0";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        final String facebookUserId = "1";
-        final String email = "ol@ukr.net";
         final String invalidFacebookUserId = "2";
-        String facebookToken = "AA";
-        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId,  facebookToken)
@@ -123,19 +116,10 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookWithDifferentAccountsWithSuccess() throws Exception {
-        String deviceUID = "b88106713409e92622461a876abcd74b";
-        String deviceType = "ANDROID";
-        String apiVersion = "6.0";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        final String facebookUserId = "user1";
-        final String firstEmail = "ol@ukr.net";
         final String otherFacebookUserId = "user2";
         final String otherFacebookEmail = "o2@ukr.net";
-        String facebookToken = "AA";
         String facebookElementJsonPath = "$.response.data[0].user.socialInfo[0]";
-
-        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, firstEmail));
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
@@ -154,7 +138,6 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId,  facebookToken)
         ).andExpect(status().isOk()).andDo(print());
-
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         assertEquals(user.getUserName(), otherFacebookEmail);
         FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
@@ -164,23 +147,15 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookFromDifferentDevicesForOneAccountWithSucess() throws Exception {
-        String deviceUID = "b88106713409e92622461a876abcd74b";
         String otherDeviceUID = "b88106713409e92622461a876abcd74b1";
-        String deviceType = "ANDROID";
-        String apiVersion = "6.0";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        final String facebookUserId = "1";
-        final String email = "ol@ukr.net";
-        String facebookToken = "AA";
-        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, email));
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
-        assertEquals(fbDetails.getEmail(), email);
+        assertEquals(fbDetails.getEmail(), facebookEmail);
 
         resultActions = signupDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
@@ -188,23 +163,15 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
         user = userRepository.findByDeviceUIDAndCommunity(otherDeviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         fbDetails = fbDetailsRepository.findForUser(user);
-        assertEquals(fbDetails.getEmail(), email);
+        assertEquals(fbDetails.getEmail(), facebookEmail);
     }
 
 
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForOneAccountTwiceFromSameDeviceWithSucess() throws Exception {
-        String deviceUID = "b88106713409e92622461a876abcd74b";
-        String deviceType = "ANDROID";
-        String apiVersion = "6.0";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        final String facebookEmail = "ol@ukr.net";
-        final String facebookUserId = "1";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
-        String facebookToken = "AA";
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
@@ -219,6 +186,7 @@ public class ApplyInitPromoFacebookTestIT extends AbstractControllerTestIT {
         fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
     }
+
 
 
 }
