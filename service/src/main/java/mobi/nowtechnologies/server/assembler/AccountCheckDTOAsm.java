@@ -121,9 +121,8 @@ public class AccountCheckDTOAsm {
             if (temp.length() != 0)
                 accountCheckDTO.appStoreProductId = temp.substring(1);
         }
-
-        LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         accountCheckDTO.setSocialInfo(buildSocialInfo(user));
+        LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
     }
 

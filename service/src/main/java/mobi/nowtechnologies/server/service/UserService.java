@@ -2024,6 +2024,24 @@ public class UserService {
         }
     }
 
+    private boolean isValidDeviceUID(String deviceUID){
+        return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User checkUser(String community, String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses){
+        User user;
+        if (isValidDeviceUID(deviceUID)) {
+            user = checkCredentials(userName, userToken, timestamp, community, deviceUID);
+        }
+        else {
+            user = checkCredentials(userName, userToken, timestamp, community);
+        }
+        checkActivationStatus(user, activationStatuses);
+        return user;
+    }
+
+
     public void setUserNotificationService(UserNotificationService userNotificationService) {
         this.userNotificationService = userNotificationService;
     }

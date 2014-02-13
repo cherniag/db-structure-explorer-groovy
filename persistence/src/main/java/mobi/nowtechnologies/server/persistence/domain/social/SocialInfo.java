@@ -10,7 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance( strategy = InheritanceType.JOINED )
-@Table(name="tb_abstractSocialInfo")
+@Table(name="social_info")
 public abstract class SocialInfo {
 
     @Id
@@ -18,7 +18,7 @@ public abstract class SocialInfo {
     @Column(name = "id")
     private Long id;
 
-    @JoinColumn(name = "userUID", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne
     private User user;
 
@@ -33,23 +33,6 @@ public abstract class SocialInfo {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SocialInfo that = (SocialInfo) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 
     @Override

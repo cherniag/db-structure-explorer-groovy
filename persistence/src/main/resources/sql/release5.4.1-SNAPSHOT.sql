@@ -1,21 +1,21 @@
-CREATE TABLE `tb_abstractSocialInfo` (
+CREATE TABLE `social_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `userUID` int(10) unsigned DEFAULT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `tb_abstractSocialInfo_user` FOREIGN KEY (`userUID`) REFERENCES `tb_users` (`i`)
+  CONSTRAINT `social_info_user_id` FOREIGN KEY (`user_id`) REFERENCES `tb_users` (`i`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `tb_fbUserInfo` (
+CREATE TABLE `facebook_user_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
-  `firstName` varchar(100),
+  `first_name` varchar(100),
   `surname` varchar(100),
-  `profileUrl` varchar(200),
-  `fbId` varchar(100),
-  `userName` varchar(100),
+  `profile_url` varchar(200),
+  `fb_id` varchar(100),
+  `user_name` varchar(100),
   PRIMARY KEY (`id`),
-  CONSTRAINT `tb_abstractSocialInfo_id` FOREIGN KEY (`id`) REFERENCES `tb_abstractSocialInfo` (`id`)
+  CONSTRAINT `facebook_user_info_id` FOREIGN KEY (`id`) REFERENCES `social_info` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
