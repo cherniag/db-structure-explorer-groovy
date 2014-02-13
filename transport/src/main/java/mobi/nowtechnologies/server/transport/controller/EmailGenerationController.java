@@ -17,10 +17,10 @@ public class EmailGenerationController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST,
             value = "**/{community}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/EMAIL_GENERATE")
-    public ModelAndView sendEmail(@RequestParam(value = "EMAIL") String email,
-                                  @RequestParam(value = "USER_NAME") String userName,
-                                  @RequestParam(value = "DEVICE_UID") String deviceUID,
-                                  @PathVariable(value = "community") String community) {
+    public ModelAndView emailGenerate(@RequestParam(value = "EMAIL") String email,
+                                      @RequestParam(value = "USER_NAME") String userName,
+                                      @RequestParam(value = "DEVICE_UID") String deviceUID,
+                                      @PathVariable(value = "community") String community) {
         LOGGER.info("EMAIL_GENERATE started for userName: [{}], email: [{}], community: [{}]", userName, email, community);
         ActivationEmail activationEmail = activationEmailService.sendEmail(email, userName, deviceUID, community);
         LOGGER.info("EMAIL_GENERATE finished");

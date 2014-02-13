@@ -74,4 +74,6 @@
     </bean>
 
     <bean id="transport.SignInFacebook" class="mobi.nowtechnologies.server.transport.controller.SigninFacebookController" parent="transport.CommonController"/>
+
+    <bean id="transport.SignInEmailController" class="mobi.nowtechnologies.server.transport.controller.SignInEmailController" parent="transport.CommonController"/>
 </beans>

@@ -75,44 +75,6 @@ public class ApplyInitPromoController extends CommonController {
         }
     }
 
-
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**//*{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/EMAIL_CONFIRM_APPLY_INIT_PROMO"})
-    public ModelAndView applyPromotionByEmail(
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("EMAIL_ID") Long activationEmailId,
-            @RequestParam("EMAIL") String email,
-            @RequestParam("TOKEN") String token,
-            @RequestParam("DEVICE_UID") String deviceUID) {
-        Exception ex = null;
-        User user = null;
-        String community = getCurrentCommunityUri();
-        try {
-            LOGGER.info("EMAIL_CONFIRM_APPLY_INIT_PROMO Started for activationEmailId: [{}], email: [{}], deviceUID: [{}]",
-                    activationEmailId, email, deviceUID);
-            user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
-
-            user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
-
-           return buildModelAndView(getAccountCheckDTOAfterApplyPromo(user));
-        } catch (UserCredentialsException ce) {
-            ex = ce;
-            LOGGER.error("EMAIL_CONFIRM_APPLY_INIT_PROMO can not find deviceUID: [{}] in community: [{}]", deviceUID, community);
-            throw ce;
-        } catch (RuntimeException re) {
-            ex = re;
-            LOGGER.error("EMAIL_CONFIRM_APPLY_INIT_PROMO error: [{}] for user :[{}], community: [{}], activationEmailId: [{}]",
-                    re.getMessage(), deviceUID, community, activationEmailId);
-            throw re;
-        } finally {
-            logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("EMAIL_CONFIRM_APPLY_INIT_PROMO error: [{}] for user :[{}], community: [{}], activationEmailId: [{}]",
-                    deviceUID, community, activationEmailId);
-        }
-    }
-
     private AccountCheckDTO getAccountCheckDTOAfterApplyPromo(User user) {
         AccountCheckDTO accountCheckDTO = getAccountCheckDTO(user);
         accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());

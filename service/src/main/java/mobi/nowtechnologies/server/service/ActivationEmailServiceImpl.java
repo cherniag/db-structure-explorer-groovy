@@ -31,11 +31,6 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivationEmailServiceImpl.class);
 
     @Override
-    public void save(ActivationEmail activationEmail) {
-        activationEmailRepository.save(activationEmail);
-    }
-
-    @Override
     public void activate(Long id, String email, String token) {
         LOGGER.info("Activating email with id: [{}], email: [{}], token: [{}]", id, email, token);
         ActivationEmail activationEmail = activationEmailRepository.findOne(id);
@@ -44,7 +39,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
         Assert.isTrue(email.equals(activationEmail.getEmail()), "Wrong email");
         activationEmail.setActivated(true);
 
-        save(activationEmail);
+        activationEmailRepository.save(activationEmail);
         LOGGER.info("Email activated");
     }
 
@@ -56,7 +51,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
             String token = ActivationEmail.generateToken(email, user);
 
             activationEmail = new ActivationEmail(email, deviceUID, token);
-            save(activationEmail);
+            activationEmailRepository.save(activationEmail);
 
             Map<String, String> params = new HashMap<String, String>();
             params.put(ActivationEmail.ID, activationEmail.getId().toString());
