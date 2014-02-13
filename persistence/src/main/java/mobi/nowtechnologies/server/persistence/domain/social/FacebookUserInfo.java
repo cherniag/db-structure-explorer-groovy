@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "facebook_user_info")
-public class FBUserInfo extends SocialInfo {
+public class FacebookUserInfo extends SocialInfo {
     private static final long serialVersionUID = 2546198857668889092L;
 
     @Column(name="email",columnDefinition="char(100)", nullable = false)

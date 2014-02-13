@@ -2,11 +2,12 @@ package mobi.nowtechnologies.server.service.facebook;
 
 import com.google.common.annotations.VisibleForTesting;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.FBUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.GraphApi;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,7 @@ import javax.annotation.Resource;
 public class FacebookService {
 
     @Resource
-    private FBUserInfoRepository fbDetailsRepository;
+    private FacebookUserInfoRepository facebookUserInfoRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -29,22 +30,22 @@ public class FacebookService {
 
     @Transactional
     public void saveFacebookInfoForUser(User user, FacebookProfile profile) {
-        fbDetailsRepository.deleteForUser(user);
+        facebookUserInfoRepository.deleteForUser(user);
         User refreshedUser = userRepository.findOne(user.getId());
-        FBUserInfo details = buildUserDetailsFromProfile(refreshedUser, profile);
+        FacebookUserInfo details = buildUserDetailsFromProfile(refreshedUser, profile);
         assignProviderInfo(refreshedUser, profile);
         userRepository.save(refreshedUser);
-        fbDetailsRepository.save(details);
+        facebookUserInfoRepository.save(details);
     }
 
-    private FBUserInfo buildUserDetailsFromProfile(User user, FacebookProfile profile) {
-        FBUserInfo details = new FBUserInfo();
+    private FacebookUserInfo buildUserDetailsFromProfile(User user, FacebookProfile profile) {
+        FacebookUserInfo details = new FacebookUserInfo();
         details.setEmail(profile.getEmail());
         details.setFirstName(profile.getFirstName());
         details.setSurname(profile.getLastName());
         details.setFacebookId(profile.getId());
         details.setUserName(profile.getUsername());
-        details.setProfileUrl("https://graph.facebook.com/" + profile.getUsername() + "/picture");
+        details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture");
         details.setUser(user);
         return details;
     }
