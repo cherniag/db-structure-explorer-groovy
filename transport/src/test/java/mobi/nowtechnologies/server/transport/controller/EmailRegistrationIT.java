@@ -4,8 +4,6 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -16,22 +14,12 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,22 +30,8 @@ import static junit.framework.Assert.*;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:transport-servlet-test.xml",
-        "classpath:task-processors.xml",
-        "classpath:META-INF/service-test.xml",
-        "classpath:META-INF/service-mocked-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/dao-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/shared.xml"}, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class EmailRegistrationIT {
+public class EmailRegistrationIT extends AbstractControllerTestIT{
 
     @Autowired
     private UserRepository userRepository;
@@ -68,14 +42,6 @@ public class EmailRegistrationIT {
 
     @Autowired
     private ActivationEmailRepository activationEmailRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
-    private WebApplicationContext applicationContext;
-
-    private MockMvc mockMvc;
 
     @Value("${sms.temporaryFolder}")
     private File temporaryFolder;
@@ -143,6 +109,7 @@ public class EmailRegistrationIT {
         applyInitPromo(activationEmail, timestamp, userToken);
         User secondUser = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
         checkActivatedUser(secondUser, EMAIL_1);
+        user = userRepository.findOne(user.getId());
         assertEquals(DEVICE_UID_2, user.getDeviceUID());
 
         assertNull(userRepository.findOne(DEVICE_UID_1, Community.O2_COMMUNITY_REWRITE_URL));
@@ -152,8 +119,6 @@ public class EmailRegistrationIT {
         String storedToken = signUpDevice(DEVICE_UID_1);
 
         checkUserAfterSignupDevice(DEVICE_UID_1);
-        // it's needed to update user
-        entityManager.clear();
 
         User activatedUser = userRepository.findOne(user.getUserName(), Community.O2_COMMUNITY_REWRITE_URL);
         assertTrue(activatedUser.getDeviceUID().contains(DISABLED));
@@ -280,10 +245,6 @@ public class EmailRegistrationIT {
         assertEquals(Community.O2_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
     }
 
-    @Before
-    public void setUp() {
-        mockMvc = webApplicationContextSetup(applicationContext).build();
-    }
 
     @After
     public void tearDown() throws IOException {

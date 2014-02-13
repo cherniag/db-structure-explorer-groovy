@@ -36,9 +36,11 @@ import static org.springframework.test.web.server.setup.MockMvcBuilders.webAppli
         "classpath:transport-servlet-test.xml",
         "classpath:task-processors.xml",
         "classpath:META-INF/service-test.xml",
+        "classpath:META-INF/service-mocked-test.xml",
         "classpath:META-INF/soap.xml",
         "classpath:META-INF/dao-test.xml",
         "classpath:META-INF/smpp.xml",
+        "classpath:META-INF/soap.xml",
         "classpath:META-INF/shared.xml"}, loader = MockWebApplicationContextLoader.class)
 @MockWebApplication(name = "transport.controller", webapp = "classpath:.")
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
