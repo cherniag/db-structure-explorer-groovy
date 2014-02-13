@@ -212,6 +212,7 @@ public class AccountCheckDTO {
                 .append("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
                 .append("subscriptionChanged", subscriptionChanged)
                 .append("subjectToAutoOptIn", subjectToAutoOptIn)
+                .append("socialInfo", socialInfo)
                 .toString();
     }
 }

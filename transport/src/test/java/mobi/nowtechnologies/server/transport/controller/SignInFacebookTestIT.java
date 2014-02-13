@@ -3,10 +3,10 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.FBUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.facebook.FacebookTemplateCustomizer;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
     @Resource
-    private FBUserInfoRepository fbDetailsRepository;
+    private FacebookUserInfoRepository fbDetailsRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -127,7 +127,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
+        FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
     }
 
@@ -174,7 +174,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk()).andDo(print());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         assertEquals(user.getUserName(), otherFacebookEmail);
-        FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
+        FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getFacebookId(), otherFacebookUserId);
     }
 
@@ -188,7 +188,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
+        FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
 
         resultActions = signupDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
@@ -208,7 +208,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        FBUserInfo fbDetails = fbDetailsRepository.findForUser(user);
+        FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
         resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(

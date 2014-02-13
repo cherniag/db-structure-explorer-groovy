@@ -7,27 +7,27 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "tb_fbUserInfo")
-public class FBUserInfo extends SocialInfo {
+@Table(name = "facebook_user_info")
+public class FacebookUserInfo extends SocialInfo {
     private static final long serialVersionUID = 2546198857668889092L;
 
     @Column(name="email",columnDefinition="char(100)", nullable = false)
     private String email;
 
-    @Column(name="firstName",columnDefinition="char(100)")
+    @Column(name="first_name",columnDefinition="char(100)")
     private String firstName;
 
     @Column(name="surname",columnDefinition="char(100)")
     private String surname;
 
-    @Column(name="profileUrl",columnDefinition="char(200)")
+    @Column(name="profile_url",columnDefinition="char(200)")
     private String profileUrl;
 
-    @Column(name="fbId",columnDefinition="char(100)", nullable = false)
+    @Column(name="fb_id",columnDefinition="char(100)", nullable = false)
     private String facebookId;
 
 
-    @Column(name="userName",columnDefinition="char(100)", nullable = false)
+    @Column(name="user_name",columnDefinition="char(100)", nullable = false)
     private String userName;
 
     public String getEmail() {
@@ -78,20 +78,4 @@ public class FBUserInfo extends SocialInfo {
         this.userName = userName;
     }
 
-      @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FBUserInfo fbDetails = (FBUserInfo) o;
-
-        if (facebookId != null ? !facebookId.equals(fbDetails.facebookId) : fbDetails.facebookId != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return facebookId != null ? facebookId.hashCode() : 0;
-    }
 }

@@ -6,8 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.AccCheckService;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -51,8 +49,6 @@ public abstract class CommonController extends ProfileController implements Appl
     protected UserService userService;
 	protected Jaxb2Marshaller jaxb2Marshaller;
 	protected CommunityService communityService;
-	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
-    private UserRepository userRepository;
     private String defaultViewName = "default";
     private ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> communityUriThreadLocal = new ThreadLocal<String>();
@@ -101,10 +97,6 @@ public abstract class CommonController extends ProfileController implements Appl
         return this.communityUriThreadLocal.get();
     }
 
-    protected boolean isValidDeviceUID(String deviceUID){
-        return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
-    }
-
     protected ModelAndView buildModelAndView(Object ... objs){
         return new ModelAndView(defaultViewName, MODEL_NAME, new Response(objs));
     }
@@ -125,16 +117,9 @@ public abstract class CommonController extends ProfileController implements Appl
 		this.jaxb2Marshaller = jaxb2Marshaller;
 	}
 	
-	public void setNowTechTokenBasedRememberMeServices(NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices) {
-		this.nowTechTokenBasedRememberMeServices = nowTechTokenBasedRememberMeServices;
-	}
 
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 
     protected UserService getUserService(String communityUrl){
@@ -315,18 +300,7 @@ public abstract class CommonController extends ProfileController implements Appl
 
 
     public User checkUser(String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses){
-        User user = null;
-        String community = getCurrentCommunityUri();
-        if (isValidDeviceUID(deviceUID)) {
-            user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
-        }
-        else {
-            user = userService.checkCredentials(userName, userToken, timestamp, community);
-        }
-
-        userService.checkActivationStatus(user, activationStatuses);
-
-        return user;
+       return  userService.checkUser(getCurrentCommunityUri(),userName, userToken, timestamp, deviceUID, activationStatuses);
     }
 
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {

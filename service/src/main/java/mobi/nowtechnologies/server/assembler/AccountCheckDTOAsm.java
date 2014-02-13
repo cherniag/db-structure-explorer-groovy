@@ -4,8 +4,8 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
+import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
@@ -121,9 +121,8 @@ public class AccountCheckDTOAsm {
             if (temp.length() != 0)
                 accountCheckDTO.appStoreProductId = temp.substring(1);
         }
-
-        LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         accountCheckDTO.setSocialInfo(buildSocialInfo(user));
+        LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
     }
 
@@ -131,8 +130,8 @@ public class AccountCheckDTOAsm {
         if (!CollectionUtils.isEmpty(user.getSocialInfo())) {
             Collection<SocialInfoDto> result = new ArrayList<SocialInfoDto>((user.getSocialInfo().size()));
             for (SocialInfo currentInfo : user.getSocialInfo()) {
-                if (currentInfo instanceof FBUserInfo) {
-                    result.add(convertFacebookInfoToDTO((FBUserInfo) currentInfo));
+                if (currentInfo instanceof FacebookUserInfo) {
+                    result.add(convertFacebookInfoToDTO((FacebookUserInfo) currentInfo));
                 }
             }
             return result;
@@ -140,7 +139,7 @@ public class AccountCheckDTOAsm {
         return Collections.emptyList();
     }
 
-    private FacebookUserInfoDto convertFacebookInfoToDTO(FBUserInfo details) {
+    private FacebookUserInfoDto convertFacebookInfoToDTO(FacebookUserInfo details) {
         FacebookUserInfoDto result = new FacebookUserInfoDto();
         result.setUserName(details.getUserName());
         result.setFirstName(details.getFirstName());
