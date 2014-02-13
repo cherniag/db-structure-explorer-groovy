@@ -7,7 +7,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "activation_emails",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "deviceUID", "token"})})
+        uniqueConstraints = {@UniqueConstraint(name = "activation_emails_email_deviceUID_token",
+                columnNames = {"email", "deviceUID", "token"})})
 public class ActivationEmail {
 
     public static final String ID = "mid";
