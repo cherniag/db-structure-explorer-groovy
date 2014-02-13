@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.social;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Inheritance( strategy = InheritanceType.JOINED )
 @Table(name="tb_abstractSocialInfo")
-public abstract class AbstractSocialInfo {
+public abstract class SocialInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -39,7 +40,7 @@ public abstract class AbstractSocialInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AbstractSocialInfo that = (AbstractSocialInfo) o;
+        SocialInfo that = (SocialInfo) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
@@ -49,6 +50,11 @@ public abstract class AbstractSocialInfo {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
 

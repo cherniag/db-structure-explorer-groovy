@@ -19,11 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class GetNewsController extends CommonController {
 
 	private MessageService messageService;
-    private AccCheckController accCheckController;
-
-    public void setAccCheckController(AccCheckController accCheckController) {
-        this.accCheckController = accCheckController;
-    }
 
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
@@ -51,7 +46,7 @@ public class GetNewsController extends CommonController {
 
 			NewsDto newsDto= messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
 
-            AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
+            AccountCheckDTO accountCheck = getAccountCheckDTO(user);
 
 			return buildModelAndView(accountCheck, newsDto);
 		} catch (Exception e) {

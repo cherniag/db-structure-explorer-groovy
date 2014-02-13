@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.server.shared.dto.social.AbstractSocialInfoDto;
+import mobi.nowtechnologies.server.shared.dto.social.SocialInfoDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -79,7 +79,7 @@ public class AccountCheckDTO {
     public SubscriptionDirection subscriptionChanged;
     public boolean subjectToAutoOptIn;
 
-    private Collection<AbstractSocialInfoDto> socialInfo;
+    private Collection<SocialInfoDto> socialInfo;
 
     public transient Object user;
 
@@ -149,11 +149,11 @@ public class AccountCheckDTO {
     }
 
 
-    public Collection<AbstractSocialInfoDto> getSocialInfo() {
+    public Collection<SocialInfoDto> getSocialInfo() {
         return socialInfo;
     }
 
-    public void setSocialInfo(Collection<AbstractSocialInfoDto> socialInfo) {
+    public void setSocialInfo(Collection<SocialInfoDto> socialInfo) {
         this.socialInfo = socialInfo;
     }
 

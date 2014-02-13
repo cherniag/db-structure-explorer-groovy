@@ -105,7 +105,7 @@ public class FailedSmsAfterFailedPaymentForO2IT {
    }
 
     private File getLastSmsFile(long time) {
-        File[] list = smsTemporaryFolder.listFiles(new TimestampExtFileNameFileter(time));
+        File[] list = smsTemporaryFolder.listFiles(new TimestampExtFileNameFilter(time));
 
         Assert.assertEquals(1, list.length);
 

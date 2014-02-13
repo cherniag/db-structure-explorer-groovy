@@ -33,12 +33,6 @@ public class GetChartController extends CommonController {
 
     private ChartService chartService;
     private ThrottlingService throttlingService;
-    private AccCheckController accCheckController;
-
-    public void setAccCheckController(AccCheckController accCheckController) {
-        this.accCheckController = accCheckController;
-    }
-
     public void setChartService(ChartService chartService) {
         this.chartService = chartService;
     }
@@ -69,7 +63,7 @@ public class GetChartController extends CommonController {
             ChartDto chartDto = chartService.processGetChartCommand(user, community, true, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
+            AccountCheckDTO accountCheck = getAccountCheckDTO(user);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -103,7 +97,7 @@ public class GetChartController extends CommonController {
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
+            AccountCheckDTO accountCheck = getAccountCheckDTO(user);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -137,7 +131,7 @@ public class GetChartController extends CommonController {
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, true);
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
+            AccountCheckDTO accountCheck = getAccountCheckDTO(user);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -171,7 +165,7 @@ public class GetChartController extends CommonController {
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, true);
 
-            AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
+            AccountCheckDTO accountCheck = getAccountCheckDTO(user);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {

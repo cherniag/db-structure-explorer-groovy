@@ -211,6 +211,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             +"join FETCH userGroup.community community "
             +"join FETCH community.appVersion appVersion "
             +"join FETCH user.status status "
+            +"LEFT join FETCH user.socialInfo socialInfo "
             +"where "
             +"user.id=?1")
     User findUserTree(int userId);

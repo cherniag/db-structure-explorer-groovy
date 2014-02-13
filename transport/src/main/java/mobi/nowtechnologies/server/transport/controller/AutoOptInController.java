@@ -15,12 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class AutoOptInController extends CommonController {
-    private AccCheckController accCheckController;
-
-    public void setAccCheckController(AccCheckController accCheckController) {
-        this.accCheckController = accCheckController;
-    }
-
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
     })
@@ -38,7 +32,7 @@ public class AutoOptInController extends CommonController {
 
             user = userService.autoOptIn(user, otac);
 
-            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
+            AccountCheckDTO accountCheckDTO = getAccountCheckDTO(user);
 
             accountCheckDTO.withHasPotentialPromoCodePromotion(true);
 

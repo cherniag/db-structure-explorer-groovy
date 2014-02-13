@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.service.AccCheckService;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.*;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
@@ -57,6 +59,10 @@ public abstract class CommonController extends ProfileController implements Appl
     private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> remoteAddrThreadLocal = new ThreadLocal<String>();
     protected ApplicationContext applicationContext;
+
+    @Resource
+    private AccCheckService accCheckService;
+
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -307,28 +313,6 @@ public abstract class CommonController extends ProfileController implements Appl
         return sendResponse(errorMessage, status, response);
 	}
 
-	/**
-	 * Returns an auth token that is generated for web portal SSO
-	 * @return rememberMe auth token
-	 */
-	public mobi.nowtechnologies.server.dto.transport.AccountCheckDto precessRememberMeToken(mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheckDTO) {
-		LOGGER.debug("input parameters mobi.nowtechnologies.server.dto.transport.AccountCheckDTO: [{}]", new Object[]{accountCheckDTO});
-
-       accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
-
-		LOGGER.debug("Output parameter mobi.nowtechnologies.server.dto.transport.AccountCheckDTO=[{}]", accountCheckDTO);
-		return accountCheckDTO;
-	}
-	
-	public String getRememberMeToken(String userName, String storedToken) {
-		LOGGER.debug("input parameters userName, storedToken: [{}], [{}]", new String[] { userName, storedToken});
-        notNull(userName , "The parameter userName is null");
-		notNull(storedToken , "The parameter storedToken is null");
-
-		String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken(userName, storedToken);
-		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
-		return rememberMeToken;
-	}
 
     public User checkUser(String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses){
         User user = null;
@@ -352,5 +336,9 @@ public abstract class CommonController extends ProfileController implements Appl
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
         }
+    }
+
+    protected mobi.nowtechnologies.server.dto.transport.AccountCheckDto getAccountCheckDTO(User user) {
+        return accCheckService.processAccCheck(user);
     }
 }

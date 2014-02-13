@@ -4,13 +4,13 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
-import mobi.nowtechnologies.server.persistence.domain.social.AbstractSocialInfo;
+import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.domain.social.FBUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.dto.social.AbstractSocialInfoDto;
+import mobi.nowtechnologies.server.shared.dto.social.SocialInfoDto;
 import mobi.nowtechnologies.server.shared.dto.social.FacebookUserInfoDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
@@ -126,17 +127,17 @@ public class AccountCheckDTOAsm {
         return accountCheckDTO;
     }
 
-    private Collection<AbstractSocialInfoDto> buildSocialInfo(User user) {
+    private Collection<SocialInfoDto> buildSocialInfo(User user) {
         if (!CollectionUtils.isEmpty(user.getSocialInfo())) {
-            Collection<AbstractSocialInfoDto> result = new ArrayList<AbstractSocialInfoDto>((user.getSocialInfo().size()));
-            for (AbstractSocialInfo currentInfo : user.getSocialInfo()) {
+            Collection<SocialInfoDto> result = new ArrayList<SocialInfoDto>((user.getSocialInfo().size()));
+            for (SocialInfo currentInfo : user.getSocialInfo()) {
                 if (currentInfo instanceof FBUserInfo) {
                     result.add(convertFacebookInfoToDTO((FBUserInfo) currentInfo));
                 }
             }
             return result;
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private FacebookUserInfoDto convertFacebookInfoToDTO(FBUserInfo details) {

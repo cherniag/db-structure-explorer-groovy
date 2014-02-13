@@ -28,12 +28,6 @@ import java.util.List;
 @Controller
 public class SignUpDeviceController extends CommonController {
 		
-    private AccCheckController accCheckController;
-
-    public void setAccCheckController(AccCheckController accCheckController) {
-        this.accCheckController = accCheckController;
-    }
-
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
     }
@@ -67,7 +61,7 @@ public class SignUpDeviceController extends CommonController {
 
 		        user = userService.registerUser(userDeviceDetailsDto, false);
 
-                AccountCheckDTO accountCheck = accCheckController.processAccCheck(user);
+                AccountCheckDTO accountCheck = getAccountCheckDTO(user);
 
 		        return buildModelAndView(accountCheck);
         }catch (ValidationException ve){

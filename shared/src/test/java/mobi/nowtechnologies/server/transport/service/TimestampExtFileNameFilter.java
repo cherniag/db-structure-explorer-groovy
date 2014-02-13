@@ -9,10 +9,10 @@ import java.io.FilenameFilter;
 /**
 * Created by oar on 12/23/13.
 */
-public class TimestampExtFileNameFileter implements FilenameFilter {
+public class TimestampExtFileNameFilter implements FilenameFilter {
     private long cutoff;
 
-    public TimestampExtFileNameFileter(long cutoff) {
+    public TimestampExtFileNameFilter(long cutoff) {
         this.cutoff = cutoff;
     }
 

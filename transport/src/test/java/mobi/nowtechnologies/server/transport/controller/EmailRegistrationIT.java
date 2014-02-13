@@ -13,7 +13,7 @@ import mobi.nowtechnologies.server.service.MailTemplateProcessor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFileter;
+import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -210,7 +210,7 @@ public class EmailRegistrationIT {
         params.put(ActivationEmail.ID, activationEmail.getId().toString());
         params.put(ActivationEmail.TOKEN, activationEmail.getToken());
 
-        File file = temporaryFolder.listFiles(new TimestampExtFileNameFileter(time))[0];
+        File file = temporaryFolder.listFiles(new TimestampExtFileNameFilter(time))[0];
         List<String> text = Files.readLines(file, Charsets.UTF_8);
         assertTrue(text.contains("from: " + from));
         assertTrue(text.contains("to: " + email));

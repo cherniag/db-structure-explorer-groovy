@@ -1,9 +1,11 @@
 package mobi.nowtechnologies.server.shared.dto.social;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Created by oar on 2/10/14.
  */
-public class FacebookUserInfoDto extends AbstractSocialInfoDto{
+public class FacebookUserInfoDto extends SocialInfoDto {
 
     private String email;
 
@@ -70,5 +72,10 @@ public class FacebookUserInfoDto extends AbstractSocialInfoDto{
     @Override
     public SocialInfoType getSocialInfoType() {
         return SocialInfoType.Facebook;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

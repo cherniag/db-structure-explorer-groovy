@@ -19,12 +19,6 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
 
     private PromotionService promotionService;
 
-    private AccCheckController accCheckController;
-
-    public void setAccCheckController(AccCheckController accCheckController) {
-        this.accCheckController = accCheckController;
-    }
-
     public void setPromotionService(PromotionService promotionService) {
         this.promotionService = promotionService;
     }
@@ -45,7 +39,7 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
 
             user = promotionService.activateVideoAudioFreeTrial(user);
 
-            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
+            AccountCheckDTO accountCheckDTO = getAccountCheckDTO(user);
 
             return buildModelAndView(accountCheckDTO);
         } catch (Exception e) {

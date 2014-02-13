@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.Rollback;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -61,7 +60,6 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
     }
 
 	@Test
-	@Rollback
 	public void testFindBefore48hExpireUsers() throws Exception {
 		final int epochSeconds = getEpochSeconds();
 
@@ -92,7 +90,6 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 	}
 	
 	@Test
-	@Rollback
 	public void testFindBefore48hExpireUsers_InActivePaymentDetails() throws Exception {
 		final int epochSeconds = getEpochSeconds();
 
@@ -122,7 +119,6 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 	}
 	
 	@Test
-	@Rollback
 	public void testFindBefore48hExpireUsers_LastBefore48SmsMillisAfter48() throws Exception {
 		final int epochSeconds = getEpochSeconds();
 		final int nextSubPaymentSeconds = epochSeconds + DAY_SECONDS;
@@ -153,7 +149,6 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 	}
 	
 	@Test
-	@Rollback
 	public void testFindBefore48hExpireUsers_NextSubPaymentAtThreeDays() throws Exception {
 		final int epochSeconds = getEpochSeconds();
 
@@ -183,7 +178,6 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 	}
 	
 	@Test
-	@Rollback
 	public void testFindBefore48hExpireUsers_NextSubPaymentAtDay() throws Exception {
 		final int epochSeconds = getEpochSeconds();
 
@@ -214,7 +208,6 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 	}
 	
 	@Test
-	@Rollback
 	public void testFindBefore48hExpireUsers_NextSubPaymentNow() throws Exception {
 		final int epochSeconds = getEpochSeconds();
 

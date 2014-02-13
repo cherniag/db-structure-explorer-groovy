@@ -477,5 +477,8 @@
 		</property>
 	</bean>
     <bean id="taskThreadPoolExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"/>
+
+    <bean id="accCheckService" class="mobi.nowtechnologies.server.service.AccCheckService"/>
+
     <import resource="classpath:controllers.xml" />
 </beans>

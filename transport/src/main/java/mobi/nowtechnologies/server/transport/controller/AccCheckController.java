@@ -3,10 +3,6 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.dto.transport.LockedTrackDto;
-import mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.*;
@@ -18,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -126,7 +120,7 @@ public class AccCheckController extends CommonController {
                 LOGGER.error(e.getMessage(), e);
             }
 
-            AccountCheckDto accountCheck = processAccCheck(user);
+            mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheck = processAccCheck(user);
 
             return buildModelAndView(accountCheck);
         } catch (Exception e) {
@@ -167,25 +161,7 @@ public class AccCheckController extends CommonController {
     }
 
     public AccountCheckDto processAccCheck(User user){
-
-        user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
-
-        Community community = user.getUserGroup().getCommunity();
-
-        List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user));
-
-        accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
-        accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
-
-        user = userService.getUserWithSelectedCharts(user.getId());
-        List<ChartDetail> chartDetails = chartService.getLockedChartItems(user);
-
-        AccountCheckDto accountCheck = new AccountCheckDto(accountCheckDTO);
-        accountCheck.lockedTracks = LockedTrackDto.fromChartDetailList(chartDetails);
-        accountCheck.playlists = SelectedPlaylistDto.fromChartList(user.getSelectedCharts());
-
-        return precessRememberMeToken(accountCheck);
+        return getAccountCheckDTO(user);
     }
 
     private void logAboutSuccessfullAccountCheck() {

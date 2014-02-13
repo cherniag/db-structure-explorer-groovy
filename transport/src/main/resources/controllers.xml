@@ -32,24 +32,20 @@
 	<bean id="transport.ApplyInitPromoController" class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >
         <property name="updateO2UserTask" ref="job.UpdateO2UserTask"/>
         <property name="userPromoService" ref="service.UserPromoService"/>
-        <property name="accCheckController" ref="transport.AccCheckController"/>
     </bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.SignUpDeviceController" parent="transport.CommonController">
 		<property name="communityService" ref="service.communityService" />
-        <property name="accCheckController" ref="transport.AccCheckController"/>
 	</bean>
 
 	<bean class="mobi.nowtechnologies.server.transport.controller.GetChartController" parent="transport.CommonController">
 		<property name="chartService" ref="service.ChartService" />
 		<property name="throttlingService" ref="throttlingService" />
-        <property name="accCheckController" ref="transport.AccCheckController"/>
 	</bean>
 	
 	<bean class="mobi.nowtechnologies.server.transport.controller.GetNewsController" parent="transport.CommonController">
 		<property name="userService" ref="service.UserService" />
 		<property name="messageService" ref="service.MessageService" />
-        <property name="accCheckController" ref="transport.AccCheckController"/>
 	</bean>
 	
 	<bean class="mobi.nowtechnologies.server.transport.controller.PhoneNumberController" parent="transport.CommonController">
@@ -70,15 +66,14 @@
 
     <bean id="transport.ActivateVideoAudioFreeTrialController" class="mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController" parent="transport.CommonController">
         <property name="promotionService" ref="service.PromotionService"/>
-        <property name="accCheckController" ref="transport.AccCheckController"/>
     </bean>
 
     <bean id="transport.AutoOptInController" class="mobi.nowtechnologies.server.transport.controller.AutoOptInController" parent="transport.CommonController">
-        <property name="accCheckController" ref="transport.AccCheckController"/>
     </bean>
 
     <bean id="transport.EmailRegistrationController" class="mobi.nowtechnologies.server.transport.controller.EmailRegistrationController" parent="transport.CommonController">
         <property name="activationEmailService" ref="service.ActivationEmailService"/>
     </bean>
 
+    <bean id="transport.SignInFacebook" class="mobi.nowtechnologies.server.transport.controller.SigninFacebookController" parent="transport.CommonController"/>
 </beans>

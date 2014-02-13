@@ -10,7 +10,7 @@ import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.transport.service.PostsSaverPostService;
-import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFileter;
+import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,7 +130,7 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
     }
 
     private File getLastSmsFile(long time) {
-        File[] list = smsTemporaryFolder.listFiles(new TimestampExtFileNameFileter(time));
+        File[] list = smsTemporaryFolder.listFiles(new TimestampExtFileNameFilter(time));
 
         Assert.assertEquals(1, list.length);
 
