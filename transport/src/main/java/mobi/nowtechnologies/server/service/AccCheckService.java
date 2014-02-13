@@ -22,7 +22,7 @@ import static org.apache.commons.lang.Validate.notNull;
  */
 public class AccCheckService {
 
-   @Resource(name = "service.UserService")
+    @Resource(name = "service.UserService")
     private UserService userService;
 
     @Resource
@@ -44,7 +44,7 @@ public class AccCheckService {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 
-    public AccountCheckDto processAccCheck(User user){
+    public AccountCheckDto processAccCheck(User user) {
 
         user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
@@ -66,7 +66,7 @@ public class AccCheckService {
         return precessRememberMeToken(accountCheck);
     }
 
-    public mobi.nowtechnologies.server.dto.transport.AccountCheckDto precessRememberMeToken(mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheckDTO) {
+    private mobi.nowtechnologies.server.dto.transport.AccountCheckDto precessRememberMeToken(mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheckDTO) {
         LOGGER.debug("input parameters mobi.nowtechnologies.server.dto.transport.AccountCheckDTO: [{}]", new Object[]{accountCheckDTO});
 
         accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
@@ -75,10 +75,10 @@ public class AccCheckService {
         return accountCheckDTO;
     }
 
-    public String getRememberMeToken(String userName, String storedToken) {
-        LOGGER.debug("input parameters userName, storedToken: [{}], [{}]", new String[] { userName, storedToken});
-        notNull(userName , "The parameter userName is null");
-        notNull(storedToken , "The parameter storedToken is null");
+    private String getRememberMeToken(String userName, String storedToken) {
+        LOGGER.debug("input parameters userName, storedToken: [{}], [{}]", new String[]{userName, storedToken});
+        notNull(userName, "The parameter userName is null");
+        notNull(storedToken, "The parameter storedToken is null");
 
         String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken(userName, storedToken);
         LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
