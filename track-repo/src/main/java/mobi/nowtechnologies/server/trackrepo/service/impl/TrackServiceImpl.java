@@ -415,15 +415,22 @@ public class TrackServiceImpl implements TrackService {
 		try {
 			
 			DOMSource response = restTemplate.getForObject(sevenDigitalApiUrl, DOMSource.class, isrc, sevenDigitalApiKey);
-		
+			
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			String releaseId = xPath.evaluate("/response/searchResults/searchResult[1]/track/release/@id", response.getNode().getFirstChild());
+			String trackId = xPath.evaluate("/response/searchResults/searchResult[1]/track/@id", response.getNode().getFirstChild());
 			
 			if (StringUtils.isBlank(releaseId)) {
 				return null;
 			}
 			
-			return "https://m.7digital.com/releases/" + releaseId + "?partner=3734";
+			if (StringUtils.isBlank(trackId)) {
+				trackId = "";
+			} else {
+				trackId = "#t" + trackId;
+			}
+			
+			return "https://m.7digital.com/GB/releases/" + releaseId + trackId + "?partner=3734";
 			
 		} catch (Exception e) {
 			
