@@ -110,7 +110,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
 
     private void applyInitPromoByEmail(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/o2/4.0/EMAIL_CONFIRM_APPLY_INIT_PROMO")
+        mockMvc.perform(post("/o2/4.0/SIGN_IN_EMAIL")
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
                 .param("EMAIL_ID", activationEmail.getId().toString())
