@@ -34,6 +34,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
     public void activate(Long id, String email, String token) {
         LOGGER.info("Activating email with id: [{}], email: [{}], token: [{}]", id, email, token);
         ActivationEmail activationEmail = activationEmailRepository.findOne(id);
+        Assert.notNull(activationEmail, "ActivationEmail for id=" + id + " is not found");
         Assert.isTrue(!activationEmail.isActivated(), "ActivationEmail must not be activated");
         Assert.isTrue(activationEmail.getToken().equals(token), "Wrong token");
         Assert.isTrue(email.equals(activationEmail.getEmail()), "Wrong email");
