@@ -40,7 +40,7 @@ public class ActivationEmail {
     }
 
     public static String generateToken(String email, User user) {
-        return Utils.md5(email + System.currentTimeMillis());
+        return Utils.md5(email + user.getDeviceUID() + Utils.getRandomString(7) + System.currentTimeMillis());
     }
 
     public Long getId() {

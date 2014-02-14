@@ -62,7 +62,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
             String body = messageSource.getMessage(community, user.getDeviceType().getName()
                     + ".activation.email.body", null, null, null);
             mailService.sendMail(from, new String[]{email}, subject, body, params);
-            LOGGER.info("Email sent");
+            LOGGER.info("Email to [{}] sent", email);
         } else {
             throw new ValidationException("Email " + email + " is not valid!");
         }
