@@ -5,7 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * Created by oar on 2/10/14.
  */
-public class FacebookUserInfoDto extends SocialInfoDto {
+public class FacebookUserDetailsDto extends UserDetailsDto {
 
     private String email;
 

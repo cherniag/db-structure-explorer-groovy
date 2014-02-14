@@ -146,7 +146,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     public void testSignUpAndApplyPromoForFacebookWithDifferentAccountsWithSuccess() throws Exception {
         final String otherFacebookUserId = "user2";
         final String otherFacebookEmail = "o2@ukr.net";
-        String facebookElementJsonPath = "$.response.data[0].user.socialInfo[0]";
+        String facebookElementJsonPath = "$.response.data[0].user.userDetails";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
