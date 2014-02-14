@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,17 +25,17 @@ public class SignInEmailController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**//*{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_IN_EMAIL"})
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_IN_EMAIL"})
     public ModelAndView applyPromotionByEmail(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("EMAIL_ID") Long activationEmailId,
             @RequestParam("EMAIL") String email,
             @RequestParam("TOKEN") String token,
-            @RequestParam("DEVICE_UID") String deviceUID) {
+            @RequestParam("DEVICE_UID") String deviceUID,
+            @PathVariable String community) {
         Exception ex = null;
         User user = null;
-        String community = getCurrentCommunityUri();
         try {
             LOGGER.info("SIGN_IN_EMAIL Started for activationEmailId: [{}], email: [{}], deviceUID: [{}]",
                     activationEmailId, email, deviceUID);
@@ -54,7 +55,7 @@ public class SignInEmailController extends CommonController {
             throw re;
         } finally {
             logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("SIGN_IN_EMAIL error: [{}] for user :[{}], community: [{}], activationEmailId: [{}]",
+            LOGGER.info("SIGN_IN_EMAIL error for user: [{}], community: [{}], activationEmailId: [{}]",
                     deviceUID, community, activationEmailId);
         }
     }

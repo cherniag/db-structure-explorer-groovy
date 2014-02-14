@@ -28,10 +28,9 @@ import java.util.Map;
 
 import static junit.framework.Assert.*;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
 
-public class EmailRegistrationIT extends AbstractControllerTestIT{
+public class EmailRegistrationIT extends AbstractControllerTestIT {
 
     @Autowired
     private UserRepository userRepository;
@@ -94,6 +93,19 @@ public class EmailRegistrationIT extends AbstractControllerTestIT{
         assertNull(user);
     }
 
+    @Test
+    public void testSkipRegistration() throws Exception {
+        String storedToken = signUpDevice(DEVICE_UID_1);
+        User user = checkUserAfterSignupDevice(DEVICE_UID_1);
+
+        String timestamp = "2011_12_26_07_04_23";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        checkGetChart(user, timestamp, userToken);
+
+        checkGetNews(user, timestamp, userToken);
+    }
+
     private void registerFirstUserOnAnotherDevice(User user) throws Exception {
         String storedToken = signUpDevice(DEVICE_UID_2);
         User userOnAnotherDevice = checkUserAfterSignupDevice(DEVICE_UID_2);
@@ -115,6 +127,11 @@ public class EmailRegistrationIT extends AbstractControllerTestIT{
         assertEquals(DEVICE_UID_2, user.getDeviceUID());
 
         assertNull(userRepository.findOne(DEVICE_UID_1, Community.O2_COMMUNITY_REWRITE_URL));
+
+        userToken = Utils.createTimestampToken(user.getToken(), timestamp);
+
+        checkGetChart(user, timestamp, userToken);
+        checkGetNews(user, timestamp, userToken);
     }
 
     private void registerSecondUserOnDevice(User user) throws Exception {
@@ -143,6 +160,11 @@ public class EmailRegistrationIT extends AbstractControllerTestIT{
         User oldUser = userRepository.findOne(user.getUserName(), Community.O2_COMMUNITY_REWRITE_URL);
         assertEquals(UserStatus.SUBSCRIBED.name(), oldUser.getStatus().getName());
         assertTrue(oldUser.getDeviceUID().contains(DISABLED));
+
+        userToken = Utils.createTimestampToken(secondUser.getToken(), timestamp);
+
+        checkGetChart(secondUser, timestamp, userToken);
+        checkGetNews(secondUser, timestamp, userToken);
     }
 
     private User registerFirstUserOnDevice() throws Exception {
@@ -163,6 +185,11 @@ public class EmailRegistrationIT extends AbstractControllerTestIT{
 
         user = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
         checkActivatedUser(user, EMAIL_1);
+
+        userToken = Utils.createTimestampToken(user.getToken(), timestamp);
+
+        checkGetChart(user, timestamp, userToken);
+        checkGetNews(user, timestamp, userToken);
         return user;
     }
 
@@ -245,6 +272,28 @@ public class EmailRegistrationIT extends AbstractControllerTestIT{
         assertEquals(UserStatus.SUBSCRIBED.name(), user.getStatus().getName());
         assertEquals(firstUserEmail, user.getUserName());
         assertEquals(Community.O2_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
+    }
+
+    private void checkGetNews(User user, String timestamp, String userToken) throws Exception {
+        mockMvc.perform(
+                post("/o2/5.5/GET_NEWS.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", user.getDeviceUID())
+        ).andExpect(status().isOk()).andExpect(jsonPath("$.response..items").exists()).
+                andExpect(jsonPath("$.response..news").exists()).
+                andExpect(jsonPath("$.response..user").exists());
+    }
+
+    private void checkGetChart(User user, String timestamp, String userToken) throws Exception {
+        mockMvc.perform(
+                post("/o2/5.5/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", user.getDeviceUID())
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061"));
     }
 
 
