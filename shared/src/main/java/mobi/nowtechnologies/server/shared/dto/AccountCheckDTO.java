@@ -1,13 +1,12 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import mobi.nowtechnologies.server.shared.dto.social.SocialInfoDto;
+import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collection;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -79,7 +78,7 @@ public class AccountCheckDTO {
     public SubscriptionDirection subscriptionChanged;
     public boolean subjectToAutoOptIn;
 
-    private Collection<SocialInfoDto> socialInfo;
+    private UserDetailsDto userDetails;
 
     public transient Object user;
 
@@ -139,7 +138,7 @@ public class AccountCheckDTO {
         this.eligibleForVideo = accountCheckDTO.eligibleForVideo;
         this.subjectToAutoOptIn = accountCheckDTO.subjectToAutoOptIn;
         this.tariff = accountCheckDTO.tariff;
-        this.setSocialInfo(accountCheckDTO.getSocialInfo());
+        this.setUserDetails(accountCheckDTO.getUserDetails());
         accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
 	}
 
@@ -148,18 +147,18 @@ public class AccountCheckDTO {
         return this;
     }
 
-
-    public Collection<SocialInfoDto> getSocialInfo() {
-        return socialInfo;
-    }
-
-    public void setSocialInfo(Collection<SocialInfoDto> socialInfo) {
-        this.socialInfo = socialInfo;
-    }
-
     public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
         this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
         return this;
+    }
+
+
+    public UserDetailsDto getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(UserDetailsDto userDetails) {
+        this.userDetails = userDetails;
     }
 
 
@@ -212,7 +211,7 @@ public class AccountCheckDTO {
                 .append("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
                 .append("subscriptionChanged", subscriptionChanged)
                 .append("subjectToAutoOptIn", subjectToAutoOptIn)
-                .append("socialInfo", socialInfo)
+                .append("userDetails", userDetails)
                 .toString();
     }
 }

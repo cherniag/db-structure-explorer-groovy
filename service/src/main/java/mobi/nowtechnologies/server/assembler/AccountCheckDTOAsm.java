@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.assembler;
 
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
@@ -10,21 +12,20 @@ import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNu
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.dto.social.SocialInfoDto;
-import mobi.nowtechnologies.server.shared.dto.social.FacebookUserInfoDto;
+import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import org.apache.commons.collections.CollectionUtils;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
+import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
+import static mobi.nowtechnologies.server.shared.CollectionUtils.unique;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 
@@ -111,36 +112,32 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.subjectToAutoOptIn = calcSubjectToAutoOptIn(user);
         accountCheckDTO.user = user;
 
-        if (appStoreProductIds != null) {
-            StringBuilder temp = new StringBuilder();
-            for (String appStoreProductId : appStoreProductIds) {
-                if (appStoreProductId != null) {
-                    temp.append("," + appStoreProductId);
-                }
-            }
-            if (temp.length() != 0)
-                accountCheckDTO.appStoreProductId = temp.substring(1);
+        if (!isEmpty(appStoreProductIds)){
+            accountCheckDTO.appStoreProductId = Joiner.on(",").skipNulls().join(appStoreProductIds);
         }
-        accountCheckDTO.setSocialInfo(buildSocialInfo(user));
+
+        accountCheckDTO.setUserDetails(buildUserDetails(user));
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
     }
 
-    private Collection<SocialInfoDto> buildSocialInfo(User user) {
-        if (!CollectionUtils.isEmpty(user.getSocialInfo())) {
-            Collection<SocialInfoDto> result = new ArrayList<SocialInfoDto>((user.getSocialInfo().size()));
-            for (SocialInfo currentInfo : user.getSocialInfo()) {
-                if (currentInfo instanceof FacebookUserInfo) {
-                    result.add(convertFacebookInfoToDTO((FacebookUserInfo) currentInfo));
-                }
+    private UserDetailsDto buildUserDetails(User user) {
+        if (ProviderType.FACEBOOK.equals(user.getProvider())) {
+            if (!isEmpty(user.getSocialInfo())) {
+                FacebookUserInfo facebookUserInfo = (FacebookUserInfo) unique(user.getSocialInfo(), new Predicate<SocialInfo>() {
+                    @Override
+                    public boolean apply(SocialInfo input) {
+                        return input instanceof FacebookUserInfo;
+                    }
+                });
+                return convertFacebookInfoToDetails(facebookUserInfo);
             }
-            return result;
         }
-        return Collections.emptyList();
+        return null;
     }
 
-    private FacebookUserInfoDto convertFacebookInfoToDTO(FacebookUserInfo details) {
-        FacebookUserInfoDto result = new FacebookUserInfoDto();
+    private FacebookUserDetailsDto convertFacebookInfoToDetails(FacebookUserInfo details) {
+        FacebookUserDetailsDto result = new FacebookUserDetailsDto();
         result.setUserName(details.getUserName());
         result.setFirstName(details.getFirstName());
         result.setSurname(details.getSurname());

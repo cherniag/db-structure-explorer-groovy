@@ -5,7 +5,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 /**
  * Created by oar on 2/11/14.
  */
-public abstract class SocialInfoDto {
+public abstract class UserDetailsDto {
 
     @JsonProperty("socialInfoType")
     public abstract SocialInfoType getSocialInfoType();
