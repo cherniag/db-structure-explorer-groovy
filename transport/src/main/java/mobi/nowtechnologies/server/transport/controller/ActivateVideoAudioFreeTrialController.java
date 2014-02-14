@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+
 /**
  * User: Titov Mykhaylo (titov)
  * 22.07.13 17:24
@@ -17,11 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ActivateVideoAudioFreeTrialController extends CommonController {
 
+    @Resource
     private PromotionService promotionService;
-
-    public void setPromotionService(PromotionService promotionService) {
-        this.promotionService = promotionService;
-    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL"})

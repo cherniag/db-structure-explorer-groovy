@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,15 +32,11 @@ import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
 @Controller
 public class GetChartController extends CommonController {
 
+    @Resource
     private ChartService chartService;
-    private ThrottlingService throttlingService;
-    public void setChartService(ChartService chartService) {
-        this.chartService = chartService;
-    }
 
-    public void setThrottlingService(ThrottlingService throttlingService) {
-        this.throttlingService = throttlingService;
-    }
+    @Resource
+    private ThrottlingService throttlingService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community:o2}/3.6/GET_CHART"

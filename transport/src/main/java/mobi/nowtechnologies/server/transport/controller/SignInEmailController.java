@@ -7,20 +7,21 @@ import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+
 @Controller
 public class SignInEmailController extends CommonController {
 
-    @Autowired
-    private UserPromoService userPromoService;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SignInEmailController.class);
+
+    @Resource
+    private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**//*{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_IN_EMAIL"})

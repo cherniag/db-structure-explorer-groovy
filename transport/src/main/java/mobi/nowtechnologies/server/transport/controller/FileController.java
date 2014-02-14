@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -33,11 +34,8 @@ import java.util.Map;
 public class FileController extends CommonController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class.getName());
 
-	private FileService fileService;
-
-	public void setFileService(FileService fileService) {
-		this.fileService = fileService;
-	}
+	@Resource
+    private FileService fileService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/GET_FILE"
@@ -74,14 +72,6 @@ public class FileController extends CommonController {
             logProfileData(null, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
-    }
-
-    protected User checkCredentials(String userName, String userToken, String timestamp, String communityName){
-        if (userName == null)
-            throw new NullPointerException("The parameter userName is null");
-        if (communityName == null)
-            throw new NullPointerException("The parameter communityName is null");
-        return userService.checkCredentials(userName, userToken, timestamp, communityName);
     }
 
     protected ModelAndView processGetFile(User user, String mediaId, FileType fileType, String resolution,final HttpServletRequest request){

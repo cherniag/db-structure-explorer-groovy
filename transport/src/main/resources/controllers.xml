@@ -3,77 +3,33 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="transport.CommonController" abstract="true">
-		<property name="view" ref="transport.JaxbMarshallingView" />
-		<property name="userService" ref="service.UserService" />
-		<property name="jaxb2Marshaller" ref="transport.JaxbMarshaller" />
-		<property name="messageSource" ref="serviceMessageSource" />
-		<property name="communityService" ref="service.communityService" />
-	</bean>
+	<bean class="mobi.nowtechnologies.server.transport.controller.FileController" />
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.FileController" parent="transport.CommonController">
-		<property name="fileService" ref="service.FileService" />
-	</bean>
+	<bean id="transport.AccCheckController" class="mobi.nowtechnologies.server.transport.controller.AccCheckController" />
 
-	<bean id="transport.AccCheckController" class="mobi.nowtechnologies.server.transport.controller.AccCheckController" parent="transport.CommonController">
-		<property name="accountCheckDTOAsm" ref="accountCheckDTOAsm" />
-		<property name="deviceUserDataService" ref="service.DeviceUserDataService" />
-		<property name="chartService" ref="service.ChartService" />
-		<property name="userDeviceDetailsService" ref="service.UserDeviceDetailsService" />
-		<property name="accountLogService" ref="service.AccountLogService" />
-		<property name="offerService" ref="service.OfferService" />
-		<property name="iTunesService" ref="service.ITunesService" />
-		<property name="deviceService" ref="service.DeviceService" />
-		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
-	</bean>
+	<bean id="transport.ApplyInitPromoController" class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController"  />
 
-	<bean id="transport.ApplyInitPromoController" class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController" parent="transport.CommonController" >
-        <property name="updateO2UserTask" ref="job.UpdateO2UserTask"/>
-        <property name="userPromoService" ref="service.UserPromoService"/>
-    </bean>
+	<bean class="mobi.nowtechnologies.server.transport.controller.SignUpDeviceController" />
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.SignUpDeviceController" parent="transport.CommonController">
-		<property name="communityService" ref="service.communityService" />
-	</bean>
+	<bean class="mobi.nowtechnologies.server.transport.controller.GetChartController" />
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.GetChartController" parent="transport.CommonController">
-		<property name="chartService" ref="service.ChartService" />
-		<property name="throttlingService" ref="throttlingService" />
-	</bean>
-	
-	<bean class="mobi.nowtechnologies.server.transport.controller.GetNewsController" parent="transport.CommonController">
-		<property name="userService" ref="service.UserService" />
-		<property name="messageService" ref="service.MessageService" />
-	</bean>
-	
-	<bean class="mobi.nowtechnologies.server.transport.controller.PhoneNumberController" parent="transport.CommonController">
-		<property name="userService" ref="service.UserService" />
-	</bean>
+	<bean class="mobi.nowtechnologies.server.transport.controller.GetNewsController" />
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.MigController">
-		<property name="userService" ref="service.UserService" />
-		<property name="migPaymentService" ref="service.migPaymentService" />
-	</bean>
+	<bean class="mobi.nowtechnologies.server.transport.controller.PhoneNumberController" />
 
-	<bean id="controller.VersionController" class="mobi.nowtechnologies.server.controller.VersionController">
-		<property name="versionService" ref="service.VersionService" />
-	</bean>
-	
- 	<bean class="mobi.nowtechnologies.server.transport.controller.UnsubscribeController" parent="transport.CommonController">
- 	</bean>
+	<bean class="mobi.nowtechnologies.server.transport.controller.MigController"/>
 
-    <bean id="transport.ActivateVideoAudioFreeTrialController" class="mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController" parent="transport.CommonController">
-        <property name="promotionService" ref="service.PromotionService"/>
-    </bean>
+	<bean id="controller.VersionController" class="mobi.nowtechnologies.server.controller.VersionController"/>
 
-    <bean id="transport.AutoOptInController" class="mobi.nowtechnologies.server.transport.controller.AutoOptInController" parent="transport.CommonController">
-    </bean>
+ 	<bean class="mobi.nowtechnologies.server.transport.controller.UnsubscribeController" />
 
-    <bean id="transport.EmailGenerationController" class="mobi.nowtechnologies.server.transport.controller.EmailGenerationController" parent="transport.CommonController">
-        <property name="activationEmailService" ref="service.ActivationEmailService"/>
-    </bean>
+    <bean id="transport.ActivateVideoAudioFreeTrialController" class="mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController" />
 
-    <bean id="transport.SignInFacebook" class="mobi.nowtechnologies.server.transport.controller.SigninFacebookController" parent="transport.CommonController"/>
+    <bean id="transport.AutoOptInController" class="mobi.nowtechnologies.server.transport.controller.AutoOptInController" />
 
-    <bean id="transport.SignInEmailController" class="mobi.nowtechnologies.server.transport.controller.SignInEmailController" parent="transport.CommonController"/>
+    <bean id="transport.EmailGenerationController" class="mobi.nowtechnologies.server.transport.controller.EmailGenerationController" />
+
+    <bean id="transport.SignInFacebook" class="mobi.nowtechnologies.server.transport.controller.SigninFacebookController" />
+
+    <bean id="transport.SignInEmailController" class="mobi.nowtechnologies.server.transport.controller.SignInEmailController" />
 </beans>

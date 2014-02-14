@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
@@ -85,7 +86,7 @@ public abstract class AbstractControllerTestIT {
     public void tireDown() {
         o2ProviderService.setO2Service(o2Service);
         userService.setMobileProviderService(o2ProviderService);
-        applyInitPromoController.setUpdateO2UserTask(updateO2UserTaskSpy);
+        ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
         sqlTestInitializer.cleanDynamicTestData();
     }
 
@@ -102,7 +103,7 @@ public abstract class AbstractControllerTestIT {
         userService.setMobileProviderService(o2ProviderServiceSpy);
         userService.setO2ClientService(o2ProviderServiceSpy);
         otacValidationService.setO2ProviderService(o2ProviderServiceSpy);
-        applyInitPromoController.setUpdateO2UserTask(updateO2UserTaskSpy);
+        ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
 
         sqlTestInitializer.prepareDynamicTestData("classpath:META-INF/dynamic-test-data.sql");
     }

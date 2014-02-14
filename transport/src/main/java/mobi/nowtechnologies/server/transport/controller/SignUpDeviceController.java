@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.validator.UserDeviceRegDetailsDtoValidator;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
@@ -28,10 +27,6 @@ import java.util.List;
 @Controller
 public class SignUpDeviceController extends CommonController {
 		
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
-    }
-
 	@InitBinder(UserDeviceRegDetailsDto.NAME)
 	public void initUserDeviceRegDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
 		binder.setValidator(new UserDeviceRegDetailsDtoValidator(getCurrentCommunityUri(), getCurrentRemoteAddr(), userService, communityService));

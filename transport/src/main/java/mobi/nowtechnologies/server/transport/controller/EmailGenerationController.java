@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+
 @Controller
 public class EmailGenerationController extends CommonController {
 
+    @Resource
     private ActivationEmailService activationEmailService;
 
     @RequestMapping(method = RequestMethod.POST,
@@ -27,7 +30,4 @@ public class EmailGenerationController extends CommonController {
         return buildModelAndView(activationEmail.getId());
     }
 
-    public void setActivationEmailService(ActivationEmailService activationEmailService) {
-        this.activationEmailService = activationEmailService;
-    }
 }
