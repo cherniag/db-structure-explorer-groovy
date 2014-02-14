@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -49,7 +48,7 @@ public abstract class AbstractControllerTestIT {
     protected MockMvc mockMvc;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private WebApplicationContext applicationContext;
 
     @Autowired
     private O2ProviderServiceImpl o2ProviderService;
@@ -92,7 +91,7 @@ public abstract class AbstractControllerTestIT {
 
     @Before
     public void setUp() throws Exception {
-        mockMvc = webApplicationContextSetup((WebApplicationContext) applicationContext).build();
+        mockMvc = webApplicationContextSetup(applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
         o2ProviderServiceSpy = spy(o2ProviderServiceTarget);
