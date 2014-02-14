@@ -57,7 +57,7 @@ public class ActivationEmailServiceTest {
         ActivationEmail activationEmail = new ActivationEmail();
         activationEmail.setEmail(EMAIL);
         activationEmail.setDeviceUID("htc");
-        String token = ActivationEmail.generateToken(EMAIL, UserFactory.createUser());
+        String token = ActivationEmail.generateToken(EMAIL, "htc");
         activationEmail.setToken(token);
         when(activationEmailRepository.findOne(1l)).thenReturn(activationEmail);
 
@@ -77,7 +77,7 @@ public class ActivationEmailServiceTest {
         activationEmail.setEmail(EMAIL);
         activationEmail.setDeviceUID("htc");
         activationEmail.setToken("ttt");
-        String token = ActivationEmail.generateToken(EMAIL, UserFactory.createUser());
+        String token = ActivationEmail.generateToken(EMAIL, "htc");
         when(activationEmailRepository.findOne(1l)).thenReturn(activationEmail);
 
         activationEmailService.activate(1l, EMAIL, token);
@@ -89,7 +89,7 @@ public class ActivationEmailServiceTest {
         activationEmail.setEmail(EMAIL);
         activationEmail.setDeviceUID("htc");
         activationEmail.setActivated(true);
-        String token = ActivationEmail.generateToken(EMAIL, UserFactory.createUser());
+        String token = ActivationEmail.generateToken(EMAIL, "htc");
         activationEmail.setToken(token);
         when(activationEmailRepository.findOne(1l)).thenReturn(activationEmail);
 
@@ -101,7 +101,7 @@ public class ActivationEmailServiceTest {
         ActivationEmail activationEmail = new ActivationEmail();
         activationEmail.setEmail("ttt@gmail.com");
         activationEmail.setDeviceUID("htc");
-        String token = ActivationEmail.generateToken(EMAIL, UserFactory.createUser());
+        String token = ActivationEmail.generateToken(EMAIL, "htc");
         activationEmail.setToken(token);
         when(activationEmailRepository.findOne(1l)).thenReturn(activationEmail);
 
@@ -112,7 +112,7 @@ public class ActivationEmailServiceTest {
     public void testActivateEmailWrongId() {
         when(activationEmailRepository.findOne(1l)).thenReturn(null);
 
-        String token = ActivationEmail.generateToken(EMAIL, UserFactory.createUser());
+        String token = ActivationEmail.generateToken(EMAIL, "htc");
 
         activationEmailService.activate(1l, EMAIL, token);
     }
