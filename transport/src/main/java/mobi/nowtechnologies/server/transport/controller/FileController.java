@@ -26,15 +26,15 @@ import java.util.Map;
 
 /**
  * FileController
- * 
+ *
  * @author Maksym Chernolevskyi (maksym)
- * 
+ *
  */
 @Controller
 public class FileController extends CommonController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class.getName());
 
-	@Resource
+    @Resource
     private FileService fileService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -104,7 +104,7 @@ public class FileController extends CommonController {
         }, "EMPTY", new Object());
     }
 
-	private String getContentType(String name) {
-		return fileService.getContentType(name);
-	}
+    private String getContentType(String name) {
+        return fileService.getContentType(name);
+    }
 }

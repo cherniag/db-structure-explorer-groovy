@@ -51,7 +51,7 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @RequestParam(required = false, value = "IDFA") String idfa
-            ) throws Exception {
+    ) throws Exception {
 
         User user = null;
         Exception ex = null;
