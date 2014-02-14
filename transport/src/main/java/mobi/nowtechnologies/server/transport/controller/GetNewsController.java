@@ -13,48 +13,72 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @Controller
 public class GetNewsController extends CommonController {
 
-	private MessageService messageService;
+    private MessageService messageService;
 
-	public void setMessageService(MessageService messageService) {
-		this.messageService = messageService;
-	}
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
-	// Support community o2, apiVersion 3.6 and higher
-	@RequestMapping(method = RequestMethod.POST, value = {
-			"**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/GET_NEWS"
+    // Support community o2, apiVersion 3.6 and higher
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}}/GET_NEWS",
+            "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_NEWS"
     })
-	public ModelAndView getNews_O2(
-			@RequestParam("USER_NAME") String userName,
-			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp,
-			@RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
-			@RequestParam(required = false, value = "DEVICE_UID") String deviceUID
-            ) throws Exception {
+    public ModelAndView getNews_O2(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
+    ) throws Exception {
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID,
+                ActivationStatus.ACTIVATED);
+    }
 
-		User user = null;
-		Exception ex = null;
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/5.5/GET_NEWS",
+            "**/{community}/5.5.0/GET_NEWS"
+    })
+    public ModelAndView getNews_v5(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
+    ) throws Exception {
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID,
+                ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
+    }
+
+    private ModelAndView getNews(String userName,
+                                 String userToken,
+                                 String timestamp,
+                                 Long lastUpdateNewsTimeMillis,
+                                 String deviceUID,
+                                 ActivationStatus... activationStatuses) throws Exception {
+        User user = null;
+        Exception ex = null;
         String community = getCurrentCommunityUri();
-		try {
-			LOGGER.info("command processing started");
+        try {
+            LOGGER.info("command processing started");
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, activationStatuses);
 
-			NewsDto newsDto= messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
+            NewsDto newsDto = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
 
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
 
-			return buildModelAndView(accountCheck, newsDto);
-		} catch (Exception e) {
-			ex = e;
-			throw e;
-		} finally {
-			logProfileData(deviceUID, community, null, null, user, ex);
-			LOGGER.info("command processing finished");
-		}
-	}
+            return buildModelAndView(accountCheck, newsDto);
+        } catch (Exception e) {
+            ex = e;
+            throw e;
+        } finally {
+            logProfileData(deviceUID, community, null, null, user, ex);
+            LOGGER.info("command processing finished");
+        }
+    }
 }

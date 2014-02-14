@@ -54,7 +54,7 @@ public class SignInEmailController extends CommonController {
             throw re;
         } finally {
             logProfileData(null, community, null, null, user, ex);
-            LOGGER.info("SIGN_IN_EMAIL error: [{}] for user :[{}], community: [{}], activationEmailId: [{}]",
+            LOGGER.info("SIGN_IN_EMAIL error for user: [{}], community: [{}], activationEmailId: [{}]",
                     deviceUID, community, activationEmailId);
         }
     }
