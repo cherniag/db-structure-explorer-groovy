@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class UserPromoServiceImpl implements UserPromoService {
         user = userService.applyInitPromo(user, null, false, true);
 
         user.setUserName(email);
+        user.setProvider(ProviderType.EMAIL);
 
         userService.updateUser(user);
 
