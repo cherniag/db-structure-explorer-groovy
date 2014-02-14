@@ -9,13 +9,4 @@ public class ObjectUtils {
         return o != null ? true : false;
     }
 
-    public static <T> boolean different(T one, T two) {
-        if(one == null && two == null)
-            return false;
-        if(one == null && two != null)
-            return true;
-        if(one.equals(two))
-            return false;
-        return true;
-    }
 }
