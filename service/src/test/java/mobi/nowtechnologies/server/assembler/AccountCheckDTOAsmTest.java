@@ -56,7 +56,7 @@ public class AccountCheckDTOAsmTest {
     public void testToAccountCheckDTOWhenUserIsInDatabase() throws Exception {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(autoOptInExemptPhoneNumber);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false);
 
         assertFalse(dto.subjectToAutoOptIn);
     }
@@ -68,7 +68,7 @@ public class AccountCheckDTOAsmTest {
         boolean isSubjectToAutoOptIn = true;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false);
 
         verify(user, times(1)).isSubjectToAutoOptIn();
 

@@ -38,7 +38,7 @@ public class AccountCheckDTOAsm {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
     }
 
-    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial) {
+    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails) {
         LOGGER.debug("user=[{}]", user);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
@@ -112,11 +112,12 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.subjectToAutoOptIn = calcSubjectToAutoOptIn(user);
         accountCheckDTO.user = user;
 
-        if (!isEmpty(appStoreProductIds)){
+        if (!isEmpty(appStoreProductIds)) {
             accountCheckDTO.appStoreProductId = Joiner.on(",").skipNulls().join(appStoreProductIds);
         }
-
-        accountCheckDTO.setUserDetails(buildUserDetails(user));
+        if (withUserDetails) {
+            accountCheckDTO.setUserDetails(buildUserDetails(user));
+        }
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
     }

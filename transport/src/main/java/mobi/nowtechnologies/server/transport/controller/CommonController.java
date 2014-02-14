@@ -57,7 +57,7 @@ public abstract class CommonController extends ProfileController implements Appl
     protected ApplicationContext applicationContext;
 
     @Resource
-    private AccCheckService accCheckService;
+    protected AccCheckService accCheckService;
 
 
     @Override
@@ -312,7 +312,4 @@ public abstract class CommonController extends ProfileController implements Appl
         }
     }
 
-    protected mobi.nowtechnologies.server.dto.transport.AccountCheckDto getAccountCheckDTO(User user) {
-        return accCheckService.processAccCheck(user);
-    }
 }

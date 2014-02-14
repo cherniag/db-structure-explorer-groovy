@@ -32,7 +32,7 @@ public class AutoOptInController extends CommonController {
 
             user = userService.autoOptIn(user, otac);
 
-            AccountCheckDTO accountCheckDTO = getAccountCheckDTO(user);
+            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false);
 
             accountCheckDTO.withHasPotentialPromoCodePromotion(true);
 

@@ -151,12 +151,6 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId,  facebookToken)
-        ).andExpect(status().isOk()).andDo(print());
-        mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", facebookEmail)
-                        .param("USER_TOKEN", getUserToken(resultActions, timestamp))
-                        .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk()).andDo(print())
                  .andExpect(jsonPath(facebookElementJsonPath + ".socialInfoType").value("Facebook"))
                 .andExpect(jsonPath(facebookElementJsonPath + ".facebookId").value(facebookUserId))

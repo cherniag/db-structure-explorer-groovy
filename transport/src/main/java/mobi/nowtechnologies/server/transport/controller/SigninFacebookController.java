@@ -43,7 +43,7 @@ public class SigninFacebookController extends CommonController {
             user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
             FacebookProfile facebookProfile = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
             user = userPromoService.applyInitPromoByFacebook(user, facebookProfile);
-            return buildModelAndView(getAccountCheckDTO(user));
+            return buildModelAndView(accCheckService.processAccCheck(user, true));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK can not find deviceUID[{}] in community[{}]", deviceUID, community);
