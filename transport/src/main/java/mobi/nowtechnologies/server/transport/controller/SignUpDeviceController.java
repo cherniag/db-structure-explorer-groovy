@@ -61,7 +61,7 @@ public class SignUpDeviceController extends CommonController {
 
 		        user = userService.registerUser(userDeviceDetailsDto, false);
 
-                AccountCheckDTO accountCheck = getAccountCheckDTO(user);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
 
 		        return buildModelAndView(accountCheck);
         }catch (ValidationException ve){

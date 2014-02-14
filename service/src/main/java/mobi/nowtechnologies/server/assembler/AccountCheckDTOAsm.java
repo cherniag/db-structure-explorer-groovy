@@ -2,13 +2,12 @@ package mobi.nowtechnologies.server.assembler;
 
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
+import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -21,11 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
 import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
-import static mobi.nowtechnologies.server.shared.CollectionUtils.unique;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 
@@ -34,11 +33,14 @@ public class AccountCheckDTOAsm {
 
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
 
+    @Resource
+    private FacebookUserInfoRepository facebookUserInfoRepository;
+
     public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
     }
 
-    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial) {
+    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails) {
         LOGGER.debug("user=[{}]", user);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
@@ -112,24 +114,20 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.subjectToAutoOptIn = calcSubjectToAutoOptIn(user);
         accountCheckDTO.user = user;
 
-        if (!isEmpty(appStoreProductIds)){
+        if (!isEmpty(appStoreProductIds)) {
             accountCheckDTO.appStoreProductId = Joiner.on(",").skipNulls().join(appStoreProductIds);
         }
-
-        accountCheckDTO.setUserDetails(buildUserDetails(user));
+        if (withUserDetails) {
+            accountCheckDTO.setUserDetails(buildUserDetails(user));
+        }
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
     }
 
     private UserDetailsDto buildUserDetails(User user) {
         if (ProviderType.FACEBOOK.equals(user.getProvider())) {
-            if (!isEmpty(user.getSocialInfo())) {
-                FacebookUserInfo facebookUserInfo = (FacebookUserInfo) unique(user.getSocialInfo(), new Predicate<SocialInfo>() {
-                    @Override
-                    public boolean apply(SocialInfo input) {
-                        return input instanceof FacebookUserInfo;
-                    }
-                });
+            FacebookUserInfo facebookUserInfo = facebookUserInfoRepository.findForUser(user);
+            if (facebookUserInfo != null){
                 return convertFacebookInfoToDetails(facebookUserInfo);
             }
         }

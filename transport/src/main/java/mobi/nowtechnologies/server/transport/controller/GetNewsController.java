@@ -46,7 +46,7 @@ public class GetNewsController extends CommonController {
 
 			NewsDto newsDto= messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
 
-            AccountCheckDTO accountCheck = getAccountCheckDTO(user);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
 
 			return buildModelAndView(accountCheck, newsDto);
 		} catch (Exception e) {

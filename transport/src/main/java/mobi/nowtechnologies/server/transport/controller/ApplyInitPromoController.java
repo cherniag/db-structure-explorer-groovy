@@ -76,7 +76,7 @@ public class ApplyInitPromoController extends CommonController {
     }
 
     private AccountCheckDTO getAccountCheckDTOAfterApplyPromo(User user) {
-        AccountCheckDTO accountCheckDTO = getAccountCheckDTO(user);
+        AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false);
         accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
         return accountCheckDTO;
     }

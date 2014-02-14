@@ -42,7 +42,7 @@ public class SignInEmailController extends CommonController {
 
             user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 
-            return buildModelAndView(getAccountCheckDTO(user));
+            return buildModelAndView(accCheckService.processAccCheck(user, false));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("SIGN_IN_EMAIL can not find deviceUID: [{}] in community: [{}]", deviceUID, community);

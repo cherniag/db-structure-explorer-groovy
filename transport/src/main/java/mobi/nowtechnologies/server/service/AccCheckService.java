@@ -44,14 +44,14 @@ public class AccCheckService {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 
-    public AccountCheckDto processAccCheck(User user) {
+    public AccountCheckDto processAccCheck(User user, boolean withUserDetails) {
 
         user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         Community community = user.getUserGroup().getCommunity();
 
         List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user));
+        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user), withUserDetails);
 
         accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
         accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;

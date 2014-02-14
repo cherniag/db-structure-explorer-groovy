@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm;
-import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.*;
@@ -120,7 +119,7 @@ public class AccCheckController extends CommonController {
                 LOGGER.error(e.getMessage(), e);
             }
 
-            mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheck = processAccCheck(user);
+            mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false);
 
             return buildModelAndView(accountCheck);
         } catch (Exception e) {
@@ -158,10 +157,6 @@ public class AccCheckController extends CommonController {
         ///
 
         return accountCheckForO2Client(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa);
-    }
-
-    public AccountCheckDto processAccCheck(User user){
-        return getAccountCheckDTO(user);
     }
 
     private void logAboutSuccessfullAccountCheck() {
