@@ -49,7 +49,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
         ActivationEmail activationEmail;
         if (EmailValidator.isEmail(email)) {
             User user = userService.findByNameAndCommunity(userName, community);
-            String token = ActivationEmail.generateToken(email, user);
+            String token = ActivationEmail.generateToken(email, deviceUID);
 
             activationEmail = new ActivationEmail(email, deviceUID, token);
             activationEmailRepository.save(activationEmail);
