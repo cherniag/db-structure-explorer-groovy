@@ -269,7 +269,7 @@ public abstract class CommonController extends ProfileController {
         return buildModelAndView(errorMessage);
     }
 
-    private ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status) {
+    protected ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status) {
         final String localizedDisplayMessage = exception.getLocalizedMessage();
         final String message = exception.getMessage();
         Integer errorCode;

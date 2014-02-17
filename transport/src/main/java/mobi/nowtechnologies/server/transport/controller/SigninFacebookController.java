@@ -3,16 +3,20 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.facebook.FacebookForbiddenException;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by oar on 2/13/14.
@@ -56,6 +60,12 @@ public class SigninFacebookController extends CommonController {
             logProfileData(null, community, null, null, user, ex);
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Finished for facebookAccessToken[{}] in community[{}]", facebookAccessToken, community);
         }
+    }
+
+
+    @ExceptionHandler(FacebookForbiddenException.class)
+    public ModelAndView handleException(Exception exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
     }
 
 

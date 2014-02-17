@@ -139,7 +139,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         ResultActions resultActions = signupDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId,  facebookToken)
-        ).andExpect(status().isInternalServerError());
+        ).andExpect(status().isForbidden());
     }
 
     @Test

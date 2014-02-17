@@ -61,7 +61,7 @@ public class FacebookService {
         templateCustomizer.customize(facebookTemplate);
         FacebookProfile facebookProfile = facebookTemplate.userOperations().getUserProfile();
         if (!facebookProfile.getId().equals(inputFacebookId)) {
-            throw new RuntimeException("Facebook id is not equal to passed id from client");
+            throw new FacebookForbiddenException("Facebook id is not equal to passed id from client");
         }
         return facebookProfile;
     }
