@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.repository.impl;
 
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepositoryCustom;
 import org.springframework.data.domain.Page;
@@ -89,6 +90,12 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             setParam("to", trackCriteria.getIngestTo(), query);
             setParam("releaseFrom", trackCriteria.getReleaseFrom(), query);
             setParam("releaseTo", trackCriteria.getReleaseTo(), query);
+
+            if (trackCriteria.getMediaType() != null)
+                if (trackCriteria.getMediaType().equals(AssetFile.FileType.VIDEO.name()))
+                    setParam("mediaType", AssetFile.FileType.VIDEO, query);
+                else
+                    setParam("mediaType", AssetFile.FileType.DOWNLOAD, query);
         }
 
         return query;
@@ -132,6 +139,8 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
                 addCriteria(criteria, " lower(t.ingestor) like :ingestor");
             if (trackCriteria.getTerritory() != null && !trackCriteria.getTerritory().isEmpty())
                 addCriteria(criteria, " lower(t.territoryCodes) like :territory");
+            if (trackCriteria.getMediaType() !=null)
+                addCriteria(criteria, " t.mediaType = :mediaType");
 
         }
 

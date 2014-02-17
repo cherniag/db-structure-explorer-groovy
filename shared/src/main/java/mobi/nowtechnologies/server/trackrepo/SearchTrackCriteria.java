@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.trackrepo;
 
+
+import mobi.nowtechnologies.server.shared.enums.FileType;
+
 import java.util.Date;
 import java.util.List;
 
@@ -33,4 +36,6 @@ public interface SearchTrackCriteria {
     boolean isWithFiles();
 	
     String getTerritory();
+
+    String getMediaType();
 }

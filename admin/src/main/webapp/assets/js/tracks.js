@@ -1,7 +1,10 @@
 $(document).ready(function() {
 
     var sel_val = parseInt($("#searchSize").val());
-    $('.selectpicker option[value="'+sel_val+'"]').attr("selected", "selected");
+    $('select[name="page.size"] option[value="'+sel_val+'"]').attr("selected", "selected");
+
+    $('select[name="mediaType"] option[value='+$("#mediaTypeValue").val()+']').attr("selected", "selected");
+
     $('.selectpicker').selectpicker();
 
     var trackSerachForm = $('#searchTrackDto');

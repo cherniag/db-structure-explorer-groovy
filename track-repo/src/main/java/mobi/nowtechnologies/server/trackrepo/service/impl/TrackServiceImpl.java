@@ -25,6 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -414,11 +415,22 @@ public class TrackServiceImpl implements TrackService {
 		try {
 			
 			DOMSource response = restTemplate.getForObject(sevenDigitalApiUrl, DOMSource.class, isrc, sevenDigitalApiKey);
-		
-			XPath xPath = XPathFactory.newInstance().newXPath();
-			String result = xPath.evaluate("/response/searchResults/searchResult/track/url", response.getNode().getFirstChild());
 			
-			return result;
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			String releaseId = xPath.evaluate("/response/searchResults/searchResult[1]/track/release/@id", response.getNode().getFirstChild());
+			String trackId = xPath.evaluate("/response/searchResults/searchResult[1]/track/@id", response.getNode().getFirstChild());
+			
+			if (StringUtils.isBlank(releaseId)) {
+				return null;
+			}
+			
+			if (StringUtils.isBlank(trackId)) {
+				trackId = "";
+			} else {
+				trackId = "#t" + trackId;
+			}
+			
+			return "https://m.7digital.com/GB/releases/" + releaseId + trackId + "?partner=3734";
 			
 		} catch (Exception e) {
 			
@@ -426,6 +438,7 @@ public class TrackServiceImpl implements TrackService {
 			return null;
 		}
 	}
+
 
 	public void setTrackRepository(TrackRepository trackRepository) {
 		this.trackRepository = trackRepository;
