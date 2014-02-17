@@ -1,3 +1,5 @@
+start transaction;
+
 update tb_promotions ps, tb_promoCode pc
 set ps.isActive = 0
 where pc.promotionId = ps.i and pc.code='promo8' and ps.userGroup = 10  and ps.freeWeeks = 8  and ps.isActive = 1;
@@ -45,3 +47,5 @@ INSERT INTO tb_promotions (i, description, numUsers, maxUsers, startDate, endDat
 update tb_promotions ps, tb_promoCode pc
 set pc.promotionId = 56
 where pc.promotionId = ps.i and pc.code='o2.consumer.4g.payg' and ps.userGroup = 10  and ps.freeWeeks = 8  and ps.isActive = 0;
+
+commit;
