@@ -69,14 +69,16 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private final String userName = "userName";
 
 
-    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions resultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws UnsupportedEncodingException {
-        String userToken = getUserToken(resultActions, timestamp);
+    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws UnsupportedEncodingException {
+        String userToken = getUserToken(signUpDeviceResultActions, timestamp);
+        String userName = getUserName(signUpDeviceResultActions);
         return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_FACEBOOK.json")
                 .param("ACCESS_TOKEN", facebookToken)
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
                 .param("DEVICE_TYPE", deviceType)
                 .param("FACEBOOK_USER_ID", facebookUserId)
+                .param("USER_NAME", userName)
                 .param("DEVICE_UID", deviceUID);
     }
 
@@ -84,6 +86,12 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         JSONObject jsonObject = getAccCheckContent(resultActions);
         String storedToken = (String) jsonObject.get("userToken");
         return Utils.createTimestampToken(storedToken, timestamp);
+    }
+
+    private String getUserName(ResultActions resultActions) throws UnsupportedEncodingException {
+        JSONObject jsonObject = getAccCheckContent(resultActions);
+        return  (String) jsonObject.get("userName");
+
     }
 
     private ResultActions signUpDevice(String deviceUID, String deviceType, String apiVersion, String communityUrl) throws Exception {

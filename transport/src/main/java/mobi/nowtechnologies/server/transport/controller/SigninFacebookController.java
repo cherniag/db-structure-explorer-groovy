@@ -40,13 +40,14 @@ public class SigninFacebookController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("ACCESS_TOKEN") String facebookAccessToken,
             @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
+            @RequestParam("USER_NAME") String userName,
             @RequestParam("DEVICE_UID") String deviceUID) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
         try {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
-            user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
             FacebookProfile facebookProfile = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
             user = userPromoService.applyInitPromoByFacebook(user, facebookProfile);
             return buildModelAndView(accCheckService.processAccCheck(user, true));
