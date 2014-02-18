@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Iterables;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
@@ -11,7 +12,6 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.facebook.FacebookTemplateCustomizer;
 import mobi.nowtechnologies.server.shared.Utils;
-import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ import org.springframework.test.web.server.request.MockHttpServletRequestBuilder
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.client.match.RequestMatchers.*;
@@ -69,7 +69,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private final String userName = "userName";
 
 
-    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws UnsupportedEncodingException {
+    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws IOException {
         String userToken = getUserToken(signUpDeviceResultActions, timestamp);
         String userName = getUserName(signUpDeviceResultActions);
         return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_FACEBOOK.json")
@@ -82,16 +82,15 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .param("DEVICE_UID", deviceUID);
     }
 
-    private String getUserToken(ResultActions resultActions, String timestamp) throws UnsupportedEncodingException {
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        String storedToken = (String) jsonObject.get("userToken");
+    private String getUserToken(ResultActions resultActions, String timestamp) throws IOException {
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+        String storedToken = dto.userToken;
         return Utils.createTimestampToken(storedToken, timestamp);
     }
 
-    private String getUserName(ResultActions resultActions) throws UnsupportedEncodingException {
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        return  (String) jsonObject.get("userName");
-
+    private String getUserName(ResultActions resultActions) throws IOException {
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+        return  dto.userName;
     }
 
     private ResultActions signUpDevice(String deviceUID, String deviceType, String apiVersion, String communityUrl) throws Exception {

@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import com.jayway.jsonpath.JsonPath;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.mock.MockWebApplication;
 import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
@@ -10,6 +11,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -24,7 +26,7 @@ import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -82,6 +84,8 @@ public abstract class AbstractControllerTestIT {
 
     private JsonPath jsonPath = JsonPath.compile("$.response.data[0].user");
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @After
     public void tireDown() {
         o2ProviderService.setO2Service(o2Service);
@@ -108,15 +112,16 @@ public abstract class AbstractControllerTestIT {
         sqlTestInitializer.prepareDynamicTestData("classpath:META-INF/dynamic-test-data.sql");
     }
 
-    private net.minidev.json.JSONObject getAccCheckContent(final String contentAsString) {
-        return jsonPath.read(contentAsString);
+
+    private net.minidev.json.JSONObject getAccCheckContentAsJsonObject(final ResultActions resultActions) throws IOException {
+        return jsonPath.read(resultActions.andReturn().getResponse().getContentAsString());
     }
 
-    protected net.minidev.json.JSONObject getAccCheckContent(final ResultActions resultActions) throws UnsupportedEncodingException {
-        return getAccCheckContent(resultActions.andReturn().getResponse().getContentAsString());
+    protected AccountCheckDto getAccCheckContent(final ResultActions resultActions) throws IOException {
+        return objectMapper.readValue(getAccCheckContentAsJsonObject(resultActions).toJSONString(), AccountCheckDto.class);
     }
 
-    protected void checkAccountCheck(ResultActions actionCall, ResultActions accountCheckCall) throws UnsupportedEncodingException {
-        assertEquals(getAccCheckContent(actionCall), getAccCheckContent(accountCheckCall));
+    protected void checkAccountCheck(ResultActions actionCall, ResultActions accountCheckCall) throws IOException {
+        assertEquals(getAccCheckContentAsJsonObject(actionCall), getAccCheckContentAsJsonObject(accountCheckCall));
     }
 }

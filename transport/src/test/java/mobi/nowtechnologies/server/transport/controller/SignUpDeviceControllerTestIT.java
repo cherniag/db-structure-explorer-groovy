@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.shared.Utils;
-import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.springframework.test.web.server.ResultActions;
 
@@ -23,9 +23,9 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_TYPE", deviceType)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk());
-        JSONObject jsonObject = getAccCheckContent(resultActions);
-        String storedToken = (String)jsonObject.get("userToken");
-        String userName = (String)jsonObject.get("userName");
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+        String storedToken = dto.userToken;
+        String userName = dto.userName;
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         ResultActions accountCheckCall = mockMvc.perform(
