@@ -5,7 +5,12 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.service.facebook.exception.FacebookForbiddenException;
+import mobi.nowtechnologies.server.service.facebook.exception.FacebookSocialException;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.social.SocialException;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.GraphApi;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
@@ -22,6 +27,8 @@ public class FacebookService {
     private UserRepository userRepository;
 
     private FacebookTemplateCustomizer templateCustomizer = new EmptyFacebookTemplateCustomizer();
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @VisibleForTesting
     public void setTemplateCustomizer(FacebookTemplateCustomizer templateCustomizer) {
@@ -57,13 +64,18 @@ public class FacebookService {
     }
 
     public FacebookProfile getAndValidateFacebookProfile(String facebookAccessToken, String inputFacebookId) {
-        FacebookTemplate facebookTemplate = new FacebookTemplate(facebookAccessToken);
-        templateCustomizer.customize(facebookTemplate);
-        FacebookProfile facebookProfile = facebookTemplate.userOperations().getUserProfile();
-        if (!facebookProfile.getId().equals(inputFacebookId)) {
-            throw new RuntimeException("Facebook id is not equal to passed id from client");
+        try {
+            FacebookTemplate facebookTemplate = new FacebookTemplate(facebookAccessToken);
+            templateCustomizer.customize(facebookTemplate);
+            FacebookProfile facebookProfile = facebookTemplate.userOperations().getUserProfile();
+            if (!facebookProfile.getId().equals(inputFacebookId)) {
+                throw new FacebookForbiddenException("invalid user facebook id");
+            }
+            return facebookProfile;
+        } catch (SocialException se) {
+            logger.error("ERROR", se);
+            throw new FacebookSocialException("invalid authorization token", se);
         }
-        return facebookProfile;
     }
 
 

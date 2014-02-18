@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -19,15 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping(value = {"/VERSION","/version"})
 public class VersionController {
 		
-	private VersionService versionService;
+	@Resource
+    private VersionService versionService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public @ResponseBody VersionDto sendVersion(HttpServletResponse response) {
+	public @ResponseBody VersionDto sendVersion() {
 		return versionService.getVersion();
 	}
 
-	public void setVersionService(VersionService versionService) {
-		this.versionService = versionService;
-	}
-	
 }

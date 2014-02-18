@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+
 /**
  * @author Titov Mykhaylo (titov)
  */
 @Controller
 public class GetNewsController extends CommonController {
 
+    @Resource
     private MessageService messageService;
 
-    public void setMessageService(MessageService messageService) {
-        this.messageService = messageService;
-    }
 
     // Support community o2, apiVersion 3.6 and higher
     @RequestMapping(method = RequestMethod.POST, value = {

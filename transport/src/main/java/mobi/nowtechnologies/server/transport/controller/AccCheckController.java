@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.service.DeviceUserDataService;
+import mobi.nowtechnologies.server.service.ITunesService;
+import mobi.nowtechnologies.server.service.UserDeviceDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -25,51 +28,14 @@ public class AccCheckController extends CommonController {
 
     private final Logger SUCCESS_ACC_CHECK_LOGGER = LoggerFactory.getLogger("SUCCESS_ACC_CHECK_LOGGER");
 
-    private AccountCheckDTOAsm accountCheckDTOAsm;
-    private ChartService chartService;
+    @Resource(name = "service.DeviceUserDataService")
     private DeviceUserDataService deviceUserDataService;
 
-    private UserDeviceDetailsService userDeviceDetailsService;private AccountLogService accountLogService;
-    private OfferService offerService;
+    @Resource(name = "service.UserDeviceDetailsService")
+    private UserDeviceDetailsService userDeviceDetailsService;
+
+    @Resource
     private ITunesService iTunesService;
-    private DeviceService deviceService;
-    private PaymentPolicyService paymentPolicyService;
-
-    public void setAccountCheckDTOAsm(AccountCheckDTOAsm accountCheckDTOAsm) {
-        this.accountCheckDTOAsm = accountCheckDTOAsm;
-    }
-
-    public void setAccountLogService(AccountLogService accountLogService) {
-        this.accountLogService = accountLogService;
-    }
-
-    public void setOfferService(OfferService offerService) {
-        this.offerService = offerService;
-    }
-
-    public void setiTunesService(ITunesService iTunesService) {
-        this.iTunesService = iTunesService;
-    }
-
-    public void setDeviceService(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
-
-    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
-        this.paymentPolicyService = paymentPolicyService;
-    }
-
-    public void setUserDeviceDetailsService(UserDeviceDetailsService userDeviceDetailsService) {
-        this.userDeviceDetailsService = userDeviceDetailsService;
-    }
-
-    public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
-        this.deviceUserDataService = deviceUserDataService;
-    }
-
-    public void setChartService(ChartService chartService) {
-        this.chartService = chartService;
-    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/ACC_CHECK"
@@ -85,7 +51,7 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @RequestParam(required = false, value = "IDFA") String idfa
-            ) throws Exception {
+    ) throws Exception {
 
         User user = null;
         Exception ex = null;

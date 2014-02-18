@@ -16,7 +16,6 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -35,35 +34,44 @@ import static org.apache.commons.lang.Validate.notNull;
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */
-public abstract class CommonController extends ProfileController implements ApplicationContextAware{
-	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
-	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
-	public static final String MODEL_NAME = "response";
-	public static final int VERSION_4 = 4;
-	public static final String VERSION_5_2 = "5.2";
+public abstract class CommonController extends ProfileController {
+    private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
+    private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
+    public static final String MODEL_NAME = "response";
+    public static final int VERSION_4 = 4;
+    public static final String VERSION_5_2 = "5.2";
 
-	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-	protected View view;
-	protected CommunityResourceBundleMessageSource messageSource;
+    @Resource(name = "transport.JaxbMarshallingView")
+    protected View view;
+
+    @Resource(name = "serviceMessageSource")
+    protected CommunityResourceBundleMessageSource messageSource;
+
+    @Resource(name = "service.UserService")
     protected UserService userService;
-	protected Jaxb2Marshaller jaxb2Marshaller;
-	protected CommunityService communityService;
+
+    @Resource(name = "transport.JaxbMarshaller")
+    protected Jaxb2Marshaller jaxb2Marshaller;
+
+    @Resource(name = "service.communityService")
+    protected CommunityService communityService;
+
+    @Resource
+    protected AccCheckService accCheckService;
+
+    @Resource
+    protected ApplicationContext applicationContext;
+
+
     private String defaultViewName = "default";
     private ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> communityUriThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> remoteAddrThreadLocal = new ThreadLocal<String>();
-    protected ApplicationContext applicationContext;
-
-    @Resource
-    protected AccCheckService accCheckService;
 
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     public void setCurrentCommandName(String commandName) {
         this.commandNameThreadLocal.set(commandName);
@@ -97,41 +105,21 @@ public abstract class CommonController extends ProfileController implements Appl
         return this.communityUriThreadLocal.get();
     }
 
-    protected ModelAndView buildModelAndView(Object ... objs){
+    protected ModelAndView buildModelAndView(Object... objs) {
         return new ModelAndView(defaultViewName, MODEL_NAME, new Response(objs));
     }
 
-    public void setView(View view) {
-		this.view = view;
-	}
 
-	public void setCommunityService(CommunityService communityService) {
-		this.communityService = communityService;
-	}
-
-	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
-	public void setJaxb2Marshaller(Jaxb2Marshaller jaxb2Marshaller) {
-		this.jaxb2Marshaller = jaxb2Marshaller;
-	}
-	
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    protected UserService getUserService(String communityUrl){
+    protected UserService getUserService(String communityUrl) {
         String userServiceBeanName = messageSource.getMessage(communityUrl, "service.bean.userService", null, null);
 
-        return (UserService)applicationContext.getBean(userServiceBeanName);
+        return (UserService) applicationContext.getBean(userServiceBeanName);
     }
 
     @ExceptionHandler(Exception.class)
-	public ModelAndView handleException(Exception exception, HttpServletResponse response) {
-		return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    public ModelAndView handleException(Exception exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
@@ -140,155 +128,153 @@ public abstract class CommonController extends ProfileController implements Appl
 
         return sendResponse(exception, response, status);
     }
-	
-	@ExceptionHandler({InvalidPhoneNumberException.class})
-	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
+
+    @ExceptionHandler({InvalidPhoneNumberException.class})
+    public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        if(versionPriority <= 0){
+        if (versionPriority <= 0) {
             status = HttpStatus.OK;
             exception.setLocalizedMessage("Invalid phone number format");
         }
 
         return sendResponse(exception, response, status);
-	}
+    }
 
     @ExceptionHandler({ActivationStatusException.class})
     public ModelAndView handleException(ActivationStatusException exception, HttpServletResponse response) {
         return sendResponse(exception, response, HttpStatus.FORBIDDEN);
     }
 
-	@ExceptionHandler(ValidationException.class)
-	public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+    @ExceptionHandler(ValidationException.class)
+    public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
         HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
 
-		ServerMessage serverMessage = validationException.getServerMessage();
-		String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
-		
-		final String localizedDisplayMessage;
-		final String message;
-		if (serverMessage != null) {
-			localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
-			message = localizedDisplayMessage;
-		}else if (errorCodeForMessageLocalization != null) {
-			Locale locale = httpServletRequest.getLocale();
-			String commnityUri = getCommunityUrl(httpServletRequest);
-			localizedDisplayMessage = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, locale);
-			message = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, Locale.ENGLISH);
-		} else{
-			localizedDisplayMessage = validationException.getLocalizedMessage();
-			message = validationException.getMessage();
-		}
-		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
-		LOGGER.warn(message);
+        ServerMessage serverMessage = validationException.getServerMessage();
+        String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
 
-		return sendResponse(errorMessage, status, response);
-	}
+        final String localizedDisplayMessage;
+        final String message;
+        if (serverMessage != null) {
+            localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
+            message = localizedDisplayMessage;
+        } else if (errorCodeForMessageLocalization != null) {
+            Locale locale = httpServletRequest.getLocale();
+            String commnityUri = getCommunityUrl(httpServletRequest);
+            localizedDisplayMessage = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, locale);
+            message = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, Locale.ENGLISH);
+        } else {
+            localizedDisplayMessage = validationException.getLocalizedMessage();
+            message = validationException.getMessage();
+        }
+        ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
+        LOGGER.warn(message);
 
-	@ExceptionHandler(UserCredentialsException.class)
-	public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
-		ServerMessage serverMessage = exception.getServerMessage();
-		
-		String localizedDisplayMessage;
-		final String message;
-		final Integer errorCode;
+        return sendResponse(errorMessage, status, response);
+    }
+
+    @ExceptionHandler(UserCredentialsException.class)
+    public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
+        ServerMessage serverMessage = exception.getServerMessage();
+
+        String localizedDisplayMessage;
+        final String message;
+        final Integer errorCode;
 
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        if(serverMessage!=null){
+        if (serverMessage != null) {
             errorCode = serverMessage.getErrorCode();
 
             localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
             localizedDisplayMessage = versionPriority > 0 ? localizedDisplayMessage : "Bad user credentials";
             message = localizedDisplayMessage;
-        }else{
+        } else {
             errorCode = null;
-			localizedDisplayMessage= versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
-			message=localizedDisplayMessage;
-		}
+            localizedDisplayMessage = versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
+            message = localizedDisplayMessage;
+        }
 
-		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
-		LOGGER.info(message);
+        ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
+        LOGGER.info(message);
 
-		return sendResponse(errorMessage, HttpStatus.UNAUTHORIZED, response);
-	}
-	
-	@ExceptionHandler(ThrottlingException.class)
-	public ModelAndView handleException(ThrottlingException exception, HttpServletResponse response) {
-		LOGGER.info(exception.toString());
-		response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
+        return sendResponse(errorMessage, HttpStatus.UNAUTHORIZED, response);
+    }
+
+    @ExceptionHandler(ThrottlingException.class)
+    public ModelAndView handleException(ThrottlingException exception, HttpServletResponse response) {
+        LOGGER.info(exception.toString());
+        response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         response.addHeader("reason", "throttling");
-		ErrorMessage errorMessage = getErrorMessage("Server is temporary overloaded and unavailable", "Server is temporary overloaded and unavailable. Please, try again later.", HttpStatus.SERVICE_UNAVAILABLE.value());
-		return sendResponse(errorMessage, HttpStatus.SERVICE_UNAVAILABLE, response);
-	}
+        ErrorMessage errorMessage = getErrorMessage("Server is temporary overloaded and unavailable", "Server is temporary overloaded and unavailable. Please, try again later.", HttpStatus.SERVICE_UNAVAILABLE.value());
+        return sendResponse(errorMessage, HttpStatus.SERVICE_UNAVAILABLE, response);
+    }
 
-	@ExceptionHandler(ServiceException.class)
-	public ModelAndView handleException(ServiceException serviceException, HttpServletRequest httpServletRequest, HttpServletResponse response) {	
-		String message = serviceException.getMessage();
-		Throwable throwable = serviceException.getCause();
-		ServerMessage serverMessage = serviceException.getServerMessage();
-		String errorCodeForMessageLocalization = serviceException.getErrorCodeForMessageLocalization();
-		
-		ErrorMessage errorMessage;
-		if (message != null && serverMessage == null) {
-			if (throwable != null) {
-				errorMessage = getErrorMessage(throwable.getLocalizedMessage(), message, null);
-			} else
-				errorMessage = getErrorMessage(message, message, null);
-			LOGGER.error(message, serviceException);
-		} else if (serverMessage != null) {
-			String localizedMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
+    @ExceptionHandler(ServiceException.class)
+    public ModelAndView handleException(ServiceException serviceException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+        String message = serviceException.getMessage();
+        Throwable throwable = serviceException.getCause();
+        ServerMessage serverMessage = serviceException.getServerMessage();
+        String errorCodeForMessageLocalization = serviceException.getErrorCodeForMessageLocalization();
 
-			errorMessage = getErrorMessage(localizedMessage, localizedMessage, serviceException.getServerMessage().getErrorCode());
-			LOGGER.error(message);
-		} else if (errorCodeForMessageLocalization != null) {
-			Locale locale = httpServletRequest.getLocale();
-			String communityUri = getCommunityUrl(httpServletRequest);
-			String localizedMessage = messageSource.getMessage(communityUri, errorCodeForMessageLocalization, null, locale);
-			message = serviceException.getLocalizedMessage();
-			errorMessage = getErrorMessage(localizedMessage, message, serviceException.getErrorCode());
-			LOGGER.error(message);
-		} else
-			throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());
-		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
-	}
-	
-	private String getCommunityUrl(HttpServletRequest httpServletRequest)
-	{
-		String communityName = httpServletRequest.getParameter(COMMUNITY_NAME_PARAM);
-		
-		if(communityName != null)
-		{
-			Community community = communityService.getCommunityByName(communityName);
-			return community != null ? community.getRewriteUrlParameter() : null;
-		}
-		
-		return null;
-	}
+        ErrorMessage errorMessage;
+        if (message != null && serverMessage == null) {
+            if (throwable != null) {
+                errorMessage = getErrorMessage(throwable.getLocalizedMessage(), message, null);
+            } else
+                errorMessage = getErrorMessage(message, message, null);
+            LOGGER.error(message, serviceException);
+        } else if (serverMessage != null) {
+            String localizedMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
 
-	private ErrorMessage getErrorMessage(String displayMessage, String message, Integer errorCode) {
-		ErrorMessage errorMessage = new ErrorMessage();
-		errorMessage.setDisplayMessage(displayMessage);
-		errorMessage.setMessage(message);
-		errorMessage.setErrorCode(errorCode);
-		return errorMessage;
+            errorMessage = getErrorMessage(localizedMessage, localizedMessage, serviceException.getServerMessage().getErrorCode());
+            LOGGER.error(message);
+        } else if (errorCodeForMessageLocalization != null) {
+            Locale locale = httpServletRequest.getLocale();
+            String communityUri = getCommunityUrl(httpServletRequest);
+            String localizedMessage = messageSource.getMessage(communityUri, errorCodeForMessageLocalization, null, locale);
+            message = serviceException.getLocalizedMessage();
+            errorMessage = getErrorMessage(localizedMessage, message, serviceException.getErrorCode());
+            LOGGER.error(message);
+        } else
+            throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());
+        return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+    }
 
-	}
+    private String getCommunityUrl(HttpServletRequest httpServletRequest) {
+        String communityName = httpServletRequest.getParameter(COMMUNITY_NAME_PARAM);
+
+        if (communityName != null) {
+            Community community = communityService.getCommunityByName(communityName);
+            return community != null ? community.getRewriteUrlParameter() : null;
+        }
+
+        return null;
+    }
+
+    private ErrorMessage getErrorMessage(String displayMessage, String message, Integer errorCode) {
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setDisplayMessage(displayMessage);
+        errorMessage.setMessage(message);
+        errorMessage.setErrorCode(errorCode);
+        return errorMessage;
+
+    }
 
     private ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
-        notNull(status , "The parameter httpStatus is null");
-        notNull(errorMessage , "The parameter errorMessage is null");
+        notNull(status, "The parameter httpStatus is null");
+        notNull(errorMessage, "The parameter errorMessage is null");
         response.setStatus(status.value());
 
         return buildModelAndView(errorMessage);
     }
 
-	private ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status) {
+    protected ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status) {
         final String localizedDisplayMessage = exception.getLocalizedMessage();
         final String message = exception.getMessage();
         Integer errorCode;
         try {
-            errorCode = exception instanceof ServiceException ? new Integer(((ServiceException)exception).getErrorCodeForMessageLocalization()) : null;
+            errorCode = exception instanceof ServiceException ? new Integer(((ServiceException) exception).getErrorCodeForMessageLocalization()) : null;
         } catch (NumberFormatException e) {
             errorCode = null;
         }
@@ -296,11 +282,11 @@ public abstract class CommonController extends ProfileController implements Appl
         LOGGER.error(message, exception);
 
         return sendResponse(errorMessage, status, response);
-	}
+    }
 
 
-    public User checkUser(String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses){
-       return  userService.checkUser(getCurrentCommunityUri(),userName, userToken, timestamp, deviceUID, activationStatuses);
+    public User checkUser(String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses) {
+        return userService.checkUser(getCurrentCommunityUri(), userName, userToken, timestamp, deviceUID, activationStatuses);
     }
 
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {

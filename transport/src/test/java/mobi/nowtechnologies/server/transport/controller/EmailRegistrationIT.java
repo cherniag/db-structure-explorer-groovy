@@ -51,6 +51,8 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     private static final String EMAIL_2 = "b@gmail.com";
     private static final String DISABLED = "_disabled_at_";
 
+
+
     @Test
     public void testNewUser() throws Exception {
         registerFirstUserOnDevice();

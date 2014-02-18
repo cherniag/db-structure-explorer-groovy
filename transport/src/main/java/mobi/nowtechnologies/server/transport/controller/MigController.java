@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.net.URLDecoder;
 import java.util.List;
 
@@ -29,16 +27,12 @@ public class MigController extends ProfileController {
 
 	private static final String STOP = "Stop";
 
-	private UserService userService;
-	private MigPaymentService migPaymentService;
+    @Resource(name = "service.UserService")
+    private UserService userService;
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    @Resource
+    private MigPaymentService migPaymentService;
 
-	public void setMigPaymentService(MigPaymentService migPaymentService) {
-		this.migPaymentService = migPaymentService;
-	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/DRListener")
 	public void callback(@RequestParam(value = "MESSAGEID") String messageId,
