@@ -452,7 +452,7 @@ public class User implements Serializable {
     }
 
     public boolean isTempUserName(){
-        return getUserName().equals(getDeviceUID());
+        return getUserName().equalsIgnoreCase(getDeviceUID());
     }
 
     public boolean isActivatedUserName(){
