@@ -189,6 +189,7 @@ public class TrackServiceTest {
 	}
 
 	@Test
+	@Ignore
 	public void encodeTest() throws Exception {	
 		Track track = service.encode(ID_VALUE, false, true);
 
