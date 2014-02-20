@@ -20,11 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
+@ContextConfiguration(locations = { "/META-INF/cloud-service-test.xml" })
+//@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+//@Transactional
 public class CloudFileServiceIT {
-	private final String DEFAULT_FILE_NAME = "testData/image/USJAY1100032S_fileResolution.jpg";
+	private final String DEFAULT_FILE_NAME = "f:\\Works\\Projects\\musicqubed\\tmp\\11122233344455.jpg";
 
 	@Autowired
 	private CloudFileService cloudFileService;
@@ -34,13 +34,13 @@ public class CloudFileServiceIT {
 		// Preparations for test
 		String destFileName = "destFileName";
 		String destContainerName = "test-storage";
-		String srcFileName = "srcFileName";
+		String srcFileName = "11122233344455.jpg";
 		String srcContainerName = "test-storage";
 				
 		cloudFileService.uploadFile(createTestFile(), srcFileName);
 
 		// Invocation of test method
-		boolean copied = cloudFileService.copyFile(destFileName, destContainerName, srcFileName, srcContainerName);
+		boolean copied = cloudFileService.copyFile("11122233344455566.jpg", destContainerName, srcFileName, srcContainerName);
 
 		// Asserts
 		Assert.assertTrue(copied);
@@ -89,8 +89,8 @@ public class CloudFileServiceIT {
 	}
 	
 	private MultipartFile createTestFile() throws IOException{
-		InputStream srcFile = getClass().getClassLoader().getResourceAsStream(DEFAULT_FILE_NAME);
-		FileItem fileItem = new DiskFileItemFactory().createItem("srcFileName", "application/octet-stream", true, "srcFileName");
+		InputStream srcFile = new FileInputStream(new File(DEFAULT_FILE_NAME));
+		FileItem fileItem = new DiskFileItemFactory().createItem("srcFileName", "image/jpeg", true, "11122233344455.jpg");
 		IOUtils.copy(srcFile, fileItem.getOutputStream());
 		MultipartFile file = new CommonsMultipartFile(fileItem); 
 		
