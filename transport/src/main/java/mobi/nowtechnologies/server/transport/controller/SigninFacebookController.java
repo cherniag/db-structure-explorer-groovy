@@ -34,7 +34,7 @@ public class SigninFacebookController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_IN_FACEBOOK"})
+            "**/{community}/6.0/SIGN_IN_FACEBOOK"})
     public ModelAndView applyPromotionByFacebook(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
