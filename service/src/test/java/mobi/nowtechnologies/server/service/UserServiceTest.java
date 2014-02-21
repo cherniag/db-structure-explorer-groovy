@@ -3929,6 +3929,48 @@ public class UserServiceTest {
         verify(userServiceSpy, times(1)).checkActivationStatus(eq(user));
     }
 
+    @Test
+    public void checkActivationStatusRegisteredShouldPassWhenDifferentCase(){
+        User user = UserFactory.createUser();
+        user.setDeviceUID("DEVICE_UID");
+        user.setUserName("device_uid");
+        user.setMobile("");
+        user.setActivationStatus(REGISTERED);
+        user.setStatus(new UserStatus(UserStatus.LIMITED));
+        userServiceSpy.checkActivationStatus(user, REGISTERED);
+    }
+
+    @Test
+    public void checkActivationStatusEnteredNumberShouldPassWhenDifferentCase(){
+        User user = UserFactory.createUser();
+        user.setDeviceUID("DEVICE_UID");
+        user.setUserName("device_uid");
+        user.setStatus(new UserStatus(UserStatus.LIMITED));
+        user.setActivationStatus(ENTERED_NUMBER);
+        userServiceSpy.checkActivationStatus(user, ENTERED_NUMBER);
+    }
+
+    @Test(expected = ActivationStatusException.class)
+    public void checkActivationStatusRegisteredShouldNotPass(){
+        User user = UserFactory.createUser();
+        user.setDeviceUID("device_uid");
+        user.setUserName("other");
+        user.setStatus(new UserStatus(UserStatus.LIMITED));
+        user.setActivationStatus(REGISTERED);
+        userServiceSpy.checkActivationStatus(user, REGISTERED);
+    }
+
+    @Test(expected = ActivationStatusException.class)
+    public void checkActivationStatusEnteredNumberShouldNotPass(){
+        User user = UserFactory.createUser();
+        user.setDeviceUID("other");
+        user.setUserName("device_uid");
+        user.setStatus(new UserStatus(UserStatus.LIMITED));
+        user.setActivationStatus(ENTERED_NUMBER);
+        userServiceSpy.checkActivationStatus(user, ENTERED_NUMBER);
+    }
+
+
     private void create4GVideoAudioSubscribedUserOnVideoAudioFreeTrial() {
         paymentPolicyTariff = _4G;
         mediaType = VIDEO_AND_AUDIO;
