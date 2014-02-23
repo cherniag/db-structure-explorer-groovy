@@ -79,7 +79,7 @@ public class TrackServiceIT {
 		assertEquals(curTime-curTime%100000, track.getPublishDate().getTime()-track.getPublishDate().getTime()%100000);
 	}
 
-    @Test
+    @Ignore @Test
     public void testCreateVideo_Success() throws Exception {
         //test preparation
         URL videoURL = this.getClass().getClassLoader().getResource("media/manual/020313/o2Tracks.mp4");

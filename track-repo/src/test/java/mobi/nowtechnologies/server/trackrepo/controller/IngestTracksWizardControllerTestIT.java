@@ -57,7 +57,7 @@ public class IngestTracksWizardControllerTestIT extends TestCase {
         assertTrue(resultJson.contains("suid"));
 	}
 
-    @Test
+    @Ignore @Test
     public void testSelectDrops_Success() throws Exception {
         ResultActions resultActions = mockMvc.perform(
                 get("/drops.json")
