@@ -1,19 +1,17 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import java.util.concurrent.TimeUnit;
-
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -90,7 +88,7 @@ public class ProfileController {
 				deviceTypeFromRequest = userDeviceRegDetailsDto.getDeviceType();
 				deviceUIDFromRequest = userDeviceRegDetailsDto.getDeviceUID();
 				if (communityFromRequest == null) {
-					communityFromRequest = userDeviceRegDetailsDto.getCommunityName();
+					communityFromRequest = userDeviceRegDetailsDto.getCommunityUri();
 				}
 			}
 

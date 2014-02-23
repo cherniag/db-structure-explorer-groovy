@@ -6,8 +6,10 @@ public class VersionDto {
 	private String version;
 	private String revision;
 	private String info;
-	
-	public VersionDto() {
+    private String branchName;
+
+
+    public VersionDto() {
 	}
 	
 	public String getBuild() {
@@ -38,4 +40,13 @@ public class VersionDto {
 	public String getInfo() {
 		return info;
 	}
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
 }

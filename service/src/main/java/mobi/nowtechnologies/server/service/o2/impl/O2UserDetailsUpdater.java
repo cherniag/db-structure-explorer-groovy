@@ -2,13 +2,8 @@ package mobi.nowtechnologies.server.service.o2.impl;
 
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.BasicUserDetailsUpdater;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.ContractChannel;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
+import mobi.nowtechnologies.server.shared.enums.*;
 
 import java.util.List;
 
@@ -17,26 +12,35 @@ import java.util.List;
  * (segment/contract/provider/4G/directChannel)
  */
 public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberData> {
-    
-	/** Updates given user */
-    @Override
-	public User setUserFieldsFromSubscriberData(User user, O2SubscriberData o2SubscriberData) {
-        O2SubscriberData data = (O2SubscriberData)o2SubscriberData;
 
-        if(data == null){
-            user.setProvider(ProviderType.O2);
-            user.setSegment(SegmentType.CONSUMER);
-            user.setContract(Contract.PAYM);
-            user.setContractChannel(ContractChannel.DIRECT);
-            user.setTariff(Tariff._3G);
-        } else {
-            user.setProvider(data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2);
-            user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);
-            user.setContract(data.isContractPostPay() ? Contract.PAYM : Contract.PAYG);
-            user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);
-            user.setContractChannel(data.isDirect4GChannel() ? ContractChannel.DIRECT : ContractChannel.INDIRECT);
+    private static final O2SubscriberData DEFAULT_SUBSCRIBER_DATA = new O2SubscriberData().
+                                                                        withTariff4G(false).
+                                                                        withProviderO2(true).
+                                                                        withContractPostPayOrPrePay(true).
+                                                                        withBusinessOrConsumerSegment(false).
+                                                                        withDirectOrIndirect4GChannel(false);
+
+    /**
+     * Updates given user
+     */
+    @Override
+    public User setUserFieldsFromSubscriberData(User user, O2SubscriberData o2SubscriberData) {
+        O2SubscriberData data = (O2SubscriberData) o2SubscriberData;
+
+        if (data == null) {
+            data = DEFAULT_SUBSCRIBER_DATA;
         }
+
+        user.setProvider(data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2);
+        user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);
+        user.setContract(data.isContractPostPay() ? Contract.PAYM : Contract.PAYG);
+        user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);
+        user.setContractChannel(data.isDirect4GChannel() ? ContractChannel.DIRECT : ContractChannel.INDIRECT);
         return user;
+    }
+
+    public O2SubscriberData getDefaultSubscriberData(){
+        return DEFAULT_SUBSCRIBER_DATA;
     }
 
     /**
@@ -72,14 +76,16 @@ public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberDa
         return differences;
     }
 
-	/** creates instance of O2Subscriber data based on given user */
-	public O2SubscriberData read(User user) {
-		O2SubscriberData data = new O2SubscriberData();
-		data.setBusinessOrConsumerSegment(user.getSegment() == SegmentType.BUSINESS);
-		data.setContractPostPayOrPrePay(user.getContract() == Contract.PAYM);
-		data.setProviderO2(ProviderType.O2.equals(user.getProvider()));
-		data.setTariff4G(user.getTariff() == Tariff._4G);
-		data.setDirectOrIndirect4GChannel(user.getContractChannel() == ContractChannel.DIRECT);
-		return data;
-	}
+    /**
+     * creates instance of O2Subscriber data based on given user
+     */
+    public O2SubscriberData read(User user) {
+        O2SubscriberData data = new O2SubscriberData();
+        data.setBusinessOrConsumerSegment(user.getSegment() == SegmentType.BUSINESS);
+        data.setContractPostPayOrPrePay(user.getContract() == Contract.PAYM);
+        data.setProviderO2(ProviderType.O2.equals(user.getProvider()));
+        data.setTariff4G(user.getTariff() == Tariff._4G);
+        data.setDirectOrIndirect4GChannel(user.getContractChannel() == ContractChannel.DIRECT);
+        return data;
+    }
 }

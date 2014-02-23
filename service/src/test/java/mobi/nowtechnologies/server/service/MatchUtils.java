@@ -24,11 +24,11 @@ public class MatchUtils {
                 }
                 return user.getId() == incomeUser.getId()
                         && (
-                        (user.getUserName() != null && user.getUserName().equals(incomeUser.getUserName()))
-                                ||
+                                (user.getUserName() != null && user.getUserName().equals(incomeUser.getUserName()))
+                                      ||
                                 (user.getUserName() == null && incomeUser.getUserName() == null)
 
-                );
+                            );
             }
 
             @Override

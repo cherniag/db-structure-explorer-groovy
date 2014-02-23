@@ -1,19 +1,11 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import mobi.nowtechnologies.server.admin.validator.NewsItemDtoValidator;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsPositionsDto;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,13 +13,15 @@ import org.springframework.social.ResourceNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -70,22 +64,24 @@ public class NewsController extends AbstractMessageController {
 
 		List<NewsItemDto> newsItemDtos = NewsAsm.toDtos(messageService.getActualNews(communityURL, selectedPublishDate));
 
-		final String selectedPublishDateString;
-		if (newsItemDtos.isEmpty()) {
-			selectedPublishDateString = dateFormat.format(selectedPublishDate);
-		} else {
-			selectedPublishDateString = dateFormat.format(newsItemDtos.get(0).getPublishTime());
-		}
-
-		ModelAndView modelAndView = new ModelAndView("news/newsCalendar");
+        ModelAndView modelAndView = new ModelAndView("news/newsCalendar");
 		modelAndView.addObject(NewsItemDto.NEWS_ITEM_DTO_LIST, newsItemDtos);
-		modelAndView.addObject("selectedPublishDate", selectedPublishDateString);
+		modelAndView.addObject("selectedPublishDate", getSelectedPublishDateAsString(selectedPublishDate, newsItemDtos));
 		modelAndView.addObject("allPublishTimeMillis", messageService.getAllPublishTimeMillis(communityURL));
 
 		return modelAndView;
 	}
 
-	/**
+    private String getSelectedPublishDateAsString(Date selectedPublishDate, List<NewsItemDto> newsItemDtos) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(URL_DATE_FORMAT);
+        if (newsItemDtos.isEmpty()) {
+            return simpleDateFormat.format(selectedPublishDate);
+        } else {
+            return simpleDateFormat.format(newsItemDtos.get(0).getPublishTime());
+        }
+    }
+
+    /**
 	 * Getting news for selected date
 	 * 
 	 * @param request
@@ -119,7 +115,7 @@ public class NewsController extends AbstractMessageController {
 	public ModelAndView updateNewsPositions(HttpServletRequest request, @ModelAttribute(NewsPositionsDto.NEWS_POSITIONS_DTO) NewsPositionsDto newsPositionsDto,
 			@PathVariable("selectedPublishDate") @DateTimeFormat(pattern = URL_DATE_FORMAT) Date selectedPublishDate) {
 		messageService.updateNewsPositions(newsPositionsDto);
-		ModelAndView modelAndView = new ModelAndView("redirect:/news/" + dateFormat.format(selectedPublishDate));
+		ModelAndView modelAndView = new ModelAndView("redirect:/news/" + new SimpleDateFormat(URL_DATE_FORMAT).format(selectedPublishDate));
 		return modelAndView;
 	}
 
@@ -179,7 +175,7 @@ public class NewsController extends AbstractMessageController {
 		if (!bindingResult.hasErrors()) {
 			newsItemDto.setPublishTime(selectedPublishDate);
 			messageService.saveNews(newsItemDto, RequestUtils.getCommunityURL());
-			modelAndView = new ModelAndView("redirect:/news/" + dateFormat.format(selectedPublishDate));
+			modelAndView = new ModelAndView("redirect:/news/" + new SimpleDateFormat(URL_DATE_FORMAT).format(selectedPublishDate));
 		} else {
 			newsItemDto.setPublishTime(selectedPublishDate);
 			modelAndView = new ModelAndView("news/add");
@@ -236,7 +232,7 @@ public class NewsController extends AbstractMessageController {
 		if (!bindingResult.hasErrors()) {
 			String communityURL = RequestUtils.getCommunityURL();
 			messageService.updateNews(newsItemDto, communityURL);
-			modelAndView = new ModelAndView("redirect:/news/" + dateFormat.format(selectedPublishDate));
+			modelAndView = new ModelAndView("redirect:/news/" + new SimpleDateFormat(URL_DATE_FORMAT).format(selectedPublishDate));
 		} else {
 			NewsItemDto oldNewsItemDto = messageService.getNewsById(messageId);
 			newsItemDto.setImageFileName(oldNewsItemDto.getImageFileName());
@@ -261,7 +257,7 @@ public class NewsController extends AbstractMessageController {
 	public ModelAndView deleteNews(HttpServletRequest request, @PathVariable("messageId") Integer messageId,
 			@PathVariable("selectedPublishDate") @DateTimeFormat(pattern = URL_DATE_FORMAT) Date selectedPublishDate) {
 		messageService.delete(messageId);
-		ModelAndView modelAndView = new ModelAndView("redirect:/news/" + dateFormat.format(selectedPublishDate));
+		ModelAndView modelAndView = new ModelAndView("redirect:/news/" + new SimpleDateFormat(URL_DATE_FORMAT).format(selectedPublishDate));
 		return modelAndView;
 	}
 

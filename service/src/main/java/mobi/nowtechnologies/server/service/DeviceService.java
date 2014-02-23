@@ -3,15 +3,14 @@
  */
 package mobi.nowtechnologies.server.service;
 
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.NotPromotedDeviceRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotedDeviceRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Map;
 
 /**
  * 
@@ -100,7 +99,7 @@ public class DeviceService {
 				}
 			}
 			
-			return (promotedDevicePhones.indexOf(phoneNumber)!=-1)?true:false;
+			return promotedDevicePhones.contains(phoneNumber);
 		}
 		return false;
 	}

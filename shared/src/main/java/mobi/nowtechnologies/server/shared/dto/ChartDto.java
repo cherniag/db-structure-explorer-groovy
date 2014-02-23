@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonTypeName;
+
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Arrays;
@@ -10,10 +13,13 @@ import java.util.Arrays;
  *
  */
 @XmlRootElement(name="chart")
+@JsonTypeName("chart")
 public class ChartDto {
-	
+
+    @JsonProperty("playlists")
 	private PlaylistDto[] playlistDtos;
-	
+
+    @JsonProperty("tracks")
 	private ChartDetailDto[] chartDetailDtos;
 
 	@XmlAnyElement

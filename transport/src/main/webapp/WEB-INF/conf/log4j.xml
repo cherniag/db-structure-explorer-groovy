@@ -148,7 +148,7 @@
             <param name="acceptOnMatch" value="true" />
         </filter>
     </appender>
-
+	
 	<!-- Payment Appenders -->
 	<appender name="pendingPaymentJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
 		<param name="File" value="${catalina.base}/logs/jobs-create-pending-payment.log" />
