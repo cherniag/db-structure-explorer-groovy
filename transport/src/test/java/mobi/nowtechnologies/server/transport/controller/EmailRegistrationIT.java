@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.web.server.MvcResult;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.*;
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class EmailRegistrationIT extends AbstractControllerTestIT {
 
