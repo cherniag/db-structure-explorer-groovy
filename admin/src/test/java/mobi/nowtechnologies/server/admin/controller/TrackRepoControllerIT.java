@@ -10,24 +10,33 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.server.MockMvc;
-import org.springframework.test.web.server.ResultActions;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.xmlConfigSetup;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:application-test.xml"})
+@ContextConfiguration(locations = {"classpath:application-test.xml",
+        "classpath:META-INF/dao-test.xml",
+        "classpath:META-INF/service-tr-test.xml",
+        "classpath:META-INF/shared.xml",
+        "classpath:admin-test.xml",
+        "classpath:WEB-INF/security.xml",
+        "classpath:application-test.xml"})
 @Ignore
 public class TrackRepoControllerIT {
 
@@ -36,16 +45,13 @@ public class TrackRepoControllerIT {
     @Autowired
     TrackRepository trackRepository;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Before
     public void setUp() {
 
-        mockMvc = xmlConfigSetup("classpath:META-INF/dao-test.xml",
-                "classpath:META-INF/service-tr-test.xml",
-                "classpath:META-INF/shared.xml",
-                "classpath:admin-test.xml",
-                "classpath:WEB-INF/security.xml",
-                "classpath:application-test.xml")
-                .configureWebAppRootDir("admin/src/main/webapp/", false).build();
+        mockMvc = webAppContextSetup((WebApplicationContext)applicationContext).build();
     }
 
     @Test

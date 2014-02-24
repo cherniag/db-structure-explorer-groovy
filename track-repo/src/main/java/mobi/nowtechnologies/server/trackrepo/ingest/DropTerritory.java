@@ -64,35 +64,16 @@ public class DropTerritory {
 			newTerritory.priceCode = territory.priceCode;
 			newTerritory.dealReference = territory.dealReference;
 			newTerritory.publisher = territory.publisher;
-
-			
 		}
 		return result;
 	}
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("country", country)
-                .append("label", label)
-                .append("currency", currency)
-                .append("price", price)
-                .append("startdate", startdate)
-                .append("reportingId", reportingId)
-                .append("distributor", distributor)
-                .append("takeDown", takeDown)
-                .append("priceCode", priceCode)
-                .append("dealReference", dealReference)
-                .append("publisher", publisher)
-                .toString();
-    }
 
     public DropTerritory addLabel(String label) {
         this.label = label;
         return this;
     }
 
-    public DropTerritory addPrice(float price) {
+    public DropTerritory addPrice(Float price) {
         this.price = price;
         return this;
     }
@@ -110,5 +91,37 @@ public class DropTerritory {
     public DropTerritory addReportingId(String isrc) {
         this.reportingId = isrc;
         return this;
+    }
+
+    public DropTerritory addDealReference(String dealReference) {
+        this.dealReference = dealReference;
+        return this;
+    }
+
+    public DropTerritory addStartDate(Date startDate) {
+        this.startdate = startDate;
+        return this;
+    }
+
+    public DropTerritory addTakeDown(boolean takeDown) {
+        this.takeDown = takeDown;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("country", country)
+                .append("label", label)
+                .append("currency", currency)
+                .append("price", price)
+                .append("startdate", startdate)
+                .append("reportingId", reportingId)
+                .append("distributor", distributor)
+                .append("takeDown", takeDown)
+                .append("priceCode", priceCode)
+                .append("dealReference", dealReference)
+                .append("publisher", publisher)
+                .toString();
     }
 }

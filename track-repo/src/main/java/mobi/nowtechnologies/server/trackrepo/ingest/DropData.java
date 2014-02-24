@@ -1,22 +1,19 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.Date;
 
 public class DropData {
 
 	public String name;
 	public Date date;
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
-	
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("name", name)
+                .append("date", date)
+                .toString();
+    }
 }

@@ -3,8 +3,6 @@ package mobi.nowtechnologies.server.trackrepo.ingest.manual;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,13 +14,12 @@ public class ManualParser extends IParser {
 
 	public ManualParser(String root) throws FileNotFoundException {
         super(root);
-		LOGGER.info("Manual parser loadin from " + root);
 	}
 
 	@Override
 	public void commit(DropData drop, boolean auto) {
 		File dropFile = new File(drop.name);
-		String commitFileName = dropFile.getParent() + "/ingest.ack";
+		String commitFileName = dropFile.getParent() + "/" + INGEST_ACK;
 		File commitFile = new File(commitFileName);
 		try {
 			commitFile.createNewFile();
@@ -37,8 +34,13 @@ public class ManualParser extends IParser {
 		if (auto)
 			return result;
 		File rootFolder = new File(root);
+		if (!rootFolder.exists()) {
+			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", rootFolder.getAbsolutePath());
+			return result;
+		}
 		for (File file: rootFolder.listFiles()) {
 			if (isDirectory(file)) {
+                LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
 				result.addAll(getDrops(file));
 			}
 		}
@@ -50,7 +52,7 @@ public class ManualParser extends IParser {
 		boolean processed = false;
 		File csv = null;
 		for (File file: rootFolder.listFiles()) {
-			if (file.getName().equals("ingest.ack")) {
+			if (file.getName().equals(INGEST_ACK)) {
 				processed = true;
 			}
 			if (file.getName().endsWith(".csv")) {
@@ -63,9 +65,10 @@ public class ManualParser extends IParser {
 			try {
 				data.name = csv.getCanonicalPath();
 			} catch (IOException e) {
-				LOGGER.error("getdrops failed "+e.getMessage());
+				LOGGER.error("getDrops failed "+e.getMessage());
 			}
 			result.add(data);
+            LOGGER.info("The drop was found: [{}]", data.name);
 		}
 
 		return result;
@@ -82,7 +85,7 @@ public class ManualParser extends IParser {
 			String line;
 			while ((line = in.readLine()) != null) {
 				String[] tokens = line.split("#");
-				LOGGER.info("Token lenght "+tokens.length+" "+line);
+				LOGGER.info("Token length [{}] line", tokens.length);
 				DropTrack track = new DropTrack();
 				track.type = Type.INSERT;
 				track.xml="";

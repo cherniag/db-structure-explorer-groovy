@@ -26,6 +26,7 @@ TRACK_ID=${17}
 PREVIEW_ONLY=${18}
 PRIVATE_KEY=${19}
 BIT_RATE=${20}
+IMG_SIZE=${21}
 
 echo "********** PARAMS"
 echo $AUDIO_FILE
@@ -85,7 +86,7 @@ echo "***** Generating thumbnails *****"
 	IMAGE_COVER="files/image/${ISRC}_cover.png"
 
 	convert "${IMAGE}" -resize 70x70 "./files/image/$IMAGE_SMALL"	|| { echo "command failed"; exit 1; } 
-	convert "$IMAGE" -resize 200x200 "files/image/$IMAGE_LARGE"|| { echo "command failed"; exit 1; } 
+	convert "$IMAGE" -resize "${IMG_SIZE}x${IMG_SIZE}" "files/image/$IMAGE_LARGE"|| { echo "command failed"; exit 1; } 
 	cp files/image/$IMAGE_LARGE "files/image/${ISRC}_22.jpg"|| { echo "command failed"; exit 1; } 
 
 	convert "$IMAGE" -resize 90x90 "files/image/${ISRC}_21.jpg"|| { echo "command failed"; exit 1; } 
@@ -130,11 +131,11 @@ echo "***** Generating Download Audio *****"
 		"MP3") 
 #	cp "${FULL_AUDIO}" "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1; } ;;
 # Make sure we have an ID3 tag in the track (Warner tracks does not have it)
-			${FFMPEG} -i "${FULL_AUDIO}" -y -acodec copy "./files/purchased/${ISRC}.mp3"|| { echo "command failed"; exit 1; } ;;
+			${FFMPEG} -i "${FULL_AUDIO}" -y -acodec copy "./files/purchased/${ISRC}.mp3"|| { echo "command failed"; exit 1001; } ;;
 		"AAC") 
-			faad -o - "${FULL_AUDIO}" | lame - -b 256 "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1; } ;;
+			faad -o - "${FULL_AUDIO}" | lame - -b 256 "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1002; } ;;
 		"WAV") 
-			lame -b 256 "${FULL_AUDIO}" "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1; } ;;
+			lame -b 256 "${FULL_AUDIO}" "./files/purchased/${ISRC}.mp3" || { echo "command failed"; exit 1003; } ;;
 	esac
 # Add temporary UITS header to the MP3
 	java -jar ${CP}/uits-4.0-SNAPSHOT.jar ${PRIVATE_KEY} "./files/purchased/${ISRC}.mp3" "./${ISRC}.mp3"    || { echo "command failed"; exit 1; }
@@ -237,6 +238,7 @@ fi
 
 	for i in files/image/${ISRC}*
     do
+		echo "Upload image file to the cloud: " ${i}
         curl -X PUT -T ${i}  -H "X-Auth-Token: ${TOKEN}" -H "X-CDN-Enabled: True" -H "X-TTL: 900" ${URL}/private/${TRACK_ID}_`basename $i`
     done
 

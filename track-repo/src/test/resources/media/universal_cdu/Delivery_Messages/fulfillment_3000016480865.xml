@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fulfillment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://ucs.umgi.digiplug.com/schemas/ucs_fulfillment.xsd">
+    <version>6.0.0</version>
+    <user_login>Nadir.Contractor@Chartsnow.mobi</user_login>
+    <delivery_source>HAL</delivery_source>
+    <work_order_id>3000016480865</work_order_id>
+    <products>
+        <product>
+            <prd_artist_name>Psy 4 De La Rime</prd_artist_name>
+            <prd_length>00:04:22</prd_length>
+            <prd_source>UMI</prd_source>
+            <prd_title>Jamaïque</prd_title>
+            <release_date>09-Sep-2013</release_date>
+            <set_count>1</set_count>
+            <upc>00602537560646</upc>
+            <assets>
+                <asset type="Video">
+                    <track_number>1</track_number>
+                    <isrc>FRUV71300321</isrc>
+                    <track_artist_name>Psy 4 De La Rime</track_artist_name>
+                    <track_length>00:04:22</track_length>
+                    <track_title>Jamaïque</track_title>
+                    <track_version_title></track_version_title>
+                    <volume>1</volume>
+                    <subtype>Video</subtype>
+                    <files>
+                        <file>
+                            <task_id>16331860689</task_id>
+                            <checksum type="MD5">a320772b2dfdc934d1f07048fac3e37b</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_vidclp_00602537560646_01_001_20601.mp4</file_name>
+                            <file_type>MP4</file_type>
+                            <excerpt type="clip">
+                                <start_time_ms>30000</start_time_ms>
+                                <end_time_ms>60000</end_time_ms>
+                                <fade>
+                                    <fade_in_duration_ms>3000</fade_in_duration_ms>
+                                    <fade_out_duration_ms>3000</fade_out_duration_ms>
+                                    <fade_function>linear</fade_function>
+                                </fade>
+                            </excerpt>
+                        </file>
+                    </files>
+                </asset>
+                <asset type="Video">
+                    <track_number>1</track_number>
+                    <isrc>FRUV71300321</isrc>
+                    <track_artist_name>Psy 4 De La Rime</track_artist_name>
+                    <track_length>00:04:22</track_length>
+                    <track_title>Jamaïque</track_title>
+                    <track_version_title></track_version_title>
+                    <volume>1</volume>
+                    <subtype>Video</subtype>
+                    <files>
+                        <file>
+                            <task_id>16331860688</task_id>
+                            <checksum type="MD5">4e92a9f57a74bf9146f0e627820a81c3</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_vidtrk_00602537560646_01_001_20601.mp4</file_name>
+                            <file_type>MP4</file_type>
+                        </file>
+                    </files>
+                </asset>
+                <asset type="Images">
+                    <hal_asset_id>110039537670</hal_asset_id>
+                    <isrc>13UAAIM79403</isrc>
+                    <subtype>Cover Art</subtype>
+                    <files>
+                        <file>
+                            <task_id>16331865985</task_id>
+                            <checksum type="MD5">94e48b35182db59bb6faf176e728cc5b</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_vidtrkimg_00602537560646_01_001_RGB300_1400x1400.jpg</file_name>
+                            <file_type>JPG</file_type>
+                        </file>
+                    </files>
+                </asset>
+                <asset type="Metadata">
+                    <files>
+                        <file>
+                            <task_id>16331860692</task_id>
+                            <checksum type="MD5">9165b7ce4c94b461e063bfebbe922f38</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_metdat_ChartsNow.mobi_GB_new_00602537560646_2013-09-18_21-47-32.xml</file_name>
+                            <file_type>XML</file_type>
+                        </file>
+                    </files>
+                </asset>
+            </assets>
+        </product>
+    </products>
+</fulfillment>

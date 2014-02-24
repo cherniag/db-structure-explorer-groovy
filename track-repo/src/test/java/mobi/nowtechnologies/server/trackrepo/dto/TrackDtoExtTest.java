@@ -64,6 +64,7 @@ public class TrackDtoExtTest {
         track.setTerritoryCodes("GB, UA, US, NL");
         track.setCoverFile(coverFile);
         track.setMediaFile(mediaFile);
+        track.setPublishDate(new Date());
         track.setMediaType(AssetFile.FileType.DOWNLOAD);
 
 		TrackDtoMapper result = new TrackDtoMapper(track);
@@ -91,6 +92,7 @@ public class TrackDtoExtTest {
 		assertEquals(track.getMediaFile().getId().toString(), result.getMediaFileName());
 		assertEquals(track.getMediaType().name(), result.getMediaType().name());
 		assertEquals(track.getItunesUrl(), result.getItunesUrl());
+        assertEquals(track.getPublishDate(), result.getPublishDate());
 		assertEquals(null, result.getReleaseDate());
 		assertEquals(null, result.getTerritories());
 		assertEquals(null, result.getFiles());
@@ -178,19 +180,6 @@ public class TrackDtoExtTest {
         assertEquals(territory.getPublisher(), ter.getPublisher());
         assertEquals(territory.getStartDate(), ter.getStartDate());
         assertEquals(territory.getReportingId(), ter.getReportingId());
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testTrackDtoExt_NotNullMediaType_Failure()
-            throws Exception {
-        AssetFile mediaFile = null;
-        AssetFile coverFile = null;
-
-        Track track = new Track();
-        track.setCoverFile(coverFile);
-        track.setMediaFile(mediaFile);
-
-        new TrackDtoMapper(track);
     }
 
 	/**

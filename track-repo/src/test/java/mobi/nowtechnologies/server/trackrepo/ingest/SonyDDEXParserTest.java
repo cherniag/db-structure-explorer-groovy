@@ -23,7 +23,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 
-public class SonyDDEXParserTest extends ParserTest<SonyDDEXParser>{
+public class SonyDDEXParserTest extends ParserTest{
 
     private Map<String, DropTrack> resultDropTrackMap;
     private String expectedAlbum;
@@ -33,6 +33,7 @@ public class SonyDDEXParserTest extends ParserTest<SonyDDEXParser>{
     private Map<String, Map<Integer, DropAssetFile>> expectedDropAssetsMap;
     private Map<String, Map<Integer, DropTerritory>> expectedTerritoriesMap;
     private Map<String, List<DropAssetFile>> dropAssetsByResourceReferenceMap;
+
     public static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd");
 
     public void createParser() throws FileNotFoundException {

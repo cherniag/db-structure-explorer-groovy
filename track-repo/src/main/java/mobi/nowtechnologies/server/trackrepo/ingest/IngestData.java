@@ -13,7 +13,6 @@ public class IngestData {
 		public Boolean ingest = true;
 		public DropTrack.Type type;
 		public String productCode;
-
 		
 		public String getProductCode() {
 			return productCode;

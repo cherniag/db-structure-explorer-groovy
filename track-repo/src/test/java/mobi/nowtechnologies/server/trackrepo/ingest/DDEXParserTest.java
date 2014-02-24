@@ -14,8 +14,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static java.io.File.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * User: sanya
@@ -26,6 +29,28 @@ import static junit.framework.Assert.assertNotNull;
 public class DDEXParserTest {
 
     private DDEXParser ddexParserFixture;
+
+    private class LoadXmlArgumentMatcher extends ArgumentMatcher<File>{
+        private String dropName;
+        private String folderName;
+        private String fileName;
+
+        private LoadXmlArgumentMatcher(String dropName, String folderName, String fileName) {
+            this.dropName = dropName;
+            this.folderName = folderName;
+            this.fileName = fileName;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            return ((File) o).getAbsolutePath().equals(dropName + separator + folderName + separator + fileName);
+        }
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        ddexParserFixture = spy(new SonyDDEXParser("classpath:media/sony_cdu/ddex/"));
+    }
 
     @Test
     public void testLoadXml_IsExplicit_Success() throws Exception {
@@ -46,12 +71,12 @@ public class DDEXParserTest {
         assertNotNull(result);
         assertEquals(3, result.size());
 
-        DropData dropExpected = null;
+        DropData dropActual = null;
         for(DropData drop : result){
-            if(drop.getName().endsWith("20130625123358187"))
-                dropExpected = drop;
+            if(drop.name.endsWith("20130625123358187"))
+                dropActual = drop;
         }
-        assertNotNull(dropExpected);
+        assertNotNull(dropActual);
     }
 
     @Test
@@ -61,12 +86,12 @@ public class DDEXParserTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        DropData dropExpected = null;
+        DropData dropActual = null;
         for(DropData drop : result){
-            if(drop.getName().endsWith("20130625123358187"))
-                dropExpected = drop;
+            if(drop.name.endsWith("20130625123358187"))
+                dropActual = drop;
         }
-        assertNotNull(dropExpected);
+        assertNotNull(dropActual);
     }
 
     @Test
@@ -74,8 +99,8 @@ public class DDEXParserTest {
         File dropFolder = new ClassPathResource("media/sony_cdu/ddex/20130625123358187").getFile();
 
         final DropData drop = new DropData();
-        drop.setDate(new Date());
-        drop.setName(dropFolder.getAbsolutePath());
+        drop.date = new Date();
+        drop.name=dropFolder.getAbsolutePath();
 
         Map<String, DropTrack> dropTracks1 = new HashMap<String, DropTrack>();
         dropTracks1.put("isrc1", new DropTrack());
@@ -86,65 +111,20 @@ public class DDEXParserTest {
         Map<String, DropTrack> dropTracks4 = new HashMap<String, DropTrack>();
         dropTracks3.put("isrc4", new DropTrack());
 
-        Mockito.doReturn(dropTracks1).when(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A0000244390N"+File.separator+"A10301A0000244390N.xml");
-            }
-        }));
-        Mockito.doReturn(dropTracks2).when(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A0001406903U"+File.separator+"A10301A0001406903U.xml");
-            }
-        }));
-        Mockito.doReturn(dropTracks3).when(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A0001640650S"+File.separator+"A10301A0001640650S.xml");
-            }
-        }));
-        Mockito.doReturn(dropTracks4).when(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A00012459223"+File.separator+"A10301A00012459223.xml");
-            }
-        }));
+        doReturn(dropTracks1).when(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0000244390N", "A10301A0000244390N.xml")));
+        doReturn(dropTracks2).when(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0001406903U", "A10301A0001406903U.xml")));
+        doReturn(dropTracks3).when(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0001640650S", "A10301A0001640650S.xml")));
+        doReturn(dropTracks4).when(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A00012459223", "A10301A00012459223.xml")));
 
         Map<String, DropTrack> result = ddexParserFixture.ingest(drop);
 
         assertNotNull(result);
         assertEquals(4, result.size());
 
-        Mockito.verify(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A0000244390N"+File.separator+"A10301A0000244390N.xml");
-            }
-        }));
-        Mockito.verify(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A0001406903U"+File.separator+"A10301A0001406903U.xml");
-            }
-        }));
-        Mockito.verify(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A0001640650S"+File.separator+"A10301A0001640650S.xml");
-            }
-        }));
-        Mockito.verify(ddexParserFixture).loadXml(Matchers.argThat(new ArgumentMatcher<File>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((File)o).getAbsolutePath().equals(drop.getName()+File.separator+"A10301A00012459223"+File.separator+"A10301A00012459223.xml");
-            }
-        }));
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        ddexParserFixture = Mockito.spy(new SonyDDEXParser("classpath:media/sony_cdu/ddex/"));
+        verify(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0000244390N", "A10301A0000244390N.xml")));
+        verify(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0001406903U", "A10301A0001406903U.xml")));
+        verify(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0001640650S", "A10301A0001640650S.xml")));
+        verify(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A00012459223", "A10301A00012459223.xml")));
     }
 
 }

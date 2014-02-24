@@ -7,7 +7,11 @@ import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mayboroda Dmytro
@@ -45,7 +49,7 @@ public interface TrackRepoService {
      *
      * @return IngestWizardData drop data without drop tracks
      */
-    IngestWizardDataDto getDrops();
+    IngestWizardDataDto getDrops(String... ingestors);
 
     /**
      * Select drops which needs to commit.
@@ -69,4 +73,6 @@ public interface TrackRepoService {
      * @return whether tracks saved to database or not
      */
     Boolean commitDrops(IngestWizardDataDto data);
+
+    public Map<String, List<TrackDto>> encodeTracks(List<TrackDto> tracks);
 }

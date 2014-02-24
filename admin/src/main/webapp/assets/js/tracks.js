@@ -1,6 +1,56 @@
+$(document).ready(function() {
+
+    var sel_val = parseInt($("#searchSize").val());
+    $('select[name="page.size"] option[value="'+sel_val+'"]').attr("selected", "selected");
+
+    $('select[name="mediaType"] option[value='+$("#mediaTypeValue").val()+']').attr("selected", "selected");
+
+    $('.selectpicker').selectpicker();
+
+    var trackSerachForm = $('#searchTrackDto');
+    var perPageForms = $('.b-per-page-form');
+
+    var searchFormRedirect = function (params){
+        var path = [
+            window.location.origin, 
+            window.location.pathname,
+            '?',
+            params].join('');
+
+        return path;
+    }
+
+    perPageForms.on('change', function(e){
+        e.preventDefault();
+        var paramsStr = $(this).serialize();
+
+        if(trackSerachForm.length > 0){
+            paramsStr += '&'+trackSerachForm.serialize();
+        }
+
+        window.location.href = searchFormRedirect(paramsStr);
+        return false;
+    });
+
+    trackSerachForm.on('submit', function(e){
+        e.preventDefault();
+        var paramsStr = $(this).serialize(); 
+
+        if(perPageForms.length > 0){
+            paramsStr += '&'+ $(perPageForms[0]).serialize();
+        }
+
+        window.location.href = searchFormRedirect(paramsStr);
+        return false;
+    });
+
+
+
+});
+
 var Tracks = {};
 
-function onShownTrackDetails(detailsEl) {
+function onShownTrackDetails(detailsEl, cb) {
     if(Tracks.details){
         Tracks.details.hide();
     }
@@ -9,22 +59,15 @@ function onShownTrackDetails(detailsEl) {
     Tracks.details = popover;
 
     var id = detailsEl.find("div:first").text();
-    var params = {"trackIds[0]":id,"withFiles":true,"withTerritories":true};
 
-    $.ajax({
-        url: findUrl,
-        type: "get",
-        data: params,
-        success: function (data) {
-            var track = data.PAGE_LIST_DTO.list[0];
-            var popoverContent = popover.tip();
-            var trackFilesTable = popoverContent.find(".trackFiles");
-            var trackTerritoriesTable = popoverContent.find(".trackTerritories");
-
-            onFetchTrackFiles(track, track.files, trackFilesTable);
-            onFetchTrackTerritories(track.territories, trackTerritoriesTable);
-        }
-    });
+    find(id, function(track, trackId){
+        var popoverContent = popover.tip();
+        var trackFilesTable = popoverContent.find(".trackFiles");
+        var trackTerritoriesTable = popoverContent.find(".trackTerritories");
+        onFetchTrackFiles(track, track.files, trackFilesTable);
+        onFetchTrackTerritories(track.territories, trackTerritoriesTable);
+        cb(detailsEl);
+    }, true, true);
 };
 
 function onHiddenTrackDetails(detailsEl){
@@ -69,7 +112,7 @@ function onFetchTrackTerritories(data, view){
         $(columns[4]).text(data[i].currency ? data[i].currency : "");
         $(columns[5]).text(data[i].price ? data[i].price : "");
         $(columns[6]).text(data[i].priceCode ? data[i].priceCode : "");
-        $(columns[7]).text(data[i].startDate ? data[i].startDate : "");
+        $(columns[7]).text(data[i].startDate ? formatStartDate(data[i].startDate) : "");
         $(columns[8]).text(data[i].reportingId ? data[i].reportingId : "");
         $(columns[9]).text(data[i].deleted ? data[i].deleted : "false");
 
@@ -99,9 +142,9 @@ function showPullDialog(trackId) {
     var id = $("#idDiv_" + trackId).text();
     var isrc = $("#isrcDiv_" + trackId).text();
     var title = $("#publishTitleDiv_" + trackId).text();
-    title = title.length > 50 ? title.substring(0, 49).replace('&', ' ') : title.replace('&', ' ');
+    title = title.length > 50 ? title.substring(0, 49) : title;
     var artist = $("#publishArtistDiv_" + trackId).text();
-    artist = artist.length > 40 ? artist.substring(0, 39).replace('&', ' ') : artist.replace('&', ' ');
+    artist = artist.length > 40 ? artist.substring(0, 39) : artist;
     var info = $("#infoDiv_" + trackId).text();
     var iTunesUrl = $("#iTunesUrlDiv_" + trackId).text();
     var amazonUrl = $("#amazonUrlDiv_" + trackId).text();
@@ -119,9 +162,9 @@ function showPullDialog(trackId) {
     itunesLink.text(iTunesUrl);
     itunesLink.attr('href', iTunesUrl);
     pullForm.find("input[name='amazonUrl']").val(amazonUrl);
-    var itunesLink = pullForm.find("a[name='amazonLink']");
-    itunesLink.text(amazonUrl);
-    itunesLink.attr('href', amazonUrl);
+    var amazonLink = pullForm.find("a[name='amazonLink']");
+    amazonLink.text(amazonUrl);
+    amazonLink.attr('href', amazonUrl);
 
     $("#pull-dialog").modal("show");
 };
@@ -152,26 +195,52 @@ function onEncodeStart(trackId){
 
     $(encodetrackButtonId+".btn-primary").button("loading");
     $(pulltrackButtonId+".btn-primary").attr("disabled", true);
-    $('.busy').show();
+}
+
+function find(trackId, callback, withFiles, withTerritories){
+    var params = {"trackIds[0]":trackId,"withFiles":withFiles,"withTerritories":withTerritories};
+
+    $.ajax({
+        url: findUrl,
+        type: "get",
+        data: params,
+        success: function (data) {
+            var track = data.PAGE_LIST_DTO.list[0];
+
+            callback(track, trackId);
+        }
+    });
 }
 
 function onEncodeSuccess(data, trackId){
-    var pulltrackButtonId = "#pulltrackButton_" + trackId;
-    var encodetrackButtonId = "#encodetrackButton_" + trackId;
-    var publishTitleDivId = "#publishTitleDiv_" + trackId;
-    var publishArtistDivId = "#publishArtistDiv_" + trackId;
-    var iTunesDivId = "#iTunesUrlDiv_" + trackId;
-    var infoDivId = "#infoDiv_" + trackId;
+    var status = data.status;
 
-    $(encodetrackButtonId+".btn-primary").button('retry');
-    $(pulltrackButtonId+".btn-primary").removeAttr("disabled");
+    if(status == "ENCODED"){
+        var pulltrackButtonId = "#pulltrackButton_" + trackId;
+        var encodetrackButtonId = "#encodetrackButton_" + trackId;
+        var publishTitleDivId = "#publishTitleDiv_" + trackId;
+        var publishArtistDivId = "#publishArtistDiv_" + trackId;
+        var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+        var amazonDivId = "#amazonUrlDiv_" + trackId;
+        var infoDivId = "#infoDiv_" + trackId;
 
-    $(publishTitleDivId).text(data.TRACK_DTO.title);
-    $(publishArtistDivId).text(data.TRACK_DTO.artist);
-    $(iTunesDivId).text(data.TRACK_DTO.itunesUrl);
-    $(infoDivId).text(data.TRACK_DTO.publishDate);
+        $(encodetrackButtonId+".btn-primary").button('retry');
+        $(pulltrackButtonId+".btn-primary").removeAttr("disabled");
 
-    $('.busy').hide();
+        $(publishTitleDivId).text(data.publishTitle);
+        $(publishArtistDivId).text(data.publishArtist);
+        $(iTunesDivId).text(data.itunesUrl);
+        $(amazonDivId).text(data.amazonUrl);
+        $(infoDivId).text(data.info);
+    } else if(status == "ENCODING"){
+        setTimeout(function(){
+           find(trackId, onEncodeSuccess, false, false);
+        }, encodeCheckDelay);
+    } else {
+        data.responseText = '{"internal_error" : "'+ defaultEncodeErrorMsg +'"}';
+
+        onEncodeFail(data, null, null, trackId);
+    }
 }
 
 function onEncodeFail(data, x, e, trackId) {
@@ -188,7 +257,6 @@ function onEncodeFail(data, x, e, trackId) {
             alert(e);
     }
     $(encodetrackButtonId+".btn-primary").button('original');
-    $('.busy').hide();
 }
 
 function onPull() {
@@ -215,33 +283,42 @@ function onPullStart(trackId){
 
     $(encodetrackButtonId+".btn-primary").attr("disabled", true);
     $(pulltrackButtonId+".btn-primary").button("loading");
-    $('.busy').show();
 }
 
 function onPullSuccess(data, trackId){
-    var pulltrackButtonId = "#pulltrackButton_" + trackId;
-    var encodetrackButtonId = "#encodetrackButton_" + trackId;
-    var publishDateDivId = "#publishDateDiv_" + trackId;
-    var publishTitleDivId = "#publishTitleDiv_" + trackId;
-    var publishArtistDivId = "#publishArtistDiv_" + trackId;
-    var iTunesDivId = "#iTunesUrlDiv_" + trackId;
-    var amazonDivId = "#amazonUrlDiv_" + trackId;
-    var infoDivId = "#infoDiv_" + trackId;
-    var areArtistUrls = "#areArtistUrlsDiv_" + trackId;
+    var status = data.status;
 
-    $(encodetrackButtonId+".btn-primary").removeAttr("disabled");
-    $(pulltrackButtonId+".btn-primary").button("original");
+    if(status == "PUBLISHED"){
+        var pulltrackButtonId = "#pulltrackButton_" + trackId;
+        var encodetrackButtonId = "#encodetrackButton_" + trackId;
+        var publishDateDivId = "#publishDateDiv_" + trackId;
+        var publishTitleDivId = "#publishTitleDiv_" + trackId;
+        var publishArtistDivId = "#publishArtistDiv_" + trackId;
+        var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+        var amazonDivId = "#amazonUrlDiv_" + trackId;
+        var infoDivId = "#infoDiv_" + trackId;
+        var areArtistUrls = "#areArtistUrlsDiv_" + trackId;
 
-    var publishDate = new Date(data.TRACK_DTO.publishDate);
-    $(publishDateDivId).text(dateFormat(publishDate, $dateformat));
-    $(publishTitleDivId).text(data.TRACK_DTO.title);
-    $(publishArtistDivId).text(data.TRACK_DTO.artist);
-    $(iTunesDivId).text(data.TRACK_DTO.itunesUrl);
-    $(amazonDivId).text(data.TRACK_DTO.amazonUrl);
-    $(areArtistUrls).text(data.TRACK_DTO.areArtistUrls);
-    $(infoDivId).text(data.TRACK_DTO.info);
+        $(encodetrackButtonId+".btn-primary").removeAttr("disabled");
+        $(pulltrackButtonId+".btn-primary").button("original");
 
-    $('.busy').hide();
+        var publishDate = new Date(data.publishDate);
+        $(publishDateDivId).text(dateFormat(publishDate, $dateformat));
+        $(publishTitleDivId).text(data.publishTitle);
+        $(publishArtistDivId).text(data.publishArtist);
+        $(iTunesDivId).text(data.itunesUrl);
+        $(amazonDivId).text(data.amazonUrl);
+        $(areArtistUrls).text(data.areArtistUrls);
+        $(infoDivId).text(data.info);
+    } else if(status == "PUBLISHING"){
+        setTimeout(function(){
+            find(trackId, onPullSuccess, false, false);
+        }, pullCheckDelay);
+    } else {
+        data.responseText = '{"internal_error" : "'+ defaultPullErrorMsg +'"}';
+
+        onPullFail(data, null, null, trackId);
+    }
 }
 
 function onPullFail(data, x, e, trackId) {
@@ -260,6 +337,150 @@ function onPullFail(data, x, e, trackId) {
     }
     $(encodetrackButtonId+".btn-primary").removeAttr("disabled");
     $(pulltrackButtonId+".btn-primary").button("original");
+}
 
-    $('.busy').hide();
+function preEncodeAll(){
+
+    var fl = false;
+    var labels = $(".for-encode");
+    for (var i = 0; i < labels.size(); i++) {
+        var label = $(labels[i]);
+        if (label.find('[name=isEncoded]').attr("checked") == "checked") {
+            fl=true;
+            break;
+        }
+    }
+
+    if (fl==false){
+        alert("No tracks have been selected");
+        return;
+    }
+
+    clearErrList();
+    $("#header-label").text("Encode");
+    var dialog=$("#encode-finished");
+    $("#btnEncodeAllOk").click(toEncode);
+    dialog.find("div.controls").show();
+    dialog.modal("show");
+}
+
+function toEncode(){
+    var tracks =[];
+    var labels = $(".for-encode");
+    var resolution = $("#encode-finished").find("input[name='isHighRate']").attr('checked') ? "RATE_96" : "RATE_48";
+    var license = $("#encode-finished").find("input[name='licensed']").attr('checked') ? "on" : "off";
+
+    for (var i = 0; i < labels.size(); i++) {
+        var label = $(labels[i]);
+        if (label.find('[name=isEncoded]').attr("checked") == "checked") {
+            var data = {
+                id: label.find('[name=encId]').val(),
+                isrc: label.find('[name=encIsrc]').val(),
+                resolution: resolution,
+                license: license
+            };
+            onEncodeStart(label.find('[name=encId]').val());
+            tracks.push(data);
+        }
+    }
+
+    var jsobj = null;
+
+    jsobj = {TRACK_DTO:tracks};
+    $.ajax({
+        url: "/jadmin/tracks/encode2.json",
+        type: "post",
+        dataType: "json",
+        data: jsobj,
+        success: function (data) {
+            clearErrList();
+            var obj = $("#errList");
+
+            //pure win !
+            if ((data.success.length!=0) && (data.fail.length==0)){
+                $("#header-label").text("Encoding successful");
+                obj.append("<div>All tracks have been encoded</div>");
+            } else {
+            //with fails
+                $("#header-label").text("Track(s) encoding failed");
+                for (i=0; i<data.fail.length; i++){
+                    obj.append("<div>"+"id="+data.fail[i].id+" isrc="+data.fail[i].isrc+"</div>");
+                }
+            }
+
+            //set fields and buttons
+            if (data.success.length != 0) {
+                for (var i = 0; i < data.success.length; i++) {
+                    var trackId = data.success[i].id;
+
+                    var pulltrackButtonId = "#pulltrackButton_" + trackId;
+                    var encodetrackButtonId = "#encodetrackButton_" + trackId;
+                    var publishTitleDivId = "#publishTitleDiv_" + trackId;
+                    var publishArtistDivId = "#publishArtistDiv_" + trackId;
+                    var iTunesDivId = "#iTunesUrlDiv_" + trackId;
+                    var amazonDivId = "#amazonUrlDiv_" + trackId;
+                    var infoDivId = "#infoDiv_" + trackId;
+
+                    $(encodetrackButtonId + ".btn-primary").button('retry');
+                    $(pulltrackButtonId + ".btn-primary").removeAttr("disabled");
+
+                    $(publishTitleDivId).text(data.success[i].publishTitle);
+                    $(publishArtistDivId).text(data.success[i].publishArtist);
+                    $(iTunesDivId).text(data.success[i].itunesUrl);
+                    $(amazonDivId).text(data.success[i].amazonUrl);
+                    $(infoDivId).text(data.success[i].info);
+                }
+            }
+
+            if (data.fail.length!=0){
+                for (var i = 0; i < data.fail.length; i++) {
+                    var encodeTrackButtonId = "#encodetrackButton_" + data.fail[i].id;
+                    $(encodeTrackButtonId+".btn-primary").button('original');
+                }
+            }
+
+            var dialog=$("#encode-finished");
+            $("#btnEncodeAllOk").off("click");
+            dialog.find("div.controls").hide();
+            dialog.modal("show");
+        }
+    }).fail(function (data) {
+            var error = $.parseJSON(data.responseText);
+            if (error != null) {
+                if (error.external_error)
+                    alert(error.external_error);
+                else if (error.internal_error)
+                    alert(error.internal_error);
+            }
+        });
+}
+
+function checkAll(){
+    var labels = $(".for-encode");
+    var etalon = $('[name=allEnc]');
+
+    var fl = etalon.attr("checked") == "checked";
+    for (var i = 0; i < labels.size(); i++) {
+      var  label = $(labels[i]);
+        label.find('[name=isEncoded]').attr("checked", fl);
+    }
+}
+
+function clearErrList(){
+   var obj = $("#errList");
+   obj.find('div').remove();
+
+}
+
+function formatStartDate(startDate){
+    var st = new Date(startDate);
+    var curr_date = st.getDate();
+    var curr_month = st.getMonth() + 1; //Months are zero based
+    var curr_year = st.getFullYear();
+
+    if (curr_date.length<2)  curr_date="0"+curr_date;
+    if (curr_month.length<2)  curr_month="0"+curr_month;
+
+    return curr_date+"/"+curr_month+"/"+curr_year;
+
 }
