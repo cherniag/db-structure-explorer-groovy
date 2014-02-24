@@ -4,10 +4,10 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Test;
 
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -18,7 +18,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void shouldAutoOptInAndVersionMore40() throws Exception {
-        //given
+        //given    org.springframework.test.web.server
         String userName = "+447111111114";
         String apiVersion = "6.0";
         String communityUrl = "o2";

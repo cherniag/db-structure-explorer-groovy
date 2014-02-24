@@ -3,8 +3,8 @@ package mobi.nowtechnologies.server.web.controller;
 import static mobi.nowtechnologies.server.shared.enums.Contract.*;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,9 +38,9 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.server.MockMvc;
-import org.springframework.test.web.server.ResultActions;
-import org.springframework.test.web.server.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.WebApplicationContext;
@@ -167,7 +167,7 @@ public class PaymentsControllerIT extends TestCase {
 			throws Exception {
 		super.setUp();
 
-		mockMvc = MockMvcBuilders.webApplicationContextSetup((WebApplicationContext) this.wac).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup((WebApplicationContext) this.wac).build();
 	}
 
 	/**

@@ -20,8 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.server.MockMvc;
-import org.springframework.test.web.server.ResultActions;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.UnsupportedEncodingException;
@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.webApplicationContextSetup;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -90,7 +90,7 @@ public abstract class AbstractControllerTestIT {
 
     @Before
     public void setUp() throws Exception {
-        mockMvc = webApplicationContextSetup((WebApplicationContext) applicationContext).build();
+        mockMvc = webAppContextSetup((WebApplicationContext) applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
         o2ProviderServiceSpy = spy(o2ProviderServiceTarget);
