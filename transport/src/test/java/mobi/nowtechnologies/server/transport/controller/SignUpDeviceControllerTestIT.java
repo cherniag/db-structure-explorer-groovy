@@ -70,7 +70,6 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "3.5";
         String communityUrl = "o2";
-
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
                         .param("DEVICE_TYPE", deviceType)
@@ -80,7 +79,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
 
 
     @Test
-    public void testSignUpDeviceV36_Sucess() throws Exception {
+    public void testSignUpDeviceInDifferentFormats() throws Exception {
         String deviceUID = "viktestdevice";
         String deviceType = "ANDROID";
         String apiVersion = "3.6";
@@ -94,6 +93,17 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                         .param("COMMUNITY_NAME", "o2")
                         .param("DEVICE_MODEL", "model")
         ).andExpect(status().isOk()).andExpect(content().mimeType(MediaType.APPLICATION_XML)).andDo(print());
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("APP_VERSION", "CNBETA")
+                        .param("API_VERSION", "V1.1")
+                        .param("COMMUNITY_NAME", "o2")
+                        .param("DEVICE_MODEL", "model")
+                        .header("Accept","application/json")
+        ).andExpect(status().isOk()).andExpect(content().mimeType(MediaType.APPLICATION_JSON)).andDo(print());
+
     }
 
 }
