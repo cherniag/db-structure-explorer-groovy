@@ -1,24 +1,48 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import mobi.nowtechnologies.server.trackrepo.domain.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.DropContent;
+import mobi.nowtechnologies.server.trackrepo.domain.IngestionLog;
+import mobi.nowtechnologies.server.trackrepo.domain.Territory;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
-import mobi.nowtechnologies.server.trackrepo.ingest.*;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropsData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData.Drop;
+import mobi.nowtechnologies.server.trackrepo.ingest.IParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors;
+import mobi.nowtechnologies.server.trackrepo.ingest.IngestData;
+import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
+import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
 import mobi.nowtechnologies.server.trackrepo.repository.IngestionLogRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
 import mobi.nowtechnologies.server.trackrepo.utils.NullAwareBeanUtilsBean;
+
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 public class IngestServiceImpl implements IngestService{
 
@@ -46,53 +70,51 @@ public class IngestServiceImpl implements IngestService{
 
     @Override
 	public IngestWizardData getDrops(String parserName) throws Exception {
-
-        LOGGER.debug("formBackingObject " + parserName);
+        LOGGER.debug("getDrops [parserName:{}]", parserName);
+		return getDrops(parserName);
+	}
+    
+    @Override
+	public IngestWizardData getDrops(String... ingestors) throws Exception {
+        LOGGER.debug("getDrops [ingestors:{}]", Arrays.toString(ingestors));
 		IngestWizardData result = updateIngestData(null, false);
+		List<Ingestors> ingObjs = new ArrayList<Ingestors>();		
+		
+		if(ingestors != null && ingestors.length > 0)
+			for(String ingStr: ingestors)
+				ingObjs.add(Ingestors.valueOf(ingStr));
+		
+		if(ingObjs.isEmpty())
+			ingObjs.addAll(Arrays.asList(Ingestors.values()));
+		
+		
+		result.setDropdata(getDropsData(ingObjs));
+		return result;
+	}
+    
+    private DropsData getDropsData(List<Ingestors> ingestors) throws Exception {
+		DropsData drops = new DropsData();
+		drops.setDrops(new ArrayList<Drop>());
 
-		if (parserName != null) {
-
-			IParserFactory.Ingestors ingestor = IParserFactory.Ingestors.valueOf(parserName);
+		for (Ingestors ingestor : ingestors){
+			LOGGER.info("Getting drops for [{}]", ingestor);
 			IParser parser = parserFactory.getParser(ingestor);
-			DropsData drops = new DropsData();
-			result.setDropdata(drops);
-			drops.setDrops(new ArrayList<DropsData.Drop>());
 
 			List<DropData> parserDrops = parser.getDrops(false);
 			if (parserDrops != null && parserDrops.size() > 0) {
 				for (DropData drop : parserDrops) {
 					DropsData.Drop data = drops.new Drop();
 					data.setName(drop.name);
-					data.setIngestor(ingestor);
 					data.setParser(parser);
+					data.setIngestor(ingestor);
 					data.setDrop(drop);
 					drops.getDrops().add(data);
 				}
 			}
-		} else {
-			DropsData drops = new DropsData();
-			drops.setDrops(new ArrayList<DropsData.Drop>());
-			result.setDropdata(drops);
-			for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
-                LOGGER.info("Getting drops for " + ingestor);
-				IParser parser = parserFactory.getParser(ingestor);
-
-				List<DropData> parserDrops = parser.getDrops(false);
-				if (parserDrops != null && parserDrops.size() > 0) {
-					for (DropData drop : parserDrops) {
-						DropsData.Drop data = drops.new Drop();
-						data.setName(drop.name);
-						data.setParser(parser);
-						data.setIngestor(ingestor);
-						data.setDrop(drop);
-						drops.getDrops().add(data);
-					}
-				}
-
-			}
 		}
-		return result;
-	}
+								
+		return drops;
+    }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -100,13 +122,13 @@ public class IngestServiceImpl implements IngestService{
         LOGGER.debug("INGEST processFinish");
         command = updateIngestData(command, true);
 
-		for (Drop drop : ((IngestWizardData) command).getDropdata().getDrops()) {
+		for (Drop drop : command.getDropdata().getDrops()) {
 
 			if (!drop.getSelected()) {
-                LOGGER.debug("Skipping not selected  " + drop.getName());
+                LOGGER.debug("Skipping not selected  [{}]", drop.getName());
 				continue;
 			}
-            LOGGER.info("Loading " + drop.getName() + " with " + drop.getParser().getClass());
+            LOGGER.info("Loading [{}] with [{}]", drop.getName(), drop.getParser().getClass());
 
 			processDrop(drop, true);
 		}
@@ -118,7 +140,7 @@ public class IngestServiceImpl implements IngestService{
 	protected void processDrop(Drop drop, boolean updateFiles) throws IOException, InterruptedException {
         LOGGER.debug("INGEST processFinish");
         IParser parser = drop.getParser();
-        IParserFactory.Ingestors ingestor = drop.getIngestor();
+        Ingestors ingestor = drop.getIngestor();
 
         LOGGER.info("Loading " + drop.getName() + " with " + parser.getClass());
 
@@ -134,10 +156,10 @@ public class IngestServiceImpl implements IngestService{
                 LOGGER.info("Null track value");
 				continue;
 			}
-            LOGGER.info("Ingesting " + value.isrc);
+            LOGGER.info("Ingesting [{}]", value.isrc);
 
 			if (value.type == Type.INSERT || value.type == Type.UPDATE) {
-                LOGGER.info("Inserting " + value.isrc);
+                LOGGER.info("Inserting [{}]", value.isrc);
 
 				Track track = trackRepository.findByKey( value.isrc,  value.productCode, parserFactory.getName(ingestor));
 				if (track == null) { // Try to find old keys for Fuga
@@ -145,11 +167,11 @@ public class IngestServiceImpl implements IngestService{
 				}
 				if (track == null) {
 					if (value.type == Type.UPDATE) {
-                        LOGGER.info("Not updating " + value.isrc + " " + value.productCode + " " + ingestor.toString());
+                        LOGGER.info("Not updating [{}] [{}] [{}]", value.isrc, value.productCode, ingestor.toString());
 						continue; // Nothing to update
 					}
 					if (value.files == null || value.files.size() == 0) {
-                        LOGGER.info("Not inserting with no tracks " + value.isrc + " " + value.productCode + " " + ingestor.toString());
+                        LOGGER.info("Not inserting with no tracks [{}] [{}] [{}]", value.isrc, value.productCode, ingestor.toString());
 						continue;
 					}
 					track = new Track();
@@ -198,8 +220,8 @@ public class IngestServiceImpl implements IngestService{
 	public void processAllDrops() throws Exception {
 
         DropsData drops = new DropsData();
-		for (IParserFactory.Ingestors ingestor : IParserFactory.Ingestors.values()) {
-            LOGGER.info("Getting drops for " + ingestor);
+		for (Ingestors ingestor : Ingestors.values()) {
+            LOGGER.info("Getting drops for [{}]", ingestor);
 			IParser parser = parserFactory.getParser(ingestor);
 
 			List<DropData> parserDrops = parser.getDrops(true);
@@ -267,15 +289,16 @@ public class IngestServiceImpl implements IngestService{
 						dataTrack.ISRC = track.getIsrc();
 						dataTrack.productCode = track.getProductCode();
 						data.getData().add(dataTrack);
-						((IngestWizardData) command).setSize(((IngestWizardData) command).getSize() + 1);
+						command.setSize(command.getSize() + 1);
 					} else {
-						((IngestWizardData) command).setSize(((IngestWizardData) command).getSize() + 1);
-                        LOGGER.info("Checking ISRC in cn " + value.isrc);
-						Track track = trackRepository.findByKey((String) value.isrc, (String) value.productCode, parserFactory.getName(drop.getIngestor()));
+						command.setSize(command.getSize() + 1);
+                        LOGGER.info("Checking Track in cn [ISRC:{}, productCode:{}, ingestor: {}]", value.isrc, value.productCode, drop.getIngestor());
+						Track track = trackRepository.findByKey(value.isrc, value.productCode, parserFactory.getName(drop.getIngestor()));
 						if (track == null) { // Try to find old keys for Fuga
-							track = trackRepository.findByKey((String) value.isrc, (String) value.isrc, parserFactory.getName(drop.getIngestor()));
+							track = trackRepository.findByKey(value.isrc, value.isrc, parserFactory.getName(drop.getIngestor()));
 						}
 						if (track == null) {
+							LOGGER.info("Track not found: [ISRC:{}, productCode:{}, ingestor: {}]", value.isrc, value.productCode, drop.getIngestor());
 							if (!value.hasAnyMediaResources()){
                                 it.remove();
                                 continue; // Skip empty insert
@@ -285,13 +308,14 @@ public class IngestServiceImpl implements IngestService{
 							dataTrack.exists = true;
 						}
 
-						dataTrack.artist = (String) value.artist;
-						dataTrack.title = (String) value.title;
-						dataTrack.ISRC = (String) value.isrc;
-						dataTrack.productCode = (String) value.productCode;
+						dataTrack.artist = value.artist;
+						dataTrack.title = value.title;
+						dataTrack.ISRC = value.isrc;
+						dataTrack.productCode = value.productCode;
 						data.getData().add(dataTrack);
 					}
 				}
+				LOGGER.info("Drop {} tracks to ingest: ", drop.getName(), drop.getIngestdata().getData().size());
 			}
             return command;
 	}
@@ -409,7 +433,7 @@ public class IngestServiceImpl implements IngestService{
 			}
 		}
 		if (!found) {
-            LOGGER.info("Adding file " + dropFile.type + " " + dropFile.file);
+            LOGGER.info("Adding file [{}] [{}]", dropFile.type, dropFile.file);
 			AssetFile file = new AssetFile();
 			file.setType(dropFile.type);
 			file.setPath(dropFile.file);
@@ -425,7 +449,7 @@ public class IngestServiceImpl implements IngestService{
 	 * territory is added or updated.
 	 */
 	protected boolean addOrUpdateTerritory(Set<Territory> territories, DropTerritory value) {
-        LOGGER.debug("Adding territory " + value.country + " " + value.label);
+        LOGGER.debug("Adding territory [{}] [{}]", value.country, value.label);
 		if (value.country != null) {
 			boolean found = false;
 			Territory territory = null;
@@ -434,7 +458,7 @@ public class IngestServiceImpl implements IngestService{
 					found = true;
 					territory = data;
 					if (value.takeDown && value.dealReference != null && value.dealReference.equals(data.getDealReference())) {
-                        LOGGER.info("Takedown for " + value.country + " on " + territory.getReportingId());
+                        LOGGER.info("Take down for [{}] on [{}]",value.country, territory.getReportingId());
 						territory.setDeleted(true);
 						territory.setDeleteDate(new Date());
 						return false;
@@ -444,16 +468,16 @@ public class IngestServiceImpl implements IngestService{
 			if (!found) {
 				territory = new Territory();
 				territories.add(territory);
-				territory.setCode((String) value.country);
+				territory.setCode(value.country);
 				territory.setCreateDate(new Date());
 			}
-			territory.setDistributor((String) value.distributor);
-			territory.setPublisher(((String) value.publisher) == null ? "" : (String) value.publisher);
-			territory.setLabel((String) value.label);
-			territory.setCurrency((String) value.currency);
-			territory.setPrice((Float) value.price);
-			territory.setStartDate((Date) value.startdate);
-			territory.setReportingId((String) value.reportingId);
+			territory.setDistributor(value.distributor);
+			territory.setPublisher((value.publisher) == null ? "" : value.publisher);
+			territory.setLabel(value.label);
+			territory.setCurrency(value.currency);
+			territory.setPrice(value.price);
+			territory.setStartDate(value.startdate);
+			territory.setReportingId(value.reportingId);
 			territory.setPriceCode(value.priceCode);
 			territory.setDealReference(value.dealReference);
 			territory.setDeleted(false);
@@ -462,7 +486,7 @@ public class IngestServiceImpl implements IngestService{
 
 	}
 
-	private void commit(IParserFactory.Ingestors ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, boolean auto,
+	private void commit(Ingestors ingestor, IParser parser, DropData drop, Collection<DropTrack> tracks, boolean status, boolean auto,
 			String message) throws IOException, InterruptedException {
 		parser.commit(drop, auto);
 		logIngest(ingestor, parser, drop, tracks, status, message);
@@ -489,8 +513,8 @@ public class IngestServiceImpl implements IngestService{
 		log.setStatus(status);
 		log.setIngestor(ingestor.name());
 		log.setMessage(message);
-		log.setDropName(drop.getName());
+		log.setDropName(drop.name);
 		ingestionLogRepository.save(log);
 	}
-
+	
 }

@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.repository.impl;
 
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepositoryCustom;
 import org.springframework.data.domain.Page;
@@ -21,24 +22,30 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
     @Override
     public Page<Track> find(SearchTrackCriteria searchTrackCreateria, Pageable pagable) {
 
-        String suffixWithoutFetchQuery = createSuffixQuery(searchTrackCreateria);
-
-        Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixWithoutFetchQuery, searchTrackCreateria);
-        countQuery.setFirstResult(pagable.getOffset());
-        countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
-        List<Integer> ids = countQuery.getResultList();
-        Long count = new Long(ids.size() + pagable.getOffset());
-
         String suffixQuery = createSuffixQuery(searchTrackCreateria);
+
+        Long total = 1L;
+        Integer pageSize = 1;
+        if(pagable != null){
+            Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixQuery, searchTrackCreateria);
+            countQuery.setFirstResult(pagable.getOffset());
+            countQuery.setMaxResults(pagable.getPageSize() * 5 + 1);
+            List<Integer> ids = countQuery.getResultList();
+            total = new Long(ids.size() + pagable.getOffset());
+            pageSize = pagable.getPageSize();
+        }
+
         Query listQuery = buildQuery("SELECT t FROM Track t " + suffixQuery, searchTrackCreateria);
-        listQuery.setFirstResult(pagable.getOffset());
-        listQuery.setMaxResults(pagable.getPageSize());
+        if(pagable != null){
+            listQuery.setFirstResult(pagable.getOffset());
+            listQuery.setMaxResults(pagable.getPageSize());
+        }
 
         List<Track> limitedTrackList = (List<Track>) listQuery.getResultList();
 
         Iterator<Track> i = limitedTrackList.iterator();
         int j = 0;
-        while (i.hasNext() && j < pagable.getPageSize()) {
+        while (i.hasNext() && j < pageSize) {
             Track track = i.next();
 
             if (searchTrackCreateria.isWithTerritories())
@@ -54,7 +61,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             j++;
         }
 
-        PageImpl<Track> page = new PageImpl<Track>(limitedTrackList, pagable, count);
+        PageImpl<Track> page = new PageImpl<Track>(limitedTrackList, pagable, total);
         return page;
     }
 
@@ -75,12 +82,20 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             setParamLike("title", trackCriteria.getTitle(), query);
             setParamLike("label", trackCriteria.getLabel(), query);
             setParamLike("ingestor", trackCriteria.getIngestor(), query);
+            setParamLike("territory", trackCriteria.getTerritory(), query);
+
 
             setParam("isrc", trackCriteria.getIsrc(), query);
             setParam("from", trackCriteria.getIngestFrom(), query);
             setParam("to", trackCriteria.getIngestTo(), query);
             setParam("releaseFrom", trackCriteria.getReleaseFrom(), query);
             setParam("releaseTo", trackCriteria.getReleaseTo(), query);
+
+            if (trackCriteria.getMediaType() != null)
+                if (trackCriteria.getMediaType().equals(AssetFile.FileType.VIDEO.name()))
+                    setParam("mediaType", AssetFile.FileType.VIDEO, query);
+                else
+                    setParam("mediaType", AssetFile.FileType.DOWNLOAD, query);
         }
 
         return query;
@@ -122,6 +137,11 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
                 addCriteria(criteria, " t.ingestionDate <= :to");
             if (trackCriteria.getIngestor() != null && !trackCriteria.getIngestor().isEmpty())
                 addCriteria(criteria, " lower(t.ingestor) like :ingestor");
+            if (trackCriteria.getTerritory() != null && !trackCriteria.getTerritory().isEmpty())
+                addCriteria(criteria, " lower(t.territoryCodes) like :territory");
+            if (trackCriteria.getMediaType() !=null)
+                addCriteria(criteria, " t.mediaType = :mediaType");
+
         }
 
         String suffixQuery = join.toString() + buildWhereCause(" WHERE ", criteria);

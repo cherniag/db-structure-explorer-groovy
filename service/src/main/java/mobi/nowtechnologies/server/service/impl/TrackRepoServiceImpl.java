@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -69,10 +70,10 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     }
 
     @Override
-    public IngestWizardDataDto getDrops() {
-        LOGGER.debug("input getDrops()");
+    public IngestWizardDataDto getDrops(String... ingestors) {
+        LOGGER.debug("input getDrops({})", Arrays.toString(ingestors));
 
-        IngestWizardDataDto data = client.getDrops();
+        IngestWizardDataDto data = client.getDrops(ingestors);
 
         LOGGER.debug("output getDrops(): [{}]", data);
         return data;
@@ -123,7 +124,6 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-    //TODO - need refactoring. too much long method
 	public TrackDto pull(TrackDto config) {
 		LOGGER.debug("input pull(track): [{}]", config);
 
@@ -142,110 +142,128 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			if (track == null) {
 				throw new ServiceException("Pulled track is null");
 			}
-			if (track.getStatus() != TrackStatus.ENCODED) {
-				throw new ServiceException("Pulled track is not encoded");
-			}
 
-			Media media = mediaRepository.getByIsrc(track.getIsrc());
-
-			if (media == null) {
-				media = new Media();
-				media.setIsrc(track.getIsrc());
-			}
-			
-			media.setTrackId(id);
-
-			// Building title
-			media.setTitle(config.getTitle());
-
-			// Building genre
-			if (track.getGenre() == null || "".equals(track.getGenre())) {
-				track.setGenre("Default");
-			}
-			String genreName = track.getGenre();
-			genreName = genreName.replaceAll("&", "");
-			Genre genre = (Genre) genreRepository.getByName(genreName);
-			if (genre == null) {
-				genre = new Genre();
-				genre.setName(genreName);
-				genreRepository.save(genre);
-			}
-			media.setGenre(genre);
-
-			// Building artist
-			Artist artist = artistRepository.getByName(config.getArtist());
-			if (artist == null) {
-				artist = new Artist();
-			}
-			artist.setName(config.getArtist());
-			artist.setRealName(track.getArtist());
-			artist.setInfo(config.getInfo());
-			artistRepository.save(artist);
-			
-			media.setArtist(artist);
-			media.setInfo(artist.getInfo());
-
-			// Building iTunesUrl
-			media.setiTunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (config.getItunesUrl() != null ? config.getItunesUrl().replace("&", "%26") : "")
-					+ "%26partnerId=2003");
-			
-			media.setAmazonUrl(config.getAmazonUrl());
-			media.setAreArtistUrls(config.getAreArtistUrls());
-
-			// Building media files
-            ResourceFileDto audioFileDto = track.getFile(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL);
-            if(audioFileDto != null){
-                media.setPurchasedFile(createMediaFile(audioFileDto));
-
-                media.setAudioPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW)));
-                media.setHeaderPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW)));
-
-                if (track.getLicensed() == null || !track.getLicensed()) {
-                    media.setAudioFile(media.getAudioPreviewFile());
-                    media.setHeaderFile(media.getHeaderPreviewFile());
-                } else {
-                    media.setAudioFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, track.getResolution())));
-                    media.setHeaderFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, track.getResolution())));
-                }
+            if (track.getPublishDate() == null) {
+                throw new ServiceException("Pulled track is not published");
             }
 
-            ResourceFileDto videoFileDto = track.getFile(FileType.VIDEO, AudioResolution.RATE_ORIGINAL);
-            if(videoFileDto != null){
-                media.setAudioFile(createMediaFile(videoFileDto));
-            }
+            Media media = createOrUpdateMedia(track, config);
 
-			media.setImageFIleLarge(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_22)));
-			media.setImageFileSmall(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_21)));
-			media.setImgFileResolution(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL)));
+            track.setPublishDate(new Date(media.getPublishDate() * 1000L));
+            track.setPublishArtist(media.getArtistName());
+            track.setTitle(media.getTitle());
+            track.setPublishTitle(track.getTitle());
+            track.setInfo(media.getInfo());
+            track.setItunesUrl(config.getItunesUrl());
+            track.setStatus(TrackStatus.PUBLISHED);
+            track.setAmazonUrl(config.getAmazonUrl());
+            track.setAreArtistUrls(config.getAreArtistUrls());
 
-			Date publishDate = track.getPublishDate() != null ? track.getPublishDate() : new Date();
-			media.setPublishDate((int) (publishDate.getTime() / 1000));
-
-			mediaRepository.save(media);
-
-			track.setPublishDate(publishDate);
-			track.setPublishArtist(media.getArtistName());
-			track.setTitle(media.getTitle());
-			track.setInfo(media.getInfo());
-			track.setItunesUrl(config.getItunesUrl());
-			track.setStatus(TrackStatus.PUBLISHED);
-			track.setAmazonUrl(config.getAmazonUrl());
-			track.setAreArtistUrls(config.getAreArtistUrls());
-
-			LOGGER.info("output pull(track): [{}]", track);
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ServiceException("tracks.pull.error", "Couldn't pull track");
-		} finally {
-			if (config != null && config.getId() != null)
-				pullingTrackSet.remove(config.getId());
-		}
+            LOGGER.error(e.getMessage(), e);
+            throw new ServiceException("tracks.pull.error", "Couldn't pull track");
+        } finally {
+            if (config != null && config.getId() != null) {
+                pullingTrackSet.remove(config.getId());
+            }
+        }
+
+        LOGGER.info("output pull(track): [{}]", track);
 
 		return track;
 	}
 
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
+    protected Media createOrUpdateMedia(TrackDto track, TrackDto config){
+        Media media = mediaRepository.getByIsrc(track.getIsrc());
+
+        if (media == null) {
+            media = new Media();
+            media.setIsrc(track.getIsrc());
+        }
+
+        media.setTrackId(config.getId());
+        media.setTitle(config.getTitle());
+
+        // Building genre
+        Genre genre = createOrUpdateGenre(track);
+        media.setGenre(genre);
+
+        // Building artist
+        Artist artist = createOrUpdateArtist(track, config);
+        media.setArtist(artist);
+        media.setInfo(artist.getInfo());
+
+        // Building iTunesUrl
+        media.setiTunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (config.getItunesUrl() != null ? config.getItunesUrl().replace("&", "%26") : "")
+                + "%26partnerId=2003");
+        media.setAmazonUrl(config.getAmazonUrl());
+        media.setAreArtistUrls(config.getAreArtistUrls());
+
+        // Building media files
+        ResourceFileDto audioFileDto = track.getFile(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL);
+        if(audioFileDto != null){
+            media.setPurchasedFile(createMediaFile(audioFileDto));
+
+            media.setAudioPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW)));
+            media.setHeaderPreviewFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW)));
+
+            if (track.getLicensed() == null || !track.getLicensed()) {
+                media.setAudioFile(media.getAudioPreviewFile());
+                media.setHeaderFile(media.getHeaderPreviewFile());
+            } else {
+                media.setAudioFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, track.getResolution())));
+                media.setHeaderFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, track.getResolution())));
+            }
+        }
+
+        ResourceFileDto videoFileDto = track.getFile(FileType.VIDEO, AudioResolution.RATE_ORIGINAL);
+        if(videoFileDto != null){
+            media.setAudioFile(createMediaFile(videoFileDto));
+        }
+
+        media.setImageFIleLarge(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_22)));
+        media.setImageFileSmall(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_21)));
+        media.setImgFileResolution(createMediaFile(track.getFile(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL)));
+
+        Date publishDate = track.getPublishDate() != null ? track.getPublishDate() : new Date();
+        media.setPublishDate((int) (publishDate.getTime() / 1000));
+
+        mediaRepository.save(media);
+
+        return media;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private Artist createOrUpdateArtist(TrackDto track, TrackDto config) {
+        Artist artist = artistRepository.getByName(config.getArtist());
+        if (artist == null) {
+            artist = new Artist();
+        }
+        artist.setName(config.getArtist());
+        artist.setRealName(track.getArtist());
+        artist.setInfo(config.getInfo());
+        artistRepository.save(artist);
+
+        return artist;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private Genre createOrUpdateGenre(TrackDto track) {
+        if (track.getGenre() == null || "".equals(track.getGenre())) {
+            track.setGenre("Default");
+        }
+        String genreName = track.getGenre();
+        genreName = genreName.replaceAll("&", "");
+        Genre genre = (Genre) genreRepository.getByName(genreName);
+        if (genre == null) {
+            genre = new Genre();
+            genre.setName(genreName);
+            genreRepository.save(genre);
+        }
+        return genre;
+    }
+
+    @Override
 	public TrackDto encode(TrackDto config) {
 		LOGGER.debug("input encode(track): [{}]", config);
 
@@ -327,18 +345,18 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	protected void fillTracks(PageListDto<TrackDto> tracks) {
 		Map<String, TrackDto> map = new HashMap<String, TrackDto>();
 		for (TrackDto track : tracks.getList()) {
-			if (track.getStatus() == TrackStatus.ENCODED) {
-				if (pullingTrackSet.contains(track.getId()))
-					track.setStatus(TrackStatus.PUBLISHING);
-				else {
-					track.setInfo(getArtistInfo(track.getArtist()));
-					track.setPublishArtist(track.getArtist());
-					track.setPublishTitle(track.getTitle());
-					map.put(track.getIsrc(), track);
-				}
-			}
+				
+			track.setInfo(getArtistInfo(track.getArtist()));
+			track.setPublishArtist(track.getArtist());
+			track.setPublishTitle(track.getTitle());
+
+			if (pullingTrackSet.contains(track.getId()))
+				track.setStatus(TrackStatus.PUBLISHING);
+			else if (track.getStatus() == TrackStatus.ENCODED || track.getStatus() == TrackStatus.PUBLISHED)
+				map.put(track.getIsrc(), track);
+
 		}
-		
+
 		if (map.size() > 0)
 		{
 			List<Media> medias = mediaRepository.findByIsrcs(map.keySet());
@@ -374,4 +392,43 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			}
 		}
 	}
+
+    @Override
+    public Map<String, List<TrackDto>> encodeTracks(List<TrackDto> tracks) {
+        Map<String, List<TrackDto>> result = new HashMap<String, List<TrackDto>>();
+
+        List<TrackDto> fails = new ArrayList<TrackDto>();
+        List<TrackDto> successes = new ArrayList<TrackDto>();
+
+        for (int i = 0; i < tracks.size(); i++) {
+
+            TrackDto track = tracks.get(i);
+            try {
+                if (track == null || track.getId() == null) {
+                    throw new IllegalArgumentException("Given track is illegal");
+                }
+
+                Media media = mediaRepository.getByIsrc(track.getIsrc());
+                if (media != null) {
+                    media.setPublishDate(0);
+                    mediaRepository.save(media);
+                }
+
+                track = client.encodeTrack(track.getId(), track.getResolution() == AudioResolution.RATE_96 ? true : false, track.getLicensed());
+                track.setPublishArtist(track.getArtist());
+                track.setPublishTitle(track.getTitle());
+                track.setInfo(getArtistInfo(track.getArtist()));
+                successes.add(track);
+            } catch (Exception e) {
+                LOGGER.error("Encoding track failed! [TrackId=" + track.getId() + "] Title=[" + track.getTitle() + "]", e);
+                fails.add(track);
+            }
+
+        }
+
+        result.put("success", successes);
+        result.put("fail", fails);
+
+        return result;
+    }
 }

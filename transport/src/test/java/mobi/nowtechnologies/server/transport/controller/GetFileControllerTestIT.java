@@ -5,10 +5,10 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
 
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GetFileControllerTestIT extends AbstractControllerTestIT {
 

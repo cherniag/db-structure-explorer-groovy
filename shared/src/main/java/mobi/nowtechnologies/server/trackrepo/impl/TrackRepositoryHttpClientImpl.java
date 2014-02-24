@@ -3,19 +3,45 @@
  */
 package mobi.nowtechnologies.server.trackrepo.impl;
 
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
+import static org.springframework.util.StringUtils.hasText;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
 import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
-import org.apache.http.*;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -31,19 +57,13 @@ import org.slf4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.springframework.util.StringUtils.hasText;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -52,7 +72,9 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(TrackRepositoryHttpClientImpl.class);
-	private String username = "admin";
+	private static final Integer DEFAULT_NUM_QUERY_THREADS = 1;
+
+    private String username = "admin";
 	private String password = "admin";
 	private String trackRepoUrl = "http://localhost:8080/trackrepo/";
 	
@@ -63,13 +85,62 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	protected DateFormat dateTimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
     protected Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
     protected Gson gsonMillis;
+    protected Integer numQuerySchedulerThreads = DEFAULT_NUM_QUERY_THREADS;
+    protected ScheduledExecutorService queryScheduler;
 
-    public TrackRepositoryHttpClientImpl(){
+    public void init(){
+        queryScheduler = Executors.newScheduledThreadPool(numQuerySchedulerThreads);
         gsonMillis = new GsonBuilder().registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
             public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
                 return new Date(json.getAsJsonPrimitive().getAsLong());
             }
         }).create();
+    }
+
+    public void setNumQuerySchedulerThreads(Integer numQuerySchedulerThreads) {
+        this.numQuerySchedulerThreads = numQuerySchedulerThreads;
+    }
+
+    protected abstract class QueryTask<T> implements Runnable {
+        private T data;
+        private Throwable failure;
+        private ScheduledFuture<?> future;
+        private final Lock lock = new ReentrantLock();
+        private final Condition isProcessing  = lock.newCondition();
+
+        public void setData(T data) {
+            this.data = data;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public Throwable getFailure() {
+            return failure;
+        }
+
+        public void setFailure(Throwable failure) {
+            this.failure = failure;
+        }
+
+        public void start(ScheduledFuture<?> future) throws InterruptedException {
+            lock.lock();
+
+            this.future = future;
+            isProcessing.await();
+
+            lock.unlock();
+        }
+
+        public void stop(){
+            lock.lock();
+
+            isProcessing.signal();
+            this.future.cancel(false);
+
+            lock.unlock();
+        }
     }
 
 	/*
@@ -138,19 +209,28 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
     * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#getDrops (java.lang.String)
     */
     @Override
-    public IngestWizardDataDto getDrops() {
+    public IngestWizardDataDto getDrops(String... ingestors) {
         IngestWizardDataDto data = new IngestWizardDataDto();
         data.setDrops(Collections.<DropDto>emptyList());
         try {
-                HttpGet query = new HttpGet(trackRepoUrl.concat("drops.json"));
-                query.setHeaders(getSecuredHeaders());
-                query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
-                HttpResponse response = getHttpClient().execute(query);
-                if (200 == response.getStatusLine().getStatusCode()) {
-                    Type type = new TypeToken<IngestWizardDataDto>() {
-                    }.getType();
-                    data = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
-                }
+            
+        	String uri = trackRepoUrl.concat("drops.json");
+        	if(ingestors != null && ingestors.length > 0){
+        		List<NameValuePair> params = new ArrayList<NameValuePair>();
+        		for(String ing: ingestors)
+        			params.add(new BasicNameValuePair("ingestors", ing));
+        		uri += "?" + URLEncodedUtils.format(params, "utf-8");
+        	}
+        	
+        	HttpGet query = new HttpGet(uri);
+            query.setHeaders(getSecuredHeaders());
+            query.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+            HttpResponse response = getHttpClient().execute(query);
+            if (200 == response.getStatusLine().getStatusCode()) {
+                Type type = new TypeToken<IngestWizardDataDto>() {
+                }.getType();
+                data = gsonMillis.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+            }
         } catch (ClientProtocolException e) {
             LOGGER.error("Cannot search drops. {}", e);
         } catch (IOException e) {
@@ -257,22 +337,70 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	 * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#pullTrack (java.lang.String)
 	 */
 	@Override
-	public TrackDto pullTrack(Long id) throws Exception{
-		TrackDto trackDto = null;
+    public TrackDto pullTrack(final Long id) throws Exception{
+//        final QueryTask<TrackDto> pullTask = new QueryTask<TrackDto>(){
+//            @Override
+//            synchronized public void run() {
+//            	LOGGER.info("Start pullTask: trackId {}", id);
+//                TrackDto trackDto = null;
+//                try {
+//                    if (id != null) {
+//                        HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
+//                        pull.setHeaders(getSecuredHeaders());
+//                        HttpResponse response = getHttpClient().execute(pull);
+//                        if (200 == response.getStatusLine().getStatusCode()) {
+//                            trackDto = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), TrackDto.class);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    LOGGER.error("Cannot pull the track by id {} from repository. {}", id, e);
+//                    this.setFailure(e);
+//                }
+//
+//                this.setData(trackDto);
+//                LOGGER.info("Received data: {}", trackDto);
+//
+//                if(this.getFailure() != null || this.getData() == null || this.getData().getPublishDate() != null){
+//                	LOGGER.info("Stop pullTask schedule: trackId {}", id);
+//                	this.stop();
+//                }
+//            }
+//        };
+//
+//        ScheduledFuture<?> future = queryScheduler.scheduleWithFixedDelay(
+//                pullTask, 0, 1, TimeUnit.SECONDS
+//        );
+//        pullTask.start(future);
+//
+//        if(pullTask.getFailure() != null){
+//            throw (Exception) pullTask.getFailure();
+//        }
+//
+//        return pullTask.getData();
+		return sendPullRequest(id);
+    }
+	
+	private TrackDto sendPullRequest(final Long id) throws Exception {
+		LOGGER.info("callPull(id:{})", id);
+		if (id == null)
+			return null;
 		try {
-			if (id != null) {
-				HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
-				pull.setHeaders(getSecuredHeaders());
-				HttpResponse response = getHttpClient().execute(pull);
-				if (200 == response.getStatusLine().getStatusCode()) {
-					trackDto = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), TrackDto.class);
-				}
+			HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
+			pull.setHeaders(getSecuredHeaders());
+			HttpResponse response = getHttpClient().execute(pull);
+			if (response.getStatusLine().getStatusCode() != 200) {
+				LOGGER.error("Server responded on Pull request for track with ID {} with error status code: {}", id, response.getStatusLine().getStatusCode());
+				//throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
+				return null;
 			}
+			String resJson = IOUtils.toString(response.getEntity().getContent()); 
+			LOGGER.info("Received json: {}", resJson);
+			TrackDto trackDto = gson.fromJson(resJson, TrackDto.class);
+			return trackDto;
 		} catch (Exception e) {
-			LOGGER.error("Cannot pull the track by id {} from repository. {}", id, e);
+			LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
 			throw e;
-		} 
-		return trackDto;
+		}
 	}
 
 	/*
@@ -361,13 +489,17 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 addQParam(criteria.getIngestor(), "ingestor", queryParams);
                 addQParam(criteria.getAlbum(), "album", queryParams);
                 addQParam(criteria.getGenre(), "genre", queryParams);
-
-                if(criteria.getTrackIds() != null && !criteria.getTrackIds().isEmpty())
+                addQParam(criteria.getTerritory(), "territory", queryParams);
+                if(criteria.getTrackIds() != null && !criteria.getTrackIds().isEmpty()) {
                     addQParam(criteria.getTrackIds().get(0).toString(), "trackIds[0]", queryParams);
+                }
 
                 if(queryParams.size() > 0){
                     addQParam(String.valueOf(criteria.isWithTerritories()), "withTerritories", queryParams);
                     addQParam(String.valueOf(criteria.isWithFiles()), "withFiles", queryParams);
+
+                    if (!("".equals(criteria.getMediaType())))
+                        addQParam(criteria.getMediaType(), "mediaType", queryParams);
 
                     buildPageParams(page, queryParams);
 
@@ -380,6 +512,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                         Type type = new TypeToken<PageListDto<TrackDto>>() {
                         }.getType();
                         tracks = gson.fromJson(new InputStreamReader(response.getEntity().getContent()), type);
+                        tracks.setPage(page.getPageNumber() + 1);
                     }
                 }
 			}
@@ -398,7 +531,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 
     private void addQParam(String param, String key, List<NameValuePair> queryParams) {
         if (hasText(param))
-        	queryParams.add(new BasicNameValuePair(key, param));
+        	queryParams.add(new BasicNameValuePair(key, param.trim()));
     }
 
     protected List<NameValuePair> buildPageParams(Pageable page, List<NameValuePair>... paramsArr){

@@ -35,10 +35,6 @@
             <classifier>jar</classifier>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test-mvc</artifactId>
-        </dependency>
-        <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>persistence</artifactId>
             <scope>test</scope>
