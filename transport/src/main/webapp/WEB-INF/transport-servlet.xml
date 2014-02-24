@@ -80,14 +80,14 @@
 	  </property>
         <property name="defaultViews">
 		<list>
-		  <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+            <ref bean="transport.JaxbMarshallingView"/>
+            <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
               <property name="objectMapper">
                   <bean class="org.codehaus.jackson.map.ObjectMapper">
                       <property name="serializationInclusion" value="NON_EMPTY"/>
                   </bean>
               </property>
           </bean>
-		  <ref bean="transport.JaxbMarshallingView"/>
 		 </list>
 	  </property>
     </bean>
