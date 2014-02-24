@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -71,7 +72,8 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 		assertEquals(curTime-curTime%100000, track.getPublishDate().getTime()-track.getPublishDate().getTime()%100000);
 	}
 
-    @Ignore @Test
+    @Ignore
+    @Test
     public void testCreateVideo_Success() throws Exception {
         //test preparation
         URL videoURL = this.getClass().getClassLoader().getResource("media/manual/020313/o2Tracks.mp4");
