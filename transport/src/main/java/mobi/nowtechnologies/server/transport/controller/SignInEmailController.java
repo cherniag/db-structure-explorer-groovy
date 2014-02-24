@@ -39,7 +39,7 @@ public class SignInEmailController extends CommonController {
         try {
             LOGGER.info("SIGN_IN_EMAIL Started for activationEmailId: [{}], email: [{}], deviceUID: [{}]",
                     activationEmailId, email, deviceUID);
-            user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
+            user = checkUser(deviceUID, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATION_STARTED);
 
             user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 

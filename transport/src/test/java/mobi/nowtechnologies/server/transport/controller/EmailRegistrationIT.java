@@ -137,14 +137,14 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     private void registerSecondUserOnDevice(User user) throws Exception {
         String storedToken = signUpDevice(DEVICE_UID_1);
 
-        checkUserAfterSignupDevice(DEVICE_UID_1);
+        User registeredUser = checkUserAfterSignupDevice(DEVICE_UID_1);
 
         User activatedUser = userRepository.findOne(user.getUserName(), Community.O2_COMMUNITY_REWRITE_URL);
         assertTrue(activatedUser.getDeviceUID().contains(DISABLED));
 
         long time = System.currentTimeMillis();
 
-        MvcResult mvcResult = emailGenerate(user, EMAIL_2);
+        MvcResult mvcResult = emailGenerate(registeredUser, EMAIL_2);
 
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0]), time, EMAIL_2, activatedUser.getDeviceType().getName());
@@ -154,17 +154,17 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         applyInitPromo(activationEmail, timestamp, userToken);
 
-        User secondUser = userRepository.findOne(EMAIL_2, Community.O2_COMMUNITY_REWRITE_URL);
-        checkActivatedUser(secondUser, EMAIL_2);
+        registeredUser = userRepository.findOne(EMAIL_2, Community.O2_COMMUNITY_REWRITE_URL);
+        checkActivatedUser(registeredUser, EMAIL_2);
         assertNull(userRepository.findOne(DEVICE_UID_1, Community.O2_COMMUNITY_REWRITE_URL));
         User oldUser = userRepository.findOne(user.getUserName(), Community.O2_COMMUNITY_REWRITE_URL);
         assertEquals(UserStatus.SUBSCRIBED.name(), oldUser.getStatus().getName());
         assertTrue(oldUser.getDeviceUID().contains(DISABLED));
 
-        userToken = Utils.createTimestampToken(secondUser.getToken(), timestamp);
+        userToken = Utils.createTimestampToken(registeredUser.getToken(), timestamp);
 
-        checkGetChart(secondUser, timestamp, userToken);
-        checkGetNews(secondUser, timestamp, userToken);
+        checkGetChart(registeredUser, timestamp, userToken);
+        checkGetNews(registeredUser, timestamp, userToken);
     }
 
     private User registerFirstUserOnDevice() throws Exception {

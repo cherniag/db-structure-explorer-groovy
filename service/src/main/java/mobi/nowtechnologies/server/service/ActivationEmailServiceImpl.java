@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.slf4j.Logger;
@@ -53,6 +54,9 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
 
             activationEmail = new ActivationEmail(email, deviceUID, token);
             activationEmailRepository.save(activationEmail);
+
+            user.setActivationStatus(ActivationStatus.ACTIVATION_STARTED);
+            userService.updateUser(user);
 
             Map<String, String> params = new HashMap<String, String>();
             params.put(ActivationEmail.ID, activationEmail.getId().toString());
