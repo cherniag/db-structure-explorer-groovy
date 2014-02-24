@@ -1,52 +1,44 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.factory.AssetFileFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
 
-public class FileControllerTestIT extends AbstractTrackRepoITTest{
-	@Autowired
-	private FileController fixture;
-	
-	@Autowired
-	private FileRepository fileRepository;
-	
-	@Value("${trackRepo.encode.destination}")
-	private Resource publishDir;
+public class FileControllerTestIT extends AbstractTrackRepoITTest {
 
-	@Test
-	public void testFile()
-		throws Exception {
+    @Autowired
+    private FileRepository fileRepository;
 
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		MockHttpServletResponse resp = new MockHttpServletResponse();
-		
-		Long id = new Long(1L);
+    @Value("${trackRepo.encode.destination}")
+    private Resource publishDir;
 
-		fixture.file(id, req, resp);
+    @Test
+    public void testFile() throws Exception {
+        mockMvc.perform(get("/file").param("id", "1")).
+                andExpect(status().isOk()).andExpect(content().contentType("image/jpeg"));
+    }
 
-		assertEquals(200, resp.getStatus());
-		assertEquals("image/jpeg", resp.getContentType());
-	}
+    @Before
+    public void setUp() throws Exception {
+        AssetFileFactory assetFileFactory = new AssetFileFactory();
+        assetFileFactory.setFileDir(publishDir.getFile());
 
-	@Before
-	public void setUp() throws Exception {
-		AssetFileFactory assetFileFactory = new AssetFileFactory();
-		assetFileFactory.setFileDir(publishDir.getFile());
+        AssetFile assetFile = assetFileFactory.anyAssetFile();
 
-		fileRepository.save(assetFileFactory.anyAssetFile());
-	}
+
+        fileRepository.save(assetFile);
+    }
 }

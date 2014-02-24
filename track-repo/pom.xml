@@ -113,6 +113,13 @@
 		</dependency>
 
         <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>service</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>

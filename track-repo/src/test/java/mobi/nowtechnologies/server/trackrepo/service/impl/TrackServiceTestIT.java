@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 	private final String DEFAULT_FILE_NAME = "work/APPCASTP.m4a";
 
-	@Resource
+	@Resource(name = "trackRepo.TrackServiceStub")
 	private TrackServiceImpl trackService;
 
     @Resource
