@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ern:NewReleaseMessage xmlns:ern="http://ddex.net/xml/2010/ern-main/312" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ddex.net/xml/2010/ern-main/312 http://ddex.net/xml/2010/ern-main/312/ern-main.xsd" MessageSchemaVersionId="2010/ern-main/312">
+    <MessageHeader>
+        <MessageThreadId>R615</MessageThreadId>
+        <MessageId>2013060300010615</MessageId>
+        <MessageSender>
+            <PartyName>
+                <FullName>Tekked</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>Omnifone</PartyId>
+            <PartyName>
+                <FullName>Omnifone</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-06-03T05:24:57-04:00</MessageCreatedDateTime>
+        <MessageControlType>LiveMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator xmlns="">OriginalMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBXYZ1300001</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+                <ProprietaryId Namespace="">8742</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8742</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Drowning in the Shallow</TitleText>
+            </ReferenceTitle>
+            <Duration>PT6M00S</Duration>
+            <CreationDate>2013-08-08</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Drowning in the Shallow</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-08-08</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>1965</Year>
+                    <PLineText>1965 Absolute test</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8742</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300785066_01_01.wav</FileName>
+                        <HashSum>
+                            <HashSum>f8b8cc3335b99c19eb9eb63a973a8343</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBXYZ1300002</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+                <ProprietaryId Namespace="">8743</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8743</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>The Reason</TitleText>
+            </ReferenceTitle>
+            <Duration>PT4M07S</Duration>
+            <CreationDate>2013-08-08</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>The Reason</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-08-08</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>1965</Year>
+                    <PLineText>1965 Absolute test</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8743</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300785066_01_02.wav</FileName>
+                        <HashSum>
+                            <HashSum>55db9a6325a2f84cb01f9383d96db922</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBXYZ1300003</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+                <ProprietaryId Namespace="">8744</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8744</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Pieces Of April</TitleText>
+            </ReferenceTitle>
+            <Duration>PT5M47S</Duration>
+            <CreationDate>2013-08-08</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Pieces Of April</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-08-08</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>1965</Year>
+                    <PLineText>1965 Absolute test</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8744</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300785066_01_03.wav</FileName>
+                        <HashSum>
+                            <HashSum>90fcd9e889ce4bcb679b29662e112651</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBXYZ1300004</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+                <ProprietaryId Namespace="">8745</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8745</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Ego</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M51S</Duration>
+            <CreationDate>2013-08-08</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Ego</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-08-08</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>1965</Year>
+                    <PLineText>1965 Absolute test</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8745</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300785066_01_04.wav</FileName>
+                        <HashSum>
+                            <HashSum>e0e7e332ab471dd71b077d326a32d877</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBXYZ1300005</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+                <ProprietaryId Namespace="">8746</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8746</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Seven Storeys</TitleText>
+            </ReferenceTitle>
+            <Duration>PT3M57S</Duration>
+            <CreationDate>2013-08-08</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Seven Storeys</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-08-08</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>1965</Year>
+                    <PLineText>1965 Absolute test</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8746</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300785066_01_05.wav</FileName>
+                        <HashSum>
+                            <HashSum>9a9673b55b5cde6565f5e54a1c1c13d6</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBXYZ1300006</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+                <ProprietaryId Namespace="">8747</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8747</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>This Poet</TitleText>
+            </ReferenceTitle>
+            <Duration>PT2M59S</Duration>
+            <CreationDate>2013-08-08</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>This Poet</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-08-08</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>1965</Year>
+                    <PLineText>1965 Absolute test</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8747</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300785066_01_06.wav</FileName>
+                        <HashSum>
+                            <HashSum>101f0025c35fbdb90e85ea6a2480eb23</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="">PID1</ProprietaryId>
+            </ImageId>
+            <ResourceReference>AI1</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <TechnicalImageDetails>
+                    <TechnicalResourceDetailsReference>TI1</TechnicalResourceDetailsReference>
+                    <ImageCodecType>JPEG</ImageCodecType>
+                    <ImageHeight>1200</ImageHeight>
+                    <ImageWidth>1200</ImageWidth>
+                    <File>
+                        <FileName>5037300785066.jpg</FileName>
+                        <HashSum>
+                            <HashSum>d0f9cc013e9f3cbc67534dd3f7ce302f</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalImageDetails>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBXYZ1300001</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8742</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Drowning in the Shallow</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8742</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Aaron Keyes</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Drowning in the Shallow</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-08-08</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>1965</Year>
+                <PLineText>1965 Absolute test</PLineText>
+            </PLine>
+            <CLine>
+                <Year>1965</Year>
+                <CLineText>1965 Absolute test</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBXYZ1300002</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8743</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>The Reason</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8743</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Aaron Keyes</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>The Reason</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-08-08</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>1965</Year>
+                <PLineText>1965 Absolute test</PLineText>
+            </PLine>
+            <CLine>
+                <Year>1965</Year>
+                <CLineText>1965 Absolute test</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBXYZ1300003</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8744</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Pieces Of April</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8744</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Aaron Keyes</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Pieces Of April</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-08-08</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>1965</Year>
+                <PLineText>1965 Absolute test</PLineText>
+            </PLine>
+            <CLine>
+                <Year>1965</Year>
+                <CLineText>1965 Absolute test</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBXYZ1300004</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8745</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Ego</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8745</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Aaron Keyes</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Ego</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-08-08</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>1965</Year>
+                <PLineText>1965 Absolute test</PLineText>
+            </PLine>
+            <CLine>
+                <Year>1965</Year>
+                <CLineText>1965 Absolute test</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBXYZ1300005</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8746</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Seven Storeys</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8746</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Aaron Keyes</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Seven Storeys</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-08-08</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>1965</Year>
+                <PLineText>1965 Absolute test</PLineText>
+            </PLine>
+            <CLine>
+                <Year>1965</Year>
+                <CLineText>1965 Absolute test</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBXYZ1300006</ISRC>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8747</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>This Poet</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8747</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Aaron Keyes</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>This Poet</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-08-08</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>1965</Year>
+                <PLineText>1965 Absolute test</PLineText>
+            </PLine>
+            <CLine>
+                <Year>1965</Year>
+                <CLineText>1965 Absolute test</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ICPN IsEan="false">5037300785066</ICPN>
+                <CatalogNumber Namespace="">TEST9</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RR615</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>TEST001 (use this one)</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AI1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8742</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8743</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8744</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8745</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8746</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8747</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>Worldwide</TerritoryCode>
+                <DisplayArtistName>Aaron Keyes</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title>
+                    <TitleText>TEST001 (use this one)</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Aaron Keyes</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <SequenceNumber>1</SequenceNumber>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ReleaseResourceReference>AT8742</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>2</SequenceNumber>
+                        <ReleaseResourceReference>AT8743</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>3</SequenceNumber>
+                        <ReleaseResourceReference>AT8744</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>4</SequenceNumber>
+                        <ReleaseResourceReference>AT8745</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>5</SequenceNumber>
+                        <ReleaseResourceReference>AT8746</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>6</SequenceNumber>
+                        <ReleaseResourceReference>AT8747</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Trip-hop</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-08-08</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>1965</Year>
+                <PLineText>1965 Absolute test</PLineText>
+            </PLine>
+            <CLine>
+                <Year>1965</Year>
+                <CLineText>1965 Absolute test</CLineText>
+            </CLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>RR615</DealReleaseReference>
+            <Deal>
+                <DealReference>DR615</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <UseType UserDefinedValue="Streaming">UserDefined</UseType>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>Worldwide</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">album_5</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-08-08</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-08-08</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-03</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8742</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8742</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <UseType UserDefinedValue="Streaming">UserDefined</UseType>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>Worldwide</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-08-08</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-08-08</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-03</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8743</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8743</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <UseType UserDefinedValue="PermanentDownload">UserDefined</UseType>
+                        <UseType UserDefinedValue="Streaming">UserDefined</UseType>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>Worldwide</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-08-08</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-08-08</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-03</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8744</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8744</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <UseType UserDefinedValue="PermanentDownload">UserDefined</UseType>
+                        <UseType UserDefinedValue="Streaming">UserDefined</UseType>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>Worldwide</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-08-08</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-08-08</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-03</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8745</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8745</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <UseType UserDefinedValue="PermanentDownload">UserDefined</UseType>
+                        <UseType UserDefinedValue="Streaming">UserDefined</UseType>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>Worldwide</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-08-08</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-08-08</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-03</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8746</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8746</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <UseType UserDefinedValue="PermanentDownload">UserDefined</UseType>
+                        <UseType UserDefinedValue="Streaming">UserDefined</UseType>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>Worldwide</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-08-08</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-08-08</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-03</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8747</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8747</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <UseType UserDefinedValue="PermanentDownload">UserDefined</UseType>
+                        <UseType UserDefinedValue="Streaming">UserDefined</UseType>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>Worldwide</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-08-08</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-08-08</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-06-03</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ern:NewReleaseMessage>

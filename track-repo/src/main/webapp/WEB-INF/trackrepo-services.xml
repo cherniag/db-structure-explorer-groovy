@@ -31,7 +31,13 @@
 		<property name="brightcoveWriteToken" value="${brightcove.token.write}" />
 		<property name="brightcoveReadToken" value="${brightcove.token.read}" />
 		<property name="brightcoveGeoFiltering" value="${brightcove.geo.filter}" />
+		<property name="sevenDigitalApiUrl" value="${trackrepo.7digital.url}" />
+		<property name="sevenDigitalApiKey" value="${trackrepo.7digital.key}" />
+		<property name="restTemplate" ref="service.RestTemplate" />
 	</bean>
+
+    <bean id="trackRepo.TrackServiceStub" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceStub" parent="trackRepo.TrackService">
+    </bean>
 
     <bean id="trackRepo.ParserFactory" class="mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory">
         <property name="sonyRoot" value="${trackRepo.ingest.sony.root}" />
@@ -42,8 +48,10 @@
         <property name="fugaRoot" value="${trackRepo.ingest.fuga.root}" />
         <property name="ciRoot" value="${trackRepo.ingest.ci.root}" />
         <property name="emiRoot" value="${trackRepo.ingest.emi.root}" />
+        <property name="emiUmgRoot" value="${trackRepo.ingest.emi_umg.root}" />
         <property name="iodaRoot" value="${trackRepo.ingest.ioda.root}" />
         <property name="manualRoot" value="${trackRepo.ingest.manual.root}" />
+        <property name="absoluteRoot" value="${trackRepo.ingest.absolute.root}" />
 	</bean>
 
     <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl">
@@ -59,5 +67,7 @@
 	
 	<bean id="trackRepo.FileService" class="mobi.nowtechnologies.server.trackrepo.service.impl.FileServiceImpl">
 		<property name="fileRepository" ref="fileRepository" />
-	</bean>		
+	</bean>
+	
+	<bean id="service.RestTemplate"  class="org.springframework.web.client.RestTemplate" />
 </beans>

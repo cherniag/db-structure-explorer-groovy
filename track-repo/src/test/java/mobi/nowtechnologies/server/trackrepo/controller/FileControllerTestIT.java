@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.trackrepo.controller;
 import junit.framework.TestCase;
 import mobi.nowtechnologies.server.trackrepo.factory.AssetFileFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,10 +42,12 @@ public class FileControllerTestIT extends TestCase {
 	public void testFile()
 		throws Exception {
 
+		MockHttpServletRequest req = new MockHttpServletRequest();
 		MockHttpServletResponse resp = new MockHttpServletResponse();
+		
 		Long id = new Long(1L);
 
-		fixture.file(resp, id);
+		fixture.file(id, req, resp);
 
 		assertEquals(200, resp.getStatus());
 		assertEquals("image/jpeg", resp.getContentType());

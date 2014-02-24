@@ -24,7 +24,7 @@ public class MediaAsm {
 		
 		mediaDto.setId(media.getI());
 		mediaDto.setArtistDto(ArtistAsm.toArtistDto(media.getArtist()));
-		//mediaDto.setAudioFileDto(MediaFileAsm.toMediaFileDto(media.getAudioFile()));
+		mediaDto.setAudioFileDto(MediaFileAsm.toMediaFileDto(media.getAudioFile()));
 		//mediaDto.setAudioPreviewFileDto(MediaFileAsm.toMediaFileDto(media.getAudioPreviewFile()));
 		//mediaDto.setHeaderFileDto(MediaFileAsm.toMediaFileDto(media.getHeaderFile()));
 		//mediaDto.setHeaderPreviewFileDto(MediaFileAsm.toMediaFileDto(media.getHeaderPreviewFile()));

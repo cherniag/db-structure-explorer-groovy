@@ -12,11 +12,9 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class SonyDDEXParser extends DDEXParser {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SonyDDEXParser.class);
 
 	public SonyDDEXParser(String root) throws FileNotFoundException {
         super(root);
-		LOGGER.info("Sony DDEX parser loading from " + root);
 	}
 
 	@Override

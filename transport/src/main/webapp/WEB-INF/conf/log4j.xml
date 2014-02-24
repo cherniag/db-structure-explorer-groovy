@@ -22,7 +22,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/errors-transport_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelRangeFilter">
 			<param name="LevelMin" value="WARN" />
@@ -39,7 +39,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/ctrl-transport_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -72,7 +72,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/jobs-push-notification_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -89,7 +89,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/jobs-smsAccordingToLaw_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -106,7 +106,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/jobs-create-retry-payment_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -123,7 +123,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/jobs-clean-exired-payment_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -157,7 +157,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/jobs-create-pending-payment_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -174,7 +174,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/pool-payment-executor_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}: [%15.15t] [%X{userId}:%X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}: [%15.15t] [%X{userId}:%X{userName} from %X{community}] %-5p %30.30c:%L - %m%n" />
 		</layout>
 
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
@@ -192,7 +192,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/ctrl-mig_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}: %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}: %-5p %30.30c:%L - %m%n" />
 		</layout>
 
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
@@ -211,7 +211,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/acc-check_%d.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c:%L - %m%n" />
 		</layout>
 	</appender>
 	
@@ -224,7 +224,7 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<!--The " ut " will be replace on current "unix time" value-->
 			<param name="ConversionPattern"
-				value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+				value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c:%L - %m%n" />
 		</layout>
 			<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -242,7 +242,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/user-notification-transport_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -259,7 +259,7 @@
 			<param name="fileNamePattern" value="${catalina.base}/logs/user-sms-notification-transport_%d{yyyy-ww}.gz" />
 		</rollingPolicy>
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
 			<param name="contextKey" value="class" />
@@ -294,7 +294,7 @@
             <param name="fileNamePattern" value="${catalina.base}/logs/update-o2-user-job_%d{yyyy-ww-dd}.gz" />
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] userid=%X{userId} %X{userName} from %X{community}] %-5p %30.30c - %m%n" />
+            <param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] userid=%X{userId} %X{userName} from %X{community}] %-5p %30.30c:%L - %m%n" />
         </layout>
         <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
             <param name="contextKey" value="class" />

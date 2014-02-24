@@ -4,6 +4,8 @@ import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -369,6 +371,21 @@ public class TrackDto {
     public void setMediaType(FileType mediaType) {
         this.mediaType = mediaType;
     }
+    
+    public String getFormattedDuration() {
+    	
+    	if (files == null) {
+    		return "";
+    	}
+    	
+    	for (ResourceFileDto file : files) {
+    		if (file.getDuration() != null && file.getDuration() > 0) {
+    			return "" + (file.getDuration() / 60000) + ":" + String.format("%02d", (file.getDuration() / 1000) % 60);
+    		}
+    	}
+    	
+    	return "";
+    }
 
     @Override
 	public int hashCode() {
@@ -582,4 +599,47 @@ public class TrackDto {
                 ", territories=" + territories +
                 "} " + super.toString();
     }
+
+    public JSONObject toJson(){
+        JSONObject result = new JSONObject();
+        try {
+            result.put("id", id);
+            result.put("ingestor", ingestor);
+            result.put("isrc", isrc);
+            result.put("title", title);
+            result.put("artist", artist);
+            result.put("ingestionDate", ingestionDate);
+            result.put("status", status);
+            result.put("coverFileName", coverFileName);
+            result.put("mediaFileName", mediaFileName);
+            result.put("mediaType", mediaType);
+            result.put("label", label);
+            result.put("subTitle", subTitle);
+            result.put("productId", productId);
+            result.put("productCode", productCode);
+            result.put("genre", genre);
+            result.put("copyright", copyright);
+            result.put("year", year);
+            result.put("album", album);
+            result.put("info", info);
+            result.put("licensed", licensed);
+            result.put("explicit", explicit);
+            result.put("ingestionUpdateDate", ingestionUpdateDate);
+            result.put("publishDate", publishDate);
+            result.put("releaseDate", releaseDate);
+            result.put("publishTitle", publishTitle);
+            result.put("publishArtist", publishArtist);
+            result.put("itunesUrl", itunesUrl);
+            result.put("amazonUrl", amazonUrl);
+            result.put("areArtistUrls", areArtistUrls);
+            result.put("resolution", resolution);
+            result.put("territoryCodes", territoryCodes);
+            result.put("files", files);
+            result.put("territories", territories);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 }

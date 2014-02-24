@@ -340,6 +340,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="trackRepoClient" class="mobi.nowtechnologies.server.trackrepo.impl.TrackRepositoryHttpClientImpl">
 		<property name="trackRepoUrl" value="${trackRepo.baseURL}" />
+		<property name="numQuerySchedulerThreads" value="${trackRepo.executor.maxPoolSize}" />
 	</bean>
 
 	<bean id="service.TrackRepoService" class="mobi.nowtechnologies.server.service.impl.TrackRepoServiceImpl">

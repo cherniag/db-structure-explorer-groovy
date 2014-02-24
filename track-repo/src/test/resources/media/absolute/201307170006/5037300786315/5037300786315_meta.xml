@@ -1,0 +1,2718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ern:NewReleaseMessage xmlns:ern="http://ddex.net/xml/2010/ern-main/312" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ddex.net/xml/2010/ern-main/312 http://ddex.net/xml/2010/ern-main/312/ern-main.xsd" MessageSchemaVersionId="2010/ern-main/312">
+    <MessageHeader>
+        <MessageThreadId>R645</MessageThreadId>
+        <MessageId>2013071700060645</MessageId>
+        <MessageSender>
+            <PartyName>
+                <FullName>Absolute Marketing &amp; Distribution Ltd.</FullName>
+            </PartyName>
+        </MessageSender>
+        <MessageRecipient>
+            <PartyId>Omnifone</PartyId>
+            <PartyName>
+                <FullName>Omnifone</FullName>
+            </PartyName>
+        </MessageRecipient>
+        <MessageCreatedDateTime>2013-07-17T12:56:45-04:00</MessageCreatedDateTime>
+        <MessageControlType>LiveMessage</MessageControlType>
+    </MessageHeader>
+    <UpdateIndicator xmlns="">OriginalMessage</UpdateIndicator>
+    <ResourceList>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1300096</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8916</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8916</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>It&apos;s You</TitleText>
+                <SubTitle>Original Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT2M58S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>It&apos;s You</TitleText>
+                    <SubTitle>Original Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Duck Sauce</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8916</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_01.wav</FileName>
+                        <HashSum>
+                            <HashSum>89846e1ebc958ecf1b951b1a33565b45</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1300102</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8917</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8917</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>You Don&apos;t Know Me</TitleText>
+                <SubTitle>Martin Solveig Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT4M52S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>You Don&apos;t Know Me</TitleText>
+                    <SubTitle>Martin Solveig Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Armand Van Helden</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Duane Harden</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Martin Solveig</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8917</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_02.wav</FileName>
+                        <HashSum>
+                            <HashSum>1ae5e0016050a007615c30909f38bb59</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBUYR1300053</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8918</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8918</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>City of Dreams</TitleText>
+                <SubTitle>Showtek Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT5M17S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>City of Dreams</TitleText>
+                    <SubTitle>Showtek Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Dirty South &amp; Alesso</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Ruben Haze</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Showtek</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8918</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_03.wav</FileName>
+                        <HashSum>
+                            <HashSum>ca3501f93ae55d1886619a954ea9c00c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1300047</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8919</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8919</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Antenna</TitleText>
+                <SubTitle>Steve Smart &amp; Westfunk Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT2M53S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Antenna</TitleText>
+                    <SubTitle>Steve Smart &amp; Westfunk Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Fuse ODG</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Steve Smart</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Westfunk</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8919</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_04.wav</FileName>
+                        <HashSum>
+                            <HashSum>2209f09cb1cc5be588107aeda8ae2e3a</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1300087</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8920</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8920</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Soundbwoy</TitleText>
+                <SubTitle>Cahill Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M09S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Soundbwoy</TitleText>
+                    <SubTitle>Cahill Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Stylo G</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Cahill</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8920</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_05.wav</FileName>
+                        <HashSum>
+                            <HashSum>4496d602fc6ac9d477d0fc4eabd334b4</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS0900204</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8921</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8921</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Move For Me</TitleText>
+                <SubTitle>Dave Darell Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M53S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Move For Me</TitleText>
+                    <SubTitle>Dave Darell Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Kaskade &amp; Deadmau5</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Dave Darell</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8921</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_06.wav</FileName>
+                        <HashSum>
+                            <HashSum>ef72203218a554f097545e655f0988b7</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>NLC281110017</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8922</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8922</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>No Beef</TitleText>
+                <SubTitle>Original Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT6M03S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>No Beef</TitleText>
+                    <SubTitle>Original Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Afrojack &amp; Steve Aoki</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Miss Palmer</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8922</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_07.wav</FileName>
+                        <HashSum>
+                            <HashSum>f0c13b719e246db5117a27a0b4ed52c7</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1300056</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8923</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8923</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Feel The Love</TitleText>
+                <SubTitle>eSQUIRE &amp; Anton Powers Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M21S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Feel The Love</TitleText>
+                    <SubTitle>eSQUIRE &amp; Anton Powers Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Cahill &amp; Kimberley Locke</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Anton Powers</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>eSQUIRE</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8923</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_08.wav</FileName>
+                        <HashSum>
+                            <HashSum>776560ee9d03f3a969fa6852b0c1c434</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>NLZ541300536</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8924</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8924</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Things Can Only Get Better</TitleText>
+                <SubTitle>Landis Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT4M58S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Things Can Only Get Better</TitleText>
+                    <SubTitle>Landis Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Cedric Gervais &amp; Howard Jones</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Landis</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8924</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_09.wav</FileName>
+                        <HashSum>
+                            <HashSum>0fc429566403a8e129aaabdfe4550cf7</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBJAJ1302446</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8925</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8925</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Alright</TitleText>
+                <SubTitle>Extended Vocal Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT4M12S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Alright</TitleText>
+                    <SubTitle>Extended Vocal Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Mark Knight</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Sway</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8925</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_10.wav</FileName>
+                        <HashSum>
+                            <HashSum>65c448b3da698bd8674591384f53b72c</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>NLBV21100012</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8926</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8926</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Tung!</TitleText>
+                <SubTitle>Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT4M04S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Tung!</TitleText>
+                    <SubTitle>Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Deniz Koyu</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8926</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_11.wav</FileName>
+                        <HashSum>
+                            <HashSum>b5bc39e23a637f186e83f6da62b0119e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1200131</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8927</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8927</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Blessed</TitleText>
+                <SubTitle>Avicii Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M02S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Blessed</TitleText>
+                    <SubTitle>Avicii Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Tom Hangs &amp; Shermanology</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Avicii</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8927</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_12.wav</FileName>
+                        <HashSum>
+                            <HashSum>1360d3e5cd9db53d25a9408415780443</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1300113</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8928</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8928</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Live Your Life</TitleText>
+                <SubTitle>Chuckie Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M02S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Live Your Life</TitleText>
+                    <SubTitle>Chuckie Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Erick Morillo &amp; Eddie Thoneick</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Shawnee Taylor</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Chuckie</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8928</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_13.wav</FileName>
+                        <HashSum>
+                            <HashSum>987ddbd57a57d0c135613cb79c773c3d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>AUVC01232611</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8929</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8929</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>The Way You Are</TitleText>
+                <SubTitle>Original Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M50S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>The Way You Are</TitleText>
+                    <SubTitle>Original Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Peking Duk</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8929</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_14.wav</FileName>
+                        <HashSum>
+                            <HashSum>aead9ed990b3a88f08c33b091ef54e2d</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBCFZ1300204</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8930</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8930</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Hey Hey</TitleText>
+                <SubTitle>Basto Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M22S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Hey Hey</TitleText>
+                    <SubTitle>Basto Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Unicorn Kid</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Basto</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8930</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_15.wav</FileName>
+                        <HashSum>
+                            <HashSum>c6fa6ecda5df437450ae04b1f8304f37</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1300014</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">8931</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT8931</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Heartlight (Polygon)</TitleText>
+                <SubTitle>Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M04S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Heartlight (Polygon)</TitleText>
+                    <SubTitle>Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>TS7</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Taylor Fowlis</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT8931</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_16.wav</FileName>
+                        <HashSum>
+                            <HashSum>2cedfe9b6df945d98e622cf9dae34585</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>USUS11000060</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">9746</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9746</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Lets Make Nasty (Bounce Little Kitty)</TitleText>
+                <SubTitle>Afrojack Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT4M15S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Lets Make Nasty (Bounce Little Kitty)</TitleText>
+                    <SubTitle>Afrojack Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Larry Tee</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Roxy Cottontail</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>FeaturedArtist</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Afrojack</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9746</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_17.wav</FileName>
+                        <HashSum>
+                            <HashSum>fdfddad2475933476e82b4af60b98098</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>ITA061100258</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">9747</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9747</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Pum Back</TitleText>
+                <SubTitle>Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT3M01S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Pum Back</TitleText>
+                    <SubTitle>Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Tradelove</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9747</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_18.wav</FileName>
+                        <HashSum>
+                            <HashSum>77402e6311235937ac19d15b169029b6</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>NLC281210342</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">9722</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9722</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Hold On</TitleText>
+                <SubTitle>Tradelove Remix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT5M43S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Hold On</TitleText>
+                    <SubTitle>Tradelove Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>DS &amp; Westfunk</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Tradelove</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9722</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_19.wav</FileName>
+                        <HashSum>
+                            <HashSum>6c0f3e8a53c1b34e0968fd90fe7d6db9</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <SoundRecording>
+            <SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+            <SoundRecordingId>
+                <ISRC>GBSXS1200180</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+                <ProprietaryId Namespace="">9719</ProprietaryId>
+            </SoundRecordingId>
+            <ResourceReference>AT9719</ResourceReference>
+            <ReferenceTitle>
+                <TitleText>Can&apos;t Stop Me</TitleText>
+                <SubTitle>Kryder &amp; Tom Staar Vocal Mix</SubTitle>
+            </ReferenceTitle>
+            <Duration>PT5M43S</Duration>
+            <CreationDate>2013-07-21</CreationDate>
+            <SoundRecordingDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Can&apos;t Stop Me</TitleText>
+                    <SubTitle>Kryder &amp; Tom Staar Vocal Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Afrojack &amp; Shermanology</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Kryder</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <ResourceContributor>
+                    <PartyName>
+                        <FullName>Tom Staar</FullName>
+                    </PartyName>
+                    <ResourceContributorRole>Contributor</ResourceContributorRole>
+                </ResourceContributor>
+                <LabelName>3 Beat Productions</LabelName>
+                <OriginalResourceReleaseDate>2013-07-21</OriginalResourceReleaseDate>
+                <PLine>
+                    <Year>2013</Year>
+                    <PLineText>2013 3 Beat Productions Ltd</PLineText>
+                </PLine>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <TechnicalSoundRecordingDetails>
+                    <TechnicalResourceDetailsReference>TT9719</TechnicalResourceDetailsReference>
+                    <AudioCodecType UserDefinedValue="wav">UserDefined</AudioCodecType>
+                    <File>
+                        <FileName>5037300786315_01_20.wav</FileName>
+                        <HashSum>
+                            <HashSum>49ade6b17a78861409efbd86143f394e</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalSoundRecordingDetails>
+            </SoundRecordingDetailsByTerritory>
+        </SoundRecording>
+        <Image>
+            <ImageType>FrontCoverImage</ImageType>
+            <ImageId>
+                <ProprietaryId Namespace="">PID1</ProprietaryId>
+            </ImageId>
+            <ResourceReference>AI1</ResourceReference>
+            <ImageDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <TechnicalImageDetails>
+                    <TechnicalResourceDetailsReference>TI1</TechnicalResourceDetailsReference>
+                    <ImageCodecType>JPEG</ImageCodecType>
+                    <ImageHeight>1400</ImageHeight>
+                    <ImageWidth>1400</ImageWidth>
+                    <File>
+                        <FileName>5037300786315.jpg</FileName>
+                        <HashSum>
+                            <HashSum>74c09b5b05f22707e68398c670f13415</HashSum>
+                            <HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+                        </HashSum>
+                    </File>
+                </TechnicalImageDetails>
+            </ImageDetailsByTerritory>
+        </Image>
+    </ResourceList>
+    <ReleaseList>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1300096</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8916</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>It&apos;s You</TitleText>
+                <SubTitle>Original Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8916</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Duck Sauce</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>It&apos;s You</TitleText>
+                    <SubTitle>Original Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Duck Sauce</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1300102</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8917</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>You Don&apos;t Know Me</TitleText>
+                <SubTitle>Martin Solveig Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8917</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Armand Van Helden</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>You Don&apos;t Know Me</TitleText>
+                    <SubTitle>Martin Solveig Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Armand Van Helden</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBUYR1300053</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8918</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>City of Dreams</TitleText>
+                <SubTitle>Showtek Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8918</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Dirty South &amp; Alesso</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>City of Dreams</TitleText>
+                    <SubTitle>Showtek Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Dirty South &amp; Alesso</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1300047</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8919</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Antenna</TitleText>
+                <SubTitle>Steve Smart &amp; Westfunk Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8919</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Fuse ODG</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Antenna</TitleText>
+                    <SubTitle>Steve Smart &amp; Westfunk Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Fuse ODG</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1300087</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8920</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Soundbwoy</TitleText>
+                <SubTitle>Cahill Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8920</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Stylo G</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Soundbwoy</TitleText>
+                    <SubTitle>Cahill Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Stylo G</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS0900204</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8921</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Move For Me</TitleText>
+                <SubTitle>Dave Darell Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8921</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Kaskade &amp; Deadmau5</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Move For Me</TitleText>
+                    <SubTitle>Dave Darell Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Kaskade &amp; Deadmau5</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>NLC281110017</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8922</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>No Beef</TitleText>
+                <SubTitle>Original Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8922</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Afrojack &amp; Steve Aoki</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>No Beef</TitleText>
+                    <SubTitle>Original Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Afrojack &amp; Steve Aoki</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1300056</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8923</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Feel The Love</TitleText>
+                <SubTitle>eSQUIRE &amp; Anton Powers Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8923</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Cahill &amp; Kimberley Locke</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Feel The Love</TitleText>
+                    <SubTitle>eSQUIRE &amp; Anton Powers Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Cahill &amp; Kimberley Locke</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>NLZ541300536</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8924</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Things Can Only Get Better</TitleText>
+                <SubTitle>Landis Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8924</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Cedric Gervais &amp; Howard Jones</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Things Can Only Get Better</TitleText>
+                    <SubTitle>Landis Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Cedric Gervais &amp; Howard Jones</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBJAJ1302446</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8925</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Alright</TitleText>
+                <SubTitle>Extended Vocal Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8925</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Mark Knight</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Alright</TitleText>
+                    <SubTitle>Extended Vocal Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Mark Knight</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>NLBV21100012</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8926</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Tung!</TitleText>
+                <SubTitle>Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8926</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Deniz Koyu</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Tung!</TitleText>
+                    <SubTitle>Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Deniz Koyu</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1200131</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8927</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Blessed</TitleText>
+                <SubTitle>Avicii Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8927</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Tom Hangs &amp; Shermanology</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Blessed</TitleText>
+                    <SubTitle>Avicii Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Tom Hangs &amp; Shermanology</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1300113</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8928</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Live Your Life</TitleText>
+                <SubTitle>Chuckie Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8928</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Erick Morillo &amp; Eddie Thoneick</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Live Your Life</TitleText>
+                    <SubTitle>Chuckie Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Erick Morillo &amp; Eddie Thoneick</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>AUVC01232611</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8929</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>The Way You Are</TitleText>
+                <SubTitle>Original Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8929</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Peking Duk</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>The Way You Are</TitleText>
+                    <SubTitle>Original Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Peking Duk</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBCFZ1300204</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8930</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Hey Hey</TitleText>
+                <SubTitle>Basto Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8930</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Unicorn Kid</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Hey Hey</TitleText>
+                    <SubTitle>Basto Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Unicorn Kid</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1300014</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT8931</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Heartlight (Polygon)</TitleText>
+                <SubTitle>Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT8931</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>TS7</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Heartlight (Polygon)</TitleText>
+                    <SubTitle>Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>TS7</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>USUS11000060</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9746</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Lets Make Nasty (Bounce Little Kitty)</TitleText>
+                <SubTitle>Afrojack Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9746</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Larry Tee</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Lets Make Nasty (Bounce Little Kitty)</TitleText>
+                    <SubTitle>Afrojack Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Larry Tee</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>ITA061100258</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9747</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Pum Back</TitleText>
+                <SubTitle>Radio Edit</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9747</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Tradelove</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Pum Back</TitleText>
+                    <SubTitle>Radio Edit</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Tradelove</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>NLC281210342</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9722</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Hold On</TitleText>
+                <SubTitle>Tradelove Remix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9722</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>DS &amp; Westfunk</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Hold On</TitleText>
+                    <SubTitle>Tradelove Remix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>DS &amp; Westfunk</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ISRC>GBSXS1200180</ISRC>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RT9719</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Can&apos;t Stop Me</TitleText>
+                <SubTitle>Kryder &amp; Tom Staar Vocal Mix</SubTitle>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference>AT9719</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Single</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Afrojack &amp; Shermanology</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title TitleType="DisplayTitle">
+                    <TitleText>Can&apos;t Stop Me</TitleText>
+                    <SubTitle>Kryder &amp; Tom Staar Vocal Mix</SubTitle>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Afrojack &amp; Shermanology</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+        <Release>
+            <ReleaseId>
+                <ICPN IsEan="false">5037300786315</ICPN>
+                <CatalogNumber Namespace="">3BEATCD004S</CatalogNumber>
+            </ReleaseId>
+            <ReleaseReference>RR645</ReleaseReference>
+            <ReferenceTitle>
+                <TitleText>Power House (Mixed By Anton Powers)</TitleText>
+            </ReferenceTitle>
+            <ReleaseResourceReferenceList>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AI1</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8916</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8917</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8918</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8919</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8920</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8921</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8922</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8923</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8924</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8925</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8926</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8927</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8928</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8929</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8930</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT8931</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9746</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9747</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9722</ReleaseResourceReference>
+                <ReleaseResourceReference ReleaseResourceType="PrimaryResource">AT9719</ReleaseResourceReference>
+            </ReleaseResourceReferenceList>
+            <ReleaseType>Album</ReleaseType>
+            <ReleaseDetailsByTerritory>
+                <TerritoryCode>GB</TerritoryCode>
+                <TerritoryCode>IE</TerritoryCode>
+                <DisplayArtistName>Various Artists</DisplayArtistName>
+                <LabelName>3 Beat Productions</LabelName>
+                <Title>
+                    <TitleText>Power House (Mixed By Anton Powers)</TitleText>
+                </Title>
+                <DisplayArtist>
+                    <PartyName>
+                        <FullName>Various Artists</FullName>
+                    </PartyName>
+                </DisplayArtist>
+                <ParentalWarningType>NotExplicit</ParentalWarningType>
+                <ResourceGroup>
+                    <SequenceNumber>1</SequenceNumber>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>1</SequenceNumber>
+                        <ReleaseResourceReference>AT8916</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>2</SequenceNumber>
+                        <ReleaseResourceReference>AT8917</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>3</SequenceNumber>
+                        <ReleaseResourceReference>AT8918</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>4</SequenceNumber>
+                        <ReleaseResourceReference>AT8919</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>5</SequenceNumber>
+                        <ReleaseResourceReference>AT8920</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>6</SequenceNumber>
+                        <ReleaseResourceReference>AT8921</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>7</SequenceNumber>
+                        <ReleaseResourceReference>AT8922</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>8</SequenceNumber>
+                        <ReleaseResourceReference>AT8923</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>9</SequenceNumber>
+                        <ReleaseResourceReference>AT8924</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>10</SequenceNumber>
+                        <ReleaseResourceReference>AT8925</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>11</SequenceNumber>
+                        <ReleaseResourceReference>AT8926</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>12</SequenceNumber>
+                        <ReleaseResourceReference>AT8927</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>13</SequenceNumber>
+                        <ReleaseResourceReference>AT8928</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>14</SequenceNumber>
+                        <ReleaseResourceReference>AT8929</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>15</SequenceNumber>
+                        <ReleaseResourceReference>AT8930</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>16</SequenceNumber>
+                        <ReleaseResourceReference>AT8931</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>17</SequenceNumber>
+                        <ReleaseResourceReference>AT9746</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>18</SequenceNumber>
+                        <ReleaseResourceReference>AT9747</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>19</SequenceNumber>
+                        <ReleaseResourceReference>AT9722</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                    <ResourceGroupContentItem>
+                        <SequenceNumber>20</SequenceNumber>
+                        <ReleaseResourceReference>AT9719</ReleaseResourceReference>
+                    </ResourceGroupContentItem>
+                </ResourceGroup>
+                <Genre>
+                    <GenreText>Electronic</GenreText>
+                    <SubGenre>Dance</SubGenre>
+                </Genre>
+                <OriginalReleaseDate>2013-07-21</OriginalReleaseDate>
+            </ReleaseDetailsByTerritory>
+            <PLine>
+                <Year>2013</Year>
+                <PLineText>2013 3 Beat Productions Ltd</PLineText>
+            </PLine>
+            <CLine>
+                <Year>2013</Year>
+                <CLineText>2013 3 Beat Productions Ltd</CLineText>
+            </CLine>
+        </Release>
+    </ReleaseList>
+    <DealList>
+        <ReleaseDeal>
+            <DealReleaseReference>RR645</DealReleaseReference>
+            <Deal>
+                <DealReference>DR645</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">album_6</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8916</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8916</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8917</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8917</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8918</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8918</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8919</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8919</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8920</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8920</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8921</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8921</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8922</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8922</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8923</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8923</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8924</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8924</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8925</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8925</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8926</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8926</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8927</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8927</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8928</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8928</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8929</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8929</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8930</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8930</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT8931</DealReleaseReference>
+            <Deal>
+                <DealReference>DT8931</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9746</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9746</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9747</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9747</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9722</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9722</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+        <ReleaseDeal>
+            <DealReleaseReference>RT9719</DealReleaseReference>
+            <Deal>
+                <DealReference>DT9719</DealReference>
+                <DealTerms>
+                    <CommercialModelType>AsPerContract</CommercialModelType>
+                    <Usage>
+                        <TechnicalInstantiation>
+                            <DrmEnforcementType>NotDrmEnforced</DrmEnforcementType>
+                        </TechnicalInstantiation>
+                    </Usage>
+                    <TerritoryCode>GB</TerritoryCode>
+                    <TerritoryCode>IE</TerritoryCode>
+                    <PriceInformation>
+                        <PriceRangeType Namespace="">single_1</PriceRangeType>
+                    </PriceInformation>
+                    <ValidityPeriod>
+                        <StartDate>2013-07-21</StartDate>
+                    </ValidityPeriod>
+                    <PreOrderReleaseDate>2013-07-21</PreOrderReleaseDate>
+                </DealTerms>
+            </Deal>
+            <EffectiveDate>2013-07-17</EffectiveDate>
+        </ReleaseDeal>
+    </DealList>
+</ern:NewReleaseMessage>

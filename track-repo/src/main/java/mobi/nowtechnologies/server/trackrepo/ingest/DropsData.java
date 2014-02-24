@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.List;
 
 public class DropsData {
@@ -60,8 +62,19 @@ public class DropsData {
 		public void setIngestdata(IngestData ingestdata) {
 			this.ingestdata = ingestdata;
 		}
-		
-	}
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("name", name)
+                    .append("selected", selected)
+                    .append("parser", parser)
+                    .append("ingestor", ingestor)
+                    .append("drop", drop)
+                    .append("ingestdata", ingestdata)
+                    .toString();
+        }
+    }
 
 	private List<Drop> drops;
 
@@ -74,4 +87,10 @@ public class DropsData {
 		this.drops = drops;
 	}
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("drops", drops)
+                .toString();
+    }
 }

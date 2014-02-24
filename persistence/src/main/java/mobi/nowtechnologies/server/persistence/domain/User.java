@@ -39,7 +39,7 @@ import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOW
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"deviceUID", "userGroup"}), @UniqueConstraint(columnNames = {"userName", "userGroup"})})
@@ -451,8 +451,8 @@ public class User implements Serializable {
         return isO2User() && !isO2Consumer();
     }
 
-    public boolean isTempUserName() {
-        return getUserName().equals(getDeviceUID());
+    public boolean isTempUserName(){
+        return getUserName().equalsIgnoreCase(getDeviceUID());
     }
 
     public boolean isActivatedUserName() {
@@ -470,7 +470,7 @@ public class User implements Serializable {
     }
 
     public boolean hasPhoneNumber() {
-        return !StringUtils.isEmpty(getMobile());
+        return !isEmpty(getMobile());
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {

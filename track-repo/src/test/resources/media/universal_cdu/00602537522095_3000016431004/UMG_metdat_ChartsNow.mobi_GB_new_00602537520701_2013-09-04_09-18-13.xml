@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.digiplug.com/dsc/umgistd-1_4_5" upc="00602537520701">
+    <type>new</type>
+    <territory>GB</territory>
+    <prd_title>Give It 2 U</prd_title>
+    <prd_version_title>Remix</prd_version_title>
+    <prd_configuration>eVideo Single</prd_configuration>
+    <prd_label_name>Polydor Associated Labels</prd_label_name>
+    <set_count>1</set_count>
+    <track_count>1</track_count>
+    <complete_product>Y</complete_product>
+    <prd_length>0:04:31</prd_length>
+    <release_date>27-Aug-2013</release_date>
+    <album_presales_previews>N</album_presales_previews>
+    <music_type>POP</music_type>
+    <genre>Pop</genre>
+    <series_name/>
+    <prd_explicit>N</prd_explicit>
+    <prd_e_marketing_tag/>
+    <local_product_number/>
+    <p_line>(P) 2013 Star Trak, LLC</p_line>
+    <c_line>(C) 2013 Star Trak, LLC</c_line>
+    <permanent_download_album_preorder_previews>N</permanent_download_album_preorder_previews>
+    <permanent_download_preorder_status>N</permanent_download_preorder_status>
+    <prd_pricing>
+        <current_price_code>STVTP</current_price_code>
+        <current_price_effective_date>04-Sep-2013</current_price_effective_date>
+        <new_price_code/>
+        <new_price_effective_date/>
+    </prd_pricing>
+    <prd_contributors>
+        <artist_name>Robin Thicke</artist_name>
+        <featured_artist>Kendrick Lamar</featured_artist>
+        <featured_artist>2 Chainz</featured_artist>
+    </prd_contributors>
+    <terms>
+        <note/>
+    </terms>
+    <prd_associated_products/>
+    <tracks>
+        <track isrc="USUV71301714">
+            <type>new</type>
+            <volume>1</volume>
+            <track_number>1</track_number>
+            <track_title>Give It 2 U</track_title>
+            <track_version_title>Closed-Captioned, Remix, Main Version</track_version_title>
+            <track_hierarchy_title/>
+            <asset_type>VIDEO</asset_type>
+            <track_length>0:04:31</track_length>
+            <track_label>Interscope</track_label>
+            <track_explicit/>
+            <track_genre>Pop</track_genre>
+            <track_e_marketing_tag/>
+            <track_owning_label/>
+            <p_line/>
+            <c_line>(C) 2013 Star Trak, LLC</c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>STVTP</current_price_code>
+                <current_price_effective_date>04-Sep-2013</current_price_effective_date>
+                <new_price_code/>
+                <new_price_effective_date/>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Robin Thicke</artist_name>
+                <featured_artist>Kendrick Lamar</featured_artist>
+                <featured_artist>2 Chainz</featured_artist>
+                <performer>Dr. Luke [Producer]</performer>
+                <performer>Diane Martel [Video Director]</performer>
+                <performer>Coleen Haynes [Video Producer]</performer>
+                <composer>Robin Thicke</composer>
+                <composer>Dr. Luke</composer>
+                <composer>will.i.am</composer>
+                <composer>Kendrick Lamar</composer>
+                <composer>Henry Walter</composer>
+                <author>Robin Thicke</author>
+                <author>Dr. Luke</author>
+                <author>will.i.am</author>
+                <author>Kendrick Lamar</author>
+                <author>Henry Walter</author>
+            </track_contributors>
+            <work_level>
+                <work_id/>
+                <work_title/>
+                <parent_work_id/>
+                <parent_work_title/>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>N</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>Y</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>N</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note/>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+    </tracks>
+</product>

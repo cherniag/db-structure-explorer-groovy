@@ -8,7 +8,6 @@ import java.util.List;
  * User: sanya
  * Date: 7/15/13
  * Time: 2:52 PM
- * To change this template use File | Settings | File Templates.
  */
 public class DropDto {
     private String ingestor;
