@@ -2,11 +2,13 @@ package mobi.nowtechnologies.server.trackrepo.controller;
 
 import mobi.nowtechnologies.server.trackrepo.factory.AssetFileFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
@@ -29,10 +31,12 @@ public class FileControllerTestIT extends AbstractTrackRepoITTest{
 	public void testFile()
 		throws Exception {
 
+		MockHttpServletRequest req = new MockHttpServletRequest();
 		MockHttpServletResponse resp = new MockHttpServletResponse();
+		
 		Long id = new Long(1L);
 
-		fixture.file(resp, id);
+		fixture.file(id, req, resp);
 
 		assertEquals(200, resp.getStatus());
 		assertEquals("image/jpeg", resp.getContentType());

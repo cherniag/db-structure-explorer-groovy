@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -10,6 +11,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +25,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.support.ServletContextResource;
 
 import javax.servlet.ServletContext;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -196,7 +200,7 @@ public class TrackServiceTest {
 		assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
 		assertEquals(track.getStatus(), TrackStatus.ENCODED);
 		
-		verify(command, times(22)).addParam(anyString());
+		verify(command, times(23)).addParam(anyString());
 		verify(command, times(1)).addParam(eq(ID_VALUE.toString()));
 		
 	}
@@ -213,7 +217,7 @@ public class TrackServiceTest {
 		assertEquals(track.getIsrc(), ISRC_VALUE);
 		assertEquals(track.getIngestor(), INGESTOR_VALUE);
 		assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
-		assertEquals(track.getStatus(), TrackStatus.ENCODED);
+		assertEquals(track.getStatus(), TrackStatus.PUBLISHED);
 	}
 
     @Test
@@ -244,7 +248,7 @@ public class TrackServiceTest {
         assertEquals(track.getIsrc(), ISRC_VALUE);
         assertEquals(track.getIngestor(), INGESTOR_VALUE);
         assertEquals(track.getIngestionDate(), INGESTION_DATE_VALUE);
-        assertEquals(track.getStatus(), TrackStatus.ENCODED);
+        assertEquals(track.getStatus(), TrackStatus.PUBLISHED);
         assertNotNull(videoFile.getExternalId());
 
         verify(service, times(1)).createVideo(any(Track.class));
@@ -252,5 +256,16 @@ public class TrackServiceTest {
         verify(cloudFileServiceMock, times(1)).copyFile(eq(track.getIsrc() + ImageResolution.SIZE_21.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString());
         verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getIsrc() +"."+ FileType.MOBILE_AUDIO.getExt()), anyString(), anyString(), anyString());
         verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getIsrc() +"."+ FileType.MOBILE_ENCODED.getExt()), anyString(), anyString(), anyString());
+
+    }
+    
+    @Test
+    @Ignore
+    public void testGetAmazonUrl() {
+    	service.setSevenDigitalApiKey("7d85yvex6wmu");
+    	service.setSevenDigitalApiUrl("http://api.7digital.com/1.2/track/search?q={query}&oauth_consumer_key={key}");
+    	service.setRestTemplate(new RestTemplate());
+    	String result = service.getAmazonUrl("AEA040800109111111111");
+    	assertNotNull(result);
     }
 }

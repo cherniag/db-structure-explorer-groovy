@@ -50,67 +50,67 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "classpath:META-INF/shared.xml" }),
         @ContextConfiguration(locations = {
                 "classpath:web-test.xml"
-                })
+        })
 })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class PaymentsControllerIT{
 
-	@Resource
-	private WebApplicationContext wac;
+    @Resource
+    private WebApplicationContext wac;
 
-	private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Resource
     private UserRepository userRepository;
 
     /**
-	 * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked" })
-	@Test
-	public void testGetManagePaymentsPage_nonO2User_Successful()
-			throws Exception {
-		String communityUrl = "o2";
-		
-		SecurityContextHolder.setContext(createSecurityContext(1));
+     * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
+     *
+     */
+    @SuppressWarnings({ "unchecked" })
+    @Test
+    public void testGetManagePaymentsPage_nonO2User_Successful()
+            throws Exception {
+        String communityUrl = "o2";
 
-		ResultActions resultActions = mockMvc.perform(
-				get("/payments.html")
-					.cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))	
-				.andExpect(status().isOk()).andDo(print());
+        SecurityContextHolder.setContext(createSecurityContext(1));
 
-		ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
-		ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
+        ResultActions resultActions = mockMvc.perform(
+                get("/payments.html")
+                        .cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
+                .andExpect(status().isOk()).andDo(print());
 
-		String viewName = modelAndView.getViewName();
-		PaymentsPage paymentsPage = (PaymentsPage)modelMap.get("paymentsPage");
-		List<PaymentPolicyDto> paymentPolicies = paymentsPage.getPaymentPolicies();
+        ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
+        ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
 
-		assertEquals("payments", viewName);
-		assertEquals(6, paymentPolicies.size());
-	}
+        String viewName = modelAndView.getViewName();
+        PaymentsPage paymentsPage = (PaymentsPage)modelMap.get("paymentsPage");
+        List<PaymentPolicyDto> paymentPolicies = paymentsPage.getPaymentPolicies();
 
-	/**
-	 * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked" })
-	@Test
-	public void testGetManagePaymentsPage_O2UserDTB_Successful()
-			throws Exception {
-		String communityUrl = "o2";
-		
-		SecurityContextHolder.setContext(createSecurityContext(101));
+        assertEquals("payments", viewName);
+        assertEquals(6, paymentPolicies.size());
+    }
 
-		ResultActions resultActions = mockMvc.perform(
-				get("/payments.html")
-					.cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))	
-				.andExpect(status().isOk());
+    /**
+     * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
+     *
+     */
+    @SuppressWarnings({ "unchecked" })
+    @Test
+    public void testGetManagePaymentsPage_O2UserDTB_Successful()
+            throws Exception {
+        String communityUrl = "o2";
 
-		ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
-		ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
+        SecurityContextHolder.setContext(createSecurityContext(101));
+
+        ResultActions resultActions = mockMvc.perform(
+                get("/payments.html")
+                        .cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
+                .andExpect(status().isOk());
+
+        ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
+        ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
 
 
         String viewName = modelAndView.getViewName();
@@ -120,59 +120,59 @@ public class PaymentsControllerIT{
         assertEquals("payments", viewName);
         assertEquals(2, paymentPolicies.size());
 
-	}
-	
-	/**
-	 * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked" })
-	@Test
-	public void testGetManagePaymentsPage_O2UserNonDTB_Successful()
-			throws Exception {
-		String communityUrl = "o2";
-		
-		SecurityContextHolder.setContext(createSecurityContext(102));
+    }
 
-		ResultActions resultActions = mockMvc.perform(
-				get("/payments.html")
-					.cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))	
-				.andExpect(status().isOk());
+    /**
+     * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
+     *
+     */
+    @SuppressWarnings({ "unchecked" })
+    @Test
+    public void testGetManagePaymentsPage_O2UserNonDTB_Successful()
+            throws Exception {
+        String communityUrl = "o2";
 
-		ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
-		ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
+        SecurityContextHolder.setContext(createSecurityContext(102));
 
-		String viewName = modelAndView.getViewName();
+        ResultActions resultActions = mockMvc.perform(
+                get("/payments.html")
+                        .cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
+                .andExpect(status().isOk());
+
+        ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
+        ModelMap modelMap = resultActions.andReturn().getModelAndView().getModelMap();
+
+        String viewName = modelAndView.getViewName();
         PaymentsPage paymentsPage = (PaymentsPage)modelMap.get("paymentsPage");
         List<PaymentPolicyDto> paymentPolicies = paymentsPage.getPaymentPolicies();
 
 
-		assertEquals("payments", viewName);
-		assertEquals(1, paymentPolicies.size());
-	}
+        assertEquals("payments", viewName);
+        assertEquals(1, paymentPolicies.size());
+    }
 
 
-	@Before
-	public void setUp()
-			throws Exception {
-			mockMvc = MockMvcBuilders.webAppContextSetup( this.wac).build();
-	}
+    @Before
+    public void setUp()
+            throws Exception {
+        mockMvc = MockMvcBuilders.webAppContextSetup( this.wac).build();
+    }
 
-	/**
-	 * generate test data
-	 */
-	private SecurityContext createSecurityContext(int userId) {
+    /**
+     * generate test data
+     */
+    private SecurityContext createSecurityContext(int userId) {
         User user = userRepository.findOne(userId);
-		if ( userId == 101 ) {
+        if ( userId == 101 ) {
             user.setProvider(O2);
-			user.setContract(PAYM);
-			user.setSegment(CONSUMER);
-		}
+            user.setContract(PAYM);
+            user.setSegment(CONSUMER);
+        }
         user.setFreeTrialExpiredMillis(System.currentTimeMillis());
-		Authentication authentication = new RememberMeAuthenticationToken("test", new UserDetailsImpl(user, true), null);
-		SecurityContext securityContext = new SecurityContextImpl();
-		securityContext.setAuthentication(authentication);
-		 
-		return securityContext;
-	}
+        Authentication authentication = new RememberMeAuthenticationToken("test", new UserDetailsImpl(user, true), null);
+        SecurityContext securityContext = new SecurityContextImpl();
+        securityContext.setAuthentication(authentication);
+
+        return securityContext;
+    }
 }

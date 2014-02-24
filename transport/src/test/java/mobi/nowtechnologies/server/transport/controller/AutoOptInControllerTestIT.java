@@ -17,7 +17,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void shouldAutoOptInAndVersionMore40() throws Exception {
-        //given
+        //given    org.springframework.test.web.server
         String userName = "+447111111114";
         String apiVersion = "6.0";
         String communityUrl = "o2";

@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<!--
@@ -27,6 +27,8 @@
 	    <mvc:argument-resolvers>
 	        <bean class="org.springframework.data.web.PageableArgumentResolver" />
 	    </mvc:argument-resolvers>
+        <mvc:async-support task-executor="admin.TaskExecuter" default-timeout="60000">
+        </mvc:async-support>
 	</mvc:annotation-driven>
 	
 	<mvc:resources mapping="/assets/**" location="/assets/**" />
@@ -39,6 +41,12 @@
 		<property name="cacheSeconds" value="180" />
 		<property name="useCodeAsDefaultMessage" value="true" />
 	</bean>
+
+    <bean id="admin.TaskExecuter" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="${trackRepo.executor.corePoolSize}" />
+        <property name="maxPoolSize" value="${trackRepo.executor.maxPoolSize}" />
+        <property name="queueCapacity" value="${trackRepo.executor.queueCapacity}" />
+    </bean>
 	
 	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
 		<property name="defaultLocale" value="en" />

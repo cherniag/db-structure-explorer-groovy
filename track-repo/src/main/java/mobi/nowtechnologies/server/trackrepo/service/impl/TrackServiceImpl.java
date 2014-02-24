@@ -7,6 +7,7 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.*;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
+
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -19,10 +20,12 @@ import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -31,10 +34,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
 /**
  * 
@@ -42,7 +50,7 @@ import java.util.*;
  * 
  */
 public class TrackServiceImpl implements TrackService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
     private static final java.util.logging.Logger BRIGHTCOVE_LOGGER  = java.util.logging.Logger.getLogger("BrightcoveLog");
 
 	private CloudFileService cloudFileService;
@@ -61,11 +69,14 @@ public class TrackServiceImpl implements TrackService {
     private String brightcoveWriteToken;
     private String brightcoveReadToken;
     private Boolean brightcoveGeoFiltering;
+    private String sevenDigitalApiUrl;
+    private String sevenDigitalApiKey;
 
-	private TrackRepository trackRepository;
+	protected TrackRepository trackRepository;
 
     private WriteApi brightcoveWriteService;
     private ReadApi brightcoveReadService;
+	private RestTemplate restTemplate;
 
 	public void setCloudFileService(CloudFileService cloudFileService) {
 		this.cloudFileService = cloudFileService;
@@ -93,7 +104,7 @@ public class TrackServiceImpl implements TrackService {
 
 	@Override
 	public Track encode(Long trackId, Boolean isHighRate, Boolean licensed) {
-		LOGGER.debug("input encode(trackId, isHighRate): [{}], [{}]", new Object[] { trackId, isHighRate });
+		LOGGER.info("encode(trackId:{}, isHighRate:{})", trackId, isHighRate );
 
 		Track track = trackRepository.findOneWithCollections(trackId);
 
@@ -102,6 +113,7 @@ public class TrackServiceImpl implements TrackService {
 
 		try {
 			track.setStatus(TrackStatus.ENCODING);
+            track.setPublishDate(null);
 			trackRepository.save(track);
 
 			licensed = licensed == null ? track.getLicensed() : licensed;
@@ -129,38 +141,64 @@ public class TrackServiceImpl implements TrackService {
 			thread.addParam(licensed != null && licensed ? "NO" : "YES");
 			thread.addParam(privateKey.getFile().getAbsolutePath());
 			thread.addParam(isHighRate != null && isHighRate ? AudioResolution.RATE_96.getSuffix() : AudioResolution.RATE_48.getSuffix());
+			thread.addParam(track.getFile(AssetFile.FileType.VIDEO) == null ? "200" : "640");
 			thread.run();
-			if (thread.getExitCode() != 0) {
-				throw new RuntimeException("Cannot encode track files or create zip package.");
+			
+			if (thread.getExitCode() != 0){
+				LOGGER.error("Cannot encode track {} files or create zip package: execution of {} returned exit code {}", trackId, encodeScript.getFile(), thread.getExitCode());
+				throw new RuntimeException("Cannot encode track files or create zip package: execution of " + encodeScript.getFile() + " returned exit code " + thread.getExitCode());
 			}
 
 			track.setItunesUrl(getITunesUrl(track.getArtist(), track.getTitle()));
+			track.setAmazonUrl(getAmazonUrl(track.getIsrc()));
 			track.setStatus(TrackStatus.ENCODED);
 			track.setResolution(isHighRate != null && isHighRate ? AudioResolution.RATE_96 : AudioResolution.RATE_48);
 			track.setLicensed(licensed);
 			trackRepository.save(track);
+
+			LOGGER.info("Track {} is encoded", trackId);
+			return track;
 		} catch (Exception e) {
 			track.setStatus(TrackStatus.NONE);
 			track.setResolution(AudioResolution.RATE_ORIGINAL);
 			trackRepository.save(track);
 
-			LOGGER.error("Cannot encode track files or create zip package.", e);
-			throw new RuntimeException(e.getMessage(), e);
+			LOGGER.error("Cannot encode track {} files or create zip package: " + e.getMessage(), trackId, e);
+			throw new RuntimeException("Cannot encode track files or create zip package: " + e.getMessage(), e);
 		}
-
-		LOGGER.info("output encode(trackId, isHighRate): [{}]", new Object[] { track });
-		return track;
 	}
 
-	@Override
+    @Override
+    public Track pull(Long trackId) {
+        LOGGER.debug("input pull(trackId): [{}]", new Object[] { trackId });
+
+        Track track = trackRepository.findOneWithCollections(trackId);
+
+        if (track == null || (track.getStatus() != TrackStatus.ENCODED && track.getStatus() != TrackStatus.PUBLISHED))
+            return track;
+
+        TrackStatus oldStatus = track.getStatus();
+
+        track.setStatus(TrackStatus.PUBLISHING);
+        trackRepository.save(track);
+
+        try {
+            pull(track);
+
+            track.setStatus(TrackStatus.PUBLISHED);
+        } catch (Exception e){
+            track.setStatus(oldStatus);
+        }
+
+        trackRepository.save(track);
+
+        LOGGER.info("output pull(trackId): [{}]", new Object[] { track });
+        return track;
+    }
+
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Track pull(Long trackId) {
-		LOGGER.debug("input pull(trackId): [{}]", new Object[] { trackId });
-
-		Track track = trackRepository.findOneWithCollections(trackId);
-
-		if (track == null || track.getStatus() != TrackStatus.ENCODED)
-			return track;
+	protected Track pull(Track track) {
+		LOGGER.info("start pull process: [trackId:{}, isrc:{}]", track.getId(), track.getIsrc());
 
 		try {
 			
@@ -174,9 +212,11 @@ public class TrackServiceImpl implements TrackService {
 						isrc+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()
 					};
 			
+			LOGGER.info("files to pull: {}", Arrays.toString(pullFiles));
+			
 			for (int i = 0; i < pullFiles.length; i++) {
                 if(pullFiles[i] != null)
-				    cloudFileService.copyFile(pullFiles[i], destPullContainer, trackId+"_"+pullFiles[i], srcPullContainer);
+				    cloudFileService.copyFile(pullFiles[i], destPullContainer, track.getId()+"_"+pullFiles[i], srcPullContainer);
 			}
 
             //upload video on brightcove if it exists
@@ -191,7 +231,7 @@ public class TrackServiceImpl implements TrackService {
 			throw new RuntimeException("Cannot pull encoded track.");
 		}
 
-		LOGGER.info("output pull(trackId): [{}]", new Object[] { track });
+		LOGGER.info("end pull process: [{}]", new Object[] { track.getIsrc() });
 		return track;
 	}
 
@@ -369,6 +409,36 @@ public class TrackServiceImpl implements TrackService {
 
 		return null;
 	}
+	
+	String getAmazonUrl(String isrc) {
+		
+		try {
+			
+			DOMSource response = restTemplate.getForObject(sevenDigitalApiUrl, DOMSource.class, isrc, sevenDigitalApiKey);
+			
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			String releaseId = xPath.evaluate("/response/searchResults/searchResult[1]/track/release/@id", response.getNode().getFirstChild());
+			String trackId = xPath.evaluate("/response/searchResults/searchResult[1]/track/@id", response.getNode().getFirstChild());
+			
+			if (StringUtils.isBlank(releaseId)) {
+				return null;
+			}
+			
+			if (StringUtils.isBlank(trackId)) {
+				trackId = "";
+			} else {
+				trackId = "#t" + trackId;
+			}
+			
+			return "https://m.7digital.com/GB/releases/" + releaseId + trackId + "?partner=3734";
+			
+		} catch (Exception e) {
+			
+			LOGGER.error("GET_AMAZON_URL error_msg[{}] for isrc=" + isrc, e);
+			return null;
+		}
+	}
+
 
 	public void setTrackRepository(TrackRepository trackRepository) {
 		this.trackRepository = trackRepository;
@@ -421,4 +491,16 @@ public class TrackServiceImpl implements TrackService {
     public void setBrightcoveReadToken(String brightcoveReadToken) {
         this.brightcoveReadToken = brightcoveReadToken;
     }
+    
+	public void setSevenDigitalApiUrl(String sevenDigitalApiUrl) {
+		this.sevenDigitalApiUrl = sevenDigitalApiUrl;
+	}
+
+	public void setSevenDigitalApiKey(String sevenDigitalApiKey) {
+		this.sevenDigitalApiKey = sevenDigitalApiKey;
+	}
+	
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 }

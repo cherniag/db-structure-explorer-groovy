@@ -31,7 +31,7 @@ public class UserLogRepositoryIT {
 	@Test
 	public void testCountByPhoneNumberAndDay_TwoSameDayAndOnePrevDayAndOneNextDay() {
 		String phoneNumber = "+447870111111";
-		long dayOfDate = (System.currentTimeMillis()-(4*60*60*1000))/Utils.DAY_MILLISECONDS;
+		long dayOfDate = (System.currentTimeMillis())/Utils.DAY_MILLISECONDS;
 		String description = "validate_phonenumber";
 		UserLogType userLogType = UserLogType.VALIDATE_PHONE_NUMBER;
 		

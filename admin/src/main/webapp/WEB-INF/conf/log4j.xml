@@ -13,7 +13,7 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<!--The " ut " will be replace on current "unix time" value-->
 			<param name="ConversionPattern"
-				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n" />
+				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c:%L - %m%n" />
 		</layout>
 	</appender>
 	
@@ -26,7 +26,7 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<!--The " ut " will be replace on current "unix time" value-->
 			<param name="ConversionPattern"
-				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n" />
+				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c:%L - %m%n" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelRangeFilter">
 			<param name="LevelMin" value="WARN" />
@@ -44,7 +44,7 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<!--The " ut " will be replace on current "unix time" value-->
 			<param name="ConversionPattern"
-				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n" />
+				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c:%L - %m%n" />
 		</layout>
 	</appender>
 	
@@ -57,7 +57,7 @@
 		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
 			<!--The " ut " will be replace on current "unix time" value-->
 			<param name="ConversionPattern"
-				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n" />
+				value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c:%L - %m%n" />
 		</layout>
 	</appender>
 

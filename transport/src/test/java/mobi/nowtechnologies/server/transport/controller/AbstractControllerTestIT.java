@@ -89,7 +89,6 @@ public abstract class AbstractControllerTestIT {
 
     @Before
     public void setUp() throws Exception {
-
         mockMvc = webAppContextSetup((WebApplicationContext) applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;

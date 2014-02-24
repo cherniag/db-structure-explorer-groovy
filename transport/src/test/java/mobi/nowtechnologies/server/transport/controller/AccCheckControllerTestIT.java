@@ -26,11 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
-	@Autowired
-	private ChartRepository chartRepository;
+    @Autowired
+    private ChartRepository chartRepository;
 
-	@Autowired
-	private ChartDetailRepository chartDetailRepository;
+    @Autowired
+    private ChartDetailRepository chartDetailRepository;
 
     @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
