@@ -3,9 +3,12 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.shared.Utils;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.server.ResultActions;
 
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.server.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
@@ -74,4 +77,23 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isNotFound());
     }
+
+
+    @Test
+    public void testSignUpDeviceV36_Sucess() throws Exception {
+        String deviceUID = "viktestdevice";
+        String deviceType = "ANDROID";
+        String apiVersion = "3.6";
+        String communityUrl = "o2";
+         mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+                 .param("APP_VERSION", "CNBETA")
+                        .param("API_VERSION", "V1.1")
+                        .param("COMMUNITY_NAME", "o2")
+                        .param("DEVICE_MODEL", "model")
+        ).andExpect(status().isOk()).andExpect(content().mimeType(MediaType.APPLICATION_XML)).andDo(print());
+    }
+
 }
