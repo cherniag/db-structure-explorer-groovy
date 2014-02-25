@@ -106,7 +106,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private MvcResult emailGenerate(User user, String email) throws Exception {
         return mockMvc.perform(post("/o2/4.0/EMAIL_GENERATE.json")
                 .param("EMAIL", email)
-                .param("USER_NAME", user.getUserName())
+                .param("USER_NAME", user.getDeviceUID())
                 .param("DEVICE_UID", user.getDeviceUID())).andExpect(status().isOk()).andReturn();
     }
 
