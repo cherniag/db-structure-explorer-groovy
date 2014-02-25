@@ -59,7 +59,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
     private final String deviceType = "ANDROID";
-    private final String apiVersion = "6.0";
+    private final String apiVersion = "5.2";
     private final String communityUrl = "o2";
     private final String timestamp = "2011_12_26_07_04_23";
     private final String facebookUserId = "1";
