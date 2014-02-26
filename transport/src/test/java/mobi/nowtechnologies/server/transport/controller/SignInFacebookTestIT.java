@@ -170,12 +170,20 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
 
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        String userToken = getUserToken(resultActions, timestamp);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
     }
 
 

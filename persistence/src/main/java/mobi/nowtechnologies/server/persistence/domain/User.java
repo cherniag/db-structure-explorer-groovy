@@ -456,7 +456,18 @@ public class User implements Serializable {
     }
 
     public boolean isActivatedUserName() {
-        return getUserName().equals(getMobile());
+        boolean userNameIsEqualsToMobile = getUserName().equals(getMobile());
+        if (provider != null){
+            switch (provider) {
+                case FACEBOOK:
+                    return true;
+                case EMAIL:
+                    return true;
+                default:
+                    return userNameIsEqualsToMobile;
+            }
+        }
+        return userNameIsEqualsToMobile;
     }
 
     public String getCommunityRewriteUrl() {
