@@ -36,9 +36,9 @@ public class FacebookService {
     }
 
     @Transactional
-    public void saveFacebookInfoForUser(User user, FacebookProfile profile) {
-        facebookUserInfoRepository.deleteForUser(user);
-        User refreshedUser = userRepository.findOne(user.getId());
+    public void saveFacebookInfoForUser(User inputUser, FacebookProfile profile) {
+        facebookUserInfoRepository.deleteForUser(inputUser);
+        User refreshedUser = userRepository.findOne(inputUser.getId());
         FacebookUserInfo details = buildUserDetailsFromProfile(refreshedUser, profile);
         assignProviderInfo(refreshedUser, profile);
         userRepository.save(refreshedUser);
@@ -59,7 +59,6 @@ public class FacebookService {
 
     private void assignProviderInfo(User user, FacebookProfile profile) {
         user.setUserName(profile.getEmail());
-        user.setMobile(profile.getEmail());
         user.setProvider(ProviderType.FACEBOOK);
     }
 

@@ -29,5 +29,6 @@ CREATE TABLE `activation_emails` (
   UNIQUE KEY `activation_emails_email_deviceUID_token` (`email`,`deviceUID`,`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE `facebook_user_info` ADD CONSTRAINT `facebook_user_info_email` UNIQUE (email);
 
-ALTER TABLE `tb_users` MODIFY COLUMN mobile VARCHAR(50);
+ALTER TABLE `facebook_user_info` ADD CONSTRAINT `facebook_user_info_fb_id` UNIQUE (fb_id);

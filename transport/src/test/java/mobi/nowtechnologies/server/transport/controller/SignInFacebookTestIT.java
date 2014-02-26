@@ -228,8 +228,8 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId, facebookToken)
         ).andExpect(status().isOk()).andDo(print());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        assertEquals(user.getUserName(), otherFacebookEmail);
         FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
+        assertEquals(fbDetails.getEmail(), otherFacebookEmail);
         assertEquals(fbDetails.getFacebookId(), otherFacebookUserId);
     }
 

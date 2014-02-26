@@ -2,6 +2,9 @@ package mobi.nowtechnologies.server.service;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.social.facebook.api.FacebookProfile;
@@ -19,6 +22,12 @@ public class UserPromoServiceImpl implements UserPromoService {
     @Resource
     private FacebookService facebookService;
 
+    @Resource
+    private FacebookUserInfoRepository facebookUserInfoRepository;
+
+    @Resource
+    private UserRepository userRepository;
+
     @Override
     public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         user.setMobile(email);
@@ -35,12 +44,22 @@ public class UserPromoServiceImpl implements UserPromoService {
     }
 
     @Override
-    public User applyInitPromoByFacebook(User user, FacebookProfile facebookProfile) {
-        //MOBILE_IS_SET BECAUSE MERGE IS POSSIBLE
-        user.setMobile(facebookProfile.getEmail());
-        user = userService.applyInitPromo(user, null, false, true);
-        facebookService.saveFacebookInfoForUser(user, facebookProfile);
-        return user;
+    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookProfile facebookProfile) {
+        User userForMerge = getUserForMerge(userAfterSignUp, facebookProfile);
+        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
+        facebookService.saveFacebookInfoForUser(userAfterApplyPromo, facebookProfile);
+        return userAfterApplyPromo;
+    }
+
+    private User getUserForMerge(User userAfterSignUp, FacebookProfile facebookProfile) {
+        String url = userAfterSignUp.getUserGroup().getCommunity().getRewriteUrlParameter();
+        String email = facebookProfile.getEmail();
+        User userByEmail = userRepository.findOne(email, url);
+        if (userByEmail != null) {
+            return userByEmail;
+        }
+        FacebookUserInfo facebookInfo = facebookUserInfoRepository.findByEmail(email);
+        return facebookInfo == null ? null : facebookInfo.getUser();
     }
 
     public void setActivationEmailService(ActivationEmailService activationEmailService) {

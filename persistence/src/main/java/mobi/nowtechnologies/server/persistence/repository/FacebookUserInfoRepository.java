@@ -17,4 +17,6 @@ public interface FacebookUserInfoRepository extends JpaRepository<FacebookUserIn
     @Modifying
     @Query(value="delete  from FacebookUserInfo facebookUserInfo where facebookUserInfo.user=?1")
     int deleteForUser(User user);
+
+    FacebookUserInfo findByEmail(String email);
 }
