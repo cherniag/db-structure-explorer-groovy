@@ -6,7 +6,6 @@
 
 	<bean name="admin.VersionController"
 		class="mobi.nowtechnologies.server.controller.VersionController">
-		<property name="versionService" ref="service.VersionService" />
 	</bean>
 
 	<bean name="admin.HomeController"
