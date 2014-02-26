@@ -67,6 +67,7 @@ public class PromotionService {
     public Promotion getActivePromotion(String promotionCode, String communityName) {
 		notNull(promotionCode, "The parameter promotionCode is null");
 		notNull(communityName, "The parameter communityName is null");
+        LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, communityName);
 
 		Community community = CommunityDao.getMapAsNames().get(communityName);
 
@@ -168,16 +169,25 @@ public class PromotionService {
     }
 
     private boolean skipPrevDataAndApplyPromotionForO24GConsumer(User user){
-        if(user.isOnAudioBoughtPeriod()) user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-        else if (user.isOnFreeTrial()) userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
-        else if (user.hasActivePaymentDetails()) userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
-
+        if(user.isOnAudioBoughtPeriod()){
+            LOGGER.info("User is on audio bought period");
+            user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        }
+        else if (user.isOnFreeTrial()) {
+            LOGGER.info("User is on free trial");
+            userService.unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
+        }
+        else if (user.hasActivePaymentDetails()){
+            LOGGER.info("User has active payment details");
+            userService.unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
+        }
         return applyPromotionForO24GConsumer(user);
     }
 
     private boolean applyPromotionForO24GConsumer(User user){
         boolean isPromotionApplied = false;
         Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
+        LOGGER.info("Promotion to apply [{}]", promotion);
         if (isNotNull(promotion)){
             isPromotionApplied = userService.applyPromotionByPromoCode(user, promotion);
         }
@@ -188,11 +198,11 @@ public class PromotionService {
         final Promotion promotion;
         final String messageCodeForPromoCode = getVideoCodeForO24GConsumer(user);
         if(StringUtils.hasText(messageCodeForPromoCode)){
-            String promoCode = messageSource.getMessage(messageCodeForPromoCode, null);
+            String promoCode = messageSource.getMessage(user.getCommunityRewriteUrl(), messageCodeForPromoCode,null, null, null);
             promotion = userService.setPotentialPromoByPromoCode(user, promoCode);
         }else{
             promotion = null;
-            LOGGER.error("Couldn't find promotion code [{}]", messageCodeForPromoCode);
+            LOGGER.error("Couldn't find promotion code for [{}]", messageCodeForPromoCode);
         }
         return promotion;
     }
@@ -202,18 +212,21 @@ public class PromotionService {
         ContractChannel contractChannel = user.getContractChannel();
         String contract = user.getContract().name();
         if (contractChannel == null){
+            LOGGER.warn("The user contract channel is null, DIRECT will be used");
             messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
-            LOGGER.info("The user contract channel is null, so the message code for getting promo code will be default [{}]", messageCodeForPromoCode);
         }else{
             messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
         }
+        LOGGER.info("Message code for getting promotion code [{}]", messageCodeForPromoCode);
         return messageCodeForPromoCode;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean updatePromotionNumUsers(Promotion promotion) {
         int updatedRowsCount = promotionRepository.updatePromotionNumUsers(promotion);
-        if (updatedRowsCount!=1) throw new ServiceException("Couldn't update promotion [" + promotion +"] numUsers ");
+        if (updatedRowsCount!=1){
+            throw new ServiceException("Couldn't update promotion [" + promotion +"] numUsers ");
+        }
         return true;
     }
 }
