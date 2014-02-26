@@ -34,6 +34,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -294,6 +295,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        String userToken = getUserToken(resultActions, timestamp);
         emailGenerate(user, facebookEmail);
         ActivationEmail activationEmail = Iterables.getFirst(activationEmailRepository.findAll(), null);
         applyInitPromoByEmail(activationEmail, timestamp, getUserToken(resultActions, timestamp));
@@ -302,6 +304,18 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
         ).andExpect(status().isOk());
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/3.8/GET_CHART.json")
+                        .param("USER_NAME", facebookEmail)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.response.data[0].user").exists());
+
     }
 
 }
