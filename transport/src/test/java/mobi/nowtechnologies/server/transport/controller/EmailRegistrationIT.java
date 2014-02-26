@@ -121,7 +121,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
                 .getObject()[0]), time, EMAIL_1, user.getDeviceType().getName());
 
         userOnAnotherDevice = userService.findByName(userOnAnotherDevice.getUserName());
-        assertEquals(ActivationStatus.ACTIVATION_STARTED, userOnAnotherDevice.getActivationStatus());
+        assertEquals(ActivationStatus.PENDING_ACTIVATION, userOnAnotherDevice.getActivationStatus());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
@@ -153,7 +153,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         MvcResult mvcResult = emailGenerate(registeredUser, EMAIL_2);
 
         registeredUser = userService.findByName(registeredUser.getUserName());
-        assertEquals(ActivationStatus.ACTIVATION_STARTED, registeredUser.getActivationStatus());
+        assertEquals(ActivationStatus.PENDING_ACTIVATION, registeredUser.getActivationStatus());
 
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0]), time, EMAIL_2, activatedUser.getDeviceType().getName());
@@ -188,7 +188,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
                 .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
         user = userService.findByName(user.getUserName());
-        assertEquals(ActivationStatus.ACTIVATION_STARTED, user.getActivationStatus());
+        assertEquals(ActivationStatus.PENDING_ACTIVATION, user.getActivationStatus());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
