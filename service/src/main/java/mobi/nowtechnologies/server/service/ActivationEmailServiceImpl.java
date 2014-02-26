@@ -55,7 +55,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
             activationEmail = new ActivationEmail(email, deviceUID, token);
             activationEmailRepository.save(activationEmail);
 
-            user.setActivationStatus(ActivationStatus.ACTIVATION_STARTED);
+            user.setActivationStatus(ActivationStatus.PENDING_ACTIVATION);
             userService.updateUser(user);
 
             Map<String, String> params = new HashMap<String, String>();

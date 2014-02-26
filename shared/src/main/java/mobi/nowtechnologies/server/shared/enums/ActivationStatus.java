@@ -1,5 +1,5 @@
 package mobi.nowtechnologies.server.shared.enums;
 
 public enum ActivationStatus {
-    REGISTERED, ENTERED_NUMBER, ACTIVATION_STARTED, ACTIVATED
+    REGISTERED, ENTERED_NUMBER, PENDING_ACTIVATION, ACTIVATED
 }
