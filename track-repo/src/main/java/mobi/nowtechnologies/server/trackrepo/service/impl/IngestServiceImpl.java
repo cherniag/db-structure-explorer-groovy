@@ -1,48 +1,36 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.DropContent;
 import mobi.nowtechnologies.server.trackrepo.domain.IngestionLog;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropsData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData.Drop;
-import mobi.nowtechnologies.server.trackrepo.ingest.IParser;
-import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors;
-import mobi.nowtechnologies.server.trackrepo.ingest.IngestData;
-import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
-import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
 import mobi.nowtechnologies.server.trackrepo.repository.IngestionLogRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
 import mobi.nowtechnologies.server.trackrepo.utils.NullAwareBeanUtilsBean;
-
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class IngestServiceImpl implements IngestService{
 
@@ -201,6 +189,15 @@ public class IngestServiceImpl implements IngestService{
                 }
 
                 addOrUpdateTerritories(track, value.territories);
+
+                List<String> alerts = new ArrayList<String>();
+                for (DropTerritory territory : value.territories){
+                    if (territory.takeDown)
+                        alerts.add(territory.country);
+                }
+
+                if (alerts.size() > 0)
+                    sendNotification(track, alerts);
 
 				trackRepository.save(track);
 			} else if (value.type == Type.DELETE) {
@@ -457,7 +454,8 @@ public class IngestServiceImpl implements IngestService{
 				if (data.getCode().equals(value.country)) {
 					found = true;
 					territory = data;
-					if (value.takeDown && value.dealReference != null && value.dealReference.equals(data.getDealReference())) {
+//					if (value.takeDown && value.dealReference != null && value.dealReference.equals(data.getDealReference())) {
+                    if (value.takeDown){
                         LOGGER.info("Take down for [{}] on [{}]",value.country, territory.getReportingId());
 						territory.setDeleted(true);
 						territory.setDeleteDate(new Date());
@@ -516,5 +514,69 @@ public class IngestServiceImpl implements IngestService{
 		log.setDropName(drop.name);
 		ingestionLogRepository.save(log);
 	}
+
+    /**
+     * Sends e-mail notification when takeDown is encountered.
+     * @param track {@link Track} - track with takeDown
+     * @param countries collection of {@link String} with territories
+     */
+    private void sendNotification(Track track, List<String> countries){
+        try {
+
+            String host = "smtp.gmail.com";
+            int port = 587;
+            final String username = "nowtechnologiesTest@gmail.com";
+            final String password = "thwmsb_00";
+
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", true);
+            props.put("mail.smtp.starttls.enable", true);
+            props.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
+
+            Session session = Session.getInstance(props, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password);
+                }
+            });
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("nowtechnologiesTest@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("Takedown@musicqubed.com"));
+            message.setSubject("TakeDown is encountered");
+            message.setText(createMailBody(track, countries));
+
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, port, username, password);
+
+            Transport.send(message);
+            LOGGER.info("E-mail was successfully send to Takedown@musicqubed.com");
+        } catch (MessagingException e) {
+            LOGGER.info("Mail sending failed: " + e.getMessage());
+            LOGGER.info("Cause: " + e.getCause());
+        }
+    }
+
+    /**
+     * Composes body of e-mail.
+     * @param track {@link Track}
+     * @param countries collection of {@link String}
+     * @return {@link String} message body
+     */
+    private String createMailBody(Track track, List<String> countries){
+        String result = "--------------------------------- \n";
+        result += "Ingestor: " + track.getIngestor() + "\n";
+        result += "Track isrc: " + track.getIsrc() + "\n";
+        result += "Product code: " + track.getProductCode() + "\n";
+        result += "Track title: " + track.getTitle() + "\n";
+        result += "Track artist: " + track.getArtist() + "\n";
+        result += "Territories: ";
+
+        for (String country: countries){
+            result += country + " ";
+        }
+        result += "\n";
+
+        return result;
+    }
 	
 }

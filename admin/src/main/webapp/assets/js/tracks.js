@@ -115,6 +115,7 @@ function onFetchTrackTerritories(data, view){
         $(columns[7]).text(data[i].startDate ? formatStartDate(data[i].startDate) : "");
         $(columns[8]).text(data[i].reportingId ? data[i].reportingId : "");
         $(columns[9]).text(data[i].deleted ? data[i].deleted : "false");
+        $(columns[10]).text(data[i].deleteDate ? formatStartDate(data[i].deleteDate) : "");
 
         row.appendTo(view);
     }
