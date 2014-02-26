@@ -119,7 +119,7 @@ public class TrackServiceImpl implements TrackService {
             track.setPublishDate(null);
 			trackRepository.save(track);
 
-			licensed = licensed == null ? track.getLicensed() : licensed;
+			licensed = licensed == null ? Boolean.FALSE : licensed;
 
 			encodeManager.encode(track, isHighRate, licensed);
 
