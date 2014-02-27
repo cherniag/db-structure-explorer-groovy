@@ -176,11 +176,13 @@ public class ChartItemController extends AbstractCommonController {
                 trackId.add(m.getTrackId().intValue());
                 searchTrackDto.setTrackIds(trackId);
                 PageListDto<TrackDto> trackDtoPageListDto = trackRepoService.find(searchTrackDto, pageRequest);
-                terCodes.put(m.getI(), trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                if ((trackDtoPageListDto != null) && (trackDtoPageListDto.getList().size() != 0)) {
+                    terCodes.put(m.getI(), trackDtoPageListDto.getList().get(0).getTerritoryCodes());
 
-                for (ChartItemDto chartItemDto: chartItemDtos){
-                    if (chartItemDto.getMediaDto().getId() == m.getI())
-                        chartItemDto.setCode(trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                    for (ChartItemDto chartItemDto : chartItemDtos) {
+                        if (chartItemDto.getMediaDto().getId().intValue() == m.getI().intValue())
+                            chartItemDto.setCode(trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                    }
                 }
             }
         }
