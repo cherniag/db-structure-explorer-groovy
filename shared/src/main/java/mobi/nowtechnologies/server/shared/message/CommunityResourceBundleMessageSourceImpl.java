@@ -53,15 +53,6 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
     }
 
     @Override
-    public String getMessage(String code, String defaults){
-        try {
-            return trim(getMessage(null, code, null, null));
-        } catch (RuntimeException e) {
-            return defaults;
-        }
-    }
-
-    @Override
     public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale) {
         Locale communityLocale = new Locale(community);
         if (locale != null)
