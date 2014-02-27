@@ -951,6 +951,23 @@ public class UserTest {
         assertThat(s, is(false));
     }
 
+
+    private void checkUser(User user, boolean isActive){
+        assertThat(user.isActivatedUserName(), is(isActive));
+    }
+
+    @Test
+    public void isActivatedUser(){
+        checkUser(new User().withProvider(FACEBOOK).withUserName("aa@ukr.net"), true);
+        checkUser(new User().withProvider(FACEBOOK), false);
+        checkUser(new User().withProvider(EMAIL).withUserName("aa@ukr.net"), true);
+        checkUser(new User().withProvider(O2).withUserName("aa@ukr.net"), false);
+        checkUser(new User().withProvider(O2).withUserName("1").withMobile("1"), true);
+        checkUser(new User().withProvider(VF).withUserName("aa@ukr.net"), false);
+        checkUser(new User().withProvider(VF).withUserName("1").withMobile("1"), true);
+    }
+
+
     @Test
     public void shouldNotBeSubjectToAutoOptInWhenDisabledAutoOptIn(){
         //given
