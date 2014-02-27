@@ -361,6 +361,7 @@ function preEncodeAll(){
     $("#header-label").text("Encode");
     var dialog=$("#encode-finished");
     $("#btnEncodeAllOk").click(toEncode);
+	dialog.find("div.controls").find("input[name='licensed']").attr('checked', true);
     dialog.find("div.controls").show();
     dialog.modal("show");
 }
