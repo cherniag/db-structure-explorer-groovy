@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.transport;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.codehaus.jackson.annotate.JsonTypeName;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "user")
+@JsonTypeName("user")
 public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.AccountCheckDTO{
 
 	@XmlAnyElement

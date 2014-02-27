@@ -36,6 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
@@ -215,7 +216,7 @@ public class ChartItemController extends AbstractCommonController {
         ModelAndView modelAndView;
         try {
             chartDetailService.updateChartItems(chartId, selectedPublishDateTime.getTime(), newPublishDateTime.getTime());
-            modelAndView = new ModelAndView("redirect:/chartsNEW/" + chartId + "/" + dateTimeFormat.format(newPublishDateTime));
+            modelAndView = new ModelAndView("redirect:/chartsNEW/" + chartId + "/" + new SimpleDateFormat(URL_DATE_TIME_FORMAT).format(newPublishDateTime));
         } catch (ServiceCheckedException e) {
             LOGGER.warn(e.getMessage(), e);
             response.setStatus(HttpStatus.PRECONDITION_FAILED.value());

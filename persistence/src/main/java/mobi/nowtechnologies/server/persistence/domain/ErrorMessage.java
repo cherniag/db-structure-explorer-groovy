@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.codehaus.jackson.annotate.JsonTypeName;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  *
  */
 @XmlRootElement(name="errorMessage")
+@JsonTypeName("errorMessage")
 public class ErrorMessage {
 	private String displayMessage;
 	private String message;

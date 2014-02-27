@@ -3,15 +3,16 @@ package mobi.nowtechnologies.server.shared.dto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * @author Titov Mykhaylo (titov)
  * @author Maksym Chernolevskyi (maksym)
  */
 @XmlRootElement(name = "user")
+@JsonRootName("user")
 public class AccountCheckDTO {
 	public String displayName;
 	public byte subBalance;
@@ -145,21 +146,6 @@ public class AccountCheckDTO {
 
     public AccountCheckDTO withHasPotentialPromoCodePromotion(boolean hasPotentialPromoCodePromotion){
         this.hasPotentialPromoCodePromotion = hasPotentialPromoCodePromotion;
-        return this;
-    }
-
-    public AccountCheckDTO withUserName(String userName){
-        this.userName = userName;
-        return this;
-    }
-
-    public AccountCheckDTO withUserToken(String userToken){
-        this.userToken = userToken;
-        return this;
-    }
-
-    public AccountCheckDTO withUser(Object user) {
-        this.user = user;
         return this;
     }
 

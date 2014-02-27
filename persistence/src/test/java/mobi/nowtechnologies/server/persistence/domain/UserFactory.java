@@ -1,12 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-
-import java.math.BigDecimal;
-import java.util.*;
-
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -16,6 +9,14 @@ import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 
 
 public class UserFactory
@@ -84,6 +85,7 @@ public class UserFactory
 		testUser.setNextSubPayment(1307219588);
 		testUser.setPostcode("412");
 		testUser.setSessionID("attg0vs3e98dsddc2a4k9vdkc6");
+		testUser.setDeviceUID("attg0vs3e98dsddc2a4k9vdkc6");
 		testUser.setStatus(userStatus);
 		testUser.setSubBalance((byte) 5);
 		testUser.setTempToken("NONE");

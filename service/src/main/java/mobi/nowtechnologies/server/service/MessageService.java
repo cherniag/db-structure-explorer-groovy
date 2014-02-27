@@ -1,27 +1,31 @@
 package mobi.nowtechnologies.server.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import mobi.nowtechnologies.server.assembler.MessageAsm;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
-import mobi.nowtechnologies.server.shared.dto.admin.*;
-
+import mobi.nowtechnologies.server.shared.dto.NewsDto;
+import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
+import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
+import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
+import mobi.nowtechnologies.server.shared.dto.admin.NewsPositionsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import static mobi.nowtechnologies.server.assembler.UserAsm.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class MessageService {
 
@@ -56,7 +60,7 @@ public class MessageService {
 	}
 
 	@Transactional(readOnly = true)
-	public Object[] processGetNewsCommand(User user, String communityName, Long lastUpdateNewsTimeMillis, boolean withAds) {
+	public NewsDto processGetNewsCommand(User user, String communityName, Long lastUpdateNewsTimeMillis, boolean withAds) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 		if (communityName == null)
@@ -64,14 +68,11 @@ public class MessageService {
 
 		LOGGER.debug("input parameters user, communityName, lastUpdateNewsTimeMillis, withAds: [{}], [{}], [{}], [{}]", new Object[] { user, communityName, lastUpdateNewsTimeMillis, withAds });
 
-		AccountCheckDTO accountCheck = userService.getAccountCheckDTO(user, Collections.<String>emptyList());
-        user = (User) accountCheck.user;
 		Community community = user.getUserGroup().getCommunity();
 
 		NewsDto newsDto = getNews(user, community, lastUpdateNewsTimeMillis, withAds);
-		Object[] objects = new Object[] { accountCheck, newsDto };
-		LOGGER.debug("Output parameter objects=[{}], [{}]", objects);
-		return objects;
+		LOGGER.debug("Output parameter newsDto=[{}], [{}]", newsDto);
+		return newsDto;
 	}
 
 	@Transactional(readOnly = true)

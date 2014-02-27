@@ -5,33 +5,30 @@ import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.*;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Locale;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -41,8 +38,9 @@ import static org.apache.commons.lang.Validate.notNull;
 public abstract class CommonController extends ProfileController implements ApplicationContextAware{
 	private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 	private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
-	public static final String MODEL_NAME = Response.class.toString();
+	public static final String MODEL_NAME = "response";
 	public static final int VERSION_4 = 4;
+	public static final String VERSION_5_2 = "5.2";
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -53,13 +51,56 @@ public abstract class CommonController extends ProfileController implements Appl
 	protected CommunityService communityService;
 	private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
     private UserRepository userRepository;
-    protected String defaultViewName = "default";
-    protected ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    private String defaultViewName = "default";
+    private ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> communityUriThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
+    private ThreadLocal<String> remoteAddrThreadLocal = new ThreadLocal<String>();
     protected ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    public void setCurrentCommandName(String commandName) {
+        this.commandNameThreadLocal.set(commandName);
+    }
+
+    public void setCurrentRemoteAddr(String remoteAddr) {
+        this.remoteAddrThreadLocal.set(remoteAddr);
+    }
+
+    public void setCurrentApiVersion(String apiVersion) {
+        this.apiVersionThreadLocal.set(apiVersion);
+    }
+
+    public void setCurrentCommunityUri(String communityUri) {
+        this.communityUriThreadLocal.set(communityUri);
+    }
+
+    public String getCurrentRemoteAddr() {
+        return this.remoteAddrThreadLocal.get();
+    }
+
+    public String getCurrentCommandName() {
+        return this.commandNameThreadLocal.get();
+    }
+
+    public String getCurrentApiVersion() {
+        return this.apiVersionThreadLocal.get();
+    }
+
+    public String getCurrentCommunityUri() {
+        return this.communityUriThreadLocal.get();
+    }
+
+    protected boolean isValidDeviceUID(String deviceUID){
+        return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
+    }
+
+    protected ModelAndView buildModelAndView(Object ... objs){
+        return new ModelAndView(defaultViewName, MODEL_NAME, new Response(objs));
     }
 
     public void setView(View view) {
@@ -98,31 +139,39 @@ public abstract class CommonController extends ProfileController implements Appl
 
     @ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception exception, HttpServletResponse response) {
-
-		final String localizedDisplayMessage = exception.getLocalizedMessage();
-		final String message = exception.getMessage();
-		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
-		LOGGER.error(message, exception);
-
-		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+		return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+
+        return sendResponse(exception, response, status);
+    }
 	
-	@ExceptionHandler(InvalidPhoneNumberException.class)
+	@ExceptionHandler({InvalidPhoneNumberException.class})
 	public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if(versionPriority <= 0){
+            status = HttpStatus.OK;
+            exception.setLocalizedMessage("Invalid phone number format");
+        }
 
-		final String localizedDisplayMessage = exception.getLocalizedMessage();
-		final String message = exception.getMessage();
-		final Integer errorCode = new Integer(exception.getErrorCodeForMessageLocalization());
-		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
-		
-		LOGGER.error(message, exception);
-
-		return sendResponse(errorMessage, HttpStatus.OK, response);
+        return sendResponse(exception, response, status);
 	}
-	
+
+    @ExceptionHandler({ActivationStatusException.class})
+    public ModelAndView handleException(ActivationStatusException exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
+    }
+
 	@ExceptionHandler(ValidationException.class)
 	public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
-			
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+
 		ServerMessage serverMessage = validationException.getServerMessage();
 		String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
 		
@@ -143,25 +192,27 @@ public abstract class CommonController extends ProfileController implements Appl
 		ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, null);
 		LOGGER.warn(message);
 
-		return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+		return sendResponse(errorMessage, status, response);
 	}
 
 	@ExceptionHandler(UserCredentialsException.class)
 	public ModelAndView handleException(UserCredentialsException exception, HttpServletResponse response) {
 		ServerMessage serverMessage = exception.getServerMessage();
 		
-		final String localizedDisplayMessage;
+		String localizedDisplayMessage;
 		final String message;
 		final Integer errorCode;
-		
-		if(serverMessage!=null){
-			errorCode = serverMessage.getErrorCode();
 
-			localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
-			message = localizedDisplayMessage;
-		}else{
-			errorCode = null;
-			localizedDisplayMessage=exception.getMessage();
+        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
+        if(serverMessage!=null){
+            errorCode = serverMessage.getErrorCode();
+
+            localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
+            localizedDisplayMessage = versionPriority > 0 ? localizedDisplayMessage : "Bad user credentials";
+            message = localizedDisplayMessage;
+        }else{
+            errorCode = null;
+			localizedDisplayMessage= versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
 			message=localizedDisplayMessage;
 		}
 
@@ -233,34 +284,40 @@ public abstract class CommonController extends ProfileController implements Appl
 
 	}
 
-	private ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
-		notNull(status , "The parameter httpStatus is null");
+    private ModelAndView sendResponse(ErrorMessage errorMessage, HttpStatus status, HttpServletResponse response) {
+        notNull(status , "The parameter httpStatus is null");
         notNull(errorMessage , "The parameter errorMessage is null");
-		response.setStatus(status.value());
+        response.setStatus(status.value());
 
-        String apiVersion = apiVersionThreadLocal.get();
+        return buildModelAndView(errorMessage);
+    }
 
-        if (isBlank(apiVersion) || isMajorApiVersionNumberLessThan(VERSION_4, apiVersion) ){
-            return new ModelAndView(view, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
+	private ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status) {
+        final String localizedDisplayMessage = exception.getLocalizedMessage();
+        final String message = exception.getMessage();
+        Integer errorCode;
+        try {
+            errorCode = exception instanceof ServiceException ? new Integer(((ServiceException)exception).getErrorCodeForMessageLocalization()) : null;
+        } catch (NumberFormatException e) {
+            errorCode = null;
         }
+        ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
+        LOGGER.error(message, exception);
 
-        return new ModelAndView(defaultViewName, Response.class.getSimpleName(), new Response(new Object[] { errorMessage }));
+        return sendResponse(errorMessage, status, response);
 	}
 
 	/**
 	 * Returns an auth token that is generated for web portal SSO
 	 * @return rememberMe auth token
 	 */
-	public Object[] precessRememberMeToken(Object[] objects) {
-		LOGGER.debug("input parameters objects: [{}]", objects);
-		for (Object object : objects) {
-			if (!(object instanceof AccountCheckDTO)) continue;
-			AccountCheckDTO accountCheckDTO = (AccountCheckDTO) object;
+	public mobi.nowtechnologies.server.dto.transport.AccountCheckDto precessRememberMeToken(mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheckDTO) {
+		LOGGER.debug("input parameters mobi.nowtechnologies.server.dto.transport.AccountCheckDTO: [{}]", new Object[]{accountCheckDTO});
 
-            accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
-		}
-		LOGGER.debug("Output parameter objects=[{}]", objects);
-		return objects;
+       accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
+
+		LOGGER.debug("Output parameter mobi.nowtechnologies.server.dto.transport.AccountCheckDTO=[{}]", accountCheckDTO);
+		return accountCheckDTO;
 	}
 	
 	public String getRememberMeToken(String userName, String storedToken) {
@@ -272,6 +329,21 @@ public abstract class CommonController extends ProfileController implements Appl
 		LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
 		return rememberMeToken;
 	}
+
+    public User checkUser(String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses){
+        User user = null;
+        String community = getCurrentCommunityUri();
+        if (isValidDeviceUID(deviceUID)) {
+            user = userService.checkCredentials(userName, userToken, timestamp, community, deviceUID);
+        }
+        else {
+            user = userService.checkCredentials(userName, userToken, timestamp, community);
+        }
+
+        userService.checkActivationStatus(user, activationStatuses);
+
+        return user;
+    }
 
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {
         try {

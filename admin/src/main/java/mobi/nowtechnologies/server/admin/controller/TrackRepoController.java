@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class TrackRepoController extends AbstractCommonController{
     @InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
 	public void initBinder(WebDataBinder binder) {
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(URL_DATE_FORMAT), true));
 	}
 
     @InitBinder({IngestWizardDataDto.INGEST_WIZARD_DATA_DTO})

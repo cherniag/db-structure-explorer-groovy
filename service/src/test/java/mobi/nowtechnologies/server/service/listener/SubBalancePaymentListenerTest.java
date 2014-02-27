@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.listener;
 
-import static org.mockito.Mockito.times;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
@@ -11,7 +10,6 @@ import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import static org.mockito.Mockito.times;
 
 /**
  * The class <code>SubBalancePaymentListenerTest</code> contains tests for the
@@ -71,7 +71,7 @@ public class SubBalancePaymentListenerTest {
 
 		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 
-		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new AccountCheckDTO());
+		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
 		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 
@@ -115,7 +115,7 @@ public class SubBalancePaymentListenerTest {
 
 		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 
-		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new AccountCheckDTO());
+		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
 		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 
@@ -157,7 +157,7 @@ public class SubBalancePaymentListenerTest {
 
 		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 
-		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new AccountCheckDTO());
+		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.eq(user), Mockito.eq(nextSubPayment), Mockito.eq(appStoreOriginalTransactionId))).thenReturn(users);
 		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 

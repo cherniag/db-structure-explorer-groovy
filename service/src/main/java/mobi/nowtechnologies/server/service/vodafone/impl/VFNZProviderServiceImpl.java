@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
 import mobi.nowtechnologies.server.service.vodafone.VFNZProviderService;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +35,10 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
         try {
             String normalizedPhoneNumber = phoneNumber;
             if(!deviceService.isPromotedDevicePhone(vfnzCommunity, phoneNumber, null)){
-                normalizedPhoneNumber = phoneValidator.validate(phoneNumber);
+                normalizedPhoneNumber = phoneValidator.validateAndNormalize(phoneNumber);
             }
 
-            if(normalizedPhoneNumber == null){
+            if (StringUtils.isEmpty(normalizedPhoneNumber)) {
                 throw new ServiceException("Invalid phone number");
             }
 
@@ -50,7 +51,7 @@ public class VFNZProviderServiceImpl implements VFNZProviderService {
             return result;
         } catch (Exception e) {
             LOGGER.error("NZ VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
-            throw new InvalidPhoneNumberException();
+            throw new InvalidPhoneNumberException(phoneNumber);
         } finally {
             LOGGER.info("NZ VALIDATE_PHONE_NUMBER finished for[{}] with [{}]", new Object[]{phoneNumber, result});
         }
