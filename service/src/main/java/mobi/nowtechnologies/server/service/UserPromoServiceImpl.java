@@ -30,13 +30,14 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Override
     public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
-        user.setMobile(email);
         activationEmailService.activate(activationEmailId, email, token);
 
-        user = userService.applyInitPromo(user, null, false, true);
+        User existingUser = userRepository.findOne(email, user.getUserGroup().getCommunity().getRewriteUrlParameter());
 
-        user.setUserName(email);
+        user = userService.applyInitPromo(user, existingUser, null, false, true);
+
         user.setProvider(ProviderType.EMAIL);
+        user.setUserName(email);
 
         userService.updateUser(user);
 

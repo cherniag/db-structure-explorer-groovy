@@ -295,6 +295,18 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         emailGenerate(user, facebookEmail);
         ActivationEmail activationEmail = Iterables.getFirst(activationEmailRepository.findAll(), null);
         applyInitPromoByEmail(activationEmail, timestamp, getUserToken(resultActions, timestamp));
+        user = userRepository.findOne(facebookEmail, communityUrl);
+        String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
+        mockMvc.perform(
+                post("/" + communityUrl + "/3.8/GET_CHART.json")
+                        .param("USER_NAME", facebookEmail)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.response.data[0].user").exists());
     }
 
 
