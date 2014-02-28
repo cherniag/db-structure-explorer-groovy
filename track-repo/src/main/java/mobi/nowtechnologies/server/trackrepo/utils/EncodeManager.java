@@ -22,6 +22,8 @@ public class EncodeManager {
 	private static String ACC_ENCODING = "acc";
 	private static String WAV_ENCODING = "wav";
 	private static String PCMS16LE_ENCODING = "pcm_s16le";
+	private static String ACC_MP4A_ENCODDING = "aac (mp4a";
+	private static String MP4_ENCODING = "mp4";
 	private static String UNKNNOWN_ENCODING = "unknown";
 	
 	private ExternalCommand commandGetEncoding;
@@ -77,6 +79,11 @@ public class EncodeManager {
 			String encoding = getEncoding(audioFilePath);
 			LOGGER.debug("Encoding is " + encoding);
 		
+			if (encoding != null && encoding.toLowerCase().startsWith(MP4_ENCODING)) {
+			
+				throw new RuntimeException("Unsupported audio format: " + MP4_ENCODING);
+			}
+
 			if (UNKNNOWN_ENCODING.equalsIgnoreCase(encoding)) {
 								
 				LOGGER.debug("Tryng to fix unknown audio file: " + audioFilePath);
@@ -239,6 +246,8 @@ public class EncodeManager {
 			return ACC_ENCODING;
 		} else if (encoding != null && encoding.toLowerCase().startsWith(PCMS16LE_ENCODING)) {
 			return WAV_ENCODING;
+		} else if (encoding != null && encoding.toLowerCase().startsWith(ACC_MP4A_ENCODDING)) {
+			return MP4_ENCODING;
 		} else {
 			return UNKNNOWN_ENCODING;
 		}
