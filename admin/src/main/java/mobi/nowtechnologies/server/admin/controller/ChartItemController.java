@@ -36,6 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
@@ -175,11 +176,13 @@ public class ChartItemController extends AbstractCommonController {
                 trackId.add(m.getTrackId().intValue());
                 searchTrackDto.setTrackIds(trackId);
                 PageListDto<TrackDto> trackDtoPageListDto = trackRepoService.find(searchTrackDto, pageRequest);
-                terCodes.put(m.getI(), trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                if ((trackDtoPageListDto != null) && (trackDtoPageListDto.getList().size() != 0)) {
+                    terCodes.put(m.getI(), trackDtoPageListDto.getList().get(0).getTerritoryCodes());
 
-                for (ChartItemDto chartItemDto: chartItemDtos){
-                    if (chartItemDto.getMediaDto().getId() == m.getI())
-                        chartItemDto.setCode(trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                    for (ChartItemDto chartItemDto : chartItemDtos) {
+                        if (chartItemDto.getMediaDto().getId().intValue() == m.getI().intValue())
+                            chartItemDto.setCode(trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                    }
                 }
             }
         }
@@ -215,7 +218,7 @@ public class ChartItemController extends AbstractCommonController {
         ModelAndView modelAndView;
         try {
             chartDetailService.updateChartItems(chartId, selectedPublishDateTime.getTime(), newPublishDateTime.getTime());
-            modelAndView = new ModelAndView("redirect:/chartsNEW/" + chartId + "/" + dateTimeFormat.format(newPublishDateTime));
+            modelAndView = new ModelAndView("redirect:/chartsNEW/" + chartId + "/" + new SimpleDateFormat(URL_DATE_TIME_FORMAT).format(newPublishDateTime));
         } catch (ServiceCheckedException e) {
             LOGGER.warn(e.getMessage(), e);
             response.setStatus(HttpStatus.PRECONDITION_FAILED.value());

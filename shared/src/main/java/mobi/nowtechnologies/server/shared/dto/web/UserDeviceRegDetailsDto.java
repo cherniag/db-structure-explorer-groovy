@@ -19,47 +19,30 @@ public class UserDeviceRegDetailsDto {
 	@NotEmpty
 	private String deviceType;
 
-	@NotEmpty
-	private String communityName;
-
 	private String ipAddress;
 
-	@NotEmpty
-	private String apiVersion;
+    private String communityUri;
 
-	@NotEmpty
-	private String appVersion;
+    public void setCommunityUri(String communityUri) {
+        this.communityUri = communityUri;
+    }
 
-	public String getCommunityName() {
-		return communityName;
-	}
+    public UserDeviceRegDetailsDto withCommunityUri(String communityUri) {
+        this.communityUri = communityUri;
 
-	public void setCOMMUNITY_NAME(String communityName) {
-		this.communityName = communityName;
-	}
+        return this;
+    }
 
-	public String getIpAddress() {
+    public String getCommunityUri() {
+        return communityUri;
+    }
+
+    public String getIpAddress() {
 		return ipAddress;
 	}
 
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
-	}
-
-	public String getApiVersion() {
-		return apiVersion;
-	}
-
-	public void setAPI_VERSION(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
-
-	public String getAppVersion() {
-		return appVersion;
-	}
-
-	public void setAPP_VERSION(String appVersion) {
-		this.appVersion = appVersion;
 	}
 
 	public String getDeviceUID() {
@@ -91,11 +74,6 @@ public class UserDeviceRegDetailsDto {
         return this;
     }
 
-    public UserDeviceRegDetailsDto withCommunityName(String communityName) {
-        this.communityName = communityName;
-        return this;
-    }
-
     public UserDeviceRegDetailsDto withDeviceType(String deviceType) {
         this.deviceType = deviceType;
         return this;
@@ -111,8 +89,6 @@ public class UserDeviceRegDetailsDto {
         return Objects.toStringHelper(this)
                 .add("deviceUID", deviceUID)
                 .add("deviceType", deviceType)
-                .add("apiVersion", apiVersion)
-                .add("community", communityName)
                 .add("IP", ipAddress)
                 .toString();
 	}

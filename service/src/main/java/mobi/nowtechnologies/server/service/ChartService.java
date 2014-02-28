@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static mobi.nowtechnologies.server.assembler.UserAsm.toAccountCheckDTO;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
@@ -37,12 +35,17 @@ public class ChartService {
 	private UserService userService;
 	private ChartDetailService chartDetailService;
 	private ChartRepository chartRepository;
+	private DrmService drmService;
 	private ChartDetailRepository chartDetailRepository;
 	private MediaService mediaService;
 	private CommunityResourceBundleMessageSource messageSource;
 	private CloudFileService cloudFileService;
 
-	public void setCloudFileService(CloudFileService cloudFileService) {
+    public void setDrmService(DrmService drmService) {
+        this.drmService = drmService;
+    }
+
+    public void setCloudFileService(CloudFileService cloudFileService) {
 		this.cloudFileService = cloudFileService;
 	}
 	
@@ -86,16 +89,29 @@ public class ChartService {
     }
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Object[] processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
+	public ChartDto processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
+        if (user == null)
+            throw new ServiceException("The parameter user is null");
+
+        user = userService.getUserWithSelectedCharts(user.getId());
+
+        UserGroup userGroup = user.getUserGroup();
+        if (userGroup == null)
+            throw new ServiceException("The parameter userGroup is null");
+
+        DrmPolicy drmPolicy = userGroup.getDrmPolicy();
+
+        if (drmPolicy == null)
+            throw new ServiceException("The parameter drmPolicy is null");
+
+        DrmType drmType = drmPolicy.getDrmType();
+        if (drmType == null)
+            throw new ServiceException("The parameter drmType is null");
+
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
 
 		LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
-
-        AccountCheckDTO accountCheck = userService.getAccountCheckDTO(user, Collections.<String>emptyList());
-        user = (User) accountCheck.user;
 
 		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
 		
@@ -111,22 +127,29 @@ public class ChartService {
 		for (ChartDetail chart : charts) {	
 			Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1 ? true : false;
 			if(!switchable || user.isSelectedChart(chart)){
-				chartDetails.addAll(chartDetailService.findChartDetailTree(user, chart.getChart().getI(), new Date(), createDrmIfNotExists, fetchLocked));
+				chartDetails.addAll(chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked));
 				playlistDtos.add(ChartAsm.toPlaylistDto(chart, switchable));
 			}
 		}
 
 		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
-		List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(user.getUserGroup().getCommunity(), chartDetails, defaultAmazonUrl);
+        for (ChartDetail chartDetail : chartDetails) {
+            Media media = chartDetail.getMedia();
+
+            Drm drmForCurrentUser = drmService.findDrmByUserAndMedia(user, media, drmPolicy, createDrmIfNotExists);
+
+            media.setDrms(Collections.singletonList(drmForCurrentUser));
+        }
+
+        List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(user.getUserGroup().getCommunity(), chartDetails, defaultAmazonUrl);
 
 		ChartDto chartDto = new ChartDto();
 		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
 		chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));
-		Object[] objects = new Object[] { accountCheck, chartDto };
 
-		LOGGER.debug("Output parameter objects=[{}]", objects);
-		return objects;
+		LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
+		return chartDto;
 	}
 
 	@Transactional(readOnly = true)
@@ -141,10 +164,11 @@ public class ChartService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<ChartDetail> getLockedChartItems(String communityName, User user) {
+	public List<ChartDetail> getLockedChartItems(User user) {
+        String communityName = user.getUserGroup().getCommunity().getName();
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
 		
-		if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod()|| user.isOnWhiteListedVideoAudioFreeTrial())
+		if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial())
 			return Collections.EMPTY_LIST;
 		
 		List<Chart> charts = chartRepository.getByCommunityName(communityName);

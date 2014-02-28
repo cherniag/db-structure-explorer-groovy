@@ -1,27 +1,23 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.persistence.QueryHint;
-
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.QueryHint;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
-public interface UserRepository extends PagingAndSortingRepository<User, Integer>{
+public interface UserRepository extends JpaRepository<User, Integer> {
 
 	@Query(value="select user from User user " +
 			"join user.userGroup userGroup " +
@@ -235,6 +231,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
     int deleteUser(int userId);
 
     @Query(value="select u from User u "
-            + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%'")
+            + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%' and u.deviceUID not like '%_wipe'")
     List<User> findByMobile(String phoneNumber);
 }

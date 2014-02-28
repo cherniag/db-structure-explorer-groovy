@@ -2,21 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:hz="http://www.hazelcast.com/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/mvc
-		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
-		http://www.hazelcast.com/schema/spring
-                http://www.hazelcast.com/schema/spring/hazelcast-spring-3.0.xsd">
+		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
 	<mvc:interceptors>
-		<bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
+        <bean class="mobi.nowtechnologies.server.interceptor.RequestInfoInterceptor" />
+        <bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
 	</mvc:interceptors>
 	
 	<mvc:annotation-driven />
-	
-	
+
+    <bean class="mobi.nowtechnologies.server.shared.web.mapping.RESTRequestMappingHandlerMapping">
+       <property name="order" value="#{ T(org.springframework.core.Ordered).HIGHEST_PRECEDENCE }"/>
+    </bean>
+
 	<!-- Application properties     -->
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -29,7 +30,7 @@
 		<property name="ignoreResourceNotFound" value="true" />
 	</bean>
 
-	<bean class="mobi.nowtechnologies.server.config.WebConfigPostProcessor"/>
+	<!--<bean class="mobi.nowtechnologies.server.config.WebConfigPostProcessor"/>-->
 
 	<bean id="transport.JaxbMarshallingView" class="org.springframework.web.servlet.view.xml.MarshallingView">
 		<constructor-arg ref="transport.JaxbMarshaller" />
@@ -70,6 +71,7 @@
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 	  <property name="order" value="1" />
       <property name="defaultContentType" value="application/xml" />
+      <property name="favorPathExtension" value="true" />
 	  <property name="mediaTypes">
 		<map>
 		   <entry key="xml" value="application/xml"/>
@@ -77,7 +79,7 @@
 		   <entry key="json" value="application/json" />
 		</map>
 	  </property>
- 	<property name="viewResolvers">
+        <property name="viewResolvers">
 		<list>
 			<bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
 				<bean id="htmlViewResolver"
@@ -86,21 +88,26 @@
 				<property name="prefix" value="/WEB-INF/views/" />
 				<property name="suffix" value=".html" />
 			</bean>
-		</list>
-	</property>
-	  <property name="defaultViews">
+        </list>
+    </property>
+        <property name="defaultViews">
 		<list>
 		  <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+              <property name="objectMapper">
+                  <bean class="org.codehaus.jackson.map.ObjectMapper">
+                      <property name="serializationInclusion" value="NON_EMPTY"/>
+                  </bean>
+              </property>
           </bean>
 		  <ref bean="transport.JaxbMarshallingView"/>
 		 </list>
 	  </property>
-	</bean>
-	<!--
-		 ****************************************************************************
-		 ****************** Automatic job and thread-pool executors *****************
-		 ****************************************************************************
-	-->
+    </bean>
+    <!--
+         ****************************************************************************
+         ****************** Automatic job and thread-pool executors *****************
+         ****************************************************************************
+    -->
 	
 		<!--	Sms According To Law job-->
 	<bean id="transport.smsAccordingToLawQuartzJobDetail"
@@ -465,5 +472,6 @@
 			</bean>
 		</property>
 	</bean>
-	<import resource="classpath:controllers.xml" />
+    <bean id="taskThreadPoolExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"/>
+    <import resource="classpath:controllers.xml" />
 </beans>

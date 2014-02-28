@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.payment.impl;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
@@ -52,6 +53,9 @@ public class VFPaymentServiceImplIT {
     @Resource(name = "service.PendingPaymentService")
     private PendingPaymentServiceImpl pendingPaymentService;
 
+    @Resource(name = "service.PaymentDetailsService")
+    private PaymentDetailsService paymentDetailsService;
+
     @Resource(name = "vf_nz.service.UserService")
     private UserService userService;
 
@@ -78,7 +82,7 @@ public class VFPaymentServiceImplIT {
 
     @Test
     public void testStartVFPayment_SuccessfulResponse_Successful() throws Exception {
-        String userName = "+642102247311";
+        String userName = "+642102247312";
         String community = "vf_nz";
         Integer paymentPolicyId = 231;
 
@@ -97,11 +101,11 @@ public class VFPaymentServiceImplIT {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setDestAddress("3313");
-        deliverSm.setSourceAddr("642102247311");
+        deliverSm.setSourceAddr("642102247312");
         deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "DELIVRD", "000", "It is test").getBytes());
         processorContainer.processStatusReportMessage(deliverSm);
 
-        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247311", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
+        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247312", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
 
         int nextSubPayment = Utils.getEpochSeconds() + 4 * Utils.WEEK_SECONDS;
         user = userService.findByNameAndCommunity(userName, community);
@@ -113,7 +117,7 @@ public class VFPaymentServiceImplIT {
 
     @Test
     public void testStartVFPayment_ErrorResponse_Successful() throws Exception {
-        String userName = "+642102247311";
+        String userName = "+642102247312";
         String community = VF_NZ_COMMUNITY_REWRITE_URL;
         Integer paymentPolicyId = 231;
 
@@ -126,6 +130,10 @@ public class VFPaymentServiceImplIT {
         for (PendingPayment pendingPayment : createPendingPayments) {
             PaymentSystemService paymentSystemService = paymentSystems.get(pendingPayment.getPaymentSystem());
             if (paymentSystemService == paymentService) {
+                pendingPayment.getPaymentDetails().incrementRetries();
+                pendingPayment.getPaymentDetails().incrementRetries();
+                pendingPayment.getPaymentDetails().incrementRetries();
+                paymentDetailsService.update(pendingPayment.getPaymentDetails());
                 paymentSystemService.startPayment(pendingPayment);
             }
         }
@@ -133,11 +141,11 @@ public class VFPaymentServiceImplIT {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setDestAddress("3313");
-        deliverSm.setSourceAddr("642102247311");
+        deliverSm.setSourceAddr("642102247312");
         deliverSm.setShortMessage(buildMessage("108768587", "000", "000", "1310020119", "1310020119", "UNDELIV", "001", "It is test").getBytes());
         processorContainer.processStatusReportMessage(deliverSm);
 
-        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247311", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
+        Mockito.verify(paymentServiceTarget.gatewayService, times(1)).send("+642102247312", "Your payment to vf_nz Tracks was successful. You were charged: 5 GBP", "3313", SUCCESS_FAILURE, 600000);
         user = userService.findByNameAndCommunity(userName, community);
         assertEquals(oldNextSubPayment.intValue(), user.getNextSubPayment());
         assertEquals("001", user.getCurrentPaymentDetails().getErrorCode());

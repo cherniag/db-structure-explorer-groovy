@@ -29,22 +29,12 @@ public class ChartDetailService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailService.class);
 
-	private DrmService drmService;
 	private ChartDetailDao chartDetailDao;
-	private EntityService entityService;
 	private ChartDetailRepository chartDetailRepository;
 	private MediaService mediaService;
 
 	public void setChartDetailDao(ChartDetailDao chartDetailDao) {
 		this.chartDetailDao = chartDetailDao;
-	}
-
-	public void setDrmService(DrmService drmService) {
-		this.drmService = drmService;
-	}
-
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
 	}
 
 	public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
@@ -57,24 +47,8 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> findChartDetailTree(User user, Integer chartId, Date choosedPublishTime, boolean createDrmIfNotExists, boolean fetchLocked) {
-		if (user == null)
-			throw new ServiceException("The parameter user is null");
-
-		UserGroup userGroup = user.getUserGroup();
-		if (userGroup == null)
-			throw new ServiceException("The parameter userGroup is null");
-
-		DrmPolicy drmPolicy = userGroup.getDrmPolicy();
-
-		if (drmPolicy == null)
-			throw new ServiceException("The parameter drmPolicy is null");
-
-		DrmType drmType = drmPolicy.getDrmType();
-		if (drmType == null)
-			throw new ServiceException("The parameter drmType is null");
-
-		LOGGER.debug("input parameters user, chartId: [{}], [{}]", user, chartId);
+	public List<ChartDetail> findChartDetailTree(Integer chartId, Date choosedPublishTime, boolean fetchLocked) {
+        LOGGER.debug("input parameters user, chartId: [{}], [{}]", chartId);
 
 		long choosedPublishTimeMillis = choosedPublishTime.getTime();
 
@@ -87,14 +61,6 @@ public class ChartDetailService {
 				chartDetails = chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
 			else 
 				chartDetails = chartDetailRepository.findNotLockedChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chartId, nearestLatestPublishTimeMillis);
-
-			for (ChartDetail chartDetail : chartDetails) {
-				Media media = chartDetail.getMedia();
-
-				Drm drmForCurrentUser = drmService.findDrmByUserAndMedia(user, media, drmPolicy, createDrmIfNotExists);
-
-				media.setDrms(Collections.singletonList(drmForCurrentUser));
-			}
 		}
 
 		LOGGER.debug("Output parameter chartDetails=[{}]", chartDetails);

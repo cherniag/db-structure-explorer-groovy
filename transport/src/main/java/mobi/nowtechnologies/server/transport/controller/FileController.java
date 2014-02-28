@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.web.servlet.PlainTextModalAndView;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,68 +33,31 @@ import java.util.Map;
 public class FileController extends CommonController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class.getName());
 
-	private UserService userService;
 	private FileService fileService;
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
 
 	public void setFileService(FileService fileService) {
 		this.fileService = fileService;
 	}
 
-	
-	@RequestMapping(method = RequestMethod.POST, value = {"/GET_FILE", "*/{apiVersion:[3-9]{1,2}\\.[0-9]{1,3}}/GET_FILE"})
-	public ModelAndView getFile(
-			@RequestParam("ID") final String mediaId,
-			@RequestParam("TYPE") String fileTypeName,
-			@RequestParam("APP_VERSION") String appVersion,
-			@RequestParam("API_VERSION") String apiVersion,
-			@RequestParam("COMMUNITY_NAME") String communityName,
-			@RequestParam("USER_NAME") final String userName,
-			@RequestParam("USER_TOKEN") String userToken,
-			@RequestParam("TIMESTAMP") String timestamp,
-			@RequestParam(value = "RESOLUTION", required = false) String resolution,
-			final HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		User user = null;
-		Exception ex = null;
-		try {
-			LOGGER.info("command processing started");
-			user = checkCredentials(userName, userToken, timestamp, communityName);
-
-            FileType fileType = FileType.valueOf(fileTypeName);
-            return processGetFile(user, mediaId, fileType, resolution, request);
-		} catch (Exception e) {
-			ex = e;
-			throw e;
-		} finally {
-			logProfileData(null, communityName, null, null, user, ex);
-			LOGGER.info("command processing finished");
-		}
-	}
-
     @RequestMapping(method = RequestMethod.POST, value = {
-            "/{community:o2}/{apiVersion:4\\.[0-9]{1,3}}/GET_FILE",
-            "*/{community}/{apiVersion:[4-5]\\.[0-9]{1,3}}/GET_FILE"
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/GET_FILE"
     })
     public ModelAndView getFile(
-            @PathVariable("community") String communityName,
             @RequestParam("ID") final String mediaId,
             @RequestParam("TYPE") String fileTypeName,
             @RequestParam("USER_NAME") final String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID,
             @RequestParam(value = "RESOLUTION", required = false) String resolution,
-            final HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            final HttpServletRequest request) throws Exception {
         User user = null;
         Exception ex = null;
+        String community = getCurrentCommunityUri();
         try {
             LOGGER.info("command processing started");
 
-            user = checkCredentials(userName, userToken, timestamp, communityName);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
 
             FileType fileType = FileType.valueOf(fileTypeName);
             if(fileType == FileType.VIDEO){
@@ -109,7 +71,7 @@ public class FileController extends CommonController {
             ex = e;
             throw e;
         } finally {
-            logProfileData(null, communityName, null, null, user, ex);
+            logProfileData(null, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }

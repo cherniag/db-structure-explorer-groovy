@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
+import mobi.nowtechnologies.server.service.validator.GBCellNumberValidator;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.slf4j.Logger;
@@ -76,6 +77,8 @@ public class O2ProviderServiceImpl implements O2ProviderService {
     private UserService userService;
 
     private O2Service o2Service;
+
+    private GBCellNumberValidator gbCellNumberValidator = new GBCellNumberValidator();
 
 	public void init() {
 		restTemplate = new RestTemplate();
@@ -176,10 +179,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		String serverO2Url = getServerO2Url(phoneNumber);
 		String url = serverO2Url + VALIDATE_PHONE_REQ;
 
-		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-		request.add("phone_number", phoneNumber);
-
-		String result = handleValidatePhoneNumber(phoneNumber, url, request);
+		String result = handleValidatePhoneNumber(phoneNumber, url);
 
 		return new PhoneNumberValidationData().withPhoneNumber(result);
 	}
@@ -192,43 +192,50 @@ public class O2ProviderServiceImpl implements O2ProviderService {
         processor.process(data);
     }
 
-    private String handleValidatePhoneNumber(String phoneNumber, String url, MultiValueMap<String, Object> request) {
+    private String handleValidatePhoneNumber(String phoneNumber, String url) {
 		LOGGER.info("VALIDATE_PHONE_NUMBER for[{}] url[{}]", phoneNumber, url);
-		
-		Long curDay = new Long(Utils.getEpochDays());
-		String phoneNumberCode = phoneNumber.replaceAll("\\s", "");
-		phoneNumberCode = phoneNumberCode.length() >= 10 ? phoneNumberCode.substring(phoneNumberCode.length()-10) : phoneNumberCode;
-		Long countPerDay = userLogRepository.countByPhoneNumberAndDay(phoneNumberCode, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
-		UserLog userLog = null;
-		if(countPerDay >= limitValidatePhoneNumber){
-			LOGGER.error("VALIDATE_PHONE_NUMBER limit phone_number calls is exceeded for[{}] url[{}]", phoneNumber, url);
-			throw new LimitPhoneNumberValidationException();
-		}else{
-			userLog = userLogRepository.findByPhoneNumber(phoneNumberCode, UserLogType.VALIDATE_PHONE_NUMBER);
-			userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
-		}
-		
-		try {
-			DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
+
+        UserLog userLog = null;
+        String validatedPhoneNumber = null;
+        try {
+            Long curDay = new Long(Utils.getEpochDays());
+            validatedPhoneNumber = gbCellNumberValidator.validateAndNormalize(phoneNumber);
+            if(validatedPhoneNumber == null)
+                throw new InvalidPhoneNumberException(phoneNumber);
+
+            Long countPerDay = userLogRepository.countByPhoneNumberAndDay(validatedPhoneNumber, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
+            if(countPerDay >= limitValidatePhoneNumber){
+                LOGGER.error("VALIDATE_PHONE_NUMBER limit phone_number calls is exceeded for[{}] url[{}]", phoneNumber, url);
+                throw new LimitPhoneNumberValidationException();
+            }else{
+                userLog = userLogRepository.findByPhoneNumber(validatedPhoneNumber, UserLogType.VALIDATE_PHONE_NUMBER);
+                userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
+            }
+
+            MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+            request.add("phone_number", validatedPhoneNumber);
+            DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
 			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
 			
-			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			
 			return result;
 		} catch (RestClientException e) {
-			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.O2_FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
-			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
-			throw new InvalidPhoneNumberException();
+			userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.O2_FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), validatedPhoneNumber, url);
+			throw new InvalidPhoneNumberException(validatedPhoneNumber);
 		} catch (DOMException e) {
-			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
-			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), phoneNumber, url);
-			throw new InvalidPhoneNumberException();
-		} catch (Exception e) {
-			userLogRepository.save(new UserLog(userLog, phoneNumberCode, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
-			LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", phoneNumber, e.getMessage());
-			throw new InvalidPhoneNumberException();
+			userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			LOGGER.error("VALIDATE_PHONE_NUMBER error_msg[{}] for[{}] url[{}]", e.getMessage(), validatedPhoneNumber, url);
+			throw new InvalidPhoneNumberException(validatedPhoneNumber);
+        } catch (InvalidPhoneNumberException e) {
+            throw e;
+        } catch (Exception e) {
+			userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.FAIL, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
+			LOGGER.error("VALIDATE_PHONE_NUMBER Error for[{}] error[{}]", validatedPhoneNumber, e.getMessage());
+			throw new InvalidPhoneNumberException(validatedPhoneNumber);
 		} finally {
-			LOGGER.info("VALIDATE_PHONE_NUMBER finished for[{}]", phoneNumber);
+			LOGGER.info("VALIDATE_PHONE_NUMBER finished for[{}]", validatedPhoneNumber != null ? validatedPhoneNumber : phoneNumber);
 		}
 	}
 

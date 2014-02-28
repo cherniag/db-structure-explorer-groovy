@@ -5,8 +5,6 @@ package mobi.nowtechnologies.server.service.exception;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 
-import java.util.Map;
-
 /**
  * @author Titov Mykhaylo (titov)
  * 
@@ -14,8 +12,9 @@ import java.util.Map;
 public class ServiceException extends RuntimeException {
 	private static final String DEFAULT_ERROR_CODE = "error.external";
 	private static final long serialVersionUID = 1L;
-	
-	private ServerMessage serverMessage;
+
+    private Object[] args;
+    private ServerMessage serverMessage;
     private Integer errorCode;
 	private String localizedMessage;
 	protected String errorCodeForMessageLocalization = DEFAULT_ERROR_CODE;
@@ -43,6 +42,12 @@ public class ServiceException extends RuntimeException {
 		this.errorCodeForMessageLocalization = code;
 		this.localizedMessage = defaultMessage;
 	}
+
+    public ServiceException(String code, String defaultMessage, String message, Object[] args) {
+        this(code, defaultMessage, message);
+
+        this.args = args;
+    }
 	
 	public ServerMessage getServerMessage() {
 		return serverMessage;
@@ -77,8 +82,12 @@ public class ServiceException extends RuntimeException {
 	public String getDefaultMessage() {
 		return localizedMessage;
 	}
-	
-	@Override
+
+    public Object[] getArgs() {
+        return args;
+    }
+
+    @Override
 	public String toString() {
 		return "ServiceException [message=" +getMessage()+ ", localizedMessage=" + localizedMessage + ", errorCodeForMessageLocalization=" + errorCodeForMessageLocalization + ", serverMessage="
 				+ serverMessage + "]";

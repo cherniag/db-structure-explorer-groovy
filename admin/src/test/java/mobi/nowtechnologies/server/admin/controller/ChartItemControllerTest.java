@@ -24,7 +24,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.mockito.Matchers.any;
@@ -242,8 +241,8 @@ public class ChartItemControllerTest extends TestCase {
 		fixture.setChartService(chartService);
 		fixture.setChartDetailService(chartDetailService);
 		fixture.setFilesURL("");
-		fixture.dateTimeFormat = new SimpleDateFormat();
-		fixture.dateFormat = new SimpleDateFormat();
+		// fixture.dateTimeFormat = new SimpleDateFormat();
+		//fixture.dateFormat = new SimpleDateFormat();
 		fixture.messageSource = mock(MessageSource.class);
 	}
 

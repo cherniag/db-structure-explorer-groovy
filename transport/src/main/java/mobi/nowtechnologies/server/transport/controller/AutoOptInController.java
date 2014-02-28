@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,41 +15,39 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class AutoOptInController extends CommonController {
+    private AccCheckController accCheckController;
+
+    public void setAccCheckController(AccCheckController accCheckController) {
+        this.accCheckController = accCheckController;
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/AUTO_OPT_IN",
-            "{other:.*}/{communityUri:o2}/{apiVersion:4\\.2}/AUTO_OPT_IN.json",
-            "{other:.*}/{communityUri:o2}/{apiVersion:5\\.0}/AUTO_OPT_IN",
-            "{other:.*}/{communityUri:o2}/{apiVersion:5\\.0}/AUTO_OPT_IN.json"
+            "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
     })
-    public ModelAndView autoOptIn(@RequestParam("APP_VERSION") String appVersion,
-                                  @RequestParam("USER_NAME") String userName,
+    public ModelAndView autoOptIn(@RequestParam("USER_NAME") String userName,
                                   @RequestParam("USER_TOKEN") String userToken,
                                   @RequestParam("TIMESTAMP") String timestamp,
                                   @RequestParam("DEVICE_UID") String deviceUID,
-                                  @RequestParam(value = "OTAC_TOKEN", required = false) String otac,
-                                  @PathVariable("communityUri") String communityUri,
-                                  @PathVariable("apiVersion") String apiVersion) throws Exception {
+                                  @RequestParam(value = "OTAC_TOKEN", required = false) String otac) throws Exception {
         User user = null;
         Exception ex = null;
         try {
-            apiVersionThreadLocal.set(apiVersion);
-
             LOGGER.info("command processing started");
 
-            final AccountCheckDTO accountCheckDTO = userService.autoOptInAndAccountCheck(userName, userToken, timestamp, deviceUID, otac, communityUri);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ENTERED_NUMBER, ActivationStatus.ACTIVATED);
 
-            user = (User) accountCheckDTO.user;
+            user = userService.autoOptIn(user, otac);
 
-            final Object[] objects = new Object[] { accountCheckDTO };
-            precessRememberMeToken(objects);
+            AccountCheckDTO accountCheckDTO = accCheckController.processAccCheck(user);
 
-            return new ModelAndView(defaultViewName, MODEL_NAME, new Response(objects));
+            accountCheckDTO.withHasPotentialPromoCodePromotion(true);
+
+            return buildModelAndView(accountCheckDTO);
         } catch (Exception e) {
             ex = e;
             throw e;
         } finally {
-            logProfileData(deviceUID, communityUri, null, null, user, ex);
+            logProfileData(deviceUID, getCurrentCommunityUri(), null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }
