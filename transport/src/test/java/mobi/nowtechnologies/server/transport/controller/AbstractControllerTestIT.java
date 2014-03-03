@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -31,14 +32,11 @@ import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:transport-servlet-test.xml",
-        "classpath:task-processors.xml",
-        "classpath:META-INF/service-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/dao-test.xml",
-        "classpath:META-INF/smpp.xml",
-        "classpath:META-INF/shared.xml"})
+@ContextHierarchy({
+        @ContextConfiguration(locations = {
+                "classpath:transport-root-test.xml"}),
+        @ContextConfiguration(locations = {
+                "classpath:transport-servlet-test.xml"})})
 @WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public abstract class AbstractControllerTestIT {
@@ -93,7 +91,7 @@ public abstract class AbstractControllerTestIT {
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
         o2ProviderServiceSpy = spy(o2ProviderServiceTarget);
-        updateO2UserTaskSpy = spy((UpdateO2UserTask) ((Advised) updateO2UserTask).getTargetSource().getTarget());
+        updateO2UserTaskSpy = spy(updateO2UserTask);
         o2ServiceMock = mock(O2Service.class);
 
         o2ProviderServiceSpy.setO2Service(o2ServiceMock);
