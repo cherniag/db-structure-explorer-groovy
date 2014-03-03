@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -21,13 +22,11 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:transport-servlet-test.xml",
-        "classpath:META-INF/service-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/dao-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/shared.xml"})
+@ContextHierarchy({
+        @ContextConfiguration(locations = {
+                "classpath:transport-root-test.xml"}),
+        @ContextConfiguration(locations = {
+                "classpath:transport-servlet-test.xml"})})
 @WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional

@@ -44,7 +44,7 @@ public abstract class AbstractControllerTestIT {
     protected MockMvc mockMvc;
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private WebApplicationContext applicationContext;
 
     @Autowired
     private O2ProviderServiceImpl o2ProviderService;
@@ -87,7 +87,7 @@ public abstract class AbstractControllerTestIT {
 
     @Before
     public void setUp() throws Exception {
-        mockMvc = webAppContextSetup((WebApplicationContext) applicationContext).build();
+        mockMvc = webAppContextSetup(applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
         o2ProviderServiceSpy = spy(o2ProviderServiceTarget);

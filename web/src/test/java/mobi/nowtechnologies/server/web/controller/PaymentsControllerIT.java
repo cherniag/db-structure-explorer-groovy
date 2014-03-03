@@ -44,13 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextHierarchy({
-        @ContextConfiguration(locations = { "classpath:security.xml",
-                "classpath:META-INF/service-test.xml",
-                "classpath:META-INF/dao-test.xml",
-                "classpath:META-INF/shared.xml" }),
-        @ContextConfiguration(locations = {
-                "classpath:web-test.xml"
-        })
+        @ContextConfiguration("classpath:web-root-test.xml"),
+        @ContextConfiguration("classpath:web-test.xml")
 })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional

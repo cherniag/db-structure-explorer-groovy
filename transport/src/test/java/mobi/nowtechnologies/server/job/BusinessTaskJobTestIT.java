@@ -22,9 +22,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
@@ -40,9 +42,15 @@ import static org.mockito.Mockito.*;
  * Date: 12/20/13
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/service-test.xml", "/META-INF/dao-test.xml", "/META-INF/shared.xml", "classpath:task-processors.xml", "classpath:jobs-test.xml"})
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager")
-public class BusinessTaskJobTestIT extends AbstractTransactionalJUnit4SpringContextTests{
+@ContextHierarchy({
+        @ContextConfiguration(locations = {
+                "classpath:transport-root-test.xml", "classpath:jobs-test.xml"}),
+        @ContextConfiguration(locations = {
+                "classpath:transport-servlet-test.xml"})})
+@WebAppConfiguration
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
+public class BusinessTaskJobTestIT {
     @Autowired
     private BusinessTaskJob businessTaskJob;
 
@@ -51,12 +59,6 @@ public class BusinessTaskJobTestIT extends AbstractTransactionalJUnit4SpringCont
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserGroupRepository userGroupRepository;
-
-    @Autowired
-    private CommunityRepository communityRepository;
 
 
     @Autowired
