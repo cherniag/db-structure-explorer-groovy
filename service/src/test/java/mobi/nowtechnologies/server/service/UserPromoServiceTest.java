@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +31,21 @@ public class UserPromoServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private UserRepository userRepository;
+
     @Test
     public void testApplyInitPromoByEmail() {
         User user = UserFactory.createUser();
 
-        when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true))).thenReturn(user);
+        when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
+
+        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true))).thenReturn(user);
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");
 
         verify(activationEmailService).activate(anyLong(), anyString(), anyString());
-        verify(userService).applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true));
+        verify(userService).applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true));
         verify(userService).updateUser(user);
     }
 
@@ -58,5 +64,6 @@ public class UserPromoServiceTest {
         userPromoService = new UserPromoServiceImpl();
         ReflectionTestUtils.setField(userPromoService, "activationEmailService", activationEmailService);
         ReflectionTestUtils.setField(userPromoService, "userService", userService);
+        ReflectionTestUtils.setField(userPromoService, "userRepository", userRepository);
     }
 }
