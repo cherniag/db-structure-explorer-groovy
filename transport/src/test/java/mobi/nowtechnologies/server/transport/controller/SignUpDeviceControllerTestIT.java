@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
@@ -46,7 +47,7 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isInternalServerError());
+        ).andExpect(status().isInternalServerError()).andDo(print());
     }
 
     @Test

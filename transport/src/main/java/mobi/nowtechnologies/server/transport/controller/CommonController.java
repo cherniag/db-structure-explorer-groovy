@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -70,7 +73,6 @@ public abstract class CommonController extends ProfileController {
     private ThreadLocal<String> communityUriThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> remoteAddrThreadLocal = new ThreadLocal<String>();
-
 
 
     public void setCurrentCommandName(String commandName) {
@@ -146,8 +148,14 @@ public abstract class CommonController extends ProfileController {
         return sendResponse(exception, response, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+
+    @ExceptionHandler(BindException.class)
+    public ModelAndView handleMethodArgumentException(BindException argumentException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+        ObjectError objectError = Iterables.getFirst(argumentException.getBindingResult().getAllErrors(), null);
+        return processException(ValidationException.getInstance(objectError.getDefaultMessage()), httpServletRequest, response);
+    }
+
+    private ModelAndView processException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
         HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -172,6 +180,12 @@ public abstract class CommonController extends ProfileController {
         LOGGER.warn(message);
 
         return sendResponse(errorMessage, status, response);
+    }
+
+
+    @ExceptionHandler(ValidationException.class)
+    public ModelAndView handleException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
+        return processException(validationException, httpServletRequest, response);
     }
 
     @ExceptionHandler(UserCredentialsException.class)

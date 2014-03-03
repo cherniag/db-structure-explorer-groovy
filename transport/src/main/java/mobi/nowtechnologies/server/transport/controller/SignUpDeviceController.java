@@ -36,21 +36,13 @@ public class SignUpDeviceController extends CommonController {
 		{
 			"**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_UP_DEVICE"
 		})
-	public ModelAndView signUpDevice(HttpServletRequest request,
-			@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto, BindingResult result) {
+	public ModelAndView signUpDevice(@Valid UserDeviceRegDetailsDto userDeviceDetailsDto) {
         String community = getCurrentCommunityUri();
 		LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]",userDeviceDetailsDto, community);
 		
 		User user = null;
 	    Exception ex = null;
 		try {
-			 if (result.hasErrors()) {
-		            List<ObjectError> objectErrors = result.getAllErrors();
-
-		            for (ObjectError objectError : objectErrors) {
-		                throw ValidationException.getInstance(objectError.getDefaultMessage());
-		            }
-		        }
 		        userDeviceDetailsDto.setIpAddress(getCurrentRemoteAddr());
                 userDeviceDetailsDto.setCommunityUri(community);
 
