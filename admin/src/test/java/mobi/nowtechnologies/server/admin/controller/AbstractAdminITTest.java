@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -24,13 +25,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = {
-        "classpath:META-INF/admin-test.xml",
-        "classpath:META-INF/service-test.xml",
-        "classpath:META-INF/dao-test.xml",
-        "classpath:META-INF/admin-dao-test.xml",
-        "classpath:META-INF/security-test.xml",
-        "classpath:META-INF/shared.xml"})
+@ContextHierarchy(
+        {
+                @ContextConfiguration("classpath:META-INF/admin-root-test.xml"),
+                @ContextConfiguration("classpath:META-INF/admin-servlet-test.xml")
+        }
+)
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public abstract class AbstractAdminITTest {
