@@ -70,31 +70,37 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
 			</list>
 		</property>
-	</bean> 
-		
-	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-	  <property name="order" value="1" />
-      <property name="defaultContentType" value="application/xml" />
-      <property name="favorPathExtension" value="true" />
-	  <property name="mediaTypes">
-		<map>
-		   <entry key="xml" value="application/xml"/>
-		   <entry key="json" value="application/json" />
-		</map>
-	  </property>
+	</bean>
+
+   <bean id="contentNegotiationManagerFactoryBean" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+       <property name="defaultContentType" value="application/xml" />
+       <property name="favorPathExtension" value="true" />
+       <property name="mediaTypes">
+       <map>
+           <entry key="xml" value="application/xml"/>
+           <entry key="json" value="application/json" />
+       </map>
+       </property>
+   </bean>
+
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="1" />
+        <property name="contentNegotiationManager" ref="contentNegotiationManagerFactoryBean"/>
         <property name="defaultViews">
-		<list>
-            <ref bean="transport.JaxbMarshallingView"/>
-            <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
-              <property name="objectMapper">
-                  <bean class="org.codehaus.jackson.map.ObjectMapper">
-                      <property name="serializationInclusion" value="NON_EMPTY"/>
-                  </bean>
-              </property>
-          </bean>
-		 </list>
-	  </property>
+            <list>
+                <ref bean="transport.JaxbMarshallingView"/>
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+                    <property name="objectMapper">
+                        <bean class="org.codehaus.jackson.map.ObjectMapper">
+                            <property name="serializationInclusion" value="NON_EMPTY"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
     </bean>
+
     <!--
          ****************************************************************************
          ****************** Automatic job and thread-pool executors *****************
