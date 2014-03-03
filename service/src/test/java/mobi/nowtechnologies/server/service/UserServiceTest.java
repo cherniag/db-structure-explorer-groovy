@@ -1142,7 +1142,7 @@ public class UserServiceTest {
         PowerMockito.doReturn(1).when(userRepositoryMock).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
 
         //when
-        User actualUser = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+        User actualUser = userServiceSpy.registerUser(userDeviceRegDetailsDto, false, false);
 
         //then
         assertNotNull(actualUser);
@@ -1165,7 +1165,7 @@ public class UserServiceTest {
 		final Map<Integer, Operator> operatorMap = (Map<Integer, Operator>) testData[0];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		User user = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		User user = userServiceSpy.registerUser(userDeviceRegDetailsDto, false, false);
 
 		assertNotNull(user);
 		assertEquals(user.getToken(), storedToken);
@@ -1204,7 +1204,7 @@ public class UserServiceTest {
 		Object[] testData = testRegisterUser(storedToken, communityName, deviceUID, deviceTypeName, ipAddress, true, true);
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		User result = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		User result = userServiceSpy.registerUser(userDeviceRegDetailsDto, false, false);
 
 		assertNotNull(result);
 		assertEquals(result.getDeviceType().getName(), DeviceTypeDao.NONE);
@@ -1225,7 +1225,7 @@ public class UserServiceTest {
 		final User user = (User) testData[2];
 		final UserDeviceRegDetailsDto userDeviceRegDetailsDto = (UserDeviceRegDetailsDto) testData[1];
 
-		User result = userServiceSpy.registerUser(userDeviceRegDetailsDto, false);
+		User result = userServiceSpy.registerUser(userDeviceRegDetailsDto, false, false);
 
 		assertNotNull(result);
 		assertEquals(result.getToken(), user.getToken());

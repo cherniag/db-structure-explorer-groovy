@@ -1386,7 +1386,7 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public User registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo) {
+    public User registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo, boolean updateUserPendingActivation) {
         LOGGER.info("REGISTER_USER Started [{}]", userDeviceRegDetailsDto);
 
         final String deviceUID = userDeviceRegDetailsDto.getDeviceUID().toLowerCase();
@@ -1401,6 +1401,8 @@ public class UserService {
             if (isNull(deviceType)) deviceType = DeviceTypeDao.getNoneDeviceType();
 
             user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
+        } else if (isNotNull(user) && updateUserPendingActivation && ActivationStatus.PENDING_ACTIVATION == user.getActivationStatus()) {
+            user.setActivationStatus(REGISTERED);
         }
 
         if (createPotentialPromo && user.getNextSubPayment() == 0) {

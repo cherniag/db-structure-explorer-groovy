@@ -109,6 +109,30 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         checkGetNews(user, timestamp, userToken);
     }
 
+    @Test
+    public void testRegisterAfterEmailSent() throws Exception {
+        String storedToken = signUpDevice(DEVICE_UID_1);
+
+        User user = checkUserAfterSignupDevice(DEVICE_UID_1);
+
+        long time = System.currentTimeMillis();
+
+        MvcResult mvcResult = emailGenerate(user, EMAIL_1);
+        ActivationEmail activationEmail = checkEmail((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
+                .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
+
+        user = userRepository.findOne(DEVICE_UID_1, user.getCommunityRewriteUrl());
+
+        assertEquals(ActivationStatus.PENDING_ACTIVATION, user.getActivationStatus());
+
+        signUpDevice(DEVICE_UID_1);
+
+        user = userRepository.findOne(DEVICE_UID_1, user.getCommunityRewriteUrl());
+
+        assertEquals(ActivationStatus.REGISTERED, user.getActivationStatus());
+
+    }
+
     private void registerFirstUserOnAnotherDevice(User user) throws Exception {
         String storedToken = signUpDevice(DEVICE_UID_2);
         User userOnAnotherDevice = checkUserAfterSignupDevice(DEVICE_UID_2);
@@ -228,7 +252,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private String signUpDevice(String deviceUID) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post("/o2/6.0/SIGN_UP_DEVICE")
+        MvcResult mvcResult = mockMvc.perform(post("/o2/5.3/SIGN_UP_DEVICE")
                 .param("DEVICE_TYPE", DeviceType.ANDROID)
                 .param("DEVICE_UID", deviceUID))
                 .andExpect(status().isOk())
