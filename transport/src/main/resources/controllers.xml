@@ -1,35 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<bean class="mobi.nowtechnologies.server.transport.controller.FileController" />
+	<context:component-scan base-package="mobi.nowtechnologies" use-default-filters="false">
+       <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
-	<bean id="transport.AccCheckController" class="mobi.nowtechnologies.server.transport.controller.AccCheckController" />
-
-	<bean id="transport.ApplyInitPromoController" class="mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController"  />
-
-	<bean class="mobi.nowtechnologies.server.transport.controller.SignUpDeviceController" />
-
-	<bean class="mobi.nowtechnologies.server.transport.controller.GetChartController" />
-
-	<bean class="mobi.nowtechnologies.server.transport.controller.GetNewsController" />
-
-	<bean class="mobi.nowtechnologies.server.transport.controller.PhoneNumberController" />
-
-	<bean class="mobi.nowtechnologies.server.transport.controller.MigController"/>
-
-	<bean id="controller.VersionController" class="mobi.nowtechnologies.server.controller.VersionController"/>
-
- 	<bean class="mobi.nowtechnologies.server.transport.controller.UnsubscribeController" />
-
-    <bean id="transport.ActivateVideoAudioFreeTrialController" class="mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController" />
-
-    <bean id="transport.AutoOptInController" class="mobi.nowtechnologies.server.transport.controller.AutoOptInController" />
-
-    <bean id="transport.EmailGenerationController" class="mobi.nowtechnologies.server.transport.controller.EmailGenerationController" />
-
-    <bean id="transport.SignInFacebook" class="mobi.nowtechnologies.server.transport.controller.SigninFacebookController" />
-
-    <bean id="transport.SignInEmailController" class="mobi.nowtechnologies.server.transport.controller.SignInEmailController" />
 </beans>
