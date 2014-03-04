@@ -2,10 +2,11 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import org.junit.Test;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 /**
  * Created by oar on 12/18/13.
@@ -17,9 +18,9 @@ public class VersionControllerTestIT extends AbstractControllerTestIT{
         mockMvc.perform(
                 get("/version")
         ).andExpect(status().isOk()).andDo(print())
-        .andExpect(jsonPath("$.build").exists())
-        .andExpect(jsonPath("$.branchName").exists())
-        .andExpect(jsonPath("$.revision").exists())
-        .andExpect(jsonPath("$.version").exists());
+                .andExpect(jsonPath("$.build").exists())
+                .andExpect(jsonPath("$.branchName").exists())
+                .andExpect(jsonPath("$.revision").exists())
+                .andExpect(jsonPath("$.version").exists());
     }
 }

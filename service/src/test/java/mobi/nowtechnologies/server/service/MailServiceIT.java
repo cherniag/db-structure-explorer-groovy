@@ -21,7 +21,6 @@ import java.util.Map;
 		"/META-INF/service-test.xml", "/META-INF/shared.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class MailServiceIT {
 	
 	private MailService mailService;

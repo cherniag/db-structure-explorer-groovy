@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.dto.PromoCodeDto;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;

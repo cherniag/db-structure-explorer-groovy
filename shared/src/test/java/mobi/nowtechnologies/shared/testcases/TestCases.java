@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.shared.testcases;
 
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;

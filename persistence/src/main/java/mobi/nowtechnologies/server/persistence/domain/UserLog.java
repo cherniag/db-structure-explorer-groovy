@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import com.google.common.base.Objects;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus;
 import mobi.nowtechnologies.server.persistence.domain.enums.UserLogType;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;

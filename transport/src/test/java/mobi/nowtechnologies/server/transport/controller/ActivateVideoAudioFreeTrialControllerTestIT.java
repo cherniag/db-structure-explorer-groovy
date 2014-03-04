@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
     @Autowired
@@ -61,7 +63,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         promotion.setPromoCode(promoCode);
 
         mockMvc.perform(
-        post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
+                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -79,13 +81,13 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
 
     @Test
     public void testActivateVideoAudioFreeTrial_EmptyDeviceUIDAndNotEligableForVideo_Failure() throws Exception {
-    	String userName = "+447111111114";
-		String apiVersion = "4.0";
-		String communityUrl = "o2";
-		String timestamp = "2011_12_26_07_04_23";
-		String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userName = "+447111111114";
+        String apiVersion = "4.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String deviceUid = "";
-		String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
@@ -107,7 +109,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-       mockMvc.perform(
+        mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)

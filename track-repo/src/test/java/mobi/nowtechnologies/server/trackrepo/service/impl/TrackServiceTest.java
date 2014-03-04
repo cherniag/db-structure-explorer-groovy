@@ -207,7 +207,6 @@ public class TrackServiceTest {
 	}
 
 	@Test
-	@Ignore
 	public void pullTest() {
 		track.setStatus(TrackStatus.ENCODED);
 

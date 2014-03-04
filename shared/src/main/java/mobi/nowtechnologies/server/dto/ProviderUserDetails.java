@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * User: Titov Mykhaylo (titov)

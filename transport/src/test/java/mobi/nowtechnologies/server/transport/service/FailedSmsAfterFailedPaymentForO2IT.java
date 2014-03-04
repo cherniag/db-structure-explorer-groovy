@@ -5,8 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import junit.framework.Assert;
 import mobi.nowtechnologies.server.job.CleanExpirePendingPaymentsJob;
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
@@ -14,14 +12,17 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
+import mobi.nowtechnologies.server.transport.controller.AbstractControllerTestIT;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -37,19 +38,15 @@ import static org.junit.Assert.assertTrue;
  * Created by oar on 12/20/13.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:transport-servlet-test.xml",
-        "classpath:META-INF/service-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/dao-test.xml",
-        "classpath:META-INF/soap.xml",
-        "classpath:META-INF/shared.xml",
-        "classpath:task-processors.xml",
-        "classpath:post-service-test.xml"}, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.AccCheckController", webapp = "classpath:.")
+@ContextHierarchy({
+        @ContextConfiguration(locations = {
+                "classpath:transport-root-test.xml", "classpath:post-service-test.xml"}),
+        @ContextConfiguration(locations = {
+                "classpath:transport-servlet-test.xml"})})
+@WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class FailedSmsAfterFailedPaymentForO2IT {
+public class FailedSmsAfterFailedPaymentForO2IT{
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
@@ -79,11 +76,10 @@ public class FailedSmsAfterFailedPaymentForO2IT {
     @Test
     public void test() throws Exception {
         PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
-
         final long time = new Date().getTime();
         logger.info("Start time {}", time);
         List<PendingPayment> createPendingPayments = pendingPaymentService.createPendingPayments();
-        User currentUser = userRepository.findOne(1);
+        User currentUser = userRepository.findOne(101);
         currentUser.getUserGroup().setCommunity(communityRepository.findByRewriteUrlParameter("o2"));
         PaymentDetails paymentDetails = paymentDetailsRepository.findOne(4L);
         paymentDetails.setOwner(currentUser);
@@ -102,7 +98,7 @@ public class FailedSmsAfterFailedPaymentForO2IT {
         List<String> smsText = Files.readLines(smsFile, Charsets.UTF_8);
         assertTrue(smsText.contains("URL: " + smsUrl));
 
-   }
+    }
 
     private File getLastSmsFile(long time) {
         File[] list = smsTemporaryFolder.listFiles(new TimestampExtFileNameFilter(time));
@@ -111,8 +107,6 @@ public class FailedSmsAfterFailedPaymentForO2IT {
 
         return list[0];
     }
-
-
 
 
 }

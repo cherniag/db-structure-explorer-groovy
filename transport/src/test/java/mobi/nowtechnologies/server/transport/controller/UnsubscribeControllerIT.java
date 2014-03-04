@@ -1,292 +1,253 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import mobi.nowtechnologies.server.mock.MockWebApplication;
-import mobi.nowtechnologies.server.mock.MockWebApplicationContextLoader;
-import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.junit.Before;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContextManager;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.http.HttpHeaders;
+import org.springframework.test.web.servlet.MvcResult;
 import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.*;
+import java.io.StringReader;
+
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
-@RunWith(Theories.class)
-@ContextConfiguration(locations = {
-		"classpath:transport-servlet-test.xml",
-        "classpath:task-processors.xml",
-		"classpath:META-INF/soap.xml",
-		"classpath:META-INF/service-test.xml",
-		"classpath:META-INF/dao-test.xml",
-		"classpath:META-INF/shared.xml" }, loader = MockWebApplicationContextLoader.class)
-@MockWebApplication(name = "transport.EntityController", webapp = "classpath:.")
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class UnsubscribeControllerIT {
+public class UnsubscribeControllerIT extends AbstractControllerTestIT {
 
-	private static final XPathExpression PHONE_NUMBER_XPATHEXPRESSION;
-	private static final XPathExpression OPERATOR_XPATHEXPRESSION;
+    private static final XPathExpression PHONE_NUMBER_XPATHEXPRESSION;
+    private static final XPathExpression OPERATOR_XPATHEXPRESSION;
 
-	static {
-		XPathFactory xPathFactory = XPathFactory.newInstance();
-		XPath xPath = xPathFactory.newXPath();
-		try {
-			PHONE_NUMBER_XPATHEXPRESSION = xPath.compile("//member[contains(name,'MSISDN') or contains(name,'*MSISDN*') or contains(key,'MSISDN') or contains(key,'*MSISDN*')]/value");
-			OPERATOR_XPATHEXPRESSION = xPath.compile("//member[contains(name,'NETWORK') or contains(name,'*NETWORK*') or contains(key,'NETWORK') or contains(key,'*NETWORK*')]/value");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    static {
+        XPathFactory xPathFactory = XPathFactory.newInstance();
+        XPath xPath = xPathFactory.newXPath();
+        try {
+            PHONE_NUMBER_XPATHEXPRESSION = xPath.compile("//member[contains(name,'MSISDN') or contains(name,'*MSISDN*') or contains(key,'MSISDN') or contains(key,'*MSISDN*')]/value");
+            OPERATOR_XPATHEXPRESSION = xPath.compile("//member[contains(name,'NETWORK') or contains(name,'*NETWORK*') or contains(key,'NETWORK') or contains(key,'*NETWORK*')]/value");
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Autowired
-	private DispatcherServlet dispatcherServlet;
 
-	@Autowired
-	private PaymentDetailsRepository paymentDetailsRepository;
-	
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private PaymentDetailsRepository paymentDetailsRepository;
 
-	@Autowired
-	protected CommunityResourceBundleMessageSource messageSource;
-	
-	private static int count=0;
+    @Autowired
+    private UserRepository userRepository;
 
-	@DataPoints
-	public static final String[] xml = new String[] { "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<methodCall>"
-			+ "<methodName>XMLRPCHandler.getContent</methodName>"
-			+ "<params>"
-			+ "<param>"
-			+ "<value>"
-			+ "<struct>"
-			+ "<member>"
-			+ "<name>SHORTCODE</name>"
-			+ "<value>8320100</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<name>NETWORK</name>"
-			+ "<value>O2</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<name>MSISDN</name>"
-			+ "<value>00447585927651</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<name>msg</name>"
-			+ "<value>Rpctest</value>"
-			+ "</member>"
-			+ "</struct>"
-			+ "</value>"
-			+ "</param>"
-			+ "</params>"
-			+ "</methodCall>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<methodCall>"
-			+ "<methodName>XMLRPCHandler.getContent</methodName>"
-			+ "<params>"
-			+ "<param>"
-			+ "<value>"
-			+ "<struct>"
-			+ "<member>"
-			+ "<name>*SHORTCODE*</name>"
-			+ "<value>*8320100*</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<name>*NETWORK*</name>"
-			+ "<value>*O2*</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<name>*MSISDN*</name>"
-			+ "<value>*00447585927651*</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<name>*msg*</name>"
-			+ "<value>*Rpctest*</value>"
-			+ "</member>"
-			+ "</struct>"
-			+ "</value>"
-			+ "</param>"
-			+ "</params>"
-			+ "</methodCall>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<methodCall>"
-			+ "<methodName>XMLRPCHandler.getContent</methodName>"
-			+ "<params>"
-			+ "<param>"
-			+ "<value>"
-			+ "<struct>"
-			+ "<member>"
-			+ "<key>SHORTCODE</key>"
-			+ "<value>8320100</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<key>NETWORK</key>"
-			+ "<value>O2</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<key>MSISDN</key>"
-			+ "<value>00447585927651</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<key>msg</key>"
-			+ "<value>Rpctest</value>"
-			+ "</member>"
-			+ "</struct>"
-			+ "</value>"
-			+ "</param>"
-			+ "</params>"
-			+ "</methodCall>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<methodCall>"
-			+ "<methodName>XMLRPCHandler.getContent</methodName>"
-			+ "<params>"
-			+ "<param>"
-			+ "<value>"
-			+ "<struct>"
-			+ "<member>"
-			+ "<key>*SHORTCODE*</key>"
-			+ "<value>*8320100*</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<key>*NETWORK*</key>"
-			+ "<value>*O2*</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<key>*MSISDN*</key>"
-			+ "<value>*00447585927651*</value>"
-			+ "</member>"
-			+ "<member>"
-			+ "<key>*msg*</key>"
-			+ "<value>*Rpctest*</value>"
-			+ "</member>"
-			+ "</struct>"
-			+ "</value>"
-			+ "</param>"
-			+ "</params>"
-			+ "</methodCall>" };
+    @Autowired
+    protected CommunityResourceBundleMessageSource messageSource;
 
-	private TestContextManager testContextManager;
-	private static O2PSMSPaymentDetails o2psmsPaymentDetails;
+    public static final String[] xml = new String[]{"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<methodCall>"
+            + "<methodName>XMLRPCHandler.getContent</methodName>"
+            + "<params>"
+            + "<param>"
+            + "<value>"
+            + "<struct>"
+            + "<member>"
+            + "<name>SHORTCODE</name>"
+            + "<value>8320100</value>"
+            + "</member>"
+            + "<member>"
+            + "<name>NETWORK</name>"
+            + "<value>O2</value>"
+            + "</member>"
+            + "<member>"
+            + "<name>MSISDN</name>"
+            + "<value>00447585927651</value>"
+            + "</member>"
+            + "<member>"
+            + "<name>msg</name>"
+            + "<value>Rpctest</value>"
+            + "</member>"
+            + "</struct>"
+            + "</value>"
+            + "</param>"
+            + "</params>"
+            + "</methodCall>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<methodCall>"
+            + "<methodName>XMLRPCHandler.getContent</methodName>"
+            + "<params>"
+            + "<param>"
+            + "<value>"
+            + "<struct>"
+            + "<member>"
+            + "<name>*SHORTCODE*</name>"
+            + "<value>*8320100*</value>"
+            + "</member>"
+            + "<member>"
+            + "<name>*NETWORK*</name>"
+            + "<value>*O2*</value>"
+            + "</member>"
+            + "<member>"
+            + "<name>*MSISDN*</name>"
+            + "<value>*00447585927651*</value>"
+            + "</member>"
+            + "<member>"
+            + "<name>*msg*</name>"
+            + "<value>*Rpctest*</value>"
+            + "</member>"
+            + "</struct>"
+            + "</value>"
+            + "</param>"
+            + "</params>"
+            + "</methodCall>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<methodCall>"
+            + "<methodName>XMLRPCHandler.getContent</methodName>"
+            + "<params>"
+            + "<param>"
+            + "<value>"
+            + "<struct>"
+            + "<member>"
+            + "<key>SHORTCODE</key>"
+            + "<value>8320100</value>"
+            + "</member>"
+            + "<member>"
+            + "<key>NETWORK</key>"
+            + "<value>O2</value>"
+            + "</member>"
+            + "<member>"
+            + "<key>MSISDN</key>"
+            + "<value>00447585927651</value>"
+            + "</member>"
+            + "<member>"
+            + "<key>msg</key>"
+            + "<value>Rpctest</value>"
+            + "</member>"
+            + "</struct>"
+            + "</value>"
+            + "</param>"
+            + "</params>"
+            + "</methodCall>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<methodCall>"
+            + "<methodName>XMLRPCHandler.getContent</methodName>"
+            + "<params>"
+            + "<param>"
+            + "<value>"
+            + "<struct>"
+            + "<member>"
+            + "<key>*SHORTCODE*</key>"
+            + "<value>*8320100*</value>"
+            + "</member>"
+            + "<member>"
+            + "<key>*NETWORK*</key>"
+            + "<value>*O2*</value>"
+            + "</member>"
+            + "<member>"
+            + "<key>*MSISDN*</key>"
+            + "<value>*00447585927651*</value>"
+            + "</member>"
+            + "<member>"
+            + "<key>*msg*</key>"
+            + "<value>*Rpctest*</value>"
+            + "</member>"
+            + "</struct>"
+            + "</value>"
+            + "</param>"
+            + "</params>"
+            + "</methodCall>"};
 
-	@Before
-	public void setUpContext() throws Exception {
-		this.testContextManager = new TestContextManager(getClass());
-		this.testContextManager.prepareTestInstance(this);
+    private static O2PSMSPaymentDetails o2psmsPaymentDetails;
 
-		if (count==0){
-			User user = UserFactory.createUser();
-			
-			user = userRepository.save(user);
-			
-			o2psmsPaymentDetails = new O2PSMSPaymentDetails();
-			o2psmsPaymentDetails.setActivated(true);
-			o2psmsPaymentDetails.setCreationTimestampMillis(0L);
-			o2psmsPaymentDetails.setDisableTimestampMillis(0L);
-			o2psmsPaymentDetails.setMadeRetries(0);
-			o2psmsPaymentDetails.setRetriesOnError(0);
-			o2psmsPaymentDetails.setOwner(user);
-	
-			o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
-			
-			user.setCurrentPaymentDetails(o2psmsPaymentDetails);
-			
-			user = userRepository.save(user);
-		}
-	}
+    @Before
+    public void setUpContext() throws Exception {
+        User user = UserFactory.createUser();
 
-	@Theory
-	public void test_unsubscribe_success(String xml) throws Exception {
-		
-		count++;
+        user = userRepository.save(user);
 
-		String community = "o2";
-		String requestURI = "/" + community + "/3.8/stop_subscription";
-		String method = "POST";
+        o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+        o2psmsPaymentDetails.setActivated(true);
+        o2psmsPaymentDetails.setCreationTimestampMillis(0L);
+        o2psmsPaymentDetails.setDisableTimestampMillis(0L);
+        o2psmsPaymentDetails.setMadeRetries(0);
+        o2psmsPaymentDetails.setRetriesOnError(0);
+        o2psmsPaymentDetails.setOwner(user);
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-		domFactory.setNamespaceAware(true); // never forget this!
-		StringReader characterStream = new StringReader(xml);
+        o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
 
-		InputSource source = new InputSource(characterStream);
+        user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 
-		String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
-		final String o2PsmsPhoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
+        user = userRepository.save(user);
+    }
 
-		o2psmsPaymentDetails.setPhoneNumber(o2PsmsPhoneNumber);
+    @Test
+    public void test_unsubscribe_success() throws Exception {
+        for (String currentXML : xml) {
+            test_unsubscribe_success1(currentXML);
+        }
+    }
 
-		o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
 
-		MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest(method, requestURI);
+    public void test_unsubscribe_success1(String xml) throws Exception {
 
-		mockHttpServletRequest.setPathInfo(requestURI);
-		mockHttpServletRequest.addHeader("Content-Length", "409");
-		mockHttpServletRequest.addHeader("Content-Type", "text/xml");
-		mockHttpServletRequest.addHeader("User-Agent", "Java1.3.1_06");
-		mockHttpServletRequest.addHeader("Host", "goat.london.02.net:8080");
-		mockHttpServletRequest.addHeader("Accept", "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
-		mockHttpServletRequest.setRemoteAddr("2.24.0.1");
-		mockHttpServletRequest.setContent(xml.getBytes());
 
-		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        String community = "o2";
+        String requestURI = "/" + community + "/3.8/stop_subscription";
 
-		long beforeUnsubscribeMillis = Utils.getEpochMillis();
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true); // never forget this!
+        StringReader characterStream = new StringReader(xml);
 
-		dispatcherServlet.service(mockHttpServletRequest, mockHttpServletResponse);
+        InputSource source = new InputSource(characterStream);
 
-		long afterUnsubscribeMillis = Utils.getEpochMillis();
+        String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
+        final String o2PsmsPhoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
 
-		assertEquals(HttpStatus.OK.value(), mockHttpServletResponse.getStatus());
+        o2psmsPaymentDetails.setPhoneNumber(o2PsmsPhoneNumber);
 
-		String responseBody = mockHttpServletResponse.getContentAsString();
+        o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
 
-		assertNotNull(responseBody);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Length", "409");
+        headers.add("Content-Type", "text/xml");
+        headers.add("User-Agent", "Java1.3.1_06");
+        headers.add("Host", "goat.london.02.net:8080");
+        headers.add("Accept", "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
 
-		String message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
-		assertEquals(message, responseBody);
 
-		characterStream = new StringReader(xml);
-		source = new InputSource(characterStream);
-		String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
-		String operatorName = receivedOperatorName.replaceAll("\\*", "");
+        long beforeUnsubscribeMillis = Utils.getEpochMillis();
 
-		PaymentDetails actualPaymentDetails = paymentDetailsRepository.findOne(o2psmsPaymentDetails.getI());
+        MvcResult result = mockMvc.perform(post(requestURI).content(xml.getBytes()).headers(headers)).
+                andExpect(status().isOk()).andReturn();
 
-		assertNotNull(actualPaymentDetails);
+        long afterUnsubscribeMillis = Utils.getEpochMillis();
 
-		assertEquals(false, actualPaymentDetails.isActivated());
-		assertEquals("STOP sms", actualPaymentDetails.getDescriptionError());
-		assertTrue(beforeUnsubscribeMillis <= actualPaymentDetails.getDisableTimestampMillis() && actualPaymentDetails.getDisableTimestampMillis() <= afterUnsubscribeMillis);
+        String responseBody = result.getResponse().getContentAsString();
 
-	}
+        assertNotNull(responseBody);
+
+        String message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
+        assertEquals(message, responseBody);
+
+        characterStream = new StringReader(xml);
+        source = new InputSource(characterStream);
+        String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
+        String operatorName = receivedOperatorName.replaceAll("\\*", "");
+
+        PaymentDetails actualPaymentDetails = paymentDetailsRepository.findOne(o2psmsPaymentDetails.getI());
+
+        assertNotNull(actualPaymentDetails);
+
+        assertEquals(false, actualPaymentDetails.isActivated());
+        assertEquals("STOP sms", actualPaymentDetails.getDescriptionError());
+        assertTrue(beforeUnsubscribeMillis <= actualPaymentDetails.getDisableTimestampMillis() && actualPaymentDetails.getDisableTimestampMillis() <= afterUnsubscribeMillis);
+
+    }
 
 }
+

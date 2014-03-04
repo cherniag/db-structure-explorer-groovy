@@ -6,7 +6,7 @@ public class KeystoreUtils {
 
 	public static void initKeystore() {
 		System.setProperty("javax.net.ssl.keyStore", new File(
-				"./src/main/resources/META-INF/keystore.jks").getAbsolutePath());
+				"service/src/main/resources/META-INF/keystore.jks").getAbsolutePath());
 		System.setProperty("javax.net.ssl.keyStorePassword", "Fb320p007++");
 	}
 }

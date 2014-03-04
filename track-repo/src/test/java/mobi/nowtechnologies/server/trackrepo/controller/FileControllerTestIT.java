@@ -1,64 +1,44 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
-import junit.framework.TestCase;
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.factory.AssetFileFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
-
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-		"classpath:META-INF/application-test.xml",
-		"file:src/main/webapp/WEB-INF/trackrepo-servlet.xml"})
-@TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
-@Transactional
-@Ignore
-public class FileControllerTestIT extends TestCase {
-	@Autowired
-	private FileController fixture;
-	
-	@Autowired
-	private FileRepository fileRepository;
-	
-	@Value("${trackRepo.encode.destination}")
-	private Resource publishDir;
 
-	@Test
-	public void testFile()
-		throws Exception {
+public class FileControllerTestIT extends AbstractTrackRepoITTest {
 
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		MockHttpServletResponse resp = new MockHttpServletResponse();
-		
-		Long id = new Long(1L);
+    @Autowired
+    private FileRepository fileRepository;
 
-		fixture.file(id, req, resp);
+    @Value("${trackRepo.encode.destination}")
+    private Resource publishDir;
 
-		assertEquals(200, resp.getStatus());
-		assertEquals("image/jpeg", resp.getContentType());
-	}
+    @Test
+    public void testFile() throws Exception {
+        mockMvc.perform(get("/file").param("id", "1")).
+                andExpect(status().isOk()).andExpect(content().contentType("image/jpeg"));
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-		AssetFileFactory assetFileFactory = new AssetFileFactory();
-		assetFileFactory.setFileDir(publishDir.getFile());
+    @Before
+    public void setUp() throws Exception {
+        AssetFileFactory assetFileFactory = new AssetFileFactory();
+        assetFileFactory.setFileDir(publishDir.getFile());
 
-		fileRepository.save(assetFileFactory.anyAssetFile());
-	}
+        AssetFile assetFile = assetFileFactory.anyAssetFile();
+
+
+        fileRepository.save(assetFile);
+    }
 }

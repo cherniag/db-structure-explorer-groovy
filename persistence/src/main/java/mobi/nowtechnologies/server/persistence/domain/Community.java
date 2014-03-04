@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;

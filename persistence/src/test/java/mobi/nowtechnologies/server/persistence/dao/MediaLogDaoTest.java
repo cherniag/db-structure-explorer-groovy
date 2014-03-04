@@ -6,7 +6,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,10 +24,18 @@ import static org.junit.Assert.*;
  * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
-@Ignore
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
 public class MediaLogDaoTest {
-	private static MediaLogDao mediaLogDao;
-	/**
+    @Autowired
+	private MediaLogDao mediaLogDao;
+
+    @Autowired
+    private EntityDao entityDao;
+
+    /**
 	 * Run the List<MediaLogShallow> findPurchasedTracksByUserId(int) method test.
 	 *
 	 * @throws Exception
@@ -44,15 +58,14 @@ public class MediaLogDaoTest {
 	 *
 	 */
 	@Test
-	@Ignore
 	public void testLogMediaEvent()
 		throws Exception {
 		int userId = 1;
 		Media media = new Media();
-		media.setI(1);
 		byte mediaLogType = (byte) 1;
 
-		mediaLogDao.logMediaEvent(userId, media, mediaLogType);
+        entityDao.saveEntity(media);
+        mediaLogDao.logMediaEvent(userId, media, mediaLogType);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
@@ -83,37 +96,5 @@ public class MediaLogDaoTest {
 
 		mediaLogDao.logMediaEvent(userId, media, mediaLogType);
 
-	}
-
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *         if the initialization fails for some reason
-	 *
-	 * @generatedBy CodePro at 15.08.11 17:26
-	 */
-	@BeforeClass
-	public static void setUp()
-		throws Exception {
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
-				new String[] { "/META-INF/dao-test.xml" });
-		mediaLogDao = (MediaLogDao) appContext
-				.getBean("persistence.MediaLogDao");
-	
-		
-	}
-
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *         if the clean-up fails for some reason
-	 *
-	 * @generatedBy CodePro at 15.08.11 17:26
-	 */
-	@AfterClass
-	public static void tearDown()
-		throws Exception {
 	}
 }

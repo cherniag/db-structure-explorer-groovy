@@ -2,34 +2,49 @@ package mobi.nowtechnologies.server.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
+import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
+import mobi.nowtechnologies.server.service.o2.impl.WebServiceGateway;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 
+import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
+import uk.co.o2.soa.chargecustomerdata.BillSubscriberResponse;
+import uk.co.o2.soa.chargecustomerdata.ServiceResult;
+import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
+import uk.co.o2.soa.coredata.SOAFaultType;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class O2ClientServiceIT {
 
-	@Resource(name = "service.O2ClientService")
-	private O2ProviderService o2ClientService;
-	
-	@Test
+	private O2ProviderServiceImpl o2ClientService;
+
+    @Mock
+    private WebServiceGateway webServiceGateway;
+
+    @Test
 	public void testMakePremiumSMSRequest_Failure() throws Exception {
 		// Preparations for test	
 		String subMerchantId = "O2 Tracks";
@@ -42,8 +57,11 @@ public class O2ClientServiceIT {
 		String internalTxId = "";
 		int userId = 1;
 		boolean smsNotify = false;
-		
-		// Invocation of test method
+
+        BillSubscriberFault response = new BillSubscriberFault("error", new SOAFaultType());
+        when(webServiceGateway.sendAndReceive(anyString(), any())).thenReturn(response);
+
+        // Invocation of test method
 		O2Response result = o2ClientService.makePremiumSMSRequest(userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription , subMerchantId, smsNotify  );
 		
 		// Asserts
@@ -64,6 +82,10 @@ public class O2ClientServiceIT {
 		String internalTxId = "";
 		int userId = 1;
 		boolean smsNotify = false;
+
+        BillSubscriberResponse response = new BillSubscriberResponse();
+        response.setResult(new ServiceResult());
+        when(webServiceGateway.sendAndReceive(anyString(), any())).thenReturn(response);
 		
 		// Invocation of test method
 		O2Response result = o2ClientService.makePremiumSMSRequest(userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription , subMerchantId, smsNotify  );
@@ -72,4 +94,10 @@ public class O2ClientServiceIT {
 		assertNotNull(result);
 		assertEquals(true, result.isSuccessful());
 	}
+
+    @Before
+    public void setUp() {
+        o2ClientService = new O2ProviderServiceImpl();
+        o2ClientService.setWebServiceGateway(webServiceGateway);
+    }
 }

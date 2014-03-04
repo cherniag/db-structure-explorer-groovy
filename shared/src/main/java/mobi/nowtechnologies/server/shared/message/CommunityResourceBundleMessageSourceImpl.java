@@ -8,7 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.trim;
+
 
 public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
     private static Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
@@ -47,15 +48,6 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
             String pediodString = trim(getMessage(null, code, null, null));
             int period = Integer.parseInt(pediodString);
             return period;
-        } catch (RuntimeException e) {
-            return defaults;
-        }
-    }
-
-    @Override
-    public String getMessage(String code, String defaults){
-        try {
-            return trim(getMessage(null, code, null, null));
         } catch (RuntimeException e) {
             return defaults;
         }

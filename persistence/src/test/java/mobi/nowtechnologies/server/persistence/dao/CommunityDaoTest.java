@@ -18,7 +18,6 @@ import static org.junit.Assert.assertNotNull;
  * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
-@Ignore
 public class CommunityDaoTest {
 	/**
 	 * Run the Map<String, ImmutableCommunity> getCOMMUNITY_MAP_NAME_AS_KEY() method test.

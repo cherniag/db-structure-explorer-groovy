@@ -103,7 +103,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-         mockMvc.perform(
+        mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS")
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)

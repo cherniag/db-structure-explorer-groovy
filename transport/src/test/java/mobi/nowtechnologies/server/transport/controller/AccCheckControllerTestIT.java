@@ -19,18 +19,18 @@ import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
-	@Autowired
-	private ChartRepository chartRepository;
+    @Autowired
+    private ChartRepository chartRepository;
 
-	@Autowired
-	private ChartDetailRepository chartDetailRepository;
+    @Autowired
+    private ChartDetailRepository chartDetailRepository;
 
     @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {

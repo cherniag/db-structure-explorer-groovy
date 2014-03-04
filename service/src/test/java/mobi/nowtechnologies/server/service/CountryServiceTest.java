@@ -27,7 +27,6 @@ import static org.junit.Assert.assertNotNull;
 		"classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml","/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-@Ignore
 public class CountryServiceTest {
 	
 	@Resource(name = "service.CountryService")

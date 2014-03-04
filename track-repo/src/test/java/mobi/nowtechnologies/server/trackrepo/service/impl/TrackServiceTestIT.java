@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import mobi.nowtechnologies.server.service.CloudFileService;
+import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoITTest;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
@@ -13,45 +14,37 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:META-INF/shared.xml", "classpath:META-INF/trackrepo-dao-test.xml", "classpath:META-INF/trackrepo-services-test.xml" })
-@TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
-@Transactional
-public class TrackServiceTestIT {
+public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 	private final String DEFAULT_FILE_NAME = "work/APPCASTP.m4a";
 
-	@Autowired
+	@Resource(name = "trackRepo.TrackServiceStub")
 	private TrackServiceImpl trackService;
 
-	@Autowired
+    @Resource
 	private TrackRepository trackRepository;
-	
-	@Autowired
+
+    @Resource
 	private CloudFileService cloudFileService;
 	
 	@Test
-    @Ignore
 	public void testPull_Success() throws Exception {
 		//test preparation
 		Track anyTrack = TrackFactory.anyTrack();
-		anyTrack.setStatus(TrackStatus.ENCODED);	
+		anyTrack.setStatus(TrackStatus.ENCODED);
+        anyTrack.setMediaType(AssetFile.FileType.MOBILE);
 		anyTrack = trackRepository.save(anyTrack);
 		
 		String isrc = anyTrack.getIsrc();
@@ -79,7 +72,8 @@ public class TrackServiceTestIT {
 		assertEquals(curTime-curTime%100000, track.getPublishDate().getTime()-track.getPublishDate().getTime()%100000);
 	}
 
-    @Ignore @Test
+    @Ignore
+    @Test
     public void testCreateVideo_Success() throws Exception {
         //test preparation
         URL videoURL = this.getClass().getClassLoader().getResource("media/manual/020313/o2Tracks.mp4");

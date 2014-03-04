@@ -102,10 +102,6 @@ public class FileService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public File getFile(String mediaIsrc, FileType fileType, String resolution, User user) {
-        notNull(mediaIsrc, "The parameter mediaIsrc is null");
-        notNull(fileType, "The parameter fileType is null");
-        notNull(user, "The parameter user is null");
-
         int userId = user.getId();
         Media media = mediaService.findByIsrc(mediaIsrc);
 
@@ -118,19 +114,19 @@ public class FileService {
         File fileName;
         if (fileType.equals(FileType.IMAGE_RESOLUTION)) {
             notNull(resolution, "The parameter fileResolution is null");
-            isTrue(containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
+            isTrue(!containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
 
             StringBuilder builder = new StringBuilder(mediaFileName);
             builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE
                     + resolution);
             builder.insert(0, folderPath + SEPARATOR);
             fileName = new File(builder.toString());
-        } else {
+        } else{
             fileName = new File(folderPath, mediaFileName);
         }
         File file = fileName;
         isTrue(file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + mediaIsrc +
-                "], path=" + file.getAbsolutePath());
+                "], path="+file.getAbsolutePath());
 
         if (fileType.equals(FileType.PURCHASED))
             mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);

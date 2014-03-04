@@ -1,44 +1,16 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.Cookie;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:META-INF/shared.xml",
-        "classpath:META-INF/dao-test.xml",
-        "classpath:META-INF/service.xml",
-        "classpath:META-INF/shared.xml",
-        "classpath:admin-test.xml",
-        "classpath:security.xml"})
-@Ignore
-public class OfferControllerIT {
-
-    MockMvc mockMvc;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Before
-    public void setUp() {
-        mockMvc = webAppContextSetup((WebApplicationContext)applicationContext).build();
-    }
+public class OfferControllerIT extends AbstractAdminITTest{
 
     @Test
     public void givenOfferWithOutPrice_WhenSaveOffer_ShouldThroughValidationExceptionAndWillNotSaveThisOffer()throws Exception{
@@ -49,6 +21,7 @@ public class OfferControllerIT {
                         .file(mockFile())
                         .param("title", "MyTitle")
                         .param("description", "MyDescription")
+                        .headers(getHttpHeaders(true))
                         .cookie(new Cookie("_chartsnow_community", community))
 
         ).andExpect(status().isOk())

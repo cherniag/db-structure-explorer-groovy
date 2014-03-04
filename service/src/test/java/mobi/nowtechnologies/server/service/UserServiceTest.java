@@ -35,7 +35,6 @@ import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -289,8 +288,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-    @Ignore
-	public void testUpdateUser_PaymentEnabledIsFalseAndNextSubPaymentInTheFutureAndSubBalanceIsChangedAndIsFreeTrialIsTrue_Success() throws Exception {
+    	public void testUpdateUser_PaymentEnabledIsFalseAndNextSubPaymentInTheFutureAndSubBalanceIsChangedAndIsFreeTrialIsTrue_Success() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
 		final int originalSubBalance = 2;
@@ -321,6 +319,7 @@ public class UserServiceTest {
 		USER_STATUS_MAP_USER_STATUS_AS_KEY.put(userDto.getUserStatus(), mockedUserStatus);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
+        PowerMockito.when(userRepositoryMock.save(mockedUser)).thenReturn(mockedUser);
 		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), originalSubBalance, null, null, TRIAL_TOPUP, null)).thenReturn(
 				new AccountLog());
 		PowerMockito.when(accountLogServiceMock.logAccountEvent(userDto.getId(), userDto.getSubBalance(), null, null, SUPPORT_TOPUP, null)).thenReturn(

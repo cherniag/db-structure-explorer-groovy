@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name="tb_mediaLogTypes")

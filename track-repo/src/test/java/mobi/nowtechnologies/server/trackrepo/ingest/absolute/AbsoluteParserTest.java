@@ -201,14 +201,14 @@ public class AbsoluteParserTest extends ParserTest {
     }
 
     private String getXml(String isrc) throws XpathException, TransformerException {
-            NodeList nodeList = xpathEngine.getMatchingNodes("/ern:NewReleaseMessage/ReleaseList/Release[ReleaseId/ISRC='"+isrc+"']", document);
-            TransformerFactory transFactory = new TransformerFactoryImpl();
-            Transformer transformer = transFactory.newTransformer();
-            StringWriter buffer = new StringWriter();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.transform(new DOMSource(nodeList.item(0)),
-                    new StreamResult(buffer));
-            return buffer.toString();
+        NodeList nodeList = xpathEngine.getMatchingNodes("/ern:NewReleaseMessage/ReleaseList/Release[ReleaseId/ISRC='"+isrc+"']", document);
+        TransformerFactory transFactory = new TransformerFactoryImpl();
+        Transformer transformer = transFactory.newTransformer();
+        StringWriter buffer = new StringWriter();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.transform(new DOMSource(nodeList.item(0)),
+                new StreamResult(buffer));
+        return buffer.toString();
     }
 
     private String getImageFileName(int index) throws XpathException {

@@ -16,7 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.NotTransactional;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

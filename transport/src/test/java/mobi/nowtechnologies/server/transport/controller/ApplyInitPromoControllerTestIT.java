@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;

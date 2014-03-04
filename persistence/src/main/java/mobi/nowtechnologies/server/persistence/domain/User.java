@@ -479,7 +479,7 @@ public class User implements Serializable {
         return selectedCharts;
     }
 
-    public boolean hasPhoneNumber() {
+    public boolean hasPhoneNumber(){
         return !isEmpty(getMobile());
     }
 

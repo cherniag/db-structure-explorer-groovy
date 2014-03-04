@@ -152,7 +152,7 @@ public class UserService {
         ProviderUserDetails providerUserDetails = isApplyingWithoutEnterPhone ? null: otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
                 user.getContract(), user.getMobile(),
-                user.getOperator());
+                user.getOperator(),user.getActivationStatus(), updateContractAndProvider);
 
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
@@ -161,13 +161,15 @@ public class UserService {
             boolean validationFromPhone = (ENTERED_NUMBER.equals(user.getActivationStatus())) &&
                     (!isEmail(user.getUserName()));
             boolean startApply = isApplyingWithoutEnterPhone ? true : validationFromPhone;
-           if (startApply){
-                 hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
-             }
+            if (startApply){
+                hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
+            }
 
         }
 
-        if(updateContractAndProvider && !user.isVFNZCommunityUser()) updateContractAndProvider(user, providerUserDetails);
+        if(updateContractAndProvider && !user.isVFNZCommunityUser()) {
+            updateContractAndProvider(user, providerUserDetails);
+        }
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
@@ -195,12 +197,12 @@ public class UserService {
     }
 
     public void setO2ClientService(O2ProviderService o2ClientService) {
-		this.o2ClientService = o2ClientService;
+        this.o2ClientService = o2ClientService;
     }
 
     public void setOtacValidationService(OtacValidationService otacValidationService) {
-		this.otacValidationService = otacValidationService;
-	}
+        this.otacValidationService = otacValidationService;
+    }
 
     public void setO2Service(O2Service o2Service) {
         this.o2Service = o2Service;
@@ -322,16 +324,28 @@ public class UserService {
     }
 
     public Boolean canActivateVideoTrial(User u) {
-        if (u.isOnWhiteListedVideoAudioFreeTrial()) return false;
-        String rewriteUrlParameter = u.getUserGroup().getCommunity().getRewriteUrlParameter();
-        Date multipleFreeTrialsStopDate = messageSource.readDate(rewriteUrlParameter, MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
+        if (u.isOnWhiteListedVideoAudioFreeTrial()) {
+            return false;
+        }
+        Date multipleFreeTrialsStopDate = messageSource.readDate(u.getCommunityRewriteUrl(), MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
 
-        if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
-        if(u.is4G() && u.isO2PAYMConsumer() && INDIRECT.equals(u.getContractChannel()) && !u.isVideoFreeTrialHasBeenActivated()) return true;
+        if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) {
+            return true;
+        }
+        if(u.is4G() && u.isO2PAYMConsumer() && INDIRECT.equals(u.getContractChannel()) && !u.isVideoFreeTrialHasBeenActivated()){
+            return true;
+        }
 
         boolean beforeMultipleFreeTrialsStopDate = new DateTime().isBefore(multipleFreeTrialsStopDate.getTime());
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial() && (DIRECT.equals(u.getContractChannel()) || isNull(u.getContractChannel())) && !u.has4GVideoAudioSubscription() && beforeMultipleFreeTrialsStopDate) return true;
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !beforeMultipleFreeTrialsStopDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial()
+                && (DIRECT.equals(u.getContractChannel()) || isNull(u.getContractChannel()))
+                && !u.has4GVideoAudioSubscription() && beforeMultipleFreeTrialsStopDate){
+            return true;
+        }
+        if(u.is4G() && u.isO2PAYMConsumer()
+                && !u.isVideoFreeTrialHasBeenActivated() && !beforeMultipleFreeTrialsStopDate){
+            return true;
+        }
         return  false;
     }
 
@@ -470,14 +484,14 @@ public class UserService {
         return userRepository.findByMobile(mobile);
     }
 
-	public User findByFacebookId(String facebookId, String communityName) {
-		LOGGER.debug("input parameters facebookId, communityName: [{}], [{}]", facebookId, communityName);
-		if (facebookId == null)
-			throw new ServiceException("The parameter facebookId is null");
-		final User user = userDao.findByFacebookAndCommunity(facebookId, communityName);
-		LOGGER.info("Output parameter user=[{}]", user);
-		return user;
-	}
+    public User findByFacebookId(String facebookId, String communityName) {
+        LOGGER.debug("input parameters facebookId, communityName: [{}], [{}]", facebookId, communityName);
+        if (facebookId == null)
+            throw new ServiceException("The parameter facebookId is null");
+        final User user = userDao.findByFacebookAndCommunity(facebookId, communityName);
+        LOGGER.info("Output parameter user=[{}]", user);
+        return user;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User registerUserWhitoutPersonalInfo(UserRegInfo userRegInfo) {
@@ -569,12 +583,12 @@ public class UserService {
         return user;
     }
 
-	public boolean applyO2PotentialPromo(ProviderUserDetails providerUserDetails, User user, Community community) {
+    public boolean applyO2PotentialPromo(ProviderUserDetails providerUserDetails, User user, Community community) {
 
         boolean isO2User = o2ClientService.isO2User(providerUserDetails);
 
         return applyPotentialPromo(isO2User, user, community);
-	}
+    }
 
     public boolean applyPotentialPromo(boolean isO2User, User user, Community community) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
@@ -583,6 +597,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyPotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
+        LOGGER.info("Applying potential promotion for user id {}, isO2user {}, freeTrialStartedTimestampSeconds {}", user.getId(), isO2User, freeTrialStartedTimestampSeconds);
         Promotion promotion;
 
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
@@ -636,7 +651,9 @@ public class UserService {
         if (userBanned == null || userBanned.isGiveAnyPromotion()) {
             final PromoCode promoCode = promotion.getPromoCode();
 
-            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)) throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
+            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)){
+                throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
+            }
 
             int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
             int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
@@ -668,7 +685,7 @@ public class UserService {
         } else {
             user.setPotentialPromoCodePromotion(null);
             user = entityService.updateEntity(user);
-            LOGGER.info("The promotion [{}] wasn't applied because of user is banned", promotion);
+            LOGGER.warn("The promotion [{}] wasn't applied because of user is banned", promotion);
         }
 
         return isPromotionApplied;
@@ -769,54 +786,54 @@ public class UserService {
         return oldUser;
     }
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public synchronized void applyPromotion(User user) {
-		Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
-		LOGGER.info("promotion [{}]", promotion);
-		if (promotion != null) {
-			user.setSubBalance((byte) (user.getSubBalance() + promotion.getFreeWeeks()));
-			entityService.updateEntity(user);
-			promotion.setNumUsers(promotion.getNumUsers() + 1);
-			entityService.updateEntity(promotion);
-			entityService.saveEntity(
-					new AccountLog(user.getId(), null, user.getSubBalance(),
-							PROMOTION));
-		}
-	}
+    @Transactional(propagation = Propagation.REQUIRED)
+    public synchronized void applyPromotion(User user) {
+        Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
+        LOGGER.info("promotion [{}]", promotion);
+        if (promotion != null) {
+            user.setSubBalance((byte) (user.getSubBalance() + promotion.getFreeWeeks()));
+            entityService.updateEntity(user);
+            promotion.setNumUsers(promotion.getNumUsers() + 1);
+            entityService.updateEntity(promotion);
+            entityService.saveEntity(
+                    new AccountLog(user.getId(), null, user.getSubBalance(),
+                            PROMOTION));
+        }
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
         LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
 
-		List<PaymentDetails> paymentDetails = paymentDetailsService.findActivatedPaymentDetails(operatorName, phoneNumber);
-		LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
-		final String reason = "STOP sms";
-		for (PaymentDetails paymentDetail : paymentDetails) {
-			final User owner = paymentDetail.getOwner();
-			if(isNotNull(owner) && paymentDetail.equals(owner.getCurrentPaymentDetails())){
-				unsubscribeUser(owner, reason);
+        List<PaymentDetails> paymentDetails = paymentDetailsService.findActivatedPaymentDetails(operatorName, phoneNumber);
+        LOGGER.info("Trying to unsubscribe [{}] user(s) having [{}] as mobile number", paymentDetails.size(), phoneNumber);
+        final String reason = "STOP sms";
+        for (PaymentDetails paymentDetail : paymentDetails) {
+            final User owner = paymentDetail.getOwner();
+            if(isNotNull(owner) && paymentDetail.equals(owner.getCurrentPaymentDetails())){
+                unsubscribeUser(owner, reason);
             }else {
                 paymentDetailsService.disablePaymentDetails(paymentDetail, reason);
             }
-			LOGGER.info("Phone number [{}] was successfully unsubscribed", phoneNumber);
-		}
+            LOGGER.info("Phone number [{}] was successfully unsubscribed", phoneNumber);
+        }
 
         LOGGER.debug("Output parameter paymentDetails=[{}]", paymentDetails);
         return paymentDetails;
     }
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public User unsubscribeUser(int userId, UnsubscribeDto dto) {
-		LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
-		User user = entityService.findById(User.class, userId);
-		String reason = dto.getReason();
-		if (!StringUtils.hasText(reason)) {
-			reason = "Unsubscribed by user manually via web portal";
-		}
-		user = unsubscribeUser(user, reason);
-		LOGGER.info("Output parameter user=[{}]", user);
-		return user;
-	}
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User unsubscribeUser(int userId, UnsubscribeDto dto) {
+        LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
+        User user = entityService.findById(User.class, userId);
+        String reason = dto.getReason();
+        if (!StringUtils.hasText(reason)) {
+            reason = "Unsubscribed by user manually via web portal";
+        }
+        user = unsubscribeUser(user, reason);
+        LOGGER.info("Output parameter user=[{}]", user);
+        return user;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
@@ -829,13 +846,13 @@ public class UserService {
         return user;
     }
 
-	@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-	public List<PaymentPolicy> getPaymentPolicies(
-			String communityName) {
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    public List<PaymentPolicy> getPaymentPolicies(
+            String communityName) {
+        if (communityName == null)
+            throw new ServiceException("The parameter communityName is null");
         Integer communityId = Community.getMapAsNames().get(communityName).getId();
-		List<PaymentPolicy> paymentPolicies = entityService.findListByProperty(
+        List<PaymentPolicy> paymentPolicies = entityService.findListByProperty(
                 PaymentPolicy.class, PaymentPolicy.Fields.communityId.name(),
                 communityId);
         for (PaymentPolicy paymentPolicy : paymentPolicies) {
@@ -891,24 +908,24 @@ public class UserService {
             deviceTypeId = DeviceTypeDao.getNoneDeviceType().getI();
         }
 
-		User user = new User();
-		user.setDisplayName(userRegInfo.getDisplayName());
-		user.setTitle(userRegInfo.getTitle());
-		user.setFirstName(userRegInfo.getFirstName());
-		user.setLastName(userRegInfo.getLastName());
-		user.setUserName(userName);
-		user.setToken(userRegInfo.getStoredToken());
-		user.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get(deviceTypeId));
-		user.setDeviceString(userRegInfo.getDeviceString());
-		user.setDevice("");
-		int communityId = CommunityDao.getCommunityId(communityName);
-		user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityId));
-		user.setAddress1(userRegInfo.getAddress());
-		user.setAddress2(userRegInfo.getAddress());
-		user.setCity(userRegInfo.getCity());
-		user.setPostcode(userRegInfo.getPostCode());
-		user.setCountry(countryService.findIdByFullName(userRegInfo
-				.getCountryFullName()));
+        User user = new User();
+        user.setDisplayName(userRegInfo.getDisplayName());
+        user.setTitle(userRegInfo.getTitle());
+        user.setFirstName(userRegInfo.getFirstName());
+        user.setLastName(userRegInfo.getLastName());
+        user.setUserName(userName);
+        user.setToken(userRegInfo.getStoredToken());
+        user.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get(deviceTypeId));
+        user.setDeviceString(userRegInfo.getDeviceString());
+        user.setDevice("");
+        int communityId = CommunityDao.getCommunityId(communityName);
+        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityId));
+        user.setAddress1(userRegInfo.getAddress());
+        user.setAddress2(userRegInfo.getAddress());
+        user.setCity(userRegInfo.getCity());
+        user.setPostcode(userRegInfo.getPostCode());
+        user.setCountry(countryService.findIdByFullName(userRegInfo
+                .getCountryFullName()));
 
         String phoneNumber = userRegInfo.getPhoneNumber();
         if (phoneNumber == null || phoneNumber.equalsIgnoreCase("null"))
@@ -1036,19 +1053,19 @@ public class UserService {
             if (user.isOnFreeTrial()) {
                 skipFreeTrial(user);
             }
-			user.setNextSubPayment(payment.getNextSubPayment());
-			user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
-			user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-		}else if (user.isMonthlyPaidUser()) {
-			user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
-		}else if (user.isSMSActivatedUser()){
-			if (Utils.getEpochSeconds() > oldNextSubPayment){
-				user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
-			}else{
-				user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
-			}
-		} else {
-			user.setSubBalance(user.getSubBalance() + subweeks);
+            user.setNextSubPayment(payment.getNextSubPayment());
+            user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
+            user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+        }else if (user.isMonthlyPaidUser()) {
+            user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
+        }else if (user.isSMSActivatedUser()){
+            if (Utils.getEpochSeconds() > oldNextSubPayment){
+                user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
+            }else{
+                user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
+            }
+        } else {
+            user.setSubBalance(user.getSubBalance() + subweeks);
 
             user.setNextSubPayment(Utils.getNewNextSubPayment(oldNextSubPayment));
         }
@@ -1057,15 +1074,15 @@ public class UserService {
             taskService.createSendChargeNotificationTask(user);
         }
 
-		entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), CARD_TOP_UP));
-		// The main idea is that we do pre-payed service, this means that
-		// in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
-		if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-			if (!user.isSMSActivatedUser() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
-				user.setSubBalance(user.getSubBalance() - 1);
-				entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), SUBSCRIPTION_CHARGE));
-			}
-		}
+        entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), CARD_TOP_UP));
+        // The main idea is that we do pre-payed service, this means that
+        // in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
+        if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
+            if (!user.isSMSActivatedUser() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
+                user.setSubBalance(user.getSubBalance() - 1);
+                entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), SUBSCRIPTION_CHARGE));
+            }
+        }
 
         // Update user status to subscribed
         user.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -1320,15 +1337,15 @@ public class UserService {
         String[] args = { migHttpService.getOtaUrl() + "&CODE=" + code };
         String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(phone);
 
-		user.setCode(code);
-		updateUser(user);
-		MigResponse response = migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
+        user.setCode(code);
+        updateUser(user);
+        MigResponse response = migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
                 messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toLowerCase(), "sms.otalink.text", args, null));
-		LOGGER.info("OTA link has been sent to user {}", userId);
-		if (200 == response.getHttpStatus())
-			return true;
-		return false;
-	}
+        LOGGER.info("OTA link has been sent to user {}", userId);
+        if (200 == response.getHttpStatus())
+            return true;
+        return false;
+    }
 
     public AccountDto saveAccountDetails(AccountDto accountDto, int userId) {
         LOGGER.debug("input parameters accountDto: [{}]", accountDto);
@@ -1464,7 +1481,7 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-	public Promotion setPotentialPromoByMessageCode(User user, String messageCode) {
+    public Promotion setPotentialPromoByMessageCode(User user, String messageCode) {
         Community community = user.getUserGroup().getCommunity();
         String communityUri = community.getRewriteUrlParameter().toLowerCase();
         String promoCode = messageSource.getMessage(communityUri, messageCode, null, null);
@@ -1473,6 +1490,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     protected Promotion setPotentialPromoByPromoCode(User user, String code) {
+        LOGGER.info("Setting potential promotion for user id {} by promo code {}", user.getId(), code);
         Community community = user.getUserGroup().getCommunity();
         if (code != null) {
             Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(code, community.getName());
@@ -1586,18 +1604,18 @@ public class UserService {
 
         user = updateUser(user);
 
-		if (!userDto.getPaymentEnabled() && isNotNull(currentPaymentDetails)) {
-			unsubscribeUser(user, "Unsubscribed by admin");
-		}
+        if (!userDto.getPaymentEnabled() && isNotNull(currentPaymentDetails)) {
+            unsubscribeUser(user, "Unsubscribed by admin");
+        }
 
         LOGGER.info("Output parameter user=[{}]", user);
         return user;
 
     }
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<User> findActivePsmsUsers(String communityURL, BigDecimal amountOfMoneyToUserNotification, long deltaSuccesfullPaymentSmsSendingTimestampMillis) {
-		LOGGER.debug("input parameters communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis: [{}], [{}], [{}]", new Object[]{
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<User> findActivePsmsUsers(String communityURL, BigDecimal amountOfMoneyToUserNotification, long deltaSuccesfullPaymentSmsSendingTimestampMillis) {
+        LOGGER.debug("input parameters communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis: [{}], [{}], [{}]", new Object[]{
                 communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis});
 
         if (communityURL == null)
@@ -1649,10 +1667,10 @@ public class UserService {
         return user;
     }
 
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
-	public Future<Boolean> makeSuccesfullPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
-		try {
-			LOGGER.debug("input parameters user: [{}]", user);
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
+    public Future<Boolean> makeSuccesfullPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
+        try {
+            LOGGER.debug("input parameters user: [{}]", user);
 
             Future<Boolean> result = new AsyncResult<Boolean>(Boolean.FALSE);
 
@@ -1688,13 +1706,13 @@ public class UserService {
 
             result = new AsyncResult<Boolean>(Boolean.TRUE);
 
-			LOGGER.debug("Output parameter result=[{}]", result);
-			return result;
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ServiceCheckedException("", "Couldn't make free sms request on successfully payment", e);
-		}
-	}
+            LOGGER.debug("Output parameter result=[{}]", result);
+            return result;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ServiceCheckedException("", "Couldn't make free sms request on successfully payment", e);
+        }
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public int resetLastSuccesfullPaymentSmsSendingTimestampMillis(int userId) {
@@ -1982,18 +2000,18 @@ public class UserService {
     }
 
     public boolean isPromotedDevice(String phoneNumber, Community community) {
-		boolean isPromoted = false;
-		try {
-			isPromoted = deviceService.isPromotedDevicePhone(
-					community,
-					phoneNumber,
-					null);
-		} catch ( Exception e ) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
-		return isPromoted;
-	}
+        boolean isPromoted = false;
+        try {
+            isPromoted = deviceService.isPromotedDevicePhone(
+                    community,
+                    phoneNumber,
+                    null);
+        } catch ( Exception e ) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        LOGGER.info("isPromotedDevice('{}')={}", phoneNumber, isPromoted);
+        return isPromoted;
+    }
 
     public boolean isVFNZOtacValid(String otac, String phoneNumber, Community community) {
         return userRepository.findByOtacMobileAndCommunity(otac, phoneNumber, community)==0L ? false: true;
@@ -2001,9 +2019,11 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User autoOptIn(User user, String otac) {
-        LOGGER.info("Attempt to auto opt in");
+        LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
-        if(!user.isSubjectToAutoOptIn()) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
+        if(!user.isSubjectToAutoOptIn()) {
+            throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
+        }
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
@@ -2014,7 +2034,9 @@ public class UserService {
             isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
         }
 
-        if (!isPromotionApplied) throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        if (!isPromotionApplied){
+            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        }
 
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         return paymentDetails.getOwner();

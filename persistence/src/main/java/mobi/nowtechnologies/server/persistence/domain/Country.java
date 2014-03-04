@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
