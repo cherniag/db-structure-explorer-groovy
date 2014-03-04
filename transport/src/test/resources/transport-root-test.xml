@@ -4,6 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <import resource="classpath:META-INF/service-test.xml"/>
+    <import resource="classpath:META-INF/service-mocked-test.xml"/>
     <import resource="classpath:META-INF/dao-test.xml"/>
     <import resource="classpath:META-INF/shared.xml"/>
     <import resource="classpath:META-INF/soap.xml"/>

@@ -102,6 +102,10 @@ public class FileService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public File getFile(String mediaIsrc, FileType fileType, String resolution, User user) {
+        notNull(mediaIsrc, "The parameter mediaIsrc is null");
+        notNull(fileType, "The parameter fileType is null");
+        notNull(user, "The parameter user is null");
+
         int userId = user.getId();
         Media media = mediaService.findByIsrc(mediaIsrc);
 

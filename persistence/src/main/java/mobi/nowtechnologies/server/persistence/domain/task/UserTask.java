@@ -3,10 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain.task;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * User: gch
