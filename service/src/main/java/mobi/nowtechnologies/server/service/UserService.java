@@ -149,10 +149,9 @@ public class UserService {
 
     private boolean applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider){
         ProviderUserDetails providerUserDetails = otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
-
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}], updateContractAndProvider [{}]", providerUserDetails,
                 user.getContract(), user.getMobile(),
-                user.getOperator());
+                user.getOperator(),user.getActivationStatus(), updateContractAndProvider);
 
         boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
@@ -161,7 +160,9 @@ public class UserService {
             hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
         }
 
-        if(updateContractAndProvider && !user.isVFNZCommunityUser()) updateContractAndProvider(user, providerUserDetails);
+        if(updateContractAndProvider && !user.isVFNZCommunityUser()) {
+            updateContractAndProvider(user, providerUserDetails);
+        }
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
@@ -316,16 +317,28 @@ public class UserService {
     }
 
     public Boolean canActivateVideoTrial(User u) {
-        if (u.isOnWhiteListedVideoAudioFreeTrial()) return false;
-        String rewriteUrlParameter = u.getUserGroup().getCommunity().getRewriteUrlParameter();
-        Date multipleFreeTrialsStopDate = messageSource.readDate(rewriteUrlParameter, MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
+        if (u.isOnWhiteListedVideoAudioFreeTrial()) {
+            return false;
+        }
+        Date multipleFreeTrialsStopDate = messageSource.readDate(u.getCommunityRewriteUrl(), MULTIPLE_FREE_TRIAL_STOP_DATE, newDate(1, 1, 2014));
 
-        if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) return true;
-        if(u.is4G() && u.isO2PAYMConsumer() && INDIRECT.equals(u.getContractChannel()) && !u.isVideoFreeTrialHasBeenActivated()) return true;
+        if(u.is4G() && u.isO2PAYGConsumer() && !u.isVideoFreeTrialHasBeenActivated()) {
+            return true;
+        }
+        if(u.is4G() && u.isO2PAYMConsumer() && INDIRECT.equals(u.getContractChannel()) && !u.isVideoFreeTrialHasBeenActivated()){
+            return true;
+        }
 
         boolean beforeMultipleFreeTrialsStopDate = new DateTime().isBefore(multipleFreeTrialsStopDate.getTime());
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial() && (DIRECT.equals(u.getContractChannel()) || isNull(u.getContractChannel())) && !u.has4GVideoAudioSubscription() && beforeMultipleFreeTrialsStopDate) return true;
-        if(u.is4G() && u.isO2PAYMConsumer() && !u.isVideoFreeTrialHasBeenActivated() && !beforeMultipleFreeTrialsStopDate) return true;
+        if(u.is4G() && u.isO2PAYMConsumer() && !u.isOnVideoAudioFreeTrial()
+                && (DIRECT.equals(u.getContractChannel()) || isNull(u.getContractChannel()))
+                && !u.has4GVideoAudioSubscription() && beforeMultipleFreeTrialsStopDate){
+            return true;
+        }
+        if(u.is4G() && u.isO2PAYMConsumer()
+                && !u.isVideoFreeTrialHasBeenActivated() && !beforeMultipleFreeTrialsStopDate){
+            return true;
+        }
         return  false;
     }
 
@@ -577,6 +590,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean applyPotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
+        LOGGER.info("Applying potential promotion for user id {}, isO2user {}, freeTrialStartedTimestampSeconds {}", user.getId(), isO2User, freeTrialStartedTimestampSeconds);
         Promotion promotion;
 
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
@@ -630,7 +644,9 @@ public class UserService {
         if (userBanned == null || userBanned.isGiveAnyPromotion()) {
             final PromoCode promoCode = promotion.getPromoCode();
 
-            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)) throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
+            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)){
+                throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
+            }
 
             int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
             int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
@@ -662,7 +678,7 @@ public class UserService {
         } else {
             user.setPotentialPromoCodePromotion(null);
             user = entityService.updateEntity(user);
-            LOGGER.info("The promotion [{}] wasn't applied because of user is banned", promotion);
+            LOGGER.warn("The promotion [{}] wasn't applied because of user is banned", promotion);
         }
 
         return isPromotionApplied;
@@ -1465,6 +1481,7 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     protected Promotion setPotentialPromoByPromoCode(User user, String code) {
+        LOGGER.info("Setting potential promotion for user id {} by promo code {}", user.getId(), code);
         Community community = user.getUserGroup().getCommunity();
         if (code != null) {
             Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(code, community.getName());
@@ -1988,9 +2005,11 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User autoOptIn(User user, String otac) {
-        LOGGER.info("Attempt to auto opt in");
+        LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
-        if(!user.isSubjectToAutoOptIn()) throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
+        if(!user.isSubjectToAutoOptIn()) {
+            throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
+        }
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
@@ -2001,7 +2020,9 @@ public class UserService {
             isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
         }
 
-        if (!isPromotionApplied) throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        if (!isPromotionApplied){
+            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        }
 
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         return paymentDetails.getOwner();
