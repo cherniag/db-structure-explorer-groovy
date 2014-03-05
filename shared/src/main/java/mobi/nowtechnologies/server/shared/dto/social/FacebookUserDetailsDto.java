@@ -24,6 +24,9 @@ public class FacebookUserDetailsDto extends UserDetailsDto {
 
     private String userName;
 
+    private String location;
+
+
     public String getEmail() {
         return email;
     }
@@ -72,6 +75,13 @@ public class FacebookUserDetailsDto extends UserDetailsDto {
         this.userName = userName;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     @Override
     public SocialInfoType getSocialInfoType() {

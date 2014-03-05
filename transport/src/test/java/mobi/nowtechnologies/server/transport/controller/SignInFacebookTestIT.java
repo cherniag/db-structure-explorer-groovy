@@ -70,6 +70,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private final String firstName = "firstName";
     private final String lastName = "lastName";
     private final String userName = "userName";
+    private final String location = "Kyiv, Ukraine";
 
 
     private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken, boolean jsonRequest) throws IOException {
@@ -125,7 +126,11 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                         "  \"last_name\": \"" + lastName + "\", \n" +
                         "  \"link\": \"https://www.facebook.com/blah blah\", \n" +
                         "  \"username\": \"" + userName + "\", \n" +
-                        "  \"type\": \"user\"\n" +
+                        "  \"type\": \"user\"\n" + ", \n" +
+                        " \"location\": {\n" +
+                        "    \"id\": \"111227078906045\", \n" +
+                        "    \"name\": \"" + location + "\" \n" +
+                        "  }" +
                         "}";
                 mockServer.expect(requestTo("https://graph.facebook.com/me"))
                         .andExpect(method(HttpMethod.GET)).
@@ -202,8 +207,8 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(xpath(facebookElementXPath + "/firstName").string(firstName))
                 .andExpect(xpath(facebookElementXPath + "/surname").string(lastName))
                 .andExpect(xpath(facebookElementXPath + "/userName").string(userName))
-                .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture")
-                );
+                .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture"))
+                .andExpect(xpath(facebookElementXPath + "/location").string(location));
     }
 
 
@@ -247,6 +252,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath(facebookElementJsonPath + ".firstName").value(firstName))
                 .andExpect(jsonPath(facebookElementJsonPath + ".surname").value(lastName))
                 .andExpect(jsonPath(facebookElementJsonPath + ".userName").value(userName))
+                .andExpect(jsonPath(facebookElementJsonPath + ".location").value(location))
                 .andExpect(jsonPath(facebookElementJsonPath + ".profileUrl").value("https://graph.facebook.com/" + userName + "/picture"))
                 .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true));
 

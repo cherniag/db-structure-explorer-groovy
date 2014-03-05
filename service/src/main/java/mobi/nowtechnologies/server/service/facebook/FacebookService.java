@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.social.SocialException;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.GraphApi;
+import org.springframework.social.facebook.api.Reference;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +55,10 @@ public class FacebookService {
         details.setUserName(profile.getUsername());
         details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture");
         details.setUser(user);
+        Reference loc = profile.getLocation();
+        if (loc != null){
+            details.setLocation(loc.getName());
+        }
         return details;
     }
 
