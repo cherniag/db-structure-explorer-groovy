@@ -106,11 +106,11 @@ public class PaymentPolicy {
     @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
     private MediaType mediaType;
 
-    @Column(name = "advanced_payment_millis", nullable = false)
-    private long advancedPaymentMillis;
+    @Column(name = "advanced_payment_seconds", nullable = false)
+    private int advancedPaymentSeconds;
 
-    @Column(name = "after_next_sub_payment_millis", nullable = false)
-    private long afterNextSubPaymentMillis;
+    @Column(name = "after_next_sub_payment_seconds", nullable = false)
+    private int afterNextSubPaymentSeconds;
 
     @Column(name = "is_default")
     private boolean isDefault;
@@ -305,7 +305,7 @@ public class PaymentPolicy {
     }
 
     public int getAfterNextSubPaymentSeconds() {
-        return (int)(afterNextSubPaymentMillis/1000);
+        return afterNextSubPaymentSeconds;
     }
 
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
@@ -416,8 +416,8 @@ public class PaymentPolicy {
                 .append("contentDescription", contentDescription)
                 .append("tariff", tariff)
                 .append("mediaType", mediaType)
-                .append("advancedPaymentMillis", advancedPaymentMillis)
-                .append("afterNextSubPaymentMillis", afterNextSubPaymentMillis)
+                .append("advancedPaymentSeconds", advancedPaymentSeconds)
+                .append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds)
                 .append("isDefault", isDefault)
                 .toString();
     }

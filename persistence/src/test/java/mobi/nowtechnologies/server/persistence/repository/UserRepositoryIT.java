@@ -259,17 +259,10 @@ public class UserRepositoryIT {
 		
 		int updatedCount = userRepository.updateLastBefore48SmsMillis(newLastBefore48SmsMillis , testUser.getId());
 		assertEquals(1, updatedCount);
-		
-//		User user = userRepository.findOne(testUser.getId());
-//		
-//		assertNotNull(user);
-//		assertEquals(testUser.getId(), user.getId());
-//		assertEquals(newLastBefore48SmsMillis, user.getLastBefore48SmsMillis());
-		
 	}
 	
 	@Test
-	public void testgetUsersForRetryPayment_MadeRetriesNotEqRetriesOnError_Success() throws Exception {
+	public void testGetUsersForRetryPayment_MadeRetriesNotEqRetriesOnError_Success() throws Exception {
 		
 		int epochSeconds = getEpochSeconds();
 		
