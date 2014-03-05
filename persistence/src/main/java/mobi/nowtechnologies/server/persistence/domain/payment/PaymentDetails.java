@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -237,7 +238,21 @@ public class PaymentDetails {
         return this;
     }
 
-	@Override
+    public boolean shouldBeUnSubscribed() {
+        return !hasMoreAttemptRetries() && isAfterPaymentPolicyNextSubPayment();
+    }
+
+    private boolean hasMoreAttemptRetries() {
+        return madeRetries < retriesOnError;
+    }
+
+    private boolean isAfterPaymentPolicyNextSubPayment() {
+        int epochSeconds = Utils.getEpochSeconds();
+        int afterNextSubPaymentSeconds = paymentPolicy.getAfterNextSubPaymentSeconds();
+        return epochSeconds > owner.getNextSubPayment() + afterNextSubPaymentSeconds;
+    }
+
+    @Override
 	public String toString() {
         return new ToStringBuilder(this)
                 .append("i", i)

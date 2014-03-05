@@ -81,9 +81,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 			"join u.currentPaymentDetails pd "+
 			"join u.userGroup ug "+
 			"join ug.community c "+
+            "join pd.paymentPolicy pp " +
 			"where "+
-			"((c.rewriteUrlParameter!='o2' and u.subBalance=0 and u.nextSubPayment<=?1) " +
-			"or (c.rewriteUrlParameter='o2' and u.nextSubPayment<=(?1+86400) and ( u.provider<>'o2' or (u.provider='o2' and ((u.segment='CONSUMER' and TYPE(pd) = O2PSMSPaymentDetails) or u.segment='BUSINESS') )  ) )) "+
+			"u.subBalance=0 and u.nextSubPayment<=(?1+pp.advancedPaymentMillis/1000) "+
 			"and (pd.lastPaymentStatus='NONE' or  pd.lastPaymentStatus='SUCCESSFUL') "+
 			"and pd.activated=true "+
 			"and u.lastDeviceLogin!=0")
@@ -94,9 +94,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     		+ "join u.currentPaymentDetails pd "
     		+ "join u.userGroup ug "
 			+ "join ug.community c "
+            + "join pd.paymentPolicy pp "
     		+ "where "
     		+ "(pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
-    		+ "and (pd.madeRetries!=pd.retriesOnError or u.nextSubPayment<=?1) "
+    		+ "and (pd.madeRetries!=pd.retriesOnError or u.nextSubPayment<=?1 or ( (u.nextSubPayment+pp.afterNextSubPaymentMillis/1000)<=?1 and pd.madeRetries=pd.retriesOnError) ) "
     		+ "and pd.activated=true "
     		+ "and u.lastDeviceLogin!=0")
     @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")})
@@ -111,7 +112,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 			"and u.appStoreOriginalTransactionId=?3 " +
 			"and u.currentPaymentDetails is NULL " +
 			"and c.rewriteUrlParameter = 'o2' " +
-			"and u.provider<>'o2' ")
+			"and u.provider<>'O2' ")
 	List<User> findUsersForItunesInAppSubscription(User user, int nextSubPayment, String appStoreOriginalTransactionId);
 
 	@Query("select u from User u " +

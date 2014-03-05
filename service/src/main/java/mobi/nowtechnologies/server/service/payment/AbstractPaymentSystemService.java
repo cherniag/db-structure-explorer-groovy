@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +47,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
 		LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
 		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
-		
-		final User user = pendingPayment.getUser();
-		final int epochSeconds = Utils.getEpochSeconds();
-		
+
 		PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 		
 		final PaymentDetailsStatus status;
@@ -88,8 +84,8 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		// Send sync-event about committed payment
 		if(submittedPayment.getStatus() == PaymentDetailsStatus.SUCCESSFUL)
 			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
-        else if (paymentDetails.getMadeRetries() == paymentDetails.getRetriesOnError() && epochSeconds > user.getNextSubPayment()) {
-            userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
+        else {
+            checkPaymentDetailsAndUnSubscribe(response, pendingPayment);
         }
 		
 		// Deleting pending payment
@@ -99,6 +95,14 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		
 		return submittedPayment;
 	}
+
+    private void checkPaymentDetailsAndUnSubscribe(PaymentSystemResponse response, PendingPayment pendingPayment) {
+        PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
+
+        if (paymentDetails.shouldBeUnSubscribed()) {
+            userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
+        }
+    }
 
     @Transactional(propagation=Propagation.REQUIRED)
     protected PaymentDetails commitPaymentDetails(User user, PaymentDetails newPaymentDetails){
