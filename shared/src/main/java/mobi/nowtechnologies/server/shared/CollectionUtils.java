@@ -6,6 +6,7 @@ import com.google.common.collect.Iterables;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +34,14 @@ public class CollectionUtils {
         return (content == null || content.isEmpty());
     }
 
-
+    public static String get(List<String> result, int i, String defaultValue) {
+        if (!isEmpty(result)) {
+            if (result.size() >= i + 1) {
+                return result.get(i);
+            }
+        }
+        return defaultValue;
+    }
 
 
 }

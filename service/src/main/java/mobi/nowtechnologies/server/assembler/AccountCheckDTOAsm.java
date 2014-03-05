@@ -142,7 +142,7 @@ public class AccountCheckDTOAsm {
         result.setEmail(details.getEmail());
         result.setProfileUrl(details.getProfileUrl());
         result.setFacebookId(details.getFacebookId());
-        result.setLocation(details.getLocation());
+        result.setLocation(details.getCity());
         return result;
     }
 

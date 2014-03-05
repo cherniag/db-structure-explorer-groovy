@@ -11,7 +11,8 @@ CREATE TABLE `facebook_user_info` (
   `email` varchar(100) NOT NULL,
   `first_name` varchar(100),
   `surname` varchar(100),
-  `location` varchar(100),
+  `city` varchar(100),
+  `country` varchar(100)
   `profile_url` varchar(200),
   `fb_id` varchar(100),
   `user_name` varchar(100),

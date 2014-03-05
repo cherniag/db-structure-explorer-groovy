@@ -20,8 +20,8 @@ public class FacebookUserInfo extends SocialInfo {
     @Column(name="surname",columnDefinition="char(100)")
     private String surname;
 
-    @Column(name="location",columnDefinition="char(100)")
-    private String location;
+    @Column(name="city",columnDefinition="char(100)")
+    private String city;
 
 
     @Column(name="profile_url",columnDefinition="char(200)")
@@ -33,6 +33,9 @@ public class FacebookUserInfo extends SocialInfo {
 
     @Column(name="user_name",columnDefinition="char(100)", nullable = false)
     private String userName;
+
+    @Column(name="country",columnDefinition="char(100)")
+    private String country;
 
     public String getEmail() {
         return email;
@@ -82,12 +85,19 @@ public class FacebookUserInfo extends SocialInfo {
         this.userName = userName;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCity() {
+        return city;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCity(String city) {
+        this.city = city;
     }
 
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCountry() {
+        return country;
+    }
 }
