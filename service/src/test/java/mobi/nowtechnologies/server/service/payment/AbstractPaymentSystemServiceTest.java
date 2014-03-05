@@ -4,10 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactor
 import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.payment.AbstractPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -189,24 +186,30 @@ public class AbstractPaymentSystemServiceTest {
 	@Test
 	public void testCommitPayment_FailResponseAndMadeRetriesEqRetriesOnError_Success()
 			throws Exception {
-		final int curremtTimeSeconds = Integer.MAX_VALUE;
+		final int currentTimeSeconds = Integer.MAX_VALUE;
 
 		PaymentSystemResponse response = O2Response.failO2Response("");
 
 		User user = UserFactory.createUser();
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
-		user.setCurrentPaymentDetails(paymentDetails);
-		user.setNextSubPayment(Integer.MIN_VALUE);
+        PaymentPolicy paymentPolicy = new PaymentPolicy();
+
+        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+        paymentDetails.setRetriesOnError(3);
+        paymentDetails.setMadeRetries(3);
+        paymentDetails.setPaymentPolicy(paymentPolicy);
+
+        user.setCurrentPaymentDetails(paymentDetails);
+        user.setNextSubPayment(Integer.MIN_VALUE);
+
+        paymentDetails.withOwner(user);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
 		pendingPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(Utils.class);
-		Mockito.when(Utils.getEpochSeconds()).thenReturn(curremtTimeSeconds);
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
 
