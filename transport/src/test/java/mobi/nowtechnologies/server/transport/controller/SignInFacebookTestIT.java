@@ -27,16 +27,16 @@ import javax.annotation.Resource;
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+
 
 /**
  * Created by oar on 2/6/14.
@@ -72,10 +72,11 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private final String userName = "userName";
 
 
-    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken) throws IOException {
+    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken, boolean jsonRequest) throws IOException {
         String userToken = getUserToken(signUpDeviceResultActions, timestamp);
         String userName = getUserName(signUpDeviceResultActions);
-        return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_FACEBOOK.json")
+        String extension = jsonRequest ? ".json" : "";
+        return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_FACEBOOK" + extension)
                 .param("ACCESS_TOKEN", facebookToken)
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
@@ -172,7 +173,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
@@ -188,12 +189,32 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
 
     @Test
+    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSucessWithXML() throws Exception {
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
+        String facebookElementXPath = "//userDetails";
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, false)
+        ).andExpect(status().isOk()).andDo(print())
+                .andExpect(xpath(facebookElementXPath + "/socialInfoType").string("Facebook"))
+                .andExpect(xpath(facebookElementXPath + "/facebookId").string(facebookUserId))
+                .andExpect(xpath(facebookElementXPath + "/email").string(facebookEmail))
+                .andExpect(xpath(facebookElementXPath + "/firstName").string(firstName))
+                .andExpect(xpath(facebookElementXPath + "/surname").string(lastName))
+                .andExpect(xpath(facebookElementXPath + "/userName").string(userName))
+                .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture")
+                );
+    }
+
+
+
+    @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookIdSucess() throws Exception {
         final String invalidFacebookUserId = "2";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId, facebookToken, true)
         ).andExpect(status().isForbidden()).andDo(print())
                 .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(661))
                 .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("invalid user facebook id"));
@@ -206,7 +227,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         facebookService.setTemplateCustomizer(getTemplateCustomizerWithErrorFromFacebook(facebookUserId, facebookEmail));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId, facebookToken, true)
         ).andExpect(status().isForbidden()).andDo(print())
                 .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(660))
                 .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("invalid authorization token"));
@@ -218,7 +239,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath(facebookElementJsonPath + ".socialInfoType").value("Facebook"))
                 .andExpect(jsonPath(facebookElementJsonPath + ".facebookId").value(facebookUserId))
@@ -234,7 +255,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         final String otherFacebookEmail = "o2@ukr.net";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(otherFacebookUserId, otherFacebookEmail));
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId, facebookToken, true)
         ).andExpect(status().isOk()).andDo(print());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
@@ -249,7 +270,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
@@ -257,7 +278,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk());
         user = userRepository.findByDeviceUIDAndCommunity(otherDeviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         fbDetails = fbDetailsRepository.findForUser(user);
@@ -269,14 +290,14 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk()).andDo(print());
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         fbDetails = fbDetailsRepository.findForUser(user);
@@ -288,7 +309,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk());
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
@@ -322,7 +343,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk());
 
         mockMvc.perform(

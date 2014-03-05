@@ -2,9 +2,13 @@ package mobi.nowtechnologies.server.shared.dto.social;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 /**
  * Created by oar on 2/10/14.
  */
+@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class FacebookUserDetailsDto extends UserDetailsDto {
 
     private String email;

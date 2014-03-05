@@ -68,6 +68,8 @@
 				<value>mobi.nowtechnologies.server.dto.transport.SelectedPlaylistDto</value>
 				<value>mobi.nowtechnologies.server.dto.transport.LockedTrackDto</value>
 				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
+                <value>mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto</value>
 			</list>
 		</property>
 	</bean>
