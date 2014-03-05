@@ -106,10 +106,10 @@ public class PaymentPolicy {
     @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
     private MediaType mediaType;
 
-    @Column(name = "advanced_payment_millis")
+    @Column(name = "advanced_payment_millis", nullable = false)
     private long advancedPaymentMillis;
 
-    @Column(name = "after_next_sub_payment_millis")
+    @Column(name = "after_next_sub_payment_millis", nullable = false)
     private long afterNextSubPaymentMillis;
 
     @Column(name = "is_default")

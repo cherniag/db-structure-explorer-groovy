@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class PaymentPolicyDaoTest {
+public class PaymentPolicyDaoIT {
 	
 	@Resource(name = "persistence.PaymentPolicyDao")
 	private PaymentPolicyDao paymentPolicyDao;
@@ -39,7 +39,6 @@ public class PaymentPolicyDaoTest {
 	public void testGetPaymentPolicy_2() throws Exception {
 		
 		Integer communityId=5;
-		String  paymentSystem = "PayPal";
 		String paymentType = UserRegInfo.PaymentType.PAY_PAL;
 		
 		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, communityId);
@@ -54,7 +53,6 @@ public class PaymentPolicyDaoTest {
 	public void testGetPaymentPolicy_3() throws Exception {
 		
 		Integer communityId=5;
-		String  paymentSystem = "SagePay";
 		String paymentType = UserRegInfo.PaymentType.CREDIT_CARD;
 		
 		PaymentPolicy paymentPolicy = paymentPolicyDao.getPaymentPolicy(0, paymentType, communityId);
