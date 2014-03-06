@@ -413,6 +413,11 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withaAvancedPaymentSeconds(int advancedPaymentSeconds){
+        this.advancedPaymentSeconds = advancedPaymentSeconds;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
