@@ -146,7 +146,7 @@ public class SMSNotificationIT {
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("O2");
 		PaymentDetails paymentDetails = new PayPalPaymentDetails();
 		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
+		paymentDetails.withMadeRetries(3);
 		PendingPayment pendingPayment = new PendingPayment();
 		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L);
 		pendingPayment.setUser(user);
@@ -175,7 +175,7 @@ public class SMSNotificationIT {
 		SagePayCreditCardPaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setReleased(true);
 		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
+		paymentDetails.withMadeRetries(3);
 		PendingPayment pendingPayment = new PendingPayment();
 		pendingPayment.setTimestamp(user.getNextSubPayment()*1000L);
 		pendingPayment.setUser(user);
@@ -201,7 +201,7 @@ public class SMSNotificationIT {
 		
 		O2PSMSPaymentDetails paymentDetails = new O2PSMSPaymentDetails();
 		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
+		paymentDetails.withMadeRetries(3);
 		paymentDetails.setPaymentPolicy(new PaymentPolicy());
 		
 		User user = UserFactory.createUser(paymentDetails, null);

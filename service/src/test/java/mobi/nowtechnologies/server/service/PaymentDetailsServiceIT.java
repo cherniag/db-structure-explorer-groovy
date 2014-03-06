@@ -46,7 +46,7 @@ public class PaymentDetailsServiceIT {
 		migPaymentDetails.setActivated(true);
 		migPaymentDetails.setCreationTimestampMillis(0L);
 		migPaymentDetails.setDisableTimestampMillis(0L);
-		migPaymentDetails.setMadeRetries(0);
+		migPaymentDetails.withMadeRetries(0);
 		migPaymentDetails.setRetriesOnError(0);
 
 		entityService.saveEntity(migPaymentDetails);
@@ -56,7 +56,7 @@ public class PaymentDetailsServiceIT {
 		o2PSMSPaymentDetails.setActivated(true);
 		o2PSMSPaymentDetails.setCreationTimestampMillis(0L);
 		o2PSMSPaymentDetails.setDisableTimestampMillis(0L);
-		o2PSMSPaymentDetails.setMadeRetries(0);
+		o2PSMSPaymentDetails.withMadeRetries(0);
 		o2PSMSPaymentDetails.setRetriesOnError(0);
 
 		entityService.saveEntity(o2PSMSPaymentDetails);
@@ -66,7 +66,7 @@ public class PaymentDetailsServiceIT {
         vfpsmsPaymentDetails.setActivated(true);
         vfpsmsPaymentDetails.setCreationTimestampMillis(0L);
         vfpsmsPaymentDetails.setDisableTimestampMillis(0L);
-        vfpsmsPaymentDetails.setMadeRetries(0);
+        vfpsmsPaymentDetails.withMadeRetries(0);
         vfpsmsPaymentDetails.setRetriesOnError(0);
 
         entityService.saveEntity(vfpsmsPaymentDetails);
