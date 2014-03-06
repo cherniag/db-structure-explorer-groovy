@@ -34,8 +34,8 @@
             <type>jar</type>
             <classifier>jar</classifier>
         </dependency>
-        <dependency>
-            <groupId>mobi.nowtechnologies.java.server</groupId>
+        <dependency>    
+             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>persistence</artifactId>
             <scope>test</scope>
             <classifier>tests</classifier>

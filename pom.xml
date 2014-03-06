@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>server</artifactId>
-    <version>5.4.1-SNAPSHOT</version>
+    <version>5.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Now Technologies Java Server</name>
 
@@ -31,7 +31,7 @@
         <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
         <org.springframework.security-version>3.1.0.RELEASE</org.springframework.security-version>
         <spring-social.version>1.0.1.RELEASE</spring-social.version>
-        <chartsnow-version>5.4.1-SNAPSHOT</chartsnow-version>
+        <chartsnow-version>5.4-SNAPSHOT</chartsnow-version>
     </properties>
 
     <profiles>
@@ -695,7 +695,6 @@
                 <artifactId>spring-aspects</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework.mobile</groupId>
                 <artifactId>spring-mobile-device</artifactId>
@@ -780,7 +779,7 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-facebook</artifactId>
-                <version>1.0.3.RELEASE</version>
+                <version>1.0.0.RC3</version>
             </dependency>
             <!-- END Spring Secuity -->
 
