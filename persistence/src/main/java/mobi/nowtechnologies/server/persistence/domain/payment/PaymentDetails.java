@@ -71,7 +71,7 @@ public class PaymentDetails {
     @Column(name = "made_attempts", nullable = false)
     private int madeAttempts;
 
-	public void incrementRetries() {
+	private void incrementRetries() {
 		this.madeRetries++;
     }
 

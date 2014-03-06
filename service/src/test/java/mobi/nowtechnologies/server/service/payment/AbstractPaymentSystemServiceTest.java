@@ -302,7 +302,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
-		final String descriptionError = "Unexpected http status code [" + HttpStatus.BAD_REQUEST.value() + "] so the madeRetries willn't be incremented";
+		final String descriptionError = "Unexpected http status code [" + HttpStatus.BAD_REQUEST.value() + "] so the madeRetries won't be incremented";
 
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
