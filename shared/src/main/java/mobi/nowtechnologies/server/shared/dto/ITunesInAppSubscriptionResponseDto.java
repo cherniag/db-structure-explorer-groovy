@@ -2,15 +2,16 @@ package mobi.nowtechnologies.server.shared.dto;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * @author Titov Mykhaylo (titov)
  *
  */
 public class ITunesInAppSubscriptionResponseDto {
-	
+
 	private String status;
-	
+
 	private Receipt receipt;
 	
 	@Expose
@@ -197,10 +198,13 @@ public class ITunesInAppSubscriptionResponseDto {
 		return "0".equals(status);
 	}
 
-	@Override
-	public String toString() {
-		return "ITunesInAppSubscriptionResponseDto [status=" + status + ", receipt=" + receipt + ", latestReceipt=" + latestReceipt + ", latestReceiptInfo=" + latestReceiptInfo + "]";
-	}
-
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("status", status)
+                .append("receipt", receipt)
+                .append("latestReceipt", latestReceipt)
+                .append("latestReceiptInfo", latestReceiptInfo)
+                .toString();
+    }
 }

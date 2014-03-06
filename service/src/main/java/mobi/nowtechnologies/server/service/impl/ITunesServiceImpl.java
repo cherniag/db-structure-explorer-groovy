@@ -1,6 +1,9 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -39,7 +42,8 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 	private UserService userService;
 	private ApplicationEventPublisher applicationEventPublisher;
 	private SubmitedPaymentService submitedPaymentService;
-	
+
+    private static JsonParser jsonParser = new JsonParser();
 	private static Gson gson = new Gson();
 
 	public void setPostService(PostService postService) {
@@ -97,12 +101,12 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 			BasicResponse = postService.sendHttpPost(iTunesUrl, null, body);
 
 			if (BasicResponse.getStatusCode() == HttpStatus.OK.value()) {
-				ITunesInAppSubscriptionResponseDto iTunesInAppSubscriptionResponseDto = gson.fromJson(BasicResponse.getMessage(), ITunesInAppSubscriptionResponseDto.class);
+                ITunesInAppSubscriptionResponseDto iTunesResponseDTO = convertToResponseDTO(BasicResponse);
 
-				if (iTunesInAppSubscriptionResponseDto.isSuccess()) {
-					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid by BasicResponse [{}]", base64EncodedAppStoreReceipt, iTunesInAppSubscriptionResponseDto);
+				if (iTunesResponseDTO.isSuccess()) {
+					LOGGER.info("ITunes confirmed that encoded receipt [{}] is valid by BasicResponse [{}]", base64EncodedAppStoreReceipt, iTunesResponseDTO);
 					
-					Receipt latestReceiptInfo = iTunesInAppSubscriptionResponseDto.getLatestReceiptInfo();
+					Receipt latestReceiptInfo = iTunesResponseDTO.getLatestReceiptInfo();
 					PaymentPolicy paymentPolicy = paymentPolicyService.findByCommunityAndAppStoreProductId(user.getUserGroup().getCommunity(), latestReceiptInfo.getProductId());
 					
 					final PaymentDetailsType paymentDetailsType;
@@ -141,6 +145,43 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 		
 		LOGGER.debug("Output parameter BasicResponse=[{}]", BasicResponse);
 		return BasicResponse;
+	}
+
+    private ITunesInAppSubscriptionResponseDto convertToResponseDTO(BasicResponse basicResponse) {
+        ITunesInAppSubscriptionResponseDto iTunesResponseDTO =  new ITunesInAppSubscriptionResponseDto();
+        JsonObject rootObject = jsonParser.parse(basicResponse.getMessage()).getAsJsonObject();
+        iTunesResponseDTO.setStatus(getStringFromJsonObject(rootObject, "status"));
+        iTunesResponseDTO.setLatestReceipt(getStringFromJsonObject(rootObject, "latest_receipt"));
+        iTunesResponseDTO.setReceipt(getObjectFromJsonObject(rootObject, "receipt", Receipt.class));
+        fillLatestReceiptInfo(rootObject, iTunesResponseDTO);
+        return iTunesResponseDTO;
+    }
+
+    private void fillLatestReceiptInfo(JsonObject rootObject, ITunesInAppSubscriptionResponseDto iTunesResponseDTO) {
+        if (!rootObject.has("latest_receipt_info")){
+            throw new IllegalArgumentException(String.format("Json object [%s] doesn't contain latest_receipt_info", rootObject));
+        }
+        JsonElement latestReceiptInfo = rootObject.get("latest_receipt_info");
+        if(latestReceiptInfo.isJsonArray()){
+            if (latestReceiptInfo.getAsJsonArray().size() != 1){
+                throw new IllegalArgumentException(String.format("latest_receipt_info [%s] have a wrong size. Must be 1", latestReceiptInfo));
+            }
+            iTunesResponseDTO.setLatestReceiptInfo(gson.fromJson(latestReceiptInfo.getAsJsonArray().get(0), Receipt.class));
+        } else if(latestReceiptInfo.isJsonObject()){
+            iTunesResponseDTO.setLatestReceiptInfo(gson.fromJson(latestReceiptInfo, Receipt.class));
+        } else {
+            throw new IllegalArgumentException(String.format("latest_receipt_info [%s] is neither array nor object", latestReceiptInfo));
+        }
+    }
+
+    private String getStringFromJsonObject(JsonObject rootObject, String name) {
+        JsonElement jsonElement = rootObject.get(name);
+        return jsonElement != null ? jsonElement.getAsString() : null;
+    }
+
+    private <T> T getObjectFromJsonObject(JsonObject rootObject, String name, Class<T> clazz){
+        JsonElement jsonElement = rootObject.get(name);
+        return jsonElement != null ? gson.fromJson(jsonElement, clazz) : null;
 	}
 
 }
