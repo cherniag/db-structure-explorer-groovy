@@ -133,7 +133,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(1);
+		paymentDetails.withMadeRetries(1);
 		user.setCurrentPaymentDetails(paymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
@@ -196,7 +196,7 @@ public class AbstractPaymentSystemServiceTest {
 
         PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
         paymentDetails.setRetriesOnError(3);
-        paymentDetails.setMadeRetries(3);
+        paymentDetails.withMadeRetries(3);
         paymentDetails.setPaymentPolicy(paymentPolicy);
 
         user.setCurrentPaymentDetails(paymentDetails);
@@ -265,7 +265,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
+		paymentDetails.withMadeRetries(3);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Integer.MIN_VALUE);
 

@@ -1342,7 +1342,7 @@ public class UserNotificationServiceImplTest {
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
-        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.withMadeRetries(madeRetries);
         o2PDPaymentDetails.setRetriesOnError(retriesOnError);
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
@@ -1398,7 +1398,7 @@ public class UserNotificationServiceImplTest {
         user.setNextSubPayment(Integer.MAX_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
-        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.withMadeRetries(madeRetries);
         o2PDPaymentDetails.setRetriesOnError(retriesOnError);
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
@@ -1454,7 +1454,7 @@ public class UserNotificationServiceImplTest {
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
-        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.withMadeRetries(madeRetries);
         o2PDPaymentDetails.setRetriesOnError(retriesOnError);
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
@@ -1510,7 +1510,7 @@ public class UserNotificationServiceImplTest {
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
-        o2PDPaymentDetails.setMadeRetries(madeRetries);
+        o2PDPaymentDetails.withMadeRetries(madeRetries);
         o2PDPaymentDetails.setRetriesOnError(retriesOnError);
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
@@ -1563,7 +1563,7 @@ public class UserNotificationServiceImplTest {
 		int retriesOnError = madeRetries;
 
 		PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		o2PDPaymentDetails.setMadeRetries(madeRetries);
+		o2PDPaymentDetails.withMadeRetries(madeRetries);
 		o2PDPaymentDetails.setRetriesOnError(retriesOnError);
 
 		User user = UserFactory.createUser();
@@ -1666,7 +1666,7 @@ public class UserNotificationServiceImplTest {
 		int retriesOnError = madeRetries;
 
 		PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		o2PDPaymentDetails.setMadeRetries(madeRetries);
+		o2PDPaymentDetails.withMadeRetries(madeRetries);
 		o2PDPaymentDetails.setRetriesOnError(retriesOnError);
 
 		User user = null;
