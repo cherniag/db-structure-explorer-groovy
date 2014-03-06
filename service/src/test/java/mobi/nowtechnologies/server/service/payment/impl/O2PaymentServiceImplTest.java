@@ -95,7 +95,6 @@ public class O2PaymentServiceImplTest {
         o2PaymentServiceImplSpy.setEntityService(mockEntityService);
         o2PaymentServiceImplSpy.setPaymentDetailsRepository(mockPaymentDetailsRepository);
         o2PaymentServiceImplSpy.setPaymentDetailsService(mockPaymentDetailsService);
-        o2PaymentServiceImplSpy.setRefundService(refundServiceMock);
     }
 
     @Test
@@ -108,7 +107,7 @@ public class O2PaymentServiceImplTest {
 		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 		
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
-		o2psmsPaymentDetails.setMadeRetries(Integer.MAX_VALUE);
+		o2psmsPaymentDetails.withMadeRetries(Integer.MAX_VALUE);
 		o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
 		o2psmsPaymentDetails.setActivated(true);
 		o2psmsPaymentDetails.setOwner(user);
@@ -235,7 +234,7 @@ public class O2PaymentServiceImplTest {
         final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 
         o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
-        o2psmsPaymentDetails.setMadeRetries(Integer.MAX_VALUE);
+        o2psmsPaymentDetails.withMadeRetries(Integer.MAX_VALUE);
         o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
         o2psmsPaymentDetails.setActivated(true);
         o2psmsPaymentDetails.setOwner(user);
@@ -364,7 +363,7 @@ public class O2PaymentServiceImplTest {
         final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 
         o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
-        o2psmsPaymentDetails.setMadeRetries(Integer.MIN_VALUE);
+        o2psmsPaymentDetails.withMadeRetries(Integer.MIN_VALUE);
         o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
         o2psmsPaymentDetails.setActivated(true);
 
