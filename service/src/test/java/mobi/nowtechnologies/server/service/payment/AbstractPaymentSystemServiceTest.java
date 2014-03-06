@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.times;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -259,7 +260,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		PaymentSystemResponse mockPaymentSystemResponse = Mockito.mock(PaymentSystemResponse.class);
 		Mockito.when(mockPaymentSystemResponse.isSuccessful()).thenReturn(false);
-		Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
+		Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(BAD_REQUEST.value());
 
 		User user = UserFactory.createUser();
 
@@ -302,7 +303,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
-		final String descriptionError = "Unexpected http status code [" + HttpStatus.BAD_REQUEST.value() + "] so the madeRetries won't be incremented";
+		final String descriptionError = "Unexpected http status code [" + BAD_REQUEST.value() + "] so the madeRetries won't be incremented";
 
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
