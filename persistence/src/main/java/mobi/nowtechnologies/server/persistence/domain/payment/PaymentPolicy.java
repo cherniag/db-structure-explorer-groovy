@@ -358,6 +358,11 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withCommunity(Community community){
+        setCommunity(community);
+        return this;
+    }
+
     public PaymentPolicy withMediaType(MediaType mediaType){
         setMediaType(mediaType);
         return this;
@@ -390,6 +395,21 @@ public class PaymentPolicy {
 
     public PaymentPolicy withSubCost(BigDecimal subCost) {
         setSubcost(subCost);
+        return this;
+    }
+
+    public PaymentPolicy withSubWeeks(byte subWeeks) {
+        setSubweeks(subWeeks);
+        return this;
+    }
+
+    public PaymentPolicy withAvailableInStore(boolean availableInStore) {
+        setAvailableInStore(availableInStore);
+        return this;
+    }
+
+    public PaymentPolicy withAfterNextSubPaymentSeconds(int afterNextSubPaymentSeconds){
+        this.afterNextSubPaymentSeconds = afterNextSubPaymentSeconds;
         return this;
     }
 

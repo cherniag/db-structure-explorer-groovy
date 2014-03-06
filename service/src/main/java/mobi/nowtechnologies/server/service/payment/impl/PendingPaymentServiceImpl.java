@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,9 +21,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.REGULAR;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.AWAITING;
+
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class PendingPaymentServiceImpl implements PendingPaymentService {
 
@@ -51,11 +53,13 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 		for (User user : usersForPendingPayment) {
 			if (!user.isInvalidPaymentPolicy()) {
 				LOGGER.info("Creating pending payment for user {} with balance {}", user.getId(), user.getSubBalance());
-				PendingPayment pendingPayment = createPendingPayment(user, PaymentDetailsType.REGULAR);
+				PendingPayment pendingPayment = createPendingPayment(user, REGULAR);
 				pendingPayments.add(pendingPayment);
 				// While creating a pending payment we update last payment status for user to AWAITING
-				user.getCurrentPaymentDetails().setLastPaymentStatus(PaymentDetailsStatus.AWAITING);
-				userService.updateUser(user);
+                PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+                currentPaymentDetails.setLastPaymentStatus(AWAITING);
+                currentPaymentDetails.resetMadeAttempts();
+                user = userService.updateUser(user);
 				LOGGER.info("Pending payment {} was created for user {}", pendingPayment.getInternalTxId(), user.getUserName());
 			} else {
 				LOGGER.info("Creating pending payment was failed for user {}, because current paymentPolicy of this user is invalid user and needs to unsubscribe him", user.getUserName());
@@ -75,22 +79,18 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 		LOGGER.debug("{} users were selected for retry payment", usersForRetryPayment.size());
 		List<PendingPayment> retryPayments = new LinkedList<PendingPayment>();
 		for (User user : usersForRetryPayment) {
-			PendingPayment pendingPayment = createPendingPayment(user, PaymentDetailsType.RETRY);
+			PendingPayment pendingPayment = createPendingPayment(user, RETRY);
 			retryPayments.add(pendingPayment);
 			PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 			// While creating a pending payment we update last payment status for user to AWAITING
-			currentPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.AWAITING);
-			if (currentPaymentDetails.getMadeRetries() == currentPaymentDetails.getRetriesOnError()) {
-				currentPaymentDetails.setMadeRetries(1);
-			} else {
-				currentPaymentDetails.incrementRetries();
-			}
-			userService.updateUser(user);
+			currentPaymentDetails.setLastPaymentStatus(AWAITING);
+            currentPaymentDetails.calcMadeRetriesForAttempt();
+            userService.updateUser(user);
 		}
 		return retryPayments;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
 	public PendingPayment createPendingPayment(User user, PaymentDetailsType type) {
 		LOGGER.debug("Start creating pending payment for user {}", user.getUserName());
 		PendingPayment pendingPayment = new PendingPayment();

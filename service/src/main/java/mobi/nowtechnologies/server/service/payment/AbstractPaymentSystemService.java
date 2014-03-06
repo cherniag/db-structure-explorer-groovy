@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.*;
 
 public abstract class AbstractPaymentSystemService implements PaymentSystemService, ApplicationEventPublisherAware {
 	
@@ -39,8 +44,6 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	private PaymentDetailsRepository paymentDetailsRepository;
 	
 	protected UserService userService;
-
-    private RefundService refundService;
 	
 	@Transactional(propagation=Propagation.REQUIRED)
 	@Override
@@ -52,39 +55,41 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		
 		final PaymentDetailsStatus status;
 		final int httpStatus = response.getHttpStatus();
-		if (!response.isSuccessful() && HttpServletResponse.SC_OK == httpStatus) {
-			status = PaymentDetailsStatus.ERROR;
+		if (!response.isSuccessful() && SC_OK == httpStatus) {
+			status = ERROR;
 			submittedPayment.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setErrorCode(response.getErrorCode());
 		} else if (response.isSuccessful()) {
-			status = PaymentDetailsStatus.SUCCESSFUL;
+			status = SUCCESSFUL;
 			paymentDetails.setDescriptionError(null);
 			paymentDetails.setErrorCode(null);
 		} else {
-			status = PaymentDetailsStatus.ERROR;
-			final String descriptionError = "Unexpected http status code ["+httpStatus+"] so the madeRetries willn't be incremented";
+			status = ERROR;
+			final String descriptionError = "Unexpected http status code ["+httpStatus+"] so the madeRetries won't be incremented";
 			submittedPayment.setDescriptionError(descriptionError);
 			paymentDetails.setDescriptionError(descriptionError);
 			paymentDetails.setErrorCode(null);
 			paymentDetails.decrementRetries();
 		}
 
-		if (submittedPayment.getExternalTxId() == null) {
+		if (isNull(submittedPayment.getExternalTxId())) {
 			submittedPayment.setExternalTxId("");
 		}
 		
 		// Store submitted payment
 		submittedPayment.setStatus(status);
 		paymentDetails.setLastPaymentStatus(status);
+        paymentDetails.checkAndIncrementMadeAttempts();
 		submittedPayment = entityService.updateEntity(submittedPayment); 
 		entityService.updateEntity(paymentDetails);
 		LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
 		
 		// Send sync-event about committed payment
-		if(submittedPayment.getStatus() == PaymentDetailsStatus.SUCCESSFUL)
+		if(submittedPayment.getStatus().equals(SUCCESSFUL)){
 			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
-        else {
+        }else {
+            paymentDetails.checkAndIncrementMadeAttempts();
             checkPaymentDetailsAndUnSubscribe(response, pendingPayment);
         }
 		
@@ -112,9 +117,9 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
         user.setCurrentPaymentDetails(newPaymentDetails);
         newPaymentDetails.setOwner(user);
         newPaymentDetails.setActivated(true);
-        newPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
+        newPaymentDetails.setLastPaymentStatus(NONE);
         newPaymentDetails.setRetriesOnError(getRetriesOnError());
-        newPaymentDetails.setMadeRetries(0);
+        newPaymentDetails.resetMadeAttempts();
 
         return paymentDetailsRepository.save(newPaymentDetails);
     }
@@ -162,8 +167,4 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-
-    public void setRefundService(RefundService refundService) {
-        this.refundService = refundService;
-    }
 }

@@ -5,7 +5,9 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus.SUCCESS;
@@ -24,6 +27,8 @@ import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.U
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.VALIDATE_PHONE_NUMBER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -265,20 +270,27 @@ public class UserRepositoryIT {
 	public void testGetUsersForRetryPayment_MadeRetriesNotEqRetriesOnError_Success() throws Exception {
 		
 		int epochSeconds = getEpochSeconds();
+
+        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		
 		User testUser = UserFactory.createUser();
 		testUser.setNextSubPayment(epochSeconds + DAY_SECONDS);
 		testUser.setLastDeviceLogin(epochSeconds);
+        testUser.setSubBalance(0);
+        testUser.setUserGroup(o2UserGroup);
 
 		testUser = userRepository.save(testUser);
+
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withAfterNextSubPaymentSeconds(100).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withSubCost(BigDecimal.ONE).withTariff(_3G));
 		
 		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
 		currentO2PaymentDetails.setActivated(true);
 		currentO2PaymentDetails.setOwner(testUser);
-		currentO2PaymentDetails.setMadeRetries(0);
+		currentO2PaymentDetails.resetMadeAttempts();
 		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
 		currentO2PaymentDetails.setRetriesOnError(3);
+        currentO2PaymentDetails.setPaymentPolicy(paymentPolicy);
 
 		currentO2PaymentDetails = paymentDetailsRepository.save(currentO2PaymentDetails);
 		
@@ -312,7 +324,7 @@ public class UserRepositoryIT {
 
 		currentO2PaymentDetails.setActivated(true);
 		currentO2PaymentDetails.setOwner(testUser);
-		currentO2PaymentDetails.setMadeRetries(3);
+		currentO2PaymentDetails.withMadeRetries(3);
 		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
 		currentO2PaymentDetails.setRetriesOnError(3);
 
@@ -329,9 +341,9 @@ public class UserRepositoryIT {
 	}
 	
 	@Test
-	public void testGetUsersForRetryPayment_O2CommunityUserWithActivatePaymentDetailsAndActivatePaymentDetailsAndNextSubPaymentInThePastAndMadeRetriesEqRetriesOnError_Success() throws Exception {
+	public void testGetUsersForRetryPayment_O2CommunityUserWithActivatePaymentDetailsAndNextSubPaymentInThePastAndMadeRetriesEqRetriesOnErrorAndMadeAttemptsIs1_Success() throws Exception {
 		
-		int epochSeconds = getEpochSeconds();
+		int epochSeconds = getEpochSeconds()-1;
 		
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		
@@ -341,14 +353,18 @@ public class UserRepositoryIT {
 		testUser.setUserGroup(o2UserGroup);
 
 		testUser = userRepository.save(testUser);
-		
+
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withAfterNextSubPaymentSeconds(100).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withSubCost(BigDecimal.ONE).withTariff(_3G));
+
 		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
+        currentO2PaymentDetails.setPaymentPolicy(paymentPolicy);
 		currentO2PaymentDetails.setActivated(true);
 		currentO2PaymentDetails.setOwner(testUser);
-		currentO2PaymentDetails.setMadeRetries(3);
+		currentO2PaymentDetails.withMadeRetries(3);
 		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
 		currentO2PaymentDetails.setRetriesOnError(3);
+        currentO2PaymentDetails.withMadeAttempts(1);
 
 		currentO2PaymentDetails = paymentDetailsRepository.save(currentO2PaymentDetails);
 		
@@ -388,15 +404,16 @@ public class UserRepositoryIT {
 	
 	@Test
 	public void testGetUsersForPendingPayment_O2_O2_CONSUMER_PSMS_Success() throws Exception {
-		
-		int epochSeconds = getEpochSeconds();
-		
+        //given
+        int epochSeconds = getEpochSeconds()-1;
+
 		UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 		
 		User testUser = UserFactory.createUser();
 		testUser.setNextSubPayment(epochSeconds);
 		testUser.setLastDeviceLogin(epochSeconds);
 		testUser.setUserGroup(o2UserGroup);
+        testUser.setSubBalance(0);
 		
 		testUser = userRepository.save(testUser);
 		
@@ -406,7 +423,7 @@ public class UserRepositoryIT {
 		
 		currentO2PaymentDetails.setActivated(true);
 		currentO2PaymentDetails.setOwner(testUser);
-		currentO2PaymentDetails.setMadeRetries(0);
+		currentO2PaymentDetails.withMadeRetries(0);
 		currentO2PaymentDetails.setPaymentPolicy(paymentPolicy);
 		currentO2PaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
 		currentO2PaymentDetails.setRetriesOnError(3);
@@ -416,12 +433,14 @@ public class UserRepositoryIT {
 		testUser.setCurrentPaymentDetails(currentO2PaymentDetails);
 		
 		testUser = userRepository.save(testUser);
-		
+
+        //when
 		List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds);
-		
+
+        //then
 		assertNotNull(actualUsers);
-		assertEquals(2, actualUsers.size());
-		assertEquals(testUser.getId(), actualUsers.get(1).getId());
+		assertThat(actualUsers.size(), is(2));
+        assertThat(actualUsers.get(1).getId(), is(testUser.getId()));
 	}
 
     @Test

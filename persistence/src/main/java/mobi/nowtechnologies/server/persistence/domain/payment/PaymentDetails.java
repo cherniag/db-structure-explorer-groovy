@@ -68,11 +68,18 @@ public class PaymentDetails {
     @Column(name = "last_failed_payment_notification_millis", nullable = true)
     private Long lastFailedPaymentNotificationMillis;
 
+    @Column(name = "made_attempts", nullable = false)
+    private int madeAttempts;
+
 	public void incrementRetries() {
 		this.madeRetries++;
-	}
-	
-	public void decrementRetries() {
+    }
+
+    public void checkAndIncrementMadeAttempts() {
+        if (madeRetries==retriesOnError) madeAttempts++;
+    }
+
+    public void decrementRetries() {
 		if (madeRetries > 0) {
 			this.madeRetries--;
 		}
@@ -88,10 +95,6 @@ public class PaymentDetails {
 
 	public int getMadeRetries() {
 		return madeRetries;
-	}
-
-	public void setMadeRetries(int madeRetries) {
-		this.madeRetries = madeRetries;
 	}
 
 	public PaymentDetailsStatus getLastPaymentStatus() {
@@ -238,8 +241,22 @@ public class PaymentDetails {
         return this;
     }
 
+    public PaymentDetails withMadeAttempts(int madeAttempts){
+        this.madeAttempts = madeAttempts;
+        return this;
+    }
+
     public boolean shouldBeUnSubscribed() {
         return !hasMoreAttemptRetries() && isAfterPaymentPolicyNextSubPayment();
+    }
+
+    public void resetMadeAttempts(){
+        this.madeAttempts=0;
+        resetMadeRetries();
+    }
+
+    public void resetMadeRetries(){
+        this.madeRetries=0;
     }
 
     private boolean hasMoreAttemptRetries() {
@@ -252,10 +269,19 @@ public class PaymentDetails {
         return epochSeconds > owner.getNextSubPayment() + afterNextSubPaymentSeconds;
     }
 
+    public void calcMadeRetriesForAttempt() {
+        if (madeRetries == retriesOnError) {
+            madeRetries=1;
+        } else {
+            incrementRetries();
+        }
+    }
+
     @Override
 	public String toString() {
         return new ToStringBuilder(this)
                 .append("i", i)
+                .append("madeAttempts", madeAttempts)
                 .append("madeRetries", madeRetries)
                 .append("retriesOnError", retriesOnError)
                 .append("lastPaymentStatus", lastPaymentStatus)
