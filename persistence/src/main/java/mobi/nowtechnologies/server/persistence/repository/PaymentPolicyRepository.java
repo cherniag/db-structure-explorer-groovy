@@ -28,14 +28,8 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
 			"and paymentPolicy.appStoreProductId=?2")
 	PaymentPolicy findByCommunityAndAppStoreProductId(Community community, String appStoreProductId);
 
-	@Query(value="select paymentPolicy from PaymentPolicy paymentPolicy "+
-			"where paymentPolicy.community=?1 " +
-			"and paymentPolicy.paymentType=?2")
-	List<PaymentPolicy> getPaymentPoliciesByPaymentType(Community community, String paymentType);
-
     @Query(value="select p from PaymentPolicy p "+
-            "where p.community=?1 and p.segment is null "
-            )
+            "where p.community=?1 and p.segment is null ")
     List<PaymentPolicy> getPaymentPoliciesWithOutSegment(Community community);
     
     @Query(value="select p from PaymentPolicy p "+
