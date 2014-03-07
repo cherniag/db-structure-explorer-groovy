@@ -80,7 +80,7 @@ public class PaymentsControllerIT{
         List<PaymentPolicyDto> paymentPolicies = paymentsPage.getPaymentPolicies();
 
         assertEquals("payments", viewName);
-        assertEquals(6, paymentPolicies.size());
+        assertEquals(7, paymentPolicies.size());
     }
 
     @Test
