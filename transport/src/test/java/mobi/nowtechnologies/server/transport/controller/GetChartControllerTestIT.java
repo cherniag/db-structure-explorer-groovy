@@ -1,22 +1,18 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.MediaFile;
-import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
-import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.NotTransactional;
 import org.springframework.test.web.servlet.ResultActions;
 
+import javax.annotation.Resource;
+
 import static junit.framework.Assert.assertTrue;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.MQ_COMMUNITY_REWRITE_URL;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,23 +20,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
-    @Autowired
+    @Resource
     private ChartRepository chartRepository;
 
-    @Autowired
+    @Resource
     private ChartDetailRepository chartDetailRepository;
 
-    @Autowired
+    @Resource
     private CommunityRepository communityRepository;
 
-    @Autowired
+    @Resource
     private MediaFileRepository mediaFileRepository;
+
+    @Resource
+    private UserRepository userRepository;
+
+    @Resource
+    private UserGroupRepository userGroupRepository;
 
     @Test
     public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-        String apiVersion = "5.1";
+        String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -153,7 +155,6 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
-    @NotTransactional
     public void testGetChart_O2_v3d6_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
@@ -271,6 +272,43 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isNotFound());
     }
 
+
+    @Test
+    public void tesGetChartForMQApp() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "5.2";
+        String communityUrl = "mq";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        Community mqCommunity = communityRepository.findByRewriteUrlParameter(MQ_COMMUNITY_REWRITE_URL);
+        Community o2Community = communityRepository.findByRewriteUrlParameter(O2_COMMUNITY_REWRITE_URL);
+        UserGroup mqUserGroup = userGroupRepository.findByCommunity(mqCommunity);
+        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, o2Community);
+        user.setUserGroup(mqUserGroup);
+        userRepository.saveAndFlush(user);
+        generateChartAllTypesForMQ();
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("APP_VERSION", apiVersion)
+                        .param("API_VERSION", apiVersion)
+                        .param("COMMUNITY_NAME", apiVersion)
+        ).andDo(print())
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(xpath("//chart/playlist").nodeCount(6))
+                .andExpect(xpath("//chart/playlist[type/text()='HOT_TRACKS']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='FIFTH_CHART']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='MQ_PLAYLIST_1']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='MQ_PLAYLIST_2']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1));
+    }
+
     private void generateChartAllTypesForO2() {
         Community o2Community = communityRepository.findOne(7);
         Chart chart = chartRepository.findOne(5);
@@ -360,5 +398,23 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         MediaFile videoFile = chartDetail.getMedia().getAudioFile();
         videoFile.setDuration(10000);
         mediaFileRepository.save(videoFile);
+    }
+
+
+    private void generateChartAllTypesForMQ() {
+        Chart chart = chartRepository.findOne(14);
+        ChartDetail chartDetail = chartDetailRepository.findOne(22);
+        ChartDetail hotDetail = new ChartDetail();
+        hotDetail.setChart(chart);
+        hotDetail.setChannel("chanell");
+        hotDetail.setMedia(chartDetail.getMedia());
+        hotDetail.setPosition(chartDetail.getPosition());
+        hotDetail.setPrevPosition(chartDetail.getPrevPosition());
+        hotDetail.setChgPosition(chartDetail.getChgPosition());
+        hotDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
+        chartDetailRepository.saveAndFlush(hotDetail);
+        MediaFile videoFile = chartDetail.getMedia().getAudioFile();
+        videoFile.setDuration(10000);
+        mediaFileRepository.saveAndFlush(videoFile);
     }
 }

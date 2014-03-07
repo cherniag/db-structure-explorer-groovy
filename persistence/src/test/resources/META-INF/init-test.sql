@@ -1,5 +1,5 @@
 insert into tb_appVersions ( description, name) values( 'Development Environment', 'CBEMA'), ('Commercial Beta', 'CNBETA');
-INSERT INTO `tb_communities` (`id`, `name`, `appVersion`, `communityTypeID`, `displayName`, `assetName`, `rewriteURLParameter`) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment'),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting'),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow'),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer'),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40'),(6,'OCC',1,6,'OCC','occ','occ'),(7,'o2',1,7,'o2','o2','o2'),(8,'vf_nz',1,8,'vf_nz','vf_nz','vf_nz');
+INSERT INTO `tb_communities` (`id`, `name`, `appVersion`, `communityTypeID`, `displayName`, `assetName`, `rewriteURLParameter`) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment'),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting'),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow'),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer'),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40'),(6,'OCC',1,6,'OCC','occ','occ'),(7,'o2',1,7,'o2','o2','o2'),(8,'vf_nz',1,8,'vf_nz','vf_nz','vf_nz'), (9,'mq',1,8,'mq','mq','mq');
 
 INSERT INTO `tb_deviceTypes` (`i`, `name`)  VALUES (1,'NONE'),(2,'ANDROID'),(3,'J2ME'),(4,'BLACKBERRY'),(5,'IOS'),(6,'SYMBIAN'),(7,'WINDOWS_PHONE');
 
@@ -23,6 +23,12 @@ insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, typ
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (8,'Default Chart',20,1,1317281215,0, 'HOT_TRACKS');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (9,'The Heavy List',20,1,1317107880,0, 'HOT_TRACKS');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (10,'Default Chart',21,1,1321452650,6, 'HOT_TRACKS');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (11,'Default Chart',21,1,1321452650,6, 'HOT_TRACKS');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (12,'Default Chart',21,1,1321452650,6, 'FOURTH_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (13,'Default Chart',21,1,1321452650,6, 'FIFTH_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (14,'Default Chart',21,1,1321452650,6, 'MQ_PLAYLIST_1');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (15,'Default Chart',21,1,1321452650,6, 'MQ_PLAYLIST_2');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (16,'Default Chart',21,1,1321452650,6, 'OTHER_CHART');
 
 insert into community_charts (chart_id, community_id) values (1,1);
 insert into community_charts (chart_id, community_id) values (1,2);
@@ -37,6 +43,12 @@ insert into community_charts (chart_id, community_id) values (7,2);
 insert into community_charts (chart_id, community_id) values (8,3);
 insert into community_charts (chart_id, community_id) values (9,4);
 insert into community_charts (chart_id, community_id) values (10,5);
+insert into community_charts (chart_id, community_id) values (11,9);
+insert into community_charts (chart_id, community_id) values (12,9);
+insert into community_charts (chart_id, community_id) values (13,9);
+insert into community_charts (chart_id, community_id) values (14,9);
+insert into community_charts (chart_id, community_id) values (15,9);
+insert into community_charts (chart_id, community_id) values (16,9);
 
 insert into tb_files (i, filename, size, fileType, version, duration) values (1894,'US-UM7-11-00061.aud',1464070,2,1, 0);
 insert into tb_files (i, filename, size, fileType, version, duration) values (1893,'US-UM7-11-00061.hdr',162676,1,666, 0);
@@ -223,7 +235,7 @@ insert into `tb_drmTypes` (i, name) values (1,'PLAYS'),(2,'TIME'),(3,'PURCHASED'
 
 insert into `tb_drmPolicy` (i, name, drmType, drmValue, community) values (1,'Default Policy',1,100,1),(2,'Default Policy',1,100,2),(3,'Default Policy',1,100,3),(5,'Default Policy',1,100,4),(6,'Default Policy',1,100,5);
 
-insert into tb_userGroups (id, name, community, chart, news, drmPolicy) values (1,'Default Group',1,1,1,1),(2,'Default Group',2,2,2,2),(3,'Default Group',3,3,3,3),(4,'Default Group',4,4,4,5),(5,'Default Group',5,5,5,3),(6,'Default Group',6,5,5,3),(7,'O2 Group',7,5,5,3),(8,'VF New Zealand Group',8,5,5,3);
+insert into tb_userGroups (id, name, community, chart, news, drmPolicy) values (1,'Default Group',1,1,1,1),(2,'Default Group',2,2,2,2),(3,'Default Group',3,3,3,3),(4,'Default Group',4,4,4,5),(5,'Default Group',5,5,5,3),(6,'Default Group',6,5,5,3),(7,'O2 Group',7,5,5,3),(8,'VF New Zealand Group',8,5,5,3), (9,'MQ Group',9,5,5,3);
 
 INSERT INTO `tb_operators` (`i`,`name`, `migName`) VALUES (1,'Orange UK','MIG01OU'),(2,'Vodafone UK','MIG00VU'),(3,'O2 UK','MIG01XU'),(4,'T-Mobile UK','MIG01TU'),(5,'Three UK','MIG01HU'),(6,'ASDA Mobile','Not Specified'),(7,'BT','Not Specified'),(8,'Giffgaff','Not Specified'),(9,'IDT Mobile','Not Specified'),(10,'Talkmobile','Not Specified'),(11,'TalkTalk','Not Specified'),(12,'Tesco Mobile','Not Specified'),(13,'Truphone','Not Specified'),(14,'Virgin Mobile','Not Specified');
 

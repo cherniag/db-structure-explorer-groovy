@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -18,6 +19,9 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.enums.ChartType.HOT_TRACKS;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.MQ_PLAYLIST_1;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.MQ_PLAYLIST_2;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Entity
@@ -32,6 +36,9 @@ public class ChartDetail {
 	public static final String NQ_FIND_CONTENT_INFO_BY_ISRC = "ChartDetail.findContentInfoByIsrc";
 
     private static final Map<String, String> countryCodeForCommunityMap;
+
+    private static List<ChartType> hotTracksChartWithSameBehaviour = Lists.newArrayList(HOT_TRACKS,
+            MQ_PLAYLIST_1, MQ_PLAYLIST_2);
 
     static {
         Map<String, String> map = new HashMap<String, String>();
@@ -294,7 +301,7 @@ public class ChartDetail {
         int headerSize = media.getHeaderSize();
         ChartType chartType = chart.getType();
 
-        byte pos = chartType == ChartType.HOT_TRACKS && position <= 40 ? (byte) (position + 40) : position;
+        byte pos = hotTracksChartWithSameBehaviour.contains(chartType) && position <= 40 ? (byte) (position + 40) : position;
         pos = chartType == ChartType.OTHER_CHART && position <= 50 ? (byte) (position + 50) : pos;
 
         chartDetailDto.setPosition(pos);
