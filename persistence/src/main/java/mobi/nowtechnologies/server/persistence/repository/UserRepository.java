@@ -83,7 +83,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 			"join ug.community c "+
             "join pd.paymentPolicy pp " +
 			"where "+
-			"u.subBalance=0 and u.nextSubPayment<=(?1+pp.advancedPaymentSeconds) "+
+			"u.subBalance=0 " +
+            "and u.nextSubPayment<=(?1+pp.advancedPaymentSeconds) "+
 			"and (pd.lastPaymentStatus='NONE' or  pd.lastPaymentStatus='SUCCESSFUL') "+
 			"and pd.activated=true "+
 			"and u.lastDeviceLogin!=0")
@@ -97,7 +98,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             + "join pd.paymentPolicy pp "
     		+ "where "
     		+ "(pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
-    		+ "and (pd.madeRetries<pd.retriesOnError or (u.nextSubPayment<=?1 and pd.madeAttempts=1 and pp.advancedPaymentSeconds>0) or (u.nextSubPayment+pp.afterNextSubPaymentSeconds)<=?1 ) "
+    		+ "and (" +
+            "   (pd.madeRetries<pd.retriesOnError and u.nextSubPayment<=?1+ pp.advancedPaymentSeconds and pp.advancedPaymentSeconds>0 and pd.madeAttempts=0) " +
+            "   or (pd.madeRetries<pd.retriesOnError and u.nextSubPayment<=?1 and (pd.madeAttempts=0 or pd.madeAttempts=1)) " +
+            "   or ((u.nextSubPayment+pp.afterNextSubPaymentSeconds)<=?1 and pp.afterNextSubPaymentSeconds>0)" +
+            ") "
     		+ "and pd.activated=true "
     		+ "and u.lastDeviceLogin!=0")
     @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")})

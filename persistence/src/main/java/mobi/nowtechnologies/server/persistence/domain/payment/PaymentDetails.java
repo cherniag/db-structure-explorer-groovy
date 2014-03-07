@@ -71,12 +71,13 @@ public class PaymentDetails {
     @Column(name = "made_attempts", nullable = false)
     private int madeAttempts;
 
-	private void incrementRetries() {
+	public void incrementRetries() {
 		this.madeRetries++;
     }
 
     public void checkAndIncrementMadeAttempts() {
         if (madeRetries==retriesOnError) madeAttempts++;
+        resetMadeRetries();
     }
 
     public void decrementRetries() {
@@ -201,6 +202,11 @@ public class PaymentDetails {
 		return paymentDetailsByPaymentDto;
 	}
 
+    public PaymentDetails withLastPaymentStatus(PaymentDetailsStatus lastPaymentStatus){
+        setLastPaymentStatus(lastPaymentStatus);
+        return this;
+    }
+
     public PaymentDetails withPaymentPolicy(PaymentPolicy paymentPolicy){
         setPaymentPolicy(paymentPolicy);
         return this;
@@ -255,7 +261,7 @@ public class PaymentDetails {
         resetMadeRetries();
     }
 
-    public void resetMadeRetries(){
+    private void resetMadeRetries(){
         this.madeRetries=0;
     }
 
@@ -267,14 +273,6 @@ public class PaymentDetails {
         int epochSeconds = Utils.getEpochSeconds();
         int afterNextSubPaymentSeconds = paymentPolicy.getAfterNextSubPaymentSeconds();
         return epochSeconds > owner.getNextSubPayment() + afterNextSubPaymentSeconds;
-    }
-
-    public void calcMadeRetriesForAttempt() {
-        if (madeRetries == retriesOnError) {
-            madeRetries=1;
-        } else {
-            incrementRetries();
-        }
     }
 
     @Override

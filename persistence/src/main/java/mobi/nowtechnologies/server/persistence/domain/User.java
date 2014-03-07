@@ -1414,6 +1414,16 @@ public class User implements Serializable {
         return this;
     }
 
+    public User withSubBalance(byte subBalance) {
+        this.subBalance=subBalance;
+        return this;
+    }
+
+    public User withLastDeviceLogin(int lastDeviceLogin) {
+        this.lastDeviceLogin=lastDeviceLogin;
+        return this;
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

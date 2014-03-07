@@ -31,6 +31,8 @@ public class PaymentPolicy {
 
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
 
+
+
     public static enum Fields {
         communityId
     }
