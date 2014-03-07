@@ -58,7 +58,7 @@ public class FacebookService {
         details.setSurname(profile.getLastName());
         details.setFacebookId(profile.getId());
         details.setUserName(profile.getUsername());
-        details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture");
+        details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture?type=large");
         details.setUser(user);
         Reference loc = profile.getLocation();
         if (loc != null) {

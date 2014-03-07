@@ -208,7 +208,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(xpath(facebookElementXPath + "/firstName").string(firstName))
                 .andExpect(xpath(facebookElementXPath + "/surname").string(lastName))
                 .andExpect(xpath(facebookElementXPath + "/userName").string(userName))
-                .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture"))
+                .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture?type=large"))
                 .andExpect(xpath(facebookElementXPath + "/location").string(locationInResponse));
     }
 
@@ -227,7 +227,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(xpath(facebookElementXPath + "/firstName").string(firstName))
                 .andExpect(xpath(facebookElementXPath + "/surname").string(lastName))
                 .andExpect(xpath(facebookElementXPath + "/userName").string(userName))
-                .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture"))
+                .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture?type=large"))
                 .andExpect(xpath(facebookElementXPath + "/location").string(locationInResponse));
     }
 
@@ -271,7 +271,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath(facebookElementJsonPath + ".surname").value(lastName))
                 .andExpect(jsonPath(facebookElementJsonPath + ".userName").value(userName))
                 .andExpect(jsonPath(facebookElementJsonPath + ".location").value(locationInResponse))
-                .andExpect(jsonPath(facebookElementJsonPath + ".profileUrl").value("https://graph.facebook.com/" + userName + "/picture"))
+                .andExpect(jsonPath(facebookElementJsonPath + ".profileUrl").value("https://graph.facebook.com/" + userName + "/picture?type=large"))
                 .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true));
 
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
