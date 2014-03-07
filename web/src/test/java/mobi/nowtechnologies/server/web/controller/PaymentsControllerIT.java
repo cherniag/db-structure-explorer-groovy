@@ -34,6 +34,7 @@ import static junit.framework.Assert.assertEquals;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,21 +60,16 @@ public class PaymentsControllerIT{
     @Resource
     private UserRepository userRepository;
 
-    /**
-     * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
-     *
-     */
-    @SuppressWarnings({ "unchecked" })
     @Test
     public void testGetManagePaymentsPage_nonO2User_Successful()
             throws Exception {
         String communityUrl = "o2";
 
-        SecurityContextHolder.setContext(createSecurityContext(1));
+        SecurityContextHolder.setContext(createSecurityContext(107));
 
         ResultActions resultActions = mockMvc.perform(
                 get("/payments.html")
-                        .cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
+                        .cookie(new Cookie[]{new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
                 .andExpect(status().isOk()).andDo(print());
 
         ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
@@ -87,11 +83,6 @@ public class PaymentsControllerIT{
         assertEquals(6, paymentPolicies.size());
     }
 
-    /**
-     * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
-     *
-     */
-    @SuppressWarnings({ "unchecked" })
     @Test
     public void testGetManagePaymentsPage_O2UserDTB_Successful()
             throws Exception {
@@ -101,7 +92,7 @@ public class PaymentsControllerIT{
 
         ResultActions resultActions = mockMvc.perform(
                 get("/payments.html")
-                        .cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
+                        .cookie(new Cookie[]{new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
                 .andExpect(status().isOk());
 
         ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
@@ -114,14 +105,8 @@ public class PaymentsControllerIT{
 
         assertEquals("payments", viewName);
         assertEquals(2, paymentPolicies.size());
-
     }
 
-    /**
-     * Run the ModelAndView getManagePaymentsPage(Cookie communityUrl) method test with success expected result.
-     *
-     */
-    @SuppressWarnings({ "unchecked" })
     @Test
     public void testGetManagePaymentsPage_O2UserNonDTB_Successful()
             throws Exception {
@@ -131,7 +116,7 @@ public class PaymentsControllerIT{
 
         ResultActions resultActions = mockMvc.perform(
                 get("/payments.html")
-                        .cookie(new Cookie[]{new Cookie(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
+                        .cookie(new Cookie[]{new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
                 .andExpect(status().isOk());
 
         ModelAndView modelAndView = resultActions.andReturn().getModelAndView();
@@ -146,16 +131,12 @@ public class PaymentsControllerIT{
         assertEquals(1, paymentPolicies.size());
     }
 
-
     @Before
     public void setUp()
             throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup( this.wac).build();
     }
 
-    /**
-     * generate test data
-     */
     private SecurityContext createSecurityContext(int userId) {
         User user = userRepository.findOne(userId);
         if ( userId == 101 ) {
