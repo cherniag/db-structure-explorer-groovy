@@ -11,8 +11,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import javax.annotation.Resource;
 
 import static junit.framework.Assert.assertTrue;
-import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.MQ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,7 +42,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-        String apiVersion = "6.0";
+        String apiVersion = "5.1";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
