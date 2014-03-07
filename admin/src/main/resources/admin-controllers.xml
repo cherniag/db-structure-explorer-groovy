@@ -54,6 +54,8 @@
 				<entry key ="FOURTH_CHART" value="chartItems/hotTracksCalendar"/>
 				<entry key ="FIFTH_CHART" value="chartItems/hotTracksCalendar"/>
                 <entry key ="VIDEO_CHART" value="chartItems/hotTracksCalendar"/>
+                <entry key ="MQ_PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
+                <entry key ="MQ_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
 			</map>
 		</property>	
 	</bean>
@@ -70,6 +72,8 @@
 				<entry key ="FOURTH_CHART" value="chartItems/hotTracks"/>
 				<entry key ="FIFTH_CHART" value="chartItems/hotTracks"/>
 				<entry key ="VIDEO_CHART" value="chartItems/hotTracks"/>
+                <entry key ="MQ_PLAYLIST_1" value="chartItems/hotTracks"/>
+                <entry key ="MQ_PLAYLIST_2" value="chartItems/hotTracks"/>
 			</map>
 		</property>		    
 	</bean>
