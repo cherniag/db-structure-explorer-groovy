@@ -80,7 +80,6 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		// Store submitted payment
 		submittedPayment.setStatus(status);
 		paymentDetails.setLastPaymentStatus(status);
-        paymentDetails.checkAndIncrementMadeAttempts();
 		submittedPayment = entityService.updateEntity(submittedPayment);
 		entityService.updateEntity(paymentDetails);
 		LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
@@ -91,6 +90,9 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
         }else {
             checkPaymentDetailsAndUnSubscribe(response, pendingPayment);
         }
+
+        paymentDetails.checkAndIncrementMadeAttempts();
+        entityService.updateEntity(paymentDetails);
 		
 		// Deleting pending payment
 		entityService.removeEntity(PendingPayment.class, pendingPayment.getI());
