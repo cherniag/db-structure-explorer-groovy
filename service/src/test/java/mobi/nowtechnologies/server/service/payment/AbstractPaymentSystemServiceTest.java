@@ -116,7 +116,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, paymentDetails.getLastPaymentStatus());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
+		Mockito.verify(mockEntityService, times(2)).updateEntity(paymentDetails);
 		Mockito.verify(mockApplicationEventPublisher, times(1)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
@@ -177,7 +177,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
+		Mockito.verify(mockEntityService, times(2)).updateEntity(paymentDetails);
 		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
@@ -316,7 +316,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(descriptionError, paymentDetails.getDescriptionError());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
-		Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
+		Mockito.verify(mockEntityService, times(2)).updateEntity(paymentDetails);
 		Mockito.verify(mockApplicationEventPublisher, times(0)).publishEvent(Mockito.argThat(applicationEventPublisherMatcher));
 		Mockito.verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
 		
