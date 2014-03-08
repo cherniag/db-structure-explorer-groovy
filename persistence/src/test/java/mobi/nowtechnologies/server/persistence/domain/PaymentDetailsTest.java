@@ -89,7 +89,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs1AndAfterNextSubPaymentSecondsIs0AndMadeAttemptsIs1(){
+    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIs0AndMadeAttemptsIs1(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(0));
@@ -115,7 +115,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIs1AndMadeAttemptsIs0(){
+    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs0(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
                 .withAfterNextSubPaymentSeconds(1));
@@ -128,7 +128,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIs1AndMadeAttemptsIs1(){
+    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs1(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
                 .withAfterNextSubPaymentSeconds(1));
@@ -141,7 +141,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIs1AndMadeAttemptsIs2(){
+    public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs2(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
                 .withAfterNextSubPaymentSeconds(1));
@@ -154,7 +154,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs1AndAfterNextSubPaymentSecondsIs1AndMadeAttemptsIs0(){
+    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs0(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
@@ -167,7 +167,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs1AndAfterNextSubPaymentSecondsIs1AndMadeAttemptsIs1(){
+    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs1(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
@@ -180,7 +180,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs1AndAfterNextSubPaymentSecondsIs1AndMadeAttemptsIs2(){
+    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs2(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
@@ -193,7 +193,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs1AndAfterNextSubPaymentSecondsIs1AndMadeAttemptsIs3(){
+    public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs3(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(3).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
