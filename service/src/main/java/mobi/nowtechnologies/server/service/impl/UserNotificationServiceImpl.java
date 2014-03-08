@@ -415,7 +415,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             final int madeRetries = paymentDetails.getMadeRetries();
             final int retriesOnError = paymentDetails.getRetriesOnError();
 
-            if (madeRetries == retriesOnError) {
+            if (paymentDetails.isCurrentAttemptFailed()) {
                 if (!rejectDevice(user, "sms.notification.paymentFail.at." + hoursBefore + "h.not.for.device.type")) {
                     wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[]{paymentsUrl});
 

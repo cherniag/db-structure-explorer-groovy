@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "paymentType", discriminatorType = DiscriminatorType.STRING)
@@ -77,7 +79,7 @@ public class PaymentDetails {
 
     public int incrementMadeAttemptsAccordingToMadeRetries() {
         if (madeRetries==retriesOnError) {
-            madeAttempts++;
+            incrementMadeAttempts();
             resetMadeRetries();
         }else {
             incrementRetries();
@@ -85,7 +87,11 @@ public class PaymentDetails {
         return madeAttempts;
     }
 
-	public Long getI() {
+    private void incrementMadeAttempts() {
+        madeAttempts++;
+    }
+
+    public Long getI() {
 		return i;
 	}
 
@@ -286,6 +292,10 @@ public class PaymentDetails {
 
     private boolean areAll3AttemptsSpent() {
         return madeAttempts == 3;
+    }
+
+    public boolean isCurrentAttemptFailed(){
+        return madeAttempts>0 && madeRetries==0 && lastPaymentStatus.equals(ERROR);
     }
 
     @Override
