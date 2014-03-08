@@ -71,13 +71,17 @@ public class PaymentDetails {
     @Column(name = "made_attempts", nullable = false)
     private int madeAttempts;
 
-	public void incrementRetries() {
+	private void incrementRetries() {
 		this.madeRetries++;
     }
 
-    public int checkAndIncrementMadeAttempts() {
-        if (madeRetries==retriesOnError) madeAttempts++;
-        resetMadeRetries();
+    public int incrementMadeAttemptsAccordingToMadeRetries() {
+        if (madeRetries==retriesOnError) {
+            madeAttempts++;
+            resetMadeRetries();
+        }else {
+            incrementRetries();
+        }
         return madeAttempts;
     }
 
@@ -271,7 +275,11 @@ public class PaymentDetails {
     }
 
     private boolean hasMoreAttemptRetries() {
-        return areAll3AttemptsSpent() || areAll2AttemptsSpent() || all1AttemptRetriesAreSpent();
+        return areAll3AttemptsSpent() || areAll2AttemptsSpent() || all1AttemptRetriesAreSpent()|| noRetriesOnError();
+    }
+
+    private boolean noRetriesOnError() {
+        return retriesOnError==0;
     }
 
     private boolean all1AttemptRetriesAreSpent() {

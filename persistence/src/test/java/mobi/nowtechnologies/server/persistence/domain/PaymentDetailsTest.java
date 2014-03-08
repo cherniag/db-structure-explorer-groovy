@@ -32,10 +32,11 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails = new PaymentDetails().withRetriesOnError(3).withMadeRetries(0);
 
         //when
-        int madeAttempts = paymentDetails.checkAndIncrementMadeAttempts();
+        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
         assertThat(madeAttempts, is(0));
+        assertThat(paymentDetails.getMadeRetries(), is(1));
     }
 
     @Test
@@ -44,10 +45,11 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails = new PaymentDetails().withRetriesOnError(3).withMadeRetries(2);
 
         //when
-        int madeAttempts = paymentDetails.checkAndIncrementMadeAttempts();
+        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
         assertThat(madeAttempts, is(0));
+        assertThat(paymentDetails.getMadeRetries(), is(3));
     }
 
     @Test
@@ -56,10 +58,11 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
 
         //when
-        int madeAttempts = paymentDetails.checkAndIncrementMadeAttempts();
+        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
         assertThat(madeAttempts, is(3));
+        assertThat(paymentDetails.getMadeRetries(), is(0));
     }
 
     @Test

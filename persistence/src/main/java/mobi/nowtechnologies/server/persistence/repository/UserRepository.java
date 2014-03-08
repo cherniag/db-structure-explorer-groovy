@@ -97,7 +97,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 			+ "join ug.community c "
             + "join pd.paymentPolicy pp "
     		+ "where "
-    		+ "(pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
+            + "pd.retriesOnError>0 "
+    		+ "and (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
     		+ "and (" +
             "   (pp.advancedPaymentSeconds>0 and pd.madeAttempts=0) " +
             "   or (u.nextSubPayment<=?1 and (pd.madeAttempts=0 or pd.madeAttempts=1)) " +

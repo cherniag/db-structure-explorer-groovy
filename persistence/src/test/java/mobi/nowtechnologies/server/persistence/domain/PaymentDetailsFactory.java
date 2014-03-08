@@ -16,7 +16,7 @@ public class PaymentDetailsFactory {
         return new PaymentDetails().withActivated(true).withLastPaymentStatus(NONE);
     }
 
-    public static PaymentDetails paymentDetailsWithActivatedTrueAndLastPaymentStatusError(){
-        return new PaymentDetails().withActivated(true).withLastPaymentStatus(ERROR);
+    public static PaymentDetails paymentDetailsWithActivatedTrueAndLastPaymentStatusErrorAndRetriesOnError3(){
+        return new PaymentDetails().withActivated(true).withLastPaymentStatus(ERROR).withRetriesOnError(3);
     }
 }

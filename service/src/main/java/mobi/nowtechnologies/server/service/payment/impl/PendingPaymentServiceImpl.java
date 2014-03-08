@@ -55,7 +55,6 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 				LOGGER.info("Creating pending payment for user {} with balance {}", user.getId(), user.getSubBalance());
 				PendingPayment pendingPayment = createPendingPayment(user, REGULAR);
 				pendingPayments.add(pendingPayment);
-				// While creating a pending payment we update last payment status for user to AWAITING
                 PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
                 currentPaymentDetails.setLastPaymentStatus(AWAITING);
                 currentPaymentDetails.resetMadeAttempts();
@@ -82,9 +81,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 			PendingPayment pendingPayment = createPendingPayment(user, RETRY);
 			retryPayments.add(pendingPayment);
 			PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-			// While creating a pending payment we update last payment status for user to AWAITING
 			currentPaymentDetails.setLastPaymentStatus(AWAITING);
-            currentPaymentDetails.incrementRetries();
             userService.updateUser(user);
 		}
 		return retryPayments;

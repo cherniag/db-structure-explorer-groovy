@@ -7,12 +7,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.RefundService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +18,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletResponse;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -60,17 +56,18 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			submittedPayment.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setErrorCode(response.getErrorCode());
+            paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 		} else if (response.isSuccessful()) {
 			status = SUCCESSFUL;
 			paymentDetails.setDescriptionError(null);
 			paymentDetails.setErrorCode(null);
+            paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 		} else {
 			status = ERROR;
 			final String descriptionError = "Unexpected http status code ["+httpStatus+"] so the madeRetries won't be incremented";
 			submittedPayment.setDescriptionError(descriptionError);
 			paymentDetails.setDescriptionError(descriptionError);
 			paymentDetails.setErrorCode(null);
-			paymentDetails.decrementRetries();
 		}
 
 		if (isNull(submittedPayment.getExternalTxId())) {
@@ -79,20 +76,18 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 		
 		// Store submitted payment
 		submittedPayment.setStatus(status);
-		paymentDetails.setLastPaymentStatus(status);
-		submittedPayment = entityService.updateEntity(submittedPayment);
-		entityService.updateEntity(paymentDetails);
-		LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
-		
+        submittedPayment = entityService.updateEntity(submittedPayment);
+        LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
+
+        paymentDetails.setLastPaymentStatus(status);
+        entityService.updateEntity(paymentDetails);
+
 		// Send sync-event about committed payment
 		if(submittedPayment.getStatus().equals(SUCCESSFUL)){
 			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
         }else {
             checkPaymentDetailsAndUnSubscribe(response, pendingPayment);
         }
-
-        paymentDetails.checkAndIncrementMadeAttempts();
-        entityService.updateEntity(paymentDetails);
 		
 		// Deleting pending payment
 		entityService.removeEntity(PendingPayment.class, pendingPayment.getI());
