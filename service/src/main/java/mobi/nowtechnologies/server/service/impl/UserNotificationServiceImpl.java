@@ -385,8 +385,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
 
             if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter())) {
-                int hoursBefore = pendingPayment.getUser().isBeforeExpiration(pendingPayment.getTimestamp(), 0) ? 0 : 24;
-                return new AsyncResult<Boolean>(sendPaymentFailSMS(paymentDetails, hoursBefore));
+                return new AsyncResult<Boolean>(sendPaymentFailSMS(paymentDetails));
             }else{
                 LOGGER.info("The payment fail sms for vf_nz community user wasn't sent cause it should be send between 8am and 8 pm by separate job");
             }
@@ -400,7 +399,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     @Override
     @Transactional
-    public boolean sendPaymentFailSMS(PaymentDetails paymentDetails, int hoursBefore) {
+    public boolean sendPaymentFailSMS(PaymentDetails paymentDetails) {
         try {
             LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
 
@@ -412,12 +411,11 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
             boolean wasSmsSentSuccessfully = false;
 
-            final int madeRetries = paymentDetails.getMadeRetries();
-            final int retriesOnError = paymentDetails.getRetriesOnError();
-
             if (paymentDetails.isCurrentAttemptFailed()) {
-                if (!rejectDevice(user, "sms.notification.paymentFail.at." + hoursBefore + "h.not.for.device.type")) {
-                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + hoursBefore + "h.text", new String[]{paymentsUrl});
+                int attempt = paymentDetails.getMadeAttempts();
+
+                if (!rejectDevice(user, "sms.notification.paymentFail.at." + attempt + "attempt.not.for.device.type")) {
+                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[]{paymentsUrl});
 
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The payment fail sms was sent successfully");
@@ -429,7 +427,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
                     LOGGER.info("The payment fail sms wasn't sent cause rejecting");
                 }
             } else {
-                LOGGER.info("The payment fail sms wasn't sent cause madeRetries [{}] and retriesOnError [{}] aren't matched", madeRetries, retriesOnError);
+                LOGGER.info("The payment fail sms wasn't sent cause current attempt isn't failed");
             }
             LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
             return wasSmsSentSuccessfully;

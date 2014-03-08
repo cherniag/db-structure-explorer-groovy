@@ -1185,10 +1185,6 @@ public class User implements Serializable {
         return currentPaymentDetails != null && PaymentDetailsStatus.AWAITING == currentPaymentDetails.getLastPaymentStatus();
     }
 
-    public boolean isBeforeExpiration(long timestamp, int hours) {
-        return nextSubPayment <= timestamp / 1000 + hours * 60 * 60;
-    }
-
     public ProviderType getProvider() {
         return provider;
     }

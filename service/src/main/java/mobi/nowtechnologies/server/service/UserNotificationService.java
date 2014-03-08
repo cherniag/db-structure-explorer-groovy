@@ -34,5 +34,5 @@ public interface UserNotificationService {
 
     Future<Boolean> sendActivationPinSMS(User user) throws UnsupportedEncodingException;
 
-    boolean sendPaymentFailSMS(PaymentDetails paymentDetails, int hoursBefore) throws UnsupportedEncodingException;
+    boolean sendPaymentFailSMS(PaymentDetails paymentDetails) throws UnsupportedEncodingException;
 }
