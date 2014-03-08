@@ -359,7 +359,9 @@ public class UserRepositoryIT {
 
 		testUser = userRepository.save(testUser);
 
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withAfterNextSubPaymentSeconds(100).withCommunity(o2UserGroup.getCommunity()).withAdvancedPaymentSeconds(1));
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields().withAfterNextSubPaymentSeconds(100)
+                .withCommunity(o2UserGroup.getCommunity())
+                .withAdvancedPaymentSeconds(1));
 
 		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
