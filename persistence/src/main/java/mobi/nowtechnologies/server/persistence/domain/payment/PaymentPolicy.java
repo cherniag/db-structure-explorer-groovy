@@ -424,6 +424,46 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withShortCode(String shortCode){
+        this.shortCode = shortCode;
+        return this;
+    }
+
+    public PaymentPolicy withOperator(Operator operator){
+        this.operator = operator;
+        return this;
+    }
+
+    public PaymentPolicy withCurrencyISO(String currencyISO) {
+        this.currencyISO = currencyISO;
+        return this;
+    }
+
+    public PaymentPolicy withAppStoreProductId(String appStoreProductId) {
+        this.appStoreProductId = appStoreProductId;
+        return this;
+    }
+
+    public PaymentPolicy withContentCategory(String contentCategory) {
+        this.contentCategory = contentCategory;
+        return this;
+    }
+
+    public PaymentPolicy withContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public PaymentPolicy withContentDescription(String contentDescription) {
+        this.contentDescription = contentDescription;
+        return this;
+    }
+
+    public PaymentPolicy withSubMerchantId(String subMerchantId) {
+        this.subMerchantId = subMerchantId;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

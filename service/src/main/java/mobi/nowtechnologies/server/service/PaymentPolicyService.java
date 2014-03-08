@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
@@ -72,7 +74,7 @@ public class PaymentPolicyService {
 	
 	public PaymentPolicyDto getPaymentPolicy(PaymentPolicy paymentPolicy, PromotionPaymentPolicy promotionPaymentPolicy) {
 		PaymentPolicyDto dto = null;
-		if (null != paymentPolicy) {
+		if (isNotNull(paymentPolicy)) {
 			dto = new PaymentPolicyDto(paymentPolicy, promotionPaymentPolicy);
 		}
 		return dto;
