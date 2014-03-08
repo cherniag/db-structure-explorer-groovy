@@ -234,8 +234,9 @@ public class O2PaymentServiceImplTest {
         final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 
         o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
-        o2psmsPaymentDetails.withMadeRetries(Integer.MAX_VALUE);
+        o2psmsPaymentDetails.withMadeRetries(0);
         o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
+        o2psmsPaymentDetails.withMadeAttempts(1);
         o2psmsPaymentDetails.setActivated(true);
         o2psmsPaymentDetails.setOwner(user);
 

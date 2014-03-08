@@ -32,25 +32,21 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {PaymentEvent.class, Utils.class, SubmittedPayment.class })
 public class AbstractPaymentSystemServiceTest {
 
 	private EntityService mockEntityService;
-	private PaymentDetailsService mockPaymentDetailsService;
 	private UserService mockUserService;
 	private AbstractPaymentSystemService mockAbstractPaymentSystemService;
 	private PaymentDetailsRepository mockPaymentDetailsRepository;
-	private PaymentDetailsService mockPaymentDetailsService2;
 	private ApplicationEventPublisher mockApplicationEventPublisher;
 
 	@Before
 	public void setUp()
 			throws Exception {
 		mockEntityService = Mockito.mock(EntityService.class);
-		mockPaymentDetailsService = Mockito.mock(PaymentDetailsService.class);
 		mockUserService = Mockito.mock(UserService.class);
 		mockPaymentDetailsRepository = Mockito.mock(PaymentDetailsRepository.class);
 		mockApplicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
@@ -58,7 +54,6 @@ public class AbstractPaymentSystemServiceTest {
 		mockAbstractPaymentSystemService = Mockito.mock(AbstractPaymentSystemService.class, Mockito.CALLS_REAL_METHODS);
 
 		mockAbstractPaymentSystemService.setEntityService(mockEntityService);
-		mockAbstractPaymentSystemService.setPaymentDetailsService(mockPaymentDetailsService2);
 		mockAbstractPaymentSystemService.setUserService(mockUserService);
 		mockAbstractPaymentSystemService.setPaymentDetailsRepository(mockPaymentDetailsRepository);
 		mockAbstractPaymentSystemService.setApplicationEventPublisher(mockApplicationEventPublisher);
@@ -126,13 +121,13 @@ public class AbstractPaymentSystemServiceTest {
 	@Test
 	public void testCommitPayment_FailResponseAndMadeRetriesNotEqRetriesOnError_Success()
 			throws Exception {
-		final int curremtTimeSeconds = Integer.MIN_VALUE;
+		final int currentTimeSeconds = Integer.MIN_VALUE;
 
 		PaymentSystemResponse response = O2Response.failO2Response("");
 
 		User user = UserFactory.createUser();
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
 		paymentDetails.setRetriesOnError(3);
 		paymentDetails.withMadeRetries(1);
 		user.setCurrentPaymentDetails(paymentDetails);
@@ -142,7 +137,7 @@ public class AbstractPaymentSystemServiceTest {
 		pendingPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(Utils.class);
-		Mockito.when(Utils.getEpochSeconds()).thenReturn(curremtTimeSeconds);
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
 
@@ -193,12 +188,10 @@ public class AbstractPaymentSystemServiceTest {
 
 		User user = UserFactory.createUser();
 
-        PaymentPolicy paymentPolicy = new PaymentPolicy();
-
-        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
         paymentDetails.setRetriesOnError(3);
-        paymentDetails.withMadeRetries(3);
-        paymentDetails.setPaymentPolicy(paymentPolicy);
+        paymentDetails.withMadeRetries(0);
+        paymentDetails.withMadeAttempts(1);
 
         user.setCurrentPaymentDetails(paymentDetails);
         user.setNextSubPayment(Integer.MIN_VALUE);
@@ -264,7 +257,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		User user = UserFactory.createUser();
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
 		paymentDetails.setRetriesOnError(3);
 		paymentDetails.withMadeRetries(3);
 		user.setCurrentPaymentDetails(paymentDetails);
