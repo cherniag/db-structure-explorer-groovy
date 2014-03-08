@@ -85,12 +85,6 @@ public class PaymentDetails {
         return madeAttempts;
     }
 
-    public void decrementRetries() {
-		if (madeRetries > 0) {
-			this.madeRetries--;
-		}
-	}
-
 	public Long getI() {
 		return i;
 	}
@@ -275,11 +269,7 @@ public class PaymentDetails {
     }
 
     private boolean hasMoreAttemptRetries() {
-        return areAll3AttemptsSpent() || areAll2AttemptsSpent() || all1AttemptRetriesAreSpent()|| noRetriesOnError();
-    }
-
-    private boolean noRetriesOnError() {
-        return retriesOnError==0;
+        return areAll3AttemptsSpent() || areAll2AttemptsSpent() || all1AttemptRetriesAreSpent();
     }
 
     private boolean all1AttemptRetriesAreSpent() {
