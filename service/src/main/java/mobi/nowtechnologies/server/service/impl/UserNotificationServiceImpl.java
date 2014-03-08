@@ -122,7 +122,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     @Async
     @Override
-    public Future<Boolean> notifyUserAboutSuccesfullPayment(User user) {
+    public Future<Boolean> notifyUserAboutSuccessfulPayment(User user) {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
             if (user == null)

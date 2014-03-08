@@ -69,7 +69,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	
 				PaymentDetails currentActivePaymentDetails = actualUser.getCurrentPaymentDetails();
 				if (currentActivePaymentDetails != null && PaymentDetails.MIG_SMS_TYPE.equals(currentActivePaymentDetails.getPaymentType())) {
-					userNotificationService.notifyUserAboutSuccesfullPayment(actualUser);
+					userNotificationService.notifyUserAboutSuccessfulPayment(actualUser);
 				}
 	
 				userService.populateAmountOfMoneyToUserNotification(actualUser, payment);

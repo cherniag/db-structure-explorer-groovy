@@ -14,7 +14,6 @@ import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -92,7 +91,7 @@ public class UserNotificationServiceImplTest {
 
 		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
 
-		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccesfullPayment(user);
+		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
 		assertNotNull(result);
 		assertEquals(Boolean.TRUE, result.get());
@@ -111,7 +110,7 @@ public class UserNotificationServiceImplTest {
 
 		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
 
-		userNotificationImplSpy.notifyUserAboutSuccesfullPayment(user);
+		userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
 		Mockito.verify(userServiceMock, times(0)).makeSuccesfullPaymentFreeSMSRequest(user);
 	}
@@ -126,7 +125,7 @@ public class UserNotificationServiceImplTest {
 
 		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new RuntimeException());
 
-		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccesfullPayment(user);
+		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
 		assertNotNull(result);
 		assertEquals(Boolean.FALSE, result.get());
@@ -146,7 +145,7 @@ public class UserNotificationServiceImplTest {
 
 		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new ServiceCheckedException(null, null, null));
 
-		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccesfullPayment(user);
+		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
 		assertNotNull(result);
 		assertEquals(Boolean.FALSE, result.get());
