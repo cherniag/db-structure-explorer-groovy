@@ -810,6 +810,26 @@ public class User implements Serializable {
         this.paymentType = PaymentType.valueOfByType(paymentType);
     }
 
+    public User withDisplayName(String displayName) {
+        this.displayName=displayName;
+        return this;
+    }
+
+    public User withTitle(String title) {
+        this.title=title;
+        return this;
+    }
+
+    public User withFirstName(String firstName) {
+        this.firstName=firstName;
+        return this;
+    }
+
+    public User withLastName(String lastName) {
+        this.lastName=lastName;
+        return this;
+    }
+
     public User withFreeTrialExpiredMillis(Long freeTrialExpiredMillis) {
         this.freeTrialExpiredMillis = freeTrialExpiredMillis;
         return this;
@@ -1421,6 +1441,21 @@ public class User implements Serializable {
 
     public User withLastDeviceLogin(int lastDeviceLogin) {
         this.lastDeviceLogin=lastDeviceLogin;
+        return this;
+    }
+
+    public User withToken(String token) {
+        this.token=token;
+        return this;
+    }
+
+    public User withUserStatus(UserStatus userStatus) {
+        this.status=userStatus;
+        return this;
+    }
+
+    public User withDevice(String device) {
+        this.device=device;
         return this;
     }
 

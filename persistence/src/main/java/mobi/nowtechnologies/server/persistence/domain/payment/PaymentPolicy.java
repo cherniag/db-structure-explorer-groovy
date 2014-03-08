@@ -415,7 +415,7 @@ public class PaymentPolicy {
         return this;
     }
 
-    public PaymentPolicy withaAvancedPaymentSeconds(int advancedPaymentSeconds){
+    public PaymentPolicy withAdvancedPaymentSeconds(int advancedPaymentSeconds){
         this.advancedPaymentSeconds = advancedPaymentSeconds;
         return this;
     }

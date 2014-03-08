@@ -1,36 +1,21 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import java.math.BigDecimal;
 
-
+import static java.math.BigDecimal.ONE;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
 /**
- * The class <code>PaymentPolicyFactory</code> implements static methods that return instances of the class <code>{@link mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy}</code>.
- *
- * @generatedBy CodePro at 29.08.12 11:09
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
-public class PaymentPolicyFactory
- {
-	/**
-	 * Prevent creation of instances of this class.
-	 *
-	 * @generatedBy CodePro at 29.08.12 11:09
-	 */
-	private PaymentPolicyFactory() {
-	}
+public class PaymentPolicyFactory{
 
-
-	/**
-	 * Create an instance of the class <code>{@link mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy}</code>.
-	 *
-	 * @generatedBy CodePro at 29.08.12 11:09
-	 */
 	public static PaymentPolicy createPaymentPolicy() {
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
 		paymentPolicy.setSubcost(BigDecimal.ZERO);
@@ -47,4 +32,8 @@ public class PaymentPolicyFactory
          paymentPolicy.setTariff(tariff);
          return paymentPolicy;
      }
+
+    public static PaymentPolicy paymentPolicyWithDefaultNotNullFields() {
+        return new PaymentPolicy().withMediaType(AUDIO).withTariff(_3G).withSubCost(ONE).withDefault(true).withCommunity(CommunityDao.getCommunity("o2"));
+    }
 }

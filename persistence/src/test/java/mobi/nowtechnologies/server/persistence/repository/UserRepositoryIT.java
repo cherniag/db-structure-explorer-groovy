@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields;
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogStatus.SUCCESS;
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.UPDATE_O2_USER;
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.VALIDATE_PHONE_NUMBER;
@@ -284,7 +285,7 @@ public class UserRepositoryIT {
 
 		testUser = userRepository.save(testUser);
 
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(DAY_SECONDS).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withSubCost(BigDecimal.ONE).withTariff(_3G));
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFields().withAdvancedPaymentSeconds(DAY_SECONDS).withCommunity(o2UserGroup.getCommunity()));
 		
 		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -358,7 +359,7 @@ public class UserRepositoryIT {
 
 		testUser = userRepository.save(testUser);
 
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withAfterNextSubPaymentSeconds(100).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withSubCost(BigDecimal.ONE).withTariff(_3G).withaAvancedPaymentSeconds(1));
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withAfterNextSubPaymentSeconds(100).withCommunity(o2UserGroup.getCommunity()).withAdvancedPaymentSeconds(1));
 
 		PaymentDetails currentO2PaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 
@@ -446,209 +447,5 @@ public class UserRepositoryIT {
 		assertThat(actualUsers.size(), is(2));
         assertThat(actualUsers.get(1).getId(), is(testUser.getId()));
 	}
-
-    @Test
-    public void shouldFindUserForAdvancedPayment(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(5).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withLastPaymentStatus(NONE).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForPendingPayment(5);
-
-        //then
-        assertThat(users.size(), is(1));
-        assertThat(users.get(0).getId(), is(user.getId()));
-    }
-
-    @Test
-    public void shouldNotFindUserForAdvancedPaymentBecauseItSToEarly(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(5).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withLastPaymentStatus(NONE).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForPendingPayment(4);
-
-        //then
-        assertThat(users.size(), is(0));
-    }
-
-    @Test
-    public void shouldFindUserForNextSubPaymentWhenNextSubPaymentPlusAdvancedTimeSecondsInThePast(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(0).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withMadeAttempts(0).withLastPaymentStatus(NONE).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForPendingPayment(11);
-
-        //then
-        assertThat(users.size(), is(1));
-        assertThat(users.get(0).getId(), is(user.getId()));
-    }
-
-    @Test
-    public void shouldNotFindUserForNextSubPaymentWhenNextSubPaymentPlusAdvancedTimeSecondsInThePast(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(0).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withLastPaymentStatus(NONE).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForPendingPayment(9);
-
-        //then
-        assertThat(users.size(), is(0));
-    }
-
-    @Test
-    public void shouldFindUserForAdvancedRetryPaymentWhenMadeRetriesLessThanRetriesOnError(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(5).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withMadeRetries(0).withRetriesOnError(3).withLastPaymentStatus(ERROR).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForRetryPayment(6);
-
-        //then
-        assertThat(users.size(), is(1));
-        assertThat(users.get(0).getId(), is(user.getId()));
-    }
-
-    @Test
-    public void shouldNotFindUserForAdvancedRetryPaymentWhenMadeRetriesEqToRetriesOnErrorAndNextSubPaymentInTheFutureAndMadeAttemptsIs0(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(5).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withMadeRetries(3).withRetriesOnError(3).withMadeAttempts(1).withLastPaymentStatus(ERROR).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForRetryPayment(6);
-
-        //then
-        assertThat(users.size(), is(0));
-    }
-
-    @Test
-    public void shouldFindUserForRetryNextSubPaymentWhenNextSubPaymentInThePastAndMadeAttemptsIs1(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(5).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withMadeRetries(1).withRetriesOnError(3).withMadeAttempts(1).withLastPaymentStatus(ERROR).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForRetryPayment(11);
-
-        //then
-        assertThat(users.size(), is(1));
-        assertThat(users.get(0).getId(), is(user.getId()));
-    }
-
-    @Test
-    public void shouldFindUserForRetryNextSubPaymentWhenNextSubPaymentInThePastAndMadeRetriesIsLessThanRetriesOnErrorAndMadeAttemptsIs1(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(5).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withMadeRetries(1).withRetriesOnError(3).withMadeAttempts(1).withLastPaymentStatus(ERROR).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForRetryPayment(11);
-
-        //then
-        assertThat(users.size(), is(1));
-        assertThat(users.get(0).getId(), is(user.getId()));
-    }
-
-    @Test
-    public void shouldNotFindUserForRetryNextSubPaymentWhenNextSubPaymentInThePastAndMadeAttemptsIs2(){
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withaAvancedPaymentSeconds(5).withCommunity(o2UserGroup.getCommunity()).withMediaType(AUDIO).withTariff(_3G).withSubCost(BigDecimal.ONE));
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup).withSubBalance((byte)0).withLastDeviceLogin(1).withNextSubPayment(10).withTariff(_3G));
-        PaymentDetails paymentDetails = paymentDetailsRepository.save(new PaymentDetails().withMadeRetries(0).withRetriesOnError(3).withMadeAttempts(2).withLastPaymentStatus(ERROR).withPaymentPolicy(paymentPolicy).withActivated(true).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
-
-        //when
-        List<User> users = userRepository.getUsersForRetryPayment(11);
-
-        //then
-        assertThat(users.size(), is(0));
-    }
-
-    @Test
-    public void shouldFindOneRecordByPinMobileAndCommunity() throws Exception {
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-
-        User user = userRepository.save(UserFactory.createUser().withMobile("mobile").withPin("pin").withUserGroup(o2UserGroup));
-
-        //when
-        long count = userRepository.findByOtacMobileAndCommunity(user.getPin(), user.getMobile(), o2UserGroup.getCommunity());
-
-        //then
-        assertThat(count, is(1L));
-    }
-
-    @Test
-    public void shouldNotFindOneRecordByPinMobileAndCommunity() throws Exception {
-        //given
-        UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
-
-        User user = userRepository.save(UserFactory.createUser().withMobile("mobile").withPin("pin").withUserGroup(o2UserGroup));
-
-        //when
-        long count = userRepository.findByOtacMobileAndCommunity("unknownPin", user.getMobile(), o2UserGroup.getCommunity());
-
-        //then
-        assertThat(count, is(0L));
-    }
-
-    @Test
-    public void shouldFindUserTree(){
-        //given
-        User user = userRepository.save(UserFactory.createUser().withUserName("1").withMobile("2").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)));
-
-        //when
-        User actualUser = userRepository.findUserTree(user.getId());
-
-        //then
-        assertNotNull(actualUser);
-        assertThat(actualUser.getId(), is(user.getId()));
-    }
-
-    @Test
-    public void shouldFindByUserNameAndCommunityAndOtherThanPassedId(){
-        //given
-        User user = userRepository.save(UserFactory.createUser().withUserName("145645").withMobile("+447766666667").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
-        User user2 = userRepository.save(UserFactory.createUser().withUserName("+447766666667").withMobile("222").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc62"));
-
-        //when
-        User actualUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
-
-        //then
-        assertNotNull(actualUser);
-        assertThat(actualUser.getId(), is(user2.getId()));
-    }
 
 }
