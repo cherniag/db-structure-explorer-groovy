@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -38,6 +39,7 @@ import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
@@ -78,7 +80,7 @@ public class UserNotificationServiceImplTest {
 	}
 
 	@Test
-	public void testNotifyUserAboutSuccesfullPayment_Success()
+	public void testNotifyUserAboutSuccesfulPayment_Success()
 			throws Exception {
 
 		User user = UserFactory.createUser();
@@ -1335,15 +1337,14 @@ public class UserNotificationServiceImplTest {
 	
 	@Test
 	public void testSendPaymentFailSMS_0h_Success() throws Exception {
-		int madeRetries = Integer.MAX_VALUE;
-		int retriesOnError = madeRetries;
-
         User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
-        o2PDPaymentDetails.withMadeRetries(madeRetries);
-        o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+        o2PDPaymentDetails.withMadeRetries(0);
+        o2PDPaymentDetails.setRetriesOnError(3);
+        o2PDPaymentDetails.withMadeAttempts(2);
+        o2PDPaymentDetails.withLastPaymentStatus(ERROR);
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
@@ -1391,7 +1392,7 @@ public class UserNotificationServiceImplTest {
 
 	@Test
 	public void testSendPaymentFailSMS_24h_Success() throws Exception {
-		int madeRetries = Integer.MAX_VALUE;
+		int madeRetries = 0;
 		int retriesOnError = madeRetries;
 
         User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
@@ -1400,6 +1401,8 @@ public class UserNotificationServiceImplTest {
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
         o2PDPaymentDetails.withMadeRetries(madeRetries);
         o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+        o2PDPaymentDetails.withMadeAttempts(1);
+        o2PDPaymentDetails.withLastPaymentStatus(ERROR);
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
@@ -1447,15 +1450,14 @@ public class UserNotificationServiceImplTest {
 	
 	@Test
 	public void testSendPaymentFailSMS_rejectedDevice_Success() throws Exception {
-        int madeRetries = Integer.MAX_VALUE;
-        int retriesOnError = madeRetries;
-
         User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
-        o2PDPaymentDetails.withMadeRetries(madeRetries);
-        o2PDPaymentDetails.setRetriesOnError(retriesOnError);
+        o2PDPaymentDetails.withMadeRetries(0);
+        o2PDPaymentDetails.setRetriesOnError(3);
+        o2PDPaymentDetails.withMadeAttempts(2);
+        o2PDPaymentDetails.withLastPaymentStatus(ERROR);
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
 

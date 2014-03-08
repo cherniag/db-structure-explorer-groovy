@@ -2,8 +2,11 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Test;
 
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -206,5 +209,53 @@ public class PaymentDetailsTest {
 
         //then
         assertThat(shouldBeUnSubscribed, is(true));
+    }
+
+    @Test
+    public void shouldNotSaidThatCurrentAttemptFailedWhenMadeAttemptsIs0(){
+        //given
+        PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(0);
+
+        //when
+        boolean isCurrentAttemptFailed = paymentDetails.isCurrentAttemptFailed();
+
+        //then
+        assertThat(isCurrentAttemptFailed, is(false));
+    }
+
+    @Test
+    public void shouldNotSaidThatCurrentAttemptFailedWhenMadeRetriesIsNot0(){
+        //given
+        PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(1).withMadeRetries(1);
+
+        //when
+        boolean isCurrentAttemptFailed = paymentDetails.isCurrentAttemptFailed();
+
+        //then
+        assertThat(isCurrentAttemptFailed, is(false));
+    }
+
+    @Test
+    public void shouldNotSaidThatCurrentAttemptFailedWhenLastPaymentStatusIsSuccessful(){
+        //given
+        PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(1).withMadeRetries(0).withLastPaymentStatus(SUCCESSFUL);
+
+        //when
+        boolean isCurrentAttemptFailed = paymentDetails.isCurrentAttemptFailed();
+
+        //then
+        assertThat(isCurrentAttemptFailed, is(false));
+    }
+
+    @Test
+    public void shouldSaidThatCurrentAttemptFailedWhenMadeAttemptsMoreThan0AndMadeRetriesIs0AndLastPaymentStatusIsError(){
+        //given
+        PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(1).withMadeRetries(0).withLastPaymentStatus(ERROR);
+
+        //when
+        boolean isCurrentAttemptFailed = paymentDetails.isCurrentAttemptFailed();
+
+        //then
+        assertThat(isCurrentAttemptFailed, is(true));
     }
 }
