@@ -75,9 +75,10 @@ public class PaymentDetails {
 		this.madeRetries++;
     }
 
-    public void checkAndIncrementMadeAttempts() {
+    public int checkAndIncrementMadeAttempts() {
         if (madeRetries==retriesOnError) madeAttempts++;
         resetMadeRetries();
+        return madeAttempts;
     }
 
     public void decrementRetries() {
@@ -169,7 +170,7 @@ public class PaymentDetails {
 	public void setPromotionPaymentPolicy(PromotionPaymentPolicy promotionPaymentPolicy) {
 		this.promotionPaymentPolicy = promotionPaymentPolicy;
 	}
-	
+
 	public String getPaymentType(){
         return UNKNOW_TYPE;
     }
@@ -177,6 +178,10 @@ public class PaymentDetails {
 	public User getOwner() {
 		return owner;
 	}
+
+    public int getMadeAttempts() {
+        return madeAttempts;
+    }
 
 	public void setOwner(User owner) {
 		this.owner = owner;
@@ -191,13 +196,13 @@ public class PaymentDetails {
 
     public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = new PaymentDetailsByPaymentDto();
-		
+
 		paymentDetailsByPaymentDto.setPaymentType(getPaymentType());
 		paymentDetailsByPaymentDto.setPaymentDetailsId(i);
 		paymentDetailsByPaymentDto.setActivated(activated);
-		
+
 		paymentDetailsByPaymentDto.setPaymentPolicyDto(paymentPolicy.toPaymentPolicyDto(paymentDetailsByPaymentDto));
-	
+
 		LOGGER.debug("Output parameter [{}]", paymentDetailsByPaymentDto);
 		return paymentDetailsByPaymentDto;
 	}
@@ -253,7 +258,7 @@ public class PaymentDetails {
     }
 
     public boolean shouldBeUnSubscribed() {
-        return !hasMoreAttemptRetries() && isAfterPaymentPolicyNextSubPayment();
+        return hasMoreAttemptRetries();
     }
 
     public void resetMadeAttempts(){
@@ -266,13 +271,23 @@ public class PaymentDetails {
     }
 
     private boolean hasMoreAttemptRetries() {
-        return madeRetries < retriesOnError;
+        return areAll3AttemptsSpent() || areAll2AttemptsSpent() || all1AttemptRetriesAreSpent();
     }
 
-    private boolean isAfterPaymentPolicyNextSubPayment() {
-        int epochSeconds = Utils.getEpochSeconds();
+    private boolean all1AttemptRetriesAreSpent() {
         int afterNextSubPaymentSeconds = paymentPolicy.getAfterNextSubPaymentSeconds();
-        return epochSeconds > owner.getNextSubPayment() + afterNextSubPaymentSeconds;
+        int advancedPaymentSeconds = paymentPolicy.getAdvancedPaymentSeconds();
+        return madeAttempts == 1 && afterNextSubPaymentSeconds == 0 && advancedPaymentSeconds == 0;
+    }
+
+    private boolean areAll2AttemptsSpent() {
+        int afterNextSubPaymentSeconds = paymentPolicy.getAfterNextSubPaymentSeconds();
+        int advancedPaymentSeconds = paymentPolicy.getAdvancedPaymentSeconds();
+        return madeAttempts == 2 && (afterNextSubPaymentSeconds == 0 || (advancedPaymentSeconds == 0 && afterNextSubPaymentSeconds > 0));
+    }
+
+    private boolean areAll3AttemptsSpent() {
+        return madeAttempts == 3;
     }
 
     @Override

@@ -31,8 +31,6 @@ public class PaymentPolicy {
 
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
 
-
-
     public static enum Fields {
         communityId
     }
@@ -116,6 +114,8 @@ public class PaymentPolicy {
 
     @Column(name = "is_default")
     private boolean isDefault;
+
+    private boolean online;
 
     public void setId(Integer id) {
         this.id = id;
@@ -310,6 +310,10 @@ public class PaymentPolicy {
         return afterNextSubPaymentSeconds;
     }
 
+    public int getAdvancedPaymentSeconds() {
+        return advancedPaymentSeconds;
+    }
+
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
         LOGGER.debug("input parameters paymentDetailsByPaymentDto: [{}]", paymentDetailsByPaymentDto);
 
@@ -446,6 +450,7 @@ public class PaymentPolicy {
                 .append("advancedPaymentSeconds", advancedPaymentSeconds)
                 .append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds)
                 .append("isDefault", isDefault)
+                .append("online", online)
                 .toString();
     }
 }
