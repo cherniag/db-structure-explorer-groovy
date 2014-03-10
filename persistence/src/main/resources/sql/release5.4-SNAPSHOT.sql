@@ -17,6 +17,28 @@ update tb_paymentpolicy set online=true;
 
 ALTER TABLE tb_paymentDetails ADD made_attempts INT UNSIGNED NOT NULL default 0;
 
+INSERT INTO tb_paymentPolicy
+(communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment   , content_category, content_type          , content_description     , sub_merchant_id, provider, tariff, media_type, is_default) VALUES
+(10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   , false),
+(10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   , true) ,
+(10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   , false),
+(10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   , false),
+(10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   , true);
+
+update tb_paymentDetails pd
+  join tb_users u
+    on pd.i=u.currentPaymentDetailsId
+  join tb_paymentPolicy pp
+    on pp.i=pd.paymentPolicyId
+set pd.made_attempts=1
+where
+  (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR')
+  and pd.activated is true
+  and pd.made_attempts!=pd.retriesOnError
+  and u.nextSubPayment<UNIX_TIMESTAMP()
+  and pp.advancedPaymentSeconds>0
+  and u.lastDeviceLogin!=0;
+
 update tb_paymentDetails pd
   join tb_users u
     on pd.i=u.currentPaymentDetailsId

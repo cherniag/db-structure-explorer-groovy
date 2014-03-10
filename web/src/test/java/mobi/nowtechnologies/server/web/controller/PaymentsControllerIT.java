@@ -128,7 +128,7 @@ public class PaymentsControllerIT{
 
 
         assertEquals("payments", viewName);
-        assertEquals(1, paymentPolicies.size());
+        assertEquals(5, paymentPolicies.size());
     }
 
     @Before
