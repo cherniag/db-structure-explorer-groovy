@@ -159,21 +159,4 @@ public class PaymentPolicyServiceTest {
 		
 	}
 
-    @Test
-    public void shouldReturnPaymentPoliciesForUserInCommunityIsVfNzAndProviderIsVF(){
-        //given
-        Community community = new Community().withRewriteUrl("vf_nz");
-        User user = new User().withProvider(VF).withUserGroup(new UserGroup().withCommunity(community));
-
-        List<PaymentPolicy> paymentPolicies = new ArrayList<PaymentPolicy>();
-        paymentPolicies.add(new PaymentPolicy().withId(1));
-
-        //when
-        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyServiceFixture.getPaymentPolicyDtos(user);
-
-        //then
-        assertThat(paymentPolicyDtos.size(), is(paymentPolicies.size()));
-        assertThat(paymentPolicyDtos.get(0).getId(), is(paymentPolicies.get(0).getId()));
-    }
-
 }
