@@ -45,11 +45,9 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 	@Override
 	public List<PendingPayment> createPendingPayments() {
 		LOGGER.info("Selecting users for pending payments...");
-		// Select users we need to make pending payment for
 		List<User> usersForPendingPayment = userService.getUsersForPendingPayment();
 		LOGGER.info("{} users were selected for pending payment", usersForPendingPayment.size());
 		List<PendingPayment> pendingPayments = new LinkedList<PendingPayment>();
-		// Going through all users in order to create a pending payment for each one
 		for (User user : usersForPendingPayment) {
 			if (!user.isInvalidPaymentPolicy()) {
 				LOGGER.info("Creating pending payment for user {} with balance {}", user.getId(), user.getSubBalance());

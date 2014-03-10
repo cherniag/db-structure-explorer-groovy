@@ -13,7 +13,8 @@ import java.util.List;
  * @author Titov Mykhaylo (titov)
  */
 public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, Integer>{
-	
+
+    //TODO should be replaced by getPaymentPolicies()
 	@Query(value="select paymentPolicy.appStoreProductId " +
             "from PaymentPolicy paymentPolicy " +
 			"where " +
@@ -21,7 +22,8 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
 			"and paymentPolicy.appStoreProductId is not NULL " +
             "and paymentPolicy.online is true")
 	List<String> findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(Community community);
-	
+
+    //TODO should be replaced by getPaymentPolicies()
 	@Query(value="select paymentPolicy " +
             "from PaymentPolicy paymentPolicy " +
 			"where paymentPolicy.community=?1 " +
