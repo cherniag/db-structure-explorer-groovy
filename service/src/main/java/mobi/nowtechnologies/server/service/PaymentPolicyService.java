@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPo
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
@@ -99,7 +100,12 @@ public class PaymentPolicyService {
 
     @Transactional(readOnly = true)
     public PaymentPolicy findDefaultO2PsmsPaymentPolicy(User user) {
-        return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(user.getUserGroup().getCommunity(), user.getProvider(), user.getSegment(), user.getContract(), user.getTariff());
+        Contract contract = user.getContract();
+        if (isNull(contract)){
+            contract = Contract.PAYG;
+        }
+        Community community = user.getUserGroup().getCommunity();
+        return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(community, user.getProvider(), user.getSegment(), contract, user.getTariff());
     }
 
     @Transactional(readOnly = true)
