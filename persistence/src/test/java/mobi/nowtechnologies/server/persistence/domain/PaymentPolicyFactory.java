@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.shared.enums.Tariff;
 import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ONE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.O2_PSMS_TYPE;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
@@ -23,7 +24,7 @@ public class PaymentPolicyFactory{
 		paymentPolicy.setCurrencyISO("GBP");
 		paymentPolicy.setShortCode("shortCode");
         paymentPolicy.setAvailableInStore(false);
-        paymentPolicy.setPaymentType(PaymentDetails.O2_PSMS_TYPE);
+        paymentPolicy.setPaymentType(O2_PSMS_TYPE);
 		return paymentPolicy;
 	}
 
