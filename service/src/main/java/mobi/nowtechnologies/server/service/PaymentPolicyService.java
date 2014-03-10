@@ -6,27 +6,27 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Collections.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -104,79 +104,60 @@ public class PaymentPolicyService {
 
     @Transactional(readOnly = true)
     public List<PaymentPolicyDto> getPaymentPolicyDtos(User user) {
-        Community community = user.getUserGroup().getCommunity();
-        SegmentType segment = user.getSegment();
-
         List<PaymentPolicyDto> paymentPolicyDtos;
-        if ( user.isVFNZCommunityUser() ) {
-            paymentPolicyDtos = getPaymentPolicyWithNullSegment(community, user);
+        if (user.isO2User() || (user.isO2CommunityUser() && isNull(user.getProvider()))) {
+            paymentPolicyDtos = getPaymentPolicyForO2UserOrO2CommunityUserWithNullProvider(user);
         } else {
-            if( isNotFromNetwork(user) ) {
-                paymentPolicyDtos = getPaymentPolicyWithOutSegment(community, user);
-            } else {
-                paymentPolicyDtos = getPaymentPolicy(community, user, segment);
-                paymentPolicyDtos = filterPaymentPoliciesForUser(paymentPolicyDtos, user);
-            }
+            paymentPolicyDtos = getMergedPaymentPolicies(user, null, null);
         }
 
-        if(isEmpty(paymentPolicyDtos)) {
-            return Collections.emptyList();
-        }
-
-        return paymentPolicyDtos;
+        return unmodifiableList(paymentPolicyDtos);
     }
 
-    private boolean isNotFromNetwork(User user) {
-        return NON_O2.equals(user.getProvider()) || NON_VF.equals(user.getProvider());
-    }
-
-    /**
-     * For 3G users we'll only display 3G payment options, for 4G users, we'll display only 4G payment options
-     */
-    private List<PaymentPolicyDto> filterPaymentPoliciesForUser(List<PaymentPolicyDto> paymentPolicyList, User user) {
-        List<PaymentPolicyDto> ret = new ArrayList<PaymentPolicyDto>();
-
-        if ( paymentPolicyList == null || user == null ) {
-            return ret;
-        }
-
-        if(user.isO2Business()){
-            //no filtering required
-            ret.addAll(paymentPolicyList);
-            return ret;
-        }
-
-        for ( PaymentPolicyDto pp : paymentPolicyList ) {
-            if ( user.is3G() && pp.isThreeG() ) {
-                ret.add( pp );
-            } else if ( user.is4G() && pp.isFourG() ) {
-                if ( !pp.isVideoAndAudio4GSubscription() || (pp.isVideoAndAudio4GSubscription() && user.isVideoFreeTrialHasBeenActivated()) ) {
-                    ret.add( pp );
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    private List<PaymentPolicyDto> getPaymentPolicyWithOutSegment(Community community, User user) {
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community);
+    private List<PaymentPolicyDto> getMergedPaymentPolicies(User user, SegmentType defaultSegment, ProviderType defaultProvider) {
+        SegmentType segment = getSegmentType(user, defaultSegment);
+        ProviderType provider = getProviderType(user, defaultProvider);
+        List<MediaType> mediaTypes = getMediaTypes(user);
+        Community community = user.getUserGroup().getCommunity();
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, provider, segment, user.getContract(),
+                user.getTariff(), mediaTypes);
         return mergePaymentPolicies(user, paymentPolicies);
     }
 
-    private List<PaymentPolicyDto> getPaymentPolicyWithNullSegment(Community community, User user) {
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithNullSegment(community, user.getProvider());
-        return mergePaymentPolicies(user, paymentPolicies);
+    private ProviderType getProviderType(User user, ProviderType defaultProvider) {
+        ProviderType provider = user.getProvider();
+        if(isNotNull(defaultProvider)){
+            provider = defaultProvider;
+        }
+        return provider;
     }
 
-    private List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {
-        if(user.isNonO2Community() && !user.isVFNZCommunityUser()){
-            return mergePaymentPolicies(user, paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community));
+    private SegmentType getSegmentType(User user, SegmentType defaultSegment) {
+        SegmentType segment = user.getSegment();
+        if(isNotNull(defaultSegment)){
+            segment = defaultSegment;
         }
-        if(isNull(segment))
-            segment = SegmentType.BUSINESS;
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment);
-        return mergePaymentPolicies(user, paymentPolicies);
+        return segment;
+    }
+
+    private List<MediaType> getMediaTypes(User user) {
+        if(user.isVideoFreeTrialHasBeenActivated()){
+            return Arrays.asList(AUDIO, VIDEO_AND_AUDIO);
+        }else{
+            return Arrays.asList(AUDIO);
+        }
+    }
+
+    private List<PaymentPolicyDto> getPaymentPolicyForO2UserOrO2CommunityUserWithNullProvider(User user) {
+        SegmentType segment = user.getSegment();
+        if(isNull(segment)) {
+            segment = BUSINESS;
+        }
+        ProviderType provider = user.getProvider();
+        if (isNull(provider)) {
+            provider = O2;
+        }
+        return getMergedPaymentPolicies(user, segment, provider);
     }
 
     private List<PaymentPolicyDto> mergePaymentPolicies(User user, List<PaymentPolicy> paymentPolicies) {

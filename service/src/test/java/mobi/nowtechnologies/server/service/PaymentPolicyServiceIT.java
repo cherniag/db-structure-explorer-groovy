@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -11,15 +9,13 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepositor
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
+import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -29,6 +25,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
@@ -48,8 +46,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class PaymentPolicyServiceIT {
-
-    public static Logger LOGGER = LoggerFactory.getLogger(PaymentPolicyServiceIT.class);
 
     @Resource(name = "service.PaymentPolicyService")
     private PaymentPolicyService paymentPolicyService;
@@ -102,92 +98,92 @@ public class PaymentPolicyServiceIT {
         paymentPolicy92 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)0).withSubCost(new BigDecimal("4.99")
         ).withPaymentType("creditCard").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(NON_O2)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy93 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)0).withSubCost(new BigDecimal("4.99")
         ).withPaymentType("PAY_PAL").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(NON_O2)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy95 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)0).withSubCost(new BigDecimal("4.99")
         ).withPaymentType("iTunesSubscription").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId("com.musicqubed.o2.subscription").withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(NON_O2)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy96 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)5).withSubCost(new BigDecimal("5")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null)
                 .withContract(null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107056").withContentDescription("Description of content").withSubMerchantId("O2 Tracks")
-                .withProvider(O2).withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withProvider(O2).withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy97 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)2).withSubCost(new BigDecimal("2")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null)
                 .withContract(null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107055").withContentDescription("Description of content").withSubMerchantId("O2 Tracks")
-                .withProvider(O2).withTariff(_3G).withMediaType(AUDIO).withDefault(true));
+                .withProvider(O2).withTariff(_3G).withMediaType(AUDIO).withDefault(true)).withOnline(true);
 
         paymentPolicy98 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)1).withSubCost(new BigDecimal("1")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null)
                 .withContract(null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107054").withContentDescription("Description of content").withSubMerchantId("O2 Tracks")
-                .withProvider(O2).withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withProvider(O2).withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy99 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)5).withSubCost(new BigDecimal("5")
         ).withPaymentType("creditCard").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(BUSINESS).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(O2)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy100 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)5).withSubCost(new BigDecimal("5")
         ).withPaymentType("PAY_PAL").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(BUSINESS).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(O2)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy101 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)5).withSubCost(new BigDecimal("5")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107056").withContentDescription("Description of content").withSubMerchantId(null).withProvider(O2)
-                .withTariff(_4G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_4G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy102 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)2).withSubCost(new BigDecimal("2")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107055").withContentDescription("Description of content").withSubMerchantId(null).withProvider(O2)
-                .withTariff(_4G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_4G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy103 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)1).withSubCost(new BigDecimal("1")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107054").withContentDescription("Description of content").withSubMerchantId(null).withProvider(O2)
-                .withTariff(_4G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_4G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy104 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)3).withSubCost(new BigDecimal("4.5")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107059").withContentDescription("Description of content").withSubMerchantId(null).withProvider(O2)
-                .withTariff(_4G).withMediaType(VIDEO_AND_AUDIO).withDefault(false));
+                .withTariff(_4G).withMediaType(VIDEO_AND_AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy105 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)2).withSubCost(new BigDecimal("3")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107058").withContentDescription("Description of content").withSubMerchantId(null).withProvider(O2)
-                .withTariff(_4G).withMediaType(VIDEO_AND_AUDIO).withDefault(false));
+                .withTariff(_4G).withMediaType(VIDEO_AND_AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy106 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)1).withSubCost(new BigDecimal("1.5")
         ).withPaymentType("o2Psms").withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(CONSUMER).withContentCategory("other").withContentType("mqbed_tracks_3107057").withContentDescription("Description of content").withSubMerchantId(null).withProvider(O2)
-                .withTariff(_4G).withMediaType(VIDEO_AND_AUDIO).withDefault(true));
+                .withTariff(_4G).withMediaType(VIDEO_AND_AUDIO).withDefault(true)).withOnline(true);
 
         paymentPolicy107 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(vfCommunity).withSubWeeks((byte) 4).withSubCost(new BigDecimal("8.29")
         ).withPaymentType("PAY_PAL").withOperator(null).withShortCode("").withCurrencyISO("NZD").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(NON_VF)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy108 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(vfCommunity).withSubWeeks((byte)4).withSubCost(new BigDecimal("8.29")
         ).withPaymentType("iTunesSubscription").withOperator(null).withShortCode("").withCurrencyISO("NZD").withAvailableInStore(true).withAppStoreProductId("com.musicqubed.vfnz.ios").withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(NON_VF)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy109 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(vfCommunity).withSubWeeks((byte) 1).withSubCost(new BigDecimal("1.5")
         ).withPaymentType("vfPsms").withOperator(null).withShortCode("3313").withCurrencyISO("NZD").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(VF)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
         paymentPolicy110 = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(vfCommunity).withSubWeeks((byte) 4).withSubCost(new BigDecimal("6")
         ).withPaymentType("vfPsms").withOperator(null).withShortCode("3006").withCurrencyISO("NZD").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(VF)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false));
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
 
     }
 
@@ -203,7 +199,7 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldNotReturnPaymentPolicyDtosWhenCommunityVfNzAndProviderIsNullAndSegmentIsNull(){
+    public void shouldNotReturnPaymentPolicyDtosForUserInVfNzCommunityWithProviderIsNullAndSegmentIsNullAnd3GTariff(){
         //given
         User user = new User().withUserGroup(vfUserGroup).withProvider(null).withSegment(null);
 
@@ -215,14 +211,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityVfNzAndProviderIsVFAndSegmentIsNull(){
+    public void shouldReturnPaymentPolicyDtosForUserInVfNzCommunityWithProviderIsVFAndSegmentIsNullAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(vfUserGroup).withProvider(VF).withSegment(null);
+        User user = new User().withTariff(_3G).withUserGroup(vfUserGroup).withProvider(VF).withSegment(null);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -231,14 +225,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityVfNzAndProviderIsNonVFAndSegmentIsNull(){
+    public void shouldReturnPaymentPolicyDtosForUserInVfNzCommunityWithProviderIsNonVFAndSegmentIsNullAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(vfUserGroup).withProvider(NON_VF).withSegment(null);
+        User user = new User().withTariff(_3G).withUserGroup(vfUserGroup).withProvider(NON_VF).withSegment(null);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -247,14 +239,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityVfNzAndProviderIsVFAndSegmentIsBusiness(){
+    public void shouldReturnPaymentPolicyDtosForUserInVfNzCommunityWithProviderIsVFAndSegmentIsBusinessAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(vfUserGroup).withProvider(VF).withSegment(BUSINESS);
+        User user = new User().withTariff(_3G).withUserGroup(vfUserGroup).withProvider(VF).withSegment(BUSINESS);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -263,14 +253,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityVfNzAndProviderIsVFAndSegmentIsConsumer(){
+    public void shouldReturnPaymentPolicyDtosForUserInVfNzCommunityWithProviderIsVFAndSegmentIsConsumerAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(vfUserGroup).withProvider(VF).withSegment(CONSUMER);
+        User user = new User().withTariff(_3G).withUserGroup(vfUserGroup).withProvider(VF).withSegment(CONSUMER);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -279,14 +267,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityVfNzAndProviderIsNonVFAndSegmentIsBusiness(){
+    public void shouldReturnPaymentPolicyDtosForUserInVfNzCommunityWithProviderIsNonVFAndSegmentIsBusinessAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(vfUserGroup).withProvider(NON_VF).withSegment(BUSINESS);
+        User user = new User().withTariff(_3G).withUserGroup(vfUserGroup).withProvider(NON_VF).withSegment(BUSINESS);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -295,14 +281,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityVfNzAndProviderIsNonVFAndSegmentIsConsumer(){
+    public void shouldReturnPaymentPolicyDtosForUserInVfNzCommunityWithProviderIsNonVFAndSegmentIsConsumerAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(vfUserGroup).withProvider(NON_VF).withSegment(CONSUMER);
+        User user = new User().withTariff(_3G).withUserGroup(vfUserGroup).withProvider(NON_VF).withSegment(CONSUMER);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -311,14 +295,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderIsNullAndSegmentIsNull(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2CommunitywithProviderIsNullAndSegmentIsNullAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(null).withSegment(null);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(null).withSegment(null);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -327,14 +309,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderIsO2AndSegmentIsNull(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2CommunityWithProviderIsO2AndSegmentIsNullAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(O2).withSegment(null);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(null);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -343,14 +323,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderIsO2AndSegmentIsBusiness(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2CommunityWithProviderIsO2AndSegmentIsBusinessAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(O2).withSegment(BUSINESS);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(BUSINESS);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -359,14 +337,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderINullAndSegmentIsBusiness(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2CommunityWithProviderINullAndSegmentIsBusinessAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(null).withSegment(BUSINESS);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(null).withSegment(BUSINESS);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(2));
@@ -375,14 +351,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderINullAndSegmentIsConsumer(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderINullAndSegmentIsConsumerAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(null).withSegment(CONSUMER);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(null).withSegment(CONSUMER);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(3));
@@ -392,14 +366,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderIsO2AndSegmentIsConsumer(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsO2AndSegmentIsConsumerAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(O2).withSegment(CONSUMER);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(CONSUMER);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(3));
@@ -409,14 +381,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderIsNonO2AndSegmentIsNull(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsNonO2AndSegmentIsNullAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(NON_O2).withSegment(null);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(NON_O2).withSegment(null);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(3));
@@ -426,14 +396,12 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderIsNonO2AndSegmentIsConsumer(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsNonO2AndSegmentIsConsumerAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(NON_O2).withSegment(CONSUMER);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(NON_O2).withSegment(CONSUMER);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(3));
@@ -443,19 +411,152 @@ public class PaymentPolicyServiceIT {
     }
 
     @Test
-    public void shouldReturnPaymentPolicyDtosWhenCommunityIsO2AndProviderIsNonO2AndSegmentIsBusiness(){
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsNonO2AndSegmentIsBusinessAnd3GTariff(){
         //given
-        User user = new User().withUserGroup(o2UserGroup).withProvider(NON_O2).withSegment(BUSINESS);
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(NON_O2).withSegment(BUSINESS);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
-
-        LOGGER.info(paymentPolicyDtos.toString());
 
         //then
         assertThat(paymentPolicyDtos.size(), is(3));
         assertThat(paymentPolicyDtos.get(0).getId(), is(paymentPolicy92.getId()));
         assertThat(paymentPolicyDtos.get(1).getId(), is(paymentPolicy93.getId()));
         assertThat(paymentPolicyDtos.get(2).getId(), is(paymentPolicy95.getId()));
+    }
+
+    @Test
+    public void shouldNotReturnPaymentPolicyDtosForUserInO2WithProviderIsO2AndSegmentIsNullAnd4GTariff(){
+        //given
+        User user = new User().withTariff(_4G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(null);
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotReturnPaymentPolicyDtosForUserInO2WithProviderIsO2AndSegmentIsBusinessAnd4GTariff(){
+        //given
+        User user = new User().withTariff(_4G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(BUSINESS);
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(0));
+    }
+
+    @Test
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsO2AndSegmentIsConsumerAnd4GTariff(){
+        //given
+        User user = new User().withTariff(_4G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(CONSUMER);
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(3));
+        assertThat(paymentPolicyDtos.get(0).getId(), is(paymentPolicy101.getId()));
+        assertThat(paymentPolicyDtos.get(1).getId(), is(paymentPolicy102.getId()));
+        assertThat(paymentPolicyDtos.get(2).getId(), is(paymentPolicy103.getId()));
+    }
+
+    @Test
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsO2AndSegmentIsNullAnd4GTariffAndVideoFreeTrialHasBeenActivatedIsTrue(){
+        //given
+        User user = new User().withVideoFreeTrialHasBeenActivated(true).withTariff(_4G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(null);
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(0));
+    }
+
+    @Test
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsO2AndSegmentIsBusinessAnd4GTariffAndVideoFreeTrialHasBeenActivatedIsTrue(){
+        //given
+        User user = new User().withVideoFreeTrialHasBeenActivated(true).withTariff(_4G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(BUSINESS);
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(0));
+    }
+
+    @Test
+    public void shouldReturnPaymentPolicyDtosForUserInO2WithProviderIsO2AndSegmentIsConsumerAnd4GTariffAndVideoFreeTrialHasBeenActivatedIsTrue(){
+        //given
+        User user = new User().withVideoFreeTrialHasBeenActivated(true).withTariff(_4G).withUserGroup(o2UserGroup).withProvider(O2).withSegment(CONSUMER);
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(6));
+        assertThat(paymentPolicyDtos.get(0).getId(), is(paymentPolicy101.getId()));
+        assertThat(paymentPolicyDtos.get(1).getId(), is(paymentPolicy104.getId()));
+        assertThat(paymentPolicyDtos.get(2).getId(), is(paymentPolicy102.getId()));
+        assertThat(paymentPolicyDtos.get(3).getId(), is(paymentPolicy105.getId()));
+        assertThat(paymentPolicyDtos.get(4).getId(), is(paymentPolicy103.getId()));
+        assertThat(paymentPolicyDtos.get(5).getId(), is(paymentPolicy106.getId()));
+    }
+
+    @Test
+    public void shouldReturnPaymentPolicyDtosForO2PAYGConsumer(){
+        //given
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(O2).withContract(PAYG).withSegment(CONSUMER);
+
+        PaymentPolicy o2PAYGConsumer5PoundsPaymentPolicy = newSavedPaymentPolicyAs(paymentPolicy96, PAYG);
+        PaymentPolicy o2PAYGConsumer2PoundsPaymentPolicy = newSavedPaymentPolicyAs(paymentPolicy97, PAYG);
+        PaymentPolicy o2PAYGConsumer1PoundPaymentPolicy = newSavedPaymentPolicyAs(paymentPolicy98, PAYG);
+
+        turnOffOldO2ConsumerO2PsmsPaymentPolicies();
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(3));
+        assertThat(paymentPolicyDtos.get(0).getId(), is(o2PAYGConsumer5PoundsPaymentPolicy.getId()));
+        assertThat(paymentPolicyDtos.get(1).getId(), is(o2PAYGConsumer2PoundsPaymentPolicy.getId()));
+        assertThat(paymentPolicyDtos.get(2).getId(), is(o2PAYGConsumer1PoundPaymentPolicy.getId()));
+    }
+
+    @Test
+    public void shouldReturnPaymentPolicyDtosForO2PAYMConsumer(){
+        //given
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(O2).withContract(PAYM).withSegment(CONSUMER);
+
+        PaymentPolicy o2PAYMConsumer5PoundsPaymentPolicy = newSavedPaymentPolicyAs(paymentPolicy96, PAYM);
+        PaymentPolicy o2PAYMConsumer2PoundsPaymentPolicy = newSavedPaymentPolicyAs(paymentPolicy97, PAYM);
+        PaymentPolicy o2PAYMConsumer1PoundPaymentPolicy = newSavedPaymentPolicyAs(paymentPolicy98, PAYM);
+
+        turnOffOldO2ConsumerO2PsmsPaymentPolicies();
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(3));
+        assertThat(paymentPolicyDtos.get(0).getId(), is(o2PAYMConsumer5PoundsPaymentPolicy.getId()));
+        assertThat(paymentPolicyDtos.get(1).getId(), is(o2PAYMConsumer2PoundsPaymentPolicy.getId()));
+        assertThat(paymentPolicyDtos.get(2).getId(), is(o2PAYMConsumer1PoundPaymentPolicy.getId()));
+    }
+
+    private void turnOffOldO2ConsumerO2PsmsPaymentPolicies() {
+        paymentPolicy96 = paymentPolicyRepository.save(paymentPolicy96.withOnline(false));
+        paymentPolicy97 = paymentPolicyRepository.save(paymentPolicy97.withOnline(false));
+        paymentPolicy98 = paymentPolicyRepository.save(paymentPolicy98.withOnline(false));
+    }
+
+    private PaymentPolicy newSavedPaymentPolicyAs(PaymentPolicy targetPaymentPolicy, Contract contract) {
+        PaymentPolicy paymentPolicy = new PaymentPolicy();
+        BeanUtils.copyProperties(targetPaymentPolicy, paymentPolicy);
+        return paymentPolicyRepository.save(paymentPolicy.withContract(contract).withOnline(true).withId(null));
     }
 }

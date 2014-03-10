@@ -464,6 +464,11 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withOnline(boolean online) {
+        this.online = online;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

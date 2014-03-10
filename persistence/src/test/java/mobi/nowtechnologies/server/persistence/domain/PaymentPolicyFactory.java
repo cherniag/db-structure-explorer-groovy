@@ -34,6 +34,6 @@ public class PaymentPolicyFactory{
      }
 
     public static PaymentPolicy paymentPolicyWithDefaultNotNullFields() {
-        return new PaymentPolicy().withMediaType(AUDIO).withTariff(_3G).withSubCost(ONE).withDefault(true).withCommunity(CommunityDao.getCommunity("o2"));
+        return new PaymentPolicy().withMediaType(AUDIO).withTariff(_3G).withSubCost(ONE).withDefault(true).withCommunity(CommunityDao.getCommunity("o2")).withOnline(true);
     }
 }

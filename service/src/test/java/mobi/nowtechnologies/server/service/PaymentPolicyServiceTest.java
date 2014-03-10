@@ -167,7 +167,6 @@ public class PaymentPolicyServiceTest {
 
         List<PaymentPolicy> paymentPolicies = new ArrayList<PaymentPolicy>();
         paymentPolicies.add(new PaymentPolicy().withId(1));
-        Mockito.when(paymentPolicyRepositoryMock.getPaymentPoliciesWithNullSegment(community, user.getProvider())).thenReturn(paymentPolicies);
 
         //when
         List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyServiceFixture.getPaymentPolicyDtos(user);
