@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:utils="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean name="admin.VersionController"
 		class="mobi.nowtechnologies.server.controller.VersionController">
@@ -43,39 +43,40 @@
 		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
 	</bean>
 	
-	<bean name="admin.ChartController"
+    <utils:map id="chartViewByChartType">
+        <entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
+        <entry key ="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
+        <entry key ="OTHER_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key ="FOURTH_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key ="FIFTH_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key ="VIDEO_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key ="MQ_PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
+        <entry key ="MQ_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
+    </utils:map>
+
+    <utils:map id="chartItemsViewByChartType">
+        <entry key="BASIC_CHART" value="chartItems/chartItems"/>
+        <entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
+        <entry key ="OTHER_CHART" value="chartItems/hotTracks"/>
+        <entry key ="FOURTH_CHART" value="chartItems/hotTracks"/>
+        <entry key ="FIFTH_CHART" value="chartItems/hotTracks"/>
+        <entry key ="VIDEO_CHART" value="chartItems/hotTracks"/>
+        <entry key ="MQ_PLAYLIST_1" value="chartItems/hotTracks"/>
+        <entry key ="MQ_PLAYLIST_2" value="chartItems/hotTracks"/>
+    </utils:map>
+
+
+    <bean name="admin.ChartController"
 		class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
 		<property name="chartItemController" ref="admin.ChartItemController" />
-		<property name="viewByChartType">
-			<map>	
-				<entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
-				<entry key ="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
-				<entry key ="OTHER_CHART" value="chartItems/hotTracksCalendar"/>
-				<entry key ="FOURTH_CHART" value="chartItems/hotTracksCalendar"/>
-				<entry key ="FIFTH_CHART" value="chartItems/hotTracksCalendar"/>
-                <entry key ="VIDEO_CHART" value="chartItems/hotTracksCalendar"/>
-                <entry key ="MQ_PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
-                <entry key ="MQ_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
-			</map>
-		</property>	
+		<property name="viewByChartType" ref="chartViewByChartType"/>
 	</bean>
 	
 	<bean name="admin.ChartItemController"
 		class="mobi.nowtechnologies.server.admin.controller.ChartItemController" parent="admin.CommonChartController">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="mediaService" ref="service.MediaService" />
-		<property name="viewByChartType">
-			<map>	
-				<entry key="BASIC_CHART" value="chartItems/chartItems"/>
-				<entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
-				<entry key ="OTHER_CHART" value="chartItems/hotTracks"/>
-				<entry key ="FOURTH_CHART" value="chartItems/hotTracks"/>
-				<entry key ="FIFTH_CHART" value="chartItems/hotTracks"/>
-				<entry key ="VIDEO_CHART" value="chartItems/hotTracks"/>
-                <entry key ="MQ_PLAYLIST_1" value="chartItems/hotTracks"/>
-                <entry key ="MQ_PLAYLIST_2" value="chartItems/hotTracks"/>
-			</map>
-		</property>		    
+		<property name="viewByChartType" ref="chartItemsViewByChartType"/>
 	</bean>
 	
 	<bean name="admin.UserController"
