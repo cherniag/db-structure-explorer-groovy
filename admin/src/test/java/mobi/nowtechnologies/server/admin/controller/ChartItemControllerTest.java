@@ -228,10 +228,10 @@ public class ChartItemControllerTest{
 
 		mockStatic( ChartDetailsAsm.class );
 
-		Map<String, String> viewByChartType = new HashMap<String, String>();
-		viewByChartType.put("BASIC_CHART", "chartItems/chartItems");
-		viewByChartType.put("HOT_TRACKS", "chartItems/hotTracks");
-		viewByChartType.put("OTHER_CHART", "chartItems/hotTracks");
+		Map<ChartType, String> viewByChartType = new HashMap<ChartType, String>();
+		viewByChartType.put(ChartType.BASIC_CHART, "chartItems/chartItems");
+		viewByChartType.put(ChartType.HOT_TRACKS, "chartItems/hotTracks");
+		viewByChartType.put(ChartType.OTHER_CHART, "chartItems/hotTracks");
 		
 		fixture = new ChartItemController();
 		fixture.setViewByChartType(viewByChartType);

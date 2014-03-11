@@ -43,7 +43,7 @@
 		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
 	</bean>
 	
-    <utils:map id="chartViewByChartType">
+    <utils:map id="chartViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
         <entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
         <entry key ="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
         <entry key ="OTHER_CHART" value="chartItems/hotTracksCalendar"/>
@@ -54,7 +54,7 @@
         <entry key ="MQ_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
     </utils:map>
 
-    <utils:map id="chartItemsViewByChartType">
+    <utils:map id="chartItemsViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
         <entry key="BASIC_CHART" value="chartItems/chartItems"/>
         <entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
         <entry key ="OTHER_CHART" value="chartItems/hotTracks"/>

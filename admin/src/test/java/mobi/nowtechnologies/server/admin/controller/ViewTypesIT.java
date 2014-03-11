@@ -13,10 +13,10 @@ import java.util.Map;
 public class ViewTypesIT extends AbstractAdminITTest {
 
     @Resource
-    private Map<String, String> chartViewByChartType;
+    private Map<ChartType, String> chartViewByChartType;
 
     @Resource
-    private Map<String, String> chartItemsViewByChartType;
+    private Map<ChartType, String> chartItemsViewByChartType;
 
 
     @Test
@@ -30,9 +30,9 @@ public class ViewTypesIT extends AbstractAdminITTest {
         check(chartItemsViewByChartType);
     }
 
-    private void check(Map<String, String> mappingInContext) {
+    private void check(Map<ChartType, String> mappingInContext) {
         for (ChartType currentType: ChartType.values()){
-            Assert.isTrue(mappingInContext.containsKey(currentType.name()));
+            Assert.isTrue(mappingInContext.containsKey(currentType));
         }
     }
 

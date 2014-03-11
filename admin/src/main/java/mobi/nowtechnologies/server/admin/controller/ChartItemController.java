@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,13 +43,13 @@ public class ChartItemController extends AbstractCommonController {
     private String filesURL;
     private String chartFilesURL;
     private ChartService chartService;
-    private Map<String, String> viewByChartType;
+    private Map<ChartType, String> viewByChartType;
 
     public void setChartService(ChartService chartService) {
         this.chartService = chartService;
     }
 
-    public void setViewByChartType(Map<String, String> viewByChartType) {
+    public void setViewByChartType(Map<ChartType, String> viewByChartType) {
         this.viewByChartType = viewByChartType;
     }
 
@@ -92,7 +93,7 @@ public class ChartItemController extends AbstractCommonController {
         allChannels = new LinkedList<String>(allChannels);
         Collections.sort((List<String>) allChannels);
 
-        return new ModelAndView(viewByChartType.get(chart.getType().name()))
+        return new ModelAndView(viewByChartType.get(chart.getType()))
                 .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos)
                 .addObject("selectedPublishDateTime", selectedPublishDateTime)
                 .addObject("filesURL", filesURL)

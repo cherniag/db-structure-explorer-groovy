@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +40,9 @@ public class ChartController extends AbstractCommonController {
 	private ChartItemController chartItemController;
 	private String filesURL;
 	private String chartFilesURL;
-	private Map<String, String> viewByChartType;
+	private Map<ChartType, String> viewByChartType;
 
-	public void setViewByChartType(Map<String, String> viewByChartType) {
+	public void setViewByChartType(Map<ChartType, String> viewByChartType) {
 		this.viewByChartType = viewByChartType;
 	}
 
@@ -134,7 +135,7 @@ public class ChartController extends AbstractCommonController {
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartItems);
 		ChartDto chartDto = ChartAsm.toChartDto(chartDetail);
 
-        return new ModelAndView(viewByChartType.get(chart.getType().name()))
+        return new ModelAndView(viewByChartType.get(chart.getType()))
 		.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos)
 		.addObject("selectedPublishDateTime", getSelectedPublishDateAsString(selectedPublishDateTime, chartItemDtos))
 		.addObject("selectedDateTime", selectedPublishDateTime)
