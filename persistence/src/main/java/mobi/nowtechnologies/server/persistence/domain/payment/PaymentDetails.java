@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -235,6 +236,12 @@ public class PaymentDetails {
     public PaymentDetails withOwner(User user) {
         this.owner = user;
         return this;
+    }
+
+    @PrePersist
+    public void validate() {
+        ActivationStatus activationStatus = owner.getActivationStatus();
+        if (!ActivationStatus.ACTIVATED.equals(activationStatus)) throw new RuntimeException("Unexpected activation status ["+activationStatus+"]. Payment details' owner should be in ACTIVATED activation status");
     }
 
 	@Override

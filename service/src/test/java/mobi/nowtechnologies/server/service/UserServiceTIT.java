@@ -8,10 +8,10 @@ import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +110,7 @@ public class UserServiceTIT {
 	
 	@Test
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveMigPaymentDetailsAndNotZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsNull_Success() {		
-		User testUser = UserFactory.createUser();
+		User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		testUser.setSubBalance(1);
 		testUser.setNextSubPayment(Utils.getEpochSeconds()-100);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -135,7 +135,7 @@ public class UserServiceTIT {
 	
 	@Test
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInactiveMigPaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsPSMS_Success() {
-        User testUser = UserFactory.createUser();
+        User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		testUser.setSubBalance(0);
 		testUser.setNextSubPayment(Utils.getEpochSeconds()- TWO_DAY_SECONDS - 10);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -159,7 +159,7 @@ public class UserServiceTIT {
 	
 	@Test
 	public void testGetListOfUsersForWeeklyUpdate_FreeTrial_Success() {
-		User testUser = UserFactory.createUser();
+		User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		testUser.setSubBalance(0);
 		testUser.setNextSubPayment(Utils.getEpochSeconds()- 10);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -176,7 +176,7 @@ public class UserServiceTIT {
 	@Test
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
 		
-		User testUser = UserFactory.createUser();
+		User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		testUser.setSubBalance(0);
 		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -201,7 +201,7 @@ public class UserServiceTIT {
 	@Test
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithInActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePast_Success() {
 		
-		User testUser = UserFactory.createUser();
+		User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		testUser.setSubBalance(0);
 		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -227,7 +227,7 @@ public class UserServiceTIT {
 	@Test
 	public void testGetListOfUsersForWeeklyUpdate_SubscribedUserWithActiveO2PaymentDetailsAndZeroBalanceAndNextSubPaymentInThePastAndLastSubscribedPaymentSystemIsMIG_Success() {
 		
-		User testUser = UserFactory.createUser();
+		User testUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		testUser.setSubBalance(0);
 		testUser.setNextSubPayment(Utils.getEpochSeconds() - TWO_DAY_SECONDS);
 		testUser.setStatus(UserStatusDao.getSubscribedUserStatus());
@@ -251,7 +251,7 @@ public class UserServiceTIT {
 
     @Test
     public void checkCreationNotificationTaskWhenProcessSubBalanceCommand() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         Community community = CommunityFactory.createCommunity();
         community.setRewriteUrlParameter("vf_nz");
         UserGroup userGroup = UserGroupFactory.createUserGroup();
@@ -273,7 +273,7 @@ public class UserServiceTIT {
 
     @Test
     public void checkCancelNotificationTaskWhenUserUnsubscribes() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         Community community = CommunityFactory.createCommunity();
         community.setRewriteUrlParameter("vf_nz");
         UserGroup userGroup = UserGroupFactory.createUserGroup();

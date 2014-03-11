@@ -4,7 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Refund;
 import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.ActionReason;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,8 +44,9 @@ public class RefundRepositoryIT {
         refund.nextSubPaymentMillis = Long.MAX_VALUE;
         refund.paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
         refund.logTimeMillis = Utils.getEpochMillis();
-        refund.user = UserFactory.createUser();
+        refund.user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         refund.actionReason = USER_DOWNGRADED_TARIFF;
+        refund.paymentDetails.setOwner(refund.user);
 
         refund.user = userRepository.save(refund.user);
 

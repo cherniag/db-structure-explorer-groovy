@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -17,7 +18,7 @@ public class TaskFactory {
         sendChargeNotificationTask.setCreationTimestamp(currentTimeMillis());
         sendChargeNotificationTask.setId(Long.valueOf(10));
         sendChargeNotificationTask.setTaskStatus(TaskStatus.ACTIVE);
-        sendChargeNotificationTask.setUser(UserFactory.createUser());
+        sendChargeNotificationTask.setUser(UserFactory.createUser(ActivationStatus.ACTIVATED));
         return sendChargeNotificationTask;
     }
 }

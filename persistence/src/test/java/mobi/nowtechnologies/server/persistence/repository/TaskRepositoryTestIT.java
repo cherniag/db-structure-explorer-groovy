@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -182,7 +183,7 @@ public class TaskRepositoryTestIT extends AbstractTransactionalJUnit4SpringConte
     }
 
     private User createAndSaveUser() {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserName(UUID.randomUUID().toString());
         user.setDeviceUID(user.getUserName());
         return userRepository.save(user);

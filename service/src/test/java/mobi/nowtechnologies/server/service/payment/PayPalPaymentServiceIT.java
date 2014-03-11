@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.http.PayPalHttpService;
 import mobi.nowtechnologies.server.service.payment.impl.PayPalPaymentServiceImpl;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import org.apache.http.NameValuePair;
@@ -136,6 +137,7 @@ public class PayPalPaymentServiceIT {
     private User createAndSaveUser() {
         User user = new User();
         user.setUserName("good@user.com");
+        user.setActivationStatus(ActivationStatus.ACTIVATED);
         entityDao.saveEntity(user);
         return user;
     }

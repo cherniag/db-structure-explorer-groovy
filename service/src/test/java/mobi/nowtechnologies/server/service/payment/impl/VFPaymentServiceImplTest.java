@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.VFResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.junit.Before;
@@ -129,7 +130,7 @@ public class VFPaymentServiceImplTest {
 
         VFResponse vfResponse = VFResponse.futureResponse().parse(deliverSm);
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
         VFPSMSPaymentDetails vfpsmsPaymentDetails = new VFPSMSPaymentDetails();
@@ -163,7 +164,7 @@ public class VFPaymentServiceImplTest {
 
         VFResponse vfResponse = VFResponse.futureResponse().parse(deliverSm);
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
         O2PSMSPaymentDetails vfpsmsPaymentDetails = new O2PSMSPaymentDetails();
@@ -191,7 +192,7 @@ public class VFPaymentServiceImplTest {
 
         VFResponse vfResponse = VFResponse.futureResponse().parse(deliverSm);
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
         O2PSMSPaymentDetails vfpsmsPaymentDetails = new O2PSMSPaymentDetails();

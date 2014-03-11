@@ -212,7 +212,7 @@ public class UserServiceTest {
 	public void testChangePassword_Success() throws Exception {
 		String password = "newPa$$1";
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		String storedToken = createStoredToken(user.getUserName(), password);
 
 		Mockito.when(entityServiceMock.findById(User.class, user.getId())).thenReturn(user);
@@ -231,7 +231,7 @@ public class UserServiceTest {
 	public void testChangePassword_Error() throws Exception {
 		String password = "newPa$$1";
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		String storedToken = createStoredToken(user.getUserName(), password);
 
 		Mockito.when(entityServiceMock.findById(User.class, user.getId())).thenReturn(user);
@@ -300,7 +300,7 @@ public class UserServiceTest {
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L + 200000L));
 		userDto.setPaymentEnabled(false);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -354,7 +354,7 @@ public class UserServiceTest {
 		userDto.setNextSubPayment(new Date());
 		userDto.setPaymentEnabled(false);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -406,7 +406,7 @@ public class UserServiceTest {
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
 		userDto.setPaymentEnabled(false);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -458,7 +458,7 @@ public class UserServiceTest {
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
 		userDto.setPaymentEnabled(false);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -514,7 +514,7 @@ public class UserServiceTest {
 		PaymentDetails paymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
 		paymentDetails.setActivated(true);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -564,7 +564,7 @@ public class UserServiceTest {
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
 		userDto.setPaymentEnabled(false);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -614,7 +614,7 @@ public class UserServiceTest {
 		userDto.setNextSubPayment(new Date(2L));
 		userDto.setPaymentEnabled(false);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -693,7 +693,7 @@ public class UserServiceTest {
 		PaymentDetails migPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
 		migPaymentDetails.setActivated(false);
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		mockedUser.setId(5);
 		mockedUser.setStatus(null);
@@ -726,7 +726,7 @@ public class UserServiceTest {
 	public void testUpdateUser_UserStatusDao_getUserStatusMapIdAsKey_RuntimeException_Failure() throws Exception {
 		UserDto userDto = UserDtoFactory.createUserDto();
 
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		PowerMockito.when(userRepositoryMock.findOne(userDto.getId())).thenReturn(mockedUser);
 		PowerMockito.when(UserStatusDao.getUserStatusMapUserStatusAsKey()).thenThrow(new RuntimeException());
@@ -826,7 +826,7 @@ public class UserServiceTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testResetSmsAccordingToLawAttributes_Success() {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		long epochMillis = 25L;
 
@@ -847,7 +847,7 @@ public class UserServiceTest {
 	@SuppressWarnings("deprecation")
 	@Test(expected = ServiceException.class)
 	public void testResetSmsAccordingToLawAttributes_Failure() {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		long epochMillis = 25L;
 
@@ -882,7 +882,7 @@ public class UserServiceTest {
 	public void testPopulateAmountOfMoneyToUserNotification_Success() {
 		final BigDecimal userAmountOfMoneyToUserNotification = BigDecimal.ONE;
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setAmountOfMoneyToUserNotification(userAmountOfMoneyToUserNotification);
 
 		SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
@@ -917,7 +917,7 @@ public class UserServiceTest {
 	public void testPopulateAmountOfMoneyToUserNotification_SubmittedPaymentIsNull_Failure() {
 		final BigDecimal userAmountOfMoneyToUserNotification = BigDecimal.ONE;
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setAmountOfMoneyToUserNotification(userAmountOfMoneyToUserNotification);
 
 		SubmittedPayment submittedPayment = null;
@@ -953,7 +953,7 @@ public class UserServiceTest {
 	@Test()
 	public void unsubscribeUser_Success() {
 		long epochMillis = 12354L;
-		User mockedUser = UserFactory.createUser();
+		User mockedUser = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final String reason = null;
 
 		PaymentDetails mockedCurrentPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
@@ -1047,7 +1047,7 @@ public class UserServiceTest {
 	private Object[] testRegisterUser(final String storedToken, String communityName, final String deviceUID
 			, final String deviceTypeName, final String ipAddress
 			, final boolean notExistUser, boolean notDeviceType) throws Exception {
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		final Integer countryId = 1;
 		final Integer operatorId = 1;
@@ -1249,7 +1249,7 @@ public class UserServiceTest {
 	public void testActivatePhoneNumber_Success() throws Exception {
 		final String phone = "07870111111";
 		final String pin = "1111";
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setPin("1234");
 
 		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenReturn(new PhoneNumberValidationData().withPhoneNumber("+447870111111").withPin(pin));
@@ -1270,7 +1270,7 @@ public class UserServiceTest {
 	public void testActivatePhoneNumber_NullPhone_Success() throws Exception {
 		final String phone = null;
         final String pin = null;
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setPin("1234");
 
 		Mockito.when(o2ClientServiceMock.validatePhoneNumber(anyString())).thenAnswer(new Answer<PhoneNumberValidationData>() {
@@ -1301,7 +1301,7 @@ public class UserServiceTest {
         final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
         final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setLastSubscribedPaymentSystem(migSmsType);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
@@ -1380,7 +1380,7 @@ public class UserServiceTest {
         final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
         final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
@@ -1457,7 +1457,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setLastSubscribedPaymentSystem(migSmsType);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
@@ -1536,7 +1536,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -1613,7 +1613,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -1697,7 +1697,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -1781,7 +1781,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -1864,7 +1864,7 @@ public class UserServiceTest {
 		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -1944,7 +1944,7 @@ public class UserServiceTest {
 		final String appStoreOriginalTransactionId = "appStoreOriginalTransactionId";
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -2026,7 +2026,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String migSmsType = PaymentDetails.MIG_SMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(null);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -2103,7 +2103,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String paymentDetailsType = PaymentDetails.O2_PSMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -2186,7 +2186,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String paymentDetailsType = PaymentDetails.O2_PSMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -2271,7 +2271,7 @@ public class UserServiceTest {
 	@Test
 	public void testGetRedeemServerO2Url_Success() throws Exception{
 		String redeemServerO2Url = "identity.o2.co.uk"; 
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		
 		Mockito.when(o2ClientServiceMock.getRedeemServerO2Url(eq(user.getMobile()))).thenReturn(redeemServerO2Url);
 		
@@ -2288,7 +2288,7 @@ public class UserServiceTest {
 		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		
 		user.setLastSubscribedPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
 		user.setStatus(limitedUserStatus);
@@ -2315,7 +2315,7 @@ public class UserServiceTest {
 		final String iTunesSubscriptionType = PaymentDetails.ITUNES_SUBSCRIPTION;
 		final String paymentDetailsType = PaymentDetails.O2_PSMS_TYPE;
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
@@ -2395,7 +2395,7 @@ public class UserServiceTest {
 		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		
 		user.setLastSubscribedPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
 		user.setStatus(subscribedUserStatus);
@@ -2416,8 +2416,8 @@ public class UserServiceTest {
 	
 	@Test
 	public void testFindUsersForItunesInAppSubscription_Success(){
-		User user = UserFactory.createUser();
-		User user2 = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+		User user2 = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		int nextSubPayment = 1;
 		String appStoreOriginalTransactionId="appStoreOriginalTransactionId";
@@ -2440,7 +2440,7 @@ public class UserServiceTest {
 
 	@Test(expected=NullPointerException.class)
 	public void testFindUsersForItunesInAppSubscription_appStoreOriginalTransactionIdIsNull_Failure(){
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		String appStoreOriginalTransactionId=null;
 		int nextSubPayment = 1;
@@ -2723,7 +2723,7 @@ public class UserServiceTest {
 		o2UserDetails.operator="o2";
 		o2UserDetails.contract="payg";
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 		
 		Mockito.when(communityResourceBundleMessageSourceMock.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
@@ -2755,7 +2755,7 @@ public class UserServiceTest {
 		o2UserDetails.operator="o2";
 		o2UserDetails.contract="payg";
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 		
 		Mockito.when(communityResourceBundleMessageSourceMock.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
@@ -2789,7 +2789,7 @@ public class UserServiceTest {
 		o2UserDetails.operator="o2";
 		o2UserDetails.contract="payg";
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 		
 		Mockito.when(communityResourceBundleMessageSourceMock.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
@@ -2824,7 +2824,7 @@ public class UserServiceTest {
 		o2UserDetails.operator = "o2";
 		o2UserDetails.contract="payg";
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 		
 		Mockito.when(communityResourceBundleMessageSourceMock.getMessage(anyString(), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
@@ -2859,7 +2859,7 @@ public class UserServiceTest {
 		o2UserDetails.operator ="o2";
 		o2UserDetails.contract="payg";
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 		
 		Calendar calendar = Calendar.getInstance();
@@ -2897,7 +2897,7 @@ public class UserServiceTest {
 		o2UserDetails.operator= "o2";
 		o2UserDetails.contract="payg";
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
 
 		Calendar calendar = Calendar.getInstance();
@@ -2931,7 +2931,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testApplyPromotionByPromoCode_BannedUserWithNoPromotion_Success() {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
         UserBanned userBanned = new UserBanned(user);
 
@@ -3431,7 +3431,7 @@ public class UserServiceTest {
     @Test
     public void testPopulateSubscriberData_IsPromotedNumber_Success() throws Exception{
         //given
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         String phoneNumber="+6421111111";
         user.setMobile(phoneNumber);
         Community community = user.getUserGroup().getCommunity();
@@ -3470,7 +3470,7 @@ public class UserServiceTest {
     @Test
     public void testPopulateSubscriberData_IsNotPromotedNumber_Success() throws Exception{
         //given
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         String phoneNumber="+6421111111";
         user.setMobile(phoneNumber);
         Community community = user.getUserGroup().getCommunity();
@@ -3861,7 +3861,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldReturnTrue_OnIsTempUserName_WhenEqualUsernameAndDeviceUID(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserName(user.getDeviceUID());
 
         boolean result = user.isTempUserName();
@@ -3871,7 +3871,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldReturnTrue_OnIsActivatedUserName_WhenEqualUsernameAndMobile(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserName(user.getMobile());
 
         boolean result = user.isActivatedUserName();
@@ -3881,7 +3881,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldReturnTrue_OnHasPhoneNumber_WhenMobileNotNUll(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setMobile("+4440000000001");
 
         boolean result = user.hasPhoneNumber();
@@ -3891,7 +3891,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldReturnFalse_OnHasPhoneNumber_WhenMobileNUll(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setMobile(null);
 
         boolean result = user.hasPhoneNumber();
@@ -3901,7 +3901,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldReturnFalse_OnHasPhoneNumber_WhenMobileEmpty(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setMobile(null);
 
         boolean result = user.hasPhoneNumber();
@@ -3931,7 +3931,7 @@ public class UserServiceTest {
 
     @Test
     public void checkActivationStatusRegisteredShouldPassWhenDifferentCase(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setDeviceUID("DEVICE_UID");
         user.setUserName("device_uid");
         user.setMobile("");
@@ -3942,7 +3942,7 @@ public class UserServiceTest {
 
     @Test
     public void checkActivationStatusEnteredNumberShouldPassWhenDifferentCase(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setDeviceUID("DEVICE_UID");
         user.setUserName("device_uid");
         user.setStatus(new UserStatus(UserStatus.LIMITED));
@@ -3952,7 +3952,7 @@ public class UserServiceTest {
 
     @Test(expected = ActivationStatusException.class)
     public void checkActivationStatusRegisteredShouldNotPass(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setDeviceUID("device_uid");
         user.setUserName("other");
         user.setStatus(new UserStatus(UserStatus.LIMITED));
@@ -3962,7 +3962,7 @@ public class UserServiceTest {
 
     @Test(expected = ActivationStatusException.class)
     public void checkActivationStatusEnteredNumberShouldNotPass(){
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setDeviceUID("other");
         user.setUserName("device_uid");
         user.setStatus(new UserStatus(UserStatus.LIMITED));
@@ -4052,7 +4052,7 @@ public class UserServiceTest {
         UserGroup userGroup = new UserGroup();
         userGroup.setCommunity(community);
 
-        user = UserFactory.createUser();
+        user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setTariff(currentUserTariff);
         user.setLastPromo(new PromoCode().withCode("testCode").withMediaType(VIDEO_AND_AUDIO));
 

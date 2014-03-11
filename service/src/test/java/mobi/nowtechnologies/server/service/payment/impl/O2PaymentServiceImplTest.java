@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -100,7 +101,7 @@ public class O2PaymentServiceImplTest {
 
     @Test
     public void testStartPayment_SuccessfulO2Response_Success() throws Exception {
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 		
@@ -227,7 +228,7 @@ public class O2PaymentServiceImplTest {
     public void testStartPayment_FailureO2ResponseAndMadeRetriesEqRetriesOnErrorAndNextSubPaymentInThePast_Success() throws Exception {
         final int epochSeconds = 55555;
 
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
@@ -356,7 +357,7 @@ public class O2PaymentServiceImplTest {
 
     @Test
     public void testStartPayment_FailureO2ResponseAndMedeRetriesNotEqRetriesOnError_Success() throws Exception {
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
@@ -481,7 +482,7 @@ public class O2PaymentServiceImplTest {
 
     @Test
     public void testCommitPaymentDetails_Success() throws Exception {
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 

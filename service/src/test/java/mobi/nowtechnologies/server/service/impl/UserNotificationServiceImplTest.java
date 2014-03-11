@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
@@ -81,7 +82,7 @@ public class UserNotificationServiceImplTest {
 	public void testNotifyUserAboutSuccesfullPayment_Success()
 			throws Exception {
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		Community community = CommunityFactory.createCommunity();
 		UserGroup userGroup = UserGroupFactory.createUserGroup(community);
 		user.setUserGroup(userGroup);
@@ -117,7 +118,7 @@ public class UserNotificationServiceImplTest {
 	@Test
 	public void testSetUserService_UserNotificationThrowsRuntimeException_Success()
 			throws Exception {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		Community community = CommunityFactory.createCommunity();
 		UserGroup userGroup = UserGroupFactory.createUserGroup(community);
 		user.setUserGroup(userGroup);
@@ -137,7 +138,7 @@ public class UserNotificationServiceImplTest {
 	@Test
 	public void testSetUserService_UserNotificationThrowsServiceCheckedException_Success()
 			throws Exception {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		Community community = CommunityFactory.createCommunity();
 		UserGroup userGroup = UserGroupFactory.createUserGroup(community);
 		user.setUserGroup(userGroup);
@@ -156,7 +157,7 @@ public class UserNotificationServiceImplTest {
 	
 	@Test
 	public void testSend4GDowngradeSMS_Success() throws Exception {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
@@ -202,7 +203,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -256,7 +257,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -310,7 +311,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -364,7 +365,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -461,7 +462,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -515,7 +516,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -574,7 +575,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -633,7 +634,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -680,7 +681,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -763,7 +764,7 @@ public class UserNotificationServiceImplTest {
 		String deviceTypeName = "ANDROID";
 		DeviceType androidDeviceType = DeviceTypeFactory.createDeviceType(deviceTypeName);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 
@@ -812,7 +813,7 @@ public class UserNotificationServiceImplTest {
 
 		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 		user.setStatus(limitedUserStatus);
@@ -860,7 +861,7 @@ public class UserNotificationServiceImplTest {
 
 		UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 		user.setStatus(subscribedUserStatus);
@@ -908,7 +909,7 @@ public class UserNotificationServiceImplTest {
 
 		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 		user.setStatus(limitedUserStatus);
@@ -956,7 +957,7 @@ public class UserNotificationServiceImplTest {
 
 		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 		user.setStatus(limitedUserStatus);
@@ -1004,7 +1005,7 @@ public class UserNotificationServiceImplTest {
 
 		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 		user.setStatus(limitedUserStatus);
@@ -1092,7 +1093,7 @@ public class UserNotificationServiceImplTest {
 
 		UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setNextSubPayment(nextSubPayment);
 		user.setDeviceType(androidDeviceType);
 		user.setStatus(limitedUserStatus);
@@ -1138,7 +1139,7 @@ public class UserNotificationServiceImplTest {
 
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setContract(PAYG);
 		user.setSegment(CONSUMER);
@@ -1169,7 +1170,7 @@ public class UserNotificationServiceImplTest {
 
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setContract(PAYM);
 		user.setSegment(CONSUMER);
@@ -1200,7 +1201,7 @@ public class UserNotificationServiceImplTest {
 
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setContract(PAYG);
 		user.setSegment(CONSUMER);
@@ -1231,7 +1232,7 @@ public class UserNotificationServiceImplTest {
 
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setContract(PAYG);
 		user.setSegment(CONSUMER);
@@ -1262,7 +1263,7 @@ public class UserNotificationServiceImplTest {
 
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setContract(PAYG);
 		user.setSegment(CONSUMER);
@@ -1309,7 +1310,7 @@ public class UserNotificationServiceImplTest {
 
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setContract(PAYG);
 		user.setSegment(CONSUMER);
@@ -1338,7 +1339,7 @@ public class UserNotificationServiceImplTest {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries;
 
-        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
@@ -1394,7 +1395,7 @@ public class UserNotificationServiceImplTest {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries;
 
-        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MAX_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
@@ -1450,7 +1451,7 @@ public class UserNotificationServiceImplTest {
         int madeRetries = Integer.MAX_VALUE;
         int retriesOnError = madeRetries;
 
-        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
@@ -1506,7 +1507,7 @@ public class UserNotificationServiceImplTest {
 		int madeRetries = Integer.MAX_VALUE;
 		int retriesOnError = madeRetries + 1;
 
-        User user = UserFactory.createUser().withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MIN_VALUE);
 
         PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
@@ -1566,7 +1567,7 @@ public class UserNotificationServiceImplTest {
 		o2PDPaymentDetails.setMadeRetries(madeRetries);
 		o2PDPaymentDetails.setRetriesOnError(retriesOnError);
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setCurrentPaymentDetails(o2PDPaymentDetails);
 		user.setNextSubPayment(Integer.MIN_VALUE);
 
@@ -1616,7 +1617,7 @@ public class UserNotificationServiceImplTest {
 	public void testSendPaymentFailSMS_PaymentDetailsIsNull_Failure() throws Exception {
 		PaymentDetails o2PDPaymentDetails = null;
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setCurrentPaymentDetails(o2PDPaymentDetails);
 		user.setNextSubPayment(Integer.MIN_VALUE);
 
@@ -1761,7 +1762,7 @@ public class UserNotificationServiceImplTest {
 		
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(null);
@@ -1787,7 +1788,7 @@ public class UserNotificationServiceImplTest {
 
     @Test
     public void testSendActivationPinSMS_Success() throws Exception {
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setPin("0000");
 
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
@@ -1824,7 +1825,7 @@ public class UserNotificationServiceImplTest {
 
     @Test
     public void testSendActivationPinSMS_RejectDevice_Success() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         doReturn(true).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
 
@@ -1840,7 +1841,7 @@ public class UserNotificationServiceImplTest {
 
     @Test
     public void testSendActivationPinSMS_NotHasAllDetails_Success() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setProvider(null);
         doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.activation.pin.not.for.device.type");
 
@@ -1871,7 +1872,7 @@ public class UserNotificationServiceImplTest {
 		
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(O2);
 		user.setSegment(null);
@@ -1905,7 +1906,7 @@ public class UserNotificationServiceImplTest {
 		
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(null);
@@ -1939,7 +1940,7 @@ public class UserNotificationServiceImplTest {
 		
 		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -1975,7 +1976,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(null);
@@ -2011,7 +2012,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(NON_O2);
 		user.setSegment(BUSINESS);
@@ -2047,7 +2048,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2083,7 +2084,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2121,7 +2122,7 @@ public class UserNotificationServiceImplTest {
         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
         paymentPolicy.setProvider(ProviderType.VF);
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(o2UserGroup);
         user.setProvider(ProviderType.VF);
         user.setDeviceType(deviceType);
@@ -2167,7 +2168,7 @@ public class UserNotificationServiceImplTest {
         PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
         paymentPolicy.setProvider(ProviderType.NON_VF);
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(o2UserGroup);
         user.setProvider(ProviderType.VF);
         user.setDeviceType(deviceType);
@@ -2214,7 +2215,7 @@ public class UserNotificationServiceImplTest {
         paymentPolicy.setProvider(ProviderType.VF);
         paymentPolicy.setSegment(SegmentType.CONSUMER);
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(o2UserGroup);
         user.setProvider(ProviderType.VF);
         user.setDeviceType(deviceType);
@@ -2262,7 +2263,7 @@ public class UserNotificationServiceImplTest {
         paymentPolicy.setSegment(SegmentType.CONSUMER);
         paymentPolicy.setContract(Contract.PAYM);
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(o2UserGroup);
         user.setProvider(ProviderType.VF);
         user.setDeviceType(deviceType);
@@ -2314,7 +2315,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2396,7 +2397,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2478,7 +2479,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2560,7 +2561,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2640,7 +2641,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2720,7 +2721,7 @@ public class UserNotificationServiceImplTest {
 
         DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(o2UserGroup);
         user.setProvider(null);
         user.setSegment(BUSINESS);
@@ -2802,7 +2803,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2882,7 +2883,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -2962,7 +2963,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -3042,7 +3043,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -3124,7 +3125,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -3206,7 +3207,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(o2UserGroup);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
@@ -3355,7 +3356,7 @@ public class UserNotificationServiceImplTest {
 		
 		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(null);
 		user.setProvider(null);
 		user.setSegment(BUSINESS);
