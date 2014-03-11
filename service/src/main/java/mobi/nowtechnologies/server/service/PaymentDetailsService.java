@@ -241,60 +241,6 @@ public class PaymentDetailsService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyWithOutSegment(Community community, User user) {
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community);
-		return mergePaymentPolicies(user, paymentPolicies);
-	}
-	
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<PaymentPolicyDto> getPaymentPolicyWithNullSegment(Community community, User user) {
-		List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithNullSegment(community, user.getProvider());
-		return mergePaymentPolicies(user, paymentPolicies);
-	}
-
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<PaymentPolicyDto> getPaymentPolicy(Community community, User user, SegmentType segment) {
-        if(user.isNonO2Community() && !user.isVFNZCommunityUser()){
-            return mergePaymentPolicies(user, paymentPolicyRepository.getPaymentPoliciesWithOutSegment(community));
-        }
-        if(isNull(segment))
-            segment = SegmentType.BUSINESS;
-        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, segment);
-        return mergePaymentPolicies(user, paymentPolicies);
-    }
-
-	private List<PaymentPolicyDto> mergePaymentPolicies(User user, List<PaymentPolicy> paymentPolicies) {
-		List<PaymentPolicyDto> result = new LinkedList<PaymentPolicyDto>();
-		for (PaymentPolicy paymentPolicy : paymentPolicies) {
-            Promotion potentialPromotion = user.getPotentialPromotion();
-            if (null != potentialPromotion) {
-            	user = userService.findById(user.getId());
-            	potentialPromotion = user.getPotentialPromotion();
-				List<PromotionPaymentPolicy> promotionPaymentPolicies = potentialPromotion.getPromotionPaymentPolicies();
-				boolean inList = false;
-				for (PromotionPaymentPolicy promotionPolicy : promotionPaymentPolicies) {
-					if (promotionPolicy.getPaymentPolicies().contains(paymentPolicy)) {
-						result.add(new PaymentPolicyDto(paymentPolicy, promotionPolicy));
-						inList = true;
-					}
-				}
-				if (!inList) {
-					result.add(paymentPolicyService.getPaymentPolicy(paymentPolicy, null));
-				}
-			} else {
-				result.add(paymentPolicyService.getPaymentPolicy(paymentPolicy, null));
-			}
-		}
-		return result;
-	}
-
-	public PaymentPolicyDto getPaymentPolicy(Integer paymentPolicyId)
-	{
-		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(paymentPolicyId);
-		return paymentPolicyService.getPaymentPolicy(paymentPolicy, null);
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public PaymentDetails getPendingPaymentDetails(int userId) {
 		User user = userService.findById(userId);
 		return user.getPendingPaymentDetails();

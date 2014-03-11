@@ -175,7 +175,7 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
         o2psmsPaymentDetails.setActivated(true);
         o2psmsPaymentDetails.setCreationTimestampMillis(0L);
         o2psmsPaymentDetails.setDisableTimestampMillis(0L);
-        o2psmsPaymentDetails.setMadeRetries(0);
+        o2psmsPaymentDetails.resetMadeAttempts();
         o2psmsPaymentDetails.setRetriesOnError(0);
         o2psmsPaymentDetails.setOwner(user);
 

@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class EntityDaoTest  {
+public class EntityDaoIT {
 	
 	@Resource(name = "persistence.EntityDao")
 	private EntityDao entityDao;

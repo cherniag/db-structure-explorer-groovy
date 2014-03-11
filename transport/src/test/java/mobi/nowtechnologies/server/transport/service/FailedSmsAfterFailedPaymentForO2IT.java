@@ -30,13 +30,10 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
-/**
- * Created by oar on 12/20/13.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextHierarchy({
         @ContextConfiguration(locations = {
@@ -78,24 +75,29 @@ public class FailedSmsAfterFailedPaymentForO2IT{
         PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
         final long time = new Date().getTime();
         logger.info("Start time {}", time);
-        List<PendingPayment> createPendingPayments = pendingPaymentService.createPendingPayments();
+
+        List<PendingPayment> pendingPayments = pendingPaymentService.createPendingPayments();
         User currentUser = userRepository.findOne(101);
         currentUser.getUserGroup().setCommunity(communityRepository.findByRewriteUrlParameter("o2"));
+
         PaymentDetails paymentDetails = paymentDetailsRepository.findOne(4L);
         paymentDetails.setOwner(currentUser);
-        paymentDetails.setMadeRetries(paymentDetails.getRetriesOnError());
+        paymentDetails.withMadeRetries(paymentDetails.getRetriesOnError());
         currentUser.setCurrentPaymentDetails(paymentDetails);
-        assertEquals(createPendingPayments.size(), 1);
-        PendingPayment pendingPayment = Iterables.getFirst(createPendingPayments, null);
+
+        assertEquals(pendingPayments.size(), 1);
+
+        PendingPayment pendingPayment = Iterables.getFirst(pendingPayments, null);
         pendingPayment.setPaymentDetails(paymentDetails);
         pendingPayment.setExpireTimeMillis(0);
         pendingPayment.setPaymentSystem("o2Psms");
+
         expirePendingPaymentsJob.execute();
 
         monitor.waitToComplete(5000);
 
         File smsFile = getLastSmsFile(time);
-        List<String> smsText = Files.readLines(smsFile, Charsets.UTF_8);
+        List<String> smsText = Files.readLines(smsFile, UTF_8);
         assertTrue(smsText.contains("URL: " + smsUrl));
 
     }

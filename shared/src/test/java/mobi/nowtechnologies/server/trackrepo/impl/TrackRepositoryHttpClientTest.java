@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mobi.nowtechnologies.server.trackrepo.impl;
 
 import com.google.gson.reflect.TypeToken;

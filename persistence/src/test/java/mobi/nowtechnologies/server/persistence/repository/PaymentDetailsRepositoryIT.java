@@ -55,7 +55,7 @@ public class PaymentDetailsRepositoryIT {
 		PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails();
 		paymentDetails.setBillingAgreementTxId(billingAgreement); 
 		paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
-		paymentDetails.setMadeRetries(0);
+		paymentDetails.withMadeAttempts(0);
 		paymentDetails.setRetriesOnError(3);
 		paymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
 		paymentDetails.setActivated(false);

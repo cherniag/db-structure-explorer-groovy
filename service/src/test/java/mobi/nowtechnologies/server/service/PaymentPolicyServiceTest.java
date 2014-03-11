@@ -1,40 +1,41 @@
 package mobi.nowtechnologies.server.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.Operator;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
 
 @RunWith(PowerMockRunner.class)
 public class PaymentPolicyServiceTest {
 	
-	private PaymentPolicyService fixturePaymentPolicyService;
-	private PaymentPolicyRepository mockPaymentPolicyRepository;
+	private PaymentPolicyService paymentPolicyServiceFixture;
+	private PaymentPolicyRepository paymentPolicyRepositoryMock;
 	
 	@Before
 	public void before() {
-		mockPaymentPolicyRepository = Mockito.mock(PaymentPolicyRepository.class);
+		paymentPolicyRepositoryMock = Mockito.mock(PaymentPolicyRepository.class);
 
-		fixturePaymentPolicyService = new PaymentPolicyService();
-		fixturePaymentPolicyService.setPaymentPolicyRepository(mockPaymentPolicyRepository);
+		paymentPolicyServiceFixture = new PaymentPolicyService();
+		paymentPolicyServiceFixture.setPaymentPolicyRepository(paymentPolicyRepositoryMock);
 	}
 	
 	@Test
@@ -43,7 +44,7 @@ public class PaymentPolicyServiceTest {
 			
 		PromotionPaymentPolicy promotion = createPromotionPaymentPolicy();
 		
-		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(paymentPolicy, promotion);
+		PaymentPolicyDto dto = paymentPolicyServiceFixture.getPaymentPolicy(paymentPolicy, promotion);
 		
 		assertNotNull(dto);
 		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), dto.getOperator());
@@ -61,7 +62,7 @@ public class PaymentPolicyServiceTest {
 	@Test
 	public void mergePaymentPolicyWithNullPromotion() {
 		PaymentPolicy paymentPolicy = createPaymentPolicy();
-		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(paymentPolicy, null);
+		PaymentPolicyDto dto = paymentPolicyServiceFixture.getPaymentPolicy(paymentPolicy, null);
 		
 		assertNotNull(dto);
 		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), dto.getOperator());
@@ -78,7 +79,7 @@ public class PaymentPolicyServiceTest {
 	
 	@Test
 	public void mergePaymentPolicyWithNulls() {
-		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(null, null);
+		PaymentPolicyDto dto = paymentPolicyServiceFixture.getPaymentPolicy(null, null);
 		assertNull(dto);
 	}
 	
@@ -87,7 +88,7 @@ public class PaymentPolicyServiceTest {
 		PaymentPolicy paymentPolicy = createPaymentPolicy();
 		paymentPolicy.setOperator(null);
 		
-		PaymentPolicyDto dto = fixturePaymentPolicyService.getPaymentPolicy(paymentPolicy, null);
+		PaymentPolicyDto dto = paymentPolicyServiceFixture.getPaymentPolicy(paymentPolicy, null);
 		
 		assertNotNull(dto);		
 		assertEquals(paymentPolicy.getPaymentType(), dto.getPaymentType());
@@ -129,14 +130,14 @@ public class PaymentPolicyServiceTest {
 		
 		List<String> appStoreProductIds = Collections.<String>emptyList();
 		
-		Mockito.when(mockPaymentPolicyRepository.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community)).thenReturn(appStoreProductIds);
+		Mockito.when(paymentPolicyRepositoryMock.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community)).thenReturn(appStoreProductIds);
 		
-		List<String> actualAppStoreProductIds = fixturePaymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+		List<String> actualAppStoreProductIds = paymentPolicyServiceFixture.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 		
 		assertNotNull(actualAppStoreProductIds);
 		assertEquals(appStoreProductIds, actualAppStoreProductIds);
 		
-		Mockito.verify(mockPaymentPolicyRepository, times(1)).findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
+		Mockito.verify(paymentPolicyRepositoryMock, times(1)).findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
 	}
 	
 	@Test
@@ -147,14 +148,14 @@ public class PaymentPolicyServiceTest {
 		
 		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy(); 
 		
-		Mockito.when(mockPaymentPolicyRepository.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy);
+		Mockito.when(paymentPolicyRepositoryMock.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy);
 		
-		final PaymentPolicy actaulPaymentPolicy = fixturePaymentPolicyService.findByCommunityAndAppStoreProductId(community, appStoreProductId);
+		final PaymentPolicy actualPaymentPolicy = paymentPolicyServiceFixture.findByCommunityAndAppStoreProductId(community, appStoreProductId);
 		
-		assertNotNull(actaulPaymentPolicy);
-		assertEquals(paymentPolicy, actaulPaymentPolicy);
+		assertNotNull(actualPaymentPolicy);
+		assertEquals(paymentPolicy, actualPaymentPolicy);
 		
-		Mockito.verify(mockPaymentPolicyRepository, times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
+		Mockito.verify(paymentPolicyRepositoryMock, times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
 		
 	}
 

@@ -3,12 +3,9 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.service.CommunityService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.PromotionService;
-import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
@@ -28,12 +25,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
@@ -53,12 +48,17 @@ public class PaymentsController extends CommonController {
     public static final String PAGE_MANAGE_PAYMENTS_INAPP = PATH_DELIM + VIEW_MANAGE_PAYMENTS_INAPP + PAGE_EXT;
 
     private PaymentDetailsService paymentDetailsService;
+    private PaymentPolicyService paymentPolicyService;
     private UserService userService;
     private CommunityService communityService;
     private PromotionService promotionService;
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
         this.paymentDetailsService = paymentDetailsService;
+    }
+
+    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
+        this.paymentPolicyService = paymentPolicyService;
     }
 
     public void setUserService(UserService userService) {
@@ -89,7 +89,7 @@ public class PaymentsController extends CommonController {
         }
         
         paymentsPage.setMobilePhoneNumber( user.getMobile() );
-        paymentsPage.setPaymentPolicies( getPaymentPolicy(user, checkNotNull(community), user.getSegment(), user.getOperator()) );
+        paymentsPage.setPaymentPolicies(paymentPolicyService.getPaymentPolicyDtos(user));
         paymentsPage.setConsumerUser( isConsumerUser(user) );
         paymentsPage.setPaymentDetails( user.getCurrentPaymentDetails() );
         paymentsPage.setPaymentPoliciesNote( paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE) );
@@ -174,63 +174,8 @@ public class PaymentsController extends CommonController {
     	return (user.isO2Consumer() && user.getSegment() == SegmentType.CONSUMER) || user.isVFNZUser();
     }
     
-    private boolean isNotFromNetwork(User user) {
-    	return ProviderType.NON_O2 == user.getProvider() || ProviderType.NON_VF == user.getProvider();
-    }
-    
     private boolean isBusinessUser(User u) {
     	return u.isO2Business(); // for VF NZ we don't have business users, so always will be false
-    }
-
-    private List<PaymentPolicyDto> getPaymentPolicy(User user, Community community, SegmentType segment, int operator2) {
-        List<PaymentPolicyDto> paymentPolicy;
-        
-        // the way we retrieve the payment policies should be refactored
-        if ( user.isVFNZCommunityUser() ) {
-        	paymentPolicy = paymentDetailsService.getPaymentPolicyWithNullSegment(community, user);
-        } else {
-        	if( isNotFromNetwork(user) ) {
-                paymentPolicy = paymentDetailsService.getPaymentPolicyWithOutSegment(community, user);
-            } else {
-            	paymentPolicy = paymentDetailsService.getPaymentPolicy(community, user, segment);
-            	paymentPolicy = filterPaymentPoliciesForUser(paymentPolicy, user);
-            }
-        }
-        
-        if(isEmpty(paymentPolicy)) {
-            return Collections.emptyList();
-        }
-        
-        return paymentPolicy;
-    }
-    
-    /**
-     * For 3G users we'll only display 3G payment options, for 4G users, we'll display only 4G payment options
-     */
-    private List<PaymentPolicyDto> filterPaymentPoliciesForUser(List<PaymentPolicyDto> paymentPolicyList, User user) {
-    	List<PaymentPolicyDto> ret = new ArrayList<PaymentPolicyDto>();
-    	
-    	if ( paymentPolicyList == null || user == null ) {
-    		return ret;
-    	}
-    	
-    	if(user.isO2Business()){
-    		//no filtering required
-    		ret.addAll(paymentPolicyList);
-    		return ret;
-    	}
-    	
-    	for ( PaymentPolicyDto pp : paymentPolicyList ) {
-    		if ( user.is3G() && pp.isThreeG() ) {
-    			ret.add( pp );
-    		} else if ( user.is4G() && pp.isFourG() ) {
-    			if ( !pp.isVideoAndAudio4GSubscription() || (pp.isVideoAndAudio4GSubscription() && user.isVideoFreeTrialHasBeenActivated()) ) {
-    				ret.add( pp );
-    			}
-    		}
-    	}
-    	
-    	return ret;
     }
 
     private PaymentDetailsByPaymentDto paymentDetailsByPaymentDto(User user) {

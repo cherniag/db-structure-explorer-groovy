@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -68,17 +71,28 @@ public class PaymentDetails {
     @Column(name = "last_failed_payment_notification_millis", nullable = true)
     private Long lastFailedPaymentNotificationMillis;
 
-	public void incrementRetries() {
-		this.madeRetries++;
-	}
-	
-	public void decrementRetries() {
-		if (madeRetries > 0) {
-			this.madeRetries--;
-		}
-	}
+    @Column(name = "made_attempts", nullable = false)
+    private int madeAttempts;
 
-	public Long getI() {
+	private void incrementRetries() {
+		this.madeRetries++;
+    }
+
+    public int incrementMadeAttemptsAccordingToMadeRetries() {
+        if (madeRetries==retriesOnError) {
+            incrementMadeAttempts();
+            resetMadeRetries();
+        }else {
+            incrementRetries();
+        }
+        return madeAttempts;
+    }
+
+    private void incrementMadeAttempts() {
+        madeAttempts++;
+    }
+
+    public Long getI() {
 		return i;
 	}
 
@@ -88,10 +102,6 @@ public class PaymentDetails {
 
 	public int getMadeRetries() {
 		return madeRetries;
-	}
-
-	public void setMadeRetries(int madeRetries) {
-		this.madeRetries = madeRetries;
 	}
 
 	public PaymentDetailsStatus getLastPaymentStatus() {
@@ -165,7 +175,7 @@ public class PaymentDetails {
 	public void setPromotionPaymentPolicy(PromotionPaymentPolicy promotionPaymentPolicy) {
 		this.promotionPaymentPolicy = promotionPaymentPolicy;
 	}
-	
+
 	public String getPaymentType(){
         return UNKNOW_TYPE;
     }
@@ -173,6 +183,10 @@ public class PaymentDetails {
 	public User getOwner() {
 		return owner;
 	}
+
+    public int getMadeAttempts() {
+        return madeAttempts;
+    }
 
 	public void setOwner(User owner) {
 		this.owner = owner;
@@ -187,16 +201,21 @@ public class PaymentDetails {
 
     public PaymentDetailsByPaymentDto toPaymentDetailsByPaymentDto() {
 		PaymentDetailsByPaymentDto paymentDetailsByPaymentDto = new PaymentDetailsByPaymentDto();
-		
+
 		paymentDetailsByPaymentDto.setPaymentType(getPaymentType());
 		paymentDetailsByPaymentDto.setPaymentDetailsId(i);
 		paymentDetailsByPaymentDto.setActivated(activated);
-		
+
 		paymentDetailsByPaymentDto.setPaymentPolicyDto(paymentPolicy.toPaymentPolicyDto(paymentDetailsByPaymentDto));
-	
+
 		LOGGER.debug("Output parameter [{}]", paymentDetailsByPaymentDto);
 		return paymentDetailsByPaymentDto;
 	}
+
+    public PaymentDetails withLastPaymentStatus(PaymentDetailsStatus lastPaymentStatus){
+        setLastPaymentStatus(lastPaymentStatus);
+        return this;
+    }
 
     public PaymentDetails withPaymentPolicy(PaymentPolicy paymentPolicy){
         setPaymentPolicy(paymentPolicy);
@@ -244,10 +263,53 @@ public class PaymentDetails {
         if (!ActivationStatus.ACTIVATED.equals(activationStatus)) throw new RuntimeException("Unexpected activation status ["+activationStatus+"]. Payment details' owner should be in ACTIVATED activation status");
     }
 
-	@Override
+    public PaymentDetails withMadeAttempts(int madeAttempts){
+        this.madeAttempts = madeAttempts;
+        return this;
+    }
+
+    public boolean shouldBeUnSubscribed() {
+        return hasMoreAttemptRetries();
+    }
+
+    public void resetMadeAttempts(){
+        this.madeAttempts=0;
+        resetMadeRetries();
+    }
+
+    private void resetMadeRetries(){
+        this.madeRetries=0;
+    }
+
+    private boolean hasMoreAttemptRetries() {
+        return areAll3AttemptsSpent() || areAll2AttemptsSpent() || all1AttemptRetriesAreSpent();
+    }
+
+    private boolean all1AttemptRetriesAreSpent() {
+        int afterNextSubPaymentSeconds = paymentPolicy.getAfterNextSubPaymentSeconds();
+        int advancedPaymentSeconds = paymentPolicy.getAdvancedPaymentSeconds();
+        return madeAttempts == 1 && afterNextSubPaymentSeconds == 0 && advancedPaymentSeconds == 0;
+    }
+
+    private boolean areAll2AttemptsSpent() {
+        int afterNextSubPaymentSeconds = paymentPolicy.getAfterNextSubPaymentSeconds();
+        int advancedPaymentSeconds = paymentPolicy.getAdvancedPaymentSeconds();
+        return madeAttempts == 2 && (afterNextSubPaymentSeconds == 0 || (advancedPaymentSeconds == 0 && afterNextSubPaymentSeconds > 0));
+    }
+
+    private boolean areAll3AttemptsSpent() {
+        return madeAttempts == 3;
+    }
+
+    public boolean isCurrentAttemptFailed(){
+        return madeAttempts>0 && madeRetries==0 && lastPaymentStatus.equals(ERROR);
+    }
+
+    @Override
 	public String toString() {
         return new ToStringBuilder(this)
                 .append("i", i)
+                .append("madeAttempts", madeAttempts)
                 .append("madeRetries", madeRetries)
                 .append("retriesOnError", retriesOnError)
                 .append("lastPaymentStatus", lastPaymentStatus)

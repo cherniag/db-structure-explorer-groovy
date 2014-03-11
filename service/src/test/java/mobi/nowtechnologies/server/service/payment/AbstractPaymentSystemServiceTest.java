@@ -4,10 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactor
 import mobi.nowtechnologies.server.persistence.domain.PendingPaymentFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.persistence.domain.payment.AbstractPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -32,28 +29,25 @@ import org.springframework.http.HttpStatus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.times;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {PaymentEvent.class, Utils.class, SubmittedPayment.class })
 public class AbstractPaymentSystemServiceTest {
 
 	private EntityService mockEntityService;
-	private PaymentDetailsService mockPaymentDetailsService;
 	private UserService mockUserService;
 	private AbstractPaymentSystemService mockAbstractPaymentSystemService;
 	private PaymentDetailsRepository mockPaymentDetailsRepository;
-	private PaymentDetailsService mockPaymentDetailsService2;
 	private ApplicationEventPublisher mockApplicationEventPublisher;
 
 	@Before
 	public void setUp()
 			throws Exception {
 		mockEntityService = Mockito.mock(EntityService.class);
-		mockPaymentDetailsService = Mockito.mock(PaymentDetailsService.class);
 		mockUserService = Mockito.mock(UserService.class);
 		mockPaymentDetailsRepository = Mockito.mock(PaymentDetailsRepository.class);
 		mockApplicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
@@ -61,7 +55,6 @@ public class AbstractPaymentSystemServiceTest {
 		mockAbstractPaymentSystemService = Mockito.mock(AbstractPaymentSystemService.class, Mockito.CALLS_REAL_METHODS);
 
 		mockAbstractPaymentSystemService.setEntityService(mockEntityService);
-		mockAbstractPaymentSystemService.setPaymentDetailsService(mockPaymentDetailsService2);
 		mockAbstractPaymentSystemService.setUserService(mockUserService);
 		mockAbstractPaymentSystemService.setPaymentDetailsRepository(mockPaymentDetailsRepository);
 		mockAbstractPaymentSystemService.setApplicationEventPublisher(mockApplicationEventPublisher);
@@ -76,7 +69,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withRetriesOnError(3);
 		user.setCurrentPaymentDetails(paymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
@@ -117,6 +110,8 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, actualSubmittedPayment.getStatus());
 
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, paymentDetails.getLastPaymentStatus());
+        assertEquals(1, paymentDetails.getMadeRetries());
+        assertEquals(0, paymentDetails.getMadeAttempts());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
@@ -129,15 +124,15 @@ public class AbstractPaymentSystemServiceTest {
 	@Test
 	public void testCommitPayment_FailResponseAndMadeRetriesNotEqRetriesOnError_Success()
 			throws Exception {
-		final int curremtTimeSeconds = Integer.MIN_VALUE;
+		final int currentTimeSeconds = Integer.MIN_VALUE;
 
 		PaymentSystemResponse response = O2Response.failO2Response("");
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
 		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(1);
+		paymentDetails.withMadeRetries(1);
 		user.setCurrentPaymentDetails(paymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
@@ -145,7 +140,7 @@ public class AbstractPaymentSystemServiceTest {
 		pendingPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(Utils.class);
-		Mockito.when(Utils.getEpochSeconds()).thenReturn(curremtTimeSeconds);
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
 
@@ -178,6 +173,8 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
 
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
+        assertEquals(2, paymentDetails.getMadeRetries());
+        assertEquals(0, paymentDetails.getMadeAttempts());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
@@ -190,24 +187,28 @@ public class AbstractPaymentSystemServiceTest {
 	@Test
 	public void testCommitPayment_FailResponseAndMadeRetriesEqRetriesOnError_Success()
 			throws Exception {
-		final int curremtTimeSeconds = Integer.MAX_VALUE;
+		final int currentTimeSeconds = Integer.MAX_VALUE;
 
 		PaymentSystemResponse response = O2Response.failO2Response("");
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
-		user.setCurrentPaymentDetails(paymentDetails);
-		user.setNextSubPayment(Integer.MIN_VALUE);
+        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
+        paymentDetails.setRetriesOnError(3);
+        paymentDetails.withMadeRetries(0);
+        paymentDetails.withMadeAttempts(1);
+
+        user.setCurrentPaymentDetails(paymentDetails);
+        user.setNextSubPayment(Integer.MIN_VALUE);
+
+        paymentDetails.withOwner(user);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
 		pendingPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(Utils.class);
-		Mockito.when(Utils.getEpochSeconds()).thenReturn(curremtTimeSeconds);
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
 
@@ -241,6 +242,8 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals("", actualSubmittedPayment.getExternalTxId());
 
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
+        assertEquals(1, paymentDetails.getMadeRetries());
+        assertEquals(1, paymentDetails.getMadeAttempts());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
 		Mockito.verify(mockEntityService, times(1)).updateEntity(paymentDetails);
@@ -253,17 +256,17 @@ public class AbstractPaymentSystemServiceTest {
 	@Test
 	public void testCommitPayment_FailResponseAndNot200HttpStatusCode_Success()
 			throws Exception {
-		final int curremtTimeSeconds = Integer.MAX_VALUE;
+		final int currentTimeSeconds = Integer.MAX_VALUE;
 
 		PaymentSystemResponse mockPaymentSystemResponse = Mockito.mock(PaymentSystemResponse.class);
 		Mockito.when(mockPaymentSystemResponse.isSuccessful()).thenReturn(false);
-		Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
+		Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(BAD_REQUEST.value());
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
 		paymentDetails.setRetriesOnError(3);
-		paymentDetails.setMadeRetries(3);
+		paymentDetails.withMadeRetries(2);
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Integer.MIN_VALUE);
 
@@ -272,7 +275,7 @@ public class AbstractPaymentSystemServiceTest {
 		pendingPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(Utils.class);
-		Mockito.when(Utils.getEpochSeconds()).thenReturn(curremtTimeSeconds);
+		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
 
@@ -300,7 +303,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		SubmittedPayment actualSubmittedPayment = mockAbstractPaymentSystemService.commitPayment(pendingPayment, mockPaymentSystemResponse);
 
-		final String descriptionError = "Unexpected http status code [" + HttpStatus.BAD_REQUEST.value() + "] so the madeRetries willn't be incremented";
+		final String descriptionError = "Unexpected http status code [" + BAD_REQUEST.value() + "] so the madeRetries won't be incremented";
 
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
@@ -309,7 +312,8 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(descriptionError, actualSubmittedPayment.getDescriptionError());
 
 		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
-		assertEquals(3, paymentDetails.getRetriesOnError());
+        assertEquals(2, paymentDetails.getMadeRetries());
+        assertEquals(0, paymentDetails.getMadeAttempts());
 		assertEquals(descriptionError, paymentDetails.getDescriptionError());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
