@@ -16,6 +16,7 @@ import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		PaymentSystemResponse response = O2Response.successfulO2Response();
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		user.setCurrentPaymentDetails(paymentDetails);
@@ -132,7 +133,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		PaymentSystemResponse response = O2Response.failO2Response("");
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		paymentDetails.setRetriesOnError(3);
@@ -193,7 +194,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		PaymentSystemResponse response = O2Response.failO2Response("");
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		paymentDetails.setRetriesOnError(3);
@@ -258,7 +259,7 @@ public class AbstractPaymentSystemServiceTest {
 		Mockito.when(mockPaymentSystemResponse.isSuccessful()).thenReturn(false);
 		Mockito.when(mockPaymentSystemResponse.getHttpStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
 
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
 		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
 		paymentDetails.setRetriesOnError(3);

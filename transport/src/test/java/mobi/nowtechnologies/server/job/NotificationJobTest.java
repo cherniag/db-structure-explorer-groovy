@@ -22,7 +22,6 @@ import java.util.Vector;
 import javapns.Push;
 import javapns.devices.Device;
 import javapns.devices.implementations.basic.BasicDevice;
-import javapns.notification.PayloadPerDevice;
 import javapns.notification.PushedNotification;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -36,6 +35,7 @@ import mobi.nowtechnologies.server.service.MessageService;
 import mobi.nowtechnologies.server.service.UserIPhoneDetailsService;
 import mobi.nowtechnologies.server.shared.Utils;
 
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -270,7 +270,7 @@ public class NotificationJobTest {
 		List<PushedNotification> successfulPushedNotifications = new ArrayList<PushedNotification>(successfulPushedNotificationsSize);
 		List<PushedNotification> failPushedNotifications = new ArrayList<PushedNotification>(failPushedNotificationsSize);
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		for (int i = 0; i < userIPhoneDetailsListSize; i++) {
 
 			final UserIPhoneDetails userIPhoneDetails = userIPhoneDetailsList.get(i);

@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
@@ -27,7 +28,7 @@ public class UserFactory
 	public static Collection<User> getUserCollection() {
 		Collection<User> users = new ArrayList<User>(1);
 		
-		users.add(createUser());
+		users.add(createUser(ActivationStatus.ACTIVATED));
 		return users;
 	}
 	
@@ -46,7 +47,7 @@ public class UserFactory
 	}
 
 
-	public static User createUser() {
+	public static User createUser(ActivationStatus status) {
 		
 		UserStatus userStatus = new UserStatus();
 		userStatus.setI((byte)10);
@@ -100,6 +101,7 @@ public class UserFactory
 		testUser.setProvider(O2);
 		testUser.setContract(PAYG);
 		testUser.setSegment(CONSUMER);
+        testUser.setActivationStatus(status);
 		return testUser;
 	}
 
@@ -109,7 +111,7 @@ public class UserFactory
 	}
 	
 	public static User createUser(PaymentDetails currentPaymentDetails, BigDecimal amountOfMoneyToUserNotification) {
-		User user = createUser();
+		User user = createUser(ActivationStatus.ACTIVATED);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setAmountOfMoneyToUserNotification(amountOfMoneyToUserNotification);
 		
@@ -117,7 +119,7 @@ public class UserFactory
 	}
 	
 	public static User createUser(PaymentDetails currentPaymentDetails, BigDecimal amountOfMoneyToUserNotification, UserGroup userGroup) {
-		User user = createUser();
+		User user = createUser(ActivationStatus.ACTIVATED);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setAmountOfMoneyToUserNotification(amountOfMoneyToUserNotification);
 		user.setUserGroup(userGroup);
@@ -132,7 +134,7 @@ public class UserFactory
          PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
          paymentDetails.setPaymentPolicy(paymentPolicy);
 
-         User user = createUser();
+         User user = createUser(ActivationStatus.ACTIVATED);
          user.setCurrentPaymentDetails(paymentDetails);
 
          return user;

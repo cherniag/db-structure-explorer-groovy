@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +35,9 @@ public class PaymentDetailsServiceIT {
 	@Resource(name = "service.EntityService")
 	private EntityService entityService;
 
+    @Resource
+    private UserRepository userRepository;
+
 	@Test
 	public void test_findActivatedPaymentDetails_Success() {
 		final String phoneNumber = "00447585927651";
@@ -41,14 +46,17 @@ public class PaymentDetailsServiceIT {
 		final String migPhoneNumber = migOperator + "." + phoneNumber;
 		final String o2PsmsPhoneNumber = "+" + phoneNumber;
 
-		MigPaymentDetails migPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user = userRepository.saveAndFlush(user);
+
+        MigPaymentDetails migPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
 		migPaymentDetails.setMigPhoneNumber(migPhoneNumber);
 		migPaymentDetails.setActivated(true);
 		migPaymentDetails.setCreationTimestampMillis(0L);
 		migPaymentDetails.setDisableTimestampMillis(0L);
 		migPaymentDetails.setMadeRetries(0);
 		migPaymentDetails.setRetriesOnError(0);
-
+        migPaymentDetails.setOwner(user);
 		entityService.saveEntity(migPaymentDetails);
 
 		O2PSMSPaymentDetails o2PSMSPaymentDetails = new O2PSMSPaymentDetails();
@@ -58,7 +66,7 @@ public class PaymentDetailsServiceIT {
 		o2PSMSPaymentDetails.setDisableTimestampMillis(0L);
 		o2PSMSPaymentDetails.setMadeRetries(0);
 		o2PSMSPaymentDetails.setRetriesOnError(0);
-
+        o2PSMSPaymentDetails.setOwner(user);
 		entityService.saveEntity(o2PSMSPaymentDetails);
 
         VFPSMSPaymentDetails vfpsmsPaymentDetails = new VFPSMSPaymentDetails();
@@ -68,7 +76,7 @@ public class PaymentDetailsServiceIT {
         vfpsmsPaymentDetails.setDisableTimestampMillis(0L);
         vfpsmsPaymentDetails.setMadeRetries(0);
         vfpsmsPaymentDetails.setRetriesOnError(0);
-
+        vfpsmsPaymentDetails.setOwner(user);
         entityService.saveEntity(vfpsmsPaymentDetails);
 
 		List<PaymentDetails> paymentDetailsList = paymentDetailsService.findActivatedPaymentDetails(migOperator, phoneNumber);
