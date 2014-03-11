@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
@@ -28,7 +29,7 @@ public class UserFactory{
 	public static Collection<User> getUserCollection() {
 		Collection<User> users = new ArrayList<User>(1);
 		
-		users.add(createUser(ActivationStatus.ACTIVATED));
+		users.add(createUser(ACTIVATED));
 		return users;
 	}
 	
@@ -106,7 +107,7 @@ public class UserFactory{
 	}
 	
 	public static User createUser(PaymentDetails currentPaymentDetails, BigDecimal amountOfMoneyToUserNotification) {
-		User user = createUser(ActivationStatus.ACTIVATED);
+		User user = createUser(ACTIVATED);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setAmountOfMoneyToUserNotification(amountOfMoneyToUserNotification);
 		
@@ -114,7 +115,7 @@ public class UserFactory{
 	}
 	
 	public static User createUser(PaymentDetails currentPaymentDetails, BigDecimal amountOfMoneyToUserNotification, UserGroup userGroup) {
-		User user = createUser(ActivationStatus.ACTIVATED);
+		User user = createUser(ACTIVATED);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setAmountOfMoneyToUserNotification(amountOfMoneyToUserNotification);
 		user.setUserGroup(userGroup);
@@ -129,7 +130,7 @@ public class UserFactory{
          PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
          paymentDetails.setPaymentPolicy(paymentPolicy);
 
-         User user = createUser(ActivationStatus.ACTIVATED);
+         User user = createUser(ACTIVATED);
          user.setCurrentPaymentDetails(paymentDetails);
 
          return user;
@@ -176,7 +177,7 @@ public class UserFactory{
         return user;
     }
 
-    public static User userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1() {
-        return userWithDefaultNotNullFields().withSubBalance((byte) 0).withLastDeviceLogin(1);
+    public static User userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED() {
+        return userWithDefaultNotNullFields().withSubBalance((byte) 0).withLastDeviceLogin(1).withActivationStatus(ACTIVATED);
     }
 }
