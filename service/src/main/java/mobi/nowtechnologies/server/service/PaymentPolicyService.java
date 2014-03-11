@@ -102,7 +102,7 @@ public class PaymentPolicyService {
     public PaymentPolicy findDefaultO2PsmsPaymentPolicy(User user) {
         Contract contract = user.getContract();
         if (isNull(contract)){
-            contract = Contract.PAYG;
+            contract = Contract.PAYM;
         }
         Community community = user.getUserGroup().getCommunity();
         return paymentPolicyRepository.findDefaultO2PsmsPaymentPolicy(community, user.getProvider(), user.getSegment(), contract, user.getTariff());
