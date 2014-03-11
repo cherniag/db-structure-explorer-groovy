@@ -12,7 +12,6 @@ ALTER TABLE tb_paymentDetails ADD made_attempts INT UNSIGNED NOT NULL default 0;
 start transaction;
 
 update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='NON_O2';
--- update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms';
 update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='BUSINESS';
 
 update tb_paymentpolicy set after_next_sub_payment_seconds=2*24*60*60*1000 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
@@ -87,11 +86,13 @@ update tb_paymentDetails pd
     on pp.i=pd.paymentPolicyId
 set pd.made_attempts=1
 where
-  (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR')
-  and pd.activated is true
-  and pd.made_attempts!=pd.retriesOnError
-  and u.nextSubPayment<UNIX_TIMESTAMP()
-  and pp.advancedPaymentSeconds>0
-  and u.lastDeviceLogin!=0;
+    (
+        pd.lastPaymentStatus = 'ERROR'
+        OR pd.lastPaymentStatus = 'EXTERNAL_ERROR'
+    )
+    AND pd.activated IS TRUE
+    AND u.nextSubPayment > UNIX_TIMESTAMP()
+    AND pp.advancedPaymentSeconds > 0
+    AND u.lastDeviceLogin != 0
 
 commit;
