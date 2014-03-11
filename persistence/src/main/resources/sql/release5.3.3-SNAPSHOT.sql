@@ -12,7 +12,6 @@ ALTER TABLE tb_paymentDetails ADD made_attempts INT UNSIGNED NOT NULL default 0;
 start transaction;
 
 update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='NON_O2';
--- update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms';
 update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='BUSINESS';
 
 update tb_paymentpolicy set after_next_sub_payment_seconds=2*24*60*60*1000 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
@@ -36,48 +35,48 @@ INSERT INTO tb_paymentPolicy
 
 UPDATE
     tb_paymentDetails pd JOIN tb_users u
-      ON pd.i = u.currentPaymentDetailsId JOIN tb_paymentPolicy ppol
-      ON ppol.i = pd.paymentPolicyId
-         AND ppol.communityID = 10
-         AND ppol.tariff = '_3G'
-         AND ppol.paymentType = 'o2Psms'
-         AND(
-      ppol.segment = 'CONSUMER'
-      OR ppol.segment IS NULL
+        ON pd.i = u.currentPaymentDetailsId JOIN tb_paymentPolicy ppol
+        ON ppol.i = pd.paymentPolicyId
+    AND ppol.communityID = 10
+    AND ppol.tariff = '_3G'
+    AND ppol.paymentType = 'o2Psms'
+    AND(
+        ppol.segment = 'CONSUMER'
+        OR ppol.segment IS NULL
     )
-         AND(
-      ppol.provider = 'O2'
-      OR ppol.provider IS NULL
+    AND(
+        ppol.provider = 'O2'
+        OR ppol.provider IS NULL
     )
+    AND u.contract='PAYG'
 SET
-  pd.paymentPolicyId =(
-    SELECT
-      pp.i
-    FROM
-      tb_paymentPolicy pp
-    WHERE
-      pp.subWeeks = ppol.subWeeks
-      AND pp.contract = u.contract
-      AND u.contract='PAYG'
-      AND pp.communityID = 10
-      AND pp.tariff = '_3G'
-      AND pp.paymentType = 'o2Psms'
-      AND(
-        pp.segment = 'CONSUMER'
-        OR pp.segment IS NULL
-      )
-      AND(
-        pp.provider = 'O2'
-        OR pp.provider IS NULL
-      )
-      AND pp.online IS TRUE
-  )
+    pd.paymentPolicyId =(
+        SELECT
+            pp.i
+        FROM
+            tb_paymentPolicy pp
+        WHERE
+            pp.subWeeks = ppol.subWeeks
+            AND pp.contract = u.contract
+            AND pp.communityID = 10
+            AND pp.tariff = '_3G'
+            AND pp.paymentType = 'o2Psms'
+            AND(
+                pp.segment = 'CONSUMER'
+                OR pp.segment IS NULL
+            )
+            AND(
+                pp.provider = 'O2'
+                OR pp.provider IS NULL
+            )
+            AND pp.online IS TRUE
+    )
 WHERE
-  (
-    pd.lastPaymentStatus = 'NONE'
-    OR pd.lastPaymentStatus = 'SUCCESSFUL'
-  )
-  AND pd.activated IS TRUE
+    (
+        pd.lastPaymentStatus = 'NONE'
+        OR pd.lastPaymentStatus = 'SUCCESSFUL'
+    )
+    AND pd.activated IS TRUE
 ;
 
 update tb_paymentDetails pd
@@ -87,11 +86,13 @@ update tb_paymentDetails pd
     on pp.i=pd.paymentPolicyId
 set pd.made_attempts=1
 where
-  (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR')
-  and pd.activated is true
-  and pd.made_attempts!=pd.retriesOnError
-  and u.nextSubPayment<UNIX_TIMESTAMP()
-  and pp.advancedPaymentSeconds>0
-  and u.lastDeviceLogin!=0;
+    (
+        pd.lastPaymentStatus = 'ERROR'
+        OR pd.lastPaymentStatus = 'EXTERNAL_ERROR'
+    )
+    AND pd.activated IS TRUE
+    AND u.nextSubPayment > UNIX_TIMESTAMP()
+    AND pp.advancedPaymentSeconds > 0
+    AND u.lastDeviceLogin != 0
 
 commit;
