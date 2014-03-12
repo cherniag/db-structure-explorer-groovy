@@ -93,6 +93,24 @@ where
     AND pd.activated IS TRUE
     AND u.nextSubPayment < UNIX_TIMESTAMP()
     AND pp.advanced_payment_seconds > 0
-    AND u.lastDeviceLogin != 0
+    AND u.lastDeviceLogin != 0;
+
+update tb_paymentDetails pd
+  join tb_users u
+    on pd.i=u.currentPaymentDetailsId
+  join tb_paymentPolicy pp
+    on pp.i=pd.paymentPolicyId
+set pd.made_attempts=1,
+set pd.madeRetries=0
+where
+    (
+        pd.lastPaymentStatus = 'ERROR'
+        OR pd.lastPaymentStatus = 'EXTERNAL_ERROR'
+    )
+    AND pd.activated IS TRUE
+    AND u.nextSubPayment > UNIX_TIMESTAMP()
+    AND pd.madeRetries=pd.retriesOnError
+    AND pp.advanced_payment_seconds > 0
+    AND u.lastDeviceLogin != 0;
 
 commit;
