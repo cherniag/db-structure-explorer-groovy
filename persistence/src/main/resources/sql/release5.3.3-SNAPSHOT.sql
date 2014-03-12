@@ -1,4 +1,4 @@
-insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.4-SN", "5.4");
+insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.3.3-SN", "5.3.3");
 
 -- Update O2 PSMS server attempts and user unsubscribe flow
 -- http://jira.musicqubed.com/browse/GO-321
