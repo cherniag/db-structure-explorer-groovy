@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ChartDetailsConverterTest {
     private static final String AFFILIATE_TOKEN = "1234567890";
+    private static final String CAMPAIGN_TOKEN = "abcdefg";
     @Mock
     private CommunityResourceBundleMessageSource messageSource;
     @InjectMocks
@@ -42,7 +43,8 @@ public class ChartDetailsConverterTest {
 
     @Before
     public void setUp() throws Exception {
-        when(messageSource.getMessage(eq("o2"), eq("itunes.affiliate.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(AFFILIATE_TOKEN) ;
+        when(messageSource.getMessage(eq("o2"), eq("itunes.affiliate.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(AFFILIATE_TOKEN);
+        when(messageSource.getMessage(eq("o2"), eq("itunes.campaign.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(CAMPAIGN_TOKEN);
     }
 
     @Test
@@ -75,7 +77,7 @@ public class ChartDetailsConverterTest {
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() - 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
         MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
-                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN));
+                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN + "%26ct%3D" + CAMPAIGN_TOKEN));
     }
 
 
@@ -87,7 +89,7 @@ public class ChartDetailsConverterTest {
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() - 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
         MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
-                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN));
+                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN + "%26ct%3D" + CAMPAIGN_TOKEN));
     }
 
     @Test
