@@ -82,7 +82,7 @@ public class FailedSmsAfterFailedPaymentForO2IT{
 
         PaymentDetails paymentDetails = paymentDetailsRepository.findOne(4L);
         paymentDetails.setOwner(currentUser);
-        paymentDetails.withMadeRetries(paymentDetails.getRetriesOnError());
+        paymentDetails.withMadeRetries(paymentDetails.getRetriesOnError()-1);
         currentUser.setCurrentPaymentDetails(paymentDetails);
 
         assertEquals(pendingPayments.size(), 1);
