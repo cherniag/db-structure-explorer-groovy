@@ -91,7 +91,7 @@ where
         OR pd.lastPaymentStatus = 'EXTERNAL_ERROR'
     )
     AND pd.activated IS TRUE
-    AND u.nextSubPayment > UNIX_TIMESTAMP()
+    AND u.nextSubPayment < UNIX_TIMESTAMP()
     AND pp.advanced_payment_seconds > 0
     AND u.lastDeviceLogin != 0
 
