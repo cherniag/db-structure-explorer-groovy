@@ -43,7 +43,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldNotIncrementMadeAttemptsWhenRetriesOnErrorIs3AndMadeRetriesIs2(){
+    public void shouldIncrementMadeAttemptsWhenRetriesOnErrorIs3AndMadeRetriesIs2(){
         //given
         PaymentDetails paymentDetails = new PaymentDetails().withRetriesOnError(3).withMadeRetries(2);
 
@@ -51,20 +51,7 @@ public class PaymentDetailsTest {
         int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
-        assertThat(madeAttempts, is(0));
-        assertThat(paymentDetails.getMadeRetries(), is(3));
-    }
-
-    @Test
-    public void shouldIncrementMadeAttemptsWhenRetriesOnErrorIs3AndMadeRetriesIs2(){
-        //given
-        PaymentDetails paymentDetails = new PaymentDetails().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
-
-        //when
-        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
-
-        //then
-        assertThat(madeAttempts, is(3));
+        assertThat(madeAttempts, is(1));
         assertThat(paymentDetails.getMadeRetries(), is(0));
     }
 
