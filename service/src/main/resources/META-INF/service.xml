@@ -178,6 +178,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="mailSender" ref="service.MailSender" />
 	</bean>
 
+    <bean id="service.ChartDetailsConverter" class="mobi.nowtechnologies.server.utils.ChartDetailsConverter">
+        <property name="messageSource" ref="serviceMessageSource"/>
+        <property name="iTunesLinkFormatCutoverTimeMillis" value="${transport.itunes.affiliate.link.format.cutover.time.millis}"/>
+    </bean>
+
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
@@ -187,6 +192,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
+        <property name="chartDetailsConverter" ref="service.ChartDetailsConverter"/>
 	</bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
@@ -355,7 +361,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="genreRepository" ref="genreRepository" />
 		<property name="artistRepository" ref="artistRepository" />
 		<property name="client" ref="trackRepoClient" />
-	</bean>
+        <property name="iTunesLinkFormatCutoverTimeMillis" value="${trackRepo.itunes.affiliate.link.format.cutover.time.millis}"/>
+    </bean>
 
 	<bean id="service.FilterService" class="mobi.nowtechnologies.server.service.FilterService">
 		<property name="filterWithCriteriaRepository" ref="filterWithCriteriaRepository" />
