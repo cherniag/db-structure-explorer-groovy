@@ -79,11 +79,10 @@ public class PaymentDetails {
     }
 
     public int incrementMadeAttemptsAccordingToMadeRetries() {
+        incrementRetries();
         if (madeRetries==retriesOnError) {
             incrementMadeAttempts();
             resetMadeRetries();
-        }else {
-            incrementRetries();
         }
         return madeAttempts;
     }
