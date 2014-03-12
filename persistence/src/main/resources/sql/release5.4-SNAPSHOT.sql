@@ -4,24 +4,24 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 -- http://jira.musicqubed.com/browse/GO-321
 -- Server MUST be shut down before script running
 
-ALTER TABLE tb_paymentpolicy ADD advanced_payment_seconds INT UNSIGNED NOT NULL;
-ALTER TABLE tb_paymentpolicy ADD after_next_sub_payment_seconds INT UNSIGNED NOT NULL;
-ALTER TABLE tb_paymentpolicy ADD online bit NOT NULL;
+ALTER TABLE tb_paymentPolicy ADD advanced_payment_seconds INT UNSIGNED NOT NULL;
+ALTER TABLE tb_paymentPolicy ADD after_next_sub_payment_seconds INT UNSIGNED NOT NULL;
+ALTER TABLE tb_paymentPolicy ADD online bit NOT NULL;
 ALTER TABLE tb_paymentDetails ADD made_attempts INT UNSIGNED NOT NULL default 0;
 
 start transaction;
 
-update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='NON_O2';
-update tb_paymentpolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='BUSINESS';
+update tb_paymentPolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='NON_O2';
+update tb_paymentPolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='BUSINESS';
 
-update tb_paymentpolicy set after_next_sub_payment_seconds=2*24*60*60*1000 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
-update tb_paymentpolicy set online=true;
+update tb_paymentPolicy set after_next_sub_payment_seconds=2*24*60*60*1000 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
+update tb_paymentPolicy set online=true;
 
 -- 3?
-select count(*) from tb_paymentpolicy where communityID = 10 AND tariff = '_3G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND
+select count(*) from tb_paymentPolicy where communityID = 10 AND tariff = '_3G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND
                                             (provider = 'O2' or provider is null) and online is true;
 
-update tb_paymentpolicy set online=false where communityID = 10 AND tariff = '_3G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND
+update tb_paymentPolicy set online=false where communityID = 10 AND tariff = '_3G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND
 (provider = 'O2' or provider is null);
 
 INSERT INTO tb_paymentPolicy
@@ -92,7 +92,7 @@ where
     )
     AND pd.activated IS TRUE
     AND u.nextSubPayment > UNIX_TIMESTAMP()
-    AND pp.advancedPaymentSeconds > 0
+    AND pp.advanced_payment_seconds > 0
     AND u.lastDeviceLogin != 0
 
 commit;
