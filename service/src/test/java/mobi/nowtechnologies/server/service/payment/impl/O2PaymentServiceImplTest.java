@@ -27,6 +27,9 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Locale;
 
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.EXTERNAL_ERROR;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.*;
@@ -107,8 +110,9 @@ public class O2PaymentServiceImplTest {
 		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 		
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
-		o2psmsPaymentDetails.withMadeRetries(Integer.MAX_VALUE);
-		o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
+        o2psmsPaymentDetails.withLastPaymentStatus(ERROR);
+		o2psmsPaymentDetails.withMadeRetries(2);
+		o2psmsPaymentDetails.setRetriesOnError(3);
 		o2psmsPaymentDetails.setActivated(true);
 		o2psmsPaymentDetails.setOwner(user);
 		
@@ -235,8 +239,9 @@ public class O2PaymentServiceImplTest {
 
         o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         o2psmsPaymentDetails.withMadeRetries(0);
-        o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
+        o2psmsPaymentDetails.setRetriesOnError(3);
         o2psmsPaymentDetails.withMadeAttempts(1);
+        o2psmsPaymentDetails.withLastPaymentStatus(EXTERNAL_ERROR);
         o2psmsPaymentDetails.setActivated(true);
         o2psmsPaymentDetails.setOwner(user);
 
@@ -294,7 +299,7 @@ public class O2PaymentServiceImplTest {
             public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
                 O2PSMSPaymentDetails o2psmsPaymentDetails = (O2PSMSPaymentDetails) invocation.getArguments()[0];
 
-                assertEquals(PaymentDetailsStatus.ERROR, o2psmsPaymentDetails.getLastPaymentStatus());
+                assertEquals(ERROR, o2psmsPaymentDetails.getLastPaymentStatus());
 
                 return o2psmsPaymentDetails;
             }
@@ -313,7 +318,7 @@ public class O2PaymentServiceImplTest {
             public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
                 SubmittedPayment submittedPayment = (SubmittedPayment) invocation.getArguments()[0];
 
-                assertEquals(PaymentDetailsStatus.ERROR, submittedPayment.getStatus());
+                assertEquals(ERROR, submittedPayment.getStatus());
                 assertEquals(o2Response.getDescriptionError(), submittedPayment.getDescriptionError());
 
                 return submittedPayment;
@@ -364,8 +369,9 @@ public class O2PaymentServiceImplTest {
         final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
 
         o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
-        o2psmsPaymentDetails.withMadeRetries(Integer.MIN_VALUE);
-        o2psmsPaymentDetails.setRetriesOnError(Integer.MAX_VALUE);
+        o2psmsPaymentDetails.withLastPaymentStatus(SUCCESSFUL);
+        o2psmsPaymentDetails.withMadeRetries(0);
+        o2psmsPaymentDetails.setRetriesOnError(3);
         o2psmsPaymentDetails.setActivated(true);
 
         community.setRewriteUrlParameter("o2");
@@ -421,7 +427,7 @@ public class O2PaymentServiceImplTest {
             public O2PSMSPaymentDetails answer(InvocationOnMock invocation) throws Throwable {
                 O2PSMSPaymentDetails o2psmsPaymentDetails = (O2PSMSPaymentDetails) invocation.getArguments()[0];
 
-                assertEquals(PaymentDetailsStatus.ERROR, o2psmsPaymentDetails.getLastPaymentStatus());
+                assertEquals(ERROR, o2psmsPaymentDetails.getLastPaymentStatus());
                 assertTrue(o2psmsPaymentDetails.isActivated());
 
                 return o2psmsPaymentDetails;
@@ -441,7 +447,7 @@ public class O2PaymentServiceImplTest {
             public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
                 SubmittedPayment submittedPayment = (SubmittedPayment) invocation.getArguments()[0];
 
-                assertEquals(PaymentDetailsStatus.ERROR, submittedPayment.getStatus());
+                assertEquals(ERROR, submittedPayment.getStatus());
                 assertEquals(o2Response.getDescriptionError(), submittedPayment.getDescriptionError());
 
                 return submittedPayment;
