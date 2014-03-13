@@ -7,9 +7,7 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean name="web.VersionController" class="mobi.nowtechnologies.server.controller.VersionController">
-        <property name="versionService" ref="service.VersionService"/>
-    </bean>
+    <bean name="web.VersionController" class="mobi.nowtechnologies.server.controller.VersionController"/>
 
     <bean name="web.HomeController" class="mobi.nowtechnologies.server.web.controller.HomeController"/>
 
