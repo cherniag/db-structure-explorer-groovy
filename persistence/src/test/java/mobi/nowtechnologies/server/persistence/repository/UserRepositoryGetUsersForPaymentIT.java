@@ -201,7 +201,7 @@ public class UserRepositoryGetUsersForPaymentIT {
     public void shouldNotFindUserWhenAdvancedPaymentSecondsIs0AndMadeAttemptsIs1AndCurrentTimePlusAfterNextSubPaymentSecondsIsInTheFuture(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFields().withAdvancedPaymentSeconds(0).withAfterNextSubPaymentSeconds(5));
-        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1().withNextSubPayment(10));
+        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusErrorAndRetriesOnError3().withMadeAttempts(1).withPaymentPolicy(paymentPolicy).withOwner(user));
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
