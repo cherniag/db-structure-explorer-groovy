@@ -100,8 +100,9 @@ update tb_paymentDetails pd
     on pd.i=u.currentPaymentDetailsId
   join tb_paymentPolicy pp
     on pp.i=pd.paymentPolicyId
-set pd.made_attempts=1,
-set pd.madeRetries=0
+set
+  pd.made_attempts=1,
+  pd.madeRetries=0
 where
     (
         pd.lastPaymentStatus = 'ERROR'
