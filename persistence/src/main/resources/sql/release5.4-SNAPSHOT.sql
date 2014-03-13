@@ -14,7 +14,7 @@ start transaction;
 update tb_paymentPolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='NON_O2';
 update tb_paymentPolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='BUSINESS';
 
-update tb_paymentPolicy set after_next_sub_payment_seconds=2*24*60*60*1000 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
+update tb_paymentPolicy set after_next_sub_payment_seconds=2*24*60*60 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
 update tb_paymentPolicy set online=true;
 
 -- 3?
