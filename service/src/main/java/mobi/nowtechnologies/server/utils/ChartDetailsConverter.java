@@ -136,47 +136,55 @@ public class ChartDetailsConverter {
         }
     }
 
-    private String getITunesUrl(String mediaITunesUrl, String communityRewriteUrlParameter) {
-        String newCountryCode = countryCodeForCommunityMap.get(communityRewriteUrlParameter);
-        if(isBlank(mediaITunesUrl)|| isBlank(newCountryCode)) {
-            LOGGER.info("Media iTunes url [{}] or new country code [{}] is empty", mediaITunesUrl, newCountryCode);
-            return mediaITunesUrl;
+    private String getITunesUrl(String existingITunesUrl, String communityRewriteUrl) {
+        String countryCode = countryCodeForCommunityMap.get(communityRewriteUrl);
+        if(isBlank(existingITunesUrl) || isBlank(countryCode)) {
+            LOGGER.warn("Media iTunes url [{}] or new country code [{}] is empty", existingITunesUrl, countryCode);
+            return existingITunesUrl;
         }
+
         try {
-            String decodedITunesUrl = URLDecoder.decode(mediaITunesUrl, "UTF-8");
+            String decodedITunesUrl = URLDecoder.decode(existingITunesUrl, "UTF-8");
             if (System.currentTimeMillis() >= iTunesLinkFormatCutoverTimeMillis){
-                if(hasOldFormat(decodedITunesUrl)){
+                if(hasOldPartnerFormat(decodedITunesUrl)){
                     decodedITunesUrl = getUrlParameterValue(decodedITunesUrl);
                 }
-                String newUrlValue = enrichITunesUrl(decodedITunesUrl, newCountryCode, communityRewriteUrlParameter);
-                return getEncodedUTF8Text(newUrlValue);
+                String newUrlValue = enrichWithAffiliateCampaignParameters(decodedITunesUrl, communityRewriteUrl);
+                String withCountryCode = Utils.replacePathSegmentInUrl(newUrlValue, 0, countryCode);
+                return getEncodedUTF8Text(withCountryCode);
             }else{
-                String urlParameterValue = getUrlParameterValue(decodedITunesUrl);
-                String newUrlParameterValue = Utils.replacePathSegmentInUrl(urlParameterValue, 0, newCountryCode);
-                int urlParameterStartIndex = decodedITunesUrl.indexOf(URL_PARAMETER);
-                return getEncodedUTF8Text(decodedITunesUrl.substring(0, urlParameterStartIndex) + URL_PARAMETER + newUrlParameterValue);
+                return replaceCountryPathToUrlParameter(countryCode, decodedITunesUrl);
             }
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
-            return mediaITunesUrl;
+            return existingITunesUrl;
         }
 
     }
 
-    private String enrichITunesUrl(String decodedUrl, String newCountryCode, String communityRewriteUrlParameter) {
+    private String replaceCountryPathToUrlParameter(String countryCode, String decodedITunesUrl) {
+        String urlParameterValue = getUrlParameterValue(decodedITunesUrl);
+        String newUrlParameterValue = Utils.replacePathSegmentInUrl(urlParameterValue, 0, countryCode);
+        int urlParameterStartIndex = decodedITunesUrl.indexOf(URL_PARAMETER);
+        return getEncodedUTF8Text(decodedITunesUrl.substring(0, urlParameterStartIndex) + URL_PARAMETER + newUrlParameterValue);
+    }
+
+    private String enrichWithAffiliateCampaignParameters(String decodedUrl, String communityRewriteUrlParameter) {
         UriComponentsBuilder iTunesUriComponentsBuilder = UriComponentsBuilder.fromUriString(decodedUrl);
         iTunesUriComponentsBuilder.replaceQueryParam("partnerId");
-        String at = messageSource.getMessage(communityRewriteUrlParameter, "itunes.affiliate.token", null, null, null);
-        LOGGER.debug("Affiliate token is [{}]", at);
-        if (!StringUtils.isEmpty(at)){
-            iTunesUriComponentsBuilder.queryParam("at", at);
+
+        String affiliateToken = messageSource.getMessage(communityRewriteUrlParameter, "itunes.affiliate.token", null, null, null);
+        LOGGER.debug("Affiliate token is [{}]", affiliateToken);
+        if (!StringUtils.isEmpty(affiliateToken)){
+            iTunesUriComponentsBuilder.queryParam("at", affiliateToken);
         }
-        String ct = messageSource.getMessage(communityRewriteUrlParameter, "itunes.campaign.token", null, null, null);
-        LOGGER.debug("Campaign token is [{}]", ct);
-        if (!StringUtils.isEmpty(ct)){
-            iTunesUriComponentsBuilder.queryParam("ct", ct);
+
+        String campaignToken = messageSource.getMessage(communityRewriteUrlParameter, "itunes.campaign.token", null, null, null);
+        LOGGER.debug("Campaign token is [{}]", campaignToken);
+        if (!StringUtils.isEmpty(campaignToken)){
+            iTunesUriComponentsBuilder.queryParam("ct", campaignToken);
         }
-        return Utils.replacePathSegmentInUrl(iTunesUriComponentsBuilder.build().toString(), 0, newCountryCode);
+        return iTunesUriComponentsBuilder.build().toString();
     }
 
     private String getUrlParameterValue(String decodedUrl) {
@@ -184,7 +192,7 @@ public class ChartDetailsConverter {
         return decodedUrl.substring(startIndex + URL_PARAMETER.length());
     }
 
-    private boolean hasOldFormat(String mediaITunesUrl) {
+    private boolean hasOldPartnerFormat(String mediaITunesUrl) {
         return mediaITunesUrl.startsWith("http://clkuk.tradedoubler.com");
     }
 
