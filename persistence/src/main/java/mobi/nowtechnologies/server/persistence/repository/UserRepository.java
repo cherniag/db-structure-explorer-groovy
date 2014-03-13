@@ -101,7 +101,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     		+ "and (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
     		+ "and (" +
             "   (pp.advancedPaymentSeconds>0 and pd.madeAttempts=0) " +
-            "   or (u.nextSubPayment<=?1 and (pd.madeAttempts=0 or pd.madeAttempts=1)) " +
+            "   or (u.nextSubPayment<=?1 and ((pd.madeAttempts=0 and pp.advancedPaymentSeconds=0) or (pd.madeAttempts=1 and pp.advancedPaymentSeconds>0))) " +
             "   or ((u.nextSubPayment+pp.afterNextSubPaymentSeconds)<=?1 and pp.afterNextSubPaymentSeconds>0)" +
             ") "
     		+ "and pd.activated=true "

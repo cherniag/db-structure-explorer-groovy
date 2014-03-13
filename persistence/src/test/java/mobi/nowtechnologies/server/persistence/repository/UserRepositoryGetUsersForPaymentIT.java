@@ -196,4 +196,19 @@ public class UserRepositoryGetUsersForPaymentIT {
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
+
+    @Test
+    public void shouldNotFindUserWhenAdvancedPaymentSecondsIs0AndMadeAttemptsIs1AndCurrentTimePlusAfterNextSubPaymentSecondsIsInTheFuture(){
+        //given
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFields().withAdvancedPaymentSeconds(0).withAfterNextSubPaymentSeconds(5));
+        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1().withNextSubPayment(10));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusErrorAndRetriesOnError3().withMadeAttempts(1).withPaymentPolicy(paymentPolicy).withOwner(user));
+        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
+
+        //when
+        List<User> users = userRepository.getUsersForRetryPayment(14);
+
+        //then
+        assertThat(users.size(), is(0));
+    }
 }
