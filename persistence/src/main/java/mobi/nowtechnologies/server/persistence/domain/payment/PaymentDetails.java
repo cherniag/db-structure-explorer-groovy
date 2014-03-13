@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -77,7 +77,14 @@ public class PaymentDetails {
 		this.madeRetries++;
     }
 
-    public int incrementMadeAttemptsAccordingToMadeRetries() {
+    public int incrementMadeAttemptsForRetry(){
+        if(lastPaymentStatus.equals(ERROR)||lastPaymentStatus.equals(EXTERNAL_ERROR)){
+            return incrementMadeAttemptsAccordingToMadeRetries();
+        }
+        return madeAttempts;
+    }
+
+    private int incrementMadeAttemptsAccordingToMadeRetries() {
         incrementRetries();
         if (madeRetries==retriesOnError) {
             incrementMadeAttempts();

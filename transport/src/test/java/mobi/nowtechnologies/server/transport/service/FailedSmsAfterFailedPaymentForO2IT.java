@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.transport.controller.AbstractControllerTestIT;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -82,6 +84,7 @@ public class FailedSmsAfterFailedPaymentForO2IT{
 
         PaymentDetails paymentDetails = paymentDetailsRepository.findOne(4L);
         paymentDetails.setOwner(currentUser);
+        paymentDetails.withLastPaymentStatus(ERROR);
         paymentDetails.withMadeRetries(paymentDetails.getRetriesOnError()-1);
         currentUser.setCurrentPaymentDetails(paymentDetails);
 
