@@ -26,6 +26,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.times;
@@ -69,7 +71,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withRetriesOnError(3);
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withLastPaymentStatus(NONE).withRetriesOnError(3);
 		user.setCurrentPaymentDetails(paymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
@@ -110,7 +112,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, actualSubmittedPayment.getStatus());
 
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, paymentDetails.getLastPaymentStatus());
-        assertEquals(1, paymentDetails.getMadeRetries());
+        assertEquals(0, paymentDetails.getMadeRetries());
         assertEquals(0, paymentDetails.getMadeAttempts());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
@@ -130,7 +132,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withLastPaymentStatus(ERROR).withPaymentPolicy(new PaymentPolicy());
 		paymentDetails.setRetriesOnError(3);
 		paymentDetails.withMadeRetries(1);
 		user.setCurrentPaymentDetails(paymentDetails);
@@ -170,9 +172,9 @@ public class AbstractPaymentSystemServiceTest {
 
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
-		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
+		assertEquals(ERROR, actualSubmittedPayment.getStatus());
 
-		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
+		assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
         assertEquals(2, paymentDetails.getMadeRetries());
         assertEquals(0, paymentDetails.getMadeAttempts());
 
@@ -193,7 +195,7 @@ public class AbstractPaymentSystemServiceTest {
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withPaymentPolicy(new PaymentPolicy());
+        PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withLastPaymentStatus(ERROR).withPaymentPolicy(new PaymentPolicy());
         paymentDetails.setRetriesOnError(3);
         paymentDetails.withMadeRetries(0);
         paymentDetails.withMadeAttempts(1);
@@ -238,10 +240,10 @@ public class AbstractPaymentSystemServiceTest {
 
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
-		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
+		assertEquals(ERROR, actualSubmittedPayment.getStatus());
 		assertEquals("", actualSubmittedPayment.getExternalTxId());
 
-		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
+		assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
         assertEquals(1, paymentDetails.getMadeRetries());
         assertEquals(1, paymentDetails.getMadeAttempts());
 
@@ -307,11 +309,11 @@ public class AbstractPaymentSystemServiceTest {
 
 		assertNotNull(actualSubmittedPayment);
 		assertEquals(submittedPayment, actualSubmittedPayment);
-		assertEquals(PaymentDetailsStatus.ERROR, actualSubmittedPayment.getStatus());
+		assertEquals(ERROR, actualSubmittedPayment.getStatus());
 		assertEquals("", actualSubmittedPayment.getExternalTxId());
 		assertEquals(descriptionError, actualSubmittedPayment.getDescriptionError());
 
-		assertEquals(PaymentDetailsStatus.ERROR, paymentDetails.getLastPaymentStatus());
+		assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
         assertEquals(2, paymentDetails.getMadeRetries());
         assertEquals(0, paymentDetails.getMadeAttempts());
 		assertEquals(descriptionError, paymentDetails.getDescriptionError());

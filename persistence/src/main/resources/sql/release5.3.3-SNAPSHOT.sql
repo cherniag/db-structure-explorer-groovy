@@ -14,7 +14,7 @@ start transaction;
 update tb_paymentPolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='NON_O2';
 update tb_paymentPolicy set advanced_payment_seconds=24*60*60 where communityID=10 and provider='O2' and segment='BUSINESS';
 
-update tb_paymentPolicy set after_next_sub_payment_seconds=2*24*60*60*1000 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
+update tb_paymentPolicy set after_next_sub_payment_seconds=2*24*60*60 where communityID=10 and provider='O2' and segment='CONSUMER' and paymentType='o2Psms' and contract='PAYG'; -- contract is NULL now
 update tb_paymentPolicy set online=true;
 
 -- 3?
@@ -100,8 +100,9 @@ update tb_paymentDetails pd
     on pd.i=u.currentPaymentDetailsId
   join tb_paymentPolicy pp
     on pp.i=pd.paymentPolicyId
-set pd.made_attempts=1,
-set pd.madeRetries=0
+set
+  pd.made_attempts=1,
+  pd.madeRetries=0
 where
     (
         pd.lastPaymentStatus = 'ERROR'
