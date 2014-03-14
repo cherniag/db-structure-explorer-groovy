@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 
 @MappedSuperclass
 public abstract class AbstractPayment {
@@ -49,7 +52,7 @@ public abstract class AbstractPayment {
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="paymentDetailsId")
-	private PaymentDetails paymentDetails;
+	protected PaymentDetails paymentDetails;
 	
 	@Column(insertable=false, updatable=false)
 	private Long paymentDetailsId; 
@@ -161,14 +164,31 @@ public abstract class AbstractPayment {
 			paymentDetailsId = paymentDetails.getI();
 	}
 
-	@Override
-	public String toString() {
-		return "amount=" + amount + ", currencyISO=" + currencyISO + ", externalTxId=" + externalTxId + ", i=" + i + ", internalTxId="
-				+ internalTxId + ", paymentSystem=" + paymentSystem + ", subweeks=" + subweeks + ", timestamp=" + timestamp + ", type=" + type + ", userId="
-				+ userId +", paymentDetailsId="+paymentDetailsId +", offerId="+offerId;
-	}
+    public boolean isRetry(){
+        return RETRY.equals(type);
+    }
 
-	public PaymentHistoryItemDto toPaymentHistoryItemDto() {
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("internalTxId", internalTxId)
+                .append("externalTxId", externalTxId)
+                .append("amount", amount)
+                .append("timestamp", timestamp)
+                .append("user", user)
+                .append("userId", userId)
+                .append("subweeks", subweeks)
+                .append("offerId", offerId)
+                .append("currencyISO", currencyISO)
+                .append("paymentSystem", paymentSystem)
+                .append("type", type)
+                .append("paymentDetails", paymentDetails)
+                .append("paymentDetailsId", paymentDetailsId)
+                .toString();
+    }
+
+    public PaymentHistoryItemDto toPaymentHistoryItemDto() {
 		PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
 		
 		paymentHistoryItemDto.setTransactionId(internalTxId);

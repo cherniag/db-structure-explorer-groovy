@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.BeanUtils;
 
 @Entity
@@ -81,11 +82,22 @@ public class SubmittedPayment extends AbstractPayment {
 		return payment;
 	}
 
-	@Override
-	public String toString() {
-		return "SubmittedPayment [" + super.toString() + ", base64EncodedAppStoreReceipt=" + base64EncodedAppStoreReceipt + ", appStoreOriginalTransactionId=" + appStoreOriginalTransactionId
-				+ ", descriptionError=" + descriptionError + ", nextSubPayment="
-				+ nextSubPayment + ", status="
-				+ status + "]";
-	}
+    public int incrementMadeAttemptsForRetry() {
+        if(isRetry()){
+            return paymentDetails.incrementMadeAttemptsForRetry();
+        }
+        return paymentDetails.getMadeAttempts();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt)
+                .append("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
+                .append("descriptionError", descriptionError)
+                .append("nextSubPayment", nextSubPayment)
+                .append("status", status)
+                .toString();
+    }
 }

@@ -45,16 +45,14 @@ public class PaymentDetailsTest {
     @Test
      public void shouldNotIncrementMadeAttemptsWhenLastPaymentStatusIsSUCCESSFUL(){
         //given
-        int madeRetries = 0;
-        int madeAttempts1 = 0;
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusSUCCESSFUL().withRetriesOnError(3).withMadeAttempts(madeAttempts1).withMadeRetries(madeRetries);
+        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusSUCCESSFUL().withRetriesOnError(3).withMadeAttempts(0).withMadeRetries(0);
 
         //when
         int madeAttempts = paymentDetails.incrementMadeAttemptsForRetry();
 
         //then
-        assertThat(madeAttempts, is(madeAttempts1));
-        assertThat(paymentDetails.getMadeRetries(), is(madeRetries));
+        assertThat(madeAttempts, is(0));
+        assertThat(paymentDetails.getMadeRetries(), is(1));
     }
 
     @Test
