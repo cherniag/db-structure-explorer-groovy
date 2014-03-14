@@ -1,6 +1,6 @@
 ﻿/* please, set community name here, other parameters should be checked manually */
-SET @new_community_name = 'mq';
-SET @new_community_full_name = 'MQ';
+SET @new_community_name = 'hl_uk';
+SET @new_community_full_name = 'HL UK';
 
 /* Creating new jAdmin user for new community in cn_service_admin */
 USE cn_service_admin;
@@ -24,19 +24,19 @@ INSERT INTO tb_news (name, numEntries, community, timestamp) VALUES
 
 /* Creating playlist */
 INSERT INTO tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) VALUES
-  ('HOT_TRACKS FOR MQ', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HOT_TRACKS'),
-  ('FIFTH_CHART FOR MQ', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FIFTH_CHART'),
-  ('MQ_PLAYLIST_1 FOR MQ', 0, 1, UNIX_TIMESTAMP(now()), 0, 'MQ_PLAYLIST_1'),
-  ('MQ_PLAYLIST_2 FOR MQ', 0, 1, UNIX_TIMESTAMP(now()), 0, 'MQ_PLAYLIST_2'),
-  ('OTHER_CHART FOR MQ', 0, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART'),
-  ('FOURTH_CHART FOR MQ', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FOURTH_CHART');
+  ('HOT_TRACKS FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HOT_TRACKS'),
+  ('FIFTH_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FIFTH_CHART'),
+  ('HL_UK_PLAYLIST_1 FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_1'),
+  ('HL_UK_PLAYLIST_2 FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
+  ('OTHER_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART'),
+  ('FOURTH_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FOURTH_CHART');
 INSERT INTO community_charts (chart_id, community_id) VALUES
-  ((select i from tb_charts where name = 'HOT_TRACKS FOR MQ'), @new_community_id),
-  ((select i from tb_charts where name = 'FIFTH_CHART FOR MQ'), @new_community_id),
-  ((select i from tb_charts where name = 'MQ_PLAYLIST_1 FOR MQ'), @new_community_id),
-  ((select i from tb_charts where name = 'MQ_PLAYLIST_2 FOR MQ'), @new_community_id),
-  ((select i from tb_charts where name = 'OTHER_CHART FOR MQ'), @new_community_id),
-  ((select i from tb_charts where name = 'FOURTH_CHART FOR MQ'), @new_community_id);
+  ((select i from tb_charts where name = 'HOT_TRACKS FOR HL UK'), @new_community_id),
+  ((select i from tb_charts where name = 'FIFTH_CHART FOR HL UK'), @new_community_id),
+  ((select i from tb_charts where name = 'HL_UK_PLAYLIST_1 FOR HL UK'), @new_community_id),
+  ((select i from tb_charts where name = 'HL_UK_PLAYLIST_2 FOR HL UK'), @new_community_id),
+  ((select i from tb_charts where name = 'OTHER_CHART FOR HL UK'), @new_community_id),
+  ((select i from tb_charts where name = 'FOURTH_CHART FOR HL UK'), @new_community_id);
 
 /* Creating usergroup */
 INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES

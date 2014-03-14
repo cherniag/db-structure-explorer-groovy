@@ -54,7 +54,7 @@ public class TransportControllerTest {
         userToken = "ab90da624e970e5865887c5f6d0dc044";
 //        userToken = "730b042edc1f6b4f6958ee151bfb3249";
 
-        serverUrl = "http://localhost:8080/transport/service/mqid/";
+        serverUrl = "http://localhost:8080/transport/service/hlid/";
 //        serverUrl = "http://rage.musicqubed.com/transport/service/mqid/";
         webClient = new WebClient();
     }

@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import javax.annotation.Resource;
 
 import static junit.framework.Assert.assertTrue;
-import static mobi.nowtechnologies.server.persistence.domain.Community.MQ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -274,21 +274,21 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
 
     @Test
-    public void tesGetChartForMQApp() throws Exception {
+    public void tesGetChartForHL() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "5.2";
-        String communityUrl = "mq";
+        String communityUrl = "hl_uk";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        Community mqCommunity = communityRepository.findByRewriteUrlParameter(MQ_COMMUNITY_REWRITE_URL);
+        Community hlCommunity = communityRepository.findByRewriteUrlParameter(HL_COMMUNITY_REWRITE_URL);
         Community o2Community = communityRepository.findByRewriteUrlParameter(O2_COMMUNITY_REWRITE_URL);
-        UserGroup mqUserGroup = userGroupRepository.findByCommunity(mqCommunity);
+        UserGroup hlUserGroup = userGroupRepository.findByCommunity(hlCommunity);
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, o2Community);
-        user.setUserGroup(mqUserGroup);
+        user.setUserGroup(hlUserGroup);
         userRepository.saveAndFlush(user);
-        generateChartAllTypesForMQ();
+        generateChartAllTypesForHL();
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
                         .param("USER_NAME", userName)
@@ -303,8 +303,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                 .andExpect(xpath("//chart/playlist").nodeCount(6))
                 .andExpect(xpath("//chart/playlist[type/text()='HOT_TRACKS']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='FIFTH_CHART']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='MQ_PLAYLIST_1']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='MQ_PLAYLIST_2']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_1']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1));
     }
@@ -401,7 +401,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     }
 
 
-    private void generateChartAllTypesForMQ() {
+    private void generateChartAllTypesForHL() {
         Chart chart = chartRepository.findOne(14);
         ChartDetail chartDetail = chartDetailRepository.findOne(22);
         ChartDetail hotDetail = new ChartDetail();

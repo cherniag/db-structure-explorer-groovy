@@ -20,8 +20,8 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import static mobi.nowtechnologies.server.shared.enums.ChartType.HOT_TRACKS;
-import static mobi.nowtechnologies.server.shared.enums.ChartType.MQ_PLAYLIST_1;
-import static mobi.nowtechnologies.server.shared.enums.ChartType.MQ_PLAYLIST_2;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.HL_UK_PLAYLIST_1;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.HL_UK_PLAYLIST_2;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Entity
@@ -38,7 +38,7 @@ public class ChartDetail {
     private static final Map<String, String> countryCodeForCommunityMap;
 
     private static List<ChartType> hotTracksChartWithSameBehaviour = Lists.newArrayList(HOT_TRACKS,
-            MQ_PLAYLIST_1, MQ_PLAYLIST_2);
+            HL_UK_PLAYLIST_1, HL_UK_PLAYLIST_2);
 
     static {
         Map<String, String> map = new HashMap<String, String>();

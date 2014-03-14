@@ -7,6 +7,6 @@ public enum ChartType {
 	OTHER_CHART,
 	FIFTH_CHART,
     VIDEO_CHART,
-    MQ_PLAYLIST_1,
-    MQ_PLAYLIST_2
+    HL_UK_PLAYLIST_1,
+    HL_UK_PLAYLIST_2
 }
