@@ -239,6 +239,17 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     }
 
     @Test
+    public void testSignUpAndApplyPromoForFacebookForWithEmptyEmail() throws Exception {
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, "", locationFromFacebook));
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
+        ).andExpect(status().isForbidden()).andDo(print())
+                .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(662))
+                .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("Email is not specified"));
+    }
+
+    @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookIdSucess() throws Exception {
         final String invalidFacebookUserId = "2";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail, locationFromFacebook));

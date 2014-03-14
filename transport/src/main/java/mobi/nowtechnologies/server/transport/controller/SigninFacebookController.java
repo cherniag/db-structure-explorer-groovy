@@ -3,12 +3,10 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.facebook.exception.FacebookForbiddenException;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
-import mobi.nowtechnologies.server.service.facebook.exception.FacebookSocialException;
+import mobi.nowtechnologies.server.service.facebook.exception.FacebookForbiddenException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.http.HttpStatus;
-import org.springframework.social.SocialException;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -68,11 +66,6 @@ public class SigninFacebookController extends CommonController {
 
     @ExceptionHandler(FacebookForbiddenException.class)
     public ModelAndView handleInvalidToken(Exception exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler(FacebookSocialException.class)
-    public ModelAndView handleSocialException(Exception exception, HttpServletResponse response) {
         return sendResponse(exception, response, HttpStatus.FORBIDDEN);
     }
 
