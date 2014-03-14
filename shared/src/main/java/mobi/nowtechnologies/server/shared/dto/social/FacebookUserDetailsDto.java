@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.social;
 
+import mobi.nowtechnologies.server.shared.enums.Gender;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,6 +26,26 @@ public class FacebookUserDetailsDto extends UserDetailsDto {
     private String userName;
 
     private String location;
+
+    private Gender gender;
+
+    private String birthDay;
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getBirthDay() {
+        return birthDay;
+    }
+
+    public void setBirthDay(String birthDay) {
+        this.birthDay = birthDay;
+    }
 
 
     public String getEmail() {

@@ -114,7 +114,9 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .param("DEVICE_UID", user.getDeviceUID())).andExpect(status().isOk()).andReturn();
     }
 
-    private FacebookTemplateCustomizer getTemplateCustomizer(final String facebookUserId, final String facebookEmail, final String returnedFacebookLocation) {
+    private FacebookTemplateCustomizer getTemplateCustomizer(final String facebookUserId,
+                                                             final String facebookEmail,
+                                                             final String returnedFacebookLocation) {
         return new FacebookTemplateCustomizer() {
             @Override
             public void customize(FacebookTemplate template) {
@@ -127,6 +129,8 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                         "  \"last_name\": \"" + lastName + "\", \n" +
                         "  \"link\": \"https://www.facebook.com/blah blah\", \n" +
                         "  \"username\": \"" + userName + "\", \n" +
+                        "  \"gender\": \"male\", \n" +
+                        "  \"birthday\": \"12/01/1990\", \n" +
                         "  \"type\": \"user\"\n" + ", \n" +
                         " \"location\": {\n" +
                         "    \"id\": \"111227078906045\", \n" +
@@ -228,7 +232,10 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(xpath(facebookElementXPath + "/surname").string(lastName))
                 .andExpect(xpath(facebookElementXPath + "/userName").string(userName))
                 .andExpect(xpath(facebookElementXPath + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture?type=large"))
-                .andExpect(xpath(facebookElementXPath + "/location").string(locationInResponse));
+                .andExpect(xpath(facebookElementXPath + "/location").string(locationInResponse))
+                .andExpect(xpath(facebookElementXPath + "/gender").string("MALE"))
+                .andExpect(xpath(facebookElementXPath + "/birthDay").string("12/01/1990")
+                );
     }
 
     @Test
@@ -272,6 +279,8 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath(facebookElementJsonPath + ".userName").value(userName))
                 .andExpect(jsonPath(facebookElementJsonPath + ".location").value(locationInResponse))
                 .andExpect(jsonPath(facebookElementJsonPath + ".profileUrl").value("https://graph.facebook.com/" + userName + "/picture?type=large"))
+                .andExpect(jsonPath(facebookElementJsonPath + ".gender").value("MALE"))
+                .andExpect(jsonPath(facebookElementJsonPath + ".birthDay").value("12/01/1990"))
                 .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true));
 
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
