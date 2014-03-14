@@ -40,7 +40,7 @@ INSERT INTO community_charts (chart_id, community_id) VALUES
 
 /* Creating usergroup */
 INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES
-  (@new_community_full_name, @new_community_id, (select i from tb_charts where name='HOT_TRACKS FOR MQ'), (select i from tb_news where community = @new_community_id), (select i from tb_drmPolicy where community = @new_community_id));
+  (@new_community_full_name, @new_community_id, (select i from tb_charts where name='HOT_TRACKS FOR HL UK'), (select i from tb_news where community = @new_community_id), (select i from tb_drmPolicy where community = @new_community_id));
 
 /* Creating payment policy */
 INSERT INTO tb_paymentPolicy (communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type,is_default) VALUES
