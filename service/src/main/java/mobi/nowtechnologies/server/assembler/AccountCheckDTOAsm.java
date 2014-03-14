@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
@@ -35,6 +36,8 @@ public class AccountCheckDTOAsm {
 
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
@@ -127,7 +130,7 @@ public class AccountCheckDTOAsm {
     private UserDetailsDto buildUserDetails(User user) {
         if (ProviderType.FACEBOOK.equals(user.getProvider())) {
             FacebookUserInfo facebookUserInfo = facebookUserInfoRepository.findForUser(user);
-            if (facebookUserInfo != null){
+            if (facebookUserInfo != null) {
                 return convertFacebookInfoToDetails(facebookUserInfo);
             }
         }
@@ -143,6 +146,10 @@ public class AccountCheckDTOAsm {
         result.setProfileUrl(details.getProfileUrl());
         result.setFacebookId(details.getFacebookId());
         result.setLocation(details.getCity());
+        result.setGender(details.getGender());
+        if (details.getBirthday() != null) {
+            result.setBirthDay(dateFormat.format(details.getBirthday()));
+        }
         return result;
     }
 

@@ -1,6 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain.social;
 
+import mobi.nowtechnologies.server.shared.enums.Gender;
+
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by oar on 2/7/14.
@@ -36,6 +39,29 @@ public class FacebookUserInfo extends SocialInfo {
 
     @Column(name="country",columnDefinition="char(100)")
     private String country;
+
+    @Enumerated(value=EnumType.STRING)
+    @Column(name="gender",columnDefinition="char(10)")
+    private Gender gender;
+
+    @Column(name="date_of_birth")
+    private Date birthday;
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
 
     public String getEmail() {
         return email;

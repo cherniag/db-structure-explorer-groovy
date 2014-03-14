@@ -12,10 +12,12 @@ CREATE TABLE `facebook_user_info` (
   `first_name` varchar(100),
   `surname` varchar(100),
   `city` varchar(100),
-  `country` varchar(100)
+  `country` varchar(100),
   `profile_url` varchar(200),
   `fb_id` varchar(100),
   `user_name` varchar(100),
+  `gender` varchar(10),
+  `date_of_birth` DATETIME,
   PRIMARY KEY (`id`),
   CONSTRAINT `facebook_user_info_id` FOREIGN KEY (`id`) REFERENCES `social_info` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -34,3 +36,4 @@ CREATE TABLE `activation_emails` (
 ALTER TABLE `facebook_user_info` ADD CONSTRAINT `facebook_user_info_email` UNIQUE (email);
 
 ALTER TABLE `facebook_user_info` ADD CONSTRAINT `facebook_user_info_fb_id` UNIQUE (fb_id);
+

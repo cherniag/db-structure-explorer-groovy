@@ -32,6 +32,8 @@ public class FacebookService {
     @Resource
     private UserRepository userRepository;
 
+    private FacebookDataConverter facebookDataConverter;
+
     private FacebookTemplateCustomizer templateCustomizer = new EmptyFacebookTemplateCustomizer();
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -45,32 +47,10 @@ public class FacebookService {
     public void saveFacebookInfoForUser(User inputUser, FacebookProfile profile) {
         facebookUserInfoRepository.deleteForUser(inputUser);
         User refreshedUser = userRepository.findOne(inputUser.getId());
-        FacebookUserInfo details = buildUserDetailsFromProfile(refreshedUser, profile);
+        FacebookUserInfo details = facebookDataConverter.convertForUser(refreshedUser, profile);
         assignProviderInfo(refreshedUser, profile);
         userRepository.save(refreshedUser);
         facebookUserInfoRepository.save(details);
-    }
-
-    private FacebookUserInfo buildUserDetailsFromProfile(User user, FacebookProfile profile) {
-        FacebookUserInfo details = new FacebookUserInfo();
-        details.setEmail(profile.getEmail());
-        details.setFirstName(profile.getFirstName());
-        details.setSurname(profile.getLastName());
-        details.setFacebookId(profile.getId());
-        details.setUserName(profile.getUsername());
-        details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture?type=large");
-        details.setUser(user);
-        Reference loc = profile.getLocation();
-        if (loc != null) {
-            String cityWithCountry = loc.getName();
-            if (!StringUtils.isEmpty(cityWithCountry)) {
-                Iterable<String> resultOfSplit = Splitter.on(',').omitEmptyStrings().trimResults().split(cityWithCountry);
-                List<String> result = Lists.newArrayList(resultOfSplit);
-                details.setCity(CollectionUtils.get(result, 0, null));
-                details.setCountry(CollectionUtils.get(result, 1, null));
-            }
-        }
-        return details;
     }
 
     private void assignProviderInfo(User user, FacebookProfile profile) {
@@ -93,5 +73,8 @@ public class FacebookService {
         }
     }
 
+    public void setFacebookDataConverter(FacebookDataConverter facebookDataConverter) {
+        this.facebookDataConverter = facebookDataConverter;
+    }
 
 }
