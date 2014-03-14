@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import mobi.nowtechnologies.server.job.CleanExpirePendingPaymentsJob;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -94,6 +96,7 @@ public class FailedSmsAfterFailedPaymentForO2IT{
         pendingPayment.setPaymentDetails(paymentDetails);
         pendingPayment.setExpireTimeMillis(0);
         pendingPayment.setPaymentSystem("o2Psms");
+        pendingPayment.setType(RETRY);
 
         expirePendingPaymentsJob.execute();
 
