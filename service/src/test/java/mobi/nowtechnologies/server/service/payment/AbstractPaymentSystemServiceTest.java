@@ -26,6 +26,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 import static org.junit.Assert.assertEquals;
@@ -82,6 +83,7 @@ public class AbstractPaymentSystemServiceTest {
 		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
+        submittedPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(SubmittedPayment.class);
 		Mockito.when(SubmittedPayment.valueOf(pendingPayment)).thenReturn(submittedPayment);
@@ -139,12 +141,15 @@ public class AbstractPaymentSystemServiceTest {
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
+        pendingPayment.setType(RETRY);
 		pendingPayment.setPaymentDetails(paymentDetails);
 
 		PowerMockito.mockStatic(Utils.class);
 		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
+        submittedPayment.setPaymentDetails(paymentDetails);
+        submittedPayment.setType(RETRY);
 
 		PowerMockito.mockStatic(SubmittedPayment.class);
 		Mockito.when(SubmittedPayment.valueOf(pendingPayment)).thenReturn(submittedPayment);
@@ -208,11 +213,14 @@ public class AbstractPaymentSystemServiceTest {
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
 		pendingPayment.setPaymentDetails(paymentDetails);
+        pendingPayment.setType(RETRY);
 
 		PowerMockito.mockStatic(Utils.class);
 		Mockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
 
 		final SubmittedPayment submittedPayment = new SubmittedPayment();
+        submittedPayment.setPaymentDetails(paymentDetails);
+        submittedPayment.setType(RETRY);
 
 		PowerMockito.mockStatic(SubmittedPayment.class);
 		Mockito.when(SubmittedPayment.valueOf(pendingPayment)).thenReturn(submittedPayment);

@@ -79,10 +79,7 @@ public class PaymentDetails {
     }
 
     public int incrementMadeAttemptsForRetry(){
-        if(lastPaymentStatus.equals(ERROR)||lastPaymentStatus.equals(EXTERNAL_ERROR)){
-            return incrementMadeAttemptsAccordingToMadeRetries();
-        }
-        return madeAttempts;
+        return incrementMadeAttemptsAccordingToMadeRetries();
     }
 
     private int incrementMadeAttemptsAccordingToMadeRetries() {
