@@ -82,10 +82,6 @@ public class SubmittedPayment extends AbstractPayment {
 		return payment;
 	}
 
-    public int incrementMadeAttemptsForRetry() {
-        return paymentDetails.incrementMadeAttemptsForRetry();
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)

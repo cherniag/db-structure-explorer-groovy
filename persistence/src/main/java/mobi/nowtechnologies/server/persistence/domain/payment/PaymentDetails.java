@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -261,6 +260,15 @@ public class PaymentDetails {
         return madeAttempts>0 && madeRetries==0 && lastPaymentStatus.equals(ERROR);
     }
 
+    public int incrementMadeAttemptsAccordingToMadeRetries() {
+        incrementRetries();
+        if (madeRetries==retriesOnError) {
+            incrementMadeAttempts();
+            resetMadeRetries();
+        }
+        return madeAttempts;
+    }
+
     private void resetMadeRetries(){
         this.madeRetries=0;
     }
@@ -285,21 +293,8 @@ public class PaymentDetails {
         return madeAttempts == 3;
     }
 
-    public int incrementMadeAttemptsForRetry(){
-        return incrementMadeAttemptsAccordingToMadeRetries();
-    }
-
     private void incrementRetries() {
         this.madeRetries++;
-    }
-
-    private int incrementMadeAttemptsAccordingToMadeRetries() {
-        incrementRetries();
-        if (madeRetries==retriesOnError) {
-            incrementMadeAttempts();
-            resetMadeRetries();
-        }
-        return madeAttempts;
     }
 
     private void incrementMadeAttempts() {
