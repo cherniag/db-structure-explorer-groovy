@@ -59,7 +59,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 			
 			for (User actualUser : users) {
 				userService.processPaymentSubBalanceCommand(actualUser, subWeeks, payment);
-				if (payment.getType().equals(FIRST)) {
+				if (FIRST.equals(payment.getType())) {
 					LOGGER
 							.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment
 									.getStatus());
