@@ -35,7 +35,7 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails = new PaymentDetails().withLastPaymentStatus(EXTERNAL_ERROR).withRetriesOnError(3).withMadeRetries(0);
 
         //when
-        int madeAttempts = paymentDetails.incrementMadeAttemptsForRetry();
+        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
         assertThat(madeAttempts, is(0));
@@ -48,7 +48,7 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusSUCCESSFUL().withRetriesOnError(3).withMadeAttempts(0).withMadeRetries(0);
 
         //when
-        int madeAttempts = paymentDetails.incrementMadeAttemptsForRetry();
+        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
         assertThat(madeAttempts, is(0));
@@ -61,7 +61,7 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withRetriesOnError(3).withMadeRetries(0);
 
         //when
-        int madeAttempts = paymentDetails.incrementMadeAttemptsForRetry();
+        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
         assertThat(madeAttempts, is(0));
@@ -74,7 +74,7 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withRetriesOnError(3).withMadeRetries(2);
 
         //when
-        int madeAttempts = paymentDetails.incrementMadeAttemptsForRetry();
+        int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
 
         //then
         assertThat(madeAttempts, is(1));
@@ -82,7 +82,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldResetMadeRetries(){
+     public void shouldResetMadeRetries(){
         //given
         PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
 
@@ -92,6 +92,19 @@ public class PaymentDetailsTest {
         //then
         assertThat(paymentDetails.getMadeAttempts(), is(0));
         assertThat(paymentDetails.getMadeRetries(), is(0));
+    }
+
+    @Test
+    public void shouldResetMadeRetriesForFirstPayment(){
+        //given
+        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
+
+        //when
+        paymentDetails.resetMadeAttemptsForFirstPayment();
+
+        //then
+        assertThat(paymentDetails.getMadeAttempts(), is(0));
+        assertThat(paymentDetails.getMadeRetries(), is(-1));
     }
 
     @Test

@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -73,27 +72,6 @@ public class PaymentDetails {
 
     @Column(name = "made_attempts", nullable = false)
     private int madeAttempts;
-
-	private void incrementRetries() {
-		this.madeRetries++;
-    }
-
-    public int incrementMadeAttemptsForRetry(){
-        return incrementMadeAttemptsAccordingToMadeRetries();
-    }
-
-    private int incrementMadeAttemptsAccordingToMadeRetries() {
-        incrementRetries();
-        if (madeRetries==retriesOnError) {
-            incrementMadeAttempts();
-            resetMadeRetries();
-        }
-        return madeAttempts;
-    }
-
-    private void incrementMadeAttempts() {
-        madeAttempts++;
-    }
 
     public Long getI() {
 		return i;
@@ -275,9 +253,27 @@ public class PaymentDetails {
         return hasMoreAttemptRetries();
     }
 
+    public void resetMadeAttemptsForFirstPayment(){
+        this.madeAttempts = 0;
+        this.madeRetries = -1;
+    }
+
     public void resetMadeAttempts(){
         this.madeAttempts=0;
         resetMadeRetries();
+    }
+
+    public boolean isCurrentAttemptFailed(){
+        return madeAttempts>0 && madeRetries==0 && lastPaymentStatus.equals(ERROR);
+    }
+
+    public int incrementMadeAttemptsAccordingToMadeRetries() {
+        incrementRetries();
+        if (madeRetries==retriesOnError) {
+            incrementMadeAttempts();
+            resetMadeRetries();
+        }
+        return madeAttempts;
     }
 
     private void resetMadeRetries(){
@@ -304,8 +300,12 @@ public class PaymentDetails {
         return madeAttempts == 3;
     }
 
-    public boolean isCurrentAttemptFailed(){
-        return madeAttempts>0 && madeRetries==0 && lastPaymentStatus.equals(ERROR);
+    private void incrementRetries() {
+        this.madeRetries++;
+    }
+
+    private void incrementMadeAttempts() {
+        madeAttempts++;
     }
 
     @Override

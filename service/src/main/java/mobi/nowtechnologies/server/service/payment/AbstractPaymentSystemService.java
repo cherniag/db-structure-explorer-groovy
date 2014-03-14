@@ -56,13 +56,13 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 			submittedPayment.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setDescriptionError(response.getDescriptionError());
 			paymentDetails.setErrorCode(response.getErrorCode());
-            submittedPayment.incrementMadeAttemptsForRetry();
+            paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
         } else if (response.isSuccessful()) {
 			status = SUCCESSFUL;
 			paymentDetails.setDescriptionError(null);
 			paymentDetails.setErrorCode(null);
-            submittedPayment.incrementMadeAttemptsForRetry();
-		} else {
+            paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
+        } else {
 			status = ERROR;
 			final String descriptionError = "Unexpected http status code ["+httpStatus+"] so the madeRetries won't be incremented";
 			submittedPayment.setDescriptionError(descriptionError);

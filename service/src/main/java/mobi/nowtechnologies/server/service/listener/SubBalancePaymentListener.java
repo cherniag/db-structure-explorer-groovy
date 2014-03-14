@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author dmytro
@@ -56,10 +58,8 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 			}
 			
 			for (User actualUser : users) {
-	
 				userService.processPaymentSubBalanceCommand(actualUser, subWeeks, payment);
-	
-				if (payment.getType() == PaymentDetailsType.FIRST) {
+				if (payment.getType().equals(FIRST)) {
 					LOGGER
 							.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment
 									.getStatus());
