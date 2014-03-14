@@ -73,27 +73,6 @@ public class PaymentDetails {
     @Column(name = "made_attempts", nullable = false)
     private int madeAttempts;
 
-	private void incrementRetries() {
-		this.madeRetries++;
-    }
-
-    public int incrementMadeAttemptsForRetry(){
-        return incrementMadeAttemptsAccordingToMadeRetries();
-    }
-
-    private int incrementMadeAttemptsAccordingToMadeRetries() {
-        incrementRetries();
-        if (madeRetries==retriesOnError) {
-            incrementMadeAttempts();
-            resetMadeRetries();
-        }
-        return madeAttempts;
-    }
-
-    private void incrementMadeAttempts() {
-        madeAttempts++;
-    }
-
     public Long getI() {
 		return i;
 	}
@@ -273,8 +252,12 @@ public class PaymentDetails {
         resetMadeRetries();
     }
 
+    public boolean isCurrentAttemptFailed(){
+        return madeAttempts>0 && madeRetries==0 && lastPaymentStatus.equals(ERROR);
+    }
+
     private void resetMadeRetries(){
-        this.madeRetries=0;
+        this.madeRetries=-1;
     }
 
     private boolean hasMoreAttemptRetries() {
@@ -297,8 +280,25 @@ public class PaymentDetails {
         return madeAttempts == 3;
     }
 
-    public boolean isCurrentAttemptFailed(){
-        return madeAttempts>0 && madeRetries==0 && lastPaymentStatus.equals(ERROR);
+    public int incrementMadeAttemptsForRetry(){
+        return incrementMadeAttemptsAccordingToMadeRetries();
+    }
+
+    private void incrementRetries() {
+        this.madeRetries++;
+    }
+
+    private int incrementMadeAttemptsAccordingToMadeRetries() {
+        incrementRetries();
+        if (madeRetries==retriesOnError) {
+            incrementMadeAttempts();
+            resetMadeRetries();
+        }
+        return madeAttempts;
+    }
+
+    private void incrementMadeAttempts() {
+        madeAttempts++;
     }
 
     @Override
