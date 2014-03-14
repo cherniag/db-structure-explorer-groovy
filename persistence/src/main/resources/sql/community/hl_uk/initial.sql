@@ -48,6 +48,6 @@ INSERT INTO tb_paymentPolicy (communityID, subWeeks, subCost, paymentType, opera
 
 /* Creating promotions, maxUsers=0 means unlimited number of users */
 INSERT INTO tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label, is_white_listed) VALUES
-  ('MQpromo2weeksAudio', 0, 0, UNIX_TIMESTAMP(now()), UNIX_TIMESTAMP('2020-12-01 02:00:00'), true, 2, 0, (select ug.id from tb_userGroups ug where ug.community = @new_community_id), 'PromoCode', false, 'mq.promo.2weeks.audio', false);
+  ('HL_UKPromo2weeksAudio', 0, 0, UNIX_TIMESTAMP(now()), UNIX_TIMESTAMP('2020-12-01 02:00:00'), true, 2, 0, (select ug.id from tb_userGroups ug where ug.community = @new_community_id), 'PromoCode', false, 'hl_uk.promo.2weeks.audio', false);
 INSERT INTO tb_promoCode (code, promotionId) VALUES
-  ('mq.promo.2weeks.audio',(select p.i from tb_promotions p where p.label='mq.promo.2weeks.audio'));
+  ('hl_uk.promo.2weeks.audio',(select p.i from tb_promotions p where p.label='hl_uk.promo.2weeks.audio'));
