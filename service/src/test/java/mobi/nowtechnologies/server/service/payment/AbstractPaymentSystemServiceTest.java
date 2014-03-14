@@ -113,7 +113,7 @@ public class AbstractPaymentSystemServiceTest {
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, actualSubmittedPayment.getStatus());
 
 		assertEquals(PaymentDetailsStatus.SUCCESSFUL, paymentDetails.getLastPaymentStatus());
-        assertEquals(0, paymentDetails.getMadeRetries());
+        assertEquals(1, paymentDetails.getMadeRetries());
         assertEquals(0, paymentDetails.getMadeAttempts());
 
 		Mockito.verify(mockEntityService, times(1)).updateEntity(submittedPayment);
