@@ -82,7 +82,7 @@ public class PaymentDetailsTest {
     }
 
     @Test
-    public void shouldResetMadeRetries(){
+     public void shouldResetMadeRetries(){
         //given
         PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
 
@@ -92,6 +92,19 @@ public class PaymentDetailsTest {
         //then
         assertThat(paymentDetails.getMadeAttempts(), is(0));
         assertThat(paymentDetails.getMadeRetries(), is(0));
+    }
+
+    @Test
+    public void shouldResetMadeRetriesForFirstPayment(){
+        //given
+        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
+
+        //when
+        paymentDetails.resetMadeAttemptsForFirstPayment();
+
+        //then
+        assertThat(paymentDetails.getMadeAttempts(), is(0));
+        assertThat(paymentDetails.getMadeRetries(), is(-1));
     }
 
     @Test

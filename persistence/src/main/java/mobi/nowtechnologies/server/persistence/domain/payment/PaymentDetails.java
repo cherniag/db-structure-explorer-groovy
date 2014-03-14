@@ -247,6 +247,11 @@ public class PaymentDetails {
         return hasMoreAttemptRetries();
     }
 
+    public void resetMadeAttemptsForFirstPayment(){
+        this.madeAttempts = 0;
+        this.madeRetries = -1;
+    }
+
     public void resetMadeAttempts(){
         this.madeAttempts=0;
         resetMadeRetries();
@@ -257,7 +262,7 @@ public class PaymentDetails {
     }
 
     private void resetMadeRetries(){
-        this.madeRetries=-1;
+        this.madeRetries=0;
     }
 
     private boolean hasMoreAttemptRetries() {
