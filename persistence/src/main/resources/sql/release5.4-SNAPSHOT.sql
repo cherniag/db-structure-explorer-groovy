@@ -53,6 +53,7 @@ UPDATE
         ON pd.i = u.currentPaymentDetailsId JOIN tb_paymentPolicy ppol
         ON ppol.i = pd.paymentPolicyId
     AND ppol.communityID = 10
+    AND ppol.tariff = '_4G'
     AND ppol.paymentType = 'o2Psms'
     AND(
         ppol.segment = 'CONSUMER'
@@ -74,7 +75,7 @@ SET
             AND pp.contract = u.contract
             AND pp.communityID = 10
             AND pp.tariff = ppol.tariff
-            AND pp.mediaType = ppol.mediaType
+            AND pp.media_type = ppol.media_type
             AND pp.paymentType = 'o2Psms'
             AND(
                 pp.segment = 'CONSUMER'
