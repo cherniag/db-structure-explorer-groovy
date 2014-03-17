@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static org.joda.time.DateTimeZone.UTC;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -441,7 +443,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     }
     
     private int days(int nextSubPayment) {
-        return (nextSubPayment - Utils.getEpochSeconds())/(24*60*60);
+        DateTime start = new DateTime(Utils.getEpochMillis(), UTC);
+        DateTime nextSubPaymentDateTime = new DateTime(nextSubPayment * 1000L, UTC);
+        return Days.daysBetween(start, nextSubPaymentDateTime).getDays();
     }
 
 }
