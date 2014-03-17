@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.mockito.Matchers.any;
@@ -73,7 +74,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         Assert.assertEquals(O2, user.getProvider());
         Assert.assertEquals(PAYM, user.getContract());
         Assert.assertEquals(CONSUMER, user.getSegment());
-        Assert.assertEquals(ContractChannel.DIRECT, user.getContractChannel());
+        Assert.assertEquals(DIRECT, user.getContractChannel());
 
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
         verify(updateO2UserTaskSpy, times(1)).handleUserUpdate(any(User.class));
@@ -129,7 +130,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         Assert.assertEquals(O2, user.getProvider());
         Assert.assertEquals(PAYG, user.getContract());
         Assert.assertEquals(CONSUMER, user.getSegment());
-        Assert.assertEquals(ContractChannel.DIRECT, user.getContractChannel());
+        Assert.assertEquals(DIRECT, user.getContractChannel());
 
         verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
         verify(updateO2UserTaskSpy, times(1)).handleUserUpdate(any(User.class));
@@ -431,7 +432,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         user.setSegment(CONSUMER);
         user.setContract(Contract.PAYG);
         user.setTariff(Tariff._3G);
-        user.setContractChannel(ContractChannel.DIRECT);
+        user.setContractChannel(DIRECT);
 
         UserStatus userStatus = userStatusRepository.findByName(UserStatus.LIMITED);
         user.setStatus(userStatus);
@@ -439,10 +440,8 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         return userService.updateUser(user);
     }
     
-    private int days(long nextSubPayment) {
-
-        return Days.daysBetween(new DateTime(System.currentTimeMillis()), new DateTime(nextSubPayment * 1000)).getDays();
-
+    private int days(int nextSubPayment) {
+        return (nextSubPayment - Utils.getEpochSeconds())/(24*60*60);
     }
 
 }
