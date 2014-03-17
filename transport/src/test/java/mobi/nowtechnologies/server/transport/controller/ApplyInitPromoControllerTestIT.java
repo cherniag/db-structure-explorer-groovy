@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.junit.Assert;
 import org.junit.Test;
@@ -438,11 +439,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         return userService.updateUser(user);
     }
-    
+
     private int days(long nextSubPayment) {
-
-        return Days.daysBetween(new DateTime(System.currentTimeMillis()), new DateTime(nextSubPayment * 1000)).getDays();
-
+        DateTimeZone timeZone = DateTimeZone.forID("UTC");
+        return Days.daysBetween(new DateTime(System.currentTimeMillis(), timeZone), new DateTime(nextSubPayment * 1000, timeZone)).getDays();
     }
-
 }
