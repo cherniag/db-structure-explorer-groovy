@@ -53,7 +53,6 @@ UPDATE
         ON pd.i = u.currentPaymentDetailsId JOIN tb_paymentPolicy ppol
         ON ppol.i = pd.paymentPolicyId
     AND ppol.communityID = 10
-    AND ppol.tariff = '_3G'
     AND ppol.paymentType = 'o2Psms'
     AND(
         ppol.segment = 'CONSUMER'
@@ -74,53 +73,8 @@ SET
             pp.subWeeks = ppol.subWeeks
             AND pp.contract = u.contract
             AND pp.communityID = 10
-            AND pp.tariff = '_3G'
-            AND pp.paymentType = 'o2Psms'
-            AND(
-                pp.segment = 'CONSUMER'
-                OR pp.segment IS NULL
-            )
-            AND(
-                pp.provider = 'O2'
-                OR pp.provider IS NULL
-            )
-            AND pp.online IS TRUE
-    )
-WHERE
-    (
-        pd.lastPaymentStatus = 'NONE'
-        OR pd.lastPaymentStatus = 'SUCCESSFUL'
-    )
-    AND pd.activated IS TRUE
-;
-
-UPDATE
-    tb_paymentDetails pd JOIN tb_users u
-        ON pd.i = u.currentPaymentDetailsId JOIN tb_paymentPolicy ppol
-        ON ppol.i = pd.paymentPolicyId
-    AND ppol.communityID = 10
-    AND ppol.tariff = '_4G'
-    AND ppol.paymentType = 'o2Psms'
-    AND(
-        ppol.segment = 'CONSUMER'
-        OR ppol.segment IS NULL
-    )
-    AND(
-        ppol.provider = 'O2'
-        OR ppol.provider IS NULL
-    )
-    AND u.contract='PAYG'
-SET
-    pd.paymentPolicyId =(
-        SELECT
-            pp.i
-        FROM
-            tb_paymentPolicy pp
-        WHERE
-            pp.subWeeks = ppol.subWeeks
-            AND pp.contract = u.contract
-            AND pp.communityID = 10
-            AND pp.tariff = '_4G'
+            AND pp.tariff = ppol.tariff
+            AND pp.mediaType = ppol.mediaType
             AND pp.paymentType = 'o2Psms'
             AND(
                 pp.segment = 'CONSUMER'
