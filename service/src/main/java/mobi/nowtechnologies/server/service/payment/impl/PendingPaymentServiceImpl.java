@@ -55,7 +55,7 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 				pendingPayments.add(pendingPayment);
                 PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
                 currentPaymentDetails.setLastPaymentStatus(AWAITING);
-                currentPaymentDetails.resetMadeAttempts();
+                currentPaymentDetails.resetMadeAttemptsForFirstPayment();
                 user = userService.updateUser(user);
 				LOGGER.info("Pending payment {} was created for user {}", pendingPayment.getInternalTxId(), user.getUserName());
 			} else {
