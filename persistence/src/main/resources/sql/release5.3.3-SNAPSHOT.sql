@@ -20,25 +20,39 @@ update tb_paymentPolicy set online=true;
 -- 3?
 select count(*) from tb_paymentPolicy where communityID = 10 AND tariff = '_3G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND
                                             (provider = 'O2' or provider is null) and online is true;
+-- 6?
+select count(*) from tb_paymentPolicy where communityID = 10 AND tariff = '_4G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND
+                                            (provider = 'O2' or provider is null) and online is true;
 
-update tb_paymentPolicy set online=false where communityID = 10 AND tariff = '_3G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND
-(provider = 'O2' or provider is null);
+update tb_paymentPolicy set online=false where communityID = 10 AND tariff = '_3G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND (provider = 'O2' or provider is null);
+update tb_paymentPolicy set online=false where communityID = 10 AND tariff = '_4G' AND paymentType = 'o2Psms' AND (segment = 'CONSUMER' or segment is null) AND (provider = 'O2' or provider is null);
 
 INSERT INTO tb_paymentPolicy
-(communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment   , content_category, content_type          , content_description     , sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online) VALUES
-  (10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   ,24*60*60                 ,2*24*60*60                     , false     , true),
-  (10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   ,24*60*60                 ,2*24*60*60                     , true      , true),
-  (10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   ,24*60*60                 ,2*24*60*60                     , false     , true),
-  (10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   ,24*60*60                 ,0                              , false     , true),
-  (10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   ,24*60*60                 ,0                              , true      , true),
-  (10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'   ,24*60*60                 ,0                              , false     , true);
+(communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment   , content_category, content_type          , content_description     , sub_merchant_id, provider, tariff, media_type       , advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online) VALUES
+(10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'          ,24*60*60                 ,2*24*60*60                     , false     , true),
+(10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'          ,24*60*60                 ,2*24*60*60                     , true      , true),
+(10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'          ,24*60*60                 ,2*24*60*60                     , false     , true),
+(10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'          ,24*60*60                 ,0                              , false     , true),
+(10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'          ,24*60*60                 ,0                              , true      , true),
+(10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_3G' , 'AUDIO'          ,24*60*60                 ,0                              , false     , true),
+(10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'AUDIO'          ,24*60*60                 ,2*24*60*60                     , false     , true),
+(10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'AUDIO'          ,24*60*60                 ,2*24*60*60                     , false     , true),
+(10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'AUDIO'          ,24*60*60                 ,2*24*60*60                     , false     , true),
+(10         , 5       , '5'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107056', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'AUDIO'          ,24*60*60                 ,0                              , false     , true),
+(10         , 2       , '2'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107055', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'AUDIO'          ,24*60*60                 ,0                              , false     , true),
+(10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'AUDIO'          ,24*60*60                 ,0                              , false     , true),
+(10         , 3       , '4.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107059', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,2*24*60*60                     , false     , true),
+(10         , 2       , '3'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107058', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,2*24*60*60                     , false     , true),
+(10         , 1       , '1.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107057', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,2*24*60*60                     , true)     , true) ,
+(10         , 3       , '4.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107059', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,0                              , false     , true),
+(10         , 2       , '3'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107058', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,0                              , false     , true),
+(10         , 1       , '1.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107057', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,0                              , true)     , true);
 
 UPDATE
     tb_paymentDetails pd JOIN tb_users u
         ON pd.i = u.currentPaymentDetailsId JOIN tb_paymentPolicy ppol
         ON ppol.i = pd.paymentPolicyId
     AND ppol.communityID = 10
-    AND ppol.tariff = '_3G'
     AND ppol.paymentType = 'o2Psms'
     AND(
         ppol.segment = 'CONSUMER'
@@ -59,7 +73,8 @@ SET
             pp.subWeeks = ppol.subWeeks
             AND pp.contract = u.contract
             AND pp.communityID = 10
-            AND pp.tariff = '_3G'
+            AND pp.tariff = ppol.tariff
+            AND pp.mediaType = ppol.mediaType
             AND pp.paymentType = 'o2Psms'
             AND(
                 pp.segment = 'CONSUMER'
