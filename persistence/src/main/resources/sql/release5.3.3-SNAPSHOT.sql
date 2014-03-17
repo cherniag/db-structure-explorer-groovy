@@ -43,16 +43,17 @@ INSERT INTO tb_paymentPolicy
 (10         , 1       , '1'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107054', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'AUDIO'          ,24*60*60                 ,0                              , false     , true),
 (10         , 3       , '4.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107059', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,2*24*60*60                     , false     , true),
 (10         , 2       , '3'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107058', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,2*24*60*60                     , false     , true),
-(10         , 1       , '1.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107057', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,2*24*60*60                     , true)     , true) ,
+(10         , 1       , '1.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYG'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107057', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,2*24*60*60                     , true     , true) ,
 (10         , 3       , '4.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107059', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,0                              , false     , true),
 (10         , 2       , '3'    , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107058', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,0                              , false     , true),
-(10         , 1       , '1.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107057', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,0                              , true)     , true);
+(10         , 1       , '1.5'  , 'o2Psms'   , NULL    , ''       , 'GBP'      , true            , NULL                , 'PAYM'  , 'CONSUMER', 'other'         , 'mqbed_tracks_3107057', 'Description of content', 'O2 Tracks'    , 'O2'    , '_4G' , 'VIDEO_AND_AUDIO',24*60*60                 ,0                              , true     , true);
 
 UPDATE
     tb_paymentDetails pd JOIN tb_users u
         ON pd.i = u.currentPaymentDetailsId JOIN tb_paymentPolicy ppol
         ON ppol.i = pd.paymentPolicyId
     AND ppol.communityID = 10
+    AND ppol.tariff = '_4G'
     AND ppol.paymentType = 'o2Psms'
     AND(
         ppol.segment = 'CONSUMER'
@@ -74,7 +75,7 @@ SET
             AND pp.contract = u.contract
             AND pp.communityID = 10
             AND pp.tariff = ppol.tariff
-            AND pp.mediaType = ppol.mediaType
+            AND pp.media_type = ppol.media_type
             AND pp.paymentType = 'o2Psms'
             AND(
                 pp.segment = 'CONSUMER'
