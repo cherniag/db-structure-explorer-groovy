@@ -51,3 +51,23 @@ INSERT INTO tb_promotions (description, numUsers, maxUsers, startDate, endDate, 
   ('HL_UKPromo2weeksAudio', 0, 0, UNIX_TIMESTAMP(now()), UNIX_TIMESTAMP('2020-12-01 02:00:00'), true, 2, 0, (select ug.id from tb_userGroups ug where ug.community = @new_community_id), 'PromoCode', false, 'hl_uk.promo.2weeks.audio', false);
 INSERT INTO tb_promoCode (code, promotionId) VALUES
   ('hl_uk.promo.2weeks.audio',(select p.i from tb_promotions p where p.label='hl_uk.promo.2weeks.audio'));
+
+
+insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) values
+  ((select i from tb_charts where name = 'FOURTH_CHART FOR HL UK'),0,null,null,null,null,null,UNIX_TIMESTAMP(now()),1,null,'FOURTH_CHART FOR HL UK','FOURTH_CHART FOR HL UK','FOURTH_CHART FOR HL UK',null,null);
+
+insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) values
+  ((select i from tb_charts where name = 'HOT_TRACKS FOR HL UK'),1,null,null,null,null,null,UNIX_TIMESTAMP(now()),1,null,'HOT_TRACKS FOR HL UK','HOT_TRACKS FOR HL UK','HOT_TRACKS FOR HL UK',null,null);
+
+insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) values
+  ((select i from tb_charts where name = 'FIFTH_CHART FOR HL UK'),2,null,null,null,null,null,UNIX_TIMESTAMP(now()),1,null,'FIFTH_CHART FOR HL UK','FIFTH_CHART FOR HL UK','FIFTH_CHART FOR HL UK',null,null);
+
+insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) values
+  ((select i from tb_charts where name = 'HL_UK_PLAYLIST_1 FOR HL UK'),3,null,null,null,null,null,UNIX_TIMESTAMP(now()),1,null,'HL_UK_PLAYLIST_1 FOR HL UK','HL_UK_PLAYLIST_1 FOR HL UK','HL_UK_PLAYLIST_1 FOR HL UK',null,null);
+
+insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) values
+  ((select i from tb_charts where name = 'HL_UK_PLAYLIST_2 FOR HL UK'),4,null,null,null,null,null,UNIX_TIMESTAMP(now()),1,null,'HL_UK_PLAYLIST_2 FOR HL UK','HL_UK_PLAYLIST_2 FOR HL UK','HL_UK_PLAYLIST_2 FOR HL UK',null,null);
+
+insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) values
+  ((select i from tb_charts where name = 'OTHER_CHART FOR HL UK'),5,null,null,null,null,null,UNIX_TIMESTAMP(now()),1,null,'OTHER_CHART FOR HL UK','OTHER_CHART FOR HL UK','OTHER_CHART FOR HL UK',null,null);
+
