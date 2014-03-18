@@ -24,12 +24,12 @@ INSERT INTO tb_news (name, numEntries, community, timestamp) VALUES
 
 /* Creating playlist */
 INSERT INTO tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) VALUES
+  ('FOURTH_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FOURTH_CHART'),
   ('HOT_TRACKS FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HOT_TRACKS'),
   ('FIFTH_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FIFTH_CHART'),
   ('HL_UK_PLAYLIST_1 FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_1'),
   ('HL_UK_PLAYLIST_2 FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
-  ('OTHER_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART'),
-  ('FOURTH_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FOURTH_CHART');
+  ('OTHER_CHART FOR HL UK', 0, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART');
 INSERT INTO community_charts (chart_id, community_id) VALUES
   ((select i from tb_charts where name = 'HOT_TRACKS FOR HL UK'), @new_community_id),
   ((select i from tb_charts where name = 'FIFTH_CHART FOR HL UK'), @new_community_id),
