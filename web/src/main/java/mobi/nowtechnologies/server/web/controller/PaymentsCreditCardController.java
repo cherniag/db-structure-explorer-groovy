@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import mobi.nowtechnologies.server.persistence.domain.Country;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.CountryService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
@@ -39,6 +41,7 @@ public class PaymentsCreditCardController extends CommonController {
 	public static final String PAGE_CREATE_PAYMENT_DETAILS = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_CREDITCARD_DETAILS + PAGE_EXT;
 
 	private CountryService countryService;
+    private PaymentPolicyService paymentPolicyService;
 	private PaymentDetailsService paymentDetailsService;
 
 	@InitBinder(CreditCardDto.NAME)
@@ -51,7 +54,7 @@ public class PaymentsCreditCardController extends CommonController {
 			@RequestParam(PaymentsController.POLICY_REQ_PARAM) Integer policyId,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl,
 			Locale locale) {
-		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(policyId);
+		PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(policyId);
 
 		ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_CREDITCARD);
 		modelAndView.addObject(CreditCardDto.NAME, new CreditCardDto());
@@ -70,7 +73,7 @@ public class PaymentsCreditCardController extends CommonController {
 			@Valid @ModelAttribute(CreditCardDto.NAME) CreditCardDto creditCardDto, BindingResult result,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl,
 			Locale locale) {
-		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(creditCardDto.getPaymentPolicyId());
+		PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(creditCardDto.getPaymentPolicyId());
 		
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addAllObjects(CreditCardDto.staticData);
@@ -143,4 +146,8 @@ public class PaymentsCreditCardController extends CommonController {
 	public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
 		this.paymentDetailsService = paymentDetailsService;
 	}
+
+    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
+        this.paymentPolicyService = paymentPolicyService;
+    }
 }

@@ -7,11 +7,13 @@ import junit.framework.Assert;
 import mobi.nowtechnologies.server.job.CleanExpirePendingPaymentsJob;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.transport.controller.AbstractControllerTestIT;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,13 +32,12 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
-/**
- * Created by oar on 12/20/13.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextHierarchy({
         @ContextConfiguration(locations = {
@@ -78,24 +79,31 @@ public class FailedSmsAfterFailedPaymentForO2IT{
         PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
         final long time = new Date().getTime();
         logger.info("Start time {}", time);
-        List<PendingPayment> createPendingPayments = pendingPaymentService.createPendingPayments();
+
+        List<PendingPayment> pendingPayments = pendingPaymentService.createPendingPayments();
         User currentUser = userRepository.findOne(101);
         currentUser.getUserGroup().setCommunity(communityRepository.findByRewriteUrlParameter("o2"));
+
         PaymentDetails paymentDetails = paymentDetailsRepository.findOne(4L);
         paymentDetails.setOwner(currentUser);
-        paymentDetails.setMadeRetries(paymentDetails.getRetriesOnError());
+        paymentDetails.withLastPaymentStatus(ERROR);
+        paymentDetails.withMadeRetries(paymentDetails.getRetriesOnError()-1);
         currentUser.setCurrentPaymentDetails(paymentDetails);
-        assertEquals(createPendingPayments.size(), 1);
-        PendingPayment pendingPayment = Iterables.getFirst(createPendingPayments, null);
+
+        assertEquals(pendingPayments.size(), 1);
+
+        PendingPayment pendingPayment = Iterables.getFirst(pendingPayments, null);
         pendingPayment.setPaymentDetails(paymentDetails);
         pendingPayment.setExpireTimeMillis(0);
         pendingPayment.setPaymentSystem("o2Psms");
+        pendingPayment.setType(RETRY);
+
         expirePendingPaymentsJob.execute();
 
         monitor.waitToComplete(5000);
 
         File smsFile = getLastSmsFile(time);
-        List<String> smsText = Files.readLines(smsFile, Charsets.UTF_8);
+        List<String> smsText = Files.readLines(smsFile, UTF_8);
         assertTrue(smsText.contains("URL: " + smsUrl));
 
     }

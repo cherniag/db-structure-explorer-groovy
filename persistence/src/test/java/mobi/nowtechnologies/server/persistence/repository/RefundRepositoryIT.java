@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactor
 import mobi.nowtechnologies.server.persistence.domain.Refund;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -36,8 +37,9 @@ public class RefundRepositoryIT  extends AbstractRepositoryIT{
         refund.nextSubPaymentMillis = Long.MAX_VALUE;
         refund.paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
         refund.logTimeMillis = Utils.getEpochMillis();
-        refund.user = UserFactory.createUser();
+        refund.user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         refund.actionReason = USER_DOWNGRADED_TARIFF;
+        refund.paymentDetails.setOwner(refund.user);
 
         refund.user = userRepository.save(refund.user);
 

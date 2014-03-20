@@ -779,7 +779,7 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-facebook</artifactId>
-                <version>1.0.3.RELEASE</version>
+                <version>1.0.0.RC3</version>
             </dependency>
             <!-- END Spring Secuity -->
 

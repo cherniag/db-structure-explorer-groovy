@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -166,7 +167,7 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
 
     @Before
     public void setUpContext() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         user = userRepository.save(user);
 
@@ -174,7 +175,7 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
         o2psmsPaymentDetails.setActivated(true);
         o2psmsPaymentDetails.setCreationTimestampMillis(0L);
         o2psmsPaymentDetails.setDisableTimestampMillis(0L);
-        o2psmsPaymentDetails.setMadeRetries(0);
+        o2psmsPaymentDetails.resetMadeAttempts();
         o2psmsPaymentDetails.setRetriesOnError(0);
         o2psmsPaymentDetails.setOwner(user);
 

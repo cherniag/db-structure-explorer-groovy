@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xerces.dom.ElementImpl;
 import org.apache.xerces.dom.TextImpl;
@@ -326,7 +327,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void testGetRedeemServerO2Url_Promoted_Success() throws Exception{
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 				
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(true);
 		
@@ -339,7 +340,7 @@ public class O2ClientServiceImplTest {
 	
 	@Test
 	public void testGetRedeemServerO2Url_NotPromoted_Success() throws Exception{
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 				
 		when(mockDeviceService.isPromotedDevicePhone(any(Community.class), anyString(), anyString())).thenReturn(false);
 		

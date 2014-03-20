@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.transport.service.PostsSaverPostService;
 import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
@@ -69,7 +70,7 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
 
     @Test
     public void checkSendChargeNotificationReminderShouldBeSent() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("vf_nz");
         user.setProvider(ProviderType.VF);
         user.setMobile("+64789654123");
@@ -81,7 +82,7 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
     public void checkSendChargeNotificationReminderShouldBeSentWithDefaultSMSText() throws Exception {
         final long time = new Date().getTime();
         PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
         user.setProvider(ProviderType.O2);
         user.setMobile("+44789654123");
@@ -95,7 +96,7 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
 
     @Test
     public void checkSendChargeNotificationReminderShouldNotBeSentForRejectedDevice() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("vf_nz");
         user.setProvider(ProviderType.NON_VF);
         user.setMobile("+64789654123");
@@ -108,7 +109,7 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
 
     @Test
     public void checkSendChargeNotificationReminderShouldNotBeSentForRejectedDevice2() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("vf_nz");
         user.setProvider(ProviderType.NON_VF);
         user.setMobile("+64789654123");
@@ -121,7 +122,7 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
 
     @Test
     public void checkSendChargeNotificationReminderShouldNotBeSentForNonAvailableCommunity() throws Exception {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("a_not_available_community");
         user.setProvider(ProviderType.VF);
         user.setMobile("+64789654123");

@@ -80,7 +80,7 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
     PaymentPolicy createPaymentPolicyWithCommunity() {
         o2Community = communityRepository.findByRewriteUrlParameter("o2");
 
-        PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+        PaymentPolicy paymentPolicy = PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields();
         paymentPolicy.setTariff(_3G);
         paymentPolicy.setCommunity(o2Community);
         paymentPolicy.setMediaType(MediaType.AUDIO);

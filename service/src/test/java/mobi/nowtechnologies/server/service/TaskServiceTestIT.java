@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,7 +188,7 @@ public class TaskServiceTestIT extends AbstractTransactionalJUnit4SpringContextT
     }
 
     private User createAndSaveUser(UserGroup userGroup) {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setUserGroup(userGroup);
         return userRepository.save(user);
     }

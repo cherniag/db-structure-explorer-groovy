@@ -12,16 +12,27 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.ChartDetailService;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.MediaService;
+import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
+import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TerritoryDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +48,10 @@ public class ChartItemController extends AbstractCommonController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartController.class);
     private static final String CHANNELS_CODE = "chartItems.channel.list";
+
+
+
+    private TrackRepoService trackRepoService;
 
     private ChartDetailService chartDetailService;
     private MediaService mediaService;
@@ -67,6 +82,10 @@ public class ChartItemController extends AbstractCommonController {
 
     public void setChartFilesURL(String chartFilesURL) {
         this.chartFilesURL = chartFilesURL;
+    }
+
+    public void setTrackRepoService(TrackRepoService trackRepoService) {
+        this.trackRepoService = trackRepoService;
     }
 
     @ModelAttribute("chartFilesURL")
@@ -147,8 +166,38 @@ public class ChartItemController extends AbstractCommonController {
         List<Media> medias = getMedias(searchWords, mediaType);
         List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtosFromMedia(selectedPublishDateTime, chartId, medias);
 
-        return new ModelAndView()
-                .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
+
+        PageRequest pageRequest  = new PageRequest(0, 10000);
+        Map<Integer, String> terCodes = new HashMap<Integer, String>();
+
+        for (Media m : medias) {
+            SearchTrackDto searchTrackDto = new SearchTrackDto();
+            List<Integer> trackId = new ArrayList<Integer>();
+            if (m.getTrackId() != null) {
+                trackId.add(m.getTrackId().intValue());
+                searchTrackDto.setTrackIds(trackId);
+                PageListDto<TrackDto> trackDtoPageListDto = trackRepoService.find(searchTrackDto, pageRequest);
+                if ((trackDtoPageListDto != null) && (trackDtoPageListDto.getList().size() != 0)) {
+                    terCodes.put(m.getI(), trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+
+                    for (ChartItemDto chartItemDto : chartItemDtos) {
+                        if (chartItemDto.getMediaDto().getId().intValue() == m.getI().intValue())
+                            chartItemDto.setCode(trackDtoPageListDto.getList().get(0).getTerritoryCodes());
+                    }
+                }
+            }
+        }
+
+        terCodes.size();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
+        modelAndView.addObject("territories", terCodes);
+
+        return modelAndView;
+
+//        return new ModelAndView()
+//                .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
     }
 
     public List<Media> getMedias(String searchWords, String mediaType) {
