@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -438,11 +439,10 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
         return userService.updateUser(user);
     }
-    
+
     private int days(long nextSubPayment) {
-
-        return Days.daysBetween(new DateTime(System.currentTimeMillis()), new DateTime(nextSubPayment * 1000)).getDays();
-
+        DateTimeZone timeZone = DateTimeZone.forID("UTC");
+        return Days.daysBetween(new DateTime(System.currentTimeMillis(), timeZone), new DateTime(nextSubPayment * 1000, timeZone)).getDays();
     }
 
 }
