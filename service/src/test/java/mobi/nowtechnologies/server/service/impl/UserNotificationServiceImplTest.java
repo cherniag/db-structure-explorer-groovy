@@ -1340,11 +1340,12 @@ public class UserNotificationServiceImplTest {
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MIN_VALUE);
 
-        PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
+        final PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
         o2PDPaymentDetails.withMadeRetries(0);
         o2PDPaymentDetails.setRetriesOnError(3);
         o2PDPaymentDetails.withMadeAttempts(2);
         o2PDPaymentDetails.withLastPaymentStatus(ERROR);
+        o2PDPaymentDetails.withPaymentPolicy(new PaymentPolicy().withShortCode("shortCode"));
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
@@ -1362,11 +1363,13 @@ public class UserNotificationServiceImplTest {
 				assertNotNull(argument);
 				Object[] args = (Object[]) argument;
 
-				assertEquals(1, args.length);
+				assertEquals(2, args.length);
 
 				String pUrl = (String) args[0];
+                String shortCode = (String) args[1];
 
 				assertEquals(userNotificationImplSpy.getPaymentsUrl(), pUrl);
+                assertEquals(o2PDPaymentDetails.getPaymentPolicy().getShortCode(), shortCode);
 
 				return true;
 			}
@@ -1398,11 +1401,12 @@ public class UserNotificationServiceImplTest {
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(new UserGroup().withCommunity(new Community().withName("")));
         user.setNextSubPayment(Integer.MAX_VALUE);
 
-        PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
+        final PaymentDetails o2PDPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withOwner(user);
         o2PDPaymentDetails.withMadeRetries(madeRetries);
         o2PDPaymentDetails.setRetriesOnError(retriesOnError);
         o2PDPaymentDetails.withMadeAttempts(1);
         o2PDPaymentDetails.withLastPaymentStatus(ERROR);
+        o2PDPaymentDetails.withPaymentPolicy(new PaymentPolicy().withShortCode("shortCode"));
 
         user.setCurrentPaymentDetails(o2PDPaymentDetails);
 
@@ -1420,11 +1424,13 @@ public class UserNotificationServiceImplTest {
 				assertNotNull(argument);
 				Object[] args = (Object[]) argument;
 
-				assertEquals(1, args.length);
+				assertEquals(2, args.length);
 
 				String pUrl = (String) args[0];
+                String shortCode = (String) args[1];
 
 				assertEquals(userNotificationImplSpy.getPaymentsUrl(), pUrl);
+                assertEquals(o2PDPaymentDetails.getPaymentPolicy().getShortCode(), shortCode);
 
 				return true;
 			}
