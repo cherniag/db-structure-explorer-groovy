@@ -24,6 +24,8 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.ExpectedException.none;
@@ -128,7 +130,7 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
                 .withRetriesOnError(1)
                 .withMadeRetries(1)
                 .withLastFailedPaymentNotificationMillis(null);
-        paymentDetails1.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+        paymentDetails1.setLastPaymentStatus(ERROR);
         PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetails1);
 
         //when
