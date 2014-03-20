@@ -16,7 +16,7 @@ public interface UserNotificationService {
 	String DOWNGRADE_FROM_4G_SUBSCRIBED = "DOWNGRADE_FROM_4G_SUBSCRIBED";
 	String DOWNGRADE_FROM_4G_FREETRIAL = "DOWNGRADE_FROM_4G_FREETRIAL";
 	
-	Future<Boolean> notifyUserAboutSuccesfullPayment(User user);
+	Future<Boolean> notifyUserAboutSuccessfulPayment(User user);
 
 	Future<Boolean> sendUnsubscribeAfterSMS(User user) throws UnsupportedEncodingException;
 
@@ -34,5 +34,5 @@ public interface UserNotificationService {
 
     Future<Boolean> sendActivationPinSMS(User user) throws UnsupportedEncodingException;
 
-    boolean sendPaymentFailSMS(PaymentDetails paymentDetails, int hoursBefore) throws UnsupportedEncodingException;
+    boolean sendPaymentFailSMS(PaymentDetails paymentDetails) throws UnsupportedEncodingException;
 }

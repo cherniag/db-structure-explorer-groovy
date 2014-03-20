@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.jsmpp.bean.DeliverSm;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,8 +73,8 @@ public class VFNZUserDetailsUpdaterTest {
 
     @Test
     public void testProcess_Success() throws Exception {
-        User user1 = UserFactory.createUser();
-        User user2 = UserFactory.createUser();
+        User user1 = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        User user2 = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         VFNZSubscriberData data = new VFNZSubscriberData();
         data.setPhoneNumber("+642111111111");

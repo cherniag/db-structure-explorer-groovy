@@ -62,7 +62,7 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob{
 
         for (PaymentDetails paymentDetail : paymentDetails) {
             try {
-                userNotificationService.sendPaymentFailSMS(paymentDetail, 0);
+                userNotificationService.sendPaymentFailSMS(paymentDetail);
             } catch (UnsupportedEncodingException e) {
                 LogUtils.putClassNameMDC(this.getClass());
                 LOGGER.error(e.getMessage(), e);

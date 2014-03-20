@@ -98,7 +98,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 		MigPaymentDetails paymentDetails = new MigPaymentDetails();
 			paymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
 			paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.PENDING);
-			paymentDetails.setMadeRetries(0);
+			paymentDetails.resetMadeAttempts();
 			paymentDetails.setRetriesOnError(getRetriesOnError());
 			paymentDetails.setMigPhoneNumber(migPhoneNumber);
 			paymentDetails.setPaymentPolicy(paymentPolicy);

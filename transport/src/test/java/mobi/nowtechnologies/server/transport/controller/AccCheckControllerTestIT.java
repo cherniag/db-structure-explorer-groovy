@@ -293,7 +293,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         final String userName = "+447111111118";
 
         //given
-        User entity = UserFactory.createUser()
+        User entity = UserFactory.createUser(ActivationStatus.ACTIVATED)
                 .withSegment(SegmentType.CONSUMER)
                 .withContract(Contract.PAYM)
                 .withProvider(ProviderType.O2)

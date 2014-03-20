@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -39,8 +40,7 @@ public class PaymentsMigController extends CommonController {
 	public static final String REDIRECT_VERIFY_PAYMENTS_PSMS = "psms" + PAGE_VERIFY;
 
 	private PaymentDetailsService paymentDetailsService;
-	
-	private UserService userService;
+    private PaymentPolicyService paymentPolicyService;
 
 	@InitBinder(PSmsDto.NAME)
 	public void initBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -51,7 +51,7 @@ public class PaymentsMigController extends CommonController {
 	public ModelAndView getMigPaymentsPage(@PathVariable("scopePrefix") String scopePrefix, 
 			@RequestParam(PaymentsController.POLICY_REQ_PARAM) Integer policyId,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
-		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(policyId);
+		PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(policyId);
 		
 		ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PSMS);
 		modelAndView.addObject(PSmsDto.NAME, new PSmsDto());
@@ -134,4 +134,8 @@ public class PaymentsMigController extends CommonController {
 	public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
 		this.paymentDetailsService = paymentDetailsService;
 	}
+
+    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
+        this.paymentPolicyService = paymentPolicyService;
+    }
 }

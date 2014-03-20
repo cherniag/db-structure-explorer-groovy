@@ -11,6 +11,7 @@ import java.util.Collections;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.service.UserService;
 
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +36,7 @@ public class Before48hExpirePSMSPaymentJobTest {
 		UserGroup userGroup = new UserGroup();
 		userGroup.setCommunity(community);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setUserGroup(userGroup);
 
 		when(mockUserService.findBefore48hExpireUsers(anyInt(), any(Pageable.class))).thenReturn(Collections.singletonList(user));

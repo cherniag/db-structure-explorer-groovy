@@ -82,7 +82,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 		paymentDetails.setBillingAgreementTxId(redirectURL.concat("?cmd=_express-checkout&token=").concat(response.getToken())); // Temporary setting token to billingAgreement
 		paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
 		paymentDetails.setPaymentPolicy(paymentPolicy);
-		paymentDetails.setMadeRetries(0);
+		paymentDetails.resetMadeAttempts();
 		paymentDetails.setRetriesOnError(getRetriesOnError());
 		paymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
 		paymentDetails.setActivated(false);

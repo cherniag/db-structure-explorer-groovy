@@ -106,8 +106,16 @@ public class PaymentPolicy {
     @Column(columnDefinition = "char(255)", name = "media_type", nullable = false)
     private MediaType mediaType;
 
+    @Column(name = "advanced_payment_seconds", nullable = false)
+    private int advancedPaymentSeconds;
+
+    @Column(name = "after_next_sub_payment_seconds", nullable = false)
+    private int afterNextSubPaymentSeconds;
+
     @Column(name = "is_default")
     private boolean isDefault;
+
+    private boolean online;
 
     public void setId(Integer id) {
         this.id = id;
@@ -298,6 +306,14 @@ public class PaymentPolicy {
         provider = providerType;
     }
 
+    public int getAfterNextSubPaymentSeconds() {
+        return afterNextSubPaymentSeconds;
+    }
+
+    public int getAdvancedPaymentSeconds() {
+        return advancedPaymentSeconds;
+    }
+
     public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
         LOGGER.debug("input parameters paymentDetailsByPaymentDto: [{}]", paymentDetailsByPaymentDto);
 
@@ -348,6 +364,11 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withCommunity(Community community){
+        setCommunity(community);
+        return this;
+    }
+
     public PaymentPolicy withMediaType(MediaType mediaType){
         setMediaType(mediaType);
         return this;
@@ -383,6 +404,71 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withSubWeeks(byte subWeeks) {
+        setSubweeks(subWeeks);
+        return this;
+    }
+
+    public PaymentPolicy withAvailableInStore(boolean availableInStore) {
+        setAvailableInStore(availableInStore);
+        return this;
+    }
+
+    public PaymentPolicy withAfterNextSubPaymentSeconds(int afterNextSubPaymentSeconds){
+        this.afterNextSubPaymentSeconds = afterNextSubPaymentSeconds;
+        return this;
+    }
+
+    public PaymentPolicy withAdvancedPaymentSeconds(int advancedPaymentSeconds){
+        this.advancedPaymentSeconds = advancedPaymentSeconds;
+        return this;
+    }
+
+    public PaymentPolicy withShortCode(String shortCode){
+        this.shortCode = shortCode;
+        return this;
+    }
+
+    public PaymentPolicy withOperator(Operator operator){
+        this.operator = operator;
+        return this;
+    }
+
+    public PaymentPolicy withCurrencyISO(String currencyISO) {
+        this.currencyISO = currencyISO;
+        return this;
+    }
+
+    public PaymentPolicy withAppStoreProductId(String appStoreProductId) {
+        this.appStoreProductId = appStoreProductId;
+        return this;
+    }
+
+    public PaymentPolicy withContentCategory(String contentCategory) {
+        this.contentCategory = contentCategory;
+        return this;
+    }
+
+    public PaymentPolicy withContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public PaymentPolicy withContentDescription(String contentDescription) {
+        this.contentDescription = contentDescription;
+        return this;
+    }
+
+    public PaymentPolicy withSubMerchantId(String subMerchantId) {
+        this.subMerchantId = subMerchantId;
+        return this;
+    }
+
+    public PaymentPolicy withOnline(boolean online) {
+        this.online = online;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -406,7 +492,10 @@ public class PaymentPolicy {
                 .append("contentDescription", contentDescription)
                 .append("tariff", tariff)
                 .append("mediaType", mediaType)
+                .append("advancedPaymentSeconds", advancedPaymentSeconds)
+                .append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds)
                 .append("isDefault", isDefault)
+                .append("online", online)
                 .toString();
     }
 }

@@ -54,19 +54,23 @@
         <property name="communityService" ref="service.communityService"/>
     	<property name="userService" ref="service.UserService"/>
     	<property name="promotionService" ref="service.PromotionService"/>
+        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
         <property name="countryService" ref="service.CountryService"/>
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsPayPalController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsMigController">
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
+        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
     </bean>
 
 	<bean class="mobi.nowtechnologies.server.web.controller.PaymentsPsmsController">

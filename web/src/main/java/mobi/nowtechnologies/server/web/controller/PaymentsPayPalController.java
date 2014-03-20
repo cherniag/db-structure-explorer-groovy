@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
@@ -45,6 +46,7 @@ public class PaymentsPayPalController extends CommonController {
 	public static final String FAIL_RESULT = "fail";
 
 	private PaymentDetailsService paymentDetailsService;
+    private PaymentPolicyService paymentPolicyService;
 
 	@RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
 	public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
@@ -59,7 +61,7 @@ public class PaymentsPayPalController extends CommonController {
 			}
 			modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
 		}else{
-			PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(paymentPolicyId);
+			PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
 			modelAndModel.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
 		}
 
@@ -70,7 +72,7 @@ public class PaymentsPayPalController extends CommonController {
 	public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, 
 			@ModelAttribute(PayPalDto.NAME) PayPalDto dto,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
-		PaymentPolicyDto paymentPolicy = paymentDetailsService.getPaymentPolicy(dto.getPaymentPolicyId());
+		PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());
 		dto.setBillingAgreementDescription(messageSource.getMessage(PAYPAL_BILLING_AGREEMENT_DESCRIPTION, new Object[]{paymentPolicy.getSubweeks(), paymentPolicy.getSubcost()}, locale));
 		StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT)
 				.append(START_PARAM_DELIM)
@@ -103,4 +105,8 @@ public class PaymentsPayPalController extends CommonController {
 	public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
 		this.paymentDetailsService = paymentDetailsService;
 	}
+
+    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
+        this.paymentPolicyService = paymentPolicyService;
+    }
 }

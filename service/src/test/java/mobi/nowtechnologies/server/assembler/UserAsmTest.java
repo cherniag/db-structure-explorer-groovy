@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class UserAsmTest {
 	@Test
 	public void testFromUserDto_IsOnTrial_Success()
 		throws Exception {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setFreeTrialExpiredMillis(new Date().getTime()+1000000);
 		UserDto userDto = new UserDto();
 		userDto.setDisplayName("Display Name");
@@ -53,7 +54,7 @@ public class UserAsmTest {
 	@Test
 	public void testFromUserDto_IsNotOnTrial_Success()
 		throws Exception {
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setFreeTrialExpiredMillis(new Date().getTime()+1000000);
 		UserDto userDto = new UserDto();
 		userDto.setDisplayName("Display Name");

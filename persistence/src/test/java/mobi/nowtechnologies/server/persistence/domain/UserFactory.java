@@ -1,10 +1,13 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserType;
 
@@ -14,20 +17,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
 
-public class UserFactory
- {
-	private UserFactory() {
-	}
+public class UserFactory{
 
 	public static Collection<User> getUserCollection() {
 		Collection<User> users = new ArrayList<User>(1);
 		
-		users.add(createUser());
+		users.add(createUser(ACTIVATED));
 		return users;
 	}
 	
@@ -46,7 +48,7 @@ public class UserFactory
 	}
 
 
-	public static User createUser() {
+	public static User createUser(ActivationStatus status) {
 		
 		UserStatus userStatus = new UserStatus();
 		userStatus.setI((byte)10);
@@ -100,16 +102,12 @@ public class UserFactory
 		testUser.setProvider(O2);
 		testUser.setContract(PAYG);
 		testUser.setSegment(CONSUMER);
+        testUser.setActivationStatus(status);
 		return testUser;
-	}
-
-
-	public static User createUserByDefaultConstructor() {
-		return new User();
 	}
 	
 	public static User createUser(PaymentDetails currentPaymentDetails, BigDecimal amountOfMoneyToUserNotification) {
-		User user = createUser();
+		User user = createUser(ACTIVATED);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setAmountOfMoneyToUserNotification(amountOfMoneyToUserNotification);
 		
@@ -117,7 +115,7 @@ public class UserFactory
 	}
 	
 	public static User createUser(PaymentDetails currentPaymentDetails, BigDecimal amountOfMoneyToUserNotification, UserGroup userGroup) {
-		User user = createUser();
+		User user = createUser(ACTIVATED);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setAmountOfMoneyToUserNotification(amountOfMoneyToUserNotification);
 		user.setUserGroup(userGroup);
@@ -132,9 +130,54 @@ public class UserFactory
          PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
          paymentDetails.setPaymentPolicy(paymentPolicy);
 
-         User user = createUser();
+         User user = createUser(ACTIVATED);
          user.setCurrentPaymentDetails(paymentDetails);
 
          return user;
      }
+
+    public static User userWithDefaultNotNullFields(){
+        User user = new User();
+        user.setDisplayName("");
+        user.setTitle("");
+        user.setFirstName("");
+        user.setLastName("");
+        user.setUserName("");
+        user.setSubBalance((byte) 0);
+        user.setToken("");
+        user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setDeviceType(DeviceTypeDao.getAndroidDeviceType());
+        user.setDevice("");
+        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(7));
+        user.setUserType(UserType.DEV);
+        user.setLastDeviceLogin(0);
+        user.setLastWebLogin(0);
+        user.setNextSubPayment(0);
+        user.setLastPaymentTx(0);
+        user.setAddress1("");
+        user.setAddress2("");
+        user.setCity("");
+        user.setPostcode("");
+        user.setCountry(1);
+        user.setMobile("");
+        user.setCode("");
+        user.setSessionID("");
+        user.setIpAddress("");
+        user.setTempToken("");
+        user.setDeviceString("");
+        user.setCanContact(false);
+        user.setOperator(1);
+        user.setPin("");
+        user.setPaymentStatus(1);
+        user.setNumPsmsRetries(0);
+        user.setAmountOfMoneyToUserNotification(BigDecimal.ONE);
+        user.setLastSuccesfullPaymentSmsSendingTimestampMillis(Long.MAX_VALUE);
+        user.setTariff(_3G);
+        user.setVideoFreeTrialHasBeenActivated(false);
+        return user;
+    }
+
+    public static User userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED() {
+        return userWithDefaultNotNullFields().withSubBalance((byte) 0).withLastDeviceLogin(1).withActivationStatus(ACTIVATED);
+    }
 }

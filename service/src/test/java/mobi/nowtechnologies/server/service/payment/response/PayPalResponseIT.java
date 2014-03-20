@@ -16,6 +16,7 @@ import mobi.nowtechnologies.server.shared.service.PostService;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Ignore
 public class PayPalResponseIT {
 	
 	private PostService httpService;

@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author dmytro
@@ -44,7 +46,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 					
 			LOGGER.info("handle SubBalance payment event: [{}]", payment);
 			User user = payment.getUser();
-			int subweeks = payment.getSubweeks();
+			int subWeeks = payment.getSubweeks();
 			final String appStoreOriginalTransactionId = payment.getAppStoreOriginalTransactionId();
 			final int nextSubPayment = payment.getNextSubPayment();
 		
@@ -56,10 +58,8 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 			}
 			
 			for (User actualUser : users) {
-	
-				userService.processPaymentSubBalanceCommand(actualUser, subweeks, payment);
-	
-				if (payment.getType() == PaymentDetailsType.FIRST) {
+				userService.processPaymentSubBalanceCommand(actualUser, subWeeks, payment);
+				if (FIRST.equals(payment.getType())) {
 					LOGGER
 							.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment
 									.getStatus());
@@ -69,7 +69,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	
 				PaymentDetails currentActivePaymentDetails = actualUser.getCurrentPaymentDetails();
 				if (currentActivePaymentDetails != null && PaymentDetails.MIG_SMS_TYPE.equals(currentActivePaymentDetails.getPaymentType())) {
-					userNotificationService.notifyUserAboutSuccesfullPayment(actualUser);
+					userNotificationService.notifyUserAboutSuccessfulPayment(actualUser);
 				}
 	
 				userService.populateAmountOfMoneyToUserNotification(actualUser, payment);
