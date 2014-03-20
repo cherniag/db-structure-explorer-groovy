@@ -415,7 +415,8 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
                 int attempt = paymentDetails.getMadeAttempts();
 
                 if (!rejectDevice(user, "sms.notification.paymentFail.at." + attempt + "attempt.not.for.device.type")) {
-                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[]{paymentsUrl});
+                    String shortCode = paymentDetails.getPaymentPolicy().getShortCode();
+                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[]{paymentsUrl, shortCode});
 
                     if (wasSmsSentSuccessfully) {
                         LOGGER.info("The payment fail sms was sent successfully");
