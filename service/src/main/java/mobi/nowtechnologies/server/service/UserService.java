@@ -2024,6 +2024,8 @@ public class UserService {
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
         }
 
+        user = userRepository.findOne(user.getId());
+
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         return paymentDetails.getOwner();
     }
