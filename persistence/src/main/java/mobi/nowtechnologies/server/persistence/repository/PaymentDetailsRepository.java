@@ -23,8 +23,7 @@ public interface PaymentDetailsRepository extends JpaRepository<PaymentDetails, 
             "join FETCH ug.community c " +
             "where " +
             "pd.activated=false " +
-            "and pd.lastPaymentStatus='ERROR' " +
-            "and pd.madeRetries=pd.retriesOnError " +
+            "and (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') " +
             "and pd.lastFailedPaymentNotificationMillis is null " +
             "and c.rewriteUrlParameter = ?1")
     List<PaymentDetails> findFailedPaymentWithNoNotificationPaymentDetails(String communityUrl, Pageable pageable);
