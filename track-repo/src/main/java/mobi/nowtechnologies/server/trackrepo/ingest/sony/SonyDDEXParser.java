@@ -37,4 +37,12 @@ public class SonyDDEXParser extends DDEXParser {
 		}
 	}
 
+    @Override
+    protected Integer getDuration(String duration) {
+        //additional check just in case not to ruin audio duration
+        if (super.getDuration(duration) < 1000)
+            return super.getDuration(duration) * 1000;
+        else
+            return super.getDuration(duration);
+    }
 }

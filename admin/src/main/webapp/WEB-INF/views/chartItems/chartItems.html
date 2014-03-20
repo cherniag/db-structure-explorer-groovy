@@ -36,6 +36,11 @@
     	font-size: 11px;
     	width: 150px;
 	}
+
+    .terr_code {
+        font-size: 11px;
+        width: 30px;
+    }
 	
 	.basket_button {
 		font-size: 11px;
@@ -316,6 +321,10 @@
 									th:text="#{chartItems.page.mediasTable.head.artist}">
 									Artist
 								</div>
+                                <div class="terr_code"
+                                     th:text="#{chartItems.page.mediasTable.head.code}">
+                                    Artist22
+                                </div>
 							</li>
 						</ul>
 						<ul class="table table_up" id="mediaList">
@@ -577,7 +586,7 @@
 		item.removeAttr("class");
 		item.removeAttr("style");
 		
-		var hiddendiv = item.find("div.isrc_media, div.title_media, div.artist_media, div.basket_button");
+		var hiddendiv = item.find("div.isrc_media, div.title_media, div.artist_media, div.basket_button, div.terr_code");
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
@@ -930,6 +939,14 @@
 		var artistMediaDiv = $('<div>').attr({
 			"class":"artist_media"
 		}).text(chartItem.mediaDto.artistDto.name).appendTo(li);
+
+        var code_text = "";
+        if (chartItem.code!=null)
+            code_text = chartItem.code;
+
+        var artistMediaDiv = $('<div>').attr({
+            "class":"terr_code"
+        }).text(code_text).appendTo(li);
 		
 		var artistMediaDiv = $('<div>').attr({
 			"class":"basket_button"
