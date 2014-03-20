@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
 import org.junit.Before;
@@ -119,7 +120,7 @@ public class ActivationEmailServiceTest {
 
     @Test
     public void testSendEmail() {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         when(userService.findByNameAndCommunity("htc", Community.O2_COMMUNITY_REWRITE_URL)).thenReturn(user);
         when(activationEmailRepository.save(any(ActivationEmail.class))).then(new Answer<Object>() {
@@ -141,7 +142,7 @@ public class ActivationEmailServiceTest {
 
     @Test(expected = ValidationException.class)
     public void testSendEmailNotValid() {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         when(userService.findByNameAndCommunity("htc", Community.O2_COMMUNITY_REWRITE_URL)).thenReturn(user);
         when(activationEmailRepository.save(any(ActivationEmail.class))).then(new Answer<Object>() {

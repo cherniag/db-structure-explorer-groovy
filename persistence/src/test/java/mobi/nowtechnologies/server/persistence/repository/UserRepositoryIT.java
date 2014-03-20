@@ -498,7 +498,7 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
     @Test
     public void testDetectUserAccountWithSameDeviceAndDisableIt(){
         //given
-        User user = userRepository.save(UserFactory.createUser().withUserName("145645").withMobile("+447766666667").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED)).withUserName("145645").withMobile("+447766666667").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
         Integer id = user.getId();
         int count = userRepository.detectUserAccountWithSameDeviceAndDisableIt(user.getDeviceUID(), user.getUserGroup());
         assertEquals(1, count);

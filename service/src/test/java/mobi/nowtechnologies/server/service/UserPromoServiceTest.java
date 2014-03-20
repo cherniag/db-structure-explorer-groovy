@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +37,7 @@ public class UserPromoServiceTest {
 
     @Test
     public void testApplyInitPromoByEmail() {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
 
@@ -51,7 +52,7 @@ public class UserPromoServiceTest {
 
     @Test(expected = ValidationException.class)
     public void testApplyInitPromoByEmailActivateError() {
-        User user = UserFactory.createUser();
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
         when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true))).thenReturn(user);
         doThrow(ValidationException.class).when(activationEmailService).activate(anyLong(), anyString(), anyString());
