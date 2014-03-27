@@ -40,6 +40,8 @@ public class ChartItemDto {
     
     private Boolean locked;
 
+    private String code;
+
 	public Integer getId() {
 		return id;
 	}
@@ -128,7 +130,15 @@ public class ChartItemDto {
 		this.channel = channel;
 	}
 
-	@Override
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @Override
 	public String toString() {
 		return "ChartItemDto [id=" + id + ", chartId=" + chartId + ", mediaDto=" + mediaDto + ", info=" + info + ", position=" + position + ", prevPosition=" + prevPosition + ", chgPosition="
 				+ chgPosition + ", channel=" + channel + ", isrc=" + isrc + ", publishTime=" + publishTime + ", locked=" + locked + "]";

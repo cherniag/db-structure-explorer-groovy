@@ -9,9 +9,12 @@ import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetai
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static junit.framework.Assert.*;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.rules.ExpectedException.none;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
@@ -42,12 +47,16 @@ public class PaymentDetailsRepositoryIT {
 
     @Resource(name = "userRepository")
     private UserRepository userRepository;
+
+
+    @Rule
+    public ExpectedException exception = none();
 		
 	private PayPalPaymentDetails getPaymentDetails(String billingAgreement) {
 		PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails();
 		paymentDetails.setBillingAgreementTxId(billingAgreement); 
 		paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
-		paymentDetails.setMadeRetries(0);
+		paymentDetails.withMadeAttempts(0);
 		paymentDetails.setRetriesOnError(3);
 		paymentDetails.setCreationTimestampMillis(System.currentTimeMillis());
 		paymentDetails.setActivated(false);
@@ -56,10 +65,8 @@ public class PaymentDetailsRepositoryIT {
 	
 	@Test
 	public void savePaymentDetailsWithChangesToUser() {
-		
-		User user = new User();
-			user.setUserName("hello@user.com");
-			user.setCity("Kiev");
+
+        User user = createUser();
 		entityDao.saveEntity(user);
 		
 		user.setCity("Lugansk");
@@ -72,16 +79,22 @@ public class PaymentDetailsRepositoryIT {
 		assertNotNull(paymentDetails.getI());
 		assertEquals("Lugansk", user.getCity());
 	}
-	
-	/**
+
+    private User createUser() {
+        User user = new User();
+        user.setUserName("hello@user.com");
+        user.setCity("Kiev");
+        user.setActivationStatus(ActivationStatus.ACTIVATED);
+        return user;
+    }
+
+    /**
 	 * Adding new payment details to user should disable old one and add a new one with activated equals to true
 	 */
 	@Test
 	@Transactional
 	public void addingNewPaymentDetailsAndToserWithExistingPaymentDetails() {
-		User user = new User();
-		user.setUserName("hello@user.com");
-		user.setCity("Kiev");
+		User user = createUser();
 			entityDao.saveEntity(user);
 			
 		PayPalPaymentDetails paymentDetails = getPaymentDetails("2345-2345-2345-23452-2345");
@@ -114,14 +127,14 @@ public class PaymentDetailsRepositoryIT {
     public void shouldFindFailurePaymentPaymentDetailsWithNoNotification(){
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(o2UserGroup));
         PaymentDetails paymentDetails1 = new O2PSMSPaymentDetails()
                 .withOwner(user)
                 .withActivated(false)
                 .withRetriesOnError(1)
                 .withMadeRetries(1)
                 .withLastFailedPaymentNotificationMillis(null);
-        paymentDetails1.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+        paymentDetails1.setLastPaymentStatus(ERROR);
         PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetails1);
 
         //when
@@ -137,7 +150,7 @@ public class PaymentDetailsRepositoryIT {
     public void shouldNotFindFailurePaymentDetailsWithStatusNone(){
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(o2UserGroup));
         PaymentDetails paymentDetails1 = new O2PSMSPaymentDetails()
                 .withOwner(user)
                 .withActivated(false)
@@ -159,7 +172,7 @@ public class PaymentDetailsRepositoryIT {
     public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotification(){
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(o2UserGroup));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(2).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
 
         //when
@@ -174,7 +187,7 @@ public class PaymentDetailsRepositoryIT {
     public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotificationBecauseTheyDoesNotExist(){
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(o2UserGroup));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(Long.MAX_VALUE));
 
         //when
@@ -189,7 +202,7 @@ public class PaymentDetailsRepositoryIT {
     public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotificationBecauseWrongCommunity(){
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(o2UserGroup));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(false).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
 
         //when
@@ -204,7 +217,7 @@ public class PaymentDetailsRepositoryIT {
     public void shouldNotFindFailurePaymentPaymentDetailsWithNoNotificationBecausePaymentDetailsIsActive(){
         //given
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
-        User user = userRepository.save(UserFactory.createUser().withUserGroup(o2UserGroup));
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED).withUserGroup(o2UserGroup));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(new O2PSMSPaymentDetails().withOwner(user).withActivated(true).withRetriesOnError(1).withMadeRetries(1).withLastFailedPaymentNotificationMillis(null));
 
         //when
@@ -214,4 +227,21 @@ public class PaymentDetailsRepositoryIT {
         assertNotNull(paymentDetailsList);
         assertThat(paymentDetailsList.size(), is(0));
     }
+
+
+    @Test
+    public void savePaymentDetailsWithOwnerInInvalidStatus() {
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("Unexpected activation status [ENTERED_NUMBER]. Payment details' owner should be in ACTIVATED activation status");
+        User user = createUser();
+        user.setActivationStatus(ActivationStatus.ENTERED_NUMBER);
+        entityDao.saveEntity(user);
+
+        user.setCity("Lugansk");
+        PayPalPaymentDetails paymentDetails = getPaymentDetails("2345-2345-2345-23452-2345");
+        paymentDetails.setOwner(user);
+
+        paymentDetailsRepository.save(paymentDetails);
+    }
+
 }

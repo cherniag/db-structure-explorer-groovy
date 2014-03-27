@@ -4,9 +4,8 @@ import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import org.hamcrest.CoreMatchers;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Test;
-import org.junit.experimental.theories.Theories;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,7 +39,7 @@ public class AccountLogServiceIT {
     @Test
     public void shouldLogAccountMergeEvent(){
         //given
-        User user = userRepository.save(UserFactory.createUser());
+        User user = userRepository.save(UserFactory.createUser(ActivationStatus.ACTIVATED));
         User removedUser = new User();
 
         //when

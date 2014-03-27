@@ -63,6 +63,7 @@
 		class="mobi.nowtechnologies.server.admin.controller.ChartItemController" parent="admin.CommonChartController">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="mediaService" ref="service.MediaService" />
+        <property name="trackRepoService" ref="service.TrackRepoService" />
 		<property name="viewByChartType">
 			<map>	
 				<entry key="BASIC_CHART" value="chartItems/chartItems"/>

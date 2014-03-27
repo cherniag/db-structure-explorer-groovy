@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -17,8 +14,6 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
@@ -44,8 +39,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("deprecation")
@@ -145,7 +138,7 @@ public class UserServiceActivationTest {
 
 	@Test
 	public void testActivatePhoneNumber_NullPhone_Success_Populate4G() throws Exception {
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		final String phoneNumber = "+447870111111";
 		final String pin = "111111";
 		user.setMobile(phoneNumber);

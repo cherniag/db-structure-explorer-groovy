@@ -7,9 +7,9 @@ import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -309,7 +309,7 @@ public class UserTest {
 		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setProvider(O2);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		user.setSegment(CONSUMER);
@@ -328,7 +328,7 @@ public class UserTest {
 		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setProvider(O2);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		user.setSegment(CONSUMER);
@@ -347,7 +347,7 @@ public class UserTest {
 		O2PSMSPaymentDetails o2psmsPaymentDetails = new O2PSMSPaymentDetails();
 		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
 		
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setProvider(NON_O2);
 		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
 		user.setSegment(CONSUMER);
@@ -360,7 +360,7 @@ public class UserTest {
 	@Test
 	public void testIsTariffChanged_tariffsAreTheSame_Success(){
 			
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setProvider(NON_O2);
 		user.setSegment(CONSUMER);
 		
@@ -527,7 +527,7 @@ public class UserTest {
 
     @Test
     public void testIsNonO2User_nonO2User_Success() throws Exception{
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
@@ -541,7 +541,7 @@ public class UserTest {
 
     @Test
     public void testIsNonO2User_O2User_Success() throws Exception{
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
@@ -555,7 +555,7 @@ public class UserTest {
 
     @Test
     public void testINonO2User_UserFromNotO2Community_Success() throws Exception{
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
@@ -569,7 +569,7 @@ public class UserTest {
 
     @Test(expected=NullPointerException.class)
     public void testIsNonO2User_CommunityIsNull_Failure() throws Exception{
-        final User user = UserFactory.createUser();
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = null;
 
@@ -973,7 +973,7 @@ public class UserTest {
         O2PSMSPaymentDetails o2PSMSPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
         o2PSMSPaymentDetails.setPaymentPolicy(paymentPolicy);
 
-        user = UserFactory.createUser();
+        user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setLastSuccessfulPaymentDetails(o2PSMSPaymentDetails);
         user.setNextSubPayment(nextSubPayment);
     }

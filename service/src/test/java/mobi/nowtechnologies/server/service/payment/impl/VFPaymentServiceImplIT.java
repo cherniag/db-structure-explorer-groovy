@@ -42,8 +42,6 @@ import static org.mockito.Mockito.times;
 @Transactional
 public class VFPaymentServiceImplIT {
 
-    //private PowerMockRule powerMockRule = new PowerMockRule();
-
     @Autowired
     private VFPaymentServiceImpl paymentService;
 
@@ -130,9 +128,7 @@ public class VFPaymentServiceImplIT {
         for (PendingPayment pendingPayment : createPendingPayments) {
             PaymentSystemService paymentSystemService = paymentSystems.get(pendingPayment.getPaymentSystem());
             if (paymentSystemService == paymentService) {
-                pendingPayment.getPaymentDetails().incrementRetries();
-                pendingPayment.getPaymentDetails().incrementRetries();
-                pendingPayment.getPaymentDetails().incrementRetries();
+                pendingPayment.getPaymentDetails().withMadeRetries(3);
                 paymentDetailsService.update(pendingPayment.getPaymentDetails());
                 paymentSystemService.startPayment(pendingPayment);
             }

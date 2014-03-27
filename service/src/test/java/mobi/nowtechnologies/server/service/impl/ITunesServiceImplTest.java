@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.SubmitedPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
@@ -143,7 +144,7 @@ public class ITunesServiceImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup();
 		userGroup.setCommunity(community);
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setId(userId);
 		user.setCurrentPaymentDetails(null);
 		user.setBase64EncodedAppStoreReceipt(null);
@@ -212,7 +213,7 @@ public class ITunesServiceImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup().withId(1);
 		userGroup.setCommunity(community);
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setId(userId);
 		user.setCurrentPaymentDetails(null);
 		user.setBase64EncodedAppStoreReceipt("g"+transactionReceipt);
@@ -286,7 +287,7 @@ public class ITunesServiceImplTest {
 		final SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
 		currentPaymentDetails.setActivated(true);
 
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setId(userId);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
 		user.setBase64EncodedAppStoreReceipt(null);
@@ -353,7 +354,7 @@ public class ITunesServiceImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup();
 		userGroup.setCommunity(community);
 		
-		final User user = UserFactory.createUser();
+		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setId(userId);
 		user.setCurrentPaymentDetails(null);
 		user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);

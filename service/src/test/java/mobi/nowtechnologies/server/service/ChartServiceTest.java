@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -80,7 +81,7 @@ public class ChartServiceTest {
 		
 		Chart selectedChart = ChartFactory.createChart();
 		selectedChart.setI(2);
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setSelectedCharts(charts);
 		
 		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(selectedChart);
@@ -104,7 +105,7 @@ public class ChartServiceTest {
 			throws Exception {
 		Chart selectedChart = ChartFactory.createChart();
 		selectedChart.setI(2);
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setSelectedCharts(null);
 		
 		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(selectedChart);
@@ -131,7 +132,7 @@ public class ChartServiceTest {
 		
 		Chart selectedChart = ChartFactory.createChart();
 		selectedChart.setI(2);
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setSelectedCharts(charts);
 		
 		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(null);
@@ -158,7 +159,7 @@ public class ChartServiceTest {
 		
 		Chart selectedChart = ChartFactory.createChart();
 		selectedChart.setI(2);
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		user.setSelectedCharts(charts);
 		
 		when(mockChartRepository.findOne(eq(selectedChart.getI()))).thenReturn(selectedChart);
@@ -179,7 +180,7 @@ public class ChartServiceTest {
 			throws Exception {
 		List<String> chartDetailIds = singletonList("ISRC");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -200,7 +201,7 @@ public class ChartServiceTest {
 			throws Exception {
 		List<String> chartDetailIds = singletonList("ISRC");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setActivated(true);
 		user.setCurrentPaymentDetails(paymentDetails);
@@ -225,7 +226,7 @@ public class ChartServiceTest {
 			throws Exception {
 		List<String> chartDetailIds = singletonList("ISRC");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setActivated(true);
 		user.setCurrentPaymentDetails(paymentDetails);
@@ -250,7 +251,7 @@ public class ChartServiceTest {
 			throws Exception {
 		List<String> chartDetailIds = singletonList("ISRC");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
-		User user = UserFactory.createUser();
+		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
 		paymentDetails.setActivated(false);
 		paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);

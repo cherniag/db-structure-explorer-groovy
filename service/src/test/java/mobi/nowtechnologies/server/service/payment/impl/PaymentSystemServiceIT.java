@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.SagePayPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,11 +58,13 @@ public class PaymentSystemServiceIT {
 		User user = new User();
 		user.setUserName(UUID.randomUUID().toString());
 		user.setStatus(UserStatusDao.getLimitedUserStatus());
+        user.setActivationStatus(ActivationStatus.ACTIVATED);
 		SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();
 			currentPaymentDetails.setLastPaymentStatus(PaymentDetailsStatus.NONE);
 			currentPaymentDetails.setReleased(true);
-			entityService.saveEntity(currentPaymentDetails);
-		user.addPaymentDetails(currentPaymentDetails);
+        entityService.saveEntity(user);
+        user.addPaymentDetails(currentPaymentDetails);
+        entityService.saveEntity(currentPaymentDetails);
 
         entityService.saveEntity(user);
 

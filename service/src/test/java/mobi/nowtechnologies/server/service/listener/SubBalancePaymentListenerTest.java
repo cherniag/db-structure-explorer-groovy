@@ -77,12 +77,12 @@ public class SubBalancePaymentListenerTest {
 
 		Future<Boolean> futureResponse = new AsyncResult<Boolean>(Boolean.TRUE);
 
-		Mockito.when(mockUserNotificationService.notifyUserAboutSuccesfullPayment(user)).thenReturn(futureResponse);
+		Mockito.when(mockUserNotificationService.notifyUserAboutSuccessfulPayment(user)).thenReturn(futureResponse);
 		Mockito.when(mockUserService.populateAmountOfMoneyToUserNotification(user, submittedPayment)).thenReturn(user);
 
 		fixtureSubBalancePaymentListener.onApplicationEvent(mockPaymentEvent);
 
-		Mockito.verify(mockUserNotificationService).notifyUserAboutSuccesfullPayment(submittedPayment.getUser());
+		Mockito.verify(mockUserNotificationService).notifyUserAboutSuccessfulPayment(submittedPayment.getUser());
 		Mockito.verify(mockUserService).populateAmountOfMoneyToUserNotification(user, submittedPayment);
 		Mockito.verify(mockUserService, times(0)).findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString());
 	}
@@ -121,12 +121,12 @@ public class SubBalancePaymentListenerTest {
 
 		Future<Boolean> futurResponse = new AsyncResult<Boolean>(Boolean.FALSE);
 
-		Mockito.when(mockUserNotificationService.notifyUserAboutSuccesfullPayment(user)).thenReturn(futurResponse);
+		Mockito.when(mockUserNotificationService.notifyUserAboutSuccessfulPayment(user)).thenReturn(futurResponse);
 		Mockito.when(mockUserService.populateAmountOfMoneyToUserNotification(user, submittedPayment)).thenReturn(user);
 
 		fixtureSubBalancePaymentListener.onApplicationEvent(mockPaymentEvent);
 
-		Mockito.verify(mockUserNotificationService).notifyUserAboutSuccesfullPayment(submittedPayment.getUser());
+		Mockito.verify(mockUserNotificationService).notifyUserAboutSuccessfulPayment(submittedPayment.getUser());
 		Mockito.verify(mockUserService).populateAmountOfMoneyToUserNotification(user, submittedPayment);
 		Mockito.verify(mockUserService, times(0)).findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString());
 	}
@@ -163,12 +163,12 @@ public class SubBalancePaymentListenerTest {
 
 		Future<Boolean> futureResponse = new AsyncResult<Boolean>(Boolean.TRUE);
 
-		Mockito.when(mockUserNotificationService.notifyUserAboutSuccesfullPayment(user)).thenReturn(futureResponse);
+		Mockito.when(mockUserNotificationService.notifyUserAboutSuccessfulPayment(user)).thenReturn(futureResponse);
 		Mockito.when(mockUserService.populateAmountOfMoneyToUserNotification(user, submittedPayment)).thenReturn(user);
 
 		fixtureSubBalancePaymentListener.onApplicationEvent(mockPaymentEvent);
 
-		Mockito.verify(mockUserNotificationService, times(0)).notifyUserAboutSuccesfullPayment(user);
+		Mockito.verify(mockUserNotificationService, times(0)).notifyUserAboutSuccessfulPayment(user);
 		Mockito.verify(mockUserService, times(1)).populateAmountOfMoneyToUserNotification(user, submittedPayment);
 		Mockito.verify(mockUserService, times(1)).populateAmountOfMoneyToUserNotification(user2, submittedPayment);
 		Mockito.verify(mockUserService, times(1)).findUsersForItunesInAppSubscription(Mockito.eq(user), Mockito.eq(nextSubPayment), Mockito.eq(appStoreOriginalTransactionId));

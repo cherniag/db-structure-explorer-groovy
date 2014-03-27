@@ -115,6 +115,7 @@ function onFetchTrackTerritories(data, view){
         $(columns[7]).text(data[i].startDate ? formatStartDate(data[i].startDate) : "");
         $(columns[8]).text(data[i].reportingId ? data[i].reportingId : "");
         $(columns[9]).text(data[i].deleted ? data[i].deleted : "false");
+        $(columns[10]).text(data[i].deleteDate ? formatStartDate(data[i].deleteDate) : "");
 
         row.appendTo(view);
     }
@@ -360,6 +361,7 @@ function preEncodeAll(){
     $("#header-label").text("Encode");
     var dialog=$("#encode-finished");
     $("#btnEncodeAllOk").click(toEncode);
+	dialog.find("div.controls").find("input[name='licensed']").attr('checked', true);
     dialog.find("div.controls").show();
     dialog.modal("show");
 }
