@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class ChartServiceTest {
 	
 	@Mock
 	private CloudFileService mockCloudFileService;
-	
+
 	//test data
 	private User testUser;
 
@@ -844,6 +845,7 @@ public class ChartServiceTest {
 		fixture.setCloudFileService(mockCloudFileService);
 		fixture.setChartDetailRepository(mockChartDetailRepository);
 		fixture.setDrmService(mockDrmService);
+        fixture.setChartDetailsConverter(spy(new ChartDetailsConverter()));
 	}
 
 	@After
