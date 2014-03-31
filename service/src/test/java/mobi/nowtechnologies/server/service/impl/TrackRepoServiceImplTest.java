@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -39,6 +40,9 @@ import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.*;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
@@ -75,6 +79,47 @@ public class TrackRepoServiceImplTest {
     @Mock
     private MediaFileRepository mediaFileRepository;
     private TrackRepoServiceImpl fixture;
+
+    @Test
+    public void checkiTunesURLBeforeCutover() throws Exception {
+        long timeStamp = System.currentTimeMillis();
+        fixture.setiTunesLinkFormatCutoverTimeMillis(timeStamp + 10000);
+        TrackDto trackDto = new TrackDto();
+        trackDto.setId(1L);
+        final String iTunesURL = "https://itunes.apple.com/gb/album/hung-up/id91992239?i=91989806&uo=4";
+        trackDto.setItunesUrl(iTunesURL);
+        fixture.pull(trackDto);
+        ArgumentCaptor<Media> captor = ArgumentCaptor.forClass(Media.class);
+        verify(mediaRepository).save(captor.capture());
+        assertThat(captor.getValue().getiTunesUrl(), startsWith("http://clkuk.tradedoubler.com"));
+        assertThat(captor.getValue().getiTunesUrl(), containsString(iTunesURL.replace("&", "%26")));
+    }
+
+    @Test
+    public void checkiTunesURLAfterCutover() throws Exception {
+        long timeStamp = System.currentTimeMillis();
+        fixture.setiTunesLinkFormatCutoverTimeMillis(timeStamp - 10000);
+        TrackDto trackDto = new TrackDto();
+        trackDto.setId(1L);
+        final String iTunesURL = "https://itunes.apple.com/gb/album/hung-up/id91992239?i=91989806&uo=4";
+        trackDto.setItunesUrl(iTunesURL);
+        fixture.pull(trackDto);
+        ArgumentCaptor<Media> captor = ArgumentCaptor.forClass(Media.class);
+        verify(mediaRepository).save(captor.capture());
+        assertThat(captor.getValue().getiTunesUrl(), equalTo(iTunesURL));
+    }
+
+    @Test
+    public void checkiTunesURLWithoutCutover() throws Exception {
+        TrackDto trackDto = new TrackDto();
+        trackDto.setId(1L);
+        final String iTunesURL = "https://itunes.apple.com/gb/album/hung-up/id91992239?i=91989806&uo=4";
+        trackDto.setItunesUrl(iTunesURL);
+        fixture.pull(trackDto);
+        ArgumentCaptor<Media> captor = ArgumentCaptor.forClass(Media.class);
+        verify(mediaRepository).save(captor.capture());
+        assertThat(captor.getValue().getiTunesUrl(), equalTo(iTunesURL));
+    }
 
     @Test
     public void testGetDrops_Success() throws Exception {

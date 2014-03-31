@@ -48,8 +48,13 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	private MediaFileRepository mediaFileRepository;
 	private ArtistRepository artistRepository;
 	private GenreRepository genreRepository;
+    private long iTunesLinkFormatCutoverTimeMillis;
 
-	public void setClient(TrackRepositoryClient client) {
+    public void setiTunesLinkFormatCutoverTimeMillis(long iTunesLinkFormatCutoverTimeMillis) {
+        this.iTunesLinkFormatCutoverTimeMillis = iTunesLinkFormatCutoverTimeMillis;
+    }
+
+    public void setClient(TrackRepositoryClient client) {
 		this.client = client;
 	}
 
@@ -194,8 +199,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         media.setInfo(artist.getInfo());
 
         // Building iTunesUrl
-        media.setiTunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (config.getItunesUrl() != null ? config.getItunesUrl().replace("&", "%26") : "")
-                + "%26partnerId=2003");
+        media.setiTunesUrl(getiTunesURL(config));
         media.setAmazonUrl(config.getAmazonUrl());
         media.setAreArtistUrls(config.getAreArtistUrls());
 
@@ -231,6 +235,15 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         mediaRepository.save(media);
 
         return media;
+    }
+
+    private String getiTunesURL(TrackDto sourceTrackDto) {
+        if (System.currentTimeMillis() >= iTunesLinkFormatCutoverTimeMillis){
+            return sourceTrackDto.getItunesUrl();
+        }else{
+            return "http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (sourceTrackDto.getItunesUrl() != null ? sourceTrackDto.getItunesUrl().replace("&", "%26") : "")
+                    + "%26partnerId=2003";
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

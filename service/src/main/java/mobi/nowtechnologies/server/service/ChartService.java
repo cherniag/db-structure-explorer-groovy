@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,6 +41,11 @@ public class ChartService {
 	private MediaService mediaService;
 	private CommunityResourceBundleMessageSource messageSource;
 	private CloudFileService cloudFileService;
+    private ChartDetailsConverter chartDetailsConverter;
+
+    public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
+        this.chartDetailsConverter = chartDetailsConverter;
+    }
 
     public void setDrmService(DrmService drmService) {
         this.drmService = drmService;
@@ -127,7 +133,7 @@ public class ChartService {
             media.setDrms(Collections.singletonList(drmForCurrentUser));
         }
 
-        List<ChartDetailDto> chartDetailDtos = ChartDetail.toChartDetailDtoList(user.getUserGroup().getCommunity(), chartDetails, defaultAmazonUrl);
+        List<ChartDetailDto> chartDetailDtos = chartDetailsConverter.toChartDetailDtoList(chartDetails, user.getUserGroup().getCommunity(), defaultAmazonUrl);
 
 		ChartDto chartDto = new ChartDto();
 		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
