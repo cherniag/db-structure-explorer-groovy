@@ -43,8 +43,9 @@ INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES
   (@new_community_full_name, @new_community_id, (select i from tb_charts where name='HOT_TRACKS FOR HL UK'), (select i from tb_news where community = @new_community_id), (select i from tb_drmPolicy where community = @new_community_id));
 
 /* Creating payment policy */
-INSERT INTO tb_paymentPolicy (communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type,is_default) VALUES
-  (@new_community_id, 1, 1, 'iTunesSubscription', null, '', 'GBP', false, 'com.musicqubed.ios.heylist.subscription.weekly.1', null, null, null, null, null, null, 'FACEBOOK', '_3G', 'AUDIO', false);
+INSERT INTO tb_paymentPolicy
+(communityID      , subWeeks, subCost, paymentType         , operator, shortCode, currencyIso, availableInStore, app_store_product_id                              , contract, segment, content_category, content_type, content_description, sub_merchant_id, provider  , tariff, media_type,advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online) VALUES
+(@new_community_id, 1       , 1      , 'iTunesSubscription', null    , ''       , 'GBP'      , false           , 'com.musicqubed.ios.heylist.subscription.weekly.1', null    , null   , null            , null        , null               , null           , 'FACEBOOK', '_3G' , 'AUDIO'   , 0                      ,0                              ,false      , true);
 
 /* Creating promotions, maxUsers=0 means unlimited number of users */
 INSERT INTO tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label, is_white_listed) VALUES
