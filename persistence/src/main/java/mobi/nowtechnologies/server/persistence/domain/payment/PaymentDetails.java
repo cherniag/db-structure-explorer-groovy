@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.*;
 
 @Entity
@@ -241,7 +242,7 @@ public class PaymentDetails {
     @PrePersist
     public void validate() {
         ActivationStatus activationStatus = owner.getActivationStatus();
-        if (!ActivationStatus.ACTIVATED.equals(activationStatus)) throw new RuntimeException("Unexpected activation status ["+activationStatus+"]. Payment details' owner should be in ACTIVATED activation status");
+        if (!ACTIVATED.equals(activationStatus)) throw new RuntimeException("Unexpected activation status ["+activationStatus+"]. Payment details' owner should be in ACTIVATED activation status");
     }
 
     public PaymentDetails withMadeAttempts(int madeAttempts){

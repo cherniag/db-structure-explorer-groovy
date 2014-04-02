@@ -93,6 +93,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	
     @Query(value="select u from User u "
     		+ "join u.currentPaymentDetails pd "
+            + "left join u.lastSuccessfulPaymentDetails lspd "
     		+ "join u.userGroup ug "
 			+ "join ug.community c "
             + "join pd.paymentPolicy pp "
@@ -100,9 +101,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             + "pd.retriesOnError>0 "
     		+ "and (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
     		+ "and (" +
-            "   (pp.advancedPaymentSeconds>0 and pd.madeAttempts=0) " +
-            "   or (u.nextSubPayment<=?1 and ((pd.madeAttempts=0 and pp.advancedPaymentSeconds=0) or (pd.madeAttempts=1 and pp.advancedPaymentSeconds>0))) " +
-            "   or ((u.nextSubPayment+pp.afterNextSubPaymentSeconds)<=?1 and pp.afterNextSubPaymentSeconds>0)" +
+             " (u.nextSubPayment<=?1 and pd.madeAttempts=0 and pp.advancedPaymentSeconds=0)" +
+            "   or (pd.i=lspd.i and (" +
+            "                       (pp.advancedPaymentSeconds>0 and pd.madeAttempts=0) " +
+            "                       or (u.nextSubPayment<=?1 and pd.madeAttempts=1 and pp.advancedPaymentSeconds>0) " +
+            "                       or ((u.nextSubPayment+pp.afterNextSubPaymentSeconds)<=?1 and pp.afterNextSubPaymentSeconds>0)" +
+            "                       )" +
+            "       )" +
             ") "
     		+ "and pd.activated=true "
     		+ "and u.lastDeviceLogin!=0")
