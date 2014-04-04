@@ -16,12 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+
 /**
- * Created with IntelliJ IDEA.
  * User: sanya
  * Date: 7/10/13
- * Time: 9:25 AM
- * To change this template use File | Settings | File Templates.
  */
 @RunWith(PowerMockRunner.class)
 public class UniversalParserTest {
@@ -267,5 +269,25 @@ public class UniversalParserTest {
         Assert.assertEquals("94e48b35182db59bb6faf176e728cc5b", previewFile.md5);
         Assert.assertEquals(null, previewFile.isrc);
         Assert.assertEquals(null, previewFile.duration);
+    }
+
+    @Test
+    public void checkIngestingContentWithSeveralTerritories() throws Exception {
+        DropData dropData = new DropData();
+        dropData.name = "3000018255385";
+        dropData.date = new Date();
+
+        Map<String, DropTrack> resultDropTracks = fixture.ingest(dropData);
+        assertThat(resultDropTracks, notNullValue());
+        assertThat(resultDropTracks.keySet(), hasSize(1));
+
+        DropTrack dropTrack = resultDropTracks.get("GBUV71200558");
+        assertThat(dropTrack, notNullValue());
+
+        List<DropTerritory> dropTrackTerritories = dropTrack.getTerritories();
+        assertThat(dropTrackTerritories, notNullValue());
+        assertThat(dropTrackTerritories, hasSize(2));
+        assertThat(dropTrackTerritories.get(0).country, is("GB"));
+        assertThat(dropTrackTerritories.get(1).country, is("NZ"));
     }
 }

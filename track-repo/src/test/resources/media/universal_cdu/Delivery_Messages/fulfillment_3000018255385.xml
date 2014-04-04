@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fulfillment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://ucs.umgi.digiplug.com/schemas/ucs_fulfillment.xsd">
+    <version>6.0.0</version>
+    <user_login>Nadir.Contractor@Chartsnow.mobi</user_login>
+    <delivery_source>HAL</delivery_source>
+    <work_order_id>3000018255385</work_order_id>
+    <products>
+        <product>
+            <prd_artist_name>Florence + The Machine</prd_artist_name>
+            <prd_length>00:05:22</prd_length>
+            <prd_source>UMI</prd_source>
+            <prd_title>Spectrum</prd_title>
+            <release_date>30-May-2012</release_date>
+            <set_count>1</set_count>
+            <upc>00602537030019</upc>
+            <assets>
+                <asset type="Video">
+                    <track_number>1</track_number>
+                    <isrc>GBUV71200558</isrc>
+                    <track_artist_name>Florence + The Machine</track_artist_name>
+                    <track_length>00:05:22</track_length>
+                    <track_title>Spectrum</track_title>
+                    <track_version_title></track_version_title>
+                    <volume>1</volume>
+                    <subtype>Video</subtype>
+                    <files>
+                        <file>
+                            <task_id>17940196953</task_id>
+                            <checksum type="MD5">e735a56871be1d4ca71a2f78fd28ac30</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_vidclp_00602537030019_01_001_20601.mp4</file_name>
+                            <file_type>MP4</file_type>
+                            <excerpt type="clip">
+							<start_time_ms>30000</start_time_ms>
+							<end_time_ms>60000</end_time_ms>
+							<fade>
+								<fade_in_duration_ms>3000</fade_in_duration_ms>
+								<fade_out_duration_ms>3000</fade_out_duration_ms>
+								<fade_function>linear</fade_function>
+							</fade>
+                            </excerpt>
+                        </file>
+                    </files>
+                </asset>
+                <asset type="Images">
+                    <hal_asset_id>110932176709</hal_asset_id>
+                    <isrc>12UMGIM14060</isrc>
+                    <subtype>Cover Art</subtype>
+                    <files>
+                        <file>
+                            <task_id>17940196948</task_id>
+                            <checksum type="MD5">81d32a15d0dea53c7bda6e50bf1d6cce</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_vidtrkimg_00602537030019_01_001_RGB300_1400x1400.jpg</file_name>
+                            <file_type>JPG</file_type>
+                        </file>
+                    </files>
+                </asset>
+                <asset type="Video">
+                    <track_number>1</track_number>
+                    <isrc>GBUV71200558</isrc>
+                    <track_artist_name>Florence + The Machine</track_artist_name>
+                    <track_length>00:05:22</track_length>
+                    <track_title>Spectrum</track_title>
+                    <track_version_title></track_version_title>
+                    <volume>1</volume>
+                    <subtype>Video</subtype>
+                    <files>
+                        <file>
+                            <task_id>17940196941</task_id>
+                            <checksum type="MD5">fd52178394fa160e8d3865eee41b8373</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_vidtrk_00602537030019_01_001_20601.mp4</file_name>
+                            <file_type>MP4</file_type>
+                        </file>
+                    </files>
+                </asset>
+                <asset type="Metadata">
+                    <files>
+                        <file>
+                            <task_id>17940196961</task_id>
+                            <checksum type="MD5">9e5235368116186e280f6a99182650ec</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_metdat_ChartsNow.mobi_NZ_new_00602537030019_2014-03-12_14-41-29.xml</file_name>
+                            <file_type>XML</file_type>
+                        </file>
+                    </files>
+                </asset>
+                <asset type="Metadata">
+                    <files>
+                        <file>
+                            <task_id>17940196965</task_id>
+                            <checksum type="MD5">2cf5cb7f39da3b64c780f8146716e53f</checksum>
+                            <state>C</state>
+                            <received>No</received>
+                            <file_name>UMG_metdat_ChartsNow.mobi_GB_new_00602537030019_2014-03-12_14-41-29.xml</file_name>
+                            <file_type>XML</file_type>
+                        </file>
+                    </files>
+                </asset>
+            </assets>
+        </product>
+	</products>
+</fulfillment>
