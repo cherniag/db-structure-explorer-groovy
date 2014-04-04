@@ -5,18 +5,19 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import org.hamcrest.Description;
+import org.hamcrest.Factory;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.hamcrest.CoreMatchers.is;
+import static mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParserTest.TerritoryMatcher.hasTerritoryWithCountry;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -287,7 +288,44 @@ public class UniversalParserTest {
         List<DropTerritory> dropTrackTerritories = dropTrack.getTerritories();
         assertThat(dropTrackTerritories, notNullValue());
         assertThat(dropTrackTerritories, hasSize(2));
-        assertThat(dropTrackTerritories.get(0).country, is("GB"));
-        assertThat(dropTrackTerritories.get(1).country, is("NZ"));
+        assertThat(dropTrackTerritories, hasTerritoryWithCountry("GB"));
+        assertThat(dropTrackTerritories, hasTerritoryWithCountry("NZ"));
+    }
+
+    static class TerritoryMatcher extends TypeSafeMatcher<Collection<DropTerritory>> {
+
+        private String country;
+
+        public TerritoryMatcher(String country) {
+            this.country = country;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("Drop territories does not contain country");
+        }
+
+        @Override
+        protected boolean matchesSafely(Collection<DropTerritory> dropTerritory) {
+            for (DropTerritory territory : dropTerritory) {
+                if (matchStrings(country, territory.country)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private boolean matchStrings(String country, String territoryCountry) {
+            if (country == territoryCountry){
+                return true;
+            }
+            return country != null && country.equals(territoryCountry);
+        }
+
+        @Factory
+        public static <T> Matcher<Collection<DropTerritory>> hasTerritoryWithCountry(String country) {
+            return new TerritoryMatcher(country);
+        }
+
     }
 }
