@@ -2021,24 +2021,25 @@ public class UserService {
     public User autoOptIn(User user, String otac) {
         LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
-        if(!user.isSubjectToAutoOptIn()) {
+        User targetUser = userRepository.findOne(user.getId());
+        if(!targetUser.isSubjectToAutoOptIn()) {
             throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
         }
 
-        User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
+        User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(targetUser.getMobile(), targetUser.getUserGroup().getCommunity(), targetUser.getId());
 
         boolean isPromotionApplied;
         if(isNotBlank(otac)){
-            isPromotionApplied = applyInitPromoInternal(user, mobileUser, otac, false, false);
+            isPromotionApplied = applyInitPromoInternal(targetUser, mobileUser, otac, false, false);
         }else{
-            isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
+            isPromotionApplied = promotionService.applyPotentialPromo(targetUser, targetUser.isO2User());
         }
 
         if (!isPromotionApplied){
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
         }
 
-        PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
+        PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(targetUser);
         return paymentDetails.getOwner();
     }
 
