@@ -2032,9 +2032,9 @@ public class UserService {
     public void activateVideoAudioFreeTrialAndAutoOptIn(User user) {
         LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
         User userInTransaction = findById(user.getId()); // using this to have the user updated
+        boolean subjectToAutoOptIn = userInTransaction.isSubjectToAutoOptIn();
         promotionService.activateVideoAudioFreeTrial(userInTransaction);
-
-        if ( userInTransaction.isSubjectToAutoOptIn() ) {
+        if (subjectToAutoOptIn) {
             paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
         }
     }
