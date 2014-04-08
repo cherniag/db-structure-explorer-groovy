@@ -3578,6 +3578,7 @@ public class UserServiceTest {
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        PowerMockito.doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
         doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
@@ -3612,6 +3613,7 @@ public class UserServiceTest {
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
+        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
         doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser, expectedUser.isO2User());
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
@@ -3651,7 +3653,7 @@ public class UserServiceTest {
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
-
+        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
         //when
         userServiceSpy.autoOptIn(expectedUser, otac);
     }
@@ -3698,7 +3700,7 @@ public class UserServiceTest {
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
-
+        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
         //when
         userServiceSpy.autoOptIn(expectedUser, otac);
     }
