@@ -3583,6 +3583,7 @@ public class UserServiceTest {
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
+        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
 
         //when
         User actualUser = userServiceSpy.autoOptIn(expectedUser, otac);
@@ -3617,6 +3618,7 @@ public class UserServiceTest {
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
         doReturn(true).when(o2ClientServiceMock).isO2User(providerUserDetails);
+        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
 
         //when
         User actualUser = userServiceSpy.autoOptIn(expectedUser, otac);
