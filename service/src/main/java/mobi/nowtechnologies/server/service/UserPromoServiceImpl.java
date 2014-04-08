@@ -34,7 +34,7 @@ public class UserPromoServiceImpl implements UserPromoService {
 
         User existingUser = userRepository.findOne(email, user.getUserGroup().getCommunity().getRewriteUrlParameter());
 
-        user = userService.applyInitPromo(user, existingUser, null, false, true);
+        user = userService.applyInitPromo(user, existingUser, null, true);
 
         user.setProvider(ProviderType.EMAIL);
         user.setUserName(email);
@@ -47,7 +47,7 @@ public class UserPromoServiceImpl implements UserPromoService {
     @Override
     public User applyInitPromoByFacebook(User userAfterSignUp, FacebookProfile facebookProfile) {
         User userForMerge = getUserForMerge(userAfterSignUp, facebookProfile);
-        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
+        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, true);
         facebookService.saveFacebookInfoForUser(userAfterApplyPromo, facebookProfile);
         return userAfterApplyPromo;
     }

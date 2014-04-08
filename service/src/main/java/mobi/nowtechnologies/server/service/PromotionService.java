@@ -76,11 +76,6 @@ public class PromotionService {
         Promotion promotion = promotionRepository.getActivePromoCodePromotion(promotionCode, userGroup, Utils.getEpochSeconds(), ADD_FREE_WEEKS_PROMOTION);
         return promotion;
 	}
-	
-	public List<PromoCode> getPromoCodes(final String communityName) {
-		Community community = CommunityDao.getMapAsNames().get(communityName);
-		return promotionDao.getActivePromoCodePromotion(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()).getId());
-	}
 
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Promotion getPromotionForUser(final String communityName, User user) {
