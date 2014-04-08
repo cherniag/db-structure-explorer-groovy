@@ -132,17 +132,6 @@ public class UserService {
         return user;
     }
 
-    private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
-            user.setContract(Contract.PAYM);
-            user.setProvider(ProviderType.O2);
-        }else{
-            user.setContract(Contract.valueOf(providerUserDetails.contract));
-            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
-        }
-        return user;
-    }
-
     private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
         UserGroup userGroup = userGroupRepository.findByCommunity(community);
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
@@ -164,11 +153,6 @@ public class UserService {
             if (startApply){
                 hasPromo = checkUserAndApplyPromo(user, providerUserDetails);
             }
-
-        }
-
-        if(!user.isVFNZCommunityUser()) {
-            updateContractAndProvider(user, providerUserDetails);
         }
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
@@ -2032,13 +2016,13 @@ public class UserService {
             isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
         }
 
+        if (!isPromotionApplied){
+            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
+        }
+
         user = userRepository.findOne(user.getId());
         if(isNull(user)){
             user = userRepository.findOne(mobileUser.getId());
-        }
-
-        if (!isPromotionApplied){
-            throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
         }
 
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
