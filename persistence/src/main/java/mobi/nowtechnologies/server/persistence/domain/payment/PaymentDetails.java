@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.*;
 
@@ -262,7 +263,7 @@ public class PaymentDetails {
 
     private boolean shouldBeUnSubscribedOnReSubscription() {
         PaymentDetails lastSuccessfulPaymentDetails = owner.getLastSuccessfulPaymentDetails();
-        return isNotNull(lastSuccessfulPaymentDetails) && !lastSuccessfulPaymentDetails.getI().equals(i) && madeAttempts>0;
+        return isNull(lastSuccessfulPaymentDetails) || !lastSuccessfulPaymentDetails.getI().equals(i) && madeAttempts>0;
     }
 
     public void resetMadeAttemptsForFirstPayment(){
