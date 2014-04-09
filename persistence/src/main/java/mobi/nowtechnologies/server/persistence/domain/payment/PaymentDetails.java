@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.*;
 
 @Entity
@@ -238,10 +240,15 @@ public class PaymentDetails {
         return this;
     }
 
+    public PaymentDetails withI(Long i) {
+        this.i = i;
+        return this;
+    }
+
     @PrePersist
     public void validate() {
         ActivationStatus activationStatus = owner.getActivationStatus();
-        if (!ActivationStatus.ACTIVATED.equals(activationStatus)) throw new RuntimeException("Unexpected activation status ["+activationStatus+"]. Payment details' owner should be in ACTIVATED activation status");
+        if (!ACTIVATED.equals(activationStatus)) throw new RuntimeException("Unexpected activation status ["+activationStatus+"]. Payment details' owner should be in ACTIVATED activation status");
     }
 
     public PaymentDetails withMadeAttempts(int madeAttempts){
@@ -250,7 +257,12 @@ public class PaymentDetails {
     }
 
     public boolean shouldBeUnSubscribed() {
-        return hasMoreAttemptRetries();
+        return shouldBeUnSubscribedOnReSubscription() || areAllAttemptSpent();
+    }
+
+    private boolean shouldBeUnSubscribedOnReSubscription() {
+        PaymentDetails lastSuccessfulPaymentDetails = owner.getLastSuccessfulPaymentDetails();
+        return isNotNull(lastSuccessfulPaymentDetails) && !lastSuccessfulPaymentDetails.getI().equals(i) && madeAttempts>0;
     }
 
     public void resetMadeAttemptsForFirstPayment(){
@@ -280,7 +292,7 @@ public class PaymentDetails {
         this.madeRetries=0;
     }
 
-    private boolean hasMoreAttemptRetries() {
+    private boolean areAllAttemptSpent() {
         return areAll3AttemptsSpent() || areAll2AttemptsSpent() || all1AttemptRetriesAreSpent();
     }
 
