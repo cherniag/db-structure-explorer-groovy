@@ -13,6 +13,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
@@ -43,7 +45,7 @@ public class ApplyInitPromoController extends CommonController {
 
             boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ENTERED_NUMBER);
+            user = checkUser(userName, userToken, timestamp, deviceUID, ENTERED_NUMBER);
 
             user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4, false);
 

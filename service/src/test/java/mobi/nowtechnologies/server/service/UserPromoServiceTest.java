@@ -42,12 +42,12 @@ public class UserPromoServiceTest {
 
         when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
 
-        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(true))).thenReturn(user);
+        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true))).thenReturn(user);
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");
 
         verify(activationEmailService).activate(anyLong(), anyString(), anyString());
-        verify(userService).applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(true));
+        verify(userService).applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true));
         verify(userService).updateUser(user);
     }
 
