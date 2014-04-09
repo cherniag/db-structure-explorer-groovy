@@ -254,6 +254,21 @@ public class PaymentDetailsTest {
     }
 
     @Test
+    public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs1AndLastSuccessfulPaymentDetailsIsNull(){
+        //given
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withI(0L).withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy()
+                .withAdvancedPaymentSeconds(1)
+                .withAfterNextSubPaymentSeconds(1));
+        paymentDetails.getOwner().withLastSuccessfulPaymentDetails(null);
+
+        //when
+        boolean shouldBeUnSubscribed = paymentDetails.shouldBeUnSubscribed();
+
+        //then
+        assertThat(shouldBeUnSubscribed, is(true));
+    }
+
+    @Test
     public void shouldNotSaidThatCurrentAttemptFailedWhenMadeAttemptsIs0(){
         //given
         PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(0);
