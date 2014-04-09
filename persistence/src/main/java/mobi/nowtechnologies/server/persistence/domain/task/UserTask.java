@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.EAGER;
+
 /**
  * User: gch
  * Date: 12/16/13
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @Entity
 public abstract class UserTask extends Task {
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
