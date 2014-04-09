@@ -1,14 +1,9 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,18 +14,13 @@ import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactor
 import static mobi.nowtechnologies.server.persistence.domain.UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
  * @author Titov Mykhaylo (titov)
  *         07.03.14 20:50
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class UserRepositoryGetUsersForPaymentIT {
+public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
 
     @Resource(name = "userRepository")
     private UserRepository userRepository;

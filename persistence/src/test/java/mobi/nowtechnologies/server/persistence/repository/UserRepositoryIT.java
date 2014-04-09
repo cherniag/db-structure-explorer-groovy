@@ -5,23 +5,14 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields;
@@ -30,23 +21,16 @@ import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.U
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.VALIDATE_PHONE_NUMBER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class UserRepositoryIT {
+
+public class UserRepositoryIT extends AbstractRepositoryIT{
 
     private static final int HOUR_SECONDS = 60 * 60;
     private static final int DAY_SECONDS = 24 * HOUR_SECONDS;
@@ -65,6 +49,9 @@ public class UserRepositoryIT {
     @Resource(name = "paymentPolicyRepository")
     private PaymentPolicyRepository paymentPolicyRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Test
     public void testFindByMobile(){
         String phoneNumber = "+64279000456";
@@ -76,7 +63,6 @@ public class UserRepositoryIT {
     }
 
     @Test
-    @Rollback
     public void testFindBefore48hExpireUsers() throws Exception {
         final int epochSeconds = getEpochSeconds();
 
@@ -107,7 +93,6 @@ public class UserRepositoryIT {
     }
 
     @Test
-    @Rollback
     public void testFindBefore48hExpireUsers_InActivePaymentDetails() throws Exception {
         final int epochSeconds = getEpochSeconds();
 
@@ -137,8 +122,7 @@ public class UserRepositoryIT {
     }
 
     @Test
-    @Rollback
-    public void testFindBefore48hExpireUsers_LastBefore48SmsMillisAfter48() throws Exception {
+    @Rollback   public void testFindBefore48hExpireUsers_LastBefore48SmsMillisAfter48() throws Exception {
         final int epochSeconds = getEpochSeconds();
         final int nextSubPaymentSeconds = epochSeconds + DAY_SECONDS;
 
@@ -168,7 +152,6 @@ public class UserRepositoryIT {
     }
 
     @Test
-    @Rollback
     public void testFindBefore48hExpireUsers_NextSubPaymentAtThreeDays() throws Exception {
         final int epochSeconds = getEpochSeconds();
 
@@ -198,7 +181,6 @@ public class UserRepositoryIT {
     }
 
     @Test
-    @Rollback
     public void testFindBefore48hExpireUsers_NextSubPaymentAtDay() throws Exception {
         final int epochSeconds = getEpochSeconds();
 
@@ -229,7 +211,6 @@ public class UserRepositoryIT {
     }
 
     @Test
-    @Rollback
     public void testFindBefore48hExpireUsers_NextSubPaymentNow() throws Exception {
         final int epochSeconds = getEpochSeconds();
 
@@ -502,4 +483,17 @@ public class UserRepositoryIT {
         assertThat(actualUser.getId(), is(user2.getId()));
     }
 
+    @Test
+    public void testDetectUserAccountWithSameDeviceAndDisableIt(){
+        //given
+        User user = userRepository.save(UserFactory.createUser(ACTIVATED)).withUserName("145645").withMobile("+447766666667").withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId)).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63");
+        Integer id = user.getId();
+        int count = userRepository.detectUserAccountWithSameDeviceAndDisableIt(user.getDeviceUID(), user.getUserGroup());
+        assertEquals(1, count);
+
+        entityManager.clear();
+        User newUser = userRepository.findOne(id);
+        assertTrue(newUser.getDeviceUID().contains("disabled"));
+
+    }
 }

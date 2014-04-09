@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
@@ -24,7 +23,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
