@@ -263,7 +263,7 @@ public class PaymentDetails {
 
     private boolean shouldBeUnSubscribedOnReSubscription() {
         PaymentDetails lastSuccessfulPaymentDetails = owner.getLastSuccessfulPaymentDetails();
-        return isNull(lastSuccessfulPaymentDetails) || !lastSuccessfulPaymentDetails.getI().equals(i) && madeAttempts>0;
+        return (isNull(lastSuccessfulPaymentDetails) || !lastSuccessfulPaymentDetails.getI().equals(i)) && madeAttempts>0;
     }
 
     public void resetMadeAttemptsForFirstPayment(){
