@@ -80,7 +80,7 @@ public class SQLTestInitializer {
                 charts.add(chartDetail.getChart());
             }
         }
-        //chartRepository.delete(charts);
+        chartRepository.delete(charts);
 
         drmRepository.deleteAll();
         userRepository.deleteAll();
