@@ -62,26 +62,8 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     @Resource
     private ActivationEmailRepository activationEmailRepository;
 
-    @Resource(name = "promotionRepository")
-    private PromotionRepository promotionRepository;
-
-    @Resource(name = "promoCodeRepository")
-    private PromoCodeRepository promoCodeRepository;
-
     @Resource(name = "userGroupRepository")
     private UserGroupRepository userGroupRepository;
-
-    @Resource(name = "chartDetailRepository")
-    private ChartDetailRepository chartDetailRepository;
-
-    @Resource(name = "chartRepository")
-    private ChartRepository chartRepository;
-
-    @Resource(name = "mediaRepository")
-    private MediaRepository mediaRepository;
-
-    @Resource(name = "messageRepository")
-    private MessageRepository messageRepository;
 
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
     private final String deviceType = "ANDROID";
@@ -97,26 +79,6 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private final String userName = "userName";
     private final String locationFromFacebook = "Kyiv, Ukraine";
     private final String locationInResponse = "Kyiv";
-
-    private static  int position = 10;
-    private static Promotion promotion;
-    private static Message message;
-    private static ChartDetail chartDetail;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        UserGroup userGroup = userGroupRepository.findOne(9);
-
-        if(isNull(promotion)) {
-            promotion = promotionRepository.save(new Promotion().withUserGroup(userGroup).withDescription("").withEndDate(Integer.MAX_VALUE).withIsActive(true).withFreeWeeks((byte) 8).withType(ADD_FREE_WEEKS_PROMOTION));
-
-            promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
-        }
-        Community community = userGroup.getCommunity();
-        message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
-    }
-
 
     private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken, boolean jsonRequest) throws IOException {
         String userToken = getUserToken(signUpDeviceResultActions, timestamp);

@@ -58,27 +58,6 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     @Autowired
     private ActivationEmailRepository activationEmailRepository;
 
-    @Resource(name = "promotionRepository")
-    private PromotionRepository promotionRepository;
-
-    @Resource(name = "promoCodeRepository")
-    private PromoCodeRepository promoCodeRepository;
-
-    @Resource(name = "userGroupRepository")
-    private UserGroupRepository userGroupRepository;
-
-    @Resource(name = "chartDetailRepository")
-    private ChartDetailRepository chartDetailRepository;
-
-    @Resource(name = "chartRepository")
-    private ChartRepository chartRepository;
-
-    @Resource(name = "mediaRepository")
-    private MediaRepository mediaRepository;
-
-    @Resource(name = "messageRepository")
-    private MessageRepository messageRepository;
-
     @Value("${sms.temporaryFolder}")
     private File temporaryFolder;
 
@@ -87,29 +66,6 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     private static final String EMAIL_1 = "a@gmail.com";
     private static final String EMAIL_2 = "b@gmail.com";
     private static final String DISABLED = "_disabled_at_";
-    private static  int position = 0;
-    private static Promotion promotion;
-    private static Message message;
-    private static ChartDetail chartDetail;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        UserGroup userGroup = userGroupRepository.findOne(9);
-
-        if(isNull(promotion)) {
-            promotion = promotionRepository.save(new Promotion().withUserGroup(userGroup).withDescription("").withEndDate(Integer.MAX_VALUE).withIsActive(true).withFreeWeeks((byte) 8).withType(ADD_FREE_WEEKS_PROMOTION));
-
-            promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
-        }
-        Community community = userGroup.getCommunity();
-
-        chartDetail = chartDetailRepository.save(new ChartDetail().withChart(userGroup.getChart()).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1)
-                .withChgPosition(DOWN)
-                .withChannel("HEATSEEKER"));
-
-        message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
-    }
 
     @Test
     public void testNewUser() throws Exception {
