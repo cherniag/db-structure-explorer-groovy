@@ -258,14 +258,6 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 	}
 
 	@Override
-	public boolean isO2User(ProviderUserDetails userDetails) {
-		if (isNotNull(userDetails) && O2.getKey().equals(userDetails.operator)) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public boolean sendFreeSms(String phoneNumber, String message) {
 		GetSubscriberProfile getSubscriberProfile = new GetSubscriberProfile();
 		getSubscriberProfile.setSubscriberID("447702059016");

@@ -308,24 +308,6 @@ public class O2ClientServiceImplTest {
 	}
 	
 	@Test
-	public void isO2User_Successful() {
-		boolean o2User = fixture.isO2User(new ProviderUserDetails().withOperator("o2").withContract("any"));
-		assertEquals(true, o2User);
-	}
-	
-	@Test
-	public void isO2User_Fail() {
-		boolean o2User = fixture.isO2User(new ProviderUserDetails().withOperator("non-o2").withContract("any"));
-		assertEquals(false, o2User);
-	}
-	
-	@Test
-	public void isO2User_Fail_with_badResponse() {
-		boolean o2User = fixture.isO2User(new ProviderUserDetails().withOperator(null).withContract("any"));
-		assertEquals(false, o2User);
-	}
-	
-	@Test
 	public void testGetRedeemServerO2Url_Promoted_Success() throws Exception{
 		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 				

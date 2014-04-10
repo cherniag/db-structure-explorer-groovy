@@ -151,15 +151,17 @@ public class UserService {
                 user.getContract(), user.getMobile(),
                 user.getOperator(),user.getActivationStatus(), updateContractAndProvider);
 
-        boolean hasPromo = false;
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
-        } else if(isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))){
-                hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
         }
 
-        if(updateContractAndProvider) {
-            updateContractAndProvider(user, providerUserDetails);
+        user = checkAndUpdateWithProviderUserDetails(user, updateContractAndProvider, providerUserDetails);
+
+        boolean hasPromo = false;
+        if (isNull(mobileUser)) {
+            if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
+                hasPromo = checkUserAndApplyPromo(user, providerUserDetails);
+            }
         }
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
@@ -169,14 +171,19 @@ public class UserService {
         return hasPromo;
     }
 
-    private boolean checkUserAndApplyPromo(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
+    private User checkAndUpdateWithProviderUserDetails(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
+        if(updateContractAndProvider) {
+            return updateContractAndProvider(user, providerUserDetails);
+        }
+        return user;
+    }
+
+    private boolean checkUserAndApplyPromo(User user, ProviderUserDetails providerUserDetails) {
         boolean isO2User = user.isO2User();
-        if (updateContractAndProvider) {
-            isO2User = o2ClientService.isO2User(providerUserDetails);
-        }else if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
+        if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
             user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
         }
-        return promotionService.applyPotentialPromo(user, isO2User);
+        return promotionService.applyPotentialPromo(user);
     }
 
     public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
@@ -574,21 +581,14 @@ public class UserService {
         return user;
     }
 
-    public boolean applyO2PotentialPromo(ProviderUserDetails providerUserDetails, User user, Community community) {
-
-        boolean isO2User = o2ClientService.isO2User(providerUserDetails);
-
-        return applyPotentialPromo(isO2User, user, community);
-    }
-
-    public boolean applyPotentialPromo(boolean isO2User, User user, Community community) {
+    public boolean applyPotentialPromo(User user, Community community) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
-        return applyPotentialPromo(isO2User, user, community, freeTrialStartedTimestampSeconds);
+        return applyPotentialPromo(user, community, freeTrialStartedTimestampSeconds);
     }
 
     @Transactional(propagation = REQUIRED)
-    public boolean applyPotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
-        LOGGER.info("Applying potential promotion for user id {}, isO2user {}, freeTrialStartedTimestampSeconds {}", user.getId(), isO2User, freeTrialStartedTimestampSeconds);
+    public boolean applyPotentialPromo(User user, Community community, int freeTrialStartedTimestampSeconds) {
+        LOGGER.info("Applying potential promotion for user id {}, freeTrialStartedTimestampSeconds {}", user.getId(), freeTrialStartedTimestampSeconds);
         Promotion promotion;
 
         String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
@@ -598,7 +598,7 @@ public class UserService {
             promotion = setPotentialPromoByPromoCode(user, staffCode);
         else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
             promotion = setPotentialPromoByPromoCode(user, storeCode);
-        else if (isO2User || user.isVFNZUser())
+        else if (user.isO2User() || user.isVFNZUser())
             promotion = setPotentialPromoByMessageCode(user, "promotionCode");
         else
             promotion = setPotentialPromoByMessageCode(user, "defaultPromotionCode");
@@ -1267,19 +1267,6 @@ public class UserService {
         return user;
     }
 
-    private User checkUserDetailsBeforeUpdate(final String deviceUID, final String storedToken, final Community community) {
-        LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[] { deviceUID, storedToken, community });
-
-        User user = findByDeviceUIDAndCommunity(deviceUID, community);
-        if (user == null || !user.getToken().equals(storedToken)) {
-            ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredTokenForDeviceUID(deviceUID, community.getRewriteUrlParameter());
-            throw new UserCredentialsException(serverMessage);
-        }
-
-        LOGGER.debug("Output parameter result=[{}]", user);
-        return user;
-    }
-
     private User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community) {
         LOGGER.debug("input parameters deviceUID, community: [{}], [{}]", deviceUID, community);
 
@@ -1331,11 +1318,6 @@ public class UserService {
         userRepository.save(user);
         LOGGER.info("REGISTER_USER user[{}] changed activation_status to[{}]", user.getUserName(), REGISTERED);
         return user;
-    }
-
-    @Transactional(readOnly = true)
-    public User findByDeviceUIDAndCommunity(String deviceUID, Community community) {
-        return userRepository.findByDeviceUIDAndCommunity(deviceUID, community);
     }
 
     private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
@@ -1826,7 +1808,7 @@ public class UserService {
 
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
         user = unsubscribeAndSkipFreeTrial(user, USER_DOWNGRADED_TARIFF);
-        applyPotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int) (user.getFreeTrialStartedTimestampMillis() / 1000L));
+        applyPotentialPromo(user, user.getUserGroup().getCommunity(), (int) (user.getFreeTrialStartedTimestampMillis() / 1000L));
         return user;
     }
 
@@ -1918,7 +1900,7 @@ public class UserService {
         if(isNotBlank(otac)){
             isPromotionApplied = applyInitPromoInternal(user, mobileUser, otac, false, false);
         }else{
-            isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
+            isPromotionApplied = promotionService.applyPotentialPromo(user);
         }
 
         if (!isPromotionApplied){

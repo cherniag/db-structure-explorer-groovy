@@ -138,12 +138,12 @@ public class PromotionService {
 	}
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public boolean applyPotentialPromo(User user, boolean isO2User){
+    public boolean applyPotentialPromo(User user){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
             isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else {
-            isPromotionApplied = userService.applyPotentialPromo(isO2User, user, user.getUserGroup().getCommunity());
+            isPromotionApplied = userService.applyPotentialPromo(user, user.getUserGroup().getCommunity());
         }
         return isPromotionApplied;
     }
