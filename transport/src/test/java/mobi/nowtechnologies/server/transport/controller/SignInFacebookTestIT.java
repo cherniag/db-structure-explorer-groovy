@@ -98,7 +98,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private final String locationFromFacebook = "Kyiv, Ukraine";
     private final String locationInResponse = "Kyiv";
 
-    private static  int position = 0;
+    private static  int position = 10;
     private static Promotion promotion;
     private static Message message;
     private static ChartDetail chartDetail;
@@ -114,10 +114,6 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
             promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
         }
         Community community = userGroup.getCommunity();
-        //List<Chart> charts = chartRepository.getByCommunityURL(community.getRewriteUrlParameter());
-
-        //chartDetail = chartDetailRepository.save(new ChartDetail().withChart(charts.get(0)).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1).withChgPosition(DOWN).withChannel("HEATSEEKER"));
-
         message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
     }
 
