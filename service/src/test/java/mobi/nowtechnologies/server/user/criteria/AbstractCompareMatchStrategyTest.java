@@ -10,7 +10,7 @@ import static org.junit.Assert.fail;
  * Author: Gennadii Cherniaiev
  * Date: 4/10/2014
  */
-public class AbstractCompareMatchStrategyTest {
+public abstract class AbstractCompareMatchStrategyTest {
     protected String description;
     protected Number first;
     private CompareMatchStrategy matchStrategy;
