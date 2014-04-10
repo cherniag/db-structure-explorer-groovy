@@ -132,11 +132,12 @@ public class AbstractPaymentSystemServiceTest {
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 
-		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withLastPaymentStatus(ERROR).withPaymentPolicy(new PaymentPolicy());
+		PaymentDetails paymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails().withI(Long.MAX_VALUE).withLastPaymentStatus(ERROR).withPaymentPolicy(new PaymentPolicy());
 		paymentDetails.setRetriesOnError(3);
 		paymentDetails.withMadeRetries(1);
         paymentDetails.withOwner(user);
 		user.setCurrentPaymentDetails(paymentDetails);
+        user.setLastSuccessfulPaymentDetails(paymentDetails);
 
 		PendingPayment pendingPayment = PendingPaymentFactory.createPendingPayment();
 		pendingPayment.setUser(user);
