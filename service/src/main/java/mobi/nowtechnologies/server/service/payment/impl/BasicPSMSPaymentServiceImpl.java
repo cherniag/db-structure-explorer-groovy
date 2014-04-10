@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
  * User: Alexsandr_Kolpakov
@@ -36,7 +37,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public void startPayment(final PendingPayment pendingPayment) throws Exception {
         final User user = pendingPayment.getUser();
         final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails)pendingPayment.getPaymentDetails();
@@ -60,6 +61,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     }
 
     @Override
+    @Transactional(propagation = REQUIRED)
     public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) {
         final User user = pendingPayment.getUser();
         final T paymentDetails = (T)pendingPayment.getPaymentDetails();
@@ -72,7 +74,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         return super.commitPayment(pendingPayment, response);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public T commitPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
         LOGGER.info("Committing o2Psms payment details for user {} ...", user.getUserName());
 
@@ -91,7 +93,7 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         return details;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public T createPaymentDetails(User user, PaymentPolicy paymentPolicy) throws ServiceException {
         LOGGER.info("Start creation psms payment details for user [{}] and paymentPolicyId [{}]...", new Object[]{user.getUserName(), paymentPolicy.getId()});
 

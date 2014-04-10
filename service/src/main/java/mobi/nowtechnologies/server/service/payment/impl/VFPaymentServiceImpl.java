@@ -11,9 +11,14 @@ import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceIm
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.VF_PSMS_TYPE;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
  * @author Alexander Kolpakov
@@ -78,6 +83,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
     }
 
     @Override
+    @Transactional(propagation = REQUIRED)
     public void process(VFResponse data) {
         String phoneNumber = data.getPhoneNumber();
 
@@ -85,7 +91,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
         for(User user : users){
 
-            PendingPayment pendingPayment = getPendingPayment(user.getId(), PaymentDetails.VF_PSMS_TYPE);
+            PendingPayment pendingPayment = getPendingPayment(user.getId(), VF_PSMS_TYPE);
             if(pendingPayment != null){
                 getThis().commitPayment(pendingPayment, data);
             }
