@@ -75,9 +75,11 @@ public class SQLTestInitializer {
         List<Chart> charts = new ArrayList<Chart>();
         List<ChartDetail> chartDetails = chartDetailRepository.findAll();
         for (ChartDetail chartDetail : chartDetails) {
-            if(chartDetail.getChart().getI() > 10){
+            Chart chart = chartDetail.getChart();
+            Integer chartId = chart.getI();
+            if(chartId > 10){
                 chartDetailRepository.delete(chartDetail);
-                charts.add(chartDetail.getChart());
+                if (chartId!=16) charts.add(chart);
             }
         }
         chartRepository.delete(charts);

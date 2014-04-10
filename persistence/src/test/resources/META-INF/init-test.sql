@@ -239,7 +239,7 @@ insert into `tb_drmTypes` (i, name) values (1,'PLAYS'),(2,'TIME'),(3,'PURCHASED'
 
 insert into `tb_drmPolicy` (i, name, drmType, drmValue, community) values (1,'Default Policy',1,100,1),(2,'Default Policy',1,100,2),(3,'Default Policy',1,100,3),(5,'Default Policy',1,100,4),(6,'Default Policy',1,100,5);
 
-insert into tb_userGroups (id, name, community, chart, news, drmPolicy) values (1,'Default Group',1,1,1,1),(2,'Default Group',2,2,2,2),(3,'Default Group',3,3,3,3),(4,'Default Group',4,4,4,5),(5,'Default Group',5,5,5,3),(6,'Default Group',6,5,5,3),(7,'O2 Group',7,5,5,3),(8,'VF New Zealand Group',8,5,5,3), (9,'HeyList UK Group',9,5,5,3);
+insert into tb_userGroups (id, name, community, chart, news, drmPolicy) values (1,'Default Group',1,1,1,1),(2,'Default Group',2,2,2,2),(3,'Default Group',3,3,3,3),(4,'Default Group',4,4,4,5),(5,'Default Group',5,5,5,3),(6,'Default Group',6,5,5,3),(7,'O2 Group',7,5,5,3),(8,'VF New Zealand Group',8,5,5,3), (9,'HeyList UK Group',9,16,5,3);
 
 INSERT INTO `tb_operators` (`i`,`name`, `migName`) VALUES (1,'Orange UK','MIG01OU'),(2,'Vodafone UK','MIG00VU'),(3,'O2 UK','MIG01XU'),(4,'T-Mobile UK','MIG01TU'),(5,'Three UK','MIG01HU'),(6,'ASDA Mobile','Not Specified'),(7,'BT','Not Specified'),(8,'Giffgaff','Not Specified'),(9,'IDT Mobile','Not Specified'),(10,'Talkmobile','Not Specified'),(11,'TalkTalk','Not Specified'),(12,'Tesco Mobile','Not Specified'),(13,'Truphone','Not Specified'),(14,'Virgin Mobile','Not Specified');
 
