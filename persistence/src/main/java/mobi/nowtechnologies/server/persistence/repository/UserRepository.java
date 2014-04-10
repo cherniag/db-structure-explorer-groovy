@@ -84,8 +84,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "join pd.paymentPolicy pp " +
 			"where "+
 			"u.subBalance=0 " +
-            "and u.nextSubPayment<=(?1+pp.advancedPaymentSeconds) "+
-			"and (pd.lastPaymentStatus='NONE' or  pd.lastPaymentStatus='SUCCESSFUL') "+
+            "and ((u.nextSubPayment<=?1 and pd.lastPaymentStatus='NONE')" +
+            "or (u.nextSubPayment<=(?1+pp.advancedPaymentSeconds) and pd.lastPaymentStatus='SUCCESSFUL')) "+
 			"and pd.activated=true "+
 			"and u.lastDeviceLogin!=0")
 	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })

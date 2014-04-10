@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -12,8 +13,8 @@ import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE
  */
 public class PaymentDetailsFactory {
 
-    public static PaymentDetails paymentDetailsWithActivatedTrueAndLastPaymentStatusNone(){
-        return new PaymentDetails().withActivated(true).withLastPaymentStatus(NONE);
+    public static PaymentDetails paymentDetailsWithActivatedTrueAndLastPaymentStatusSuccessful(){
+        return new PaymentDetails().withActivated(true).withLastPaymentStatus(SUCCESSFUL);
     }
 
     public static PaymentDetails paymentDetailsWithActivatedTrueAndLastPaymentStatusErrorAndRetriesOnError3(){
