@@ -30,7 +30,9 @@ public abstract class RulesManager <T extends RulesManager.Trigger> {
     private static class RuleComparator implements Comparator<Rule> {
         @Override
         public int compare(Rule o1, Rule o2) {
-            return Integer.compare(o2.getPriority(), o1.getPriority());
+            int x = o2.getPriority();
+            int y = o1.getPriority();
+            return (x < y) ? -1 : ((x == y) ? 0 : 1);
         }
     }
 
