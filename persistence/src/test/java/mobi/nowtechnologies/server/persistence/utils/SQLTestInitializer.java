@@ -72,14 +72,14 @@ public class SQLTestInitializer {
             }
         }
 
-//        List<Chart> charts = new ArrayList<Chart>();
-//        List<ChartDetail> chartDetails = chartDetailRepository.findAll();
-//        for (ChartDetail chartDetail : chartDetails) {
-//            if(chartDetail.getChart().getI() > 10){
-//                chartDetailRepository.delete(chartDetail);
-//                charts.add(chartDetail.getChart());
-//            }
-//        }
+        List<Chart> charts = new ArrayList<Chart>();
+        List<ChartDetail> chartDetails = chartDetailRepository.findAll();
+        for (ChartDetail chartDetail : chartDetails) {
+            if(chartDetail.getChart().getI() > 10){
+                chartDetailRepository.delete(chartDetail);
+                charts.add(chartDetail.getChart());
+            }
+        }
         //chartRepository.delete(charts);
 
         drmRepository.deleteAll();
