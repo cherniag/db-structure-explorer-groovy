@@ -128,6 +128,10 @@ public class Community implements Serializable {
         return VF_NZ_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
     }
 
+    public boolean isHLZCommunity(){
+        return HL_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

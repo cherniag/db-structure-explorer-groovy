@@ -6,6 +6,8 @@ import mobi.nowtechnologies.server.service.OtacValidationService;
 import mobi.nowtechnologies.server.service.VFOtacValidationService;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 
+import static mobi.nowtechnologies.server.dto.ProviderUserDetails.NULL_PROVIDER_USER_DETAILS;
+
 /**
  * User: Titov Mykhaylo (titov)
  * 27.09.13 14:42
@@ -27,6 +29,7 @@ public class OtacValidationServiceImpl implements OtacValidationService{
     public ProviderUserDetails validate(String otac, String phoneNumber, Community community) {
         if (community.isO2Community()) return o2ProviderService.getUserDetails(otac, phoneNumber, community);
         else if (community.isVFNZCommunity()) return vfOtacValidationService.validate(otac, phoneNumber, community);
+        else if (community.isHLZCommunity()) return NULL_PROVIDER_USER_DETAILS;
         else throw new UnsupportedOperationException("Unknown community [" + community + "]");
     }
 }

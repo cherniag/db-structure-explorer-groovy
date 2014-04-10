@@ -128,7 +128,9 @@ public class UserService {
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
+        if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
+            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+        }else if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
             user.setContract(Contract.PAYM);
             user.setProvider(ProviderType.O2);
         }else{
@@ -144,9 +146,9 @@ public class UserService {
     }
 
     private boolean applyInitPromoInternal(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone){
-        boolean updateContractAndProvider = isMajorApiVersionNumberLessThan4 && user.isNotVFNZCommunityUser();
+        boolean updateContractAndProvider = isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
 
-        ProviderUserDetails providerUserDetails = isApplyingWithoutEnterPhone ? null: otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
+        ProviderUserDetails providerUserDetails = otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
                 user.getContract(), user.getMobile(),
                 user.getOperator(),user.getActivationStatus(), updateContractAndProvider);
@@ -160,7 +162,7 @@ public class UserService {
         boolean hasPromo = false;
         if (isNull(mobileUser)) {
             if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
-                hasPromo = checkUserAndApplyPromo(user, providerUserDetails);
+                hasPromo = promotionService.applyPotentialPromo(user);
             }
         }
 
@@ -176,14 +178,6 @@ public class UserService {
             return updateContractAndProvider(user, providerUserDetails);
         }
         return user;
-    }
-
-    private boolean checkUserAndApplyPromo(User user, ProviderUserDetails providerUserDetails) {
-        boolean isO2User = user.isO2User();
-        if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
-            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
-        }
-        return promotionService.applyPotentialPromo(user);
     }
 
     public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {

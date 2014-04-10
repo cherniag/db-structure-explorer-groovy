@@ -9,6 +9,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 public class ProviderUserDetails {
 
+    public static class NullProviderUserDetails extends ProviderUserDetails{
+        private NullProviderUserDetails(){
+
+        }
+    }
+
+    public static final NullProviderUserDetails NULL_PROVIDER_USER_DETAILS = new NullProviderUserDetails();
+
     public String operator;
     public String contract;
 
