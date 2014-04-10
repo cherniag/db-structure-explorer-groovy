@@ -2477,7 +2477,7 @@ public class UserServiceTest {
 	}
 
     @Test
-    public void shouldApplyInitPromoAndAccCheckWitoutUpdateContractAndProvider() {
+    public void shouldApplyInitPromoAndAccCheckWithUpdateContractAndProvider() {
         //given
         Community community = new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL).withName(VF_NZ_COMMUNITY_REWRITE_URL);
         User user = new User().withActivationStatus(ENTERED_NUMBER).withDeviceType(new DeviceType()).withUserName("g@g.gg").withUserGroup(new UserGroup().withCommunity(community));
@@ -2485,7 +2485,7 @@ public class UserServiceTest {
         User mobileUser = null;
         String otac = "otac";
 
-        ProviderUserDetails providerUserDetails = new ProviderUserDetails().withOperator(VF.toString()).withContract(PAYG.name());
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails().withOperator(VF.getKey()).withContract(PAYG.name());
 
         doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
         Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), community)).thenReturn(providerUserDetails);
@@ -2501,7 +2501,7 @@ public class UserServiceTest {
         assertEquals(user, result);
 
         assertNull(user.getContract());
-        assertNull(user.getProvider());
+        assertThat(user.getProvider(), is(VF));
         assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         assertEquals(user.getMobile(), user.getUserName());
 

@@ -146,18 +146,18 @@ public class UserService {
     }
 
     private boolean applyInitPromoInternal(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone){
-        boolean updateContractAndProvider = isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
+        boolean updateWithProviderUserDetails = isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
 
         ProviderUserDetails providerUserDetails = otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails,
                 user.getContract(), user.getMobile(),
-                user.getOperator(),user.getActivationStatus(), updateContractAndProvider);
+                user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
         if (isNotNull(mobileUser)) {
             user = checkAndMerge(user, mobileUser);
         }
 
-        user = checkAndUpdateWithProviderUserDetails(user, updateContractAndProvider, providerUserDetails);
+        user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
         boolean hasPromo = false;
         if (isNull(mobileUser)) {
