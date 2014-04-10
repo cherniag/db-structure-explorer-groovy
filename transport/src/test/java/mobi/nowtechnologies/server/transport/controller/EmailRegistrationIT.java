@@ -103,9 +103,10 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
             promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
         }
         Community community = userGroup.getCommunity();
-        List<Chart> charts = chartRepository.getByCommunityURL(community.getRewriteUrlParameter());
 
-        chartDetail = chartDetailRepository.save(new ChartDetail().withChart(charts.get(0)).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1).withChgPosition(DOWN).withChannel("HEATSEEKER"));
+        chartDetail = chartDetailRepository.save(new ChartDetail().withChart(userGroup.getChart()).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1)
+                .withChgPosition(DOWN)
+                .withChannel("HEATSEEKER"));
 
         message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
     }
