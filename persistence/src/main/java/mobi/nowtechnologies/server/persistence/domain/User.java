@@ -443,6 +443,10 @@ public class User implements Serializable {
         return VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
     }
 
+    public boolean isNotVFNZCommunityUser() {
+        return !isVFNZCommunityUser();
+    }
+
     public boolean isO2Consumer() {
         return isO2User() && CONSUMER.equals(segment);
     }

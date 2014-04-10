@@ -1009,7 +1009,7 @@ public class UserServiceTest {
 		Mockito.when(getEpochMillis()).thenReturn(epochMillis);
 		Mockito.when(userRepositoryMock.updateFields(epochMillis, user.getId())).thenReturn(1);
 
-		Future<Boolean> futureMigResponse = userServiceSpy.makeSuccesfullPaymentFreeSMSRequest(user);
+		Future<Boolean> futureMigResponse = userServiceSpy.makeSuccessfulPaymentFreeSMSRequest(user);
 
 		assertNotNull(futureMigResponse);
 		assertTrue(futureMigResponse.get());
@@ -1040,7 +1040,7 @@ public class UserServiceTest {
 		mockMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toUpperCase(), SMS_SUCCESFULL_PAYMENT_TEXT_MESSAGE_CODE,
 				succesfullPaymentMessageArgs, SMS_SUCCESFULL_PAYMENT_TEXT);
 
-		userServiceSpy.makeSuccesfullPaymentFreeSMSRequest(user);
+		userServiceSpy.makeSuccessfulPaymentFreeSMSRequest(user);
 
 		verify(migHttpServiceMock).makeFreeSMSRequest(currentMigPaymentDetails.getMigPhoneNumber(), SMS_SUCCESFULL_PAYMENT_TEXT);
 	}

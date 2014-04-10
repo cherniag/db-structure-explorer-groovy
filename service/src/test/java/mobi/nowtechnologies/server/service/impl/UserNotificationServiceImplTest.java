@@ -90,7 +90,7 @@ public class UserNotificationServiceImplTest {
 
 		Future<Boolean> futureResult = new AsyncResult<Boolean>(Boolean.TRUE);
 
-		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
+		Mockito.when(userServiceMock.makeSuccessfulPaymentFreeSMSRequest(user)).thenReturn(futureResult);
 
 		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
@@ -99,7 +99,7 @@ public class UserNotificationServiceImplTest {
 		assertEquals(false, result.isCancelled());
 		assertEquals(true, result.isDone());
 
-		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock).makeSuccessfulPaymentFreeSMSRequest(user);
 	}
 
 	@Test(expected = java.lang.NullPointerException.class)
@@ -109,11 +109,11 @@ public class UserNotificationServiceImplTest {
 
 		Future<Boolean> futureResult = new AsyncResult<Boolean>(Boolean.TRUE);
 
-		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenReturn(futureResult);
+		Mockito.when(userServiceMock.makeSuccessfulPaymentFreeSMSRequest(user)).thenReturn(futureResult);
 
 		userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
-		Mockito.verify(userServiceMock, times(0)).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock, times(0)).makeSuccessfulPaymentFreeSMSRequest(user);
 	}
 
 	@Test
@@ -124,7 +124,7 @@ public class UserNotificationServiceImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup(community);
 		user.setUserGroup(userGroup);
 
-		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new RuntimeException());
+		Mockito.when(userServiceMock.makeSuccessfulPaymentFreeSMSRequest(user)).thenThrow(new RuntimeException());
 
 		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
@@ -133,7 +133,7 @@ public class UserNotificationServiceImplTest {
 		assertEquals(false, result.isCancelled());
 		assertEquals(true, result.isDone());
 
-		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock).makeSuccessfulPaymentFreeSMSRequest(user);
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class UserNotificationServiceImplTest {
 		UserGroup userGroup = UserGroupFactory.createUserGroup(community);
 		user.setUserGroup(userGroup);
 
-		Mockito.when(userServiceMock.makeSuccesfullPaymentFreeSMSRequest(user)).thenThrow(new ServiceCheckedException(null, null, null));
+		Mockito.when(userServiceMock.makeSuccessfulPaymentFreeSMSRequest(user)).thenThrow(new ServiceCheckedException(null, null, null));
 
 		Future<Boolean> result = userNotificationImplSpy.notifyUserAboutSuccessfulPayment(user);
 
@@ -153,7 +153,7 @@ public class UserNotificationServiceImplTest {
 		assertEquals(false, result.isCancelled());
 		assertEquals(true, result.isDone());
 
-		Mockito.verify(userServiceMock).makeSuccesfullPaymentFreeSMSRequest(user);
+		Mockito.verify(userServiceMock).makeSuccessfulPaymentFreeSMSRequest(user);
 	}
 	
 	@Test

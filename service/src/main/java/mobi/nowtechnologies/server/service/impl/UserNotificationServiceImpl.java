@@ -134,7 +134,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
             Future<Boolean> result;
             try {
 
-                result = userService.makeSuccesfullPaymentFreeSMSRequest(user);
+                result = userService.makeSuccessfulPaymentFreeSMSRequest(user);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 result = new AsyncResult<Boolean>(Boolean.FALSE);
