@@ -132,6 +132,10 @@ public class Community implements Serializable {
         return HL_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
     }
 
+    public List<Chart> getCharts() {
+        return charts;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

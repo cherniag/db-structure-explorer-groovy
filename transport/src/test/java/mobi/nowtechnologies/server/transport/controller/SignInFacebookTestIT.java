@@ -2,16 +2,13 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
-import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.facebook.FacebookTemplateCustomizer;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -25,8 +22,15 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType.NEWS;
+import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -58,10 +62,31 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     @Resource
     private ActivationEmailRepository activationEmailRepository;
 
+    @Resource(name = "promotionRepository")
+    private PromotionRepository promotionRepository;
+
+    @Resource(name = "promoCodeRepository")
+    private PromoCodeRepository promoCodeRepository;
+
+    @Resource(name = "userGroupRepository")
+    private UserGroupRepository userGroupRepository;
+
+    @Resource(name = "chartDetailRepository")
+    private ChartDetailRepository chartDetailRepository;
+
+    @Resource(name = "chartRepository")
+    private ChartRepository chartRepository;
+
+    @Resource(name = "mediaRepository")
+    private MediaRepository mediaRepository;
+
+    @Resource(name = "messageRepository")
+    private MessageRepository messageRepository;
+
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
     private final String deviceType = "ANDROID";
     private final String apiVersion = "5.2";
-    private final String communityUrl = "o2";
+    private final String communityUrl = "hl_uk";
     private final String timestamp = "2011_12_26_07_04_23";
     private final String facebookUserId = "1";
     private final String facebookEmail = "ol@ukr.net";
@@ -72,6 +97,29 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     private final String userName = "userName";
     private final String locationFromFacebook = "Kyiv, Ukraine";
     private final String locationInResponse = "Kyiv";
+
+    private static  int position = 0;
+    private static Promotion promotion;
+    private static Message message;
+    private static ChartDetail chartDetail;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        UserGroup userGroup = userGroupRepository.findOne(9);
+
+        if(isNull(promotion)) {
+            promotion = promotionRepository.save(new Promotion().withUserGroup(userGroup).withDescription("").withEndDate(Integer.MAX_VALUE).withIsActive(true).withFreeWeeks((byte) 8).withType(ADD_FREE_WEEKS_PROMOTION));
+
+            promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
+        }
+        Community community = userGroup.getCommunity();
+        //List<Chart> charts = chartRepository.getByCommunityURL(community.getRewriteUrlParameter());
+
+        //chartDetail = chartDetailRepository.save(new ChartDetail().withChart(charts.get(0)).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1).withChgPosition(DOWN).withChannel("HEATSEEKER"));
+
+        message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
+    }
 
 
     private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken, boolean jsonRequest) throws IOException {
@@ -108,7 +156,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     }
 
     private MvcResult emailGenerate(User user, String email) throws Exception {
-        return mockMvc.perform(post("/o2/4.0/EMAIL_GENERATE.json")
+        return mockMvc.perform(post("/hl_uk/4.0/EMAIL_GENERATE.json")
                 .param("EMAIL", email)
                 .param("USER_NAME", user.getDeviceUID())
                 .param("DEVICE_UID", user.getDeviceUID())).andExpect(status().isOk()).andReturn();
@@ -140,7 +188,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 mockServer.expect(requestTo("https://graph.facebook.com/me"))
                         .andExpect(method(HttpMethod.GET)).
                         andExpect(header("Authorization", "OAuth " + facebookToken)).
-                        andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+                        andRespond(withSuccess(response, APPLICATION_JSON));
             }
         };
     }
@@ -161,13 +209,13 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 mockServer.expect(requestTo("https://graph.facebook.com/me"))
                         .andExpect(method(HttpMethod.GET)).
                         andExpect(header("Authorization", "OAuth " + facebookToken)).
-                        andRespond(withStatus(HttpStatus.BAD_REQUEST).body(response).contentType(MediaType.APPLICATION_JSON));
+                        andRespond(withStatus(HttpStatus.BAD_REQUEST).body(response).contentType(APPLICATION_JSON));
             }
         };
     }
 
     private void applyInitPromoByEmail(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/o2/4.0/SIGN_IN_EMAIL")
+        mockMvc.perform(post("/hl_uk/4.0/SIGN_IN_EMAIL")
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
                 .param("EMAIL_ID", activationEmail.getId().toString())
@@ -296,7 +344,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         final String otherFacebookUserId = "user2";
-        final String otherFacebookEmail = "o2@ukr.net";
+        final String otherFacebookEmail = "hl_uk@ukr.net";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(otherFacebookUserId, otherFacebookEmail, locationFromFacebook));
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId, facebookToken, true)
@@ -363,14 +411,14 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         user = userRepository.findOne(facebookEmail, communityUrl);
         String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
         mockMvc.perform(
-                post("/" + communityUrl + "/3.8/GET_CHART.json")
+                post("/" + communityUrl + "/5.5/GET_CHART.json")
                         .param("USER_NAME", facebookEmail)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.response.data[0].user").exists());
     }
 
@@ -378,7 +426,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
     @Test
     public void testFacebookApplyAfterEmailRegistration() throws Exception {
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail, locationFromFacebook));
-        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        User user = userRepository.save(UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withDeviceUID(deviceUID).withUserGroup(userGroupRepository.findOne(9)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
         emailGenerate(user, facebookEmail);
@@ -391,14 +439,14 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
 
         mockMvc.perform(
-                post("/" + communityUrl + "/3.8/GET_CHART.json")
+                post("/" + communityUrl + "/5.5/GET_CHART.json")
                         .param("USER_NAME", facebookEmail)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.response.data[0].user").exists());
 
     }
