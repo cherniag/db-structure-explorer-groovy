@@ -16,6 +16,7 @@ import java.util.List;
  * Date: 12/20/13
  * Time: 3:36 PM
  */
+//@TODO Remove it ASAP
 public class SQLTestInitializer {
     public SQLUtils sqlUtils;
     protected UserRepository userRepository;
@@ -79,7 +80,7 @@ public class SQLTestInitializer {
                 charts.add(chartDetail.getChart());
             }
         }
-        chartRepository.delete(charts);
+        //chartRepository.delete(charts);
 
         drmRepository.deleteAll();
         userRepository.deleteAll();
