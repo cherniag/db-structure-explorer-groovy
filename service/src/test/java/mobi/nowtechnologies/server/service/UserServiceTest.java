@@ -49,8 +49,10 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonMap;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
@@ -2643,7 +2645,10 @@ public class UserServiceTest {
         mockStatic(Utils.class);
 
         final int currentTimeSeconds = Integer.MAX_VALUE;
+        int expectedNextSubPaymentSeconds = freeTrialStartedTimestampSeconds + promotion.getFreeWeeks() * WEEK_SECONDS;
         PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+        PowerMockito.when(Utils.secondsToMillis(expectedNextSubPaymentSeconds)).thenReturn(SECONDS.toMillis(expectedNextSubPaymentSeconds));
+        PowerMockito.when(Utils.secondsToMillis(freeTrialStartedTimestampSeconds)).thenReturn(SECONDS.toMillis(freeTrialStartedTimestampSeconds));
 
         UserStatus subscribedUserStatus = new UserStatus();
         PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
@@ -2688,7 +2693,6 @@ public class UserServiceTest {
         //than
         assertThat(isPromotionApplied, is(true));
         assertThat(user.getLastPromo(), is(promotion.getPromoCode()));
-        int expectedNextSubPaymentSeconds = freeTrialStartedTimestampSeconds + promotion.getFreeWeeks() * WEEK_SECONDS;
         assertThat(user.getNextSubPayment(), is(expectedNextSubPaymentSeconds));
         assertThat(user.getFreeTrialExpiredMillis(), is(expectedNextSubPaymentSeconds*1000L));
         assertNull(user.getPotentialPromoCodePromotion());

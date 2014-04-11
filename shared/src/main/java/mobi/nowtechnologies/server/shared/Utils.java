@@ -105,7 +105,7 @@ public class Utils {
 		return new Date(((long) intDate) * 1000L);
 	}
 
-    public static long secondsToMillis(int seconds){
+    public static long secondsToMillis(long seconds){
         return SECONDS.toMillis(seconds);
     }
 

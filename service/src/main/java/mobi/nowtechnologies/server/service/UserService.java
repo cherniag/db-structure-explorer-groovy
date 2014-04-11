@@ -636,7 +636,7 @@ public class UserService {
         }
 
         int freeWeeks = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
-        int nextSubPayment = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
+        int nextSubPayment = promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds);
 
         user.setLastPromo(promoCode);
         user.setNextSubPayment(nextSubPayment);
