@@ -128,6 +128,7 @@ public class UserService {
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
+        LOGGER.info("Attempt to update user contract and provider with [{}]", providerUserDetails);
         if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
             user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
         }else if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
@@ -149,9 +150,7 @@ public class UserService {
         boolean updateWithProviderUserDetails = isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
 
         ProviderUserDetails providerUserDetails = otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails,
-                user.getContract(), user.getMobile(),
-                user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
         user = checkAndMerge(user, mobileUser);
         user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
