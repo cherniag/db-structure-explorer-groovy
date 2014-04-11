@@ -121,7 +121,7 @@ public class UserService {
     private TaskService taskService;
 
     private User checkAndMerge(User user, User mobileUser) {
-        if (mobileUser.getId() != user.getId()) {
+        if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
             user = mergeUser(mobileUser, user);
         }
         return user;
@@ -153,23 +153,25 @@ public class UserService {
                 user.getContract(), user.getMobile(),
                 user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
-        if (isNotNull(mobileUser)) {
-            user = checkAndMerge(user, mobileUser);
-        }
-
+        user = checkAndMerge(user, mobileUser);
         user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
+        boolean hasPromo = checkAndApplyPromo(user, mobileUser, isApplyingWithoutEnterPhone);
+
+        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
+        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
+
+        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
+        return hasPromo;
+    }
+
+    private boolean checkAndApplyPromo(User user, User mobileUser, boolean isApplyingWithoutEnterPhone) {
         boolean hasPromo = false;
         if (isNull(mobileUser)) {
             if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
                 hasPromo = promotionService.applyPotentialPromo(user);
             }
         }
-
-        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
-        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
-
-        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
         return hasPromo;
     }
 
