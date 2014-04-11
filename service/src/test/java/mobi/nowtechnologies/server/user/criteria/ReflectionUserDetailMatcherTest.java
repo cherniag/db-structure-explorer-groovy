@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 
-import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
 import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,7 +18,6 @@ public class ReflectionUserDetailMatcherTest {
     @Test
     public void testMatchExistingPrimitiveField() throws Exception {
         reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("subBalance", equalTo(), 9);
-        new ReflectionUserDetailMatcher("nextSubPayment", lessThan(), 1555555L);
         User user = new User();
         user.setSubBalance(9);
         boolean match = reflectionUserDetailMatcher.match(user);

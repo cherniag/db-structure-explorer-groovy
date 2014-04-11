@@ -8,13 +8,13 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * Author: Gennadii Cherniaiev
  * Date: 4/10/2014
  */
-public class ReflectionUserDetailMatcher implements Matcher<User> {
+public class ReflectionUserDetailMatcher<T> implements Matcher<User> {
 
     private String fieldName;
-    private Object expectedValue;
-    private MatchStrategy matchStrategy;
+    private T expectedValue;
+    private MatchStrategy<T> matchStrategy;
 
-    public ReflectionUserDetailMatcher(String fieldName, MatchStrategy matchStrategy, Object expectedValue) {
+    public ReflectionUserDetailMatcher(String fieldName, MatchStrategy<T> matchStrategy, T expectedValue) {
         this.fieldName = fieldName;
         this.expectedValue = expectedValue;
         this.matchStrategy = matchStrategy;
@@ -24,7 +24,7 @@ public class ReflectionUserDetailMatcher implements Matcher<User> {
     public boolean match(User user) {
         try {
             Object actualValue = ReflectionHelper.getFieldValue(user, fieldName);
-            return matchStrategy.match(actualValue, expectedValue);
+            return matchStrategy.match((T) actualValue, expectedValue);
         } catch (Exception e){
             throw new MatchException(e);
         }

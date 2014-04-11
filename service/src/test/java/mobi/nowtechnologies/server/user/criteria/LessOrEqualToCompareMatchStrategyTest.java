@@ -16,7 +16,7 @@ import static org.junit.runners.Parameterized.Parameters;
 public class LessOrEqualToCompareMatchStrategyTest extends AbstractCompareMatchStrategyTest {
 
     public LessOrEqualToCompareMatchStrategyTest(String description, Number first, Number second, boolean matchResult, Class<?> exceptionClass) {
-        super(description, first, second, matchResult, exceptionClass, CompareMatchStrategy.lessOrEqualTo());
+        super(description, first, second, matchResult, exceptionClass, CompareMatchStrategy.<Integer>lessOrEqualTo());
     }
 
     @Parameters

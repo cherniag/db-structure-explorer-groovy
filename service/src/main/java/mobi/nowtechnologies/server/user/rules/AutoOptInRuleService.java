@@ -10,17 +10,15 @@ import mobi.nowtechnologies.server.user.criteria.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import static mobi.nowtechnologies.server.user.criteria.AndMatcher.and;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.is;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.isNull;
-import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
+import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.*;
+import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.ExpectedValueHolder.now;
+import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.ExpectedValueHolder.valueOf;
 import static mobi.nowtechnologies.server.user.criteria.NotMatcher.not;
 import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
+import static mobi.nowtechnologies.server.user.rules.RuleServiceSupport.RuleComparator;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -28,6 +26,9 @@ import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOp
  */
 
 public class AutoOptInRuleService {
+
+    private static final ArrayList<String> DIRECT_PAYMENT_TYPES = Lists.newArrayList(PaymentDetails.O2_PSMS_TYPE, PaymentDetails.VF_PSMS_TYPE);
+    private static final UserStatus USER_STATUS_LIMITED = new UserStatus(UserStatus.LIMITED);
 
     public enum AutoOptInTriggerType implements TriggerType {
         ACC_CHECK;
@@ -40,35 +41,32 @@ public class AutoOptInRuleService {
 
     public void init(){
         Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
-        SortedSet<Rule> rules = new TreeSet<Rule>(new RuleServiceSupport.RuleComparator());
+        SortedSet<Rule> rules = new TreeSet<Rule>(new RuleComparator());
 
-        Matcher<User> limitedUserStatus = new ReflectionUserDetailMatcher("status", equalTo(), new UserStatus(UserStatus.LIMITED));
-        Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
-        Matcher<User> isEligibleForDirectPayment = new IsEligibleForDirectPaymentUserMatcher(paymentPolicyRepository,
-                Lists.newArrayList(PaymentDetails.O2_PSMS_TYPE, PaymentDetails.VF_PSMS_TYPE));
+        Matcher<User> limitedUserStatus = is(userStatus(), ExactMatchStrategy.<UserStatus>equalTo(), valueOf(USER_STATUS_LIMITED));
         Matcher<User> freeTrialIsNull = isNull(userFreeTrialExpiredMillis());
-        Matcher<User> freeTrialIsNotNull = not(freeTrialIsNull);
         Matcher<User> freeTrialIsEnded = is(userFreeTrialExpiredMillis(), CompareMatchStrategy.<Long>lessThan(), now());
+        Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
+        Matcher<User> isEligibleForDirectPayment = new IsEligibleForDirectPaymentUserMatcher(paymentPolicyRepository, DIRECT_PAYMENT_TYPES);
 
         /*
         * users that have used their free trial but did not proceed to subscribing
         * */
 
-        Matcher<User> rootUserMatcher = and(limitedUserStatus, freeTrialIsNotNull, freeTrialIsEnded, isInCampaignTable, isEligibleForDirectPayment);
+        Matcher<User> rootUserMatcher = and(limitedUserStatus, not(freeTrialIsNull), freeTrialIsEnded, isInCampaignTable, isEligibleForDirectPayment);
         UserRule userRule = new UserRule(rootUserMatcher, 10);
         rules.add(userRule);
         actionRules.put(ACC_CHECK, rules);
         ruleServiceSupport = new RuleServiceSupport(actionRules);
     }
 
-    private CallBackUserDetailsMatcher.ExpectedValueHolder<Long> now() {
-        return new CallBackUserDetailsMatcher.ExpectedValueHolder<Long>() {
-            @Override
-            public Long getValue() {
-                return System.currentTimeMillis();
-            }
-        };
+    public RuleResult<Boolean> fireRules(AutoOptInTriggerType triggerType, User user){
+         LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
+         RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
+         LOGGER.info("Rule result {}", ruleResult);
+         return ruleResult;
     }
+
 
     private CallBackUserDetailsMatcher.UserDetailHolder<Long> userFreeTrialExpiredMillis() {
         return new CallBackUserDetailsMatcher.UserDetailHolder<Long>("freeTrialExpiredMillis") {
@@ -79,12 +77,14 @@ public class AutoOptInRuleService {
         };
     }
 
-    public RuleResult<Boolean> fireRules(AutoOptInTriggerType triggerType, User user){
-         LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
-         RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
-         LOGGER.info("Rule result {}", ruleResult);
-         return ruleResult;
-     }
+    private CallBackUserDetailsMatcher.UserDetailHolder<UserStatus> userStatus() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<UserStatus>("status") {
+            @Override
+            public UserStatus getUserDetail(User user) {
+                return user.getStatus();
+            }
+        };
+    }
 
     public void setSubscriptionCampaignRepository(SubscriptionCampaignRepository subscriptionCampaignRepository) {
         this.subscriptionCampaignRepository = subscriptionCampaignRepository;

@@ -74,5 +74,24 @@ public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
         public String toString() {
             return String.valueOf(getValue());
         }
+
+        public static <T> ExpectedValueHolder<T> valueOf(final T value){
+            return new ExpectedValueHolder<T>(){
+
+                @Override
+                public T getValue() {
+                    return value;
+                }
+            };
+        }
+
+        public static ExpectedValueHolder<Long> now() {
+            return new ExpectedValueHolder<Long>() {
+                @Override
+                public Long getValue() {
+                    return System.currentTimeMillis();
+                }
+            };
+        }
     }
 }

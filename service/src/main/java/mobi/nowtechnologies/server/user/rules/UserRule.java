@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.user.rules;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.user.criteria.Matcher;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -40,7 +41,7 @@ public class UserRule implements Rule<User, Boolean> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("rootMatcher", rootMatcher)
                 .append("isValid", isValid)
                 .append("rulePriority", rulePriority)
