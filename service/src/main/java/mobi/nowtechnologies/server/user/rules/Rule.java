@@ -6,10 +6,11 @@ import mobi.nowtechnologies.server.user.criteria.Matcher;
  * Author: Gennadii Cherniaiev
  * Date: 4/8/2014
  */
-public interface Rule {
-    Matcher getRootMatcher();
+public interface Rule<T, R>{
 
-    RuleResult getResult();
+    Matcher<T> getRootMatcher();
+
+    RuleResult<R> getResult();
 
     int getPriority();
 
