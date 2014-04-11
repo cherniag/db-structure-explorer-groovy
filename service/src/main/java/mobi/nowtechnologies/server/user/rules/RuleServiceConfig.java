@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.user.rules;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -52,11 +51,11 @@ public class RuleServiceConfig {
                 userIsEligibleForDirectBillingMatcher()
         );
 
-        accountCheckRules.add(new UserRule(rootMatcher));
+        accountCheckRules.add(new UserRule(rootMatcher, 0));
         return  accountCheckRules;
     }
 
-    private <T> AndMatcher<T> andMatcher(Matcher... matchers) {
+    private <T> AndMatcher<T> andMatcher(Matcher<T>... matchers) {
         return new AndMatcher<T>(Lists.newArrayList(matchers));
     }
 
@@ -65,7 +64,7 @@ public class RuleServiceConfig {
     }
 
     private IsEligibleForDirectPaymentUserMatcher userIsEligibleForDirectBillingMatcher() {
-        return new IsEligibleForDirectPaymentUserMatcher(paymentPolicyRepository, Sets.newHashSet(PaymentDetails.O2_PSMS_TYPE, PaymentDetails.VF_PSMS_TYPE));
+        return new IsEligibleForDirectPaymentUserMatcher(paymentPolicyRepository, Lists.newArrayList(PaymentDetails.O2_PSMS_TYPE, PaymentDetails.VF_PSMS_TYPE));
     }
 
     private IsInCampaignTableUserMatcher isInCampaignTableUserMatcher(){

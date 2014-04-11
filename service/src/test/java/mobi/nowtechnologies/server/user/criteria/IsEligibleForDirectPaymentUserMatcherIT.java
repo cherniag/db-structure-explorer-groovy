@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.user.criteria;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,7 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 public class IsEligibleForDirectPaymentUserMatcherIT {
     private static final mobi.nowtechnologies.server.persistence.domain.UserStatus LIMITED = new mobi.nowtechnologies.server.persistence.domain.UserStatus(mobi.nowtechnologies.server.persistence.domain.UserStatus.LIMITED);
-    private static final HashSet<String> DIRECT_PAYMENT_TYPES = Sets.newHashSet(PaymentDetails.O2_PSMS_TYPE, PaymentDetails.VF_PSMS_TYPE);
+    private static final List<String> DIRECT_PAYMENT_TYPES = Lists.newArrayList(PaymentDetails.O2_PSMS_TYPE, PaymentDetails.VF_PSMS_TYPE);
     private static final Tariff TARIFF = Tariff._4G;
     private static final ProviderType PROVIDER = ProviderType.O2;
     private static final Contract CONTRACT = Contract.PAYG;
@@ -72,10 +72,12 @@ public class IsEligibleForDirectPaymentUserMatcherIT {
     }
 
     @Test
-    public void testNotMatchNullUserGroup() throws Exception {
+    public void testNotMatchWrongUserGroup() throws Exception {
         User user = new User();
         user.setTariff(TARIFF);
-        user.setUserGroup(null);
+        UserGroup group = new UserGroup();
+        group.setCommunity(communityRepository.findByRewriteUrlParameter("vf_nz"));
+        user.setUserGroup(group);
         user.setProvider(PROVIDER);
         user.setContract(CONTRACT);
         user.setSegment(SEGMENT);

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.user.rules;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.user.criteria.Matcher;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -9,9 +10,12 @@ import mobi.nowtechnologies.server.user.criteria.Matcher;
  */
 public class UserRule implements Rule<User, Boolean> {
     private Matcher<User> rootMatcher;
+    private boolean isValid = true;
+    private int rulePriority;
 
-    public UserRule(Matcher<User> rootMatcher) {
+    public UserRule(Matcher<User> rootMatcher, int rulePriority) {
         this.rootMatcher = rootMatcher;
+        this.rulePriority = rulePriority;
     }
 
     @Override
@@ -26,11 +30,20 @@ public class UserRule implements Rule<User, Boolean> {
 
     @Override
     public int getPriority() {
-        return 0;
+        return rulePriority;
     }
 
     @Override
     public boolean isValid() {
-        return true;
+        return isValid;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("rootMatcher", rootMatcher)
+                .append("isValid", isValid)
+                .append("rulePriority", rulePriority)
+                .toString();
     }
 }

@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.user.criteria;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -26,5 +27,14 @@ public class ReflectionUserDetailMatcher implements Matcher<User> {
         } catch (Exception e){
             throw new MatchException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("fieldName", fieldName)
+                .append("matchStrategy", matchStrategy)
+                .append("expectedValue", expectedValue)
+                .toString();
     }
 }

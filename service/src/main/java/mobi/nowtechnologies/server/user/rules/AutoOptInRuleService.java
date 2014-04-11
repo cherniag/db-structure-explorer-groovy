@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.user.rules;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.SortedSet;
@@ -10,6 +12,8 @@ import java.util.SortedSet;
  * Date: 4/10/2014
  */
 public class AutoOptInRuleService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutoOptInRuleService.class);
 
     public enum AutoOptInTriggerType implements TriggerType {
         ACC_CHECK;
@@ -22,6 +26,9 @@ public class AutoOptInRuleService {
     }
 
      public RuleResult<Boolean> fireRules(AutoOptInTriggerType triggerType, User user){
-         return ruleServiceSupport.fireRules(triggerType, user);
+         LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
+         RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
+         LOGGER.info("Rule result {}", ruleResult);
+         return ruleResult;
      }
 }
