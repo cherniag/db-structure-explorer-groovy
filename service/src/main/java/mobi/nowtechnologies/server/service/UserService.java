@@ -123,6 +123,8 @@ public class UserService {
     private User checkAndMerge(User user, User mobileUser) {
         if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
             user = mergeUser(mobileUser, user);
+        }else{
+            LOGGER.info("User merge procedure is skipped");
         }
         return user;
     }
@@ -169,6 +171,8 @@ public class UserService {
         if (isNull(mobileUser)) {
             if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
                 hasPromo = promotionService.applyPotentialPromo(user);
+            }else{
+                LOGGER.info("Promo applying procedure is skipped");
             }
         }
         return hasPromo;
@@ -177,6 +181,8 @@ public class UserService {
     private User checkAndUpdateWithProviderUserDetails(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
         if(updateContractAndProvider) {
             return updateContractAndProvider(user, providerUserDetails);
+        }else{
+            LOGGER.info("Update user contract and provider procedure is skipped");
         }
         return user;
     }
