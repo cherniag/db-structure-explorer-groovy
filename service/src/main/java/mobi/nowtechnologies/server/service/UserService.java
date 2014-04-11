@@ -57,7 +57,7 @@ import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
+import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
@@ -488,7 +488,7 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User registerUserWhitoutPersonalInfo(UserRegInfo userRegInfo) {
+    public User registerUserWithoutPersonalInfo(UserRegInfo userRegInfo) {
         if (userRegInfo == null)
             throw new ServiceException("The parameter userRegInfo is null");
 
@@ -579,6 +579,7 @@ public class UserService {
 
     public boolean applyPotentialPromo(User user, Community community) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
+        LOGGER.info("Attempt to apply promotion using current unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
         return applyPotentialPromo(user, community, freeTrialStartedTimestampSeconds);
     }
 
@@ -605,77 +606,93 @@ public class UserService {
     @Transactional(propagation = REQUIRED)
     public boolean applyPromotionByPromoCode(User user, Promotion promotion) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
+        LOGGER.info("Attempt to apply promotion using current unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
         return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
-    }
-
-    private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){
-        // the role of this method was to avoid having multiple video promotions,btu it seems that's
-        // blocking other types of promotions - for example, a twoWeeks promotion can not be applied
-        // if the previous promotion was AUDIO. The right way to do this is using an extra table (userId, promotionId)
-        // and to do the check using records from there. For now I'll just return true for the twoWeeksPromotion
-
-        if ( currentPromoCode != null && PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE.equals(currentPromoCode.getCode()) ) {
-            // ignoring the check for twoWeeksPromo
-            return false;
-        }
-
-        return isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType())
-                && lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
     }
 
     @Transactional(propagation = REQUIRED)
     public boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
-        LOGGER.debug("input parameters user, promotion, freeTrialStartedTimestampSeconds: [{}], [{}], [{}]", new Object[]{user, promotion, freeTrialStartedTimestampSeconds});
-
-        LOGGER.info("Attempt to apply promotion [{}]", promotion);
+        LOGGER.info("Attempt to apply promotion [{}] for user [{}] using [{}] as freeTrialStartedTimestampSeconds", promotion, user, freeTrialStartedTimestampSeconds);
 
         boolean isPromotionApplied = false;
-        if (promotion == null) {
-            throw new IllegalArgumentException("No promotion found");
-        }
-
-        UserBanned userBanned = getUserBanned(user.getId());
-        if (userBanned == null || userBanned.isGiveAnyPromotion()) {
-            final PromoCode promoCode = promotion.getPromoCode();
-
-            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)){
-                throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
-            }
-
-            int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
-            int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
-
-            user.setLastPromo(promoCode);
-            user.setNextSubPayment(nextSubPayment);
-            user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
-            user.setPotentialPromoCodePromotion(null);
-
-            if(isVideoAndMusicPromoCode(promoCode)){
-                user.setVideoFreeTrialHasBeenActivated(true);
-            }
-
-            user.setStatus(UserStatusDao.getSubscribedUserStatus());
-            user.setFreeTrialStartedTimestampMillis(freeTrialStartedTimestampSeconds * 1000L);
-            user = entityService.updateEntity(user);
-
-            promotionService.updatePromotionNumUsers(promotion);
-
-            AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
-                    PROMOTION_BY_PROMO_CODE_APPLIED);
-            accountLog.setPromoCode(promoCode.getCode());
-            entityService.saveEntity(accountLog);
-            for (byte i = 1; i <= freeWeeks; i++) {
-                entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks - i),
-                        SUBSCRIPTION_CHARGE));
-            }
-            isPromotionApplied = true;
+        if (isUserNotBanned(user)) {
+            isPromotionApplied = applyPromoForNotBannedUser(user, promotion, freeTrialStartedTimestampSeconds);
         } else {
-            user.setPotentialPromoCodePromotion(null);
-            user = entityService.updateEntity(user);
-            LOGGER.warn("The promotion [{}] wasn't applied because of user is banned", promotion);
+            skipPotentialPromoCodePromotionApplyingForBannedUser(user);
         }
 
         return isPromotionApplied;
+    }
+
+    private boolean applyPromoForNotBannedUser(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
+        if (isNull(promotion)) {
+            throw new IllegalArgumentException("No promotion found");
+        }
+
+        final PromoCode promoCode = promotion.getPromoCode();
+
+        if(couldNotBeApplied(user, promoCode)){
+            throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type. Probably because last applied promotion was on the same media type");
+        }
+
+        int freeWeeks = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
+        int nextSubPayment = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
+
+        user.setLastPromo(promoCode);
+        user.setNextSubPayment(nextSubPayment);
+        user.setFreeTrialExpiredMillis(secondsToMillis(nextSubPayment));
+        user.setPotentialPromoCodePromotion(null);
+
+        if(isVideoAndMusicPromoCode(promoCode)){
+            user.setVideoFreeTrialHasBeenActivated(true);
+        }
+
+        user.setStatus(UserStatusDao.getSubscribedUserStatus());
+        user.setFreeTrialStartedTimestampMillis(secondsToMillis(freeTrialStartedTimestampSeconds));
+        user = entityService.updateEntity(user);
+
+        promotionService.updatePromotionNumUsers(promotion);
+
+        logAboutPromoApplying(user, promoCode, freeWeeks);
+        return true;
+    }
+
+    public void logAboutPromoApplying(User user, PromoCode promoCode, int freeWeeks) {
+        byte balanceAfter = (byte) (user.getSubBalance() + freeWeeks);
+        AccountLog accountLog = new AccountLog(user.getId(), null, balanceAfter, PROMOTION_BY_PROMO_CODE_APPLIED);
+        accountLog.setPromoCode(promoCode.getCode());
+        entityService.saveEntity(accountLog);
+        for (byte i = 1; i <= freeWeeks; i++) {
+            entityService.saveEntity(new AccountLog(user.getId(), null, balanceAfter - i, SUBSCRIPTION_CHARGE));
+        }
+    }
+
+    private User skipPotentialPromoCodePromotionApplyingForBannedUser(User user) {
+        LOGGER.warn("The promotion wouldn't be applied because user is banned");
+        user.setPotentialPromoCodePromotion(null);
+        return entityService.updateEntity(user);
+    }
+
+    public boolean isUserNotBanned(User user) {
+        UserBanned userBanned = getUserBanned(user.getId());
+        return isNull(userBanned) || userBanned.isGiveAnyPromotion();
+    }
+
+    private boolean couldNotBeApplied(User user, PromoCode currentPromoCode){
+        return !couldBeAppliedMultipleTimes(currentPromoCode) && arePromotionMediaTypesTheSame(user.getLastPromo(), currentPromoCode);
+    }
+
+    private boolean couldBeAppliedMultipleTimes(PromoCode currentPromoCode){
+        boolean couldBeAppliedMultipleTimes = isNotNull(currentPromoCode) && currentPromoCode.isTwoWeeksOnSubscription();
+        LOGGER.info("Is found promo could be applied multiple times: [{}]", couldBeAppliedMultipleTimes);
+        return couldBeAppliedMultipleTimes;
+    }
+
+    private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){
+        boolean arePromotionMediaTypesTheSame = isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType())
+                && lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
+        LOGGER.info("Are found and last applied promotions have the same media type: [{}]", arePromotionMediaTypesTheSame);
+        return arePromotionMediaTypesTheSame;
     }
 
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
@@ -977,9 +994,9 @@ public class UserService {
             user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
         }else if (user.isSMSActivatedUser()){
             if (Utils.getEpochSeconds() > oldNextSubPayment){
-                user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
+                user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * WEEK_SECONDS);
             }else{
-                user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
+                user.setNextSubPayment(oldNextSubPayment + subweeks * WEEK_SECONDS);
             }
         } else {
             user.setSubBalance(user.getSubBalance() + subweeks);
@@ -1804,7 +1821,9 @@ public class UserService {
 
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
         user = unsubscribeAndSkipFreeTrial(user, USER_DOWNGRADED_TARIFF);
-        applyPotentialPromo(user, user.getUserGroup().getCommunity(), (int) (user.getFreeTrialStartedTimestampMillis() / 1000L));
+        int freeTrialStartedTimestampSeconds = (int) (user.getFreeTrialStartedTimestampMillis() / 1000L);
+        LOGGER.info("Attempt to apply promotion using user freeTrialStartedTimestampMillis value unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
+        applyPotentialPromo(user, user.getUserGroup().getCommunity(), freeTrialStartedTimestampSeconds);
         return user;
     }
 

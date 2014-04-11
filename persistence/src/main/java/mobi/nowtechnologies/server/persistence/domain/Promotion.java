@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 
 @Entity
 @Table(name = "tb_promotions")
@@ -286,6 +288,14 @@ public class Promotion implements Serializable {
     public Promotion withIsWhiteListed(boolean isWhiteListed){
         setWhiteListed(isWhiteListed);
         return this;
+    }
+
+    public int getFreeWeeks(int freeTrialStartedTimestampSeconds){
+        return freeWeeks == 0 ? (endDate - freeTrialStartedTimestampSeconds) / WEEK_SECONDS : freeWeeks;
+    }
+
+    public int getFreeWeeksEndDate(int freeTrialStartedTimestampSeconds){
+        return freeWeeks == 0 ? endDate:  freeTrialStartedTimestampSeconds + freeWeeks*WEEK_SECONDS;
     }
 
     @Override

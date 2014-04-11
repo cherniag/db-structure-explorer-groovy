@@ -22,7 +22,7 @@ import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.Utils.concatLowerCase;
+import static mobi.nowtechnologies.server.shared.Utils.conCatLowerCase;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
 import static org.apache.commons.lang.Validate.notNull;
@@ -36,7 +36,6 @@ public class PromotionService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
     private static final String PROMO_CODE_FOR_O2_CONSUMER_4G = "promoCode.for.o2.consumer.4g.";
-    public static final String PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE = "TwoWeeksOnSubscription";
 	
 	private PromotionDao promotionDao;
 	private EntityService entityService;
@@ -208,9 +207,9 @@ public class PromotionService {
         String contract = user.getContract().name();
         if (contractChannel == null){
             LOGGER.warn("The user contract channel is null, DIRECT will be used");
-            messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
+            messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", DIRECT.name());
         }else{
-            messageCodeForPromoCode = concatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
+            messageCodeForPromoCode = conCatLowerCase(PROMO_CODE_FOR_O2_CONSUMER_4G, contract, ".", contractChannel.name());
         }
         LOGGER.info("Message code for getting promotion code [{}]", messageCodeForPromoCode);
         return messageCodeForPromoCode;

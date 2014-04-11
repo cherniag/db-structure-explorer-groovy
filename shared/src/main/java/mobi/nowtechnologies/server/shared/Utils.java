@@ -16,10 +16,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.Locale.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
 /**
@@ -102,6 +104,10 @@ public class Utils {
 	public static Date getDateFromInt(int intDate) {
 		return new Date(((long) intDate) * 1000L);
 	}
+
+    public static long secondsToMillis(int seconds){
+        return SECONDS.toMillis(seconds);
+    }
 
 	public static String getOTACode(int userId, String userName) {
 		if (userName == null)
@@ -192,7 +198,7 @@ public class Utils {
         return s.substring(0,i);
     }
 
-    public static String concatLowerCase(String... strs) {
+    public static String conCatLowerCase(String... strs) {
         StringBuilder buf = new StringBuilder();
         for(String s: strs)
             buf.append(s);
@@ -244,14 +250,6 @@ public class Utils {
         original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
 
         return original.build().toString();
-    }
-
-    public static List<String> getParametersInUrl(String url, String parameterName) {
-        LOGGER.debug("url=[{}], parameterName=[{}]", url, parameterName);
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(url);
-        UriComponents uriComponents = uriComponentsBuilder.build();
-        MultiValueMap<String,String> queryParams = uriComponents.getQueryParams();
-        return queryParams.get(parameterName);
     }
 
     public static String preFormatCurrency(BigDecimal amount) {

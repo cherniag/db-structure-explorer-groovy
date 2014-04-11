@@ -48,7 +48,7 @@ public class MailNotification {
 	 * @param joinPoint
 	 * @throws Throwable
 	 */
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.registerUserWhitoutPersonalInfo(*))")
+	@Around("execution(* mobi.nowtechnologies.server.service.UserService.registerUserWithoutPersonalInfo(*))")
 	public Object sendRegistrationNotification(ProceedingJoinPoint joinPoint) throws Throwable {
 		Object object = joinPoint.proceed();
 		UserRegInfo userRegInfo = (UserRegInfo) joinPoint.getArgs()[0];
