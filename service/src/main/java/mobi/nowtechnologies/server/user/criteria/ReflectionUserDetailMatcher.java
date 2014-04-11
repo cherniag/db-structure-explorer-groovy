@@ -11,12 +11,10 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public class ReflectionUserDetailMatcher<T> implements Matcher<User> {
 
     private String fieldName;
-    private T expectedValue;
     private MatchStrategy<T> matchStrategy;
 
-    public ReflectionUserDetailMatcher(String fieldName, MatchStrategy<T> matchStrategy, T expectedValue) {
+    public ReflectionUserDetailMatcher(String fieldName, MatchStrategy<T> matchStrategy) {
         this.fieldName = fieldName;
-        this.expectedValue = expectedValue;
         this.matchStrategy = matchStrategy;
     }
 
@@ -24,7 +22,7 @@ public class ReflectionUserDetailMatcher<T> implements Matcher<User> {
     public boolean match(User user) {
         try {
             Object actualValue = ReflectionHelper.getFieldValue(user, fieldName);
-            return matchStrategy.match((T) actualValue, expectedValue);
+            return matchStrategy.match((T) actualValue);
         } catch (Exception e){
             throw new MatchException(e);
         }
@@ -35,7 +33,6 @@ public class ReflectionUserDetailMatcher<T> implements Matcher<User> {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("fieldName", fieldName)
                 .append("matchStrategy", matchStrategy)
-                .append("expectedValue", expectedValue)
                 .toString();
     }
 }

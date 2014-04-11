@@ -10,27 +10,25 @@ import static org.junit.Assert.fail;
  * Author: Gennadii Cherniaiev
  * Date: 4/10/2014
  */
-public abstract class AbstractCompareMatchStrategyTest {
+public abstract class AbstractCompareMatchStrategyTest<T extends Number & Comparable<T>> {
     protected String description;
-    protected Number first;
-    private CompareMatchStrategy matchStrategy;
-    protected Number second;
+    protected T first;
+    private CompareMatchStrategy<T> matchStrategy;
     protected boolean matchResult;
     protected Class<?> exceptionClass;
 
-    public AbstractCompareMatchStrategyTest(String description, Number first, Number second, boolean matchResult, Class<?> exceptionClass, CompareMatchStrategy matchStrategy) {
+    public AbstractCompareMatchStrategyTest(String description, T first, CompareMatchStrategy<T> second, boolean matchResult, Class<?> exceptionClass) {
         this.matchResult = matchResult;
         this.exceptionClass = exceptionClass;
         this.first = first;
-        this.matchStrategy = matchStrategy;
+        this.matchStrategy = second;
         this.description = description + " [" + first + "] [" + second + "]";
-        this.second = second;
     }
 
     @Test
     public void testMatching() throws Exception {
         try {
-            assertThat(description, matchStrategy.match(first, second), is(matchResult));
+            assertThat(description, matchStrategy.match(first), is(matchResult));
         } catch (Exception e) {
             if (exceptionClass == null) {
                 fail("Unexpected exception " + e.getClass());

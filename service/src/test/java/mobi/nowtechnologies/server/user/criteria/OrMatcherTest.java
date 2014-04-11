@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.user.criteria;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.junit.Test;
 
 import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
+import static mobi.nowtechnologies.server.user.criteria.OrMatcher.or;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -18,11 +18,10 @@ public class OrMatcherTest {
 
     @Test
     public void testOrMatcherComplex() throws Exception {
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher("mobile", equalTo(), "+44123456789");
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher("subBalance", equalTo(), 9);
-        OrMatcher matcher = new OrMatcher(Lists.<Matcher>newArrayList(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2));
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher3 = new ReflectionUserDetailMatcher("deviceType", equalTo(), "IOS");
-        orMatcher = new OrMatcher(Lists.<Matcher>newArrayList(matcher, ReflectionUserDetailMatcher3));
+        Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
+        Matcher<User> ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(9));
+        Matcher<User> ReflectionUserDetailMatcher3 = new ReflectionUserDetailMatcher<String>("deviceType", equalTo("IOS"));
+        orMatcher = or( or(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2), ReflectionUserDetailMatcher3);
         User user = new User();
         user.setMobile("+44123456789");
         user.setSubBalance(100);
@@ -32,9 +31,9 @@ public class OrMatcherTest {
 
     @Test
     public void testOrMatcherWithOneMatching() throws Exception {
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher("mobile", equalTo(), "+44123456789");
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher("subBalance", equalTo(), 123);
-        orMatcher = new OrMatcher(Lists.<Matcher>newArrayList(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2));
+        Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
+        Matcher<User> ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(123));
+        orMatcher = or(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2);
         User user = new User();
         user.setMobile("+44123456789");
         user.setSubBalance(0);
@@ -44,9 +43,9 @@ public class OrMatcherTest {
 
     @Test
     public void testOrMatcherWithBothMatching() throws Exception {
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher("mobile", equalTo(), "+44123456789");
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher("subBalance", equalTo(), 9);
-        orMatcher = new OrMatcher(Lists.<Matcher>newArrayList(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2));
+        Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
+        Matcher<User> ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(9));
+        orMatcher = or(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2);
         User user = new User();
         user.setMobile("+44123456789");
         user.setSubBalance(9);
@@ -56,9 +55,9 @@ public class OrMatcherTest {
 
     @Test
     public void testOrMatcherWithNoneMatching() throws Exception {
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher("mobile", equalTo(), "+44123456789");
-        ReflectionUserDetailMatcher ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher("subBalance", equalTo(), 9);
-        orMatcher = new OrMatcher(Lists.<Matcher>newArrayList(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2));
+        Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
+        Matcher<User> ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(9));
+        orMatcher = or(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2);
         User user = new User();
         user.setMobile("+44000000000");
         user.setSubBalance(0);

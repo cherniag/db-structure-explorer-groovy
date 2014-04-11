@@ -17,7 +17,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMatchExistingPrimitiveField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("subBalance", equalTo(), 9);
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("subBalance", equalTo(9));
         User user = new User();
         user.setSubBalance(9);
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -26,7 +26,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMatchExistingEnumField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("tariff", equalTo(), Tariff._4G);
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("tariff", equalTo(Tariff._4G));
         User user = new User();
         user.setTariff(Tariff._4G);
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -35,7 +35,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMatchExistingStringField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(), "+447123456789");
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo("+447123456789"));
         User user = new User();
         user.setMobile("+447123456789");
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -44,7 +44,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMismatchExistingField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(), "0000");
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo("0000"));
         User user = new User();
         user.setMobile("+447123456789");
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -53,14 +53,14 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test(expected = MatchException.class)
     public void testMatchNonExistingField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("Not exist", equalTo(), "Value");
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("Not exist", equalTo("Value"));
         User user = new User();
         reflectionUserDetailMatcher.match(user);
     }
 
     @Test
     public void testMatchNulls() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(), null);
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(ExpectedValueHolder.nullValue()));
         User user = new User();
         user.setMobile(null);
         boolean match = reflectionUserDetailMatcher.match(user);

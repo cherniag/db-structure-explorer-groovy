@@ -6,16 +6,21 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
-import mobi.nowtechnologies.server.user.criteria.*;
+import mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher;
+import mobi.nowtechnologies.server.user.criteria.IsEligibleForDirectPaymentUserMatcher;
+import mobi.nowtechnologies.server.user.criteria.IsInCampaignTableUserMatcher;
+import mobi.nowtechnologies.server.user.criteria.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 import static mobi.nowtechnologies.server.user.criteria.AndMatcher.and;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.*;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.ExpectedValueHolder.now;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.ExpectedValueHolder.valueOf;
+import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.is;
+import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.isNull;
+import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
+import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
+import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
 import static mobi.nowtechnologies.server.user.criteria.NotMatcher.not;
 import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
 import static mobi.nowtechnologies.server.user.rules.RuleServiceSupport.RuleComparator;
@@ -43,9 +48,9 @@ public class AutoOptInRuleService {
         Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
         SortedSet<Rule> rules = new TreeSet<Rule>(new RuleComparator());
 
-        Matcher<User> limitedUserStatus = is(userStatus(), ExactMatchStrategy.<UserStatus>equalTo(), valueOf(USER_STATUS_LIMITED));
+        Matcher<User> limitedUserStatus = is(userStatus(), equalTo(USER_STATUS_LIMITED));
         Matcher<User> freeTrialIsNull = isNull(userFreeTrialExpiredMillis());
-        Matcher<User> freeTrialIsEnded = is(userFreeTrialExpiredMillis(), CompareMatchStrategy.<Long>lessThan(), now());
+        Matcher<User> freeTrialIsEnded = is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()));
         Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
         Matcher<User> isEligibleForDirectPayment = new IsEligibleForDirectPaymentUserMatcher(paymentPolicyRepository, DIRECT_PAYMENT_TYPES);
 

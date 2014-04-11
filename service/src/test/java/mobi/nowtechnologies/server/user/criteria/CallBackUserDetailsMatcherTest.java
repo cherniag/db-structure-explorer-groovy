@@ -3,8 +3,9 @@ package mobi.nowtechnologies.server.user.criteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.junit.Test;
 
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.ExpectedValueHolder;
 import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.UserDetailHolder;
+import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.greaterThan;
+import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -18,7 +19,7 @@ public class CallBackUserDetailsMatcherTest {
 
     @Test
     public void testMatch() throws Exception {
-        callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Long>(freeTrialExpired(), CompareMatchStrategy.<Long>greaterThan(), currentTimeMillis());
+        callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Long>(freeTrialExpired(), greaterThan(currentTimestamp()));
         User user = new User();
         user.setFreeTrialExpiredMillis(System.currentTimeMillis() + 1000L);
         assertThat(callBackUserDetailsMatcher.match(user), is(true));
@@ -26,21 +27,10 @@ public class CallBackUserDetailsMatcherTest {
 
     @Test
     public void testNotMatch() throws Exception {
-        callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Long>(freeTrialExpired(), CompareMatchStrategy.<Long>greaterThan(), currentTimeMillis());
+        callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Long>(freeTrialExpired(), greaterThan(currentTimestamp()));
         User user = new User();
         user.setFreeTrialExpiredMillis(System.currentTimeMillis() - 1000L);
         assertThat(callBackUserDetailsMatcher.match(user), is(false));
-    }
-
-
-
-    private ExpectedValueHolder<Long> currentTimeMillis() {
-        return new ExpectedValueHolder<Long>() {
-                @Override
-                public Long getValue() {
-                    return System.currentTimeMillis();
-                }
-            };
     }
 
     private UserDetailHolder<Long> freeTrialExpired(){

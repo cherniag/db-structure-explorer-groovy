@@ -10,20 +10,17 @@ import org.apache.commons.lang.builder.ToStringStyle;
  */
 public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
     private UserDetailHolder<T> userDetailHolder;
-    private ExpectedValueHolder<T> expectedValueHolder;
     private MatchStrategy<T> matchStrategy;
 
-    public CallBackUserDetailsMatcher(UserDetailHolder<T> userDetailHolder, MatchStrategy<T> matchStrategy, ExpectedValueHolder<T> expectedValueHolder) {
+    public CallBackUserDetailsMatcher(UserDetailHolder<T> userDetailHolder, MatchStrategy<T> matchStrategy) {
         this.userDetailHolder = userDetailHolder;
         this.matchStrategy = matchStrategy;
-        this.expectedValueHolder = expectedValueHolder;
     }
 
     @Override
     public boolean match(User user) {
         T actual = userDetailHolder.getUserDetail(user);
-        T expected = expectedValueHolder.getValue();
-        return matchStrategy.match(actual, expected);
+        return matchStrategy.match(actual);
     }
 
     @Override
@@ -31,21 +28,15 @@ public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("userDetailHolder", userDetailHolder)
                 .append("matchStrategy", matchStrategy)
-                .append("expectedValue", expectedValueHolder)
                 .toString();
     }
 
-    public static <T> CallBackUserDetailsMatcher<T> is(UserDetailHolder<T> userDetailHolder, MatchStrategy<T> matchStrategy, ExpectedValueHolder<T> expectedValueHolder){
-        return new CallBackUserDetailsMatcher<T>(userDetailHolder, matchStrategy, expectedValueHolder);
+    public static <T> CallBackUserDetailsMatcher<T> is(UserDetailHolder<T> userDetailHolder, MatchStrategy<T> matchStrategy){
+        return new CallBackUserDetailsMatcher<T>(userDetailHolder, matchStrategy);
     }
 
     public static <T> CallBackUserDetailsMatcher<T> isNull(UserDetailHolder<T> userDetailHolder){
-        return new CallBackUserDetailsMatcher<T>(userDetailHolder, ExactMatchStrategy.<T>equalTo(), new ExpectedValueHolder<T>() {
-            @Override
-            public T getValue() {
-                return null;
-            }
-        });
+        return new CallBackUserDetailsMatcher<T>(userDetailHolder, ExactMatchStrategy.equalTo(ExpectedValueHolder.<T>nullValue()));
     }
 
     public static abstract class UserDetailHolder<T>{
@@ -67,31 +58,4 @@ public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
         }
     }
 
-    public static abstract class ExpectedValueHolder<T>{
-        public abstract T getValue();
-
-        @Override
-        public String toString() {
-            return String.valueOf(getValue());
-        }
-
-        public static <T> ExpectedValueHolder<T> valueOf(final T value){
-            return new ExpectedValueHolder<T>(){
-
-                @Override
-                public T getValue() {
-                    return value;
-                }
-            };
-        }
-
-        public static ExpectedValueHolder<Long> now() {
-            return new ExpectedValueHolder<Long>() {
-                @Override
-                public Long getValue() {
-                    return System.currentTimeMillis();
-                }
-            };
-        }
-    }
 }
