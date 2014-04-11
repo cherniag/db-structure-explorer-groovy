@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.*;
+import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.apache.commons.lang.Validate.notNull;
@@ -390,7 +391,7 @@ public class PaymentDetailsService {
 	private void applyPromoToLimitedUsers(User user, Community community) {
     	if ( user.isLimited() ) {
 
-			Promotion twoWeeksTrial = promotionService.getActivePromotion(PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+			Promotion twoWeeksTrial = promotionService.getActivePromotion(PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
 			long now = System.currentTimeMillis();
 			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds
 			if ( twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate() ) {
