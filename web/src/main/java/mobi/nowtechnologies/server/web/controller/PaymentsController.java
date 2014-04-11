@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.*;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
@@ -228,7 +230,7 @@ public class PaymentsController extends CommonController {
     private boolean userIsLimitedAndPromotionIsActive(User user, Community community) {
     	if ( user.isLimited() ) {
     		
-			Promotion twoWeeksTrial = promotionService.getActivePromotion(PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+			Promotion twoWeeksTrial = promotionService.getActivePromotion(PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
 			long now = System.currentTimeMillis();
 			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds
 			if ( twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate() ) {
