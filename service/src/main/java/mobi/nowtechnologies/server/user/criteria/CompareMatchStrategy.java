@@ -1,58 +1,60 @@
 package mobi.nowtechnologies.server.user.criteria;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.springframework.util.Assert;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 4/10/2014
  */
-public class CompareMatchStrategy implements MatchStrategy<Number> {
-    private CompareOperation compareOperation;
+public class CompareMatchStrategy<T extends Number & Comparable<T>> implements MatchStrategy<T> {
+    private CompareOperation<T> compareOperation;
 
-    public CompareMatchStrategy(CompareOperation compareOperation) {
+    public CompareMatchStrategy(CompareOperation<T> compareOperation) {
         this.compareOperation = compareOperation;
     }
 
     @Override
-    public boolean match(Number first, Number second) {
+    public boolean match(T first, T second) {
         return compareOperation.compare(first, second);
     }
 
-    public static CompareMatchStrategy greaterThan(){
-        return new CompareMatchStrategy(new CompareOperation("GreaterThan") {
+    public static <T extends Number & Comparable<T>> CompareMatchStrategy<T> greaterThan(){
+        return new CompareMatchStrategy<T>(new CompareOperation<T>("GreaterThan") {
                 @Override
-                public boolean compare(Number first, Number second) {
-                    return argsCanBeCompared(first, second) ? ((Comparable)first).compareTo(second) > 0 : raiseException(first, second);
+                public boolean compare(T first, T second) {
+                    return getCompareResult(first, second) > 0;
                 }
             }
         );
     }
 
-    public static CompareMatchStrategy greaterOrEqualTo(){
-        return new CompareMatchStrategy(new CompareOperation("GreaterOrEqualTo") {
+    public static <T extends Number & Comparable<T>> CompareMatchStrategy<T> greaterOrEqualTo(){
+        return new CompareMatchStrategy<T>(new CompareOperation<T>("GreaterOrEqualTo") {
                 @Override
-                public boolean compare(Number first, Number second) {
-                    return argsCanBeCompared(first, second) ? ((Comparable)first).compareTo(second) >= 0 : raiseException(first, second);
+                public boolean compare(T first, T second) {
+                    return getCompareResult(first, second) >= 0;
                 }
             }
         );
     }
 
-    public static CompareMatchStrategy lessThan(){
-        return new CompareMatchStrategy(new CompareOperation("LessThan") {
+    public static <T extends Number & Comparable<T>> CompareMatchStrategy<T> lessThan(){
+        return new CompareMatchStrategy<T>(new CompareOperation<T>("LessThan") {
                 @Override
-                public boolean compare(Number first, Number second) {
-                    return argsCanBeCompared(first, second) ? ((Comparable)first).compareTo(second) < 0 : raiseException(first, second);
+                public boolean compare(T first, T second) {
+                    return getCompareResult(first, second) < 0;
                 }
             }
         );
     }
 
-    public static CompareMatchStrategy lessOrEqualTo(){
-        return new CompareMatchStrategy(new CompareOperation("LessOrEqualTo") {
+    public static <T extends Number & Comparable<T>> CompareMatchStrategy<T> lessOrEqualTo(){
+        return new CompareMatchStrategy<T>(new CompareOperation<T>("LessOrEqualTo") {
                 @Override
-                public boolean compare(Number first, Number second) {
-                    return argsCanBeCompared(first, second) ? ((Comparable)first).compareTo(second) <= 0 : raiseException(first, second);
+                public boolean compare(T first, T second) {
+                    return getCompareResult(first, second) <= 0;
                 }
             }
         );
@@ -60,12 +62,12 @@ public class CompareMatchStrategy implements MatchStrategy<Number> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("compareOperation", compareOperation)
                 .toString();
     }
 
-    private abstract static class CompareOperation{
+    private abstract static class CompareOperation<T extends Number & Comparable<T>>{
 
         private final String name;
 
@@ -73,14 +75,12 @@ public class CompareMatchStrategy implements MatchStrategy<Number> {
             this.name = name;
         }
 
-        abstract boolean compare(Number first, Number second);
+        abstract boolean compare(T first, T second);
 
-        protected boolean argsCanBeCompared(Number first, Number second){
-            return first instanceof Comparable && second instanceof Comparable;
-        }
-
-        protected boolean raiseException(Number first, Number second){
-            throw new IllegalArgumentException("Arguments are not comparable: [" + first + "] [" + second + "]");
+        protected int getCompareResult(T first, T second){
+            Assert.notNull(first);
+            Assert.notNull(second);
+            return first.compareTo(second);
         }
 
         @Override

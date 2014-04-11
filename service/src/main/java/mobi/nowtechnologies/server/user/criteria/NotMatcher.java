@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.user.criteria;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -19,10 +20,14 @@ public class NotMatcher<T> implements Matcher<T> {
         return !matcher.match(value);
     }
 
+    public static <T> NotMatcher<T> not(Matcher<T> matcher){
+        return new NotMatcher<T>(matcher);
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("matcher", matcher)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append(matcher)
                 .toString();
     }
 }

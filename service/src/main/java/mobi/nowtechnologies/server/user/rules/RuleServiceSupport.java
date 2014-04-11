@@ -27,7 +27,7 @@ public class RuleServiceSupport {
             return RuleResult.FAIL_RESULT;
         }
         for (Rule rule : rules) {
-            LOGGER.debug("Evaluating rule {}", rule);
+            LOGGER.info("Evaluating rule {}", rule);
             if(rule.isValid() && rule.getRootMatcher().match(arg)) {
                 return rule.getResult();
             }

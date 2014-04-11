@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.user.criteria;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -31,7 +32,7 @@ public class ReflectionUserDetailMatcher implements Matcher<User> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("fieldName", fieldName)
                 .append("matchStrategy", matchStrategy)
                 .append("expectedValue", expectedValue)

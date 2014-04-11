@@ -6,14 +6,12 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
-import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -33,7 +31,6 @@ import static org.hamcrest.Matchers.is;
 public class AutoOptInRuleServiceIT {
 
     @Autowired
-    @Qualifier("service.AutoOptInRuleService")
     private AutoOptInRuleService ruleService;
 
     @Autowired
@@ -41,9 +38,6 @@ public class AutoOptInRuleServiceIT {
 
     @Autowired
     private PaymentPolicyRepository paymentPolicyRepository;
-
-    @Autowired
-    private PromoCodeRepository promoCodeRepository;
 
     @Autowired
     private CommunityRepository communityRepository;
@@ -57,8 +51,7 @@ public class AutoOptInRuleServiceIT {
     public void testContext() throws Exception {
         SubscriptionCampaignRecord subscriptionCampaignRecord = new SubscriptionCampaignRecord();
         subscriptionCampaignRecord.setMobile("+447123456789");
-        PromoCode promoCode = promoCodeRepository.findOne(1);
-        subscriptionCampaignRecord.setPromoCode(promoCode);
+        subscriptionCampaignRecord.setCampaignId("campaignId");
         subscriptionCampaignRepository.save(subscriptionCampaignRecord);
 
         PaymentPolicy paymentPolicy = new PaymentPolicy();
@@ -85,6 +78,7 @@ public class AutoOptInRuleServiceIT {
         user.setContract(Contract.PAYG);
         user.setSegment(SegmentType.BUSINESS);
         user.setStatus(new UserStatus(UserStatus.LIMITED));
+        user.setFreeTrialExpiredMillis(System.currentTimeMillis() - 1000L);
 
         RuleResult<Boolean> ruleResult = ruleService.fireRules(ACC_CHECK, user);
         assertThat(ruleResult, notNullValue());

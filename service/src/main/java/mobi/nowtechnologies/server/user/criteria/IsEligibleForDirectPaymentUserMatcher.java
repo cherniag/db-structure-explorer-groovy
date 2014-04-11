@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.util.List;
 
@@ -34,5 +36,12 @@ public class IsEligibleForDirectPaymentUserMatcher implements Matcher<User> {
                     directPaymentTypes
         );
         return paymentPolicies != null && paymentPolicies.size()>0;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("directPaymentTypes", directPaymentTypes)
+                .toString();
     }
 }

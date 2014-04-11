@@ -14,4 +14,9 @@ public class ExactMatchStrategy<T> implements MatchStrategy<T> {
     public static <T> ExactMatchStrategy<T> equalTo(){
         return new ExactMatchStrategy<T>();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

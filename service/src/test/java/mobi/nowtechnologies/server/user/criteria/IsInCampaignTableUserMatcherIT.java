@@ -1,9 +1,7 @@
 package mobi.nowtechnologies.server.user.criteria;
 
-import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,22 +24,19 @@ public class IsInCampaignTableUserMatcherIT {
     @Autowired
     private SubscriptionCampaignRepository subscriptionCampaignRepository;
 
-    @Autowired
-    private PromoCodeRepository promoCodeRepository;
-
     private IsInCampaignTableUserMatcher isInCampaignTableUserMatcher;
 
     @Before
     public void setUp() throws Exception {
         subscriptionCampaignRepository.deleteAll();
-        isInCampaignTableUserMatcher = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository);
+        isInCampaignTableUserMatcher = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
     }
 
     @Test
     public void testMatch() throws Exception {
         String mobile = "+447123456789";
-        createAndSaveSubscriptionCampaignRecord(mobile, 1);
-        createAndSaveSubscriptionCampaignRecord(mobile, 2);
+        createAndSaveSubscriptionCampaignRecord(mobile, "campaignId");
+        createAndSaveSubscriptionCampaignRecord(mobile, "campaignId");
         User user  = new User();
         user.setMobile(mobile);
         assertThat(isInCampaignTableUserMatcher.match(user), is(true));
@@ -52,8 +47,9 @@ public class IsInCampaignTableUserMatcherIT {
         String mobile1 = "+447123456789";
         String mobile2 = "+447111111111";
         String mobile3 = "+447000000000";
-        createAndSaveSubscriptionCampaignRecord(mobile1, 1);
-        createAndSaveSubscriptionCampaignRecord(mobile2, 1);
+        createAndSaveSubscriptionCampaignRecord(mobile1, "campaignId");
+        createAndSaveSubscriptionCampaignRecord(mobile2, "campaignId");
+        createAndSaveSubscriptionCampaignRecord(mobile3, "otherCampaign");
         User user  = new User();
         user.setMobile(mobile3);
         assertThat(isInCampaignTableUserMatcher.match(user), is(false));
@@ -67,11 +63,10 @@ public class IsInCampaignTableUserMatcherIT {
         assertThat(isInCampaignTableUserMatcher.match(user), is(false));
     }
 
-    private void createAndSaveSubscriptionCampaignRecord(String mobile, int promo_id) {
+    private void createAndSaveSubscriptionCampaignRecord(String mobile, String campaignId) {
         SubscriptionCampaignRecord subscriptionCampaignRecord = new SubscriptionCampaignRecord();
         subscriptionCampaignRecord.setMobile(mobile);
-        PromoCode promoCode = promoCodeRepository.findOne(promo_id);
-        subscriptionCampaignRecord.setPromoCode(promoCode);
+        subscriptionCampaignRecord.setCampaignId(campaignId);
         subscriptionCampaignRepository.save(subscriptionCampaignRecord);
     }
 }

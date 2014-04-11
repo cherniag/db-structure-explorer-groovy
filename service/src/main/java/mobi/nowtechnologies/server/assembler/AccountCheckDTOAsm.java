@@ -16,6 +16,8 @@ import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
+import mobi.nowtechnologies.server.user.rules.RuleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -28,6 +30,7 @@ import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDeta
 import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
 
 public class AccountCheckDTOAsm {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckDTOAsm.class);
@@ -38,6 +41,8 @@ public class AccountCheckDTOAsm {
     private FacebookUserInfoRepository facebookUserInfoRepository;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+    private AutoOptInRuleService autoOptInRuleService;
 
     public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
@@ -158,9 +163,15 @@ public class AccountCheckDTOAsm {
 
         AutoOptInExemptPhoneNumber byUserName = autoOptInExemptPhoneNumberRepository.findOne(user.getMobile());
 
+        //TODO: move to rule this check
         if (byUserName != null) {
             LOGGER.info("Found in database auto-opt-in record for mobile: " + user.getMobile());
             return false;
+        }
+
+        RuleResult<Boolean> ruleResult = autoOptInRuleService.fireRules(ACC_CHECK, user);
+        if(ruleResult.isSuccessful()){
+            return ruleResult.getResult();
         } else {
             LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
             return user.isSubjectToAutoOptIn();
@@ -218,5 +229,9 @@ public class AccountCheckDTOAsm {
             return;
         accountCheckDTO.newsTimestamp = news.getTimestamp();
         accountCheckDTO.newsItems = news.getNumEntries();
+    }
+
+    public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {
+        this.autoOptInRuleService = autoOptInRuleService;
     }
 }

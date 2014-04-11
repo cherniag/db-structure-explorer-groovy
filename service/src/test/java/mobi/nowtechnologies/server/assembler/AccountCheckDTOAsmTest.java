@@ -3,6 +3,8 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
+import mobi.nowtechnologies.server.user.rules.RuleResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -11,13 +13,14 @@ import org.mockito.MockitoAnnotations;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
+import static org.mockito.Mockito.*;
 
 public class AccountCheckDTOAsmTest {
     @Mock
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
+    @Mock
+    private AutoOptInRuleService autoOptInRuleService;
 
     @InjectMocks
     private AccountCheckDTOAsm accountCheckDTOAsm;
@@ -64,6 +67,7 @@ public class AccountCheckDTOAsmTest {
     @Test
     public void testToAccountCheckDTOWhenUserIsInNotDatabase() throws Exception {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
+        when(autoOptInRuleService.fireRules(ACC_CHECK, user)).thenReturn(RuleResult.FAIL_RESULT);
 
         boolean isSubjectToAutoOptIn = true;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);

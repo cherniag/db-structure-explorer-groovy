@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.user.criteria;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -29,10 +30,14 @@ public class OrMatcher<T> implements Matcher<T> {
         return false;
     }
 
+    public static <T> OrMatcher<T> or(Matcher<T> ... matchers){
+        return new OrMatcher<T>(matchers);
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("matchers", matchers)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append(matchers)
                 .toString();
     }
 }
