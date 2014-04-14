@@ -29,6 +29,7 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
@@ -48,7 +49,9 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -1694,6 +1697,12 @@ public class UserService {
 
     public boolean isVFNZOtacValid(String otac, String phoneNumber, Community community) {
         return userRepository.findByOtacMobileAndCommunity(otac, phoneNumber, community)==0L ? false: true;
+    }
+
+    @Transactional(propagation = REQUIRED)
+    public User autoOptIn(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac) {
+        User user = checkUser(communityUri, userName, userToken, timestamp, deviceUID, ENTERED_NUMBER, ACTIVATED);
+        return autoOptIn(user, otac);
     }
 
     @Transactional(propagation = REQUIRED)
