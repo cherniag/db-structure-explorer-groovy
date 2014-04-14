@@ -29,17 +29,18 @@ public class SubscriptionCampaignRepositoryIT{
 
     @Test
     public void testGetCountForMobile() throws Exception {
-        createAndSaveRecord("+447123456789");
-        createAndSaveRecord("+447123456789");
-        createAndSaveRecord("+447123456789");
-        createAndSaveRecord("+440000000000");
-        long countForMobile = subscriptionCampaignRepository.getCountForMobile("+447123456789");
-        assertThat(countForMobile, is(3L));
+        createAndSaveRecord("+447123456789", "campaignId");
+        createAndSaveRecord("+447123456789", "campaignId");
+        createAndSaveRecord("+447123456789", "other");
+        createAndSaveRecord("+440000000000", "campaignId");
+        long countForMobile = subscriptionCampaignRepository.getCountForMobile("+447123456789", "campaignId");
+        assertThat(countForMobile, is(2L));
     }
 
-    private void createAndSaveRecord(String mobile) {
+    private void createAndSaveRecord(String mobile, String campaignId) {
         SubscriptionCampaignRecord subscriptionCampaignRecord = new SubscriptionCampaignRecord();
         subscriptionCampaignRecord.setMobile(mobile);
+        subscriptionCampaignRecord.setCampaignId(campaignId);
         subscriptionCampaignRepository.saveAndFlush(subscriptionCampaignRecord);
     }
 }

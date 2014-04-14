@@ -5,9 +5,10 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -16,35 +17,31 @@ import java.util.Set;
 public class IsEligibleForDirectPaymentUserMatcher implements Matcher<User> {
 
     private PaymentPolicyRepository paymentPolicyRepository;
-    private Set<String> directPaymentTypes;
+    private List<String> directPaymentTypes;
 
-    public IsEligibleForDirectPaymentUserMatcher(PaymentPolicyRepository paymentPolicyRepository, Set<String> directPaymentTypes) {
+    public IsEligibleForDirectPaymentUserMatcher(PaymentPolicyRepository paymentPolicyRepository, List<String> directPaymentTypes) {
         this.paymentPolicyRepository = paymentPolicyRepository;
         this.directPaymentTypes = directPaymentTypes;
     }
 
     @Override
     public boolean match(User user){
-        if(user == null || user.getUserGroup() == null || user.getUserGroup().getCommunity() == null){
-            return false;
-        }
-        List<PaymentPolicy> paymentPolicies = null;
-        paymentPolicies = paymentPolicyRepository.getPaymentPolicies(
+        List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPoliciesWithPaymentType(
                     user.getUserGroup().getCommunity(),
                     user.getProvider(),
                     user.getSegment(),
                     user.getContract(),
                     user.getTariff(),
-                    Lists.newArrayList(MediaType.values())
+                    Lists.newArrayList(MediaType.values()),
+                    directPaymentTypes
         );
-        if(paymentPolicies == null){
-            return false;
-        }
-        for (PaymentPolicy paymentPolicy : paymentPolicies) {
-            if (directPaymentTypes.contains(paymentPolicy.getPaymentType())){
-                return true;
-            }
-        }
-        return false;
+        return paymentPolicies != null && paymentPolicies.size()>0;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("directPaymentTypes", directPaymentTypes)
+                .toString();
     }
 }

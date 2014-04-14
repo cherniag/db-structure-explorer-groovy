@@ -19,9 +19,8 @@ public class SubscriptionCampaignRecord implements Serializable{
     @Column(name = "mobile")
     private String mobile;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promo_code_id")
-    private PromoCode promoCode;
+    @Column(name = "campaign_id")
+    private String campaignId;
 
     public long getId() {
         return id;
@@ -39,11 +38,11 @@ public class SubscriptionCampaignRecord implements Serializable{
         this.mobile = mobile;
     }
 
-    public PromoCode getPromoCode() {
-        return promoCode;
+    public String getCampaignId() {
+        return campaignId;
     }
 
-    public void setPromoCode(PromoCode promoCode) {
-        this.promoCode = promoCode;
+    public void setCampaignId(String campaignId) {
+        this.campaignId = campaignId;
     }
 }

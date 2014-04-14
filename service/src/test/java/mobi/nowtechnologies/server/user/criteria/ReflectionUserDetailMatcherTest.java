@@ -4,8 +4,8 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 
-import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
 import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
+import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.nullValue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -18,8 +18,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMatchExistingPrimitiveField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("subBalance", equalTo(), 9);
-        new ReflectionUserDetailMatcher("nextSubPayment", lessThan(), 1555555L);
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("subBalance", equalTo(9));
         User user = new User();
         user.setSubBalance(9);
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -28,7 +27,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMatchExistingEnumField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("tariff", equalTo(), Tariff._4G);
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("tariff", equalTo(Tariff._4G));
         User user = new User();
         user.setTariff(Tariff._4G);
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -37,7 +36,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMatchExistingStringField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(), "+447123456789");
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo("+447123456789"));
         User user = new User();
         user.setMobile("+447123456789");
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -46,7 +45,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMismatchExistingField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(), "0000");
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo("0000"));
         User user = new User();
         user.setMobile("+447123456789");
         boolean match = reflectionUserDetailMatcher.match(user);
@@ -55,17 +54,26 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test(expected = MatchException.class)
     public void testMatchNonExistingField() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("Not exist", equalTo(), "Value");
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("Not exist", equalTo("Value"));
         User user = new User();
         reflectionUserDetailMatcher.match(user);
     }
 
     @Test
-    public void testMatchNulls() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(), null);
+    public void testMatchNullsMacth() throws Exception {
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", nullValue(String.class));
         User user = new User();
         user.setMobile(null);
         boolean match = reflectionUserDetailMatcher.match(user);
         assertThat(match, is(true));
+    }
+
+    @Test
+    public void testMatchNullsNotMatch() throws Exception {
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", nullValue(String.class));
+        User user = new User();
+        user.setMobile("+447788992556");
+        boolean match = reflectionUserDetailMatcher.match(user);
+        assertThat(match, is(false));
     }
 }

@@ -8,7 +8,6 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <import resource="task.xml"/>
-    <import resource="rule-service.xml"/>
 
 	<!-- Application properties -->
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -44,6 +43,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
     <bean id="accountCheckDTOAsm" class="mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm">
         <property name="autoOptInExemptPhoneNumberRepository" ref="autoOptInExemptPhoneNumberRepository" />
+        <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
     </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
@@ -515,6 +515,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoServiceImpl">
         <property name="userService" ref="service.UserService"/>
         <property name="activationEmailService" ref="service.ActivationEmailService"/>
+    </bean>
+
+    <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.rules.AutoOptInRuleService" init-method="init">
+        <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
+        <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
     </bean>
 
 	<import resource="payment.xml" />
