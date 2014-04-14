@@ -154,10 +154,10 @@ public class UserService {
 
     private boolean applyInitPromoInternal(PromoRequest promoRequest){
         User user = promoRequest.user;
-        User mobileUser = promoRequest.user;
+        User mobileUser = promoRequest.mobileUser;
 
         boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
-        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, mobileUser.getMobile(), user.getUserGroup().getCommunity());
+        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, user.getMobile(), user.getUserGroup().getCommunity());
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
         user= checkAndMerge(user, mobileUser);
