@@ -17,11 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
  * User: sanya
  * Date: 7/10/13
  * Time: 9:25 AM
- * To change this template use File | Settings | File Templates.
  */
 @RunWith(PowerMockRunner.class)
 public class UniversalParserTest {

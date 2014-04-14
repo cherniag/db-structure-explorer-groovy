@@ -395,7 +395,7 @@ public class PaymentDetailsService {
 			long now = System.currentTimeMillis();
 			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds
 			if ( twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate() ) {
-				userService.applyPromotionByPromoCode(user, twoWeeksTrial);
+				promotionService.applyPromotionByPromoCode(user, twoWeeksTrial);
 			}
 		}
     }

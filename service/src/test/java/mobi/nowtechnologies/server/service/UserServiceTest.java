@@ -196,7 +196,6 @@ public class UserServiceTest {
         userServiceSpy.setO2Service(o2ServiceMock);
         userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setiTunesService(iTunesServiceMock);
-        userServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
@@ -2617,239 +2616,6 @@ public class UserServiceTest {
 		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 	}
 
-    @Test(expected = ServiceException.class)
-    public void shouldDoNotApplyPromotionByPromoCode() {
-        //given
-        User user = new User().withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion()));
-
-        Promotion promotion = new Promotion().withPromoCode(new PromoCode().withMediaType(VIDEO_AND_AUDIO));
-
-        doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
-
-        //when
-        userServiceSpy.applyPromotionByPromoCode(user, promotion, 0);
-    }
-
-    @Test
-    public void shouldApplyPromotionByPromoCode() {
-        //given
-        final User user = new User().withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion()));
-
-        final Promotion promotion = new Promotion().withFreeWeeks((byte)3).withPromoCode(new PromoCode().withCode("code").withMediaType(AUDIO));
-
-        int freeTrialStartedTimestampSeconds = 1;
-
-        Mockito.doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
-
-        mockStatic(UserStatusDao.class);
-        mockStatic(Utils.class);
-
-        final int currentTimeSeconds = Integer.MAX_VALUE;
-        int expectedNextSubPaymentSeconds = freeTrialStartedTimestampSeconds + promotion.getFreeWeeks() * WEEK_SECONDS;
-        PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
-        PowerMockito.when(Utils.secondsToMillis(expectedNextSubPaymentSeconds)).thenReturn(SECONDS.toMillis(expectedNextSubPaymentSeconds));
-        PowerMockito.when(Utils.secondsToMillis(freeTrialStartedTimestampSeconds)).thenReturn(SECONDS.toMillis(freeTrialStartedTimestampSeconds));
-
-        UserStatus subscribedUserStatus = new UserStatus();
-        PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
-
-        doReturn(user).when(entityServiceMock).updateEntity(user);
-        Mockito.doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                promotion.setNumUsers(promotion.getNumUsers()+1);
-                return true;
-            }
-        }).when(promotionServiceMock).updatePromotionNumUsers(promotion);
-        Answer answer = new Answer() {
-            int count = -1;
-
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                AccountLog accountLog = (AccountLog) invocation.getArguments()[0];
-                assertNotNull(accountLog);
-                assertThat(accountLog.getUserId(), is(user.getId()));
-                assertNull(accountLog.getSubmittedPayment());
-                assertThat(accountLog.getLogTimestamp(), is(currentTimeSeconds));
-                if(count==-1){
-                    assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance()+ (int) promotion.getFreeWeeks()));
-                    assertThat(accountLog.getTransactionType(), is(PROMOTION_BY_PROMO_CODE_APPLIED));
-                    assertThat(accountLog.getPromoCode(), is(promotion.getPromoCode().getCode()));
-                    count = 1;
-                }else{
-                    assertThat(accountLog.getBalanceAfter(), is(user.getSubBalance() + (int) promotion.getFreeWeeks() - count));
-                    assertThat(accountLog.getTransactionType(), is(SUBSCRIPTION_CHARGE));
-                    count++;
-                }
-
-                return accountLog;
-            }
-        };
-        Mockito.doAnswer(answer).when(entityServiceMock).saveEntity(any(AccountLog.class));
-
-        //when
-        boolean isPromotionApplied = userServiceSpy.applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
-
-        //than
-        assertThat(isPromotionApplied, is(true));
-        assertThat(user.getLastPromo(), is(promotion.getPromoCode()));
-        assertThat(user.getNextSubPayment(), is(expectedNextSubPaymentSeconds));
-        assertThat(user.getFreeTrialExpiredMillis(), is(expectedNextSubPaymentSeconds*1000L));
-        assertNull(user.getPotentialPromoCodePromotion());
-        assertThat(user.getStatus(), is(subscribedUserStatus));
-        assertThat(user.getFreeTrialStartedTimestampMillis(), is(freeTrialStartedTimestampSeconds*1000L));
-        assertThat(user.isVideoFreeTrialHasBeenActivated(), is(false));
-
-        assertThat(promotion.getNumUsers(), is(1));
-
-        verify(userBannedRepositoryMock, times(1)).findOne(user.getId());
-        verify(entityServiceMock, times(1)).updateEntity(user);
-        verify(promotionServiceMock, times(1)).updatePromotionNumUsers(promotion);
-        verify(entityServiceMock, times(promotion.getFreeWeeks()+1)).saveEntity(any(AccountLog.class));
-    }
-	
-	@Test
-	public void testApplyPromotionByPromoCode_ToSomeDate_Success() {
-        ProviderUserDetails o2UserDetails = new ProviderUserDetails();
-		o2UserDetails.operator ="o2";
-		o2UserDetails.contract="payg";
-		
-		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
-		
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2013, Calendar.JANUARY, 1);
-		PromoCode promoCode = new PromoCode();
-		promoCode.setCode("staff");
-		final Promotion promotion = new Promotion();
-		promotion.setPromoCode(promoCode);
-		promotion.setEndDate((int)(calendar.getTimeInMillis()/1000));
-
-		Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
-		Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
-			@Override
-			public User answer(InvocationOnMock invocation) throws Throwable {
-				User user = (User)invocation.getArguments()[0];
-				if(user != null)
-					assertEquals(promotion.getEndDate(), user.getNextSubPayment());
-				
-				return user;
-			}
-		});
-        doReturn(true).when(promotionServiceMock).updatePromotionNumUsers(promotion);
-        Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
-
-		userServiceSpy.applyPromotionByPromoCode(user, promotion);
-
-        verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
-		verify(promotionServiceMock, times(1)).updatePromotionNumUsers(promotion);
-		verify(entityServiceMock, times(1)).updateEntity(eq(user));
-	}
-	
-	@Test
-	public void testApplyPromotionByPromoCode_OnSomeWeeks_Success() {
-        ProviderUserDetails o2UserDetails = new ProviderUserDetails();
-		o2UserDetails.operator= "o2";
-		o2UserDetails.contract="payg";
-		
-		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2013, Calendar.JANUARY, 1);
-		PromoCode promoCode = new PromoCode();
-		promoCode.setCode("store");
-		final Promotion promotion = new Promotion();
-		promotion.setPromoCode(promoCode);
-		promotion.setFreeWeeks((byte)52);
-		
-		Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
-			@Override
-			public User answer(InvocationOnMock invocation) throws Throwable {
-				User user = (User)invocation.getArguments()[0];
-				if(user != null)
-					assertEquals(getEpochSeconds() + 52 * WEEK_SECONDS, user.getNextSubPayment());
-				
-				return user;
-			}
-		});
-		Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
-        doReturn(true).when(promotionServiceMock).updatePromotionNumUsers(promotion);
-        Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
-
-        userServiceSpy.applyPromotionByPromoCode(user, promotion);
-
-        verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
-        verify(promotionServiceMock, times(1)).updatePromotionNumUsers(promotion);
-        verify(entityServiceMock, times(1)).updateEntity(eq(user));
-	}
-
-	@Test
-	public void testApplyPromotionByPromoCode_BannedUserWithNoPromotion_Success() {
-		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-		user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
-        UserBanned userBanned = new UserBanned(user);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2013, Calendar.JANUARY, 1);
-        PromoCode promoCode = new PromoCode();
-        promoCode.setCode("store");
-        final Promotion promotion = new Promotion();
-        promotion.setPromoCode(promoCode);
-        promotion.setFreeWeeks((byte)52);
-
-        Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
-            @Override
-            public User answer(InvocationOnMock invocation) throws Throwable {
-                User user = (User)invocation.getArguments()[0];
-                return user;
-            }
-        });
-        Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(userBanned);
-        Mockito.when(entityServiceMock.updateEntity(eq(promotion))).thenReturn(promotion);
-        Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
-
-		userServiceSpy.applyPromotionByPromoCode(user, promotion);
-
-        verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
-		verify(entityServiceMock, times(0)).updateEntity(eq(promotion));
-		verify(entityServiceMock, times(1)).updateEntity(eq(user));
-	}
-
-    @Test
-    public void shouldApplyPotentialPromo() {
-        //given
-        User user = new User().withProvider(VF).withUserGroup(new UserGroup().withCommunity(new Community().withName(VF_NZ_COMMUNITY_REWRITE_URL).withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
-
-        Promotion promotion = new Promotion();
-
-        Mockito.when(communityResourceBundleMessageSourceMock.getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("staff");
-        Mockito.when(communityResourceBundleMessageSourceMock.getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class))).thenReturn("store");
-        Mockito.when(deviceServiceMock.isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("staff"))).thenReturn(false);
-        Mockito.when(deviceServiceMock.isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("store"))).thenReturn(false);
-        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("staff"));
-        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("store"));
-        doReturn(promotion).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("promotionCode"));
-        doReturn(null).when(userServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("defaultPromotionCode"));
-        doReturn(true).when(userServiceSpy).applyPromotionByPromoCode(eq(user), eq(promotion), any(int.class));
-
-        //when
-        boolean result = userServiceSpy.applyPotentialPromo(user, user.getUserGroup().getCommunity());
-
-        //then
-        assertEquals(true, result);
-
-        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("o2.staff.promotionCode"), any(Object[].class), any(Locale.class));
-        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(user.getUserGroup().getCommunity().getRewriteUrlParameter()), eq("o2.store.promotionCode"), any(Object[].class), any(Locale.class));
-        verify(deviceServiceMock, times(1)).isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("staff"));
-        verify(deviceServiceMock, times(1)).isPromotedDevicePhone(eq(user.getUserGroup().getCommunity()), anyString(), eq("store"));
-        verify(userServiceSpy, times(1)).setPotentialPromoByMessageCode(eq(user), eq("promotionCode"));
-        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("defaultPromotionCode"));
-        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("store"));
-        verify(userServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("staff"));
-        verify(userServiceSpy, times(1)).applyPromotionByPromoCode(eq(user), eq(promotion), any(int.class));
-    }
-
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
 		final ArgumentMatcher<Object[]> matcher = new ArgumentMatcher<Object[]>() {
 			@Override
@@ -2914,7 +2680,7 @@ public class UserServiceTest {
         assertEquals(currentTimeMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(userServiceSpy, times(1)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        verify(promotionServiceMock, times(1)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
@@ -2937,7 +2703,7 @@ public class UserServiceTest {
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(userServiceSpy, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
@@ -2960,7 +2726,7 @@ public class UserServiceTest {
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(userServiceSpy, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
@@ -2982,7 +2748,7 @@ public class UserServiceTest {
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(userServiceSpy, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
@@ -3004,7 +2770,7 @@ public class UserServiceTest {
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(1)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(userServiceSpy, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(1)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
@@ -3026,7 +2792,7 @@ public class UserServiceTest {
         assertEquals(freeTrialExpiredMillis, actualUser.getFreeTrialExpiredMillis());
 
         verify(userServiceSpy, times(0)).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        verify(userServiceSpy, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        verify(promotionServiceMock, times(0)).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         verify(accountLogServiceMock, times(0)).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }
@@ -3936,7 +3702,7 @@ public class UserServiceTest {
 
         Mockito.doReturn(user.getLastPromo().getCode()).when(promotionServiceMock).getVideoCodeForO24GConsumer(user);
         Mockito.doReturn(user).when(userServiceSpy).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        Mockito.doReturn(true).when(userServiceSpy).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        Mockito.doReturn(true).when(promotionServiceMock).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }

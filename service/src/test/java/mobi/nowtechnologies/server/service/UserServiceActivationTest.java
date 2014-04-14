@@ -130,7 +130,6 @@ public class UserServiceActivationTest {
         userServiceSpy.setO2Service(o2ServiceMock);
         userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setiTunesService(iTunesServiceMock);
-        userServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
         userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);

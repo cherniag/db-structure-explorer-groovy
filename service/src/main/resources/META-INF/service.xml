@@ -69,7 +69,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="drmService" ref="service.DrmService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
-		<property name="userBannedRepository" ref="userBannedRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
 		<property name="iTunesService" ref="service.ITunesService" />
         <property name="refundService" ref="service.RefundService" />
@@ -173,6 +172,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="promotionRepository" ref="promotionRepository" />
         <property name="userService" ref="service.UserService" />
         <property name="messageSource" ref="serviceMessageSource" />
+        <property name="userBannedRepository" ref="userBannedRepository" />
+        <property name="deviceService" ref="service.DeviceService" />
 	</bean>
 
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
