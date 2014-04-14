@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.junit.Before;
@@ -32,6 +31,7 @@ import java.util.Locale;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.service.PromotionService.PromoParams;
 import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
@@ -52,6 +52,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
@@ -59,7 +60,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
  * @author Titov Mykhaylo (titov)
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class })
+@PrepareForTest({ UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, EmailValidator.class, PromoParams.class, PromotionService.class })
 public class PromotionServiceTest {
 
     public static final String PROMO_CODE_FOR_O2_CONSUMER_4G_PAYG_DIRECT = "promocode.for.o2.consumer.4g.payg.direct";
@@ -603,7 +604,7 @@ public class PromotionServiceTest {
         doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
 
         //when
-        promotionServiceSpy.applyPromotionByPromoCode(user, promotion, 0);
+        promotionServiceSpy.applyPromotionByPromoCode(new PromoParams(user, promotion, 0));
     }
 
     @Test
@@ -624,7 +625,7 @@ public class PromotionServiceTest {
         int expectedNextSubPaymentSeconds = freeTrialStartedTimestampSeconds + promotion.getFreeWeeks() * WEEK_SECONDS;
         PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
         PowerMockito.when(Utils.secondsToMillis(expectedNextSubPaymentSeconds)).thenReturn(SECONDS.toMillis(expectedNextSubPaymentSeconds));
-        PowerMockito.when(Utils.secondsToMillis(freeTrialStartedTimestampSeconds)).thenReturn(freeTrialStartedTimestampSeconds*1000L);
+        PowerMockito.when(Utils.secondsToMillis(freeTrialStartedTimestampSeconds)).thenReturn(freeTrialStartedTimestampSeconds * 1000L);
 
         mobi.nowtechnologies.server.persistence.domain.UserStatus subscribedUserStatus = new mobi.nowtechnologies.server.persistence.domain.UserStatus();
         PowerMockito.when(UserStatusDao.getSubscribedUserStatus()).thenReturn(subscribedUserStatus);
@@ -665,7 +666,7 @@ public class PromotionServiceTest {
         Mockito.doAnswer(answer).when(entityServiceMock).saveEntity(any(AccountLog.class));
 
         //when
-        boolean isPromotionApplied = promotionServiceSpy.applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
+        boolean isPromotionApplied = promotionServiceSpy.applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
 
         //than
         assertThat(isPromotionApplied, is(true));
@@ -700,14 +701,14 @@ public class PromotionServiceTest {
         promoCode.setCode("staff");
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
-        promotion.setEndDate((int)(calendar.getTimeInMillis()/1000));
+        promotion.setEndDate((int) (calendar.getTimeInMillis() / 1000));
 
         Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
         Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
-                User user = (User)invocation.getArguments()[0];
-                if(user != null)
+                User user = (User) invocation.getArguments()[0];
+                if (user != null)
                     assertEquals(promotion.getEndDate(), user.getNextSubPayment());
 
                 return user;
@@ -738,13 +739,13 @@ public class PromotionServiceTest {
         promoCode.setCode("store");
         final Promotion promotion = new Promotion();
         promotion.setPromoCode(promoCode);
-        promotion.setFreeWeeks((byte)52);
+        promotion.setFreeWeeks((byte) 52);
 
         Mockito.when(entityServiceMock.updateEntity(eq(user))).thenAnswer(new Answer<User>() {
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {
-                User user = (User)invocation.getArguments()[0];
-                if(user != null)
+                User user = (User) invocation.getArguments()[0];
+                if (user != null)
                     assertEquals(getEpochSeconds() + 52 * WEEK_SECONDS, user.getNextSubPayment());
 
                 return user;
@@ -794,7 +795,7 @@ public class PromotionServiceTest {
     }
 
     @Test
-    public void shouldApplyPotentialPromo() {
+    public void shouldApplyPotentialPromo() throws Exception {
         //given
         User user = new User().withProvider(VF).withUserGroup(new UserGroup().withCommunity(new Community().withName(VF_NZ_COMMUNITY_REWRITE_URL).withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
 
@@ -808,7 +809,12 @@ public class PromotionServiceTest {
         doReturn(null).when(promotionServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("store"));
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("promotionCode"));
         doReturn(null).when(promotionServiceSpy).setPotentialPromoByMessageCode(eq(user), eq("defaultPromotionCode"));
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(eq(user), eq(promotion), any(int.class));
+        PowerMockito.mockStatic(Utils.class);
+        int currentTimeSeconds = 0;
+        PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
+        PromoParams promoParams = new PromoParams(user, promotion, currentTimeSeconds);
+        PowerMockito.whenNew(PromoParams.class).withArguments(user, promotion, 0).thenReturn(promoParams);
+        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(promoParams);
 
         //when
         boolean result = promotionServiceSpy.applyPotentialPromo(user, user.getUserGroup().getCommunity());
@@ -824,7 +830,7 @@ public class PromotionServiceTest {
         verify(promotionServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("defaultPromotionCode"));
         verify(promotionServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("store"));
         verify(promotionServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("staff"));
-        verify(promotionServiceSpy, times(1)).applyPromotionByPromoCode(eq(user), eq(promotion), any(int.class));
+        verify(promotionServiceSpy, times(1)).applyPromotionByPromoCode(promoParams);
     }
 
 

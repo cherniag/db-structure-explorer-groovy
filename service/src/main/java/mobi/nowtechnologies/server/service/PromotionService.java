@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -79,6 +80,27 @@ public class PromotionService {
 
     public void setDeviceService(DeviceService deviceService) {
         this.deviceService = deviceService;
+    }
+
+    static class PromoParams {
+        public final User user;
+        public final Promotion promotion;
+        public final int freeTrialStartedTimestampSeconds;
+
+        PromoParams(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
+            this.user = user;
+            this.promotion = promotion;
+            this.freeTrialStartedTimestampSeconds = freeTrialStartedTimestampSeconds;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("user", user)
+                    .append("promotion", promotion)
+                    .append("freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds)
+                    .toString();
+        }
     }
 
     public Promotion getActivePromotion(String promotionCode, String communityName) {
@@ -283,23 +305,24 @@ public class PromotionService {
         else
             promotion = setPotentialPromoByMessageCode(user, "defaultPromotionCode");
 
-        return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
+        return applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
     }
 
     @Transactional(propagation = REQUIRED)
     public boolean applyPromotionByPromoCode(User user, Promotion promotion) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
         LOGGER.info("Attempt to apply promotion using current unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
-        return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
+        return applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
     }
 
     @Transactional(propagation = REQUIRED)
-    public boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
-        LOGGER.info("Attempt to apply promotion [{}] for user [{}] using [{}] as freeTrialStartedTimestampSeconds", promotion, user, freeTrialStartedTimestampSeconds);
+    public boolean applyPromotionByPromoCode(PromoParams promoParams) {
+        User user = promoParams.user;
+        LOGGER.info("Attempt to apply promotion [{}] for user [{}] using [{}] as freeTrialStartedTimestampSeconds", promoParams.promotion, user, promoParams.freeTrialStartedTimestampSeconds);
 
         boolean isPromotionApplied = false;
         if (isUserNotBanned(user)) {
-            isPromotionApplied = applyPromoForNotBannedUser(user, promotion, freeTrialStartedTimestampSeconds);
+            isPromotionApplied = applyPromoForNotBannedUser(promoParams);
         } else {
             skipPotentialPromoCodePromotionApplyingForBannedUser(user);
         }
@@ -344,7 +367,11 @@ public class PromotionService {
         return entityService.updateEntity(user);
     }
 
-    private boolean applyPromoForNotBannedUser(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
+    private boolean applyPromoForNotBannedUser(PromoParams promoParams) {
+        Promotion promotion = promoParams.promotion;
+        User user = promoParams.user;
+        int freeTrialStartedTimestampSeconds = promoParams.freeTrialStartedTimestampSeconds;
+
         if (isNull(promotion)) {
             throw new IllegalArgumentException("No promotion found");
         }
