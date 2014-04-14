@@ -9,12 +9,12 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * Author: Gennadii Cherniaiev
  * Date: 4/9/2014
  */
-public class UserRule implements Rule<User, Boolean> {
+public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
     private Matcher<User> rootMatcher;
     private boolean isValid = true;
     private int rulePriority;
 
-    public UserRule(Matcher<User> rootMatcher, int rulePriority) {
+    public SubscriptionCampaignUserRule(Matcher<User> rootMatcher, int rulePriority) {
         this.rootMatcher = rootMatcher;
         this.rulePriority = rulePriority;
     }

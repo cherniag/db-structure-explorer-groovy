@@ -17,9 +17,9 @@ import java.util.*;
 
 import static mobi.nowtechnologies.server.user.criteria.AndMatcher.and;
 import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.is;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.isNull;
 import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
 import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
+import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.nullValue;
 import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
 import static mobi.nowtechnologies.server.user.criteria.NotMatcher.not;
 import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
@@ -48,8 +48,8 @@ public class AutoOptInRuleService {
         Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
         SortedSet<Rule> rules = new TreeSet<Rule>(new RuleComparator());
 
-        Matcher<User> limitedUserStatus = is(userStatus(), equalTo(USER_STATUS_LIMITED));
-        Matcher<User> freeTrialIsNull = isNull(userFreeTrialExpiredMillis());
+        Matcher<User> userStatusIsLimited = is(userStatus(), equalTo(USER_STATUS_LIMITED));
+        Matcher<User> freeTrialIsNull = is(userFreeTrialExpiredMillis(), nullValue(Long.class));
         Matcher<User> freeTrialIsEnded = is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()));
         Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
         Matcher<User> isEligibleForDirectPayment = new IsEligibleForDirectPaymentUserMatcher(paymentPolicyRepository, DIRECT_PAYMENT_TYPES);
@@ -58,9 +58,9 @@ public class AutoOptInRuleService {
         * users that have used their free trial but did not proceed to subscribing
         * */
 
-        Matcher<User> rootUserMatcher = and(limitedUserStatus, not(freeTrialIsNull), freeTrialIsEnded, isInCampaignTable, isEligibleForDirectPayment);
-        UserRule userRule = new UserRule(rootUserMatcher, 10);
-        rules.add(userRule);
+        Matcher<User> rootUserMatcher = and(userStatusIsLimited, not(freeTrialIsNull), freeTrialIsEnded, isInCampaignTable, isEligibleForDirectPayment);
+        SubscriptionCampaignUserRule subscriptionCampaignUserRule = new SubscriptionCampaignUserRule(rootUserMatcher, 10);
+        rules.add(subscriptionCampaignUserRule);
         actionRules.put(ACC_CHECK, rules);
         ruleServiceSupport = new RuleServiceSupport(actionRules);
     }

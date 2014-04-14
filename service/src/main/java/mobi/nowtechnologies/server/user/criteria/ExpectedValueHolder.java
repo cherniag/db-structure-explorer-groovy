@@ -31,13 +31,4 @@ public abstract class ExpectedValueHolder<T> {
             }
         };
     }
-
-    public static <T> ExpectedValueHolder<T> nullValue() {
-        return new ExpectedValueHolder<T>() {
-            @Override
-            public T getValue() {
-                return null;
-            }
-        };
-    }
 }

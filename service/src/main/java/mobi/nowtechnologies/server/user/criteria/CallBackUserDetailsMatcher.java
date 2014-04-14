@@ -35,10 +35,6 @@ public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
         return new CallBackUserDetailsMatcher<T>(userDetailHolder, matchStrategy);
     }
 
-    public static <T> CallBackUserDetailsMatcher<T> isNull(UserDetailHolder<T> userDetailHolder){
-        return new CallBackUserDetailsMatcher<T>(userDetailHolder, ExactMatchStrategy.equalTo(ExpectedValueHolder.<T>nullValue()));
-    }
-
     public static abstract class UserDetailHolder<T>{
         private String detailName;
 

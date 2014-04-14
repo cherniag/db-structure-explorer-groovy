@@ -27,6 +27,10 @@ public class ExactMatchStrategy<T> implements MatchStrategy<T> {
         return new ExactMatchStrategy<T>(valueOf(second));
     }
 
+    public static <T> ExactMatchStrategy<T> nullValue(Class<T> clazz){
+        return new ExactMatchStrategy<T>(valueOf((T)null));
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName();

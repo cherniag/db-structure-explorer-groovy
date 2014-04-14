@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 
 import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
+import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.nullValue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -60,7 +61,7 @@ public class ReflectionUserDetailMatcherTest {
 
     @Test
     public void testMatchNulls() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(ExpectedValueHolder.nullValue()));
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(nullValue(String.class)));
         User user = new User();
         user.setMobile(null);
         boolean match = reflectionUserDetailMatcher.match(user);
