@@ -48,8 +48,12 @@ public class AutoOptInRuleServiceIT {
     @Before
     public void setUp() throws Exception {
         initCommunity();
+        disableAutoOptIn();
         initPaymentPolicy();
         initSubscriptionCampaignRecord();
+    }
+
+    private void disableAutoOptIn() {
         System.setProperty("auto.opt.in.enabled", "false");
     }
 
@@ -103,6 +107,30 @@ public class AutoOptInRuleServiceIT {
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
         assertThat(ruleResult, is(false));
+    }
+
+    @Test
+    public void testFireWhenUserIsNotDirectCharged() throws Exception {
+        User user = createMatchingUser();
+        user.setProvider(ProviderType.NON_O2);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
+    public void testFireWhenUserRulesAreFalse() throws Exception {
+        User user = createMatchingUser();
+        //fail rules
+        user.setStatus(new UserStatus(UserStatus.SUBSCRIBED));
+        //make user.isSubjectToAutoOptIn() to return true (isAutoOptInEnabled && isNull(oldUser) && isO24GConsumer() && !isLastPromoForVideoAndAudio() )
+        System.setProperty("auto.opt.in.enabled", "true");
+        user.withOldUser(null);
+        user.setSegment(SegmentType.CONSUMER);
+        user.setLastPromo(null);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(true));
     }
 
     private User createMatchingUser() {
