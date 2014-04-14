@@ -1,13 +1,11 @@
 package mobi.nowtechnologies.server.user.rules;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
-import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.math.BigDecimal;
-
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -30,60 +30,101 @@ import static org.hamcrest.Matchers.is;
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 public class AutoOptInRuleServiceIT {
 
+    private static final String MOBILE = "+447123456789";
     @Autowired
     private AutoOptInRuleService ruleService;
 
     @Autowired
     private SubscriptionCampaignRepository subscriptionCampaignRepository;
 
-    @Autowired
-    private PaymentPolicyRepository paymentPolicyRepository;
-
-    @Autowired
-    private CommunityRepository communityRepository;
-    private Community o2;
-    private PaymentPolicy paymentPolicy;
     private SubscriptionCampaignRecord subscriptionCampaignRecord;
 
     @Before
     public void setUp() throws Exception {
-        initCommunity();
-        disableAutoOptIn();
-        initPaymentPolicy();
         initSubscriptionCampaignRecord();
-    }
-
-    private void disableAutoOptIn() {
-        System.setProperty("auto.opt.in.enabled", "false");
     }
 
     @After
     public void tearDown() throws Exception {
-        paymentPolicyRepository.delete(paymentPolicy);
         subscriptionCampaignRepository.deleteAll();
     }
 
     @Test
-    public void testAllMatchersAreMatched() throws Exception {
+    public void checkRuleIsMatched() throws Exception {
         User user = createMatchingUser();
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
         assertThat(ruleResult, is(true));
-
     }
 
     @Test
-     public void testFireWhenUserIsNotLimited() throws Exception {
+    public void checkRuleIsMatchedFor3G() throws Exception {
+        User user = createMatchingUser();
+        user.setTariff(_3G);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(true));
+    }
+
+    @Test
+    public void checkRuleIsMatchedFor4G() throws Exception {
+        User user = createMatchingUser();
+        user.setTariff(_4G);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(true));
+    }
+
+    @Test
+    public void checkRuleIsMatchedForPAYM() throws Exception {
+        User user = createMatchingUser();
+        user.setContract(PAYM);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(true));
+    }
+
+    @Test
+    public void checkRuleIsMatchedForPAYG() throws Exception {
+        User user = createMatchingUser();
+        user.setContract(PAYG);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(true));
+    }
+
+    @Test
+    public void checkRuleIsMatchedForDisabledPaymentDetailsAndNoPayments() throws Exception {
+        User user = createMatchingUser();
+        PaymentDetails paymentDetails = new O2PSMSPaymentDetails();
+        paymentDetails.setActivated(false);
+        user.setCurrentPaymentDetails(paymentDetails);
+        user.setLastSuccessfulPaymentDetails(null);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(true));
+    }
+
+    @Test
+    public void checkWhenUserIsNotFromO2() throws Exception {
+        User user = createMatchingUser();
+        user.getUserGroup().getCommunity().setRewriteUrlParameter("vf");
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
+     public void checkWhenUserIsNotLimited() throws Exception {
         User user = createMatchingUser();
         user.setStatus(new UserStatus(UserStatus.SUBSCRIBED));
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
         assertThat(ruleResult, is(false));
-
     }
 
     @Test
-    public void testFireWhenUserDoesNotHaveAFreeTrial() throws Exception {
+    public void checkWhenUserDoesNotHaveAFreeTrial() throws Exception {
         User user = createMatchingUser();
         user.setFreeTrialExpiredMillis(null);
 
@@ -92,7 +133,7 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
-    public void testFireWhenUsersFreeTrialIsNotExpired() throws Exception {
+    public void checkWhenUsersFreeTrialIsNotExpired() throws Exception {
         User user = createMatchingUser();
         user.setFreeTrialExpiredMillis(System.currentTimeMillis() + 10000L);
 
@@ -101,7 +142,30 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
-    public void testFireWhenUserIsNotInCampaignTable() throws Exception {
+    public void checkWhenUserHasActivePaymentDetails() throws Exception {
+        User user = createMatchingUser();
+        PaymentDetails paymentDetails = new O2PSMSPaymentDetails();
+        paymentDetails.setActivated(true);
+        user.setCurrentPaymentDetails(paymentDetails);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
+    public void checkWhenUserHasDisabledPaymentDetailsAndPayments() throws Exception {
+        User user = createMatchingUser();
+        PaymentDetails paymentDetails = new O2PSMSPaymentDetails();
+        paymentDetails.setActivated(false);
+        user.setCurrentPaymentDetails(paymentDetails);
+        user.setLastSuccessfulPaymentDetails(paymentDetails);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
+    public void checkWhenUserIsNotInCampaignTable() throws Exception {
         User user = createMatchingUser();
         user.setMobile("+4455555555");
 
@@ -110,7 +174,7 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
-    public void testFireWhenUserIsNotDirectCharged() throws Exception {
+    public void checkWhenUserIsNotFromO2Provider() throws Exception {
         User user = createMatchingUser();
         user.setProvider(ProviderType.NON_O2);
 
@@ -119,12 +183,21 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
-    public void testFireWhenUserRulesAreFalse() throws Exception {
+    public void checkWhenUserIsNotConsumer() throws Exception {
+        User user = createMatchingUser();
+        user.setSegment(SegmentType.BUSINESS);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
+    public void checkWithLegacyIsSubjectToAutoOptIn() throws Exception {
         User user = createMatchingUser();
         //fail rules
         user.setStatus(new UserStatus(UserStatus.SUBSCRIBED));
         //make user.isSubjectToAutoOptIn() to return true (isAutoOptInEnabled && isNull(oldUser) && isO24GConsumer() && !isLastPromoForVideoAndAudio() )
-        System.setProperty("auto.opt.in.enabled", "true");
+        user.withAutoOptInEnabled(true);
         user.withOldUser(null);
         user.setSegment(SegmentType.CONSUMER);
         user.setLastPromo(null);
@@ -135,41 +208,25 @@ public class AutoOptInRuleServiceIT {
 
     private User createMatchingUser() {
         User user = new User();
-        user.setMobile("+447123456789");
-        user.setTariff(Tariff._4G);
+        user.setMobile(MOBILE);
+        user.setTariff(_4G);
+        Community community = new Community();
+        community.setRewriteUrlParameter(Community.O2_COMMUNITY_REWRITE_URL);
         UserGroup userGroup = new UserGroup();
-        userGroup.setCommunity(o2);
+        userGroup.setCommunity(community);
         user.setUserGroup(userGroup);
         user.setProvider(ProviderType.O2);
-        user.setContract(Contract.PAYG);
-        user.setSegment(SegmentType.BUSINESS);
+        user.setContract(PAYG);
+        user.setSegment(SegmentType.CONSUMER);
         user.setStatus(new UserStatus(UserStatus.LIMITED));
         user.setFreeTrialExpiredMillis(System.currentTimeMillis() - 1000L);
+        user.withAutoOptInEnabled(false);
         return user;
-    }
-
-    private void initCommunity() {
-        o2 = communityRepository.findByRewriteUrlParameter("o2");
-    }
-
-    private void initPaymentPolicy() {
-        paymentPolicy = new PaymentPolicy();
-        paymentPolicy.setTariff(Tariff._4G);
-        paymentPolicy.setMediaType(MediaType.AUDIO);
-        paymentPolicy.setCommunity(o2);
-        paymentPolicy.setProvider(ProviderType.O2);
-        paymentPolicy.setSegment(SegmentType.BUSINESS);
-        paymentPolicy.setPaymentType(PaymentDetails.O2_PSMS_TYPE);
-        paymentPolicy.setContract(Contract.PAYG);
-        paymentPolicy.setSubcost(BigDecimal.ONE);
-        paymentPolicy.withOnline(true);
-
-        paymentPolicyRepository.save(paymentPolicy);
     }
 
     private void initSubscriptionCampaignRecord() {
         subscriptionCampaignRecord = new SubscriptionCampaignRecord();
-        subscriptionCampaignRecord.setMobile("+447123456789");
+        subscriptionCampaignRecord.setMobile(MOBILE);
         subscriptionCampaignRecord.setCampaignId("campaignId");
         subscriptionCampaignRepository.save(subscriptionCampaignRecord);
     }

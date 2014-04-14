@@ -45,7 +45,6 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "and paymentPolicy.online is true")
     PaymentPolicy findDefaultO2PsmsPaymentPolicy(Community community, ProviderType provider, SegmentType segment, Contract contract, Tariff tariff);
 
-    //in case of changing this method consider also changing the next one
     @Query(value="select paymentPolicy " +
             "from PaymentPolicy paymentPolicy "+
             "where " +
@@ -60,23 +59,4 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
     List<PaymentPolicy> getPaymentPolicies(Community community, ProviderType provider, SegmentType segment, Contract contract, Tariff tariff,
                                            List<MediaType> mediaTypes);
 
-    @Query(value="select paymentPolicy " +
-            "from PaymentPolicy paymentPolicy "+
-            "where " +
-            "paymentPolicy.community=:community " +
-            "and (paymentPolicy.provider=:provider or paymentPolicy.provider is null)" +
-            "and (paymentPolicy.segment=:segment or paymentPolicy.segment is null)" +
-            "and (paymentPolicy.contract=:contract or paymentPolicy.contract is null)" +
-            "and paymentPolicy.tariff=:tariff " +
-            "and paymentPolicy.mediaType in :mediaType " +
-            "and paymentPolicy.paymentType in :paymentType " +
-            "and paymentPolicy.online is true " +
-            "order by paymentPolicy.subweeks desc")
-    List<PaymentPolicy> getPaymentPoliciesWithPaymentType(@Param("community") Community community,
-                                                          @Param("provider") ProviderType provider,
-                                                          @Param("segment") SegmentType segment,
-                                                          @Param("contract") Contract contract,
-                                                          @Param("tariff") Tariff tariff,
-                                                          @Param("mediaType") List<MediaType> mediaTypes,
-                                                          @Param("paymentType") List<String> paymentTypes);
 }
