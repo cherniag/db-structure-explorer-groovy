@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNu
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
+import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,13 +14,15 @@ import org.mockito.MockitoAnnotations;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static org.mockito.Mockito.*;
 
 public class AccountCheckDTOAsmTest {
     @Mock
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
     @Mock
+    private RuleServiceSupport ruleServiceSupport;
+
     private AutoOptInRuleService autoOptInRuleService;
 
     @InjectMocks
@@ -53,6 +56,10 @@ public class AccountCheckDTOAsmTest {
         when(userGroup.getChart()).thenReturn(chart);
         when(userGroup.getDrmPolicy()).thenReturn(drmPolicy);
         when(drmPolicy.getDrmType()).thenReturn(drmType);
+
+        autoOptInRuleService = new AutoOptInRuleService();
+        autoOptInRuleService.setRuleServiceSupport(ruleServiceSupport);
+        accountCheckDTOAsm.setAutoOptInRuleService(autoOptInRuleService);
     }
 
     @Test
@@ -60,7 +67,7 @@ public class AccountCheckDTOAsmTest {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(autoOptInExemptPhoneNumber);
 
         AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false);
-        verify(autoOptInRuleService, times(0)).fireRules(eq(ACC_CHECK), any(User.class));
+        verify(ruleServiceSupport, times(0)).fireRules(eq(ALL), any(User.class));
 
         assertFalse(dto.subjectToAutoOptIn);
     }
@@ -68,7 +75,7 @@ public class AccountCheckDTOAsmTest {
     @Test
     public void testToAccCheckDTOForNotExemptAndNotCampaignUser() throws Exception {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
-        when(autoOptInRuleService.fireRules(eq(ACC_CHECK), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);
+        when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);
 
         boolean isSubjectToAutoOptIn = true;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
@@ -76,7 +83,7 @@ public class AccountCheckDTOAsmTest {
         AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false);
 
         verify(user, times(1)).isSubjectToAutoOptIn();
-        verify(autoOptInRuleService, times(1)).fireRules(eq(ACC_CHECK), any(User.class));
+        verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
 
         assertEquals(isSubjectToAutoOptIn, dto.subjectToAutoOptIn);
     }
@@ -84,7 +91,7 @@ public class AccountCheckDTOAsmTest {
     @Test
     public void testToAccCheckDTOForNotExemptAndInCampaignUser() throws Exception {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
-        when(autoOptInRuleService.fireRules(eq(ACC_CHECK), any(User.class))).thenReturn(new RuleResult<Boolean>(true, true));
+        when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(new RuleResult(true, true));
 
         boolean isSubjectToAutoOptIn = false;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
@@ -92,7 +99,7 @@ public class AccountCheckDTOAsmTest {
         AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false);
 
         verify(user, times(0)).isSubjectToAutoOptIn();
-        verify(autoOptInRuleService, times(1)).fireRules(eq(ACC_CHECK), any(User.class));
+        verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
 
         assertEquals(true, dto.subjectToAutoOptIn);
     }

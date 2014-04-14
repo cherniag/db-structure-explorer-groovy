@@ -33,6 +33,10 @@ public class ExactMatchStrategy<T> implements MatchStrategy<T> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return new StringBuilder()
+                .append("equalTo(")
+                .append(second)
+                .append(")")
+        .toString();
     }
 }

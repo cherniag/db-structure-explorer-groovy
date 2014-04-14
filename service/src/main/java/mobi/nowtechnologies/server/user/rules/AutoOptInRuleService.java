@@ -22,7 +22,7 @@ import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equal
 import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.nullValue;
 import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
 import static mobi.nowtechnologies.server.user.criteria.NotMatcher.not;
-import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static mobi.nowtechnologies.server.user.rules.RuleServiceSupport.RuleComparator;
 
 /**
@@ -35,8 +35,12 @@ public class AutoOptInRuleService {
     private static final ArrayList<String> DIRECT_PAYMENT_TYPES = Lists.newArrayList(PaymentDetails.O2_PSMS_TYPE, PaymentDetails.VF_PSMS_TYPE);
     private static final UserStatus USER_STATUS_LIMITED = new UserStatus(UserStatus.LIMITED);
 
+    public void setRuleServiceSupport(RuleServiceSupport ruleServiceSupport) {
+        this.ruleServiceSupport = ruleServiceSupport;
+    }
+
     public enum AutoOptInTriggerType implements TriggerType {
-        ACC_CHECK;
+        ALL;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoOptInRuleService.class);
@@ -61,16 +65,22 @@ public class AutoOptInRuleService {
         Matcher<User> rootUserMatcher = and(userStatusIsLimited, not(freeTrialIsNull), freeTrialIsEnded, isInCampaignTable, isEligibleForDirectPayment);
         SubscriptionCampaignUserRule subscriptionCampaignUserRule = new SubscriptionCampaignUserRule(rootUserMatcher, 10);
         rules.add(subscriptionCampaignUserRule);
-        actionRules.put(ACC_CHECK, rules);
+        actionRules.put(ALL, rules);
         ruleServiceSupport = new RuleServiceSupport(actionRules);
     }
 
-    public RuleResult<Boolean> fireRules(AutoOptInTriggerType triggerType, User user){
-         LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
-         RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
-         LOGGER.info("Rule result {}", ruleResult);
-         return ruleResult;
+    public boolean isSubjectToAutoOptIn(AutoOptInTriggerType triggerType, User user){
+        LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
+        RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
+        LOGGER.info("Rule result {}", ruleResult);
+        if(ruleResult.isSuccessful()){
+            return ruleResult.getResult();
+        } else {
+            return user.isSubjectToAutoOptIn();
+        }
     }
+
+
 
 
     private CallBackUserDetailsMatcher.UserDetailHolder<Long> userFreeTrialExpiredMillis() {

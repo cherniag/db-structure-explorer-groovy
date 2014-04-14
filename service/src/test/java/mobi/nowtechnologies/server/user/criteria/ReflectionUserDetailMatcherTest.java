@@ -60,11 +60,20 @@ public class ReflectionUserDetailMatcherTest {
     }
 
     @Test
-    public void testMatchNulls() throws Exception {
-        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", equalTo(nullValue(String.class)));
+    public void testMatchNullsMacth() throws Exception {
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", nullValue(String.class));
         User user = new User();
         user.setMobile(null);
         boolean match = reflectionUserDetailMatcher.match(user);
         assertThat(match, is(true));
+    }
+
+    @Test
+    public void testMatchNullsNotMatch() throws Exception {
+        reflectionUserDetailMatcher = new ReflectionUserDetailMatcher("mobile", nullValue(String.class));
+        User user = new User();
+        user.setMobile("+447788992556");
+        boolean match = reflectionUserDetailMatcher.match(user);
+        assertThat(match, is(false));
     }
 }

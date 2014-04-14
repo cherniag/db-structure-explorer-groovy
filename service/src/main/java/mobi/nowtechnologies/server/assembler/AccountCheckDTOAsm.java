@@ -17,7 +17,6 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
-import mobi.nowtechnologies.server.user.rules.RuleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -30,7 +29,7 @@ import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDeta
 import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ACC_CHECK;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 
 public class AccountCheckDTOAsm {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckDTOAsm.class);
@@ -168,14 +167,9 @@ public class AccountCheckDTOAsm {
             LOGGER.info("Found in database auto-opt-in record for mobile: " + user.getMobile());
             return false;
         }
+        LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
+        return autoOptInRuleService.isSubjectToAutoOptIn(ALL, user);
 
-        RuleResult<Boolean> ruleResult = autoOptInRuleService.fireRules(ACC_CHECK, user);
-        if(ruleResult.isSuccessful()){
-            return ruleResult.getResult();
-        } else {
-            LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
-            return user.isSubjectToAutoOptIn();
-        }
     }
 
     private static String getOldPaymentStatus(PaymentDetails paymentDetails) {

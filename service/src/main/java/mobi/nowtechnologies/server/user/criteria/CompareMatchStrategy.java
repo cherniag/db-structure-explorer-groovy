@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.user.criteria;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.util.Assert;
 
 import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.valueOf;
@@ -82,10 +80,12 @@ public class CompareMatchStrategy<T extends Number & Comparable<T>> implements M
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("compareOperation", compareOperation)
-                .append(" ", second)
-                .toString();
+        return new StringBuilder()
+                .append(compareOperation)
+                .append("(")
+                .append(second)
+                .append(")")
+        .toString();
     }
 
     private abstract static class CompareOperation<T extends Number & Comparable<T>>{

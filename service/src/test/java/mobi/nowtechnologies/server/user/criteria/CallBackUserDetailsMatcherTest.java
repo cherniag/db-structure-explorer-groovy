@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.UserDetailHolder;
 import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.greaterThan;
+import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.nullValue;
 import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,6 +31,22 @@ public class CallBackUserDetailsMatcherTest {
         callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Long>(freeTrialExpired(), greaterThan(currentTimestamp()));
         User user = new User();
         user.setFreeTrialExpiredMillis(System.currentTimeMillis() - 1000L);
+        assertThat(callBackUserDetailsMatcher.match(user), is(false));
+    }
+
+    @Test
+    public void testMatchNull() throws Exception {
+        callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Long>(freeTrialExpired(), nullValue(Long.class));
+        User user = new User();
+        user.setFreeTrialExpiredMillis(null);
+        assertThat(callBackUserDetailsMatcher.match(user), is(true));
+    }
+
+    @Test
+    public void testNotMatchNull() throws Exception {
+        callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Long>(freeTrialExpired(), nullValue(Long.class));
+        User user = new User();
+        user.setFreeTrialExpiredMillis(System.currentTimeMillis());
         assertThat(callBackUserDetailsMatcher.match(user), is(false));
     }
 
