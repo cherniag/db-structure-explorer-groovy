@@ -12,4 +12,7 @@ public interface CommunityRepository extends JpaRepository<Community, Integer> {
 	
 	@Query(value="select community from Community community where LOWER(community.rewriteUrlParameter)=LOWER(?1)")
 	Community findByRewriteUrlParameter(String rewriteUrlParameter);
+
+    @Query(value="select community from Community community where LOWER(community.name)=LOWER(?1)")
+    Community findByName(String name);
 }

@@ -32,12 +32,14 @@ import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -69,6 +71,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
@@ -131,6 +134,9 @@ public class UserServiceTest {
     private UserGroupRepository userGroupRepositoryMock;
     private UserDeviceDetailsService userDeviceDetailsServiceMock;
     private TaskService taskService;
+
+    @Mock
+    private AutoOptInRuleService autoOptInRuleServiceMock;
 
     @Before
     public void setUp() throws Exception {
@@ -206,6 +212,7 @@ public class UserServiceTest {
         userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
         userServiceSpy.setTaskService(taskService);
+        userServiceSpy.setAutoOptInRuleService(autoOptInRuleServiceMock);
 
         PowerMockito.mockStatic(UserStatusDao.class);
     }
@@ -3197,6 +3204,7 @@ public class UserServiceTest {
         User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
+        doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
@@ -3212,6 +3220,7 @@ public class UserServiceTest {
         assertNotNull(actualUser);
         assertEquals(expectedUser, actualUser);
 
+        verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, expectedUser);
         verify(userServiceSpy, times(0)).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser);
         verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
@@ -3232,6 +3241,7 @@ public class UserServiceTest {
         User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
+        doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
@@ -3246,6 +3256,7 @@ public class UserServiceTest {
         assertNotNull(actualUser);
         assertEquals(expectedUser, actualUser);
 
+        verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, expectedUser);
         verify(userServiceSpy, times(0)).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser);
         verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);

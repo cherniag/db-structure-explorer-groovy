@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
@@ -29,7 +28,6 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
@@ -39,7 +37,7 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.apache.commons.lang.Validate;
+import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +47,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -70,6 +66,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static mobi.nowtechnologies.server.shared.util.EmailValidator.isNotEmail;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.*;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
@@ -121,6 +118,11 @@ public class UserService {
     private UserNotificationService userNotificationService;
 
     private TaskService taskService;
+    private AutoOptInRuleService autoOptInRuleService;
+
+    public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {
+        this.autoOptInRuleService = autoOptInRuleService;
+    }
 
     private User checkAndMerge(User user, User mobileUser) {
         if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
@@ -150,16 +152,18 @@ public class UserService {
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
-    private boolean applyInitPromoInternal(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone){
-        boolean updateWithProviderUserDetails = isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
+    private boolean applyInitPromoInternal(PromoRequest promoRequest){
+        User user = promoRequest.user;
+        User mobileUser = promoRequest.user;
 
-        ProviderUserDetails providerUserDetails = otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
+        boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
+        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, mobileUser.getMobile(), user.getUserGroup().getCommunity());
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
-        user = checkAndMerge(user, mobileUser);
-        user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
+        user= checkAndMerge(user, mobileUser);
+        user= checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
-        boolean hasPromo = checkAndApplyPromo(user, mobileUser, isApplyingWithoutEnterPhone);
+        boolean hasPromo = checkAndApplyPromo(promoRequest);
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
@@ -168,14 +172,32 @@ public class UserService {
         return hasPromo;
     }
 
-    private boolean checkAndApplyPromo(User user, User mobileUser, boolean isApplyingWithoutEnterPhone) {
+    private boolean checkAndApplyPromo(PromoRequest promoRequest) {
+        User user =  promoRequest.user;
+        User mobileUser = promoRequest.mobileUser;
+        boolean isApplyingWithoutEnterPhone = promoRequest.isApplyingWithoutEnterPhone;
         boolean hasPromo = false;
         if (isNull(mobileUser)) {
             if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
                 hasPromo = promotionService.applyPotentialPromo(user);
             }else{
-                LOGGER.info("Promo applying procedure is skipped");
+                LOGGER.info("Promo applying procedure is skipped for new user");
             }
+        }else if(promoRequest.isSubjectToAutoOptIn){
+            hasPromo = findAndApplyPromoFromRule(user);
+        }else{
+            LOGGER.info("Promo applying procedure is skipped for existed user");
+        }
+        return hasPromo;
+    }
+
+    private boolean findAndApplyPromoFromRule(User user) {
+        boolean hasPromo = false;
+        Promotion promotion = promotionService.getPromotionFromRuleForAutoOptIn(user);
+        if (isNotNull(promotion)) {
+            hasPromo = promotionService.applyPromotionByPromoCode(user, promotion);
+        }else{
+            LOGGER.info("Promo applying procedure is skipped because no promotion from rule found");
         }
         return hasPromo;
     }
@@ -1499,7 +1521,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone) {
-        boolean hasPromo = applyInitPromoInternal(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone);
+        boolean hasPromo = applyInitPromoInternal(new PromoRequest(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false));
 
         user = !ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
 
@@ -1709,7 +1731,7 @@ public class UserService {
     public User  autoOptIn(User user, String otac) {
         LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
-        if(!user.isSubjectToAutoOptIn()) {
+        if(!autoOptInRuleService.isSubjectToAutoOptIn(ALL, user)) {
             throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
         }
 
@@ -1717,7 +1739,7 @@ public class UserService {
 
         boolean isPromotionApplied;
         if(isNotBlank(otac)){
-            isPromotionApplied = applyInitPromoInternal(user, mobileUser, otac, false, false);
+            isPromotionApplied = applyInitPromoInternal(new PromoRequest(user, mobileUser, otac, false, false, true));
         }else{
             isPromotionApplied = promotionService.applyPotentialPromo(user);
         }
@@ -1761,5 +1783,23 @@ public class UserService {
         }
         checkActivationStatus(user, activationStatuses);
         return user;
+    }
+
+    private static class PromoRequest {
+        public User user;
+        public final User mobileUser;
+        public final String otac;
+        public final boolean isMajorApiVersionNumberLessThan4;
+        public final boolean isApplyingWithoutEnterPhone;
+        public final boolean isSubjectToAutoOptIn;
+
+        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn) {
+            this.user = user;
+            this.mobileUser = mobileUser;
+            this.otac = otac;
+            this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
+            this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
+            this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
+        }
     }
 }

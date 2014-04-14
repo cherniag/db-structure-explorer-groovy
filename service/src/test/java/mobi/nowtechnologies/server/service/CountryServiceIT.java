@@ -16,28 +16,18 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * The class <code>CountryServiceTest</code> contains tests for the class <code>{@link CountryService}</code>.
- *
- * @generatedBy CodePro at 16.08.11 11:54
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml","/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class CountryServiceTest {
+public class CountryServiceIT {
 	
 	@Resource(name = "service.CountryService")
 	private CountryService countryService;
 
-	/**
-	 * Run the Integer findIdByFullName(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 */
 	@Test
 	public void testFindIdByFullNameGreat_Britain()
 		throws Exception {
@@ -47,13 +37,6 @@ public class CountryServiceTest {
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the Integer findIdByFullName(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 16.08.11 11:54
-	 */
 	@Test(expected=ServiceException.class)
 	public void testFindIdByFullNameWrongCountryFullName()
 		throws Exception {
@@ -61,13 +44,6 @@ public class CountryServiceTest {
 		countryService.findIdByFullName(countryFullName);
 	}
 
-	/**
-	 * Run the Integer findIdByFullName(String) method test.
-	 *
-	 * @throws Exception
-	 *
-	 * @generatedBy CodePro at 16.08.11 11:54
-	 */
 	@Test(expected=ServiceException.class)
 	public void testFindIdByFullNameWhenCountryFullNameIsNull()
 		throws Exception {
@@ -77,12 +53,6 @@ public class CountryServiceTest {
 		assertNotNull(result);
 	}
 
-	/**
-	 * Run the List<Country> getAllCountries() method test.
-	 *
-	 * @throws Exception
-	 *
-	 */
 	@Test
 	public void testGetAllCountries()
 		throws Exception {

@@ -83,6 +83,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="userNotificationService" ref="service.UserNotificationService" />
         <property name="taskService" ref="task.TaskService"/>
         <property name="sendActivationSMS" value="false"/>
+        <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
 	</bean>
 
     <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">
@@ -166,7 +167,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
 	</bean>
 
-	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService">
+	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" init-method="init">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="promotionDao" ref="persistence.PromotionDao" />
         <property name="promotionRepository" ref="promotionRepository" />
@@ -174,6 +175,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="userBannedRepository" ref="userBannedRepository" />
         <property name="deviceService" ref="service.DeviceService" />
+        <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
+        <property name="communityService" ref="service.communityService"/>
 	</bean>
 
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">

@@ -23,7 +23,7 @@ public class CommunityServiceImpl implements CommunityService {
 	@Override
 	public Community getCommunityByName(String communityName) {
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
-		Community community = CommunityDao.getCommunity(communityName);
+		Community community = communityRepository.findByName(communityName);
 		LOGGER.debug("Output parameter community=[{}]", community);
 		return community;
 	}

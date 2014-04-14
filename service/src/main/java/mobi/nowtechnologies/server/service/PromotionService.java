@@ -8,11 +8,18 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher;
+import mobi.nowtechnologies.server.user.criteria.IsEligibleForDirectPaymentUserMatcher;
+import mobi.nowtechnologies.server.user.criteria.IsInCampaignTableUserMatcher;
+import mobi.nowtechnologies.server.user.criteria.Matcher;
+import mobi.nowtechnologies.server.user.rules.*;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -21,18 +28,29 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
+import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.conCatLowerCase;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
+import static mobi.nowtechnologies.server.user.criteria.AndMatcher.and;
+import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.UserDetailHolder;
+import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.is;
+import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
+import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
+import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.nullValue;
+import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
+import static mobi.nowtechnologies.server.user.criteria.NotMatcher.not;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
@@ -53,8 +71,11 @@ public class PromotionService {
     private PromotionRepository promotionRepository;
     private UserBannedRepository userBannedRepository;
     private DeviceService deviceService;
+    private RuleServiceSupport ruleServiceSupport;
+    private SubscriptionCampaignRepository subscriptionCampaignRepository;
+    private CommunityService communityService;
 
-	public void setEntityService(EntityService entityService) {
+    public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
@@ -80,6 +101,63 @@ public class PromotionService {
 
     public void setDeviceService(DeviceService deviceService) {
         this.deviceService = deviceService;
+    }
+
+    public void setRuleServiceSupport(RuleServiceSupport ruleServiceSupport) {
+        this.ruleServiceSupport = ruleServiceSupport;
+    }
+
+    public void setSubscriptionCampaignRepository(SubscriptionCampaignRepository subscriptionCampaignRepository) {
+        this.subscriptionCampaignRepository = subscriptionCampaignRepository;
+    }
+
+    public enum PromotionTriggerType implements TriggerType {
+        AUTO_OPT_IN;
+    }
+
+    public void init(){
+        Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
+        SortedSet<Rule> rules = new TreeSet<Rule>(new RuleServiceSupport.RuleComparator());
+
+        String campaign3GPromoCode = messageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.3g.promoCode", null, null);
+        String campaign4GPromoCode = messageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.4g.promoCode", null, null);
+
+        Promotion promotion3G = getActivePromotion(campaign3GPromoCode, O2_COMMUNITY_REWRITE_URL);
+        Promotion promotion4G = getActivePromotion(campaign4GPromoCode, O2_COMMUNITY_REWRITE_URL);
+
+        Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
+        Matcher<User> isTheSameLastPromo = is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()));
+        Matcher<User> is3G = is(userTariff(), equalTo(_3G));
+        Matcher<User> is4G = is(userTariff(), equalTo(_4G));
+
+        Matcher<User> root3GPromotionUserMatcher = and(isInCampaignTable, not(isTheSameLastPromo), is3G);
+        PromotionRule promotionRule = new PromotionRule(root3GPromotionUserMatcher, 10, promotion3G);
+        rules.add(promotionRule);
+
+        Matcher<User> root4GPromotionUserMatcher = and(isInCampaignTable, not(isTheSameLastPromo), is4G);
+        PromotionRule promotion4GRule = new PromotionRule(root4GPromotionUserMatcher, 9, promotion4G);
+        rules.add(promotion4GRule);
+
+        actionRules.put(AUTO_OPT_IN, rules);
+        ruleServiceSupport = new RuleServiceSupport(actionRules);
+    }
+
+    public UserDetailHolder<Integer> userLastPromoCodeId() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Integer>() {
+            @Override
+            public Integer getUserDetail(User user) {
+                return  isNotNull(user.getLastPromo()) ? user.getLastPromo().getId() : null;
+            }
+        };
+    }
+
+    public UserDetailHolder<Tariff> userTariff() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Tariff>() {
+            @Override
+            public Tariff getUserDetail(User user) {
+                return  user.getTariff();
+            }
+        };
     }
 
     static class PromoParams {
@@ -108,7 +186,7 @@ public class PromotionService {
 		notNull(communityName, "The parameter communityName is null");
         LOGGER.info("Get active promotion for promo code {}, community {}", promotionCode, communityName);
 
-		Community community = CommunityDao.getMapAsNames().get(communityName);
+		Community community = communityService.getCommunityByName(communityName);
 
 		UserGroup userGroup = entityService.findByProperty(UserGroup.class,	UserGroup.Fields.communityId.toString(), community.getId());
 
@@ -474,6 +552,11 @@ public class PromotionService {
         }
     }
 
+    public Promotion getPromotionFromRuleForAutoOptIn(User user) {
+        RuleResult<Promotion> ruleResult = ruleServiceSupport.fireRules(AUTO_OPT_IN, user);
+        return ruleResult.getResult();
+    }
+
     private String communityName(User user) {
         UserGroup userGroup = user.getUserGroup();
         Community community = userGroup.getCommunity();
@@ -482,5 +565,9 @@ public class PromotionService {
 
     private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
         return isNotNull(promoCode) && promoCode.forVideoAndAudio();
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
     }
 }

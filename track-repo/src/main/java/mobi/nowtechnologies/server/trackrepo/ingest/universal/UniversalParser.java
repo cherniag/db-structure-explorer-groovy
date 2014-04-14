@@ -21,10 +21,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static java.util.Locale.ENGLISH;
+
 public class UniversalParser extends IParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(UniversalParser.class);
     private PeriodFormatter durationFormatter;
-    protected SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", ENGLISH);
     protected SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 
     public UniversalParser(String root) throws FileNotFoundException {
@@ -150,6 +152,7 @@ public class UniversalParser extends IParser {
                 startDate = dateFormat.parse(releaseDate);
             }
         } catch (ParseException e) {
+            LOGGER.warn(e.getMessage(), e);
         }
 
         return startDate;
