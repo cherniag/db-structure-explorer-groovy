@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 
+import static mobi.nowtechnologies.server.user.rules.RuleResult.FAIL_RESULT;
+
 /**
  * Author: Gennadii Cherniaiev
  * Date: 4/10/2014
@@ -24,7 +26,7 @@ public class RuleServiceSupport {
         SortedSet<Rule> rules = actionRules.get(actionType);
         LOGGER.info("Found {} rules for trigger type {}", rules == null ? "null" : rules.size(), actionType);
         if(rules == null){
-            return RuleResult.FAIL_RESULT;
+            return FAIL_RESULT;
         }
         for (Rule rule : rules) {
             LOGGER.info("Evaluating rule {}", rule);
@@ -32,7 +34,7 @@ public class RuleServiceSupport {
                 return rule.getResult();
             }
         }
-        return RuleResult.FAIL_RESULT;
+        return FAIL_RESULT;
     }
 
     public static class RuleComparator implements Comparator<Rule> {
