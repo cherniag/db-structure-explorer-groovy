@@ -1597,11 +1597,12 @@ public class UserService {
     private User  autoOptIn(User user, String otac) {
         LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
+        User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
+
+        user.withOldUser(mobileUser);
         if(!autoOptInRuleService.isSubjectToAutoOptIn(ALL, user)) {
             throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
         }
-
-        User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
         boolean isPromotionApplied;
         if(isNotBlank(otac)){

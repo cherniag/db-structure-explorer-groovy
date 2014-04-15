@@ -45,6 +45,11 @@ public class Community implements Serializable {
     public Community() {
     }
 
+    public Community withId(Integer id) {
+        setId(id);
+        return  this;
+    }
+
     public Community withRewriteUrl(String url){
         setRewriteUrlParameter(url);
         return  this;
@@ -148,5 +153,4 @@ public class Community implements Serializable {
                 .append("rewriteUrlParameter", rewriteUrlParameter)
                 .toString();
     }
-
 }

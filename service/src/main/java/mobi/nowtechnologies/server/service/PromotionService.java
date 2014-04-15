@@ -114,7 +114,7 @@ public class PromotionService {
         AUTO_OPT_IN;
     }
 
-    public void init(){
+    public RuleServiceSupport init(){
         Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
         SortedSet<Rule> rules = new TreeSet<Rule>(new RuleServiceSupport.RuleComparator());
 
@@ -138,7 +138,7 @@ public class PromotionService {
         rules.add(promotion4GRule);
 
         actionRules.put(AUTO_OPT_IN, rules);
-        ruleServiceSupport = new RuleServiceSupport(actionRules);
+        return new RuleServiceSupport(actionRules);
     }
 
     public UserDetailHolder<Integer> userLastPromoCodeId() {
