@@ -45,7 +45,7 @@ public class AutoOptInRuleService {
     }
 
     public enum AutoOptInTriggerType implements TriggerType {
-        ALL;
+        ALL, EMPTY;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoOptInRuleService.class);

@@ -1783,8 +1783,7 @@ public class UserService {
         LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
         User userInTransaction = findById(user.getId()); // using this to have the user updated
         promotionService.activateVideoAudioFreeTrial(userInTransaction);
-
-        if ( userInTransaction.isSubjectToAutoOptIn() ) {
+        if ( autoOptInRuleService.isSubjectToAutoOptIn(EMPTY, user)) {
             paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
         }
     }
