@@ -16,7 +16,6 @@ import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher;
-import mobi.nowtechnologies.server.user.criteria.IsEligibleForDirectPaymentUserMatcher;
 import mobi.nowtechnologies.server.user.criteria.IsInCampaignTableUserMatcher;
 import mobi.nowtechnologies.server.user.criteria.Matcher;
 import mobi.nowtechnologies.server.user.rules.*;
