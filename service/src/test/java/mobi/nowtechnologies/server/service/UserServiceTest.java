@@ -3371,6 +3371,7 @@ public class UserServiceTest {
 //    }
 
     @Test
+    @Ignore
     public void shouldAutoOptInPromoCampaignUser() {
         //given
         String userToken="";
