@@ -8,16 +8,12 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.filter.FreeTrialPeriodFilter;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
-import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
+import mobi.nowtechnologies.server.service.configuration.ConfigurationAwareService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ContractChannel;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher;
-import mobi.nowtechnologies.server.user.criteria.IsInCampaignTableUserMatcher;
-import mobi.nowtechnologies.server.user.criteria.Matcher;
 import mobi.nowtechnologies.server.user.rules.*;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -51,7 +47,7 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRED;
  * @author Titov Mykhaylo (titov)
  *
  */
-public class PromotionService {
+public class PromotionService extends ConfigurationAwareService <PromotionService.PromotionTriggerType,Promotion> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionService.class);
 
@@ -64,8 +60,6 @@ public class PromotionService {
     private PromotionRepository promotionRepository;
     private UserBannedRepository userBannedRepository;
     private DeviceService deviceService;
-    private RuleServiceSupport ruleServiceSupport;
-    private SubscriptionCampaignRepository subscriptionCampaignRepository;
     private CommunityService communityService;
 
     public void setEntityService(EntityService entityService) {
@@ -96,62 +90,8 @@ public class PromotionService {
         this.deviceService = deviceService;
     }
 
-    public void setRuleServiceSupport(RuleServiceSupport ruleServiceSupport) {
-        this.ruleServiceSupport = ruleServiceSupport;
-    }
-
-    public void setSubscriptionCampaignRepository(SubscriptionCampaignRepository subscriptionCampaignRepository) {
-        this.subscriptionCampaignRepository = subscriptionCampaignRepository;
-    }
-
-    public enum PromotionTriggerType implements TriggerType {
+    public static enum PromotionTriggerType implements TriggerType {
         AUTO_OPT_IN;
-    }
-
-    public RuleServiceSupport init(){
-        Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
-        SortedSet<Rule> rules = new TreeSet<Rule>(new RuleServiceSupport.RuleComparator());
-
-        String campaign3GPromoCode = messageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.3g.promoCode", null, null);
-        String campaign4GPromoCode = messageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.4g.promoCode", null, null);
-
-        Promotion promotion3G = getActivePromotion(campaign3GPromoCode, O2_COMMUNITY_REWRITE_URL);
-        Promotion promotion4G = getActivePromotion(campaign4GPromoCode, O2_COMMUNITY_REWRITE_URL);
-
-        Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
-        Matcher<User> isTheSame3GLastPromo = is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()));
-        Matcher<User> isTheSame4GLastPromo = is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId()));
-        Matcher<User> is3G = is(userTariff(), equalTo(_3G));
-        Matcher<User> is4G = is(userTariff(), equalTo(_4G));
-
-        Matcher<User> root3GPromotionUserMatcher = and(isInCampaignTable, not(isTheSame3GLastPromo), is3G);
-        PromotionRule promotionRule = new PromotionRule(root3GPromotionUserMatcher, 10, promotion3G);
-        rules.add(promotionRule);
-
-        Matcher<User> root4GPromotionUserMatcher = and(isInCampaignTable, not(isTheSame4GLastPromo), is4G);
-        PromotionRule promotion4GRule = new PromotionRule(root4GPromotionUserMatcher, 9, promotion4G);
-        rules.add(promotion4GRule);
-
-        actionRules.put(AUTO_OPT_IN, rules);
-        return new RuleServiceSupport(actionRules);
-    }
-
-    public UserDetailHolder<Integer> userLastPromoCodeId() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<Integer>() {
-            @Override
-            public Integer getUserDetail(User user) {
-                return  isNotNull(user.getLastPromo()) ? user.getLastPromo().getId() : null;
-            }
-        };
-    }
-
-    public UserDetailHolder<Tariff> userTariff() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<Tariff>() {
-            @Override
-            public Tariff getUserDetail(User user) {
-                return  user.getTariff();
-            }
-        };
     }
 
     static class PromoParams {
@@ -547,7 +487,7 @@ public class PromotionService {
     }
 
     public Promotion getPromotionFromRuleForAutoOptIn(User user) {
-        RuleResult<Promotion> ruleResult = ruleServiceSupport.fireRules(AUTO_OPT_IN, user);
+        RuleResult<Promotion> ruleResult = getRuleServiceSupport().fireRules(AUTO_OPT_IN, user);
         return ruleResult.getResult();
     }
 

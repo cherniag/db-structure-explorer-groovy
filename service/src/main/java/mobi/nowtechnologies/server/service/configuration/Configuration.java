@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.user.criteria.*;
 import mobi.nowtechnologies.server.user.rules.Rule;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.valueOf;
 
 public abstract class Configuration <TType extends TriggerType, V, BuilderType extends RuleBuilder<?, V> > implements InitializingBean {
@@ -87,6 +89,24 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
         return new OldUserMatcher(matcher);
     }
     //user details
+
+    public CallBackUserDetailsMatcher.UserDetailHolder<Integer> userLastPromoCodeId() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Integer>("user.LastPromoCodeId") {
+            @Override
+            public Integer getUserDetail(User user) {
+                return  isNotNull(user.getLastPromo()) ? user.getLastPromo().getId() : null;
+            }
+        };
+    }
+
+    public CallBackUserDetailsMatcher.UserDetailHolder<Tariff> userTariff() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Tariff>("user.tariff") {
+            @Override
+            public Tariff getUserDetail(User user) {
+                return  user.getTariff();
+            }
+        };
+    }
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<String> userDeviceTypeName() {
         return new CallBackUserDetailsMatcher.UserDetailHolder<String>("user.deviceType") {

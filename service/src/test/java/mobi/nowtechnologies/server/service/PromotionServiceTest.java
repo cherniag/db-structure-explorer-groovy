@@ -104,7 +104,12 @@ public class PromotionServiceTest {
 
     @Before
 	public void before() {
-		promotionServiceSpy = spy(new PromotionService());
+		promotionServiceSpy = spy(new PromotionService(){
+            @Override
+            public RuleServiceSupport<PromotionTriggerType> getRuleServiceSupport() {
+                return ruleServiceSupportMock;
+            }
+        });
 			when(entityServiceMock.updateEntity(any(Object.class))).thenAnswer(new Answer<Object>() {
                 @Override
                 public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -119,8 +124,7 @@ public class PromotionServiceTest {
         promotionServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setDeviceService(deviceServiceMock);
-        promotionServiceSpy.setRuleServiceSupport(ruleServiceSupportMock);
-	}
+  	}
 	
 	@Test
 	public void applyPromotion() {

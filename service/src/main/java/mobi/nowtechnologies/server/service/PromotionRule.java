@@ -1,9 +1,11 @@
-package mobi.nowtechnologies.server.user.rules;
+package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.user.criteria.Matcher;
+import mobi.nowtechnologies.server.user.rules.Rule;
+import mobi.nowtechnologies.server.user.rules.RuleResult;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 

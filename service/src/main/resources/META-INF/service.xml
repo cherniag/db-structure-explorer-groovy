@@ -167,7 +167,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="mediaLogTypeDao" ref="persistence.MediaLogTypeDao" />
 	</bean>
 
-	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" init-method="init">
+	<bean id="service.PromotionService" class="mobi.nowtechnologies.server.service.PromotionService" >
 		<property name="entityService" ref="service.EntityService" />
 		<property name="promotionDao" ref="persistence.PromotionDao" />
         <property name="promotionRepository" ref="promotionRepository" />
@@ -175,9 +175,17 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="messageSource" ref="serviceMessageSource" />
         <property name="userBannedRepository" ref="userBannedRepository" />
         <property name="deviceService" ref="service.DeviceService" />
+        <property name="communityService" ref="service.communityService"/>
+        <property name="configuration" ref="configuration.PromotionService"/>
+    </bean>
+
+    <bean id="configuration.PromotionService" class="mobi.nowtechnologies.server.service.PromotionConfiguration">
+        <property name="entityService" ref="service.EntityService" />
+        <property name="promotionRepository" ref="promotionRepository" />
+        <property name="messageSource" ref="serviceMessageSource" />
         <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
         <property name="communityService" ref="service.communityService"/>
-	</bean>
+    </bean>
 
 	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
 		<property name="mailSender" ref="service.MailSender" />

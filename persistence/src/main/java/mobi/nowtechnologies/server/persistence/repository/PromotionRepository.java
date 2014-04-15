@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface PromotionRepository extends JpaRepository<Promotion, String> {
+public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
 
     @Query(value = "select promotion from Promotion promotion " +
             "join promotion.promoCode promoCode " +
