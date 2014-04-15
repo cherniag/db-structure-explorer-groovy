@@ -13,16 +13,15 @@ import static junit.framework.Assert.assertTrue;
 
 
 /**
- * The class <code>MessageRepositoryTest</code> contains tests for the class <code>{@link MessageRepository}</code>.
- *
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
- * @generatedBy CodePro at 16.05.12 11:10
  */
 public class MessageRepositoryTest extends AbstractRepositoryIT {
 
     @Resource(name = "messageRepository")
     private MessageRepository messageRepository;
+
+    @Resource(name = "communityRepository")
+    private CommunityRepository communityRepository;
 
     @Test
     public void testCount() {
@@ -38,7 +37,7 @@ public class MessageRepositoryTest extends AbstractRepositoryIT {
 
     @Test
     public void findMaxPosition() {
-        Community community = CommunityDao.getCommunity("Now Music");
+        Community community = communityRepository.findByName("Now Music");
         Integer position = messageRepository.findMaxPosition(community, MessageType.NEWS, 1315686788000L);
         assertNotNull(position);
     }

@@ -539,48 +539,6 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = REQUIRED)
-    public User registerUserWithoutPersonalInfo(UserRegInfo userRegInfo) {
-        if (userRegInfo == null)
-            throw new ServiceException("The parameter userRegInfo is null");
-
-        String countryFullName = userRegInfo.getCountryFullName();
-
-        if (userRegInfo.getTitle() == null)
-            userRegInfo.setTitle("");
-        if (userRegInfo.getFirstName() == null)
-            userRegInfo.setFirstName("");
-        if (userRegInfo.getLastName() == null)
-            userRegInfo.setLastName("");
-        if (countryFullName == null || countryFullName.isEmpty())
-            userRegInfo.setCountryFullName("Great Britain");
-        if (userRegInfo.getCity() == null)
-            userRegInfo.setCity("");
-        if (userRegInfo.getAddress() == null)
-            userRegInfo.setAddress("");
-        if (userRegInfo.getPostCode() == null)
-            userRegInfo.setPostCode("");
-        if (userRegInfo.getNewsByEmail() == null)
-            userRegInfo.setNewsByEmail(Boolean.FALSE);
-        if (userRegInfo.getPhoneNumber() == null) {
-            userRegInfo.setPhoneNumber("");
-        } else {
-            userRegInfo.setPhoneNumber(convertPhoneNumberFromInternationalToGreatBritainFormat(userRegInfo.getPhoneNumber()));
-        }
-
-        UserRegInfoValidator.validateWhitoutPersonalInfo(userRegInfo);
-
-        final String ipAddress = userRegInfo.getIpAddress();
-        userRegInfo.setCountryCodeByIpAddress(findCountryCodeByIp(ipAddress));
-
-        validateCountry(userRegInfo.getAppVersion(), userRegInfo.getCountryCodeByIpAddress());
-
-        User user = continueRegistration(userRegInfo);
-        LOGGER.debug("Output parameter user=[{}]", user);
-        promotionService.assignPotentialPromotion(user);
-        return user;
-    }
-
     private String findCountryCodeByIp(String ipAddress) {
         LOGGER.debug("input parameters ipAddress: [{}]", ipAddress);
 
@@ -627,17 +585,6 @@ public class UserService {
         User user = userDao.findByNameAndCommunity(userName, communityName);
         LOGGER.debug("Output parameter user=[{}]", user);
         return user;
-    }
-
-    private void validateCountry(String appVersion, String countryCode) {
-        if (appVersion == null)
-            throw new ServiceException("The parameter appVersion is null");
-        if (countryCode == null)
-            throw new ServiceException("The parameter countryCode is null");
-
-        boolean isValid = countryAppVersionService.isAppVersionLinkedWithCountry(appVersion, countryCode);
-        if (!isValid)
-            throw ValidationException.getInstance("registerUser.command.error.unsupportedCountry");
     }
 
     @Transactional(propagation = REQUIRED)
@@ -751,107 +698,6 @@ public class UserService {
         userRepository.updateFields(storedToken, userId);
 
         LOGGER.debug("output parameters changePassword(Integer userId, String newPassword): [{}]", new Object[]{user});
-        return user;
-    }
-
-    private User getUser(UserRegInfo userRegInfo) {
-        if (userRegInfo == null)
-            throw new ServiceException("The parameter userRegInfo is null");
-
-        LOGGER.debug("input parameters userRegInfo: [{}]",
-                new Object[] { userRegInfo });
-
-        final String userName = userRegInfo.getEmail().toLowerCase();
-        final String communityName = userRegInfo.getCommunityName();
-
-        String deviceType = userRegInfo.getDeviceType();
-        byte deviceTypeId;
-        if (StringUtils.hasText(deviceType)) {
-            deviceTypeId = deviceTypeService.findIdByName(deviceType);
-        } else {
-            deviceTypeId = DeviceTypeDao.getNoneDeviceType().getI();
-        }
-
-        User user = new User();
-        user.setDisplayName(userRegInfo.getDisplayName());
-        user.setTitle(userRegInfo.getTitle());
-        user.setFirstName(userRegInfo.getFirstName());
-        user.setLastName(userRegInfo.getLastName());
-        user.setUserName(userName);
-        user.setToken(userRegInfo.getStoredToken());
-        user.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get(deviceTypeId));
-        user.setDeviceString(userRegInfo.getDeviceString());
-        user.setDevice("");
-        int communityId = CommunityDao.getCommunityId(communityName);
-        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityId));
-        user.setAddress1(userRegInfo.getAddress());
-        user.setAddress2(userRegInfo.getAddress());
-        user.setCity(userRegInfo.getCity());
-        user.setPostcode(userRegInfo.getPostCode());
-        user.setCountry(countryService.findIdByFullName(userRegInfo
-                .getCountryFullName()));
-
-        String phoneNumber = userRegInfo.getPhoneNumber();
-        if (phoneNumber == null || phoneNumber.equalsIgnoreCase("null"))
-            userRegInfo.setPhoneNumber("");
-
-        user.setPin("");
-        user.setMobile(userRegInfo.getPhoneNumber());
-        user.setCode("");
-        user.setSessionID("");
-        user.setIpAddress(userRegInfo.getIpAddress());
-        user.setTempToken("");
-        user.setCanContact(userRegInfo.getNewsByEmail());
-
-        user.setOperator(userRegInfo.getOperator());
-
-        if (0 == user.getOperator()) {
-            Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
-            user.setOperator(entry.getKey());
-        }
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-
-    }
-
-    @Transactional(propagation = REQUIRED)
-    private User continueRegistration(UserRegInfo userRegInfo) {
-        if (userRegInfo == null)
-            throw new ServiceException("The parameter userRegInfo is null");
-
-        LOGGER.debug("input parameters userRegInfo: [{}]",
-                new Object[]{userRegInfo});
-
-        final String userName = userRegInfo.getEmail().toLowerCase();
-        final String communityName = userRegInfo.getCommunityName();
-        User user = findByNameAndCommunity(userName, communityName);
-
-        if (user != null) {
-            throw new ServiceException("User with user name [" + userName + "] and community name [" + communityName + "] already registered");
-        }
-
-        user = getUser(userRegInfo);
-        String promotionCode = userRegInfo.getPromotionCode();
-
-        if (promotionCode == null || promotionCode.isEmpty()) {
-            Community community = CommunityDao.getMapAsNames().get(communityName);
-            user.setStatus(UserStatusDao.getEulaUserStatus());
-
-            entityService.saveEntity(user);
-
-            createPaymentDetails(userRegInfo, user, community);
-        } else {
-            user.setStatus(UserStatusDao.getSubscribedUserStatus());
-
-            entityService.saveEntity(user);
-
-            promotionService.applyPromotionByPromoCode(user, promotionCode);
-        }
-
-        user.setCode(Utils.getOTACode(user.getId(), user.getUserName()));
-
-        LOGGER.debug("Output parameter user=[{}]", user);
         return user;
     }
 
