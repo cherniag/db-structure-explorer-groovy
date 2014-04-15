@@ -193,7 +193,7 @@ public class PromotionService {
         return promotion;
 	}
 
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation= REQUIRED)
 	public Promotion getPromotionForUser(final String communityName, User user) {
 		LOGGER.debug("input parameters communityName, user: [{}], [{}]", communityName, user);
 		
@@ -230,7 +230,7 @@ public class PromotionService {
 		return resPromotion;
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation= REQUIRED)
 	public User applyPromotion(User user) {
 		if (null != user.getPotentialPromotion()) {
 			user.setPotentialPromotion(null);
@@ -244,7 +244,7 @@ public class PromotionService {
 		return user;
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation= REQUIRED)
 	public synchronized Promotion incrementUserNumber(Promotion promotion) {
 		if (null != promotion) {
 			promotion.setNumUsers(promotion.getNumUsers()+1);
@@ -253,7 +253,7 @@ public class PromotionService {
 		return null;
 	}
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public boolean applyPotentialPromo(User user){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
@@ -264,7 +264,7 @@ public class PromotionService {
         return isPromotionApplied;
     }
     
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User activateVideoAudioFreeTrial(User user){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
@@ -350,7 +350,7 @@ public class PromotionService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public boolean updatePromotionNumUsers(Promotion promotion) {
         int updatedRowsCount = promotionRepository.updatePromotionNumUsers(promotion);
         if (updatedRowsCount!=1){
