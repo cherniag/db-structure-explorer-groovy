@@ -30,10 +30,6 @@ public class AndMatcher<T> implements Matcher<T> {
         return true;
     }
 
-    public static <T> AndMatcher<T> and(Matcher<T> ... matchers){
-        return new AndMatcher<T>(matchers);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)

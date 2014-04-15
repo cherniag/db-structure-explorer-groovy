@@ -42,14 +42,8 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
-import static mobi.nowtechnologies.server.user.criteria.AndMatcher.and;
+import static mobi.nowtechnologies.server.service.configuration.Configuration.*;
 import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.UserDetailHolder;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.is;
-import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
-import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.equalTo;
-import static mobi.nowtechnologies.server.user.criteria.ExactMatchStrategy.nullValue;
-import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
-import static mobi.nowtechnologies.server.user.criteria.NotMatcher.not;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 

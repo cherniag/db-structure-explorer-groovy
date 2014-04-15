@@ -30,10 +30,6 @@ public class OrMatcher<T> implements Matcher<T> {
         return false;
     }
 
-    public static <T> OrMatcher<T> or(Matcher<T> ... matchers){
-        return new OrMatcher<T>(matchers);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)

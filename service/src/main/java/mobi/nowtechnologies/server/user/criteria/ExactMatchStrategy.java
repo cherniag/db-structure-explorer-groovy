@@ -19,18 +19,6 @@ public class ExactMatchStrategy<T> implements MatchStrategy<T> {
         return first == this.second.getValue() || first!=null && first.equals(this.second.getValue());
     }
 
-    public static <T> ExactMatchStrategy<T> equalTo(ExpectedValueHolder<T> second){
-        return new ExactMatchStrategy<T>(second);
-    }
-
-    public static <T> ExactMatchStrategy<T> equalTo(T second){
-        return new ExactMatchStrategy<T>(valueOf(second));
-    }
-
-    public static <T> ExactMatchStrategy<T> nullValue(Class<T> clazz){
-        return new ExactMatchStrategy<T>(valueOf((T)null));
-    }
-
     @Override
     public String toString() {
         return new StringBuilder()

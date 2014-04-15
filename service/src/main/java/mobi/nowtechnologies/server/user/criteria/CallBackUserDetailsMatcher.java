@@ -31,10 +31,6 @@ public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
                 .toString();
     }
 
-    public static <T> CallBackUserDetailsMatcher<T> is(UserDetailHolder<T> userDetailHolder, MatchStrategy<T> matchStrategy){
-        return new CallBackUserDetailsMatcher<T>(userDetailHolder, matchStrategy);
-    }
-
     public static abstract class UserDetailHolder<T>{
         private String detailName;
 

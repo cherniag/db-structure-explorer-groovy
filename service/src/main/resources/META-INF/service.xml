@@ -520,7 +520,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="activationEmailService" ref="service.ActivationEmailService"/>
     </bean>
 
-    <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.rules.AutoOptInRuleService" init-method="init">
+    <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService">
+        <property name="configuration" ref="configuration.AutoOptIn"/>
+    </bean>
+
+    <bean id="configuration.AutoOptIn" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInConfiguration">
         <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
     </bean>
 

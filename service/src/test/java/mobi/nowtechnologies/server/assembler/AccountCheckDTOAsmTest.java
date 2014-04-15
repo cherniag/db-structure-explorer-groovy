@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
+import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 import org.junit.Before;
@@ -14,7 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
+import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static org.mockito.Mockito.*;
 
 public class AccountCheckDTOAsmTest {
@@ -57,8 +57,12 @@ public class AccountCheckDTOAsmTest {
         when(userGroup.getDrmPolicy()).thenReturn(drmPolicy);
         when(drmPolicy.getDrmType()).thenReturn(drmType);
 
-        autoOptInRuleService = new AutoOptInRuleService();
-        autoOptInRuleService.setRuleServiceSupport(ruleServiceSupport);
+        autoOptInRuleService = new AutoOptInRuleService(){
+            @Override
+            public RuleServiceSupport<AutoOptInTriggerType> getRuleServiceSupport() {
+                return ruleServiceSupport;
+            }
+        };
         accountCheckDTOAsm.setAutoOptInRuleService(autoOptInRuleService);
     }
 
