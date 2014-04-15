@@ -19,6 +19,7 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
+import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.EMPTY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -202,6 +203,21 @@ public class AutoOptInRuleServiceIT {
         user.setLastPromo(null);
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(true));
+    }
+
+    @Test
+    public void checkWithLegacyIsSubjectToAutoOptInForEMPTYTriggerType() throws Exception {
+        User user = createMatchingUser();
+        //fail rules
+        user.setStatus(new UserStatus(UserStatus.SUBSCRIBED));
+        //make user.isSubjectToAutoOptIn() to return true (isAutoOptInEnabled && isNull(oldUser) && isO24GConsumer() && !isLastPromoForVideoAndAudio() )
+        user.withAutoOptInEnabled(true);
+        user.withOldUser(null);
+        user.setSegment(SegmentType.CONSUMER);
+        user.setLastPromo(null);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(EMPTY, user);
         assertThat(ruleResult, is(true));
     }
 
