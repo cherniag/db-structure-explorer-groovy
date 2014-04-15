@@ -161,7 +161,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<User> oldUser() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<User>("oldUser") {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<User>("user.oldUser") {
             @Override
             public User getUserDetail(User user) {
                 return user.getOldUser();
