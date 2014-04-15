@@ -1748,8 +1748,7 @@ public class UserService {
         return autoOptIn(user, otac);
     }
 
-    @Transactional(propagation = REQUIRED)
-    public User  autoOptIn(User user, String otac) {
+    private User  autoOptIn(User user, String otac) {
         LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
         if(!autoOptInRuleService.isSubjectToAutoOptIn(ALL, user)) {
