@@ -1431,6 +1431,11 @@ public class User implements Serializable {
         return oldUser.getId();
     }
 
+    public User withId(Integer id){
+        this.id = id;
+        return this;
+    }
+
     public User withAutoOptInEnabled(boolean isAutoOptInEnabled) {
         this.isAutoOptInEnabled = isAutoOptInEnabled;
         return this;

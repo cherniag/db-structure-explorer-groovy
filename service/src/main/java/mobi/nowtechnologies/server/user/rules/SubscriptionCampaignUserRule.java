@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.user.criteria.Matcher;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 /**
  * Author: Gennadii Cherniaiev
  * Date: 4/9/2014
@@ -41,7 +43,7 @@ public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
                 .append("rootMatcher", rootMatcher)
                 .append("isValid", isValid)
                 .append("rulePriority", rulePriority)

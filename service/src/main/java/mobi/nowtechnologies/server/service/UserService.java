@@ -59,8 +59,10 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
@@ -124,6 +126,24 @@ public class UserService {
         this.autoOptInRuleService = autoOptInRuleService;
     }
 
+    private static class PromoRequest {
+        public User user;
+        public final User mobileUser;
+        public final String otac;
+        public final boolean isMajorApiVersionNumberLessThan4;
+        public final boolean isApplyingWithoutEnterPhone;
+        public final boolean isSubjectToAutoOptIn;
+
+        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn) {
+            this.user = user;
+            this.mobileUser = mobileUser;
+            this.otac = otac;
+            this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
+            this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
+            this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
+        }
+    }
+
     private User checkAndMerge(User user, User mobileUser) {
         if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
             user = mergeUser(mobileUser, user);
@@ -137,12 +157,14 @@ public class UserService {
         LOGGER.info("Attempt to update user contract and provider with [{}]", providerUserDetails);
         if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
             user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
-        }else if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
-            user.setContract(Contract.PAYM);
-            user.setProvider(ProviderType.O2);
-        }else{
-            user.setContract(Contract.valueOf(providerUserDetails.contract));
-            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+        }else {
+            if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity())) {
+                user.setContract(PAYM);
+                user.setProvider(O2);
+            } else {
+                user.setContract(Contract.valueOf(providerUserDetails.contract));
+                user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+            }
         }
         return user;
     }
@@ -153,20 +175,19 @@ public class UserService {
     }
 
     private boolean applyInitPromoInternal(PromoRequest promoRequest){
-        User user = promoRequest.user;
         User mobileUser = promoRequest.mobileUser;
 
-        boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
-        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, user.getMobile(), user.getUserGroup().getCommunity());
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
+        boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || promoRequest.user.isVFNZCommunityUser();
+        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, promoRequest.user.getMobile(), promoRequest.user.getUserGroup().getCommunity());
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, promoRequest.user.getContract(), promoRequest.user.getMobile(), promoRequest.user.getOperator(), promoRequest.user.getActivationStatus(), updateWithProviderUserDetails);
 
-        user= checkAndMerge(user, mobileUser);
-        user= checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
+        promoRequest.user= checkAndMerge(promoRequest.user, mobileUser);
+        promoRequest.user= checkAndUpdateWithProviderUserDetails(promoRequest.user, updateWithProviderUserDetails, providerUserDetails);
 
         boolean hasPromo = checkAndApplyPromo(promoRequest);
 
-        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
-        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
+        promoRequest.user = userRepository.save(promoRequest.user.withActivationStatus(ACTIVATED).withUserName(promoRequest.user.getMobile()));
+        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", promoRequest.user);
 
         LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
         return hasPromo;
@@ -1777,29 +1798,10 @@ public class UserService {
         User user;
         if (isValidDeviceUID(deviceUID)) {
             user = checkCredentials(userName, userToken, timestamp, community, deviceUID);
-        }
-        else {
+        }else {
             user = checkCredentials(userName, userToken, timestamp, community);
         }
         checkActivationStatus(user, activationStatuses);
         return user;
-    }
-
-    private static class PromoRequest {
-        public User user;
-        public final User mobileUser;
-        public final String otac;
-        public final boolean isMajorApiVersionNumberLessThan4;
-        public final boolean isApplyingWithoutEnterPhone;
-        public final boolean isSubjectToAutoOptIn;
-
-        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn) {
-            this.user = user;
-            this.mobileUser = mobileUser;
-            this.otac = otac;
-            this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
-            this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
-            this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
-        }
     }
 }

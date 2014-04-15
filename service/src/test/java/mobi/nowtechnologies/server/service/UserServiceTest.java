@@ -36,6 +36,7 @@ import mobi.nowtechnologies.server.user.rules.AutoOptInRuleService;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -56,6 +57,8 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Collections.singletonMap;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.UserStatusFactory.createUserStatus;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
@@ -70,6 +73,7 @@ import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
+import static mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static mobi.nowtechnologies.server.user.rules.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static org.hamcrest.CoreMatchers.is;
@@ -303,7 +307,7 @@ public class UserServiceTest {
 		int nextSubPayment = Utils.getEpochSeconds() + 24 * 60 * 60;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(3);
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L + 200000L));
@@ -357,7 +361,7 @@ public class UserServiceTest {
 		final int originalSubBalance = 2;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(3);
 		userDto.setNextSubPayment(new Date());
@@ -409,7 +413,7 @@ public class UserServiceTest {
 		final int nextSubPayment = 5;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(3);
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
@@ -461,7 +465,7 @@ public class UserServiceTest {
 		final int nextSubPayment = 5;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(originalSubBalance);
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
@@ -514,7 +518,7 @@ public class UserServiceTest {
 		final int nextSubPayment = 5;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(originalSubBalance);
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
@@ -567,7 +571,7 @@ public class UserServiceTest {
 		final int nextSubPayment = 5;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(originalSubBalance);
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
@@ -617,7 +621,7 @@ public class UserServiceTest {
 		final int originalSubBalance = 2;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(3);
 		userDto.setNextSubPayment(new Date(2L));
@@ -658,7 +662,7 @@ public class UserServiceTest {
 		final int originalSubBalance = 2;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(3);
 		userDto.setNextSubPayment(new Date());
@@ -693,7 +697,7 @@ public class UserServiceTest {
 		final int nextSubPayment = 5;
 
 		userDto.setId(5);
-		userDto.setUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
+		userDto.setUserStatus(LIMITED);
 		userDto.setDisplayName("displayName");
 		userDto.setSubBalance(originalSubBalance);
 		userDto.setNextSubPayment(new Date(nextSubPayment * 1000L));
@@ -1315,9 +1319,9 @@ public class UserServiceTest {
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
-        final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-        final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-        final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+        final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+        final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+        final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 
         community.setRewriteUrlParameter("vf_nz");
         userGroup.setCommunity(community);
@@ -1393,9 +1397,9 @@ public class UserServiceTest {
         final UserGroup userGroup = UserGroupFactory.createUserGroup();
         final Community community = CommunityFactory.createCommunity();
 
-        final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-        final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-        final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+        final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+        final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+        final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 
         community.setRewriteUrlParameter(Community.VF_NZ_COMMUNITY_REWRITE_URL);
         userGroup.setCommunity(community);
@@ -1471,9 +1475,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
@@ -1549,9 +1553,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
@@ -1626,9 +1630,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		final int oldNextSubPayment = 2;
 		
@@ -1710,9 +1714,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		final int oldNextSubPayment = 2;
 		
@@ -1794,9 +1798,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		final int oldNextSubPayment = 2;
 		
@@ -1877,9 +1881,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		final int oldSubBalance = 2;
 		final int oldNextSubPayment=0;
@@ -1957,9 +1961,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		final int oldSubBalance = 2;
 		final int nextSubPayment = 1;
@@ -2039,9 +2043,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		community.setRewriteUrlParameter("chartsNow");
 		userGroup.setCommunity(community);
@@ -2116,9 +2120,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
@@ -2199,9 +2203,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
@@ -2294,8 +2298,8 @@ public class UserServiceTest {
 	@Test
 	public void testIsIOsnonO2ItunesSubscribedUser_LIMITED_Success() throws Exception{
 		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
 		
 		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		
@@ -2328,9 +2332,9 @@ public class UserServiceTest {
 		final UserGroup userGroup = UserGroupFactory.createUserGroup();
 		final Community community = CommunityFactory.createCommunity();
 
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus eulaUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus eulaUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.EULA);
 		
 		community.setRewriteUrlParameter("o2");
 		userGroup.setCommunity(community);
@@ -2401,8 +2405,8 @@ public class UserServiceTest {
 	@Test
 	public void testIsIOsnonO2ItunesSubscribedUser_SUBSCRIBED_Success() throws Exception{
 		DeviceType iosDeviceType = DeviceTypeFactory.createDeviceType("IOs");
-		final UserStatus limitedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED);
-		final UserStatus subscribedUserStatus = UserStatusFactory.createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
+		final UserStatus limitedUserStatus = createUserStatus(LIMITED);
+		final UserStatus subscribedUserStatus = createUserStatus(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED);
 		
 		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		
@@ -3201,7 +3205,7 @@ public class UserServiceTest {
         String deviceUID="";
         String otac = "g";
 
-        User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
@@ -3238,7 +3242,7 @@ public class UserServiceTest {
         String deviceUID="";
         String otac = null;
 
-        User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        User expectedUser = new User().withUserName("").withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
@@ -3273,7 +3277,7 @@ public class UserServiceTest {
         String deviceUID="";
         String otac = "";
 
-        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        User expectedUser = new User().withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
@@ -3296,7 +3300,7 @@ public class UserServiceTest {
         String deviceUID="";
         String otac = "";
 
-        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        User expectedUser = new User().withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
         doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
@@ -3318,7 +3322,7 @@ public class UserServiceTest {
         String deviceUID="";
         String otac = "";
 
-        User expectedUser = new User().withProvider(ProviderType.O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        User expectedUser = new User().withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(userName, userToken, timestamp, communityUri, deviceUID);
@@ -3329,6 +3333,85 @@ public class UserServiceTest {
 
         //when
         userServiceSpy.autoOptIn(expectedUser, otac);
+    }
+
+//    @Test
+//    public void shouldAutoOptInPromoCampaignUser() {
+//        //given
+//        String userToken="";
+//        String timestamp="";
+//        String otac = "g";
+//        String userName = "";
+//
+//        User expectedUser = new User().withUserName(userName).withMobile("+380913008199").withDeviceUID("").withUserStatus(createUserStatus(LIMITED)).withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+//        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+//
+//        doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
+//        doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
+//        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
+//        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+//        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+//        doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+//        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
+//        doReturn(expectedUser).when(userRepositoryMock).save(expectedUser);
+//
+//        //when
+//        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+//
+//        //then
+//        assertNotNull(actualUser);
+//        assertEquals(expectedUser, actualUser);
+//
+//        verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, expectedUser);
+//        verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, expectedUser.getCommunityRewriteUrl());
+//        verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser);
+//        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
+//        verify(otacValidationServiceMock, times(1)).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+//        verify(userRepositoryMock, times(1)).save(expectedUser);
+//    }
+
+    @Test
+    public void shouldAutoOptInPromoCampaignUser() {
+        //given
+        String userToken="";
+        String timestamp="";
+        String otac = "g";
+        String userName = "";
+
+        User expectedUser = new User().withId(1).withUserName(userName).withMobile("+380913008199").withDeviceUID("").withUserStatus(createUserStatus(LIMITED)).withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
+        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+
+        doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
+        doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
+        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
+        doReturn(expectedUser).when(userRepositoryMock).save(expectedUser);
+        User mobileUser = new User().withId(2);
+        doReturn(mobileUser).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+
+        doReturn(1).when(userRepositoryMock).deleteUser(expectedUser.getId());
+        doReturn(mobileUser).when(userRepositoryMock).save(mobileUser);
+
+        Promotion promotion = new Promotion();
+        doReturn(promotion).when(promotionServiceMock).getPromotionFromRuleForAutoOptIn(mobileUser);
+        doReturn(true).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
+
+        //when
+        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+
+        //then
+        assertNotNull(actualUser);
+        assertEquals(expectedUser, actualUser);
+
+        verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, expectedUser);
+        verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, expectedUser.getCommunityRewriteUrl());
+        verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser);
+        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
+        verify(otacValidationServiceMock, times(1)).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
+        verify(userRepositoryMock, times(1)).save(expectedUser);
     }
 
     @Test
