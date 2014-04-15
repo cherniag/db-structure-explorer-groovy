@@ -89,7 +89,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     //user details
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<String> userDeviceTypeName() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<String>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<String>("user.deviceType") {
             @Override
             public String getUserDetail(User user) {
                 return user.getDeviceType() != null ? user.getDeviceType().getName() : null;
@@ -98,7 +98,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<SegmentType> userSegment() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<SegmentType>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<SegmentType>("user.segment") {
             @Override
             public SegmentType getUserDetail(User user) {
                 return user.getSegment();
@@ -107,7 +107,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public static   CallBackUserDetailsMatcher.UserDetailHolder<ProviderType> userProviderType() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<ProviderType>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<ProviderType>("user.providerType") {
             @Override
             public ProviderType getUserDetail(User user) {
                 return user.getProvider();
@@ -116,7 +116,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<String> userCommunityRewriteUrl() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<String>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<String>("user.communityRewriteUrl") {
             @Override
             public String getUserDetail(User user) {
                 return user.getCommunityRewriteUrl();
@@ -125,7 +125,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public  static CallBackUserDetailsMatcher.UserDetailHolder<Boolean> userCurrentPaymentDetailsActivated() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<Boolean>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Boolean>("user.paymentDetailsActivated") {
             @Override
             public Boolean getUserDetail(User user) {
                 return user.getCurrentPaymentDetails() != null ? user.getCurrentPaymentDetails().isActivated() : null;
@@ -134,7 +134,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails> userCurrentPaymentDetails() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails>("user.currentPaymentDetails") {
             @Override
             public PaymentDetails getUserDetail(User user) {
                 return user.getCurrentPaymentDetails();
@@ -143,7 +143,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<Long> userFreeTrialExpiredMillis() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<Long>("freeTrialExpiredMillis") {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Long>("user.freeTrialExpiredMillis") {
             @Override
             public Long getUserDetail(User user) {
                 return user.getFreeTrialExpiredMillis();
@@ -152,7 +152,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
     }
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<UserStatus> userStatus() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<UserStatus>("status") {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<UserStatus>("user.status") {
             @Override
             public UserStatus getUserDetail(User user) {
                 return user.getStatus();
