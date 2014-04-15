@@ -87,12 +87,13 @@ public class AutoOptInRuleService {
         rules.add(subscriptionCampaignUserRule);
         actionRules.put(ALL, rules);
         ruleServiceSupport = new RuleServiceSupport(actionRules);
+        LOGGER.info("RuleServiceSupport has been initialized. ActionRules : {}", actionRules);
     }
 
     public boolean isSubjectToAutoOptIn(AutoOptInTriggerType triggerType, User user){
         LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
         RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
-        LOGGER.info("Rule result {}", ruleResult);
+        LOGGER.debug("Rule result {}", ruleResult);
         if(ruleResult.isSuccessful()){
             return ruleResult.getResult();
         } else {
@@ -101,7 +102,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<String> userDeviceTypeName() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<String>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<String>("user.deviceType.name") {
             @Override
             public String getUserDetail(User user) {
                 return user.getDeviceType() != null ? user.getDeviceType().getName() : null;
@@ -110,7 +111,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<SegmentType> userSegment() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<SegmentType>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<SegmentType>("user.segment") {
             @Override
             public SegmentType getUserDetail(User user) {
                 return user.getSegment();
@@ -119,7 +120,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<ProviderType> userProviderType() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<ProviderType>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<ProviderType>("user.provider.type") {
             @Override
             public ProviderType getUserDetail(User user) {
                 return user.getProvider();
@@ -128,7 +129,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<String> userCommunityRewriteUrl() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<String>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<String>("user.communityRewriteUrl") {
             @Override
             public String getUserDetail(User user) {
                 return user.getCommunityRewriteUrl();
@@ -137,7 +138,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<Boolean> userCurrentPaymentDetailsActivated() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<Boolean>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Boolean>("user.currentPaymentDetails.activated") {
             @Override
             public Boolean getUserDetail(User user) {
                 return user.getCurrentPaymentDetails() != null ? user.getCurrentPaymentDetails().isActivated() : null;
@@ -146,7 +147,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails> userCurrentPaymentDetails() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails>() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails>("user.currentPaymentDetails") {
             @Override
             public PaymentDetails getUserDetail(User user) {
                 return user.getCurrentPaymentDetails();
@@ -155,7 +156,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<Long> userFreeTrialExpiredMillis() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<Long>("freeTrialExpiredMillis") {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<Long>("user.freeTrialExpiredMillis") {
             @Override
             public Long getUserDetail(User user) {
                 return user.getFreeTrialExpiredMillis();
@@ -164,7 +165,7 @@ public class AutoOptInRuleService {
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<UserStatus> userStatus() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<UserStatus>("status") {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<UserStatus>("user.status") {
             @Override
             public UserStatus getUserDetail(User user) {
                 return user.getStatus();
