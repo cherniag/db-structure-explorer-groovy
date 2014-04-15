@@ -29,7 +29,7 @@ public class RuleServiceSupport <TT extends TriggerType> {
             return FAIL_RESULT;
         }
         for (Rule rule : rules) {
-            LOGGER.info("Evaluating rule {}", rule);
+            LOGGER.debug("Evaluating rule {}", rule);
             if(rule.isValid() && rule.getRootMatcher().match(arg)) {
                 return rule.getResult();
             }

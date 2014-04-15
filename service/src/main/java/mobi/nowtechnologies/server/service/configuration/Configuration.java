@@ -83,6 +83,9 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
         return new NotMatcher<T>(matcher);
     }
 
+    public static OldUserMatcher withOldUser(Matcher<User> matcher){
+        return new OldUserMatcher(matcher);
+    }
     //user details
 
     public static  CallBackUserDetailsMatcher.UserDetailHolder<String> userDeviceTypeName() {
@@ -153,6 +156,15 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
             @Override
             public UserStatus getUserDetail(User user) {
                 return user.getStatus();
+            }
+        };
+    }
+
+    public static  CallBackUserDetailsMatcher.UserDetailHolder<User> oldUser() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<User>("oldUser") {
+            @Override
+            public User getUserDetail(User user) {
+                return user.getOldUser();
             }
         };
     }

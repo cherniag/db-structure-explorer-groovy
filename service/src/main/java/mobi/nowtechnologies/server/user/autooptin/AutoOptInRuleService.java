@@ -1,10 +1,8 @@
 package mobi.nowtechnologies.server.user.autooptin;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.service.configuration.ConfigurationAwareService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
-import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 import mobi.nowtechnologies.server.user.rules.TriggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +13,6 @@ import org.slf4j.LoggerFactory;
  */
 
 public class AutoOptInRuleService extends ConfigurationAwareService <AutoOptInRuleService.AutoOptInTriggerType, Boolean> {
-
-
 
     public static enum AutoOptInTriggerType implements TriggerType {
         ALL, EMPTY;

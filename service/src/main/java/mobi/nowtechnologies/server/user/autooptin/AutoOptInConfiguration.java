@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.user.autooptin;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.service.configuration.Configuration;
 import mobi.nowtechnologies.server.user.criteria.IsInCampaignTableUserMatcher;
-import mobi.nowtechnologies.server.user.rules.*;
+import mobi.nowtechnologies.server.user.rules.Rule;
+import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 
 import java.util.Map;
 import java.util.SortedSet;
@@ -50,18 +52,22 @@ public class AutoOptInConfiguration extends Configuration<
                 and(
                         //O2 Community
                         is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
-                        //Limit status
-                        is(userStatus(), equalTo(USER_STATUS_LIMITED)),
-                        and(
-                                not(is(userFreeTrialExpiredMillis(), nullValue(Long.class))),
-                                is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()))
-                        ),
-                        or(
-                                is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
-                                is(userCurrentPaymentDetailsActivated(), equalTo(false))
-                        ),
                         is(userProviderType(), equalTo(O2)),
                         is(userSegment(), equalTo(CONSUMER)),
+                        not(is(oldUser(), nullValue(User.class))),
+                        withOldUser(
+                                and(
+                                        is(userStatus(), equalTo(USER_STATUS_LIMITED)),
+                                        and(
+                                                not(is(userFreeTrialExpiredMillis(), nullValue(Long.class))),
+                                                is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()))
+                                                ),
+                                        or(
+                                                is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
+                                                is(userCurrentPaymentDetailsActivated(), equalTo(false))
+                                                )
+                                        )
+                                ),
                         not(is(userDeviceTypeName(), equalTo(BLACKBERRY))),
                         new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId")
                 )

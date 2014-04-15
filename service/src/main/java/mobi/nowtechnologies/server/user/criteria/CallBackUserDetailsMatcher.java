@@ -3,12 +3,15 @@ package mobi.nowtechnologies.server.user.criteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 4/11/2014
  */
 public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CallBackUserDetailsMatcher.class);
     private UserDetailHolder<T> userDetailHolder;
     private MatchStrategy<T> matchStrategy;
 
@@ -20,7 +23,10 @@ public class CallBackUserDetailsMatcher<T> implements Matcher<User> {
     @Override
     public boolean match(User user) {
         T actual = userDetailHolder.getUserDetail(user);
-        return matchStrategy.match(actual);
+        LOGGER.debug("Matching userDetail [{}] actual [{}] with strategy [{}]...", userDetailHolder, actual, matchStrategy);
+        boolean result = matchStrategy.match(actual);
+        LOGGER.debug("Result [{}]", result);
+        return result;
     }
 
     @Override

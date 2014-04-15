@@ -4,12 +4,15 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 4/8/2014
  */
 public class IsInCampaignTableUserMatcher implements Matcher<User> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IsInCampaignTableUserMatcher.class);
 
     private SubscriptionCampaignRepository subscriptionCampaignRepository;
     private String campaignId;
@@ -21,10 +24,13 @@ public class IsInCampaignTableUserMatcher implements Matcher<User> {
 
     @Override
     public boolean match(User user){
+        LOGGER.debug("Matching user with mobile [{}] and campaignId [{}]...", user.getMobile(), campaignId);
         if (user.getMobile() == null){
             return false;
         }
-        return subscriptionCampaignRepository.getCountForMobile(user.getMobile(), campaignId) > 0;
+        long countForMobile = subscriptionCampaignRepository.getCountForMobile(user.getMobile(), campaignId);
+        LOGGER.debug("Result [{}] records", countForMobile);
+        return countForMobile > 0;
     }
 
     @Override
