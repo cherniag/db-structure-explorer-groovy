@@ -14,6 +14,8 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
+import mobi.nowtechnologies.server.user.rules.RuleResult;
+import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,6 +34,7 @@ import java.util.Locale;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.service.PromotionService.PromoParams;
+import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
@@ -89,6 +92,9 @@ public class PromotionServiceTest {
     @Mock
     DeviceService deviceServiceMock;
 
+    @Mock
+    RuleServiceSupport ruleServiceSupportMock;
+
     private String promoCode;
     private Promotion promotion;
     private User user;
@@ -113,6 +119,7 @@ public class PromotionServiceTest {
         promotionServiceSpy.setUserBannedRepository(userBannedRepositoryMock);
         promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setDeviceService(deviceServiceMock);
+        promotionServiceSpy.setRuleServiceSupport(ruleServiceSupportMock);
 	}
 	
 	@Test
@@ -831,6 +838,22 @@ public class PromotionServiceTest {
         verify(promotionServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("store"));
         verify(promotionServiceSpy, times(0)).setPotentialPromoByMessageCode(eq(user), eq("staff"));
         verify(promotionServiceSpy, times(1)).applyPromotionByPromoCode(promoParams);
+    }
+
+    @Test
+    public void shouldReturnPromotionFromRuleForAutoOptIn(){
+        //given
+        User user = new User();
+
+        Promotion promotionFromRuleForAutoOptIn = new Promotion();
+
+        doReturn(new RuleResult<Promotion>(true, promotionFromRuleForAutoOptIn)).when(ruleServiceSupportMock).fireRules(AUTO_OPT_IN, user);
+
+        //when
+        Promotion promotion = promotionServiceSpy.getPromotionFromRuleForAutoOptIn(user);
+
+        //then
+        assertThat(promotion, is(promotionFromRuleForAutoOptIn));
     }
 
 
