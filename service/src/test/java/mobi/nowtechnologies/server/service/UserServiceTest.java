@@ -3371,7 +3371,6 @@ public class UserServiceTest {
 //    }
 
     @Test
-    @Ignore
     public void shouldAutoOptInPromoCampaignUser() {
         //given
         String userToken="";
@@ -3379,21 +3378,29 @@ public class UserServiceTest {
         String otac = "g";
         String userName = "";
 
-        User expectedUser = new User().withId(1).withUserName(userName).withMobile("+380913008199").withDeviceUID("").withUserStatus(createUserStatus(LIMITED)).withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
-        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
+        final User deviceUIdUser = new User().withId(1).withUserName(userName).withMobile("+380913008199").withDeviceUID("").withUserStatus(createUserStatus(LIMITED)).withActivationStatus(ENTERED_NUMBER).withTariff(_3G).withSegment(CONSUMER).withProvider(O2).withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("o2")));
 
-        doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
-        doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
-        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
-        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
+        doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, deviceUIdUser);
+        doReturn(deviceUIdUser).when(userServiceSpy).checkCredentials(deviceUIdUser.getUserName(), userToken, timestamp, deviceUIdUser.getCommunityRewriteUrl());
+        doReturn(true).when(promotionServiceMock).applyPotentialPromo(deviceUIdUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
-        doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
-        doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
-        doReturn(expectedUser).when(userRepositoryMock).save(expectedUser);
+        doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, deviceUIdUser.getMobile(), deviceUIdUser.getUserGroup().getCommunity());
+        doReturn(deviceUIdUser).when(userRepositoryMock).findOne(deviceUIdUser.getId());
+        doReturn(deviceUIdUser).when(userRepositoryMock).save(deviceUIdUser);
         User mobileUser = new User().withId(2);
-        doReturn(mobileUser).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity(), expectedUser.getId());
+        doReturn(mobileUser).when(userRepositoryMock).findByUserNameAndCommunityAndOtherThanPassedId(deviceUIdUser.getMobile(), deviceUIdUser.getUserGroup().getCommunity(), deviceUIdUser.getId());
 
-        doReturn(1).when(userRepositoryMock).deleteUser(expectedUser.getId());
+        doAnswer(new Answer() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                doReturn(null).when(userRepositoryMock).findOne(deviceUIdUser.getId());
+                return 1;
+            }
+        }).when(userRepositoryMock).deleteUser(deviceUIdUser.getId());
+        doReturn(mobileUser).when(userRepositoryMock).findOne(mobileUser.getId());
+
+        PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(mobileUser);
+        doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(mobileUser);
         doReturn(mobileUser).when(userRepositoryMock).save(mobileUser);
 
         Promotion promotion = new Promotion();
@@ -3401,18 +3408,18 @@ public class UserServiceTest {
         doReturn(true).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+        User actualUser = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac);
 
         //then
         assertNotNull(actualUser);
-        assertEquals(expectedUser, actualUser);
+        assertEquals(mobileUser, actualUser);
 
-        verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, expectedUser);
-        verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, expectedUser.getCommunityRewriteUrl());
-        verify(promotionServiceMock, times(1)).applyPotentialPromo(expectedUser);
-        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(expectedUser);
-        verify(otacValidationServiceMock, times(1)).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
-        verify(userRepositoryMock, times(1)).save(expectedUser);
+        verify(autoOptInRuleServiceMock, times(1)).isSubjectToAutoOptIn(ALL, deviceUIdUser);
+        verify(userServiceSpy, times(1)).checkCredentials(userName, userToken, timestamp, deviceUIdUser.getCommunityRewriteUrl());
+        verify(otacValidationServiceMock, times(1)).validate(otac, deviceUIdUser.getMobile(), deviceUIdUser.getUserGroup().getCommunity());
+        verify(promotionServiceMock, times(1)).applyPromotionByPromoCode(mobileUser, promotion);
+        verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(mobileUser);
+        verify(userRepositoryMock, times(2)).save(mobileUser);
     }
 
     @Test

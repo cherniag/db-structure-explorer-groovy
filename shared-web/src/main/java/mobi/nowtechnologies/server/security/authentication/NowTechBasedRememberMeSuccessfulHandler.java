@@ -20,24 +20,24 @@ public class NowTechBasedRememberMeSuccessfulHandler implements AuthenticationSu
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
-	
+
+    public void setPromotionService(PromotionService promotionService) {
+        this.promotionService = promotionService;
+    }
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		
+
 		Object principal = authentication.getPrincipal();
 		if (principal instanceof UserDetailsImpl){
 			UserDetailsImpl userDetailsImpl=(UserDetailsImpl)principal;
 			int userId = userDetailsImpl.getUserId();
 			User user = promotionService.assignPotentialPromotion(userId);
-			
+
 			String requestURI = request.getRequestURI();
 			if (requestURI!=null&&(requestURI.endsWith("/signin") || requestURI.endsWith("/facebook_signin")))
 				userService.updateLastWebLogin(user);
 		}
 
 	}
-
-    public void setPromotionService(PromotionService promotionService) {
-        this.promotionService = promotionService;
-    }
 }
