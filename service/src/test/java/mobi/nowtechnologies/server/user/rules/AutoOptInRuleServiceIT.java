@@ -153,21 +153,11 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
-    public void checkWhenUserHasDisabledPaymentDetailsAndPayments() throws Exception {
+    public void checkWhenUserDeviceIsBB() throws Exception {
         User user = createMatchingUser();
-        PaymentDetails paymentDetails = new O2PSMSPaymentDetails();
-        paymentDetails.setActivated(false);
-        user.setCurrentPaymentDetails(paymentDetails);
-        user.setLastSuccessfulPaymentDetails(paymentDetails);
-
-        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
-        assertThat(ruleResult, is(false));
-    }
-
-    @Test
-    public void checkWhenUserIsNotInCampaignTable() throws Exception {
-        User user = createMatchingUser();
-        user.setMobile("+4455555555");
+        DeviceType deviceType = new DeviceType();
+        deviceType.setName(DeviceType.BLACKBERRY);
+        user.setDeviceType(deviceType);
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
         assertThat(ruleResult, is(false));
@@ -192,6 +182,15 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
+    public void checkWhenUserIsNotInCampaignTable() throws Exception {
+        User user = createMatchingUser();
+        user.setMobile("+4455555555");
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
     public void checkWithLegacyIsSubjectToAutoOptIn() throws Exception {
         User user = createMatchingUser();
         //fail rules
@@ -208,12 +207,15 @@ public class AutoOptInRuleServiceIT {
 
     private User createMatchingUser() {
         User user = new User();
-        user.setMobile(MOBILE);
-        user.setTariff(_4G);
         Community community = new Community();
         community.setRewriteUrlParameter(Community.O2_COMMUNITY_REWRITE_URL);
         UserGroup userGroup = new UserGroup();
         userGroup.setCommunity(community);
+        DeviceType deviceType = new DeviceType();
+        deviceType.setName(DeviceType.ANDROID);
+        user.setDeviceType(deviceType);
+        user.setMobile(MOBILE);
+        user.setTariff(_4G);
         user.setUserGroup(userGroup);
         user.setProvider(ProviderType.O2);
         user.setContract(PAYG);

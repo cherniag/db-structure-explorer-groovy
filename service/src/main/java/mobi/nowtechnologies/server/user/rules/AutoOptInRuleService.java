@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.user.rules;
 
 import com.google.common.collect.Lists;
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -16,6 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.BLACKBERRY;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.user.criteria.AndMatcher.and;
 import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.is;
 import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
@@ -53,38 +56,57 @@ public class AutoOptInRuleService {
         Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
         SortedSet<Rule> rules = new TreeSet<Rule>(new RuleComparator());
 
-        Matcher<User> fromO2Community = is(userCommunityRewriteUrl(), equalTo(Community.O2_COMMUNITY_REWRITE_URL));
+        Matcher<User> fromO2Community = is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL));
         Matcher<User> hasLimitedStatus = is(userStatus(), equalTo(USER_STATUS_LIMITED));
         Matcher<User> freeTrialIsNull = is(userFreeTrialExpiredMillis(), nullValue(Long.class));
         Matcher<User> freeTrialIsEnded = is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()));
         Matcher<User> hasNoPaymentDetails = is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class));
         Matcher<User> paymentDetailsAreDeactivated = is(userCurrentPaymentDetailsActivated(), equalTo(false));
-        Matcher<User> hasNoPayments = is(userLastSuccessfullPaymentDetails(), nullValue(PaymentDetails.class));
-        Matcher<User> isO2Provider = is(userProviderType(), equalTo(ProviderType.O2));
-        Matcher<User> isConsumerSegment = is(userSegment(), equalTo(SegmentType.CONSUMER));
+        Matcher<User> isO2Provider = is(userProviderType(), equalTo(O2));
+        Matcher<User> isConsumerSegment = is(userSegment(), equalTo(CONSUMER));
+        Matcher<User> deviceIsBlackBerry = is(userDeviceTypeName(), equalTo(BLACKBERRY));
         Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
 
         Matcher<User> rootUserMatcher = and(
                 fromO2Community,
                 hasLimitedStatus,
                 and(
-                    not(freeTrialIsNull),
-                    freeTrialIsEnded
+                        not(freeTrialIsNull),
+                        freeTrialIsEnded
                 ),
                 or(
                     hasNoPaymentDetails,
-                    and(
-                            paymentDetailsAreDeactivated,
-                            hasNoPayments)
-                    ),
+                    paymentDetailsAreDeactivated
+                ),
                 isO2Provider,
                 isConsumerSegment,
+                not(deviceIsBlackBerry),
                 isInCampaignTable
         );
         SubscriptionCampaignUserRule subscriptionCampaignUserRule = new SubscriptionCampaignUserRule(rootUserMatcher, 10);
         rules.add(subscriptionCampaignUserRule);
         actionRules.put(ALL, rules);
         ruleServiceSupport = new RuleServiceSupport(actionRules);
+    }
+
+    public boolean isSubjectToAutoOptIn(AutoOptInTriggerType triggerType, User user){
+        LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
+        RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
+        LOGGER.info("Rule result {}", ruleResult);
+        if(ruleResult.isSuccessful()){
+            return ruleResult.getResult();
+        } else {
+            return user.isSubjectToAutoOptIn();
+        }
+    }
+
+    private CallBackUserDetailsMatcher.UserDetailHolder<String> userDeviceTypeName() {
+        return new CallBackUserDetailsMatcher.UserDetailHolder<String>() {
+            @Override
+            public String getUserDetail(User user) {
+                return user.getDeviceType() != null ? user.getDeviceType().getName() : null;
+            }
+        };
     }
 
     private CallBackUserDetailsMatcher.UserDetailHolder<SegmentType> userSegment() {
@@ -110,26 +132,6 @@ public class AutoOptInRuleService {
             @Override
             public String getUserDetail(User user) {
                 return user.getCommunityRewriteUrl();
-            }
-        };
-    }
-
-    public boolean isSubjectToAutoOptIn(AutoOptInTriggerType triggerType, User user){
-        LOGGER.info("Firing rules for trigger type {} and user id {}", triggerType, user.getId());
-        RuleResult<Boolean> ruleResult = ruleServiceSupport.fireRules(triggerType, user);
-        LOGGER.info("Rule result {}", ruleResult);
-        if(ruleResult.isSuccessful()){
-            return ruleResult.getResult();
-        } else {
-            return user.isSubjectToAutoOptIn();
-        }
-    }
-
-    private CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails> userLastSuccessfullPaymentDetails() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<PaymentDetails>() {
-            @Override
-            public PaymentDetails getUserDetail(User user) {
-                return user.getLastSuccessfulPaymentDetails();
             }
         };
     }
