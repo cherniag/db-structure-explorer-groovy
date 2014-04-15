@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.user.criteria;
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,28 +29,44 @@ public class IsInCampaignTableUserMatcherIT {
 
     @Before
     public void setUp() throws Exception {
-        subscriptionCampaignRepository.deleteAll();
         isInCampaignTableUserMatcher = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        subscriptionCampaignRepository.deleteAll();
     }
 
     @Test
     public void testMatch() throws Exception {
         String mobile = "+447123456789";
         createAndSaveSubscriptionCampaignRecord(mobile, "campaignId");
-        createAndSaveSubscriptionCampaignRecord(mobile, "campaignId");
+        createAndSaveSubscriptionCampaignRecord(mobile, "otherCampaign");
         User user  = new User();
         user.setMobile(mobile);
         assertThat(isInCampaignTableUserMatcher.match(user), is(true));
     }
 
     @Test
-    public void testNotMatch() throws Exception {
+    public void testCampaignIdNotMatch() throws Exception {
         String mobile1 = "+447123456789";
         String mobile2 = "+447111111111";
         String mobile3 = "+447000000000";
         createAndSaveSubscriptionCampaignRecord(mobile1, "campaignId");
         createAndSaveSubscriptionCampaignRecord(mobile2, "campaignId");
         createAndSaveSubscriptionCampaignRecord(mobile3, "otherCampaign");
+        User user  = new User();
+        user.setMobile(mobile3);
+        assertThat(isInCampaignTableUserMatcher.match(user), is(false));
+    }
+
+    @Test
+    public void testMobileNotMatch() throws Exception {
+        String mobile1 = "+447123456789";
+        String mobile2 = "+447111111111";
+        String mobile3 = "+447000000000";
+        createAndSaveSubscriptionCampaignRecord(mobile1, "campaignId");
+        createAndSaveSubscriptionCampaignRecord(mobile2, "campaignId");
         User user  = new User();
         user.setMobile(mobile3);
         assertThat(isInCampaignTableUserMatcher.match(user), is(false));

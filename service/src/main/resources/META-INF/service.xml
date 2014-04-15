@@ -521,7 +521,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </bean>
 
     <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.rules.AutoOptInRuleService" init-method="init">
-        <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
         <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
     </bean>
 
