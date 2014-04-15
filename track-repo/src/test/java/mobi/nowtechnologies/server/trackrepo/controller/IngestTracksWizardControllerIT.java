@@ -1,12 +1,22 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
+import mobi.nowtechnologies.server.trackrepo.domain.Territory;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
+import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
+import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultActions;
 
+import javax.annotation.Resource;
+import java.util.Set;
+
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -18,7 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Alexander Kolpakov (akolpakov)
  */
 
-public class IngestTracksWizardControllerIT extends AbstractTrackRepoITTest{
+public class IngestTracksWizardControllerIT extends AbstractTrackRepoITTest {
+
+    @Resource
+    private TrackRepository trackRepository;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void testGetDrops_Success() throws Exception {
@@ -44,7 +58,8 @@ public class IngestTracksWizardControllerIT extends AbstractTrackRepoITTest{
                         contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.suid").exists())
-                .andExpect(jsonPath("$.drops[0].tracks[0].productCode").exists());;
+                .andExpect(jsonPath("$.drops[0].tracks[0].productCode").exists());
+        ;
     }
 
     @Test
@@ -83,38 +98,36 @@ public class IngestTracksWizardControllerIT extends AbstractTrackRepoITTest{
         assertTrue(resultJson.contains("\"INSERT\",\"selected\":false"));
     }
 
+
+    private String markAllTracksAsSelected(ResultActions resultActions) throws Exception {
+        IngestWizardDataDto dto = objectMapper.readValue(resultActions.andReturn().getResponse().getContentAsString(), IngestWizardDataDto.class);
+        for (DropDto currentDrop : dto.getDrops()) {
+            currentDrop.setSelected(true);
+        }
+        return objectMapper.writeValueAsString(dto);
+    }
+
     @Test
-    @Ignore
-    public void testCommitDrops_Success() throws Exception {
+    public void testCommitDropsForUniversal_Success() throws Exception {
         ResultActions resultActions = mockMvc.perform(
                 get("/drops.json")
+                        .param("ingestors", "UNIVERSAL")
         ).andExpect(status().isOk());
-
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
-        resultJson = resultJson.replaceAll("\"selected\":false", "\"selected\":true");
-
         resultActions = mockMvc.perform(
                 post("/drops/select.json").
-                        content(resultJson.getBytes()).
+                        content(markAllTracksAsSelected(resultActions)).
                         accept(MediaType.APPLICATION_JSON).
                         contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        resultJson = aHttpServletResponse.getContentAsString();
-        resultJson = resultJson.replaceAll("\"INSERT\",\"selected\":true", "\"INSERT\",\"selected\":false");
-
         resultActions = mockMvc.perform(
                 post("/drops/commit.json").
-                        content(resultJson.getBytes()).
+                        content(markAllTracksAsSelected(resultActions)).
                         accept(MediaType.APPLICATION_JSON).
                         contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
-
-        aHttpServletResponse = resultActions.andReturn().getResponse();
-        resultJson = aHttpServletResponse.getContentAsString();
-
-        assertTrue(resultJson.equals("true"));
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString().equals("true"));
+        Track track = trackRepository.findByISRC("GBUV71200558");
+        Set<Territory> ters = track.getTerritories();
+        assertEquals(2, ters.size());
     }
 }

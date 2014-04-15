@@ -1,0 +1,23 @@
+<order_ticket>
+  <order_id>3000018255385</order_id>
+  <asset_map>/home/ingest/universal_cdu/Delivery_Messages/fulfillment_3000018255385.xml</asset_map>
+  <date>12/21/2011 12:39:10 PM</date>
+  <time_span>00:02:10.491</time_span>
+  <state>Delivered</state>
+  <files>
+    <all>26</all>
+    <done>26</done>
+    <errors>0</errors>
+  </files>
+  <options>
+    <retry_counter>5</retry_counter>
+    <threads>1</threads>
+    <accept_orders>true</accept_orders>
+    <bundle_by>
+      <setting type="ProductBundle">
+        <destination_root>/home/ingest/universal_cdu</destination_root>
+        <accept_files>true</accept_files>
+      </setting>
+    </bundle_by>
+  </options>
+</order_ticket>

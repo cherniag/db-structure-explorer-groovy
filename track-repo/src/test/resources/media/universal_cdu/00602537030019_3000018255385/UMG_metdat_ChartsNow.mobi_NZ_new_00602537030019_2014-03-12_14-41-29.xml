@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.digiplug.com/dsc/umgistd-1_4_5" upc="00602537030019">
+    <type>new</type>
+    <territory>NZ</territory>
+    <prd_title>Spectrum</prd_title>
+    <prd_version_title></prd_version_title>
+    <prd_configuration>eVideo Single</prd_configuration>
+    <prd_label_name>Universal Music Ltd.</prd_label_name>
+    <set_count>1</set_count>
+    <track_count>1</track_count>
+    <complete_product>Y</complete_product>
+    <prd_length>0:05:22</prd_length>
+    <release_date>15-Aug-2012</release_date>
+    <album_presales_previews>N</album_presales_previews>
+    <music_type>POP</music_type>
+    <genre>Alternative</genre>
+    <series_name></series_name>
+    <prd_explicit>N</prd_explicit>
+    <prd_e_marketing_tag></prd_e_marketing_tag>
+    <local_product_number></local_product_number>
+    <p_line>(P) 2012 Universal Island Records, a division of Universal Music Operations Limited</p_line>
+    <c_line>(C) 2012 Universal Island Records, a division of Universal Music Operations Limited</c_line>
+    <permanent_download_album_preorder_previews>N</permanent_download_album_preorder_previews>
+    <permanent_download_preorder_status>N</permanent_download_preorder_status>
+    <prd_pricing>
+        <current_price_code>TVTP</current_price_code>
+        <current_price_effective_date>12-Mar-2014</current_price_effective_date>
+        <new_price_code></new_price_code>
+        <new_price_effective_date></new_price_effective_date>
+    </prd_pricing>
+    <prd_contributors>
+        <artist_name>Florence + The Machine</artist_name>
+    </prd_contributors>
+    <terms>
+        <note></note>
+    </terms>
+    <prd_associated_products/>
+    <tracks>
+        <track isrc="GBUV71200558">
+            <type>new</type>
+            <volume>1</volume>
+            <track_number>1</track_number>
+            <track_title>Spectrum</track_title>
+            <track_version_title></track_version_title>
+            <track_hierarchy_title></track_hierarchy_title>
+            <asset_type>VIDEO</asset_type>
+            <track_length>0:05:22</track_length>
+            <track_label>Universal Music</track_label>
+            <track_explicit></track_explicit>
+            <track_genre>Alternative</track_genre>
+            <track_e_marketing_tag></track_e_marketing_tag>
+            <track_owning_label></track_owning_label>
+            <p_line></p_line>
+            <c_line>(C) 2012 Universal Island Records, a division of Universal Music Operations Limited</c_line>
+            <permanent_download_preorder_only>N</permanent_download_preorder_only>
+            <track_pricing>
+                <current_price_code>TVTP</current_price_code>
+                <current_price_effective_date>12-Mar-2014</current_price_effective_date>
+                <new_price_code></new_price_code>
+                <new_price_effective_date></new_price_effective_date>
+            </track_pricing>
+            <track_contributors>
+                <artist_name>Florence + The Machine</artist_name>
+                <performer>David LaChapelle [Video Director]</performer>
+                <performer>Kim Delara [Video Producer]</performer>
+                <composer>Florence Welch</composer>
+                <composer>Paul Epworth</composer>
+                <author>Florence Welch</author>
+                <author>Paul Epworth</author>
+            </track_contributors>
+            <work_level>
+                <work_id></work_id>
+                <work_title></work_title>
+                <parent_work_id></parent_work_id>
+                <parent_work_title></parent_work_title>
+            </work_level>
+            <terms>
+                <download_singles_restriction>N</download_singles_restriction>
+                <terms_of_use>
+                    <a_la_carte_online_permanent_download>N</a_la_carte_online_permanent_download>
+                    <a_la_carte_mobile_permanent_download>N</a_la_carte_mobile_permanent_download>
+                    <a_la_carte_online_time_limited_download>N</a_la_carte_online_time_limited_download>
+                    <a_la_carte_mobile_time_limited_download>N</a_la_carte_mobile_time_limited_download>
+                    <a_la_carte_online_streaming>N</a_la_carte_online_streaming>
+                    <a_la_carte_mobile_streaming>N</a_la_carte_mobile_streaming>
+                    <subscription_online_permanent_download>N</subscription_online_permanent_download>
+                    <subscription_mobile_permanent_download>N</subscription_mobile_permanent_download>
+                    <subscription_online_time_limited_download>N</subscription_online_time_limited_download>
+                    <subscription_mobile_time_limited_download>N</subscription_mobile_time_limited_download>
+                    <subscription_online_streaming>N</subscription_online_streaming>
+                    <subscription_mobile_streaming>Y</subscription_mobile_streaming>
+                    <adfunded_online_permanent_download>N</adfunded_online_permanent_download>
+                    <adfunded_mobile_permanent_download>N</adfunded_mobile_permanent_download>
+                    <adfunded_online_time_limited_download>N</adfunded_online_time_limited_download>
+                    <adfunded_mobile_time_limited_download>N</adfunded_mobile_time_limited_download>
+                    <adfunded_online_streaming>N</adfunded_online_streaming>
+                    <adfunded_mobile_streaming>N</adfunded_mobile_streaming>
+                </terms_of_use>
+                <note></note>
+            </terms>
+            <associated_products/>
+            <associated_tracks/>
+        </track>
+    </tracks>
+</product>
