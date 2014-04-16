@@ -71,7 +71,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
         return new CallBackUserDetailsMatcher<T>(userDetailHolder, matchStrategy);
     }
 
-    public static  <T> AndMatcher<T> and(Matcher<T>... matchers){
+    public static  <T> Matcher<T> and(Matcher<T>... matchers){
         return new AndMatcher<T>(matchers);
     }
 
@@ -79,7 +79,7 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
         return new OrMatcher<T>(matchers);
     }
 
-    public  static <T> NotMatcher<T> not(Matcher<T> matcher){
+    public  static <T> Matcher<T> not(Matcher<T> matcher){
         return new NotMatcher<T>(matcher);
     }
 

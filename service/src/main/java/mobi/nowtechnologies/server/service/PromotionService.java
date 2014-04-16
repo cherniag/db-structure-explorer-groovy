@@ -44,6 +44,7 @@ import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
 import static mobi.nowtechnologies.server.service.configuration.Configuration.*;
 import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.UserDetailHolder;
+import static mobi.nowtechnologies.server.user.rules.RuleServiceSupport.RuleComparator;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
@@ -109,8 +110,8 @@ public class PromotionService {
     }
 
     public RuleServiceSupport init(){
-        Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
-        SortedSet<Rule> rules = new TreeSet<Rule>(new RuleServiceSupport.RuleComparator());
+        Map<TriggerType, Set<Rule>> actionRulesMap = new HashMap<TriggerType, Set<Rule>>();
+        Set<Rule> rules = new TreeSet<Rule>(new RuleComparator());
 
         String campaign3GPromoCode = messageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.3g.promoCode", null, null);
         String campaign4GPromoCode = messageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.4g.promoCode", null, null);
@@ -132,8 +133,9 @@ public class PromotionService {
         PromotionRule promotion4GRule = new PromotionRule(root4GPromotionUserMatcher, 9, promotion4G);
         rules.add(promotion4GRule);
 
-        actionRules.put(AUTO_OPT_IN, rules);
-        return new RuleServiceSupport(actionRules);
+        actionRulesMap.put(AUTO_OPT_IN, rules);
+        ruleServiceSupport = new RuleServiceSupport(actionRulesMap);
+        return ruleServiceSupport;
     }
 
     public UserDetailHolder<Integer> userLastPromoCodeId() {
