@@ -38,6 +38,7 @@ import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
+import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -1629,7 +1630,6 @@ public class UserService {
     public void activateVideoAudioFreeTrialAndAutoOptIn(User user) {
         LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
         User userInTransaction = findById(user.getId()); // using this to have the user updated
-        boolean subjectToAutoOptIn = userInTransaction.isSubjectToAutoOptIn();
         promotionService.activateVideoAudioFreeTrial(userInTransaction);
         if ( autoOptInRuleService.isSubjectToAutoOptIn(EMPTY, user)) {
             paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
