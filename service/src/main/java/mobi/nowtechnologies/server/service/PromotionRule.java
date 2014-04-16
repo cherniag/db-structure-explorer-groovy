@@ -43,7 +43,9 @@ public class PromotionRule implements Rule<User, Promotion> {
 
     @Override
     public boolean isValid() {
-        return promo.getIsActive() && promo.getEndDate()> Utils.getEpochSeconds();
+        return  promo.getIsActive() &&
+                Utils.getEpochSeconds() <= promo.getEndDate() &&
+                Utils.getEpochSeconds() >= promo.getStartDate();
     }
 
     @Override
