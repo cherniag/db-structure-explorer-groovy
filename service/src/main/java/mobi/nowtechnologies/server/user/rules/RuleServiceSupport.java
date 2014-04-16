@@ -14,22 +14,22 @@ import static mobi.nowtechnologies.server.user.rules.RuleResult.FAIL_RESULT;
  * Author: Gennadii Cherniaiev
  * Date: 4/10/2014
  */
-public class RuleServiceSupport {
+public class RuleServiceSupport <TT extends TriggerType> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RuleServiceSupport.class);
-    private Map<TriggerType, SortedSet<Rule>> actionRules = new HashMap<TriggerType, SortedSet<Rule>>();
+    private Map<TT, SortedSet<Rule>> actionRules = new HashMap<TT, SortedSet<Rule>>();
 
-    public RuleServiceSupport(Map<TriggerType, SortedSet<Rule>> actionRules) {
+    public RuleServiceSupport(Map<TT, SortedSet<Rule>> actionRules) {
         this.actionRules = actionRules;
     }
 
-    public <T, R> RuleResult<R> fireRules(TriggerType actionType, T arg){
+    public <T, R> RuleResult<R> fireRules(TT actionType, T arg){
         SortedSet<Rule> rules = actionRules.get(actionType);
         LOGGER.info("Found {} rules for trigger type {}", rules == null ? "null" : rules.size(), actionType);
         if(rules == null){
             return FAIL_RESULT;
         }
         for (Rule rule : rules) {
-            LOGGER.info("Evaluating rule {}", rule);
+            LOGGER.debug("Evaluating rule {}", rule);
             if(rule.isValid() && rule.getRootMatcher().match(arg)) {
                 return rule.getResult();
             }

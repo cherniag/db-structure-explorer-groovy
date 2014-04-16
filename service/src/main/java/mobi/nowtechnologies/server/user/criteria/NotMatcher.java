@@ -20,9 +20,6 @@ public class NotMatcher<T> implements Matcher<T> {
         return !matcher.match(value);
     }
 
-    public static <T> NotMatcher<T> not(Matcher<T> matcher){
-        return new NotMatcher<T>(matcher);
-    }
 
     @Override
     public String toString() {

@@ -15,10 +15,12 @@ public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
     private Matcher<User> rootMatcher;
     private boolean isValid = true;
     private int rulePriority;
+    private boolean result = true;
 
-    public SubscriptionCampaignUserRule(Matcher<User> rootMatcher, int rulePriority) {
+    public SubscriptionCampaignUserRule(Matcher<User> rootMatcher, int rulePriority, boolean resultValue) {
         this.rootMatcher = rootMatcher;
         this.rulePriority = rulePriority;
+        this.result = resultValue;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
 
     @Override
     public RuleResult<Boolean> getResult() {
-        return new RuleResult<Boolean>(true, true);
+        return new RuleResult<Boolean>(true, result);
     }
 
     @Override
