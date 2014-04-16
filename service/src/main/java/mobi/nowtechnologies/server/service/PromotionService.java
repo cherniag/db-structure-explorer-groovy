@@ -40,6 +40,7 @@ import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
 import static mobi.nowtechnologies.server.service.configuration.Configuration.*;
 import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.UserDetailHolder;
+import static mobi.nowtechnologies.server.user.rules.RuleServiceSupport.RuleComparator;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
