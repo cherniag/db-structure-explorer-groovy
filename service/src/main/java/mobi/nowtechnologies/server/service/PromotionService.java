@@ -119,15 +119,16 @@ public class PromotionService {
         Promotion promotion4G = getActivePromotion(campaign4GPromoCode, O2_COMMUNITY_REWRITE_URL);
 
         Matcher<User> isInCampaignTable = new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, "campaignId");
-        Matcher<User> isTheSameLastPromo = is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()));
+        Matcher<User> isTheSame3GLastPromo = is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()));
+        Matcher<User> isTheSame4GLastPromo = is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId()));
         Matcher<User> is3G = is(userTariff(), equalTo(_3G));
         Matcher<User> is4G = is(userTariff(), equalTo(_4G));
 
-        Matcher<User> root3GPromotionUserMatcher = and(isInCampaignTable, not(isTheSameLastPromo), is3G);
+        Matcher<User> root3GPromotionUserMatcher = and(isInCampaignTable, not(isTheSame3GLastPromo), is3G);
         PromotionRule promotionRule = new PromotionRule(root3GPromotionUserMatcher, 10, promotion3G);
         rules.add(promotionRule);
 
-        Matcher<User> root4GPromotionUserMatcher = and(isInCampaignTable, not(isTheSameLastPromo), is4G);
+        Matcher<User> root4GPromotionUserMatcher = and(isInCampaignTable, not(isTheSame4GLastPromo), is4G);
         PromotionRule promotion4GRule = new PromotionRule(root4GPromotionUserMatcher, 9, promotion4G);
         rules.add(promotion4GRule);
 

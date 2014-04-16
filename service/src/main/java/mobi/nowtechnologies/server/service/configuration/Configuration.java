@@ -67,8 +67,8 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
         return new ExactMatchStrategy<T>(valueOf((T)null));
     }
 
-    public static  <T> CallBackUserDetailsMatcher<T> is(CallBackUserDetailsMatcher.UserDetailHolder<T> userDetailHolder, MatchStrategy<T> matchStrategy){
-        return new CallBackUserDetailsMatcher<T>(userDetailHolder, matchStrategy);
+    public static  <T> Matcher<T> is(CallBackUserDetailsMatcher.UserDetailHolder<T> userDetailHolder, MatchStrategy<T> matchStrategy){
+        return (Matcher<T>) new CallBackUserDetailsMatcher<T>(userDetailHolder, matchStrategy);
     }
 
     public static  <T> AndMatcher<T> and(Matcher<T>... matchers){
