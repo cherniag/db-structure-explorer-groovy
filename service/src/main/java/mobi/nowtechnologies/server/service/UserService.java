@@ -1628,11 +1628,11 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public void activateVideoAudioFreeTrialAndAutoOptIn(User user) {
-        LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
-        User userInTransaction = findById(user.getId()); // using this to have the user updated
-        promotionService.activateVideoAudioFreeTrial(userInTransaction);
-        if ( autoOptInRuleService.isSubjectToAutoOptIn(EMPTY, user)) {
-            paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
+        LOGGER.info("Attempt to activate video audio free trial and subscribe user user with id: [{}]", user.getId());
+        boolean subjectToAutoOptIn = autoOptInRuleService.isSubjectToAutoOptIn(EMPTY, user);
+        user = promotionService.activateVideoAudioFreeTrial(user);
+        if (subjectToAutoOptIn) {
+            paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         }
     }
 

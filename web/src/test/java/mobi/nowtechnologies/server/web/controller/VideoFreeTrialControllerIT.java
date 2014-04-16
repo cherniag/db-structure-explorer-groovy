@@ -35,7 +35,14 @@ import javax.servlet.http.Cookie;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class VideoFreeTrailControllerIT {
+public class VideoFreeTrialControllerIT {
 
     @Resource
     private WebApplicationContext wac;
@@ -78,13 +85,17 @@ public class VideoFreeTrailControllerIT {
         String communityUrl = "o2";
         user = userRepository.findOne(101);
         assertTrue(user.getPaymentDetailsList().isEmpty());
-        user.setActivationStatus(ActivationStatus.ACTIVATED);
-        user.setTariff(Tariff._4G);
+        user.setActivationStatus(ACTIVATED);
+        user.setTariff(_4G);
         user.setContract(PAYM);
-        user.setSegment(SegmentType.CONSUMER);
+        user.setSegment(CONSUMER);
         user.setVideoFreeTrialHasBeenActivated(false);
         user.setFreeTrialExpiredMillis(System.currentTimeMillis());
-        userService.updateUser(user);
+
+        Promotion lastPromotion = promotionRepository.save(new Promotion().withStartDate(0).withEndDate(2014).withIsActive(true).withMaxUsers(5).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(user.getUserGroup()).withDescription(""));
+        PromoCode lastPromoCode = promoCodeRepository.save(new PromoCode().withMediaType(AUDIO).withPromotion(lastPromotion).withCode(""));
+
+        userService.updateUser(user.withLastPromo(lastPromoCode));
 
         int now = (int)(System.currentTimeMillis()/1000);
         Promotion promotion = new Promotion();
@@ -94,12 +105,12 @@ public class VideoFreeTrailControllerIT {
         promotion.setMaxUsers(30);
         promotion.setNumUsers(1);
         promotion.setIsActive(true);
-        promotion.setType(Promotion.ADD_FREE_WEEKS_PROMOTION);
+        promotion.setType(ADD_FREE_WEEKS_PROMOTION);
         promotion = promotionRepository.save(promotion);
 
         PromoCode promoCode = new PromoCode();
         promoCode.setCode("o2.consumer.4g.paym.direct");
-        promoCode.setMediaType(MediaType.VIDEO_AND_AUDIO);
+        promoCode.setMediaType(VIDEO_AND_AUDIO);
         promoCode.setPromotion(promotion);
         promoCode = promoCodeRepository.save(promoCode);
         promotion.setPromoCode(promoCode);
