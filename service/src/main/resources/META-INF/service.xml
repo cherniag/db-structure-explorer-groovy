@@ -180,10 +180,14 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </bean>
 
     <bean id="configuration.PromotionService" class="mobi.nowtechnologies.server.service.PromotionConfiguration">
+        <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
+        <property name="promotionProvider" ref="provider.Promotion"/>
+    </bean>
+
+    <bean id="provider.Promotion" class="mobi.nowtechnologies.server.service.PromotionProvider">
         <property name="entityService" ref="service.EntityService" />
         <property name="promotionRepository" ref="promotionRepository" />
         <property name="messageSource" ref="serviceMessageSource" />
-        <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
         <property name="communityService" ref="service.communityService"/>
     </bean>
 
@@ -534,6 +538,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
     <bean id="configuration.AutoOptIn" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInConfiguration">
         <property name="subscriptionCampaignRepository" ref="subscriptionCampaignRepository"/>
+        <property name="promotionProvider" ref="provider.Promotion"/>
     </bean>
 
 	<import resource="payment.xml" />

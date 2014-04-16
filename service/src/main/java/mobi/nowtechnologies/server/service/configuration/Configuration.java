@@ -4,6 +4,7 @@ package mobi.nowtechnologies.server.service.configuration;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
@@ -20,7 +21,12 @@ import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.valu
 
 public abstract class Configuration <TType extends TriggerType, V, BuilderType extends RuleBuilder<?, V> > implements InitializingBean {
 
+    private SubscriptionCampaignRepository subscriptionCampaignRepository;
     private Map<TType, List<BuilderType>> registeredBuilderMap = new HashMap<TType, List<BuilderType>>();
+
+    public void setSubscriptionCampaignRepository(SubscriptionCampaignRepository subscriptionCampaignRepository) {
+        this.subscriptionCampaignRepository = subscriptionCampaignRepository;
+    }
 
     final public RuleServiceSupport<TType> get() {
         Map<TType, SortedSet<Rule>> actionRules = new HashMap<TType, SortedSet<Rule>>();
@@ -56,6 +62,11 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
 
     abstract protected BuilderType createBuilder(TType trigger);
     abstract protected void configure();
+
+
+    public Matcher<User> campaignUser(String campaignId){
+      return new IsInCampaignTableUserMatcher(subscriptionCampaignRepository, campaignId);
+    }
 
     public static <T> ExactMatchStrategy<T> equalTo(ExpectedValueHolder<T> second){
         return new ExactMatchStrategy<T>(second);
