@@ -218,7 +218,7 @@ public class UserService {
         boolean hasPromo = false;
         Promotion promotion = promotionService.getPromotionFromRuleForAutoOptIn(user);
         if (isNotNull(promotion)) {
-            hasPromo = promotionService.applyPromotionByPromoCode(user, promotion);
+            hasPromo = promotionService.applyPromotionByPromoCode(user, promotion.withCouldBeAppliedMultipleTimes(true));
         }else{
             LOGGER.info("Promo applying procedure is skipped because no promotion from rule found");
         }

@@ -427,13 +427,7 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
     }
 
     private boolean couldNotBeApplied(User user, PromoCode currentPromoCode){
-        return !couldBeAppliedMultipleTimes(currentPromoCode) && arePromotionMediaTypesTheSame(user.getLastPromo(), currentPromoCode);
-    }
-
-    private boolean couldBeAppliedMultipleTimes(PromoCode currentPromoCode){
-        boolean couldBeAppliedMultipleTimes = isNotNull(currentPromoCode) && currentPromoCode.isTwoWeeksOnSubscription();
-        LOGGER.info("Is found promo could be applied multiple times: [{}]", couldBeAppliedMultipleTimes);
-        return couldBeAppliedMultipleTimes;
+        return !currentPromoCode.getPromotion().isCouldBeAppliedMultipleTimes() && arePromotionMediaTypesTheSame(user.getLastPromo(), currentPromoCode);
     }
 
     private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){

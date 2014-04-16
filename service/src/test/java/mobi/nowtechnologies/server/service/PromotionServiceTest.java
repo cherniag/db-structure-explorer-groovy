@@ -614,6 +614,8 @@ public class PromotionServiceTest {
 
         doReturn(null).when(userBannedRepositoryMock).findOne(user.getId());
 
+        promotion.getPromoCode().withPromotion(promotion);
+
         //when
         promotionServiceSpy.applyPromotionByPromoCode(new PromoParams(user, promotion, 0));
     }
@@ -624,6 +626,7 @@ public class PromotionServiceTest {
         final User user = new User().withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion()));
 
         final Promotion promotion = new Promotion().withFreeWeeks((byte)3).withPromoCode(new PromoCode().withCode("code").withMediaType(AUDIO));
+        promotion.getPromoCode().withPromotion(promotion);
 
         int freeTrialStartedTimestampSeconds = 1;
 
@@ -728,6 +731,8 @@ public class PromotionServiceTest {
         doReturn(true).when(promotionServiceSpy).updatePromotionNumUsers(promotion);
         Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
 
+        promotion.getPromoCode().withPromotion(promotion);
+
         promotionServiceSpy.applyPromotionByPromoCode(user, promotion);
 
         verify(userBannedRepositoryMock, times(1)).findOne(anyInt());
@@ -765,6 +770,7 @@ public class PromotionServiceTest {
         Mockito.when(userBannedRepositoryMock.findOne(anyInt())).thenReturn(null);
         doReturn(true).when(promotionServiceSpy).updatePromotionNumUsers(promotion);
         Mockito.when(entityServiceMock.saveEntity(any(AccountLog.class))).thenReturn(null);
+        promotion.getPromoCode().withPromotion(promotion);
 
         promotionServiceSpy.applyPromotionByPromoCode(user, promotion);
 

@@ -67,6 +67,9 @@ public class Promotion implements Serializable {
     @Column(name = "is_white_listed", columnDefinition = "BIT default false")
     private boolean isWhiteListed;
 
+    @Transient
+    private boolean couldBeAppliedMultipleTimes;
+
 	public Promotion() {
 	}
 
@@ -290,12 +293,21 @@ public class Promotion implements Serializable {
         return this;
     }
 
+    public Promotion withCouldBeAppliedMultipleTimes(boolean couldBeAppliedMultipleTimes){
+        this.couldBeAppliedMultipleTimes = couldBeAppliedMultipleTimes;
+        return this;
+    }
+
     public int getFreeWeeks(int freeTrialStartedTimestampSeconds){
         return freeWeeks == 0 ? (endDate - freeTrialStartedTimestampSeconds) / WEEK_SECONDS : freeWeeks;
     }
 
     public int getFreeWeeksEndDate(int freeTrialStartedTimestampSeconds){
         return freeWeeks == 0 ? endDate:  freeTrialStartedTimestampSeconds + freeWeeks*WEEK_SECONDS;
+    }
+
+    public boolean isCouldBeAppliedMultipleTimes(){
+        return couldBeAppliedMultipleTimes || isNotNull(promoCode) && promoCode.isTwoWeeksOnSubscription();
     }
 
     @Override
@@ -316,6 +328,7 @@ public class Promotion implements Serializable {
                 .append("isWhiteListed", isWhiteListed)
                 .append("userGroupId", getUserGroupId())
                 .append("promoCodeId", getPromoCodeId())
+                .append("isCouldBeAppliedMultipleTimes()", isCouldBeAppliedMultipleTimes())
                 .toString();
     }
 
