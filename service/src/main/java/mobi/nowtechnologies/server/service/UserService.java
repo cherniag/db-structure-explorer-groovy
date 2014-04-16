@@ -176,53 +176,49 @@ public class UserService {
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
-    private boolean applyInitPromoInternal(PromoRequest promoRequest){
-        User mobileUser = promoRequest.mobileUser;
+    private User applyInitPromoInternal(PromoRequest promoRequest){
+        User user = promoRequest.user;
+        boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
+        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, user.getMobile(), user.getUserGroup().getCommunity());
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
-        boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || promoRequest.user.isVFNZCommunityUser();
-        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, promoRequest.user.getMobile(), promoRequest.user.getUserGroup().getCommunity());
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, promoRequest.user.getContract(), promoRequest.user.getMobile(), promoRequest.user.getOperator(), promoRequest.user.getActivationStatus(), updateWithProviderUserDetails);
+        user = checkAndMerge(user, promoRequest.mobileUser);
+        promoRequest.user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
-        promoRequest.user= checkAndMerge(promoRequest.user, mobileUser);
-        promoRequest.user= checkAndUpdateWithProviderUserDetails(promoRequest.user, updateWithProviderUserDetails, providerUserDetails);
+        user = checkAndApplyPromo(promoRequest);
 
-        boolean hasPromo = checkAndApplyPromo(promoRequest);
+        user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
+        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
-        promoRequest.user = userRepository.save(promoRequest.user.withActivationStatus(ACTIVATED).withUserName(promoRequest.user.getMobile()));
-        LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", promoRequest.user);
-
-        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
-        return hasPromo;
+        LOGGER.debug("Output parameter user=[{}]", user);
+        return user;
     }
 
-    private boolean checkAndApplyPromo(PromoRequest promoRequest) {
-        User user =  promoRequest.user;
-        User mobileUser = promoRequest.mobileUser;
+    private User checkAndApplyPromo(PromoRequest promoRequest) {
+        User user = promoRequest.user;
         boolean isApplyingWithoutEnterPhone = promoRequest.isApplyingWithoutEnterPhone;
-        boolean hasPromo = false;
-        if (isNull(mobileUser)) {
-            if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
-                hasPromo = promotionService.applyPotentialPromo(user);
+        if (isNull(promoRequest.mobileUser)) {
+            if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(promoRequest.user.getActivationStatus()) && isNotEmail(promoRequest.user.getUserName()))) {
+                user = promotionService.applyPotentialPromo(promoRequest.user);
             }else{
                 LOGGER.info("Promo applying procedure is skipped for new user");
             }
         }else if(promoRequest.isSubjectToAutoOptIn){
-            hasPromo = findAndApplyPromoFromRule(user);
+            user = findAndApplyPromoFromRule(user);
         }else{
             LOGGER.info("Promo applying procedure is skipped for existed user");
         }
-        return hasPromo;
+        return user;
     }
 
-    private boolean findAndApplyPromoFromRule(User user) {
-        boolean hasPromo = false;
+    private User findAndApplyPromoFromRule(User user) {
         Promotion promotion = promotionService.getPromotionFromRuleForAutoOptIn(user);
         if (isNotNull(promotion)) {
-            hasPromo = promotionService.applyPromotionByPromoCode(user, promotion.withCouldBeAppliedMultipleTimes(true));
+            user = promotionService.applyPromotionByPromoCode(user, promotion.withCouldBeAppliedMultipleTimes(true));
         }else{
             LOGGER.info("Promo applying procedure is skipped because no promotion from rule found");
         }
-        return hasPromo;
+        return user;
     }
 
     private User checkAndUpdateWithProviderUserDetails(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
@@ -1390,11 +1386,10 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone) {
-        boolean hasPromo = applyInitPromoInternal(new PromoRequest(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false));
+        PromoRequest promoRequest = new PromoRequest(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
+        user = applyInitPromoInternal(promoRequest);
 
-        user = !ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
-
-        user.setHasPromo(hasPromo);
+        user.setHasPromo(user.isPromotionApplied());
         return user;
     }
 
@@ -1606,20 +1601,14 @@ public class UserService {
             throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
         }
 
-        boolean isPromotionApplied;
         if(isNotBlank(otac)){
-            isPromotionApplied = applyInitPromoInternal(new PromoRequest(user, mobileUser, otac, false, false, true));
+            user = applyInitPromoInternal(new PromoRequest(user, mobileUser, otac, false, false, true));
         }else{
-            isPromotionApplied = promotionService.applyPotentialPromo(user);
+            user = promotionService.applyPotentialPromo(user);
         }
 
-        if (!isPromotionApplied){
+        if (!user.isPromotionApplied()){
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
-        }
-
-        user = userRepository.findOne(user.getId());
-        if(isNull(user)){
-            user = userRepository.findOne(mobileUser.getId());
         }
 
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);

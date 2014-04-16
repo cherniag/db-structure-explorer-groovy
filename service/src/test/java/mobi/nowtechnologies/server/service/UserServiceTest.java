@@ -115,7 +115,6 @@ public class UserServiceTest {
 	private DeviceService deviceServiceMock;
 	private FacebookService facebookServiceMock;
 	private ITunesService iTunesServiceMock;
-    private UserBannedRepository userBannedRepositoryMock;
     private RefundService refundServiceMock;
     private User actualUser;
     private User user;
@@ -141,6 +140,8 @@ public class UserServiceTest {
 
     @Mock
     private AutoOptInRuleService autoOptInRuleServiceMock;
+    private Answer userWithPromoAnswer;
+    private Answer userWithoutPromoAnswer;
 
     @Before
     public void setUp() throws Exception {
@@ -170,7 +171,6 @@ public class UserServiceTest {
         o2ServiceMock = PowerMockito.mock(O2Service.class);
         MailService mailServiceMock = PowerMockito.mock(MailService.class);
         iTunesServiceMock = PowerMockito.mock(ITunesService.class);
-        userBannedRepositoryMock = PowerMockito.mock(UserBannedRepository.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
         userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
         otacValidationServiceMock = PowerMockito.mock(OtacValidationService.class);
@@ -219,6 +219,20 @@ public class UserServiceTest {
         userServiceSpy.setAutoOptInRuleService(autoOptInRuleServiceMock);
 
         PowerMockito.mockStatic(UserStatusDao.class);
+
+        userWithPromoAnswer = new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return ((User) invocation.getArguments()[0]).withIsPromotionApplied(true);
+            }
+        };
+
+        userWithoutPromoAnswer = new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return ((User) invocation.getArguments()[0]).withIsPromotionApplied(false);
+            }
+        };
     }
 
     @Test
@@ -2537,6 +2551,7 @@ public class UserServiceTest {
         doReturn(user).when(userServiceSpy).mergeUser(mobileUser, user);
         Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), community)).thenReturn(providerUserDetails);
         Mockito.when(userRepositoryMock.save(user)).thenReturn(user);
+        Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(userWithPromoAnswer);
 
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
@@ -2606,7 +2621,7 @@ public class UserServiceTest {
 		Mockito.when(communityServiceMock.getCommunityByName(community.getName())).thenReturn(community);
 		
 		boolean hasPromo = false;
-        doReturn(hasPromo).when(promotionServiceMock).applyPotentialPromo(user);
+        Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(userWithoutPromoAnswer);
 
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
@@ -3208,7 +3223,7 @@ public class UserServiceTest {
 
         doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
-        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
+        doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
@@ -3243,7 +3258,7 @@ public class UserServiceTest {
 
         doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, expectedUser);
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
-        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
+        doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
@@ -3276,7 +3291,7 @@ public class UserServiceTest {
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
-        doReturn(false).when(promotionServiceMock).applyPotentialPromo(expectedUser);
+        doAnswer(userWithoutPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
@@ -3321,7 +3336,7 @@ public class UserServiceTest {
         PaymentDetails expectedPaymentDetails = new O2PSMSPaymentDetails().withOwner(expectedUser);
 
         doReturn(expectedUser).when(userServiceSpy).checkCredentials(expectedUser.getUserName(), userToken, timestamp, expectedUser.getCommunityRewriteUrl());
-        doReturn(true).when(promotionServiceMock).applyPotentialPromo(expectedUser);
+        doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(expectedUser);
         doReturn(expectedPaymentDetails).when(paymentDetailsServiceMock).createDefaultO2PsmsPaymentDetails(expectedUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
@@ -3342,7 +3357,7 @@ public class UserServiceTest {
 
         doReturn(true).when(autoOptInRuleServiceMock).isSubjectToAutoOptIn(ALL, deviceUIdUser);
         doReturn(deviceUIdUser).when(userServiceSpy).checkCredentials(deviceUIdUser.getUserName(), userToken, timestamp, deviceUIdUser.getCommunityRewriteUrl());
-        doReturn(true).when(promotionServiceMock).applyPotentialPromo(deviceUIdUser);
+        doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(deviceUIdUser);
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         doReturn(providerUserDetails).when(otacValidationServiceMock).validate(otac, deviceUIdUser.getMobile(), deviceUIdUser.getUserGroup().getCommunity());
         doReturn(deviceUIdUser).when(userRepositoryMock).findOne(deviceUIdUser.getId());
@@ -3365,7 +3380,7 @@ public class UserServiceTest {
 
         Promotion promotion = new Promotion();
         doReturn(promotion).when(promotionServiceMock).getPromotionFromRuleForAutoOptIn(mobileUser);
-        doReturn(true).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
+        doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
 
         //when
         User actualUser = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac);
@@ -3764,7 +3779,7 @@ public class UserServiceTest {
 
         Mockito.doReturn(user.getLastPromo().getCode()).when(promotionServiceMock).getVideoCodeForO24GConsumer(user);
         Mockito.doReturn(user).when(userServiceSpy).unsubscribeUser(user, USER_DOWNGRADED_TARIFF.getDescription());
-        Mockito.doReturn(true).when(promotionServiceMock).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
+        Mockito.doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPotentialPromo(user, user.getUserGroup().getCommunity(), currentTimeSeconds);
         Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, BOUGHT_PERIOD_SKIPPING, null);
         Mockito.doReturn(null).when(accountLogServiceMock).logAccountEvent(user.getId(), user.getSubBalance(), null, null, TRIAL_SKIPPING, null);
     }

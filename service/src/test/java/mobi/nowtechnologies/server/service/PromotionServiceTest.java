@@ -101,6 +101,8 @@ public class PromotionServiceTest {
     private UserGroup userGroup;
     private Community community;
     private boolean isPromotionForO24GConsumerApplied;
+    private Answer userWithPromoAnswer;
+    private Answer firstArgAnswer;
 
     @Before
 	public void before() {
@@ -116,6 +118,20 @@ public class PromotionServiceTest {
                     return invocation.getArguments()[0];
                 }
             });
+
+        userWithPromoAnswer = new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return ((User) invocation.getArguments()[0]).withIsPromotionApplied(true);
+            }
+        };
+
+        firstArgAnswer = new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0];
+            }
+        };
 
 		promotionServiceSpy.setEntityService(entityServiceMock);
         promotionServiceSpy.setMessageSource(messageSourceMock);
@@ -191,14 +207,15 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -224,14 +241,15 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -257,14 +275,15 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
         doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -287,10 +306,11 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -314,10 +334,11 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -338,10 +359,11 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -361,10 +383,11 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -384,10 +407,11 @@ public class PromotionServiceTest {
 
         doReturn(true).when(userServiceMock).canActivateVideoTrial(user);
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
         then().validateAs(true);
 
@@ -407,12 +431,12 @@ public class PromotionServiceTest {
                 .getMessage(any(String.class), any(String.class), any(Object[].class), any(String.class), any(Locale.class));
 
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
-        doReturn(true).when(promotionServiceSpy).applyPotentialPromo(user, community);
+        doAnswer(firstArgAnswer).when(promotionServiceSpy).applyPotentialPromo(user, community);
 
-        isPromotionForO24GConsumerApplied = promotionServiceSpy.applyPotentialPromo(user);
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user);
+        isPromotionForO24GConsumerApplied = actualUser.isPromotionApplied();
 
-        then().validateAs(true);
+        then().validateAs(false);
 
         verify(messageSourceMock, times(0)).getMessage(any(String.class), any(String.class), any(Object[].class), any(String.class), any(Locale.class));
         verify(promotionServiceSpy, times(0)).setPotentialPromoByPromoCode(user, promoCode);
@@ -439,7 +463,7 @@ public class PromotionServiceTest {
         when(userServiceMock.canActivateVideoTrial(user)).thenReturn(true);
 
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
         doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
 
@@ -476,7 +500,7 @@ public class PromotionServiceTest {
         when(userServiceMock.canActivateVideoTrial(user)).thenReturn(true);
 
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
         doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
         doReturn(user).when(userServiceMock).unsubscribeAndSkipFreeTrial(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
 
@@ -512,7 +536,7 @@ public class PromotionServiceTest {
         when(userServiceMock.canActivateVideoTrial(user)).thenReturn(true);
 
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
         doReturn(user).when(userServiceMock).unsubscribeUser(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION.getDescription());
         doReturn(user).when(userServiceMock).skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
 
@@ -549,7 +573,7 @@ public class PromotionServiceTest {
         when(userServiceMock.canActivateVideoTrial(user)).thenReturn(true);
 
         doReturn(null).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
 
         //when
         promotionServiceSpy.activateVideoAudioFreeTrial(user);
@@ -574,7 +598,7 @@ public class PromotionServiceTest {
         when(userServiceMock.canActivateVideoTrial(user)).thenReturn(false);
 
         doReturn(promotion).when(promotionServiceSpy).setPotentialPromoByPromoCode(user, promoCode);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
+        doAnswer(userWithPromoAnswer).when(promotionServiceSpy).applyPromotionByPromoCode(user, promotion);
 
         //when
         promotionServiceSpy.activateVideoAudioFreeTrial(user);
@@ -680,7 +704,8 @@ public class PromotionServiceTest {
         Mockito.doAnswer(answer).when(entityServiceMock).saveEntity(any(AccountLog.class));
 
         //when
-        boolean isPromotionApplied = promotionServiceSpy.applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
+        User actualUser = promotionServiceSpy.applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
+        boolean isPromotionApplied = actualUser.isPromotionApplied();
 
         //than
         assertThat(isPromotionApplied, is(true));
@@ -831,10 +856,16 @@ public class PromotionServiceTest {
         PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
         PromoParams promoParams = new PromoParams(user, promotion, currentTimeSeconds);
         PowerMockito.whenNew(PromoParams.class).withArguments(user, promotion, 0).thenReturn(promoParams);
-        doReturn(true).when(promotionServiceSpy).applyPromotionByPromoCode(promoParams);
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return ((PromoParams)invocation.getArguments()[0]).user.withIsPromotionApplied(true);
+            }
+        }).when(promotionServiceSpy).applyPromotionByPromoCode(promoParams);
 
         //when
-        boolean result = promotionServiceSpy.applyPotentialPromo(user, user.getUserGroup().getCommunity());
+        User actualUser = promotionServiceSpy.applyPotentialPromo(user, user.getUserGroup().getCommunity());
+        boolean result = actualUser.isPromotionApplied();
 
         //then
         assertEquals(true, result);

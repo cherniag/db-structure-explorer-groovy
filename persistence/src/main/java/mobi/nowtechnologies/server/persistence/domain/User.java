@@ -309,6 +309,9 @@ public class User implements Serializable {
     @Transient
     private boolean hasPromo = false;
 
+    @Transient
+    private boolean isPromotionApplied;
+
     public User() {
         setDisplayName("");
         setTitle("");
@@ -1480,6 +1483,16 @@ public class User implements Serializable {
         this.device=device;
         return this;
     }
+
+    public boolean isPromotionApplied() {
+        return isPromotionApplied;
+    }
+
+    public User withIsPromotionApplied(boolean isPromotionApplied) {
+        this.isPromotionApplied = isPromotionApplied;
+        return this;
+    }
+
 
     public Collection<SocialInfo> getSocialInfo() {
         return socialInfo;

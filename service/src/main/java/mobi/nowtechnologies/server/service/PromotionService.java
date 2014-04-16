@@ -190,21 +190,21 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
 	}
 
     @Transactional(propagation = REQUIRED)
-    public boolean applyPotentialPromo(User user){
-        boolean isPromotionApplied;
+    public User applyPotentialPromo(User user){
         if (userService.canActivateVideoTrial(user)) {
-            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
+            user = skipPrevDataAndApplyPromotionForO24GConsumer(user);
         }else {
-            isPromotionApplied = applyPotentialPromo(user, user.getUserGroup().getCommunity());
+            user = applyPotentialPromo(user, user.getUserGroup().getCommunity());
         }
-        return isPromotionApplied;
+        return user;
     }
     
     @Transactional(propagation = REQUIRED)
     public User activateVideoAudioFreeTrial(User user){
         boolean isPromotionApplied;
         if (userService.canActivateVideoTrial(user)) {
-            isPromotionApplied = skipPrevDataAndApplyPromotionForO24GConsumer(user);
+            user = skipPrevDataAndApplyPromotionForO24GConsumer(user);
+            isPromotionApplied = user.isPromotionApplied();
         }else{
             throw new ServiceException("user.is.not.eligible.for.this.action", "The user isn't eligible for this action")
                     .addErrorCode(ServiceException.Error.NOT_ELIGIBLE.getCode());
@@ -215,7 +215,7 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         return user;
     }
 
-    private boolean skipPrevDataAndApplyPromotionForO24GConsumer(User user){
+    private User skipPrevDataAndApplyPromotionForO24GConsumer(User user){
         if(user.isOnAudioBoughtPeriod()){
             LOGGER.info("User is on audio bought period");
             user = userService.skipBoughtPeriodAndUnsubscribe(user, VIDEO_AUDIO_FREE_TRIAL_ACTIVATION);
@@ -231,14 +231,13 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         return applyPromotionForO24GConsumer(user);
     }
 
-    private boolean applyPromotionForO24GConsumer(User user){
-        boolean isPromotionApplied = false;
+    private User applyPromotionForO24GConsumer(User user){
         Promotion promotion = setVideoAudioPromotionForO24GConsumer(user);
         LOGGER.info("Promotion to apply [{}]", promotion);
         if (isNotNull(promotion)){
-            isPromotionApplied = applyPromotionByPromoCode(user, promotion);
+            user = applyPromotionByPromoCode(user, promotion);
         }
-        return isPromotionApplied;
+        return user;
     }
 
     private Promotion setVideoAudioPromotionForO24GConsumer(User user){
@@ -295,14 +294,14 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         return true;
     }
 
-    public boolean applyPotentialPromo(User user, Community community) {
+    public User applyPotentialPromo(User user, Community community) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
         LOGGER.info("Attempt to apply promotion using current unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
         return applyPotentialPromo(user, community, freeTrialStartedTimestampSeconds);
     }
 
     @Transactional(propagation = REQUIRED)
-    public boolean applyPotentialPromo(User user, Community community, int freeTrialStartedTimestampSeconds) {
+    public User applyPotentialPromo(User user, Community community, int freeTrialStartedTimestampSeconds) {
         LOGGER.info("Applying potential promotion for user id {}, freeTrialStartedTimestampSeconds {}", user.getId(), freeTrialStartedTimestampSeconds);
         Promotion promotion;
 
@@ -322,25 +321,24 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
     }
 
     @Transactional(propagation = REQUIRED)
-    public boolean applyPromotionByPromoCode(User user, Promotion promotion) {
+    public User applyPromotionByPromoCode(User user, Promotion promotion) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
         LOGGER.info("Attempt to apply promotion using current unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
         return applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
     }
 
     @Transactional(propagation = REQUIRED)
-    public boolean applyPromotionByPromoCode(PromoParams promoParams) {
+    public User applyPromotionByPromoCode(PromoParams promoParams) {
         User user = promoParams.user;
         LOGGER.info("Attempt to apply promotion [{}] for user [{}] using [{}] as freeTrialStartedTimestampSeconds", promoParams.promotion, user, promoParams.freeTrialStartedTimestampSeconds);
 
-        boolean isPromotionApplied = false;
         if (isUserNotBanned(user)) {
-            isPromotionApplied = applyPromoForNotBannedUser(promoParams);
+            user = applyPromoForNotBannedUser(promoParams);
         } else {
             skipPotentialPromoCodePromotionApplyingForBannedUser(user);
         }
 
-        return isPromotionApplied;
+        return user;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -380,7 +378,7 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         return entityService.updateEntity(user);
     }
 
-    private boolean applyPromoForNotBannedUser(PromoParams promoParams) {
+    private User applyPromoForNotBannedUser(PromoParams promoParams) {
         Promotion promotion = promoParams.promotion;
         User user = promoParams.user;
         int freeTrialStartedTimestampSeconds = promoParams.freeTrialStartedTimestampSeconds;
@@ -414,7 +412,7 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         updatePromotionNumUsers(promotion);
 
         logAboutPromoApplying(user, promoCode, freeWeeks);
-        return true;
+        return user.withIsPromotionApplied(true);
     }
 
     public boolean isUserNotBanned(User user) {
@@ -475,7 +473,9 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
             throw new ServiceException("Invalid promotion code. Please re-enter the code or leave the field blank");
         }
 
-        boolean isPromotionApplied = applyPromotionByPromoCode(user, userPromotion);
+        User applyPromotionByPromoCodeUser = applyPromotionByPromoCode(user, userPromotion);
+
+        boolean isPromotionApplied = applyPromotionByPromoCodeUser.isPromotionApplied();
         if (isPromotionApplied){
             userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
         }
