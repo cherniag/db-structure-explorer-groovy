@@ -58,6 +58,7 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     public void checkSendChargeNotificationTaskIsSavedSuccessfully() {
         SendChargeNotificationTask task = TaskFactory.createSendChargeNotificationTask();
         task.setId(null);
+        task.setUser(userRepository.findOne(110));
         repository.save(task);
         List<SendChargeNotificationTask> savedTasks = repository.findAll();
         assertThat(savedTasks.size(), is(1));

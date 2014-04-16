@@ -374,6 +374,7 @@ public class O2PaymentServiceImplTest {
         o2psmsPaymentDetails.withMadeRetries(0);
         o2psmsPaymentDetails.setRetriesOnError(3);
         o2psmsPaymentDetails.setActivated(true);
+        o2psmsPaymentDetails.withOwner(user);
 
         community.setRewriteUrlParameter("o2");
         userGroup.setCommunity(community);

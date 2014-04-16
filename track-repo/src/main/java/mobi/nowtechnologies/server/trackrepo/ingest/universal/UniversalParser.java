@@ -48,6 +48,7 @@ public class UniversalParser extends IParser {
         LOGGER.info("Scanning " + root + "/" + code + "_" + drop + " ");
         File productDir = new File(root + "/" + code + "_" + drop);
         File[] files = productDir.listFiles();
+        Map<String, DropTrack> resultDropTracksWithMetadata = new HashMap<String, DropTrack>();
         for (File file : files) {
             if (file.getName().endsWith(".xml")) {
                 try {
@@ -56,7 +57,7 @@ public class UniversalParser extends IParser {
                     Document document = builder.build(file);
                     Element product = document.getRootElement();
 
-                    return parseProductMetadata(code, fulfillmentFiles, product);
+                    addProductMetadata(code, fulfillmentFiles, product, resultDropTracksWithMetadata);
                 } catch (IOException io) {
                     LOGGER.error(io.getMessage());
                 } catch (JDOMException jdomex) {
@@ -65,12 +66,10 @@ public class UniversalParser extends IParser {
             }
         }
 
-        return null;
+        return resultDropTracksWithMetadata;
     }
 
-    private Map<String, DropTrack> parseProductMetadata(String code, Map<String, List<DropAssetFile>> fulfillmentFiles, Element product) {
-        Map<String, DropTrack> result = new HashMap<String, DropTrack>();
-
+    private void addProductMetadata(String code, Map<String, List<DropAssetFile>> fulfillmentFiles, Element product, Map<String, DropTrack> resultDropTracks) {
         String country = product.getChildText("territory");
         String provider = product.getChildText("prd_label_name");
         String releaseDate = product.getChildText("release_date");
@@ -86,10 +85,10 @@ public class UniversalParser extends IParser {
         for (Element track : tracks) {
             String isrc = track.getAttributeValue("isrc");
 
-            DropTrack data = result.get(isrc);
+            DropTrack data = resultDropTracks.get(isrc);
             if (data == null) {
                 data = new DropTrack();
-                result.put(isrc, data);
+                resultDropTracks.put(isrc, data);
             }
 
             data.type = type;
@@ -108,14 +107,19 @@ public class UniversalParser extends IParser {
 
             parseTerritories(country, provider, startDate, track, data);
 
-            if (fulfillmentFiles.containsKey(isrc))
-                data.files.addAll(fulfillmentFiles.get(isrc));
-
-            if (fulfillmentFiles.containsKey(null))
-                data.files.addAll(fulfillmentFiles.get(null));
+            insertIntoDropTrackDropAssetFiles(fulfillmentFiles, data, isrc);
+            insertIntoDropTrackDropAssetFiles(fulfillmentFiles, data, null);
         }
+    }
 
-        return result;
+    private void insertIntoDropTrackDropAssetFiles(Map<String, List<DropAssetFile>> fulfillmentFiles, DropTrack data, String key) {
+        if (fulfillmentFiles.containsKey(key)) {
+            for (DropAssetFile dropAssetFile : fulfillmentFiles.get(key)) {
+                if(!data.files.contains(dropAssetFile)){
+                    data.files.add(dropAssetFile);
+                }
+            }
+        }
     }
 
     private void parseTerritories(String country, String provider, Date startDate, Element track, DropTrack data) {
@@ -124,8 +128,7 @@ public class UniversalParser extends IParser {
 
         DropTerritory territoryData = DropTerritory.getTerritory(country, data.territories);
         territoryData.country = country;
-        String territoryLabel = track.getChildText("track_label");
-        territoryData.label = territoryLabel;
+        territoryData.label = track.getChildText("track_label");
         territoryData.reportingId = isrc;
         territoryData.distributor = provider;
         territoryData.startdate = startDate;
