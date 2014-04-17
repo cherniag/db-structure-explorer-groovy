@@ -47,7 +47,7 @@ public class PromotionConfiguration extends Configuration<PromotionService.Promo
                         is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
                         is(userTariff(), equalTo(Tariff._3G)),
                         not(is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()))),
-                        campaignUser("campaignId")
+                        campaignUser("O2reengagement")
                 )
         ).result(promotion3G);
 
@@ -56,7 +56,7 @@ public class PromotionConfiguration extends Configuration<PromotionService.Promo
                         is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
                         is(userTariff(), equalTo(Tariff._4G)),
                         not(is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId()))),
-                        campaignUser("campaignId")
+                        campaignUser("O2reengagement")
                 )
         ).result(promotion4G);
     }
