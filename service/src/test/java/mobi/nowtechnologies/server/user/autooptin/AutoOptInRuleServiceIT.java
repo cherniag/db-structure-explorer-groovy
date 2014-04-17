@@ -4,16 +4,20 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
+import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -38,6 +42,13 @@ public class AutoOptInRuleServiceIT {
 
     @Autowired
     private SubscriptionCampaignRepository subscriptionCampaignRepository;
+
+    @Autowired
+    private PromotionService promotionService;
+
+    @Autowired
+    @Qualifier("serviceMessageSource")
+    private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
     private SubscriptionCampaignRecord subscriptionCampaignRecord;
 
@@ -176,6 +187,30 @@ public class AutoOptInRuleServiceIT {
     public void checkWhenUserIsNotConsumer() throws Exception {
         User user = createMatchingUser();
         user.setSegment(SegmentType.BUSINESS);
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
+    public void checkWhen3GUserHad3GPromo() throws Exception {
+        User user = createMatchingUser();
+        user.setTariff(_3G);
+        String promoCode = communityResourceBundleMessageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.3g.promoCode", null, null);
+        Promotion promotion = promotionService.getActivePromotion(promoCode, O2_COMMUNITY_REWRITE_URL);
+        user.getOldUser().setLastPromo(promotion.getPromoCode());
+
+        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
+        assertThat(ruleResult, is(false));
+    }
+
+    @Test
+    public void checkWhen4GUserHad4GPromo() throws Exception {
+        User user = createMatchingUser();
+        user.setTariff(_4G);
+        String promoCode = communityResourceBundleMessageSource.getMessage(O2_COMMUNITY_REWRITE_URL, "o2.promotion.campaign.4g.promoCode", null, null);
+        Promotion promotion = promotionService.getActivePromotion(promoCode, O2_COMMUNITY_REWRITE_URL);
+        user.getOldUser().setLastPromo(promotion.getPromoCode());
 
         boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
         assertThat(ruleResult, is(false));

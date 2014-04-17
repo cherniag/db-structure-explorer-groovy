@@ -56,7 +56,6 @@ public class AutoOptInConfiguration extends Configuration<
                         is(userProviderType(), equalTo(O2)),
                         is(userSegment(), equalTo(CONSUMER)),
                         is(userTariff(), equalTo(Tariff._3G)),
-                        not(is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId()))),
                         not(is(oldUser(), nullValue(User.class))),
                         withOldUser(
                                 and(
@@ -68,7 +67,8 @@ public class AutoOptInConfiguration extends Configuration<
                                         or(
                                                 is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
                                                 is(userCurrentPaymentDetailsActivated(), equalTo(false))
-                                        )
+                                        ),
+                                        not(is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId())))
                                 )
                         ),
                         not(is(userDeviceTypeName(), equalTo(BLACKBERRY))),
@@ -83,7 +83,6 @@ public class AutoOptInConfiguration extends Configuration<
                         is(userProviderType(), equalTo(O2)),
                         is(userSegment(), equalTo(CONSUMER)),
                         is(userTariff(), equalTo(Tariff._4G)),
-                        not(is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId()))),
                         not(is(oldUser(), nullValue(User.class))),
                         withOldUser(
                                 and(
@@ -95,7 +94,8 @@ public class AutoOptInConfiguration extends Configuration<
                                         or(
                                                 is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
                                                 is(userCurrentPaymentDetailsActivated(), equalTo(false))
-                                        )
+                                        ),
+                                        not(is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId())))
                                 )
                         ),
                         not(is(userDeviceTypeName(), equalTo(BLACKBERRY))),
