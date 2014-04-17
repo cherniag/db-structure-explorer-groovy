@@ -4,8 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.user.criteria.Matcher;
-import mobi.nowtechnologies.server.user.rules.Rule;
-import mobi.nowtechnologies.server.user.rules.RuleResult;
+import mobi.nowtechnologies.server.user.rules.*;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -19,11 +18,13 @@ public class PromotionRule implements Rule<User, Promotion> {
     private Matcher<User> rootMatcher;
     private int rulePriority;
     private Promotion promo;
+    private ValidationDelegate validationDelegate;
 
     public PromotionRule(Matcher<User> rootMatcher, int rulePriority, Promotion promo) {
         this.rootMatcher = rootMatcher;
         this.rulePriority = rulePriority;
         this.promo = promo;
+        this.validationDelegate = new PromotionBasedValidationDelegate(promo);
     }
 
     @Override
@@ -43,13 +44,14 @@ public class PromotionRule implements Rule<User, Promotion> {
 
     @Override
     public boolean isValid() {
-        return promo.getIsActive() && promo.getEndDate()> Utils.getEpochSeconds();
+        return validationDelegate.isValid();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
                 .append("rootMatcher", rootMatcher)
+                .append("validation", validationDelegate)
                 .append("isValid", isValid())
                 .append("rulePriority", rulePriority)
                 .append("promo", promo)

@@ -12,15 +12,17 @@ import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
  * Date: 4/9/2014
  */
 public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
+
     private Matcher<User> rootMatcher;
-    private boolean isValid = true;
+    private ValidationDelegate validationDelegate = new NoOpValidationDelegate(true);
     private int rulePriority;
     private boolean result = true;
 
-    public SubscriptionCampaignUserRule(Matcher<User> rootMatcher, int rulePriority, boolean resultValue) {
+    public SubscriptionCampaignUserRule(Matcher<User> rootMatcher, ValidationDelegate delegate, int rulePriority, boolean resultValue) {
         this.rootMatcher = rootMatcher;
         this.rulePriority = rulePriority;
         this.result = resultValue;
+        this.validationDelegate = delegate;
     }
 
     @Override
@@ -40,14 +42,15 @@ public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
 
     @Override
     public boolean isValid() {
-        return isValid;
+        return validationDelegate.isValid();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
                 .append("rootMatcher", rootMatcher)
-                .append("isValid", isValid)
+                .append("validation", validationDelegate)
+                .append("isValid", isValid())
                 .append("rulePriority", rulePriority)
                 .toString();
     }
