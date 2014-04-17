@@ -259,7 +259,7 @@ public class AutoOptInRuleServiceIT {
     private void initSubscriptionCampaignRecord() {
         subscriptionCampaignRecord = new SubscriptionCampaignRecord();
         subscriptionCampaignRecord.setMobile(MOBILE);
-        subscriptionCampaignRecord.setCampaignId("campaignId");
+        subscriptionCampaignRecord.setCampaignId("O2reengagement");
         subscriptionCampaignRepository.save(subscriptionCampaignRecord);
     }
 }

@@ -71,7 +71,7 @@ public class AutoOptInConfiguration extends Configuration<
                                 )
                         ),
                         not(is(userDeviceTypeName(), equalTo(BLACKBERRY))),
-                        campaignUser("campaignId")
+                        campaignUser("O2reengagement")
                 )
         ).result(true);
 
@@ -97,7 +97,7 @@ public class AutoOptInConfiguration extends Configuration<
                                 )
                         ),
                         not(is(userDeviceTypeName(), equalTo(BLACKBERRY))),
-                        campaignUser("campaignId")
+                        campaignUser("O2reengagement")
                 )
         ).result(true);
     }
