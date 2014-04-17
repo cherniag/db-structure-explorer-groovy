@@ -4,6 +4,7 @@ import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
+import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -25,7 +26,6 @@ import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -37,9 +37,7 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
-import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +54,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static mobi.nowtechnologies.server.builder.PromoRequestBuilder.PromoRequest;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.*;
@@ -128,24 +127,6 @@ public class UserService {
         this.autoOptInRuleService = autoOptInRuleService;
     }
 
-    private static class PromoRequest {
-        public User user;
-        public final User mobileUser;
-        public final String otac;
-        public final boolean isMajorApiVersionNumberLessThan4;
-        public final boolean isApplyingWithoutEnterPhone;
-        public final boolean isSubjectToAutoOptIn;
-
-        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn) {
-            this.user = user;
-            this.mobileUser = mobileUser;
-            this.otac = otac;
-            this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
-            this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
-            this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
-        }
-    }
-
     private User checkAndMerge(User user, User mobileUser) {
         if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
             user = mergeUser(mobileUser, user);
@@ -183,9 +164,9 @@ public class UserService {
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
         user = checkAndMerge(user, promoRequest.mobileUser);
-        promoRequest.user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
+        user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
-        user = checkAndApplyPromo(promoRequest);
+        user = checkAndApplyPromo(new PromoRequestBuilder(promoRequest).setUser(user).createPromoRequest());
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
@@ -1386,7 +1367,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone) {
-        PromoRequest promoRequest = new PromoRequest(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
+        PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).setIsSubjectToAutoOptIn(false).createPromoRequest();
         user = applyInitPromoInternal(promoRequest);
 
         user.setHasPromo(user.isPromotionApplied());
@@ -1602,7 +1583,7 @@ public class UserService {
         }
 
         if(isNotBlank(otac)){
-            user = applyInitPromoInternal(new PromoRequest(user, mobileUser, otac, false, false, true));
+            user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).createPromoRequest());
         }else{
             user = promotionService.applyPotentialPromo(user);
         }

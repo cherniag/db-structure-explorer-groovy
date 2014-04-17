@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.PromotionDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
@@ -16,17 +17,15 @@ import mobi.nowtechnologies.server.shared.enums.ContractChannel;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.user.rules.*;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.*;
+import static mobi.nowtechnologies.server.builder.PromoParamsBuilder.PromoParams;
 import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -34,13 +33,8 @@ import static mobi.nowtechnologies.server.shared.Utils.conCatLowerCase;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.*;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.PROMOTION_BY_PROMO_CODE_APPLIED;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.SUBSCRIPTION_CHARGE;
-import static mobi.nowtechnologies.server.service.configuration.Configuration.*;
-import static mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher.UserDetailHolder;
-import static mobi.nowtechnologies.server.user.rules.RuleServiceSupport.RuleComparator;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
@@ -93,27 +87,6 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
 
     public static enum PromotionTriggerType implements TriggerType {
         AUTO_OPT_IN;
-    }
-
-    static class PromoParams {
-        public final User user;
-        public final Promotion promotion;
-        public final int freeTrialStartedTimestampSeconds;
-
-        PromoParams(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
-            this.user = user;
-            this.promotion = promotion;
-            this.freeTrialStartedTimestampSeconds = freeTrialStartedTimestampSeconds;
-        }
-
-        @Override
-        public String toString() {
-            return new ToStringBuilder(this)
-                    .append("user", user)
-                    .append("promotion", promotion)
-                    .append("freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds)
-                    .toString();
-        }
     }
 
     public Promotion getActivePromotion(String promotionCode, String communityName) {
@@ -317,14 +290,14 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         else
             promotion = setPotentialPromoByMessageCode(user, "defaultPromotionCode");
 
-        return applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
+        return applyPromotionByPromoCode(new PromoParamsBuilder().setUser(user).setPromotion(promotion).setFreeTrialStartedTimestampSeconds(freeTrialStartedTimestampSeconds).createPromoParams());
     }
 
     @Transactional(propagation = REQUIRED)
     public User applyPromotionByPromoCode(User user, Promotion promotion) {
         int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
         LOGGER.info("Attempt to apply promotion using current unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
-        return applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
+        return applyPromotionByPromoCode(new PromoParamsBuilder().setUser(user).setPromotion(promotion).setFreeTrialStartedTimestampSeconds(freeTrialStartedTimestampSeconds).createPromoParams());
     }
 
     @Transactional(propagation = REQUIRED)
@@ -387,12 +360,11 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
             throw new IllegalArgumentException("No promotion found");
         }
 
-        final PromoCode promoCode = promotion.getPromoCode();
-
-        if(couldNotBeApplied(user, promoCode)){
-            throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type. Probably because last applied promotion was on the same media type");
+        if(couldNotBeApplied(user, promotion)){
+            throw new ServiceException("Couldn't apply promotion for ["+ promotion + "]. Probably because last applied promotion was on the same media type and this promo couldn't be applied multiple times");
         }
 
+        final PromoCode promoCode = promotion.getPromoCode();
         int freeWeeks = promotion.getFreeWeeks(freeTrialStartedTimestampSeconds);
         int nextSubPayment = promotion.getFreeWeeksEndDate(freeTrialStartedTimestampSeconds);
 
@@ -424,8 +396,8 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
         return userBannedRepository.findOne(userId);
     }
 
-    private boolean couldNotBeApplied(User user, PromoCode currentPromoCode){
-        return !currentPromoCode.getPromotion().isCouldBeAppliedMultipleTimes() && arePromotionMediaTypesTheSame(user.getLastPromo(), currentPromoCode);
+    private boolean couldNotBeApplied(User user, Promotion promotion){
+        return !promotion.isCouldBeAppliedMultipleTimes() && arePromotionMediaTypesTheSame(user.getLastPromo(), promotion.getPromoCode());
     }
 
     private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){

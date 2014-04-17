@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.builder.PromoParamsBuilder;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
@@ -33,7 +34,7 @@ import java.util.Locale;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.service.PromotionService.PromoParams;
+import static mobi.nowtechnologies.server.builder.PromoParamsBuilder.PromoParams;
 import static mobi.nowtechnologies.server.service.PromotionService.PromotionTriggerType.AUTO_OPT_IN;
 import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
@@ -57,9 +58,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
- *
  * @author Titov Mykhaylo (titov)
  */
 @RunWith(PowerMockRunner.class)
@@ -641,7 +642,7 @@ public class PromotionServiceTest {
         promotion.getPromoCode().withPromotion(promotion);
 
         //when
-        promotionServiceSpy.applyPromotionByPromoCode(new PromoParams(user, promotion, 0));
+        promotionServiceSpy.applyPromotionByPromoCode(new PromoParamsBuilder().setUser(user).setPromotion(promotion).setFreeTrialStartedTimestampSeconds(0).createPromoParams());
     }
 
     @Test
@@ -704,7 +705,7 @@ public class PromotionServiceTest {
         Mockito.doAnswer(answer).when(entityServiceMock).saveEntity(any(AccountLog.class));
 
         //when
-        User actualUser = promotionServiceSpy.applyPromotionByPromoCode(new PromoParams(user, promotion, freeTrialStartedTimestampSeconds));
+        User actualUser = promotionServiceSpy.applyPromotionByPromoCode(new PromoParamsBuilder().setUser(user).setPromotion(promotion).setFreeTrialStartedTimestampSeconds(freeTrialStartedTimestampSeconds).createPromoParams());
         boolean isPromotionApplied = actualUser.isPromotionApplied();
 
         //than
@@ -854,12 +855,18 @@ public class PromotionServiceTest {
         PowerMockito.mockStatic(Utils.class);
         int currentTimeSeconds = 0;
         PowerMockito.when(Utils.getEpochSeconds()).thenReturn(currentTimeSeconds);
-        PromoParams promoParams = new PromoParams(user, promotion, currentTimeSeconds);
+        PromoParams promoParams = new PromoParamsBuilder().setUser(user).setPromotion(promotion).setFreeTrialStartedTimestampSeconds(currentTimeSeconds).createPromoParams();
+        PromoParamsBuilder promoParamsBuilderMock = mock(PromoParamsBuilder.class);
+        PowerMockito.whenNew(PromoParamsBuilder.class).withNoArguments().thenReturn(promoParamsBuilderMock);
+        Mockito.when(promoParamsBuilderMock.setUser(user)).thenReturn(promoParamsBuilderMock);
+        Mockito.when(promoParamsBuilderMock.setFreeTrialStartedTimestampSeconds(currentTimeSeconds)).thenReturn(promoParamsBuilderMock);
+        Mockito.when(promoParamsBuilderMock.setPromotion(promotion)).thenReturn(promoParamsBuilderMock);
+        Mockito.when(promoParamsBuilderMock.createPromoParams()).thenReturn(promoParams);
         PowerMockito.whenNew(PromoParams.class).withArguments(user, promotion, 0).thenReturn(promoParams);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                return ((PromoParams)invocation.getArguments()[0]).user.withIsPromotionApplied(true);
+                return ((PromoParams) invocation.getArguments()[0]).user.withIsPromotionApplied(true);
             }
         }).when(promotionServiceSpy).applyPromotionByPromoCode(promoParams);
 

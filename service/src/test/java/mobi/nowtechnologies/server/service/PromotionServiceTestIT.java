@@ -39,7 +39,6 @@ import java.util.Locale;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.service.PromotionService.PromoParams;
 import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.VIDEO_AUDIO_FREE_TRIAL_ACTIVATION;
