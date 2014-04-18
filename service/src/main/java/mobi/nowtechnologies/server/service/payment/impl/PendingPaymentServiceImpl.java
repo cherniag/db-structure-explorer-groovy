@@ -40,15 +40,20 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 	private PaymentDao paymentDao;
 	private PaymentPolicyService paymentPolicyService;
 	private PendingPaymentRepository pendingPaymentRepository;
+    private int maxCount;
 
-	@Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public List<PendingPayment> createPendingPayments() {
 		LOGGER.info("Selecting users for pending payments...");
 		List<User> usersForPendingPayment = userService.getUsersForPendingPayment();
-		LOGGER.info("{} users were selected for pending payment", usersForPendingPayment.size());
+		LOGGER.info("{} users were selected for pending payment, but only {} pending payments will be created", usersForPendingPayment.size(), maxCount);
 		List<PendingPayment> pendingPayments = new LinkedList<PendingPayment>();
+        int count = 0;
 		for (User user : usersForPendingPayment) {
+            if(++count > maxCount){
+                break;
+            }
 			if (!user.isInvalidPaymentPolicy()) {
 				LOGGER.info("Creating pending payment for user {} with balance {}", user.getId(), user.getSubBalance());
 				PendingPayment pendingPayment = createPendingPayment(user, REGULAR);
@@ -73,15 +78,20 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 	public List<PendingPayment> createRetryPayments() {
 		LOGGER.info("Start creating retry-pending payments...");
 		List<User> usersForRetryPayment = userService.getUsersForRetryPayment();
-		LOGGER.debug("{} users were selected for retry payment", usersForRetryPayment.size());
+		LOGGER.debug("{} users were selected for retry payment, but only {} retry payments will be created", usersForRetryPayment.size(), maxCount);
 		List<PendingPayment> retryPayments = new LinkedList<PendingPayment>();
+        int count = 0;
 		for (User user : usersForRetryPayment) {
+            if(++count > maxCount){
+                break;
+            }
 			PendingPayment pendingPayment = createPendingPayment(user, RETRY);
 			retryPayments.add(pendingPayment);
 			PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 			currentPaymentDetails.setLastPaymentStatus(AWAITING);
             userService.updateUser(user);
 		}
+        LOGGER.info("{} retry payments were created", retryPayments.size());
 		return retryPayments;
 	}
 
@@ -144,4 +154,8 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
 	public void setPendingPaymentRepository(PendingPaymentRepository pendingPaymentRepository) {
 		this.pendingPaymentRepository = pendingPaymentRepository;
 	}
+
+    public void setMaxCount(int maxCount) {
+        this.maxCount = maxCount;
+    }
 }

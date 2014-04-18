@@ -281,6 +281,7 @@
 	<bean id="paymentTask" class="mobi.nowtechnologies.server.job.CreatePendingPaymentJob">
 		<property name="executor" ref="paymentExecutor" />
 		<property name="pendingPaymentService" ref="service.PendingPaymentService" />
+        <property name="paymentSystems" ref="service.map.paymentSystems"/>
 	</bean>
 	<bean id="paymentJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="paymentTask" />
@@ -297,6 +298,7 @@
 	<bean id="retryPaymentTask" class="mobi.nowtechnologies.server.job.CreateRetryPaymentJob">
 		<property name="executor" ref="paymentExecutor" />
 		<property name="pendingPaymentService" ref="service.PendingPaymentService" />
+        <property name="paymentSystems" ref="service.map.paymentSystems"/>
 	</bean>
 	<bean id="retryPaymentJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="retryPaymentTask" />
