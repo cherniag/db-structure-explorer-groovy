@@ -76,6 +76,8 @@ public class PromotionServiceTest {
     private PromotionService promotionServiceSpy;
 
     @Mock
+    PromotionProvider.PromotionProxy promotionProxyMock;
+    @Mock
     UserService userServiceMock;
 
     @Mock
@@ -895,7 +897,8 @@ public class PromotionServiceTest {
 
         Promotion promotionFromRuleForAutoOptIn = new Promotion();
 
-        doReturn(new RuleResult<Promotion>(true, promotionFromRuleForAutoOptIn)).when(ruleServiceSupportMock).fireRules(AUTO_OPT_IN, user);
+        doReturn(promotionFromRuleForAutoOptIn).when(promotionProxyMock).getPromotion();
+        doReturn(new RuleResult<PromotionProvider.PromotionProxy>(true, promotionProxyMock)).when(ruleServiceSupportMock).fireRules(AUTO_OPT_IN, user);
 
         //when
         Promotion promotion = promotionServiceSpy.getPromotionFromRuleForAutoOptIn(user);
