@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,6 +50,35 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
         Community o2Community = communityRepository.findByRewriteUrlParameter("o2");
 
         o2UserGroup = getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2Community.getId());
+    }
+
+
+    @Test
+    public void shouldReturnDeactivatedPromotion(){
+        promotionCode = "code";
+
+        saved(o2PromotionByPromoCodeBefore2014EndDate().withIsActive(false));
+        saved(promoCodeForO2PromotionBefore2014EndDate());
+
+        activePromoCodePromotion = promotionRepository.getPromotionByPromoCode(promotionCode, o2UserGroup, ADD_FREE_WEEKS_PROMOTION);
+        Assert.assertNotNull(activePromoCodePromotion);
+        Assert.assertEquals(activePromoCodePromotion.getI(), o2PromotionByPromoCodeBefore2014EndDate.getI());
+    }
+
+    @Test
+    public void shouldReturnPromotionInPast(){
+        promotionCode = "code";
+
+        saved(o2PromotionByPromoCodeBefore2014EndDate().withIsActive(false).withEndDate(2000));
+        saved(promoCodeForO2PromotionBefore2014EndDate());
+
+        activePromoCodePromotion = promotionRepository.getPromotionByPromoCode(promotionCode, o2UserGroup, ADD_FREE_WEEKS_PROMOTION);
+        Assert.assertNotNull(activePromoCodePromotion);
+        Assert.assertEquals(activePromoCodePromotion.getI(), o2PromotionByPromoCodeBefore2014EndDate.getI());
+    }
+
+    private Promotion createDefaultO2Promotion() {
+        return new Promotion().withStartDate(0).withEndDate(2014).withIsActive(false).withNumUsers(5).withMaxUsers(0).withType(ADD_FREE_WEEKS_PROMOTION).withUserGroup(o2UserGroup).withDescription("");
     }
 
     @Test
@@ -231,6 +261,7 @@ public class PromotionRepositoryIT  extends AbstractRepositoryIT{
         assertNotNull(activePromoCodePromotion);
         assertEquals(o2PromotionByPromoCodeAfter2014StartDate.getI(), activePromoCodePromotion.getI());
     }
+
 
     void validateAsDoNotReturnedPromotion(){
         assertNull(activePromoCodePromotion);

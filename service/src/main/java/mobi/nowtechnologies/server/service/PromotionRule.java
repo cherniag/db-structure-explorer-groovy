@@ -13,17 +13,17 @@ import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 /**
  * @author Titov Mykhaylo (titov) on 14.04.2014.
  */
-public class PromotionRule implements Rule<User, Promotion> {
+public class PromotionRule implements Rule<User, PromotionProvider.PromotionProxy> {
 
     private Matcher<User> rootMatcher;
     private int rulePriority;
-    private Promotion promo;
+    private PromotionProvider.PromotionProxy promo;
     private ValidationDelegate validationDelegate;
 
-    public PromotionRule(Matcher<User> rootMatcher, int rulePriority, Promotion promo) {
+    public PromotionRule(Matcher<User> rootMatcher, int rulePriority, PromotionProvider.PromotionProxy promoProxy) {
         this.rootMatcher = rootMatcher;
         this.rulePriority = rulePriority;
-        this.promo = promo;
+        this.promo = promoProxy;
         this.validationDelegate = new PromotionBasedValidationDelegate(promo);
     }
 
@@ -33,8 +33,8 @@ public class PromotionRule implements Rule<User, Promotion> {
     }
 
     @Override
-    public RuleResult<Promotion> getResult() {
-        return new RuleResult<Promotion>(true, promo);
+    public RuleResult<PromotionProvider.PromotionProxy> getResult() {
+        return new RuleResult<PromotionProvider.PromotionProxy>(true, promo);
     }
 
     @Override

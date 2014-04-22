@@ -46,8 +46,8 @@ public class AutoOptInConfiguration extends Configuration<
     @Override
     protected void configure() {
 
-        Promotion promotion3G = promotionProvider.getActivePromotionByPropertyName("o2.promotion.campaign.3g.promoCode", O2_COMMUNITY_REWRITE_URL);
-        Promotion promotion4G = promotionProvider.getActivePromotionByPropertyName("o2.promotion.campaign.4g.promoCode", O2_COMMUNITY_REWRITE_URL);
+        PromotionProvider.PromotionProxy promotion3G = promotionProvider.getPromotionProxyByPropertyName("o2.promotion.campaign.3g.promoCode", O2_COMMUNITY_REWRITE_URL);
+        PromotionProvider.PromotionProxy promotion4G = promotionProvider.getPromotionProxyByPropertyName("o2.promotion.campaign.4g.promoCode", O2_COMMUNITY_REWRITE_URL);
 
         rule(AutoOptInRuleService.AutoOptInTriggerType.ALL).priority(10).validAsPer(promotion3G).match(
                 and(

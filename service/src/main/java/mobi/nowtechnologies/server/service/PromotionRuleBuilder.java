@@ -6,7 +6,7 @@ import mobi.nowtechnologies.server.service.configuration.AbstractRuleBuilder;
 import mobi.nowtechnologies.server.user.rules.Rule;
 
 
-public class PromotionRuleBuilder extends AbstractRuleBuilder<User, Promotion> {
+public class PromotionRuleBuilder extends AbstractRuleBuilder<User, PromotionProvider.PromotionProxy> {
 
     private int priority;
 
@@ -14,7 +14,7 @@ public class PromotionRuleBuilder extends AbstractRuleBuilder<User, Promotion> {
     public PromotionRuleBuilder() {}
 
     @Override
-    public Rule<User, Promotion> buildRule() {
+    public Rule<User, PromotionProvider.PromotionProxy> buildRule() {
         return new PromotionRule(getUserMatcher(), priority, getResult());
     }
 

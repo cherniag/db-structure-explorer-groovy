@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.user.autooptin;
 
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.PromotionProvider;
 import mobi.nowtechnologies.server.service.configuration.AbstractRuleBuilder;
 import mobi.nowtechnologies.server.user.rules.PromotionBasedValidationDelegate;
 import mobi.nowtechnologies.server.user.rules.Rule;
@@ -28,7 +29,7 @@ public class AutoOptInRuleBuilder extends AbstractRuleBuilder<User, Boolean> {
        return this;
     }
 
-    public AutoOptInRuleBuilder validAsPer(Promotion promotion){
+    public AutoOptInRuleBuilder validAsPer(PromotionProvider.PromotionProxy promotion){
         Assert.notNull(promotion);
         validationDelegate = new PromotionBasedValidationDelegate(promotion);
         return this;

@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.Date;
 
+//TODO: update test to test public isValid instead of isValidImpl (time issue)
 public class PromotionBasedValidationDelegateTest {
 
     private PromotionBasedValidationDelegate testInstance;
@@ -18,8 +19,8 @@ public class PromotionBasedValidationDelegateTest {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, 0);
         promotion.setIsActive(true);
-        testInstance = new PromotionBasedValidationDelegate(promotion);
-        MatcherAssert.assertThat(testInstance.isValid(), Matchers.is(true));
+        testInstance = new PromotionBasedValidationDelegate(null);
+        MatcherAssert.assertThat(testInstance.isValidImpl(promotion), Matchers.is(true));
     }
 
     @Test
@@ -27,8 +28,8 @@ public class PromotionBasedValidationDelegateTest {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, 0);
         promotion.setIsActive(false);
-        testInstance = new PromotionBasedValidationDelegate(promotion);
-        MatcherAssert.assertThat(testInstance.isValid(), Matchers.is(false));
+        testInstance = new PromotionBasedValidationDelegate(null);
+        MatcherAssert.assertThat(testInstance.isValidImpl(promotion), Matchers.is(false));
     }
 
     @Test
@@ -36,8 +37,8 @@ public class PromotionBasedValidationDelegateTest {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, -7);
         promotion.setIsActive(true);
-        testInstance = new PromotionBasedValidationDelegate(promotion);
-        MatcherAssert.assertThat(testInstance.isValid(), Matchers.is(false));
+        testInstance = new PromotionBasedValidationDelegate(null);
+        MatcherAssert.assertThat(testInstance.isValidImpl(promotion), Matchers.is(false));
     }
 
     @Test
@@ -45,8 +46,8 @@ public class PromotionBasedValidationDelegateTest {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, 7);
         promotion.setIsActive(true);
-        testInstance = new PromotionBasedValidationDelegate(promotion);
-        MatcherAssert.assertThat(testInstance.isValid(), Matchers.is(false));
+        testInstance = new PromotionBasedValidationDelegate(null);
+        MatcherAssert.assertThat(testInstance.isValidImpl(promotion), Matchers.is(false));
     }
 
     private void updateWithValidDate(Promotion promotion, int dayOffset) {

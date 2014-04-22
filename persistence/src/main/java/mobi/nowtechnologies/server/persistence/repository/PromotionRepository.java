@@ -22,6 +22,16 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
             "and promotion.type=?4")
     Promotion getActivePromoCodePromotion(String promotionCode, UserGroup userGroup, int epochSeconds, String promotionType);
 
+
+    @Query(value = "select promotion from Promotion promotion " +
+            "join promotion.promoCode promoCode " +
+            "where " +
+            "promoCode.code=?1 " +
+            "and promotion.userGroup=?2 " +
+            "and promotion.type=?3")
+    Promotion getPromotionByPromoCode(String promotionCode, UserGroup userGroup, String promotionType);
+
+
     @Modifying
     @Query(value = "update Promotion p " +
             "set p.numUsers=p.numUsers+1 " +
