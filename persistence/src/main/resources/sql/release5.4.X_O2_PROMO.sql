@@ -5,7 +5,7 @@ CREATE TABLE `subscription_campaign` (
   `mobile` varchar(25) NOT NULL,
   `campaign_id` varchar(25),
   PRIMARY KEY (`id`),
-  INDEX mobile-campaign_id (mobile, campaign_id)
+  INDEX `mobile-campaign_id` (mobile, campaign_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- http://jira.musicqubed.com/browse/GO-1069
