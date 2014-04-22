@@ -454,8 +454,8 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
     }
 
     public Promotion getPromotionFromRuleForAutoOptIn(User user) {
-        RuleResult<Promotion> ruleResult = getRuleServiceSupport().fireRules(AUTO_OPT_IN, user);
-        return ruleResult.getResult();
+        RuleResult<PromotionProvider.PromotionProxy> ruleResult = getRuleServiceSupport().fireRules(AUTO_OPT_IN, user);
+        return ruleResult.getResult().getPromotion();
     }
 
     private String communityName(User user) {
