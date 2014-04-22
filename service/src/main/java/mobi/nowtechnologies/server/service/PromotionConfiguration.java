@@ -23,7 +23,7 @@ import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUN
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static org.apache.commons.lang.Validate.notNull;
 
-public class PromotionConfiguration extends Configuration<PromotionService.PromotionTriggerType,Promotion, PromotionRuleBuilder> {
+public class PromotionConfiguration extends Configuration<PromotionService.PromotionTriggerType,PromotionProvider.PromotionProxy, PromotionRuleBuilder> {
 
     private PromotionProvider promotionProvider;
 
@@ -39,8 +39,8 @@ public class PromotionConfiguration extends Configuration<PromotionService.Promo
 
     @Override
     protected void configure() {
-        Promotion promotion3G = promotionProvider.getActivePromotionByPropertyName("o2.promotion.campaign.3g.promoCode", O2_COMMUNITY_REWRITE_URL);
-        Promotion promotion4G = promotionProvider.getActivePromotionByPropertyName("o2.promotion.campaign.4g.promoCode", O2_COMMUNITY_REWRITE_URL);
+        PromotionProvider.PromotionProxy promotion3G = promotionProvider.getPromotionProxyByPropertyName("o2.promotion.campaign.3g.promoCode", O2_COMMUNITY_REWRITE_URL);
+        PromotionProvider.PromotionProxy promotion4G = promotionProvider.getPromotionProxyByPropertyName("o2.promotion.campaign.4g.promoCode", O2_COMMUNITY_REWRITE_URL);
 
         rule(PromotionService.PromotionTriggerType.AUTO_OPT_IN).priority(10).match(
                 and(
