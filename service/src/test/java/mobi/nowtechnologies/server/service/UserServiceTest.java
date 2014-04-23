@@ -56,6 +56,8 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonMap;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static mobi.nowtechnologies.server.dto.ProviderUserDetails.NULL_PROVIDER_USER_DETAILS;
+import static mobi.nowtechnologies.server.dto.ProviderUserDetails.NullProviderUserDetails;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.UserStatusFactory.createUserStatus;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
@@ -3663,6 +3665,43 @@ public class UserServiceTest {
         user.setStatus(new UserStatus(UserStatus.LIMITED));
         user.setActivationStatus(ENTERED_NUMBER);
         userServiceSpy.checkActivationStatus(user, ENTERED_NUMBER);
+    }
+
+    @Test
+    public void shouldNotUpdateProvider(){
+
+        //given
+        User user = new User().withUserName("userName").withProvider(VF).withActivationStatus(ENTERED_NUMBER).withMobile("mobile").withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl(VF_NZ_COMMUNITY_REWRITE_URL)));
+        User mobileUser = null;
+        String otac = "otac";
+        boolean isMajorApiVersionNumberLessThan4 = false;
+        boolean isApplyingWithoutEnterPhone = false;
+
+        Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), user.getUserGroup().getCommunity())).thenReturn(NULL_PROVIDER_USER_DETAILS);
+        Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(new Answer<User>() {
+            @Override
+            public User answer(InvocationOnMock invocation) throws Throwable {
+                User user = (User) invocation.getArguments()[0];
+                return user.withIsPromotionApplied(true);
+            }
+        });
+        Mockito.when(userRepositoryMock.save(user)).thenAnswer(new Answer<User>() {
+            @Override
+            public User answer(InvocationOnMock invocation) throws Throwable {
+                User user = (User) invocation.getArguments()[0];
+                return user.withActivationStatus(ACTIVATED).withUserName(user.getMobile());
+            }
+        });
+
+        //when
+        User actualUser = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone);
+
+        //then
+        assertThat(actualUser, is (user));
+        assertThat(actualUser.getActivationStatus(), is (ACTIVATED));
+        assertThat(actualUser.getProvider(), is (VF));
+        assertThat(actualUser.getUserName(), is (user.getMobile()));
+        assertThat(actualUser.isHasPromo(), is (true));
     }
 
 

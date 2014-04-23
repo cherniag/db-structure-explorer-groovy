@@ -138,8 +138,8 @@ public class UserService {
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
         LOGGER.info("Attempt to update user contract and provider with [{}]", providerUserDetails);
-        if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
-            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+        if (user.isVFNZCommunityUser()){
+            updateProviderForVFNZCommunityUser(user, providerUserDetails);
         }else {
             if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity())) {
                 user.setContract(PAYM);
@@ -150,6 +150,12 @@ public class UserService {
             }
         }
         return user;
+    }
+
+    private void updateProviderForVFNZCommunityUser(User user, ProviderUserDetails providerUserDetails) {
+        if (isNotNull(providerUserDetails.operator)) {
+            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+        }
     }
 
     private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
@@ -179,8 +185,8 @@ public class UserService {
         User user = promoRequest.user;
         boolean isApplyingWithoutEnterPhone = promoRequest.isApplyingWithoutEnterPhone;
         if (isNull(promoRequest.mobileUser)) {
-            if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(promoRequest.user.getActivationStatus()) && isNotEmail(promoRequest.user.getUserName()))) {
-                user = promotionService.applyPotentialPromo(promoRequest.user);
+            if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
+                user = promotionService.applyPotentialPromo(user);
             }else{
                 LOGGER.info("Promo applying procedure is skipped for new user");
             }
