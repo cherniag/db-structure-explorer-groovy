@@ -119,15 +119,6 @@ public abstract class Configuration <TType extends TriggerType, V, BuilderType e
         };
     }
 
-    public static  CallBackUserDetailsMatcher.UserDetailHolder<String> userDeviceTypeName() {
-        return new CallBackUserDetailsMatcher.UserDetailHolder<String>("user.deviceType") {
-            @Override
-            public String getUserDetail(User user) {
-                return user.getDeviceType() != null ? user.getDeviceType().getName() : null;
-            }
-        };
-    }
-
     public static  CallBackUserDetailsMatcher.UserDetailHolder<SegmentType> userSegment() {
         return new CallBackUserDetailsMatcher.UserDetailHolder<SegmentType>("user.segment") {
             @Override

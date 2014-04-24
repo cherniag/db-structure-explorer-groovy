@@ -166,15 +166,6 @@ public class AutoOptInRuleServiceIT {
     }
 
     @Test
-    public void checkWhenUserDeviceIsBB() throws Exception {
-        User user = createMatchingUser();
-        user.setDeviceType(getDeviceType(DeviceType.BLACKBERRY));
-
-        boolean ruleResult = ruleService.isSubjectToAutoOptIn(ALL, user);
-        assertThat(ruleResult, is(false));
-    }
-
-    @Test
     public void checkWhenUserIsNotFromO2Provider() throws Exception {
         User user = createMatchingUser();
         user.setProvider(ProviderType.NON_O2);

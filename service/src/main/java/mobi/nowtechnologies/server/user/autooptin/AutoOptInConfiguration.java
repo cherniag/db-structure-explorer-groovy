@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.user.autooptin;
 
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -14,7 +13,6 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.BLACKBERRY;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
@@ -71,7 +69,6 @@ public class AutoOptInConfiguration extends Configuration<
                                         not(is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId())))
                                 )
                         ),
-                        not(is(userDeviceTypeName(), equalTo(BLACKBERRY))),
                         campaignUser("O2reengagement")
                 )
         ).result(true);
@@ -98,7 +95,6 @@ public class AutoOptInConfiguration extends Configuration<
                                         not(is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId())))
                                 )
                         ),
-                        not(is(userDeviceTypeName(), equalTo(BLACKBERRY))),
                         campaignUser("O2reengagement")
                 )
         ).result(true);
