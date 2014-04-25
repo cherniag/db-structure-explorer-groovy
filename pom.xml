@@ -30,7 +30,7 @@
     <properties>
         <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
         <org.springframework.security-version>3.1.0.RELEASE</org.springframework.security-version>
-        <spring-social.version>1.0.1.RELEASE</spring-social.version>
+        <spring-social.version>1.1.0.RELEASE</spring-social.version>
         <chartsnow-version>5.4-SNAPSHOT</chartsnow-version>
     </properties>
 
@@ -316,6 +316,21 @@
     <dependencyManagement>
 
         <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.2.2</version>
+            </dependency>
             <dependency>
                 <groupId>com.sentaca.spring.smpp</groupId>
                 <artifactId>spring-smpp</artifactId>
@@ -779,8 +794,15 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-facebook</artifactId>
-                <version>1.0.3.RELEASE</version>
+                <version>1.1.0.RELEASE</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.springframework.social</groupId>
+                <artifactId>spring-social-google</artifactId>
+                <version>1.0.0.M3</version>
+            </dependency>
+
             <!-- END Spring Secuity -->
 
             <!-- Logging section -->
@@ -1026,12 +1048,6 @@
                 <groupId>javax.xml.crypto</groupId>
                 <artifactId>jsr105-api</artifactId>
                 <version>1.0.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.9</version>
             </dependency>
 
             <dependency>

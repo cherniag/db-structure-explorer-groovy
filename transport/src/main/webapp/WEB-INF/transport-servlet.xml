@@ -92,9 +92,9 @@
         <property name="defaultViews">
             <list>
                 <ref bean="transport.JaxbMarshallingView"/>
-                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
                     <property name="objectMapper">
-                        <bean class="org.codehaus.jackson.map.ObjectMapper">
+                        <bean class="com.fasterxml.jackson.databind.ObjectMapper">
                             <property name="serializationInclusion" value="NON_EMPTY"/>
                         </bean>
                     </property>

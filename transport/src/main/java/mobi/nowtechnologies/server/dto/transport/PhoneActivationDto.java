@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.dto.transport;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.codehaus.jackson.annotate.JsonTypeName;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
