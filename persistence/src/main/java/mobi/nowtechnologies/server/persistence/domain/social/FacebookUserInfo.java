@@ -63,6 +63,7 @@ public class FacebookUserInfo extends SocialInfo {
         this.gender = gender;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }

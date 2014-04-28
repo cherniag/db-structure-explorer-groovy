@@ -11,10 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 public interface FacebookUserInfoRepository extends BaseSocialRepository<FacebookUserInfo> {
 
     @Query(value="select facebookUserInfo from FacebookUserInfo facebookUserInfo where facebookUserInfo.user=?1")
-    FacebookUserInfo findForUser(User user);
+    FacebookUserInfo findByUser(User user);
 
     @Modifying
     @Query(value="delete  from FacebookUserInfo facebookUserInfo where facebookUserInfo.user=?1")
-    int deleteForUser(User user);
+    int deleteByUser(User user);
 
 }

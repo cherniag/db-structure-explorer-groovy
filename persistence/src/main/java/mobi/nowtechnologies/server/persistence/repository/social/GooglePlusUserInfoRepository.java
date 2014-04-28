@@ -11,10 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 public interface GooglePlusUserInfoRepository extends BaseSocialRepository<GooglePlusUserInfo> {
 
     @Query(value = "select googlePlusUserInfo from GooglePlusUserInfo googlePlusUserInfo where googlePlusUserInfo.user=?1")
-    GooglePlusUserInfo findForUser(User user);
+    GooglePlusUserInfo findByUser(User user);
 
     @Modifying
     @Query(value = "delete  from GooglePlusUserInfo googlePlusUserInfo where googlePlusUserInfo.user=?1")
-    int deleteForUser(User user);
+    int deleteByUser(User user);
 
 }

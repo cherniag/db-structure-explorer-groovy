@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public  interface BaseSocialRepository<T extends SocialInfo> extends JpaRepository<T, Long> {
     T findByEmail(String email);
 
-    T findForUser(User user);
+    T findByUser(User user);
 
-    int deleteForUser(User user);
+    int deleteByUser(User user);
 }

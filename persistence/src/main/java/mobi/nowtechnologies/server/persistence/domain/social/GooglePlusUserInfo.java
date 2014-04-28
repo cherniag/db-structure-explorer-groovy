@@ -48,6 +48,7 @@ public class GooglePlusUserInfo extends SocialInfo{
         this.picture = picture;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }

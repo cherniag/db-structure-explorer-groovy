@@ -9,12 +9,13 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
-import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
 @Transactional
 public class UserPromoServiceImpl implements UserPromoService {
@@ -22,9 +23,6 @@ public class UserPromoServiceImpl implements UserPromoService {
     private ActivationEmailService activationEmailService;
 
     private UserService userService;
-
-    @Resource
-    private GooglePlusService googlePlusService;
 
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
@@ -55,44 +53,52 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Override
     public User applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo) {
-        User userForMerge = getUserForMerge(userAfterSignUp, googleUserInfo.getEmail());
-        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
-        googlePlusUserInfoRepository.deleteForUser(userAfterApplyPromo);
-
-        googleUserInfo.setUser(userAfterApplyPromo);
-        userAfterApplyPromo.setUserName(googleUserInfo.getEmail());
-        userAfterApplyPromo.setProvider(ProviderType.GOOGLE_PLUS);
-
-        userRepository.save(userAfterApplyPromo);
+        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS);
         googlePlusUserInfoRepository.save(googleUserInfo);
-
 
         return userAfterApplyPromo;
     }
 
     @Override
     public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo userInfo) {
-        User userForMerge = getUserForMerge(userAfterSignUp, userInfo.getEmail());
-        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
-        facebookUserInfoRepository.deleteForUser(userAfterApplyPromo);
-
-        userInfo.setUser(userAfterApplyPromo);
-        userAfterApplyPromo.setUserName(userInfo.getEmail());
-        userAfterApplyPromo.setProvider(ProviderType.FACEBOOK);
-
-        userRepository.save(userAfterApplyPromo);
+        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, userInfo, facebookUserInfoRepository, ProviderType.FACEBOOK);
         facebookUserInfoRepository.save(userInfo);
 
         return userAfterApplyPromo;
     }
 
-    private User getUserForMerge(User userAfterSignUp, String email) {
+    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType googlePlus) {
+        User userForMerge = getUserForMerge(baseSocialRepository, userAfterSignUp, socialInfo.getEmail());
+        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
+        baseSocialRepository.deleteByUser(userAfterApplyPromo);
+
+        socialInfo.setUser(userAfterApplyPromo);
+        userAfterApplyPromo.setUserName(socialInfo.getEmail());
+        userAfterApplyPromo.setProvider(googlePlus);
+
+        userRepository.save(userAfterApplyPromo);
+        return userAfterApplyPromo;
+    }
+
+    private User getUserForMerge(BaseSocialRepository baseSocialRepository, User userAfterSignUp, String email) {
         String url = userAfterSignUp.getCommunityRewriteUrl();
         User userByEmail = userRepository.findOne(email, url);
         if (userByEmail != null) {
             return userByEmail;
         }
-        for (BaseSocialRepository currentSocialRepository : socialRepositories){
+
+        User user = tryToFindUserByEmail(email, Arrays.asList(baseSocialRepository));
+        if(user != null) {
+            return user;
+        }
+
+        Collection<BaseSocialRepository> filtered = new HashSet<BaseSocialRepository>(socialRepositories);
+        filtered.remove(baseSocialRepository);
+        return tryToFindUserByEmail(email, filtered);
+    }
+
+    private User tryToFindUserByEmail(String email, Collection<BaseSocialRepository> socialRepositories) {
+        for (BaseSocialRepository currentSocialRepository : socialRepositories) {
             SocialInfo socialInfo = currentSocialRepository.findByEmail(email);
             if (socialInfo != null) {
                 return socialInfo.getUser();

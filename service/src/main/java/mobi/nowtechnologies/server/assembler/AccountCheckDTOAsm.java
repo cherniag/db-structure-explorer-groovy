@@ -134,14 +134,14 @@ public class AccountCheckDTOAsm {
 
     private UserDetailsDto buildUserDetails(User user) {
         if (ProviderType.FACEBOOK.equals(user.getProvider())) {
-            FacebookUserInfo facebookUserInfo = facebookUserInfoRepository.findForUser(user);
+            FacebookUserInfo facebookUserInfo = facebookUserInfoRepository.findByUser(user);
             if (facebookUserInfo != null) {
                 return convertFacebookInfoToDetails(facebookUserInfo);
             }
         }
 
         if (ProviderType.GOOGLE_PLUS.equals(user.getProvider())) {
-            GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findForUser(user);
+            GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user);
             if (googlePlusUserInfo != null) {
                 return convertGooglePlusInfoToDetails(googlePlusUserInfo);
             }

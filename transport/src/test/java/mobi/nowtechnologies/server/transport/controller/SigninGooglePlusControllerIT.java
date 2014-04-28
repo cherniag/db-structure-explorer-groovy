@@ -148,7 +148,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
 
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findForUser(user);
+        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(gpDetails.getEmail(), googlePlusEmail);
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
@@ -238,7 +238,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherGooglePlusUserId, accessToken, true)
         ).andExpect(status().isOk()).andDo(print());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findForUser(user);
+        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(gpDetails.getEmail(), otherGooglePlusEmail);
         assertEquals(gpDetails.getGooglePlusId(), otherGooglePlusUserId);
     }
@@ -253,7 +253,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findForUser(user);
+        GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
 
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
@@ -261,7 +261,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 buildApplyGooglePlusPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk());
         user = userRepository.findByDeviceUIDAndCommunity(otherDeviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        fbDetails = googlePlusUserInfoRepository.findForUser(user);
+        fbDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
     }
 
@@ -273,14 +273,14 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findForUser(user);
+        GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk()).andDo(print());
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        fbDetails = googlePlusUserInfoRepository.findForUser(user);
+        fbDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
     }
 
@@ -364,7 +364,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
-        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findForUser(user);
+        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(gpDetails.getEmail(), googlePlusEmail);
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
