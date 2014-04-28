@@ -72,12 +72,14 @@ public class UserPromoServiceImpl implements UserPromoService {
         User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
         baseSocialRepository.deleteByUser(userAfterApplyPromo);
 
-        socialInfo.setUser(userAfterApplyPromo);
-        userAfterApplyPromo.setUserName(socialInfo.getEmail());
-        userAfterApplyPromo.setProvider(googlePlus);
+        User refreshedUser = userRepository.findOne(userAfterApplyPromo.getId());
 
-        userRepository.save(userAfterApplyPromo);
-        return userAfterApplyPromo;
+        socialInfo.setUser(refreshedUser);
+        refreshedUser.setUserName(socialInfo.getEmail());
+        refreshedUser.setProvider(googlePlus);
+
+        userRepository.save(refreshedUser);
+        return refreshedUser;
     }
 
     private User getUserForMerge(BaseSocialRepository baseSocialRepository, User userAfterSignUp, String email) {
