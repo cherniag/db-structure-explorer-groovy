@@ -3,13 +3,14 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -27,10 +28,11 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
+    @Resource
+    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
 
     @Resource
     private UserRepository userRepository;
-
 
     @Resource
     private Collection<BaseSocialRepository> socialRepositories;
@@ -51,12 +53,20 @@ public class UserPromoServiceImpl implements UserPromoService {
         return user;
     }
 
-
     @Override
-    public User applyInitPromoByGooglePlus(User userAfterSignUp, GoogleUserInfo googleUserInfo) {
+    public User applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo) {
         User userForMerge = getUserForMerge(userAfterSignUp, googleUserInfo.getEmail());
         User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
-        googlePlusService.saveGooglePlusInfoForUser(userAfterApplyPromo, googleUserInfo);
+        googlePlusUserInfoRepository.deleteForUser(userAfterApplyPromo);
+
+        googleUserInfo.setUser(userAfterApplyPromo);
+        userAfterApplyPromo.setUserName(googleUserInfo.getEmail());
+        userAfterApplyPromo.setProvider(ProviderType.GOOGLE_PLUS);
+
+        userRepository.save(userAfterApplyPromo);
+        googlePlusUserInfoRepository.save(googleUserInfo);
+
+
         return userAfterApplyPromo;
     }
 
@@ -69,6 +79,7 @@ public class UserPromoServiceImpl implements UserPromoService {
         userInfo.setUser(userAfterApplyPromo);
         userAfterApplyPromo.setUserName(userInfo.getEmail());
         userAfterApplyPromo.setProvider(ProviderType.FACEBOOK);
+
         userRepository.save(userAfterApplyPromo);
         facebookUserInfoRepository.save(userInfo);
 

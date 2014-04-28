@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,7 +42,7 @@ public class SigninGooglePlusController extends CommonController {
         try {
             LOGGER.info("APPLY_INIT_PROMO_GOOGLE_PLUS Started for accessToken[{}] in community[{}] ", accessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
-            GoogleUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
+            GooglePlusUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
             user = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo);
             return buildModelAndView(accCheckService.processAccCheck(user, true));
         } catch (UserCredentialsException ce) {

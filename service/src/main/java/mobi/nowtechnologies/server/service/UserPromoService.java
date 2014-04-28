@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import org.springframework.social.google.api.userinfo.GoogleUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 
 public interface UserPromoService {
 
@@ -12,5 +12,5 @@ public interface UserPromoService {
 
     User applyInitPromoByFacebook(User user, FacebookUserInfo facebookProfile);
 
-    User applyInitPromoByGooglePlus(User user, GoogleUserInfo googleUserInfo);
+    User applyInitPromoByGooglePlus(User user, GooglePlusUserInfo googleUserInfo);
 }

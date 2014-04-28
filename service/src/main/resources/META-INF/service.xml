@@ -255,9 +255,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
     <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 
-    <bean id="service.GooglePlusDataConverter" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusDataConverter"/>
-
-
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userService" ref="service.UserService" />
 	</bean>
