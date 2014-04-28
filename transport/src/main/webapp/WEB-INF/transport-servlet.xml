@@ -70,6 +70,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
                 <value>mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto</value>
                 <value>mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto</value>
 			</list>
 		</property>
 	</bean>

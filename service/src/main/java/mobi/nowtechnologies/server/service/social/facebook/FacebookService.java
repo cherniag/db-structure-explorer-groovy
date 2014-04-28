@@ -1,11 +1,13 @@
-package mobi.nowtechnologies.server.service.facebook;
+package mobi.nowtechnologies.server.service.social.facebook;
 
 import com.google.common.annotations.VisibleForTesting;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.facebook.exception.FacebookForbiddenException;
+import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
+import mobi.nowtechnologies.server.service.social.core.EmptyOAuth2ApiBindingCustomizer;
+import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +28,16 @@ public class FacebookService {
     @Resource
     private UserRepository userRepository;
 
+
+    @Resource
     private FacebookDataConverter facebookDataConverter;
 
-    private FacebookTemplateCustomizer templateCustomizer = new EmptyFacebookTemplateCustomizer();
+    private AbstractOAuth2ApiBindingCustomizer templateCustomizer = new EmptyOAuth2ApiBindingCustomizer();
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @VisibleForTesting
-    public void setTemplateCustomizer(FacebookTemplateCustomizer templateCustomizer) {
+    public void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer templateCustomizer) {
         this.templateCustomizer = templateCustomizer;
     }
 
@@ -61,22 +65,19 @@ public class FacebookService {
             return facebookProfile;
         } catch (SocialException se) {
             logger.error("ERROR", se);
-            throw new FacebookForbiddenException(FacebookConstants.FACEBOOK_INVALID_TOKEN_ERROR_CODE, "invalid authorization token");
+            throw new OAuth2ForbiddenException(FacebookConstants.FACEBOOK_INVALID_TOKEN_ERROR_CODE, "invalid authorization token");
         }
     }
 
     private void validateProfile(String inputFacebookId, FacebookProfile facebookProfile) {
         if (!facebookProfile.getId().equals(inputFacebookId)) {
-            throw new FacebookForbiddenException(FacebookConstants.FACEBOOK_INVALID_USER_ID_ERROR_CODE, "invalid user facebook id");
+            throw new OAuth2ForbiddenException(FacebookConstants.FACEBOOK_INVALID_USER_ID_ERROR_CODE, "invalid user facebook id");
         }
         if (isEmpty(facebookProfile.getEmail())) {
-            throw new FacebookForbiddenException(FacebookConstants.FACEBOOK_EMAIL_IS_NOT_SPECIFIED_ERROR_CODE, "Email is not specified");
+            throw new OAuth2ForbiddenException(FacebookConstants.FACEBOOK_EMAIL_IS_NOT_SPECIFIED_ERROR_CODE, "Email is not specified");
         }
 
     }
 
-    public void setFacebookDataConverter(FacebookDataConverter facebookDataConverter) {
-        this.facebookDataConverter = facebookDataConverter;
-    }
 
 }

@@ -6,12 +6,15 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
-import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
@@ -37,7 +40,9 @@ public class AccountCheckDTOAsm {
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+    @Resource
+    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
+
 
     public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
@@ -134,7 +139,24 @@ public class AccountCheckDTOAsm {
                 return convertFacebookInfoToDetails(facebookUserInfo);
             }
         }
+
+        if (ProviderType.GOOGLE_PLUS.equals(user.getProvider())) {
+            GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findForUser(user);
+            if (googlePlusUserInfo != null) {
+                return convertGooglePlusInfoToDetails(googlePlusUserInfo);
+            }
+        }
         return null;
+    }
+
+    private UserDetailsDto convertGooglePlusInfoToDetails(GooglePlusUserInfo googlePlusUserInfo) {
+        GooglePlusUserDetailsDto result = new GooglePlusUserDetailsDto();
+        result.setGooglePlusId(googlePlusUserInfo.getGooglePlusId());
+        result.setEmail(googlePlusUserInfo.getEmail());
+        result.setSurname(googlePlusUserInfo.getSurname());
+        result.setFirstName(googlePlusUserInfo.getFirstName());
+        result.setPictureUrl(googlePlusUserInfo.getPicture());
+        return result;
     }
 
     private FacebookUserDetailsDto convertFacebookInfoToDetails(FacebookUserInfo details) {
@@ -148,6 +170,7 @@ public class AccountCheckDTOAsm {
         result.setLocation(details.getCity());
         result.setGender(details.getGender());
         if (details.getBirthday() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             result.setBirthDay(dateFormat.format(details.getBirthday()));
         }
         return result;

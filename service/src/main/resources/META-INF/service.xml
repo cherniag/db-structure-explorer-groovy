@@ -249,11 +249,14 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="entityService" ref="service.EntityService" />
 	</bean>
 
-	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.facebook.FacebookService">
-            <property name="facebookDataConverter" ref="service.FacebookDataConverter"/>
-    </bean>
+	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService"/>
 
-    <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.facebook.FacebookDataConverter"/>
+    <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.social.facebook.FacebookDataConverter"/>
+
+    <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
+
+    <bean id="service.GooglePlusDataConverter" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusDataConverter"/>
+
 
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userService" ref="service.UserService" />

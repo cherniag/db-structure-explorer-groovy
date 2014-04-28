@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.persistence.repository;
+package mobi.nowtechnologies.server.persistence.repository.social;
 
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;

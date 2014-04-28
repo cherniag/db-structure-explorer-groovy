@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.facebook;
+package mobi.nowtechnologies.server.service.social.facebook;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;

@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.transport.controller.facebook;
+package mobi.nowtechnologies.server.transport.controller.googleplus;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -7,7 +7,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.social.facebook.api.impl.FacebookTemplate;
+import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,22 +17,22 @@ import java.io.IOException;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
-abstract class AbstractFacebookTemplateCustomizerImpl implements AbstractOAuth2ApiBindingCustomizer<FacebookTemplate> {
-    private String fbToken;
+abstract class AbstractGooglePlusTemplateCustomizerImpl implements AbstractOAuth2ApiBindingCustomizer<GoogleTemplate> {
+    private String goolePlusToken;
 
-    public AbstractFacebookTemplateCustomizerImpl(String fbToken) {
-        this.fbToken = fbToken;
+    public AbstractGooglePlusTemplateCustomizerImpl(String fbToken) {
+        this.goolePlusToken = fbToken;
     }
 
     @Override
-    public final void customize(FacebookTemplate template) {
+    public final void customize(GoogleTemplate template) {
         RestTemplate mock = template.getRestTemplate();
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(mock);
         String response = render(prepareBody());
 
-        mockServer.expect(requestTo("https://graph.facebook.com/me"))
+        mockServer.expect(requestTo("https://www.googleapis.com/oauth2/v2/userinfo"))
                 .andExpect(method(HttpMethod.GET)).
-                andExpect(header("Authorization", "OAuth " + fbToken)).
+                andExpect(header("Authorization", "Bearer " + goolePlusToken)).
                 andRespond(withStatus(getRespondStatus()).body(response).contentType(MediaType.APPLICATION_JSON));
     }
 

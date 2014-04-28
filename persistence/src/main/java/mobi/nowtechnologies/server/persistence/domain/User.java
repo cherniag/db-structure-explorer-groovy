@@ -460,6 +460,8 @@ public class User implements Serializable {
             switch (provider) {
                 case FACEBOOK:
                     return !isEmpty(getUserName());
+                case GOOGLE_PLUS:
+                    return !isEmpty(getUserName());
                 case EMAIL:
                     return !isEmpty(getUserName());
                 default:

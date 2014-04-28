@@ -1,0 +1,12 @@
+{
+    "family_name": "%s",
+    "name": "Oleg Artyomov",
+    "picture": "%s",
+    "locale": "ru",
+    "gender": "male",
+    "email": "%s",
+    "link": "https://plus.google.com/111488608117867698111",
+    "given_name": "%s",
+    "id": "%s",
+    "verified_email": true
+}

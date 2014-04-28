@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.facebook;
+package mobi.nowtechnologies.server.service.social.facebook;
 
 /**
  * Created by oar on 2/18/14.
