@@ -2,13 +2,13 @@ package mobi.nowtechnologies.server.service;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
+import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +23,10 @@ public class UserPromoServiceImpl implements UserPromoService {
     private UserService userService;
 
     @Resource
-    private FacebookService facebookService;
-
-    @Resource
     private GooglePlusService googlePlusService;
 
+    @Resource
+    private FacebookUserInfoRepository facebookUserInfoRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -62,22 +61,29 @@ public class UserPromoServiceImpl implements UserPromoService {
     }
 
     @Override
-    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookProfile facebookProfile) {
-        User userForMerge = getUserForMerge(userAfterSignUp, facebookProfile.getEmail());
+    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo userInfo) {
+        User userForMerge = getUserForMerge(userAfterSignUp, userInfo.getEmail());
         User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
-        facebookService.saveFacebookInfoForUser(userAfterApplyPromo, facebookProfile);
+        facebookUserInfoRepository.deleteForUser(userAfterApplyPromo);
+
+        userInfo.setUser(userAfterApplyPromo);
+        userAfterApplyPromo.setUserName(userInfo.getEmail());
+        userAfterApplyPromo.setProvider(ProviderType.FACEBOOK);
+        userRepository.save(userAfterApplyPromo);
+        facebookUserInfoRepository.save(userInfo);
+
         return userAfterApplyPromo;
     }
 
     private User getUserForMerge(User userAfterSignUp, String email) {
-        String url = userAfterSignUp.getUserGroup().getCommunity().getRewriteUrlParameter();
+        String url = userAfterSignUp.getCommunityRewriteUrl();
         User userByEmail = userRepository.findOne(email, url);
         if (userByEmail != null) {
             return userByEmail;
         }
-        for (BaseSocialRepository currentSocialRepository: socialRepositories){
+        for (BaseSocialRepository currentSocialRepository : socialRepositories){
             SocialInfo socialInfo = currentSocialRepository.findByEmail(email);
-            if (socialInfo != null){
+            if (socialInfo != null) {
                 return socialInfo.getUser();
             }
         }
