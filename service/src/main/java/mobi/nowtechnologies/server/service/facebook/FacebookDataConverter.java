@@ -23,10 +23,9 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * Created by oar on 3/14/14.
  */
 public class FacebookDataConverter {
+    private static final String DATE_FORMAT = "MM/dd/yyyy";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     public FacebookUserInfo convertForUser(User user, FacebookProfile profile) {
         FacebookUserInfo details = new FacebookUserInfo();
@@ -47,7 +46,7 @@ public class FacebookDataConverter {
         String birthDay = profile.getBirthday();
         if (!isEmpty(birthDay)) {
             try {
-                return dateFormat.parse(birthDay);
+                return new SimpleDateFormat(DATE_FORMAT).parse(birthDay);
             } catch (ParseException e) {
                 logger.error("ERROR during parse", e);
             }
