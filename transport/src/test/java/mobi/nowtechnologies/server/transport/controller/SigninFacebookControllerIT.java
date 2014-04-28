@@ -7,14 +7,17 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
+import mobi.nowtechnologies.server.shared.CgLibHelper;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.transport.controller.facebook.FacebookTemplateCustomizerImpl;
 import mobi.nowtechnologies.server.transport.controller.facebook.ProblematicFacebookTemplateCustomizer;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -111,9 +114,14 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
                 .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isOk());
     }
 
+    private void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer customizer) {
+        CgLibHelper helper = new CgLibHelper(facebookService);
+        ReflectionTestUtils.setField(helper.getTargetObject(), "templateCustomizer", customizer);
+    }
+
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessWithJSON() throws Exception {
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
 
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
@@ -137,7 +145,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessWithXML() throws Exception {
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         String facebookElementXPath = "//userDetails";
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
@@ -156,7 +164,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessWithXMLWithOnlyOneCity() throws Exception {
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationInResponse, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationInResponse, fbToken));
         String facebookElementXPath = "//userDetails";
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
@@ -177,7 +185,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForWithEmptyEmail() throws Exception {
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, "", locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, "", locationFromFacebook, fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
@@ -189,7 +197,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookIdSuccess() throws Exception {
         final String invalidFacebookUserId = "2";
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId, fbToken, true)
@@ -202,7 +210,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     @Test
     public void testLoginWithInvalidFacebookToken() throws Exception {
         final String invalidFacebookUserId = "2";
-        facebookService.setTemplateCustomizer(new ProblematicFacebookTemplateCustomizer(fbToken));
+        setTemplateCustomizer(new ProblematicFacebookTemplateCustomizer(fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidFacebookUserId, fbToken, true)
@@ -214,7 +222,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForFacebookWithDifferentAccountsWithSuccess() throws Exception {
         String facebookElementJsonPath = "$.response.data[0].user.userDetails";
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
@@ -234,7 +242,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         final String otherFacebookUserId = "user2";
         final String otherFacebookEmail = "o2@ukr.net";
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, otherFacebookUserId, otherFacebookEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, otherFacebookUserId, otherFacebookEmail, locationFromFacebook, fbToken));
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherFacebookUserId, fbToken, true)
         ).andExpect(status().isOk()).andDo(print());
@@ -248,7 +256,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForFacebookFromDifferentDevicesForOneAccountWithSuccess() throws Exception {
         String otherDeviceUID = "b88106713409e92622461a876abcd74b1";
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
@@ -268,7 +276,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForOneAccountTwiceFromSameDeviceWithSuccess() throws Exception {
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
@@ -287,7 +295,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testEmailRegistrationAfterFacebookApply() throws Exception {
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
@@ -314,7 +322,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testFacebookApplyAfterEmailRegistration() throws Exception {
-        facebookService.setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);

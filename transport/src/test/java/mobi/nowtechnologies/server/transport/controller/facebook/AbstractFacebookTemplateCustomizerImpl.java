@@ -17,7 +17,7 @@ import java.io.IOException;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
-abstract class AbstractFacebookTemplateCustomizerImpl implements AbstractOAuth2ApiBindingCustomizer<FacebookTemplate> {
+public abstract class AbstractFacebookTemplateCustomizerImpl implements AbstractOAuth2ApiBindingCustomizer<FacebookTemplate> {
     private String fbToken;
 
     public AbstractFacebookTemplateCustomizerImpl(String fbToken) {

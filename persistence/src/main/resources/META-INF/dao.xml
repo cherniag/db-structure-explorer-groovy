@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:repository="http://www.springframework.org/schema/data/repository"
 
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd">
 
 	<bean id="persistence.UserDao" class="mobi.nowtechnologies.server.persistence.dao.UserDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
@@ -198,9 +199,10 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 	</bean>
 
 	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
-	<jpa:repositories base-package="mobi.nowtechnologies.server.persistence.repository"
+	<jpa:repositories base-package="mobi.nowtechnologies.server.persistence.repository" 
 		entity-manager-factory-ref="persistence.EntityManagerFactory"
 		transaction-manager-ref="persistence.TransactionManager">
+        <repository:exclude-filter type="regex" expression="mobi\.nowtechnologies\.server\.persistence\.repository\.social\.Base.*"/>
 	</jpa:repositories>
 	
 </beans>

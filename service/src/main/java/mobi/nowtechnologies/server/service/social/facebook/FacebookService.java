@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.social.facebook;
 
-import com.google.common.annotations.VisibleForTesting;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -28,7 +27,6 @@ public class FacebookService {
     @Resource
     private UserRepository userRepository;
 
-
     @Resource
     private FacebookDataConverter facebookDataConverter;
 
@@ -36,10 +34,6 @@ public class FacebookService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @VisibleForTesting
-    public void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer templateCustomizer) {
-        this.templateCustomizer = templateCustomizer;
-    }
 
     @Transactional
     public void saveFacebookInfoForUser(User inputUser, FacebookProfile profile) {

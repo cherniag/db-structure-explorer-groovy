@@ -2,11 +2,9 @@ package mobi.nowtechnologies.server.service;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -15,6 +13,7 @@ import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 
 @Transactional
 public class UserPromoServiceImpl implements UserPromoService {
@@ -29,15 +28,13 @@ public class UserPromoServiceImpl implements UserPromoService {
     @Resource
     private GooglePlusService googlePlusService;
 
-    @Resource
-    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
-
-
-    @Resource
-    private FacebookUserInfoRepository facebookUserInfoRepository;
 
     @Resource
     private UserRepository userRepository;
+
+
+    @Resource
+    private Collection<BaseSocialRepository> socialRepositories;
 
     @Override
     public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
@@ -78,22 +75,15 @@ public class UserPromoServiceImpl implements UserPromoService {
         if (userByEmail != null) {
             return userByEmail;
         }
-        User result = getUserLoggedByFacebook(email);
-        if (result == null){
-            result = getUserLoggedByGooglePlus(email);
+        for (BaseSocialRepository currentSocialRepository: socialRepositories){
+            SocialInfo socialInfo = currentSocialRepository.findByEmail(email);
+            if (socialInfo != null){
+                return socialInfo.getUser();
+            }
         }
-        return result;
+        return null;
     }
 
-    private User getUserLoggedByGooglePlus(String email) {
-        GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findByEmail(email);
-        return googlePlusUserInfo == null ? null : googlePlusUserInfo.getUser();
-    }
-
-    private User getUserLoggedByFacebook(String email) {
-        FacebookUserInfo facebookInfo = facebookUserInfoRepository.findByEmail(email);
-        return facebookInfo == null ? null : facebookInfo.getUser();
-    }
 
     public void setActivationEmailService(ActivationEmailService activationEmailService) {
         this.activationEmailService = activationEmailService;

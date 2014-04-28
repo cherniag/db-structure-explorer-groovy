@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.social.googleplus;
 
-import com.google.common.annotations.VisibleForTesting;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -35,10 +34,6 @@ public class GooglePlusService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @VisibleForTesting
-    public void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer templateCustomizer) {
-        this.templateCustomizer = templateCustomizer;
-    }
 
     @Transactional
     public void saveGooglePlusInfoForUser(User inputUser, GoogleUserInfo profile) {

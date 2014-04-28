@@ -17,7 +17,7 @@ import java.io.IOException;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
-abstract class AbstractGooglePlusTemplateCustomizerImpl implements AbstractOAuth2ApiBindingCustomizer<GoogleTemplate> {
+public abstract class AbstractGooglePlusTemplateCustomizerImpl implements AbstractOAuth2ApiBindingCustomizer<GoogleTemplate> {
     private String goolePlusToken;
 
     public AbstractGooglePlusTemplateCustomizerImpl(String fbToken) {
