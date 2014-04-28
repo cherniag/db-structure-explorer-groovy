@@ -68,8 +68,8 @@ public class GooglePlusService {
         }
     }
 
-    private void validateProfile(String inputGooglekId, GoogleUserInfo googleUserInfo) {
-        if (!googleUserInfo.getId().equals(inputGooglekId)) {
+    private void validateProfile(String inputGooglePlusId, GoogleUserInfo googleUserInfo) {
+        if (!googleUserInfo.getId().equals(inputGooglePlusId)) {
             throw new OAuth2ForbiddenException(GooglePlusConstants.GOOGLE_PLUS_INVALID_USER_ID_ERROR_CODE, "invalid user google plus id");
         }
         if (isEmpty(googleUserInfo.getEmail())) {
