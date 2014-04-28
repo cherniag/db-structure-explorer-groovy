@@ -59,16 +59,16 @@ public class GooglePlusService {
             return googleUserInfo;
         } catch (RestClientException se) {
             logger.error("ERROR", se);
-            throw new OAuth2ForbiddenException(GooglePlusConstants.GOOGLE_PLUS_INVALID_TOKEN_ERROR_CODE, "invalid authorization token");
+            throw OAuth2ForbiddenException.invalidGooglePlusToken();
         }
     }
 
     private void validateProfile(String inputGooglePlusId, GoogleUserInfo googleUserInfo) {
         if (!googleUserInfo.getId().equals(inputGooglePlusId)) {
-            throw new OAuth2ForbiddenException(GooglePlusConstants.GOOGLE_PLUS_INVALID_USER_ID_ERROR_CODE, "invalid user google plus id");
+            throw OAuth2ForbiddenException.invalidGooglePlusUserId();
         }
         if (isEmpty(googleUserInfo.getEmail())) {
-            throw new OAuth2ForbiddenException(GooglePlusConstants.GOOGLE_PLUS_EMAIL_IS_NOT_SPECIFIED_ERROR_CODE, "Email is not specified");
+            throw OAuth2ForbiddenException.emptyGooglePlusEmail();
         }
     }
 

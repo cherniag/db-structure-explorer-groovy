@@ -186,7 +186,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isForbidden()).andDo(print())
                 .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(762))
-                .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("Email is not specified"));
+                .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("email is not specified"));
     }
 
     @Test

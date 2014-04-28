@@ -32,16 +32,16 @@ public class FacebookService {
             return facebookDataConverter.convert(facebookProfile);
         } catch (SocialException se) {
             logger.error("ERROR", se);
-            throw new OAuth2ForbiddenException(FacebookConstants.FACEBOOK_INVALID_TOKEN_ERROR_CODE, "invalid authorization token");
+            throw OAuth2ForbiddenException.invalidFacebookToken();
         }
     }
 
     private void validateProfile(String inputFacebookId, FacebookProfile facebookProfile) {
         if (!facebookProfile.getId().equals(inputFacebookId)) {
-            throw new OAuth2ForbiddenException(FacebookConstants.FACEBOOK_INVALID_USER_ID_ERROR_CODE, "invalid user facebook id");
+            throw OAuth2ForbiddenException.invalidFacebookUserId();
         }
         if (isEmpty(facebookProfile.getEmail())) {
-            throw new OAuth2ForbiddenException(FacebookConstants.FACEBOOK_EMAIL_IS_NOT_SPECIFIED_ERROR_CODE, "Email is not specified");
+            throw OAuth2ForbiddenException.emptyFacebookEmail();
         }
 
     }

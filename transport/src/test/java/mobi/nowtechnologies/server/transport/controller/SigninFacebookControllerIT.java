@@ -191,7 +191,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
         ).andExpect(status().isForbidden()).andDo(print())
                 .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(662))
-                .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("Email is not specified"));
+                .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("email is not specified"));
     }
 
     @Test
