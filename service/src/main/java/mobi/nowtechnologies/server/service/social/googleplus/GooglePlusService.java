@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.service.social.googleplus;
 
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
-import mobi.nowtechnologies.server.service.social.core.EmptyOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +12,16 @@ import org.springframework.web.client.RestClientException;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class GooglePlusService {
-    private AbstractOAuth2ApiBindingCustomizer templateCustomizer = new EmptyOAuth2ApiBindingCustomizer();
+    private AbstractOAuth2ApiBindingCustomizer<GoogleTemplate> templateCustomizer;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     public GooglePlusUserInfo getAndValidateProfile(String accessToken, String googlePlusUserId) {
         try {
             GoogleTemplate googleTemplate = new GoogleTemplate(accessToken);
-            templateCustomizer.customize(googleTemplate);
+            if(templateCustomizer != null) {
+                templateCustomizer.customize(googleTemplate);
+            }
             GoogleUserInfo googleUserInfo = googleTemplate.userOperations().getUserInfo();
             validateProfile(googlePlusUserId, googleUserInfo);
             return convertForUser(googleUserInfo);
