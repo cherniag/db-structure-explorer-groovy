@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
@@ -25,6 +26,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -63,6 +65,9 @@ public class BusinessTaskJobTestIT {
 
     private SMPPServiceImpl smppService;
 
+    @Resource
+    private UserGroupRepository userGroupRepository;
+
     @Before
     public void setUp() throws Exception {
         smppService = mock(SMPPServiceImpl.class);
@@ -74,8 +79,7 @@ public class BusinessTaskJobTestIT {
     @Test
     public void checkSendChargeNotificationTaskExecution() throws Exception {
         long now = System.currentTimeMillis();
-        UserGroup userGroup = UserGroupFactory.createUserGroup();
-        userGroup.setId(8);
+        UserGroup userGroup = userGroupRepository.findOne(8);
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setId(0);
         user.setUserName("+64598720352");
