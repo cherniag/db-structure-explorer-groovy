@@ -29,7 +29,7 @@ public class SigninGooglePlusController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/5.2/SIGN_IN_GOOGLE_PLUS"})
-    public ModelAndView applyPromotionByFacebook(
+    public ModelAndView applyPromotionBySignInGooglePlus(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("ACCESS_TOKEN") String accessToken,

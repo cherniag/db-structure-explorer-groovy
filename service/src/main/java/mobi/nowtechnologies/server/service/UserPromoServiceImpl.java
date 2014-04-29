@@ -26,6 +26,7 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
+
     @Resource
     private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
 
@@ -68,18 +69,17 @@ public class UserPromoServiceImpl implements UserPromoService {
     }
 
     private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType googlePlus) {
-        User userForMerge = getUserForMerge(baseSocialRepository, userAfterSignUp, socialInfo.getEmail());
-        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true);
+        User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
+        User userForMerge = getUserForMerge(baseSocialRepository, refreshedSignUpUser, socialInfo.getEmail());
+        User userAfterApplyPromo = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true);
         baseSocialRepository.deleteByUser(userAfterApplyPromo);
 
-        User refreshedUser = userRepository.findOne(userAfterApplyPromo.getId());
+        socialInfo.setUser(userAfterApplyPromo);
+        userAfterApplyPromo.setUserName(socialInfo.getEmail());
+        userAfterApplyPromo.setProvider(googlePlus);
 
-        socialInfo.setUser(refreshedUser);
-        refreshedUser.setUserName(socialInfo.getEmail());
-        refreshedUser.setProvider(googlePlus);
-
-        userRepository.save(refreshedUser);
-        return refreshedUser;
+        userRepository.save(userAfterApplyPromo);
+        return userAfterApplyPromo;
     }
 
     private User getUserForMerge(BaseSocialRepository baseSocialRepository, User userAfterSignUp, String email) {
