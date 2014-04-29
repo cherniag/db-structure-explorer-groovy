@@ -71,7 +71,6 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     private final String userName = "userName";
     private final String locationFromFacebook = "Kyiv, Ukraine";
-    private final String locationInResponse = "Kyiv";
     private final String fbUserId = "100";
 
     private MockHttpServletRequestBuilder buildApplyGooglePlusPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String googlePlusUserId, String accessToken, boolean jsonRequest) throws IOException {
