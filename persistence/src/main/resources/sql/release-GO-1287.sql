@@ -8,3 +8,7 @@ CREATE TABLE `google_plus_user_info` (
   PRIMARY KEY (`id`),
   CONSTRAINT `google_plus_user_info_id` FOREIGN KEY (`id`) REFERENCES `social_info` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+ALTER TABLE `google_plus_user_info` ADD CONSTRAINT `google_plus_user_info_email` UNIQUE (email);
+
+ALTER TABLE `google_plus_user_info` ADD CONSTRAINT `google_plus_user_info_gp_id` UNIQUE (gp_id);
