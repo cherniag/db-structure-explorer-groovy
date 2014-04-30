@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
@@ -25,8 +26,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 
+import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType.NEWS;
+import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -80,6 +87,32 @@ public abstract class AbstractControllerTestIT {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @Resource(name = "promotionRepository")
+    private PromotionRepository promotionRepository;
+
+    @Resource(name = "promoCodeRepository")
+    private PromoCodeRepository promoCodeRepository;
+
+    @Resource(name = "userGroupRepository")
+    private UserGroupRepository userGroupRepository;
+
+    @Resource(name = "chartDetailRepository")
+    private ChartDetailRepository chartDetailRepository;
+
+    @Resource(name = "chartRepository")
+    private ChartRepository chartRepository;
+
+    @Resource(name = "mediaRepository")
+    private MediaRepository mediaRepository;
+
+    @Resource(name = "messageRepository")
+    private MessageRepository messageRepository;
+
+    private static  int position = 0;
+    private static Promotion promotion;
+    private static Message message;
+    private static ChartDetail chartDetail;
+
     @After
     public void tireDown() {
         o2ProviderService.setO2Service(o2Service);
@@ -104,6 +137,21 @@ public abstract class AbstractControllerTestIT {
         ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
 
         sqlTestInitializer.prepareDynamicTestData("classpath:META-INF/dynamic-test-data.sql");
+
+        UserGroup userGroup = userGroupRepository.findOne(9);
+
+        if(isNull(promotion)) {
+            promotion = promotionRepository.save(new Promotion().withUserGroup(userGroup).withDescription("").withEndDate(Integer.MAX_VALUE).withIsActive(true).withFreeWeeks((byte) 8).withType(ADD_FREE_WEEKS_PROMOTION));
+
+            promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
+        }
+        Community community = userGroup.getCommunity();
+
+        chartDetail = chartDetailRepository.save(new ChartDetail().withChart(userGroup.getChart()).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1)
+                .withChgPosition(DOWN)
+                .withChannel("HEATSEEKER"));
+
+        message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
     }
 
 

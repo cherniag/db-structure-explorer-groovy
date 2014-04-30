@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Test;
 
+import static java.lang.Long.MAX_VALUE;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.EXTERNAL_ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
@@ -22,7 +23,7 @@ public class PaymentDetailsTest {
         PaymentDetails paymentDetails;
 
         //when
-        paymentDetails = paymentDetailsWithLastPaymentStatusERROR();
+        paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR();
 
         //then
         assertThat(paymentDetails.getMadeAttempts(), is(0));
@@ -58,7 +59,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotIncrementMadeAttemptsWhenRetriesOnErrorIs3AndMadeRetriesIs0(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withRetriesOnError(3).withMadeRetries(0);
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withRetriesOnError(3).withMadeRetries(0);
 
         //when
         int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
@@ -71,7 +72,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldIncrementMadeAttemptsWhenRetriesOnErrorIs3AndMadeRetriesIs2(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withRetriesOnError(3).withMadeRetries(2);
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withRetriesOnError(3).withMadeRetries(2);
 
         //when
         int madeAttempts = paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
@@ -84,7 +85,7 @@ public class PaymentDetailsTest {
     @Test
      public void shouldResetMadeRetries(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
 
         //when
         paymentDetails.resetMadeAttempts();
@@ -97,7 +98,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldResetMadeRetriesForFirstPayment(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(2).withRetriesOnError(3).withMadeRetries(3);
 
         //when
         paymentDetails.resetMadeAttemptsForFirstPayment();
@@ -110,7 +111,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIs0AndMadeAttemptsIs0(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
                 .withAfterNextSubPaymentSeconds(0));
 
         //when
@@ -123,7 +124,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIs0AndMadeAttemptsIs1(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(0));
 
         //when
@@ -136,7 +137,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIs0AndMadeAttemptsIs2(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(0));
 
         //when
@@ -149,7 +150,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs0(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
                 .withAfterNextSubPaymentSeconds(1));
 
         //when
@@ -162,7 +163,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs1(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
                 .withAfterNextSubPaymentSeconds(1));
 
         //when
@@ -175,7 +176,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIs0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs2(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(0)
                 .withAfterNextSubPaymentSeconds(1));
 
         //when
@@ -188,7 +189,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs0(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(0).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
 
         //when
@@ -201,7 +202,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs1(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
 
         //when
@@ -214,7 +215,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs2(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(2).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
 
         //when
@@ -227,8 +228,38 @@ public class PaymentDetailsTest {
     @Test
     public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs3(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(3).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(3).withPaymentPolicy(new PaymentPolicy().withAdvancedPaymentSeconds(1)
                 .withAfterNextSubPaymentSeconds(1));
+
+        //when
+        boolean shouldBeUnSubscribed = paymentDetails.shouldBeUnSubscribed();
+
+        //then
+        assertThat(shouldBeUnSubscribed, is(true));
+    }
+
+    @Test
+    public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs1AndLastSuccessfulPaymentDetailsAndCurrentAreNotTheSame(){
+        //given
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withI(0L).withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy()
+                .withAdvancedPaymentSeconds(1)
+                .withAfterNextSubPaymentSeconds(1));
+        paymentDetails.getOwner().withLastSuccessfulPaymentDetails(new PaymentDetails().withI(1L));
+
+        //when
+        boolean shouldBeUnSubscribed = paymentDetails.shouldBeUnSubscribed();
+
+        //then
+        assertThat(shouldBeUnSubscribed, is(true));
+    }
+
+    @Test
+    public void shouldSaidThatItShouldBeUnSubscribedWhenAdvancedPaymentSecondsIsNot0AndAfterNextSubPaymentSecondsIsNot0AndMadeAttemptsIs1AndLastSuccessfulPaymentDetailsIsNull(){
+        //given
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withI(0L).withMadeAttempts(1).withPaymentPolicy(new PaymentPolicy()
+                .withAdvancedPaymentSeconds(1)
+                .withAfterNextSubPaymentSeconds(1));
+        paymentDetails.getOwner().withLastSuccessfulPaymentDetails(null);
 
         //when
         boolean shouldBeUnSubscribed = paymentDetails.shouldBeUnSubscribed();
@@ -240,7 +271,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatCurrentAttemptFailedWhenMadeAttemptsIs0(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(0);
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(0);
 
         //when
         boolean isCurrentAttemptFailed = paymentDetails.isCurrentAttemptFailed();
@@ -252,7 +283,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldNotSaidThatCurrentAttemptFailedWhenMadeRetriesIsNot0(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(1).withMadeRetries(1);
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(1).withMadeRetries(1);
 
         //when
         boolean isCurrentAttemptFailed = paymentDetails.isCurrentAttemptFailed();
@@ -276,7 +307,7 @@ public class PaymentDetailsTest {
     @Test
     public void shouldSaidThatCurrentAttemptFailedWhenMadeAttemptsMoreThan0AndMadeRetriesIs0AndLastPaymentStatusIsError(){
         //given
-        PaymentDetails paymentDetails = paymentDetailsWithLastPaymentStatusERROR().withMadeAttempts(1).withMadeRetries(0);
+        PaymentDetails paymentDetails = paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR().withMadeAttempts(1).withMadeRetries(0);
 
         //when
         boolean isCurrentAttemptFailed = paymentDetails.isCurrentAttemptFailed();
@@ -289,7 +320,9 @@ public class PaymentDetailsTest {
         return new PaymentDetails().withLastPaymentStatus(SUCCESSFUL);
     }
 
-    private PaymentDetails paymentDetailsWithLastPaymentStatusERROR() {
-        return new PaymentDetails().withLastPaymentStatus(ERROR);
+    private PaymentDetails paymentDetailsThatWasLastSuccessfulWithOwnerAndLastPaymentStatusERROR() {
+        PaymentDetails paymentDetails = new PaymentDetails();
+        return paymentDetails.withI(MAX_VALUE).withOwner(new User().withLastSuccessfulPaymentDetails(paymentDetails)).withLastPaymentStatus(ERROR);
+
     }
 }

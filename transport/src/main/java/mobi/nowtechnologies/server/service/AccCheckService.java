@@ -41,7 +41,7 @@ public class AccCheckService {
     private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
 
 
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
 
 
     public AccountCheckDto processAccCheck(User user, boolean withUserDetails) {
@@ -67,11 +67,11 @@ public class AccCheckService {
     }
 
     private mobi.nowtechnologies.server.dto.transport.AccountCheckDto precessRememberMeToken(mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheckDTO) {
-        LOGGER.debug("input parameters mobi.nowtechnologies.server.dto.transport.AccountCheckDTO: [{}]", new Object[]{accountCheckDTO});
+        LOGGER.debug("input parameters: [{}]", new Object[]{accountCheckDTO});
 
         accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
 
-        LOGGER.debug("Output parameter mobi.nowtechnologies.server.dto.transport.AccountCheckDTO=[{}]", accountCheckDTO);
+        LOGGER.debug("Output parameter [{}]", accountCheckDTO);
         return accountCheckDTO;
     }
 

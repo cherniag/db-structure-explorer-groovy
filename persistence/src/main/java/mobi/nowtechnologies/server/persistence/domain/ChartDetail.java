@@ -284,6 +284,11 @@ public class ChartDetail {
         return this;
     }
 
+    public ChartDetail withChannel(String channel) {
+        setChannel(channel);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

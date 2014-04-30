@@ -2,9 +2,9 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.assembler.UserAsm;
+import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
@@ -27,8 +26,6 @@ import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.service.util.PaymentDetailsValidator;
-import mobi.nowtechnologies.server.service.util.UserRegInfoValidator;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -40,8 +37,7 @@ import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.util.PhoneNumberValidator;
-import org.apache.commons.lang.Validate;
+import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,32 +45,34 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.social.facebook.api.FacebookProfile;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.Errors;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static mobi.nowtechnologies.server.builder.PromoRequestBuilder.PromoRequest;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
+import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
-import static mobi.nowtechnologies.server.shared.util.EmailValidator.isEmail;
+import static mobi.nowtechnologies.server.shared.util.EmailValidator.isNotEmail;
+import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.*;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.Validate.notNull;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 public class UserService {
     public static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
@@ -108,7 +106,6 @@ public class UserService {
     private UserRepository userRepository;
     private OtacValidationService otacValidationService;
     private ITunesService iTunesService;
-    private UserBannedRepository userBannedRepository;
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
     private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
@@ -124,23 +121,41 @@ public class UserService {
     private UserNotificationService userNotificationService;
 
     private TaskService taskService;
+    private AutoOptInRuleService autoOptInRuleService;
+
+    public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {
+        this.autoOptInRuleService = autoOptInRuleService;
+    }
 
     private User checkAndMerge(User user, User mobileUser) {
-        if (mobileUser.getId() != user.getId()) {
+        if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
             user = mergeUser(mobileUser, user);
+        }else{
+            LOGGER.info("User merge procedure is skipped");
         }
         return user;
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
-        if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity()) ) {
-            user.setContract(Contract.PAYM);
-            user.setProvider(ProviderType.O2);
-        }else{
-            user.setContract(Contract.valueOf(providerUserDetails.contract));
-            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+        LOGGER.info("Attempt to update user contract and provider with [{}]", providerUserDetails);
+        if (user.isVFNZCommunityUser()){
+            updateProviderForVFNZCommunityUser(user, providerUserDetails);
+        }else {
+            if (isPromotedDevice(user.getMobile(), user.getUserGroup().getCommunity())) {
+                user.setContract(PAYM);
+                user.setProvider(O2);
+            } else {
+                user.setContract(Contract.valueOf(providerUserDetails.contract));
+                user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+            }
         }
         return user;
+    }
+
+    private void updateProviderForVFNZCommunityUser(User user, ProviderUserDetails providerUserDetails) {
+        if (isNotNull(providerUserDetails.operator)) {
+            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+        }
     }
 
     private int detectUserAccountWithSameDeviceAndDisableIt(String deviceUID, Community community) {
@@ -148,44 +163,58 @@ public class UserService {
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
-    private boolean applyInitPromoInternal(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isApplyingWithoutEnterPhone){
-        ProviderUserDetails providerUserDetails = isApplyingWithoutEnterPhone ? null: otacValidationService.validate(otac, user.getMobile(), user.getUserGroup().getCommunity());
-        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}]", providerUserDetails,
-                user.getContract(), user.getMobile(),
-                user.getOperator(),user.getActivationStatus(), updateContractAndProvider);
+    private User applyInitPromoInternal(PromoRequest promoRequest){
+        User user = promoRequest.user;
+        boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
+        ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, user.getMobile(), user.getUserGroup().getCommunity());
+        LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
-        boolean hasPromo = false;
-        if (isNotNull(mobileUser)) {
-            user = checkAndMerge(user, mobileUser);
-        } else {
-            boolean validationFromPhone = (ENTERED_NUMBER.equals(user.getActivationStatus())) &&
-                    (!isEmail(user.getUserName()));
-            boolean startApply = isApplyingWithoutEnterPhone ? true : validationFromPhone;
-            if (startApply){
-                hasPromo = checkUserAndApplyPromo(user, updateContractAndProvider, providerUserDetails);
-            }
+        user = checkAndMerge(user, promoRequest.mobileUser);
+        user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
-        }
-
-        if(updateContractAndProvider && !user.isVFNZCommunityUser()) {
-            updateContractAndProvider(user, providerUserDetails);
-        }
+        user = checkAndApplyPromo(new PromoRequestBuilder(promoRequest).setUser(user).createPromoRequest());
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
-        LOGGER.debug("Output parameter hasPromo=[{}]", hasPromo);
-        return hasPromo;
+        LOGGER.debug("Output parameter user=[{}]", user);
+        return user;
     }
 
-    private boolean checkUserAndApplyPromo(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
-        boolean isO2User = user.isO2User();
-        if (!user.isVFNZCommunityUser() && updateContractAndProvider) {
-            isO2User = o2ClientService.isO2User(providerUserDetails);
-        }else if (user.isVFNZCommunityUser() && isNotNull(providerUserDetails.operator)){
-            user.setProvider(ProviderType.valueOfKey(providerUserDetails.operator));
+    private User checkAndApplyPromo(PromoRequest promoRequest) {
+        User user = promoRequest.user;
+        boolean isApplyingWithoutEnterPhone = promoRequest.isApplyingWithoutEnterPhone;
+        if (isNull(promoRequest.mobileUser)) {
+            if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
+                user = promotionService.applyPotentialPromo(user);
+            }else{
+                LOGGER.info("Promo applying procedure is skipped for new user");
+            }
+        }else if(promoRequest.isSubjectToAutoOptIn){
+            user = findAndApplyPromoFromRule(user);
+        }else{
+            LOGGER.info("Promo applying procedure is skipped for existed user");
         }
-        return promotionService.applyPotentialPromo(user, isO2User);
+        return user;
+    }
+
+    private User findAndApplyPromoFromRule(User user) {
+        Promotion promotion = promotionService.getPromotionFromRuleForAutoOptIn(user);
+        if (isNotNull(promotion)) {
+            user = promotionService.applyPromotionByPromoCode(user, promotion.withCouldBeAppliedMultipleTimes(true));
+        }else{
+            LOGGER.info("Promo applying procedure is skipped because no promotion from rule found");
+        }
+        return user;
+    }
+
+    private User checkAndUpdateWithProviderUserDetails(User user, boolean updateContractAndProvider, ProviderUserDetails providerUserDetails) {
+        if(updateContractAndProvider) {
+            return updateContractAndProvider(user, providerUserDetails);
+        }else{
+            LOGGER.info("Update user contract and provider procedure is skipped");
+        }
+        return user;
     }
 
     public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
@@ -206,10 +235,6 @@ public class UserService {
 
     public void setO2Service(O2Service o2Service) {
         this.o2Service = o2Service;
-    }
-
-    public void setUserBannedRepository(UserBannedRepository userBannedRepository) {
-        this.userBannedRepository = userBannedRepository;
     }
 
     public void setDrmService(DrmService drmService) {
@@ -321,6 +346,18 @@ public class UserService {
 
     public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
         this.userGroupRepository = userGroupRepository;
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
+    }
+
+    public void setSendActivationSMS(boolean sendActivationSMS) {
+        this.sendActivationSMS = sendActivationSMS;
+    }
+
+    public void setTaskService(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     public Boolean canActivateVideoTrial(User u) {
@@ -461,12 +498,6 @@ public class UserService {
         return user;
     }
 
-
-
-    public UserBanned getUserBanned(Integer userId) {
-        return userBannedRepository.findOne(userId);
-    }
-
     @Deprecated
     public boolean userExists(String userName, String communityName) {
         return userDao.userExists(userName, communityName);
@@ -490,48 +521,6 @@ public class UserService {
             throw new ServiceException("The parameter facebookId is null");
         final User user = userDao.findByFacebookAndCommunity(facebookId, communityName);
         LOGGER.info("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User registerUserWhitoutPersonalInfo(UserRegInfo userRegInfo) {
-        if (userRegInfo == null)
-            throw new ServiceException("The parameter userRegInfo is null");
-
-        String countryFullName = userRegInfo.getCountryFullName();
-
-        if (userRegInfo.getTitle() == null)
-            userRegInfo.setTitle("");
-        if (userRegInfo.getFirstName() == null)
-            userRegInfo.setFirstName("");
-        if (userRegInfo.getLastName() == null)
-            userRegInfo.setLastName("");
-        if (countryFullName == null || countryFullName.isEmpty())
-            userRegInfo.setCountryFullName("Great Britain");
-        if (userRegInfo.getCity() == null)
-            userRegInfo.setCity("");
-        if (userRegInfo.getAddress() == null)
-            userRegInfo.setAddress("");
-        if (userRegInfo.getPostCode() == null)
-            userRegInfo.setPostCode("");
-        if (userRegInfo.getNewsByEmail() == null)
-            userRegInfo.setNewsByEmail(Boolean.FALSE);
-        if (userRegInfo.getPhoneNumber() == null) {
-            userRegInfo.setPhoneNumber("");
-        } else {
-            userRegInfo.setPhoneNumber(convertPhoneNumberFromInternationalToGreatBritainFormat(userRegInfo.getPhoneNumber()));
-        }
-
-        UserRegInfoValidator.validateWhitoutPersonalInfo(userRegInfo);
-
-        final String ipAddress = userRegInfo.getIpAddress();
-        userRegInfo.setCountryCodeByIpAddress(findCountryCodeByIp(ipAddress));
-
-        validateCountry(userRegInfo.getAppVersion(), userRegInfo.getCountryCodeByIpAddress());
-
-        User user = continueRegistration(userRegInfo);
-        LOGGER.debug("Output parameter user=[{}]", user);
-        assignPotentialPromotion(user);
         return user;
     }
 
@@ -583,188 +572,12 @@ public class UserService {
         return user;
     }
 
-    public boolean applyO2PotentialPromo(ProviderUserDetails providerUserDetails, User user, Community community) {
-
-        boolean isO2User = o2ClientService.isO2User(providerUserDetails);
-
-        return applyPotentialPromo(isO2User, user, community);
-    }
-
-    public boolean applyPotentialPromo(boolean isO2User, User user, Community community) {
-        int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
-        return applyPotentialPromo(isO2User, user, community, freeTrialStartedTimestampSeconds);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public boolean applyPotentialPromo(boolean isO2User, User user, Community community, int freeTrialStartedTimestampSeconds) {
-        LOGGER.info("Applying potential promotion for user id {}, isO2user {}, freeTrialStartedTimestampSeconds {}", user.getId(), isO2User, freeTrialStartedTimestampSeconds);
-        Promotion promotion;
-
-        String staffCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.staff.promotionCode", null, null);
-        String storeCode = messageSource.getMessage(community.getRewriteUrlParameter(), "o2.store.promotionCode", null, null);
-
-        if (deviceService.isPromotedDevicePhone(community, user.getMobile(), staffCode))
-            promotion = setPotentialPromoByPromoCode(user, staffCode);
-        else if (deviceService.isPromotedDevicePhone(community, user.getMobile(), storeCode))
-            promotion = setPotentialPromoByPromoCode(user, storeCode);
-        else if (isO2User || user.isVFNZUser())
-            promotion = setPotentialPromoByMessageCode(user, "promotionCode");
-        else
-            promotion = setPotentialPromoByMessageCode(user, "defaultPromotionCode");
-
-        return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public boolean applyPromotionByPromoCode(User user, Promotion promotion) {
-        int freeTrialStartedTimestampSeconds = Utils.getEpochSeconds();
-        return applyPromotionByPromoCode(user, promotion, freeTrialStartedTimestampSeconds);
-    }
-
-    private boolean arePromotionMediaTypesTheSame(PromoCode lastAppliedPromoCode, PromoCode currentPromoCode){
-        // the role of this method was to avoid having multiple video promotions,btu it seems that's
-        // blocking other types of promotions - for example, a twoWeeks promotion can not be applied
-        // if the previous promotion was AUDIO. The right way to do this is using an extra table (userId, promotionId)
-        // and to do the check using records from there. For now I'll just return true for the twoWeeksPromotion
-
-        if ( currentPromoCode != null && PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE.equals(currentPromoCode.getCode()) ) {
-            // ignoring the check for twoWeeksPromo
-            return false;
-        }
-
-        return isNotNull(lastAppliedPromoCode) && isNotNull(currentPromoCode) && isNotNull(lastAppliedPromoCode.getMediaType())
-                && lastAppliedPromoCode.getMediaType().equals(currentPromoCode.getMediaType());
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public boolean applyPromotionByPromoCode(User user, Promotion promotion, int freeTrialStartedTimestampSeconds) {
-        LOGGER.debug("input parameters user, promotion, freeTrialStartedTimestampSeconds: [{}], [{}], [{}]", new Object[]{user, promotion, freeTrialStartedTimestampSeconds});
-
-        LOGGER.info("Attempt to apply promotion [{}]", promotion);
-
-        boolean isPromotionApplied = false;
-        if (promotion == null) {
-            throw new IllegalArgumentException("No promotion found");
-        }
-
-        UserBanned userBanned = getUserBanned(user.getId());
-        if (userBanned == null || userBanned.isGiveAnyPromotion()) {
-            final PromoCode promoCode = promotion.getPromoCode();
-
-            if(arePromotionMediaTypesTheSame(user.getLastPromo(), promoCode)){
-                throw new ServiceException("Couldn't apply promotion for ["+ promoCode.getMediaType() + "] media type when last applied promotion was on the same media type");
-            }
-
-            int freeWeeks = promotion.getFreeWeeks() == 0 ? (promotion.getEndDate() - freeTrialStartedTimestampSeconds) / (7 * 24 * 60 * 60) : promotion.getFreeWeeks();
-            int nextSubPayment = promotion.getFreeWeeks() == 0 ? promotion.getEndDate() : freeTrialStartedTimestampSeconds + freeWeeks * Utils.WEEK_SECONDS;
-
-            user.setLastPromo(promoCode);
-            user.setNextSubPayment(nextSubPayment);
-            user.setFreeTrialExpiredMillis(new Long(nextSubPayment * 1000L));
-            user.setPotentialPromoCodePromotion(null);
-
-            if(isVideoAndMusicPromoCode(promoCode)){
-                user.setVideoFreeTrialHasBeenActivated(true);
-            }
-
-            user.setStatus(UserStatusDao.getSubscribedUserStatus());
-            user.setFreeTrialStartedTimestampMillis(freeTrialStartedTimestampSeconds * 1000L);
-            user = entityService.updateEntity(user);
-
-            promotionService.updatePromotionNumUsers(promotion);
-
-            AccountLog accountLog = new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks),
-                    PROMOTION_BY_PROMO_CODE_APPLIED);
-            accountLog.setPromoCode(promoCode.getCode());
-            entityService.saveEntity(accountLog);
-            for (byte i = 1; i <= freeWeeks; i++) {
-                entityService.saveEntity(new AccountLog(user.getId(), null, (byte) (user.getSubBalance() + freeWeeks - i),
-                        SUBSCRIPTION_CHARGE));
-            }
-            isPromotionApplied = true;
-        } else {
-            user.setPotentialPromoCodePromotion(null);
-            user = entityService.updateEntity(user);
-            LOGGER.warn("The promotion [{}] wasn't applied because of user is banned", promotion);
-        }
-
-        return isPromotionApplied;
-    }
-
-    private boolean isVideoAndMusicPromoCode(PromoCode promoCode) {
-        return isNotNull(promoCode) && promoCode.forVideoAndAudio();
-    }
-
-    public void updateMobile(User user, String mobile, Integer operator, String communityName) {
-        if (communityName == null)
-            throw new NullPointerException(
-                    "The parameter communityName is null");
-        PhoneNumberValidator.validate(mobile);
-
-        if (!Operator.getMapAsIds().containsKey(operator))
-            throw new ServiceException("Unknown operator parameter value: ["
-                    + operator + "]");
-
-        Community community = CommunityDao.getMapAsNames().get(communityName);
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(operator, PaymentType.PREMIUM_USER, community.getId());
-
-        String migPhone = convertPhoneNumberFromGreatBritainToInternationalFormat(mobile);
-        migPaymentService.createPaymentDetails(getMigPhoneNumber(operator, migPhone), user, community, paymentPolicy);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void updatePaymentDetails(User user, UserRegInfo userRegInfo) {
-
-        if (userRegInfo == null)
-            throw new ServiceException("The parameter userRegInfo is null");
-        if (user == null)
-            throw new ServiceException("The parameter user is null");
-
-
-        PaymentDetailsValidator.validate(userRegInfo);
-
-        Community community = CommunityDao.getMapAsNames().get(userRegInfo.getCommunityName());
-        user = findById(user.getId());
-        createPaymentDetails(userRegInfo, user, community);
-    }
-
-    private void validateCountry(String appVersion, String countryCode) {
-        if (appVersion == null)
-            throw new ServiceException("The parameter appVersion is null");
-        if (countryCode == null)
-            throw new ServiceException("The parameter countryCode is null");
-
-        boolean isValid = countryAppVersionService.isAppVersionLinkedWithCountry(appVersion, countryCode);
-        if (!isValid)
-            throw ValidationException.getInstance("registerUser.command.error.unsupportedCountry");
-    }
-
-    // TODO Inspect usage of this method and remove it in release 3.5
-    @Deprecated
-    public void validateUserPin(User user, String pin, String communityName) {
-        if (pin == null)
-            throw new ServiceException("The parameter pin is null");
-        if (StringUtils.hasText(user.getPin())) {
-            LOGGER.info(MessageFormat.format("Received from user [{0}] pin [{1}]", user.getId(), pin));
-
-            // For REGISTER_USER command via mobile
-            if (pin.equals(user.getPin())) {
-                paymentDetailsService.commitMigPaymentDetails(pin, user.getId());
-            } else {
-                LOGGER.info(MessageFormat.format("Incorrect pin for user [{0}]", user.getId()));
-                throw new ServiceException("Incorrect pin");
-            }
-        } else {
-            throw new ServiceException("User has no pin to verify");
-        }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User updateUser(User user) {
         return userRepository.save(user);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User mergeUser(User oldUser, User userByDeviceUID) {
         LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
@@ -786,7 +599,7 @@ public class UserService {
         return oldUser;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public synchronized void applyPromotion(User user) {
         Promotion promotion = userDao.getActivePromotion(user.getUserGroup());
         LOGGER.info("promotion [{}]", promotion);
@@ -801,7 +614,7 @@ public class UserService {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public List<PaymentDetails> unsubscribeUser(String phoneNumber, String operatorName) {
         LOGGER.debug("input parameters phoneNumber, operatorName: [{}], [{}]", phoneNumber, operatorName);
 
@@ -822,7 +635,7 @@ public class UserService {
         return paymentDetails;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(int userId, UnsubscribeDto dto) {
         LOGGER.debug("input parameters userId, dto: [{}], [{}]", userId, dto);
         User user = entityService.findById(User.class, userId);
@@ -835,7 +648,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
         LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
         notNull(user, "The parameter user is null");
@@ -846,24 +659,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public List<PaymentPolicy> getPaymentPolicies(
-            String communityName) {
-        if (communityName == null)
-            throw new ServiceException("The parameter communityName is null");
-        Integer communityId = Community.getMapAsNames().get(communityName).getId();
-        List<PaymentPolicy> paymentPolicies = entityService.findListByProperty(
-                PaymentPolicy.class, PaymentPolicy.Fields.communityId.name(),
-                communityId);
-        for (PaymentPolicy paymentPolicy : paymentPolicies) {
-            Operator operator = paymentPolicy.getOperator();
-            if (null != operator)
-                paymentPolicy.setOperatorName(operator.getName());
-        }
-        return paymentPolicies;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public void makeUserActive(User user) {
         if (user == null)
             throw new ServiceException("The parameter user is null");
@@ -876,7 +672,7 @@ public class UserService {
         return entityService.findById(User.class, id);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User changePassword(Integer userId, String newPassword) {
         LOGGER.debug("input parameters changePassword(Integer userId, String newPassword): [{}], [{}]", new Object[]{userId, newPassword});
 
@@ -890,108 +686,7 @@ public class UserService {
         return user;
     }
 
-    private User getUser(UserRegInfo userRegInfo) {
-        if (userRegInfo == null)
-            throw new ServiceException("The parameter userRegInfo is null");
-
-        LOGGER.debug("input parameters userRegInfo: [{}]",
-                new Object[] { userRegInfo });
-
-        final String userName = userRegInfo.getEmail().toLowerCase();
-        final String communityName = userRegInfo.getCommunityName();
-
-        String deviceType = userRegInfo.getDeviceType();
-        byte deviceTypeId;
-        if (StringUtils.hasText(deviceType)) {
-            deviceTypeId = deviceTypeService.findIdByName(deviceType);
-        } else {
-            deviceTypeId = DeviceTypeDao.getNoneDeviceType().getI();
-        }
-
-        User user = new User();
-        user.setDisplayName(userRegInfo.getDisplayName());
-        user.setTitle(userRegInfo.getTitle());
-        user.setFirstName(userRegInfo.getFirstName());
-        user.setLastName(userRegInfo.getLastName());
-        user.setUserName(userName);
-        user.setToken(userRegInfo.getStoredToken());
-        user.setDeviceType(DeviceTypeDao.getDeviceTypeMapIdAsKeyAndDeviceTypeValue().get(deviceTypeId));
-        user.setDeviceString(userRegInfo.getDeviceString());
-        user.setDevice("");
-        int communityId = CommunityDao.getCommunityId(communityName);
-        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityId));
-        user.setAddress1(userRegInfo.getAddress());
-        user.setAddress2(userRegInfo.getAddress());
-        user.setCity(userRegInfo.getCity());
-        user.setPostcode(userRegInfo.getPostCode());
-        user.setCountry(countryService.findIdByFullName(userRegInfo
-                .getCountryFullName()));
-
-        String phoneNumber = userRegInfo.getPhoneNumber();
-        if (phoneNumber == null || phoneNumber.equalsIgnoreCase("null"))
-            userRegInfo.setPhoneNumber("");
-
-        user.setPin("");
-        user.setMobile(userRegInfo.getPhoneNumber());
-        user.setCode("");
-        user.setSessionID("");
-        user.setIpAddress(userRegInfo.getIpAddress());
-        user.setTempToken("");
-        user.setCanContact(userRegInfo.getNewsByEmail());
-
-        user.setOperator(userRegInfo.getOperator());
-
-        if (0 == user.getOperator()) {
-            Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
-            user.setOperator(entry.getKey());
-        }
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    private User continueRegistration(UserRegInfo userRegInfo) {
-        if (userRegInfo == null)
-            throw new ServiceException("The parameter userRegInfo is null");
-
-        LOGGER.debug("input parameters userRegInfo: [{}]",
-                new Object[]{userRegInfo});
-
-        final String userName = userRegInfo.getEmail().toLowerCase();
-        final String communityName = userRegInfo.getCommunityName();
-        User user = findByNameAndCommunity(userName, communityName);
-
-        if (user != null) {
-            throw new ServiceException("User with user name [" + userName + "] and community name [" + communityName + "] already registered");
-        }
-
-        user = getUser(userRegInfo);
-        String promotionCode = userRegInfo.getPromotionCode();
-
-        if (promotionCode == null || promotionCode.isEmpty()) {
-            Community community = CommunityDao.getMapAsNames().get(communityName);
-            user.setStatus(UserStatusDao.getEulaUserStatus());
-
-            entityService.saveEntity(user);
-
-            createPaymentDetails(userRegInfo, user, community);
-        } else {
-            user.setStatus(UserStatusDao.getSubscribedUserStatus());
-
-            entityService.saveEntity(user);
-
-            applyPromotionByPromoCode(user, promotionCode);
-        }
-
-        user.setCode(Utils.getOTACode(user.getId(), user.getUserName()));
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public PaymentDetails createPaymentDetails(UserRegInfo userRegInfo, User user, Community community) {
         PaymentDetailsDto dto = UserRegInfo.getPaymentDetailsDto(userRegInfo);
 
@@ -1007,33 +702,7 @@ public class UserService {
         return createPaymentDetails;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    private void applyPromotionByPromoCode(final User user, final String promotionCode) {
-        Validate.notNull(user, "The parameter user is null");
-        Validate.notNull(promotionCode, "The parameter promotionCode is null");
-
-        LOGGER.debug("input parameters user, promotionCode, communityName: [{}], [{}]", user, promotionCode);
-
-        Promotion userPromotion = promotionService.getActivePromotion(promotionCode, communityName(user));
-        if (userPromotion == null) {
-            LOGGER.info("Promotion code [{}] does not exist", promotionCode);
-            throw new ServiceException("Invalid promotion code. Please re-enter the code or leave the field blank");
-        }
-
-        boolean isPromotionApplied = applyPromotionByPromoCode(user, userPromotion);
-        if (isPromotionApplied){
-            proceessAccountCheckCommandForAuthorizedUser(user.getId());
-        }
-
-    }
-
-    private String communityName(User user) {
-        UserGroup userGroup = user.getUserGroup();
-        Community community = userGroup.getCommunity();
-        return community.getName();
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public void processPaymentSubBalanceCommand(User user, int subweeks, SubmittedPayment payment) {
         LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
         final String paymentSystem = payment.getPaymentSystem();
@@ -1060,9 +729,9 @@ public class UserService {
             user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
         }else if (user.isSMSActivatedUser()){
             if (Utils.getEpochSeconds() > oldNextSubPayment){
-                user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * Utils.WEEK_SECONDS);
+                user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * WEEK_SECONDS);
             }else{
-                user.setNextSubPayment(oldNextSubPayment + subweeks * Utils.WEEK_SECONDS);
+                user.setNextSubPayment(oldNextSubPayment + subweeks * WEEK_SECONDS);
             }
         } else {
             user.setSubBalance(user.getSubBalance() + subweeks);
@@ -1092,20 +761,7 @@ public class UserService {
         LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User updateUserBalance(User user, byte intSubBalance) {
-        if (user == null)
-            throw new ServiceException("The parameter user is null");
-        LOGGER.debug("input parameters user, intSubBalance: [{}]", new Object[]{user, intSubBalance});
-
-        user.setSubBalance(intSubBalance);
-
-        user = updateUser(user);
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User proceessAccountCheckCommandForAuthorizedUser(int userId) {
         LOGGER.debug("input parameters userId: [{}]", new String[]{String.valueOf(userId)});
 
@@ -1143,42 +799,8 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User loginUser(User user, String communityName, Errors errors) {
-        User existingUser = findByNameAndCommunity(user.getUserName(), communityName);
-        if (null != existingUser) {
-            if (!existingUser.getToken().equals(user.getToken())) {
-                errors.rejectValue("token", "login.form.error");
-            } else {
-                existingUser = assignPotentialPromotion(existingUser);
-            }
-        } else {
-            errors.rejectValue("token", "user.service.error.no.user.found");
-        }
-        return existingUser;
-    }
-
-    public User assignPotentialPromotion(User existingUser) {
-        LOGGER.debug("input parameters communityName: [{}]", existingUser);
-        if (existingUser.getLastSuccessfulPaymentTimeMillis() == 0) {
-            String communityName = communityName(existingUser);
-            Promotion promotion = promotionService.getPromotionForUser(communityName, existingUser);
-            existingUser.setPotentialPromotion(promotion);
-            existingUser = entityService.updateEntity(existingUser);
-            LOGGER.info("Promotion [{}] was attached to user with id [{}]", promotion, existingUser.getId());
-        }
-        LOGGER.debug("Output parameter existingUser=[{}]", existingUser);
-        return existingUser;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User setPotentialPromotion(User user, Promotion promotion) {
-        user.setPotentialPromotion(promotion);
-        return updateUser(user);
-    }
-
     @Deprecated
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User registerUser(UserRegDetailsDto userRegDetailsDto) {
         LOGGER.debug("input parameters userRegDetailsDto: [{}]", userRegDetailsDto);
 
@@ -1198,13 +820,13 @@ public class UserService {
         String communityName = community.getName();
 
         String promotionCode = userRegDetailsDto.getPromotionCode();
-        if (promotionCode == null)
+        if (isNull(promotionCode))
             promotionCode = getDefaultPromoCode(communityName);
 
-        applyPromotionByPromoCode(user, promotionCode);
+        promotionService.applyPromotionByPromoCode(user, promotionCode);
 
         LOGGER.debug("Output parameter user=[{}]", user);
-        assignPotentialPromotion(user);
+        promotionService.assignPotentialPromotion(user);
         return user;
     }
 
@@ -1237,7 +859,7 @@ public class UserService {
         return promotionCode;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    @Transactional(propagation = REQUIRED, readOnly = true)
     public User getUser(String userName, String communityUrl) {
         LOGGER.debug("input parameters email, communityUrl: [{}], [{}]", userName, communityUrl);
         User user = userRepository.findOne(userName, communityUrl);
@@ -1255,7 +877,7 @@ public class UserService {
         return (null != promotion) ? true : false;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User registerUser(FacebookProfile facebookProfile, String communityName, String ipAddress) {
         LOGGER.debug("input parameters facebookProfile: [{}]", facebookProfile);
 
@@ -1281,7 +903,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public boolean restoreUserPassword(String email, String communityRedirectURL) {
         LOGGER.debug("input parameters email, communityRedirectURL: [{}], [{}]", email, communityRedirectURL);
 
@@ -1330,7 +952,7 @@ public class UserService {
         return accountDto;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public boolean sendSMSWithOTALink(String phone, int userId) {
         User user = findById(userId);
         String code = Utils.getOTACode(user.getId(), user.getUserName());
@@ -1369,30 +991,6 @@ public class UserService {
 
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User assignPotentialPromotion(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", userId);
-        User user = findById(userId);
-
-        user = assignPotentialPromotion(user);
-
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    private User checkUserDetailsBeforeUpdate(final String deviceUID, final String storedToken, final Community community) {
-        LOGGER.debug("input parameters deviceUID, storedToken, community: [{}], [{}], [{}]", new Object[] { deviceUID, storedToken, community });
-
-        User user = findByDeviceUIDAndCommunity(deviceUID, community);
-        if (user == null || !user.getToken().equals(storedToken)) {
-            ServerMessage serverMessage = ServerMessage.getInvalidPassedStoredTokenForDeviceUID(deviceUID, community.getRewriteUrlParameter());
-            throw new UserCredentialsException(serverMessage);
-        }
-
-        LOGGER.debug("Output parameter result=[{}]", user);
-        return user;
-    }
-
     private User findUserWithUserNameAsPassedDeviceUID(String deviceUID, Community community) {
         LOGGER.debug("input parameters deviceUID, community: [{}], [{}]", deviceUID, community);
 
@@ -1402,7 +1000,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User registerUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, boolean createPotentialPromo, boolean updateUserPendingActivation) {
         LOGGER.info("REGISTER_USER Started [{}]", userDeviceRegDetailsDto);
 
@@ -1438,17 +1036,12 @@ public class UserService {
                     promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
             }
 
-            setPotentialPromoByPromoCode(user, promotionCode);
+            promotionService.setPotentialPromoByPromoCode(user, promotionCode);
         }
 
         userRepository.save(user);
         LOGGER.info("REGISTER_USER user[{}] changed activation_status to[{}]", user.getUserName(), REGISTERED);
         return user;
-    }
-
-    @Transactional(readOnly = true)
-    public User findByDeviceUIDAndCommunity(String deviceUID, Community community) {
-        return userRepository.findByDeviceUIDAndCommunity(deviceUID, community);
     }
 
     private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
@@ -1480,46 +1073,7 @@ public class UserService {
         return existsInPromotedList || (promotedDeviceModel && doesNotExistInNotPromotedList);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Promotion setPotentialPromoByMessageCode(User user, String messageCode) {
-        Community community = user.getUserGroup().getCommunity();
-        String communityUri = community.getRewriteUrlParameter().toLowerCase();
-        String promoCode = messageSource.getMessage(communityUri, messageCode, null, null);
-        return setPotentialPromoByPromoCode(user, promoCode);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    protected Promotion setPotentialPromoByPromoCode(User user, String code) {
-        LOGGER.info("Setting potential promotion for user id {} by promo code {}", user.getId(), code);
-        Community community = user.getUserGroup().getCommunity();
-        if (code != null) {
-            Promotion potentialPromoCodePromotion = promotionService.getActivePromotion(code, community.getName());
-            user.setPotentialPromoCodePromotion(potentialPromoCodePromotion);
-            entityService.updateEntity(user);
-            return potentialPromoCodePromotion;
-        }
-        return null;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User applyInitialPromotion(User user) {
-        LOGGER.debug("input parameters user: [{}]", new Object[]{user});
-
-        if (user == null)
-            throw new NullPointerException("The parameter user is null");
-
-        if (UserStatusDao.LIMITED.equals(user.getStatus().getName())) {
-
-            Promotion potentialPromoCodePromotion = user.getPotentialPromoCodePromotion();
-            if (potentialPromoCodePromotion != null) {
-                applyPromotionByPromoCode(user, potentialPromoCodePromotion);
-            }
-        }
-        LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User updateLastDeviceLogin(User user) {
         LOGGER.debug("input parameters user: [{}]", user);
 
@@ -1530,7 +1084,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User updateLastWebLogin(User user) {
         LOGGER.debug("input parameters user: [{}]", user);
 
@@ -1556,7 +1110,7 @@ public class UserService {
         return users;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User updateUser(UserDto userDto) {
         LOGGER.debug("input parameters userDto: [{}], [{}]", userDto);
 
@@ -1613,7 +1167,7 @@ public class UserService {
 
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public List<User> findActivePsmsUsers(String communityURL, BigDecimal amountOfMoneyToUserNotification, long deltaSuccesfullPaymentSmsSendingTimestampMillis) {
         LOGGER.debug("input parameters communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis: [{}], [{}], [{}]", new Object[]{
                 communityURL, amountOfMoneyToUserNotification, deltaSuccesfullPaymentSmsSendingTimestampMillis});
@@ -1629,7 +1183,7 @@ public class UserService {
         return users;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User resetSmsAccordingToLawAttributes(User user) {
         LOGGER.debug("input parameters user: [{}]", user);
 
@@ -1648,7 +1202,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User populateAmountOfMoneyToUserNotification(User user, SubmittedPayment payment) {
         LOGGER.debug("input parameters user, payment: [{}], [{}]", user, payment);
 
@@ -1667,8 +1221,8 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
-    public Future<Boolean> makeSuccesfullPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
+    @Transactional(propagation = REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
+    public Future<Boolean> makeSuccessfulPaymentFreeSMSRequest(User user) throws ServiceCheckedException {
         try {
             LOGGER.debug("input parameters user: [{}]", user);
 
@@ -1702,7 +1256,7 @@ public class UserService {
                 throw new Exception(migResponse.getDescriptionError());
 
             if (user.getLastSuccesfullPaymentSmsSendingTimestampMillis() == 0)
-                resetLastSuccesfullPaymentSmsSendingTimestampMillis(user.getId());
+                resetLastSuccessfulPaymentSmsSendingTimestampMillis(user.getId());
 
             result = new AsyncResult<Boolean>(Boolean.TRUE);
 
@@ -1714,8 +1268,8 @@ public class UserService {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public int resetLastSuccesfullPaymentSmsSendingTimestampMillis(int userId) {
+    @Transactional(propagation = REQUIRED)
+    public int resetLastSuccessfulPaymentSmsSendingTimestampMillis(int userId) {
         LOGGER.debug("input parameters userId: [{}]", userId);
 
         int updatedRowCount = userRepository.updateFields(getEpochMillis(), userId);
@@ -1726,7 +1280,7 @@ public class UserService {
         return updatedRowCount;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User setToZeroSmsAccordingToLawAttributes(User user) {
         LOGGER.debug("input parameters user: [{}]", user);
 
@@ -1745,7 +1299,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User activatePhoneNumber(User user, String phone) {
         LOGGER.info("activate phone number phone=[{}] userId=[{}] activationStatus=[{}]", phone, user.getId(),
                 user.getActivationStatus());
@@ -1782,7 +1336,7 @@ public class UserService {
 
         if ( isPromotedDevice(phoneNumber, community)) {
             // if the device is promoted, we set the default field
-            populateSubscriberData(user, (SubscriberData) null);
+            populateSubscriberData(user, null);
         } else {
             try {
                 mobileProviderService.getSubscriberData(phoneNumber, userDetailsUpdater);
@@ -1807,27 +1361,26 @@ public class UserService {
         return o2ClientService.getRedeemServerO2Url(user.getMobile());
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User applyInitPromo(User user, String otac, boolean updateContractAndProvider, boolean isApplyingWithoutEnterPhone) {
-        LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], updateContractAndProvider=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), updateContractAndProvider);
+    @Transactional(propagation = REQUIRED)
+    public User applyInitPromo(User user, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone) {
+        LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], isMajorApiVersionNumberLessThan4=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), isMajorApiVersionNumberLessThan4);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
-        return applyInitPromo(user, mobileUser, otac, updateContractAndProvider, isApplyingWithoutEnterPhone);
+        return applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone);
 
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User applyInitPromo(User user, User mobileUser, String otac, boolean updateContractAndProvider, boolean isApplyingWithoutEnterPhone) {
-        boolean hasPromo = applyInitPromoInternal(user, mobileUser, otac, updateContractAndProvider, isApplyingWithoutEnterPhone);
+    @Transactional(propagation = REQUIRED)
+    public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone) {
+        PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).setIsSubjectToAutoOptIn(false).createPromoRequest();
+        user = applyInitPromoInternal(promoRequest);
 
-        user = !ActivationStatus.ACTIVATED.equals(user.getActivationStatus()) ? mobileUser : user;
-
-        user.setHasPromo(hasPromo);
+        user.setHasPromo(user.isPromotionApplied());
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public void saveWeeklyPayment(User user) throws Exception {
         if (user == null)
             throw new ServiceException("The parameter user is null");
@@ -1885,7 +1438,7 @@ public class UserService {
         return userRepository.findBefore48hExpireUsers(epochSeconds, pageable);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public void updateLastBefore48SmsMillis(long lastBefore48SmsMillis, int userId) {
         userRepository.updateLastBefore48SmsMillis(lastBefore48SmsMillis, userId);
     }
@@ -1910,7 +1463,7 @@ public class UserService {
         return usersForRetryPayment;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User downgradeUserTariff(User userWithOldTariff, Tariff newTariff) {
 
         Tariff oldTariff = userWithOldTariff.getTariff();
@@ -1939,18 +1492,20 @@ public class UserService {
 
     private User downgradeUserOn4GFreeTrialVideoAudioSubscription(User user) {
         user = unsubscribeAndSkipFreeTrial(user, USER_DOWNGRADED_TARIFF);
-        applyPotentialPromo(user.isO2User(), user, user.getUserGroup().getCommunity(), (int) (user.getFreeTrialStartedTimestampMillis() / 1000L));
+        int freeTrialStartedTimestampSeconds = (int) (user.getFreeTrialStartedTimestampMillis() / 1000L);
+        LOGGER.info("Attempt to apply promotion using user freeTrialStartedTimestampMillis value unix time [{}] as freeTrialStartedTimestampSeconds", freeTrialStartedTimestampSeconds);
+        promotionService.applyPotentialPromo(user, user.getUserGroup().getCommunity(), freeTrialStartedTimestampSeconds);
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User unsubscribeAndSkipFreeTrial(User user, ActionReason actionReason) {
         user = unsubscribeUser(user, actionReason.getDescription());
         user = skipFreeTrial(user);
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User skipBoughtPeriodAndUnsubscribe(User userWithOldTariffOnOldBoughtPeriod, ActionReason actionReason) {
         userWithOldTariffOnOldBoughtPeriod = unsubscribeUser(userWithOldTariffOnOldBoughtPeriod, actionReason.getDescription());
         userWithOldTariffOnOldBoughtPeriod = skipBoughtPeriod(userWithOldTariffOnOldBoughtPeriod, actionReason);
@@ -1985,7 +1540,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User o2SubscriberDataChanged(User user, O2SubscriberData o2SubscriberData) {
         Tariff newTariff = o2SubscriberData.isTariff4G() ? _4G : _3G;
         if (!newTariff.equals(user.getTariff())) {
@@ -2017,24 +1572,29 @@ public class UserService {
         return userRepository.findByOtacMobileAndCommunity(otac, phoneNumber, community)==0L ? false: true;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User autoOptIn(User user, String otac) {
-        LOGGER.info("Attempt to auto opt in, otac {}", otac);
+    @Transactional(propagation = REQUIRED)
+    public User autoOptIn(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac) {
+        User user = checkUser(communityUri, userName, userToken, timestamp, deviceUID, ENTERED_NUMBER, ACTIVATED);
+        return autoOptIn(user, otac);
+    }
 
-        if(!user.isSubjectToAutoOptIn()) {
-            throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
-        }
+    private User  autoOptIn(User user, String otac) {
+        LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
-        boolean isPromotionApplied;
-        if(isNotBlank(otac)){
-            isPromotionApplied = applyInitPromoInternal(user, mobileUser, otac, false, false);
-        }else{
-            isPromotionApplied = promotionService.applyPotentialPromo(user, user.isO2User());
+        user.withOldUser(mobileUser);
+        if(!autoOptInRuleService.isSubjectToAutoOptIn(ALL, user)) {
+            throw new ServiceException("user.is.not.subject.to.auto.opt.in", "User isn't subject to Auto Opt In");
         }
 
-        if (!isPromotionApplied){
+        if(isNotBlank(otac)){
+            user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).createPromoRequest());
+        }else{
+            user = promotionService.applyPotentialPromo(user);
+        }
+
+        if (!user.isPromotionApplied()){
             throw new ServiceException("could.not.apply.promotion", "Couldn't apply promotion");
         }
 
@@ -2042,14 +1602,13 @@ public class UserService {
         return paymentDetails.getOwner();
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public void activateVideoAudioFreeTrialAndAutoOptIn(User user) {
-        LOGGER.info("activateVideoAudioFreeTrialAndAutoOptIn({})", user.getId());
-        User userInTransaction = findById(user.getId()); // using this to have the user updated
-        promotionService.activateVideoAudioFreeTrial(userInTransaction);
-
-        if ( userInTransaction.isSubjectToAutoOptIn() ) {
-            paymentDetailsService.createDefaultO2PsmsPaymentDetails(userInTransaction);
+        LOGGER.info("Attempt to activate video audio free trial and subscribe user user with id: [{}]", user.getId());
+        boolean subjectToAutoOptIn = autoOptInRuleService.isSubjectToAutoOptIn(EMPTY, user);
+        user = promotionService.activateVideoAudioFreeTrial(user);
+        if (subjectToAutoOptIn) {
+            paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         }
     }
 
@@ -2057,29 +1616,15 @@ public class UserService {
         return org.springframework.util.StringUtils.hasText(deviceUID) && !deviceUID.equals("0f607264fc6318a92b9e13c65db7cd3c");
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = REQUIRED)
     public User checkUser(String community, String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses){
         User user;
         if (isValidDeviceUID(deviceUID)) {
             user = checkCredentials(userName, userToken, timestamp, community, deviceUID);
-        }
-        else {
+        }else {
             user = checkCredentials(userName, userToken, timestamp, community);
         }
         checkActivationStatus(user, activationStatuses);
         return user;
-    }
-
-
-    public void setUserNotificationService(UserNotificationService userNotificationService) {
-        this.userNotificationService = userNotificationService;
-    }
-
-    public void setSendActivationSMS(boolean sendActivationSMS) {
-        this.sendActivationSMS = sendActivationSMS;
-    }
-
-    public void setTaskService(TaskService taskService) {
-        this.taskService = taskService;
     }
 }

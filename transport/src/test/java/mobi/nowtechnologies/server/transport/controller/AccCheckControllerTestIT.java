@@ -8,11 +8,13 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +33,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Autowired
     private ChartDetailRepository chartDetailRepository;
+
+    @Resource(name = "communityRepository")
+    private CommunityRepository communityRepository;
 
     @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
@@ -289,7 +294,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void testAccountCheckForITunesClientWhichDoesntHaveLockedTracks() throws Exception {
+    public void testAccountCheckForITunesClientWhichDoesNotHaveLockedTracks() throws Exception {
         final String userName = "+447111111118";
 
         //given
@@ -304,7 +309,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 .withDeviceUID("b88106713409e92822461a876abcd74c")
                 .withDeviceUID("d")
                 .withMobile("+447111111118")
-                .withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(CommunityDao.getCommunity("o2").getId()));
+                .withUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(communityRepository.findByName("o2").getId()));
         entity.setToken("f701af8d07e5c95d3f5cf3bd9a62344d");
         entity.setStatus(UserStatusDao.getUserStatusMapIdAsKey().get((byte) 10));
         entity.setDevice("");

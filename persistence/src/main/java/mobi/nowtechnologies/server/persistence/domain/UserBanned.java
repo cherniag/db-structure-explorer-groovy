@@ -66,12 +66,12 @@ public class UserBanned {
         this.description = description;
     }
 
-    public boolean isGiveAnyPromotion() {
-        return giveAnyPromotion;
-    }
-
     public void setGiveAnyPromotion(boolean giveAnyPromotion) {
         this.giveAnyPromotion = giveAnyPromotion;
+    }
+
+    public boolean isGiveAnyPromotion() {
+        return giveAnyPromotion;
     }
 
     @Override

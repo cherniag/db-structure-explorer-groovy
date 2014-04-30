@@ -42,42 +42,6 @@ public class MailNotification {
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-
-	/**
-	 * Sending email after user made a successful registration
-	 * @param joinPoint
-	 * @throws Throwable
-	 */
-	@Around("execution(* mobi.nowtechnologies.server.service.UserService.registerUserWhitoutPersonalInfo(*))")
-	public Object sendRegistrationNotification(ProceedingJoinPoint joinPoint) throws Throwable {
-		Object object = joinPoint.proceed();
-		UserRegInfo userRegInfo = (UserRegInfo) joinPoint.getArgs()[0];
-		try{
-			sendWelcomeEmail(userRegInfo);
-		}catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		return object;
-	}
-
-	protected void sendWelcomeEmail(UserRegInfo user) {
-		Community community = CommunityDao.getMapAsNames().get(user.getCommunityName());
-		String communityUri = community.getRewriteUrlParameter().toLowerCase();
-		
-		String from = messageSource.getMessage(communityUri, "support.email",null, null);
-		String subject = messageSource.getMessage(communityUri, "mail.registration.complete.subject",null, null);
-		String body = messageSource.getMessage(communityUri, "mail.registration.complete.body",null, null);
-		Map<String, String> model = new HashMap<String, String>();
-			model.put("displayName", user.getDisplayName());
-			
-			model.put("communityName", community.getDisplayName());
-			model.put("portalUrl", messageSource.getMessage(communityUri, "mail.portal.url",null, null)+community.getRewriteUrlParameter());
-			model.put("supportEmail", messageSource.getMessage(communityUri, "support.email",null, null));
-			model.put("supportPhone", messageSource.getMessage(communityUri, "support.phone",null, null));
-			
-		mailService.sendMail(from, new String[]{user.getEmail()}, subject , body , model);
-		LOGGER.info("Welcome email was send to user {} from community {}", user.getEmail(), community.getDisplayName());
-	}
 	
 	@Around("execution(* mobi.nowtechnologies.server.service.UserService.resetPassword(..))")
 	public void sendResetPasswordNotification(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -101,25 +65,6 @@ public class MailNotification {
 		
 		mailService.sendMail(from, new String[]{user.getUserName()}, subject , body , model);
 		LOGGER.info("User {} reset a password", user.getUserName());
-	}
-	
-	protected void sendPaymentEmail(User user, Community community, String subject, String body, String numberOfWeeks, String amountDeducted) {
-		String communityUri = community.getRewriteUrlParameter().toLowerCase();
-		
-		String from = messageSource.getMessage(communityUri, "mail.subscribed.cc.address",null, null);
-		
-		Map<String, String> model = new HashMap<String, String>();
-			model.put("displayName", user.getDisplayName());
-			model.put("communityName", community.getDisplayName());
-			model.put("numberOfWeeks", numberOfWeeks);
-			model.put("amountDeducted", amountDeducted);
-			model.put("portalUrl", messageSource.getMessage(communityUri, "mail.portal.url",null, null)+community.getRewriteUrlParameter());
-			model.put("supportEmail", messageSource.getMessage(communityUri, "support.email",null, null));
-			model.put("supportPhone", messageSource.getMessage(communityUri, "support.phone",null, null));
-			
-		mailService.sendMail(from, new String[]{user.getUserName()}, subject , body , model);
-		
-		LOGGER.info("Billing email for SagePay Credit Card was send to user {} from community {}", user.getUserName(), community.getDisplayName());
 	}
 	
 	

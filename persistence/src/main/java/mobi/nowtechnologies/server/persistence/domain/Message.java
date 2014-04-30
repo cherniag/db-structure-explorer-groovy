@@ -218,6 +218,41 @@ public class Message {
 		return clonedMessage;
 	}
 
+    public Message withActivated(boolean activated) {
+        this.activated = activated;
+        return this;
+    }
+
+    public Message withCommunity(Community community) {
+        this.community = community;
+        return this;
+    }
+
+    public Message withBody(String body) {
+        this.body = body;
+        return this;
+    }
+
+    public Message withPosition(int position) {
+        this.position = position;
+        return this;
+    }
+
+    public Message withPublishTimeMillis(long publishTimeMillis) {
+        this.publishTimeMillis = publishTimeMillis;
+        return this;
+    }
+
+    public Message withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public Message withMessageType(MessageType messageType) {
+        this.messageType = messageType;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

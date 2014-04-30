@@ -45,6 +45,11 @@ public class Community implements Serializable {
     public Community() {
     }
 
+    public Community withId(Integer id) {
+        setId(id);
+        return  this;
+    }
+
     public Community withRewriteUrl(String url){
         setRewriteUrlParameter(url);
         return  this;
@@ -128,6 +133,14 @@ public class Community implements Serializable {
         return VF_NZ_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
     }
 
+    public boolean isHLZCommunity(){
+        return HL_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
+    }
+
+    public List<Chart> getCharts() {
+        return charts;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -140,5 +153,4 @@ public class Community implements Serializable {
                 .append("rewriteUrlParameter", rewriteUrlParameter)
                 .toString();
     }
-
 }

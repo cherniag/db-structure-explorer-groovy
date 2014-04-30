@@ -17,6 +17,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
+
 @Transactional
 public class UserPromoServiceImpl implements UserPromoService {
 
@@ -37,6 +40,7 @@ public class UserPromoServiceImpl implements UserPromoService {
     private Collection<BaseSocialRepository> socialRepositories;
 
     @Override
+    @Transactional(propagation = REQUIRED)
     public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         activationEmailService.activate(activationEmailId, email, token);
 
@@ -44,7 +48,7 @@ public class UserPromoServiceImpl implements UserPromoService {
 
         user = userService.applyInitPromo(user, existingUser, null, false, true);
 
-        user.setProvider(ProviderType.EMAIL);
+        user.setProvider(EMAIL);
         user.setUserName(email);
 
         userService.updateUser(user);

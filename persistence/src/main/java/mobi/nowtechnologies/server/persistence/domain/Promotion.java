@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
+import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 
 @Entity
 @Table(name = "tb_promotions")
@@ -64,6 +66,9 @@ public class Promotion implements Serializable {
 
     @Column(name = "is_white_listed", columnDefinition = "BIT default false")
     private boolean isWhiteListed;
+
+    @Transient
+    private boolean couldBeAppliedMultipleTimes;
 
 	public Promotion() {
 	}
@@ -288,6 +293,23 @@ public class Promotion implements Serializable {
         return this;
     }
 
+    public Promotion withCouldBeAppliedMultipleTimes(boolean couldBeAppliedMultipleTimes){
+        this.couldBeAppliedMultipleTimes = couldBeAppliedMultipleTimes;
+        return this;
+    }
+
+    public int getFreeWeeks(int freeTrialStartedTimestampSeconds){
+        return freeWeeks == 0 ? (endDate - freeTrialStartedTimestampSeconds) / WEEK_SECONDS : freeWeeks;
+    }
+
+    public int getFreeWeeksEndDate(int freeTrialStartedTimestampSeconds){
+        return freeWeeks == 0 ? endDate:  freeTrialStartedTimestampSeconds + freeWeeks*WEEK_SECONDS;
+    }
+
+    public boolean isCouldBeAppliedMultipleTimes(){
+        return couldBeAppliedMultipleTimes || isNotNull(promoCode) && promoCode.isTwoWeeksOnSubscription();
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -306,6 +328,7 @@ public class Promotion implements Serializable {
                 .append("isWhiteListed", isWhiteListed)
                 .append("userGroupId", getUserGroupId())
                 .append("promoCodeId", getPromoCodeId())
+                .append("isCouldBeAppliedMultipleTimes()", isCouldBeAppliedMultipleTimes())
                 .toString();
     }
 

@@ -13,6 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -37,7 +38,7 @@ public class UserPromoServiceTest {
 
     @Test
     public void testApplyInitPromoByEmail() {
-        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        User user = UserFactory.createUser(ACTIVATED);
 
         when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
 
@@ -52,7 +53,7 @@ public class UserPromoServiceTest {
 
     @Test(expected = ValidationException.class)
     public void testApplyInitPromoByEmailActivateError() {
-        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        User user = UserFactory.createUser(ACTIVATED);
 
         when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true))).thenReturn(user);
         doThrow(ValidationException.class).when(activationEmailService).activate(anyLong(), anyString(), anyString());

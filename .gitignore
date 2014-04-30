@@ -11,3 +11,9 @@ atlassian-ide-plugin.xml
 track-repo/src/main/java/rebel-remote.xml
 track-repo/src/main/java/rebel.xml
 deploy-preprod.sh
+
+#After test releated data
+mem.*
+*/mem.*
+*bambooBuildDir*
+*/*bambooBuildDir*

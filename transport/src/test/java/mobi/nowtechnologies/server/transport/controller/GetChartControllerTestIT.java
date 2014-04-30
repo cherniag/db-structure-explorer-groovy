@@ -352,7 +352,6 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         videoChart.setGenre(chart.getGenre());
         chartRepository.save(videoChart);
 
-
         ChartDetail chartDetail = chartDetailRepository.findOne(22);
 
         ChartDetail hotDetail = new ChartDetail();
