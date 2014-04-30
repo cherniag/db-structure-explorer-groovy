@@ -4,9 +4,11 @@ import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
@@ -51,10 +53,15 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     @Resource
     private ActivationEmailRepository activationEmailRepository;
 
+    @Resource
+    private UserGroupRepository userGroupRepository;
+
+
+
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
     private final String deviceType = "ANDROID";
     private final String apiVersion = "5.2";
-    private final String communityUrl = "o2";
+    private final String communityUrl = "hl_uk";
     private final String timestamp = "2011_12_26_07_04_23";
     private final String fbUserId = "1";
     private final String fbEmail = "ol@ukr.net";
@@ -97,7 +104,8 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     private MvcResult emailGenerate(User user, String email) throws Exception {
         return mockMvc.perform(
-                post("/o2/4.0/EMAIL_GENERATE.json")
+                post("/" +
+                        "" + communityUrl + "/4.0/EMAIL_GENERATE.json")
                         .param("EMAIL", email)
                         .param("USER_NAME", user.getDeviceUID())
                         .param("DEVICE_UID", user.getDeviceUID())
@@ -105,7 +113,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     }
 
     private void applyInitPromoByEmail(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/o2/4.0/SIGN_IN_EMAIL")
+        mockMvc.perform(post("/" + communityUrl + "/4.0/SIGN_IN_EMAIL")
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
                 .param("EMAIL_ID", activationEmail.getId().toString())
@@ -308,7 +316,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         user = userRepository.findOne(fbEmail, communityUrl);
         String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
         mockMvc.perform(
-                post("/" + communityUrl + "/3.8/GET_CHART.json")
+                post("/" + communityUrl + "/5.5/GET_CHART.json")
                         .param("USER_NAME", fbEmail)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -323,7 +331,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     @Test
     public void testFacebookApplyAfterEmailRegistration() throws Exception {
         setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
-        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        User user = userRepository.save(UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withDeviceUID(deviceUID).withUserGroup(userGroupRepository.findOne(9)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
         emailGenerate(user, fbEmail);
@@ -336,7 +344,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
 
         mockMvc.perform(
-                post("/" + communityUrl + "/3.8/GET_CHART.json")
+                post("/" + communityUrl + "/5.5/GET_CHART.json")
                         .param("USER_NAME", fbEmail)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
