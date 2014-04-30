@@ -45,7 +45,7 @@ public class SigninFacebookController extends CommonController {
         String community = getCurrentCommunityUri();
         try {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             FacebookProfile facebookProfile = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
             user = userPromoService.applyInitPromoByFacebook(user, facebookProfile);
             return buildModelAndView(accCheckService.processAccCheck(user, true));

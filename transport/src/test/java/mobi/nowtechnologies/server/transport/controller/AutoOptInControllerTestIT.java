@@ -2,9 +2,11 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.PromoCode;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
+import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import javax.annotation.Resource;
 
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,11 +50,44 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
     private Promotion promotion;
     private PromoCode promoCode;
 
+    @Resource
+    private ReactivationUserInfoRepository reactivationUserInfoRepository;
+
+
+    @Test
+    public void shouldAutoOptReactivateUser() throws Exception {
+        //given    org.springframework.test.web.server
+        String userName = "+447111111114";
+        String apiVersion = "6.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String deviceUid = "b88106713409e92622461a876abcd74b";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String otac = null;
+        User user = userRepository.findOne(userName, communityUrl);
+        ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
+        reactivationUserInfo.setUser(user);
+        reactivationUserInfo.setReactivationRequest(true);
+        reactivationUserInfoRepository.save(reactivationUserInfo);
+        //then
+        mockMvc.perform(
+                post("/h/" + communityUrl + "/" + apiVersion + "/AUTO_OPT_IN.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+                        .param("DEVICE_UID", deviceUid)
+        ).andExpect(status().isOk());
+        reactivationUserInfo = reactivationUserInfoRepository.findByUser(user);
+        assertFalse(reactivationUserInfo.isReactivationRequest());
+    }
+
     @Test
     public void shouldAutoOptInAndVersionMore40() throws Exception {
         //given    org.springframework.test.web.server
         String userName = "+447111111114";
-        String apiVersion = "6.0";
+        String apiVersion = "5.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

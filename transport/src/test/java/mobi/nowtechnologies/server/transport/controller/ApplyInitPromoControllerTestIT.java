@@ -2,8 +2,10 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
@@ -16,10 +18,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
+
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -32,6 +37,9 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
     @Autowired
     private UserStatusRepository userStatusRepository;
+
+    @Resource
+    private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_v3d6_PromoPhoneNumber() throws Exception {
@@ -149,7 +157,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         //given
         String userName = "imei_351722057812748";
         User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "6.0";
+        String apiVersion = "5.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -422,6 +430,45 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
         ).andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    public void applyInitPromoWithReactivation() throws Exception {
+        //given
+        String userName = "999a72f8864fd5c23957beef9d99656568";
+        User user = prepareUserForApplyInitPromo(userName);
+        String apiVersion = "6.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = user.getToken();
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
+        doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
+        ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
+        reactivationUserInfo.setUser(user);
+        reactivationUserInfo.setReactivationRequest(true);
+        reactivationUserInfoRepository.save(reactivationUserInfo);
+        //then
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+        ).andExpect(status().isOk());
+
+        user = userService.findByName(user.getMobile());
+
+        //when
+        Assert.assertNotNull(user);
+        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+        reactivationUserInfo = reactivationUserInfoRepository.findByUser(user);
+        assertFalse(reactivationUserInfo.isReactivationRequest());
     }
 
     private User prepareUserForApplyInitPromo(String userName){

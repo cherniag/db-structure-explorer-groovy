@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
@@ -9,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.junit.Test;
@@ -22,9 +22,7 @@ import java.util.List;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
@@ -36,6 +34,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Resource(name = "communityRepository")
     private CommunityRepository communityRepository;
+
+    @Resource
+    private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
@@ -63,6 +64,50 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 andExpect(xpath("/response/user/playlist/id").number(5d)).
                 andExpect(xpath("/response/user/playlist/type").string("BASIC_CHART"));
     }
+
+
+    @Test
+    public void testAccountCheckWhenNeedReactivation() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "6.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        List<Chart> charts = new ArrayList<Chart>();
+        Chart chart = chartRepository.findOne(5);
+        charts.add(chart);
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setSelectedCharts(charts);
+        userService.updateUser(user);
+
+        ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
+        reactivationUserInfo.setUser(user);
+        reactivationUserInfo.setReactivationRequest(true);
+        reactivationUserInfoRepository.save(reactivationUserInfo);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isForbidden()).andDo(print())
+                .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(601))
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Reactivation required"));
+        reactivationUserInfo = reactivationUserInfoRepository.findByUser(user);
+        reactivationUserInfo.setReactivationRequest(false);
+        reactivationUserInfoRepository.save(reactivationUserInfo);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk());
+    }
+
 
     @Test
     public void testAccountCheckForO2Client_WithLockedTracks_Success() throws Exception {

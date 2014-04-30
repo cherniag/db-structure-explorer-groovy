@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
-import mobi.nowtechnologies.server.persistence.repository.UserBannedRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
@@ -24,8 +23,6 @@ import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTOFactory;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDtoFactory;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
@@ -36,7 +33,6 @@ import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -52,15 +48,11 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonMap;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.dto.ProviderUserDetails.NULL_PROVIDER_USER_DETAILS;
-import static mobi.nowtechnologies.server.dto.ProviderUserDetails.NullProviderUserDetails;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.UserStatusFactory.createUserStatus;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
@@ -2522,7 +2514,7 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false, false);
+        User result = userServiceSpy.applyInitPromo(user, otac, false, false, false);
 
         //then
         assertNotNull(result);
@@ -2558,7 +2550,7 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false, false);
+        User result = userServiceSpy.applyInitPromo(user, otac, false, false, false);
 
         //then
         assertNotNull(result);
@@ -2592,7 +2584,7 @@ public class UserServiceTest {
 		
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 		
-		User result = userServiceSpy.applyInitPromo(user, otac, true, false);
+		User result = userServiceSpy.applyInitPromo(user, otac, true, false, false);
 		
 		assertNotNull(result);
 		assertEquals(user, result);
@@ -2627,7 +2619,7 @@ public class UserServiceTest {
 
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
-		User result = userServiceSpy.applyInitPromo(user, otac, true, false);
+		User result = userServiceSpy.applyInitPromo(user, otac, true, false, false);
 		
 		assertNotNull(result);
 		assertEquals(user, result);
@@ -3233,7 +3225,7 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).save(expectedUser);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
 
         //then
         assertNotNull(actualUser);
@@ -3267,7 +3259,7 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
 
         //then
         assertNotNull(actualUser);
@@ -3299,7 +3291,7 @@ public class UserServiceTest {
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
 
         //when
-        userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+        userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
     }
 
     @Test(expected = RuntimeException.class)
@@ -3321,7 +3313,7 @@ public class UserServiceTest {
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
 
         //when
-        userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+        userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
     }
 
     @Test(expected = ServiceException.class)
@@ -3344,7 +3336,7 @@ public class UserServiceTest {
         doReturn(providerUserDetails).when(o2ClientServiceMock).getUserDetails(otac, expectedUser.getMobile(), expectedUser.getUserGroup().getCommunity());
 
         //when
-        userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac);
+        userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
     }
 
     @Test
@@ -3385,7 +3377,7 @@ public class UserServiceTest {
         doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac);
+        User actualUser = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac, false);
 
         //then
         assertNotNull(actualUser);
@@ -3694,7 +3686,7 @@ public class UserServiceTest {
         });
 
         //when
-        User actualUser = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone);
+        User actualUser = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
 
         //then
         assertThat(actualUser, is (user));

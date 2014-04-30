@@ -66,7 +66,7 @@ public class GetNewsController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, activationStatuses);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
             NewsDto newsDto = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
 

@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.builder;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.UserService;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PromoRequestBuilder {
@@ -11,6 +10,8 @@ public class PromoRequestBuilder {
     private boolean isMajorApiVersionNumberLessThan4;
     private boolean isApplyingWithoutEnterPhone;
     private boolean isSubjectToAutoOptIn;
+    private boolean checkReactivation;
+
 
     public static class PromoRequest {
         public final User user;
@@ -19,14 +20,17 @@ public class PromoRequestBuilder {
         public final boolean isMajorApiVersionNumberLessThan4;
         public final boolean isApplyingWithoutEnterPhone;
         public final boolean isSubjectToAutoOptIn;
+        public final boolean checkReactivation;
 
-        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn) {
+
+        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn, boolean checkReactivation) {
             this.user = user;
             this.mobileUser = mobileUser;
             this.otac = otac;
             this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
             this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
             this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
+            this.checkReactivation = checkReactivation;
         }
 
         @Override
@@ -52,6 +56,7 @@ public class PromoRequestBuilder {
         isMajorApiVersionNumberLessThan4 = promoRequest.isMajorApiVersionNumberLessThan4;
         isApplyingWithoutEnterPhone = promoRequest.isApplyingWithoutEnterPhone;
         isSubjectToAutoOptIn = promoRequest.isSubjectToAutoOptIn;
+        checkReactivation = promoRequest.checkReactivation;
     }
 
     public PromoRequestBuilder setUser(User user) {
@@ -74,6 +79,12 @@ public class PromoRequestBuilder {
         return this;
     }
 
+
+    public PromoRequestBuilder setCheckReactivation(boolean checkReactivation) {
+        this.checkReactivation = checkReactivation;
+        return this;
+    }
+
     public PromoRequestBuilder setIsApplyingWithoutEnterPhone(boolean isApplyingWithoutEnterPhone) {
         this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
         return this;
@@ -85,6 +96,6 @@ public class PromoRequestBuilder {
     }
 
     public PromoRequest createPromoRequest() {
-        return new PromoRequest(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, isSubjectToAutoOptIn);
+        return new PromoRequest(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, isSubjectToAutoOptIn, checkReactivation);
     }
 }

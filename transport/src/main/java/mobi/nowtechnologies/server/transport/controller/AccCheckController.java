@@ -53,6 +53,10 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IDFA") String idfa
     ) throws Exception {
 
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false);
+    }
+
+    private ModelAndView accCheckImpl(String userName, String userToken, String timestamp, String deviceType, String deviceUID, String pushNotificationToken, String iphoneToken, String xtifyToken, String transactionReceipt, String idfa, boolean checkReactivation) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -63,7 +67,7 @@ public class AccCheckController extends CommonController {
                 pushNotificationToken = iphoneToken;
             }
 
-            user = checkUser(userName, userToken, timestamp, deviceUID);
+            user = checkUser(userName, userToken, timestamp, deviceUID, checkReactivation);
             LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(user.getId()), pushNotificationToken, deviceType, transactionReceipt});
 
             logAboutSuccessfullAccountCheck();
@@ -122,8 +126,33 @@ public class AccCheckController extends CommonController {
         }
         ///
 
-        return accountCheckForO2Client(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false);
     }
+
+
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6.0}/ACC_CHECK"
+    })
+    public ModelAndView accountCheckWithPossibilityOfReactivation(
+            @PathVariable("apiVersion") String apiVersion,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
+            @PathVariable("community") String community) throws Exception {
+
+        ///
+
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true);
+    }
+
 
     private void logAboutSuccessfullAccountCheck() {
         SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");

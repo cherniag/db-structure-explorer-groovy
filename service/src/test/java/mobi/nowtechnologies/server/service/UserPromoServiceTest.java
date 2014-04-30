@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,12 +41,12 @@ public class UserPromoServiceTest {
 
         when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
 
-        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true))).thenReturn(user);
+        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(user);
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");
 
         verify(activationEmailService).activate(anyLong(), anyString(), anyString());
-        verify(userService).applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true));
+        verify(userService).applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true), eq(false));
         verify(userService).updateUser(user);
     }
 
@@ -55,7 +54,7 @@ public class UserPromoServiceTest {
     public void testApplyInitPromoByEmailActivateError() {
         User user = UserFactory.createUser(ACTIVATED);
 
-        when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true))).thenReturn(user);
+        when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(user);
         doThrow(ValidationException.class).when(activationEmailService).activate(anyLong(), anyString(), anyString());
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");
