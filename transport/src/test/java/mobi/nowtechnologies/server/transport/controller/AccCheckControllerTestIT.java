@@ -94,7 +94,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isForbidden()).andDo(print())
-                .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(601))
+                .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(604))
                 .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Reactivation required"));
         reactivationUserInfo = reactivationUserInfoRepository.findByUser(user);
         reactivationUserInfo.setReactivationRequest(false);
