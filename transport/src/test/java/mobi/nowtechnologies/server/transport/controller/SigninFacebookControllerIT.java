@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by oar on 2/6/14.
  */
-public class SignInFacebookTestIT extends AbstractControllerTestIT {
+public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Resource
     private FacebookUserInfoRepository fbDetailsRepository;
@@ -205,7 +205,7 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
 
     @Test
-    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSucessAndCheckReactivation() throws Exception {
+    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessAndCheckReactivation() throws Exception {
         String needCheckReactivationApiVersion = "6.0";
         facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail, locationFromFacebook));
 
