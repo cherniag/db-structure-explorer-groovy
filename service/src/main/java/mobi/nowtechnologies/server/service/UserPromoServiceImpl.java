@@ -48,9 +48,9 @@ public class UserPromoServiceImpl implements UserPromoService {
     }
 
     @Override
-    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookProfile facebookProfile) {
+    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookProfile facebookProfile, boolean checkReactivation) {
         User userForMerge = getUserForMerge(userAfterSignUp, facebookProfile);
-        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true, false);
+        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true, checkReactivation);
         facebookService.saveFacebookInfoForUser(userAfterApplyPromo, facebookProfile);
         return userAfterApplyPromo;
     }

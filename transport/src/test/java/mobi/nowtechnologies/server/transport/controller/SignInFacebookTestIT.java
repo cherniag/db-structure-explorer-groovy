@@ -2,17 +2,18 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
+import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.facebook.FacebookTemplateCustomizer;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MvcResult;
@@ -22,24 +23,20 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
-import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType.NEWS;
-import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static junit.framework.Assert.assertNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 
 /**
@@ -61,6 +58,9 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
 
     @Resource
     private ActivationEmailRepository activationEmailRepository;
+
+    @Resource
+    private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     @Resource(name = "userGroupRepository")
     private UserGroupRepository userGroupRepository;
@@ -192,6 +192,35 @@ public class SignInFacebookTestIT extends AbstractControllerTestIT {
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
         ).andExpect(status().isOk());
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
+        assertEquals(fbDetails.getEmail(), facebookEmail);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSucessAndCheckReactivation() throws Exception {
+        String needCheckReactivationApiVersion = "6.0";
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail, locationFromFacebook));
+
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl);
+        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
+        reactivationUserInfo.setUser(user);
+        reactivationUserInfo.setReactivationRequest(true);
+        reactivationUserInfoRepository.save(reactivationUserInfo);
+        String userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
+        ).andExpect(status().isOk());
+        assertNull(reactivationUserInfoRepository.isUserShouldBeReactivated(user));
+        user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
         assertEquals(fbDetails.getEmail(), facebookEmail);
         mockMvc.perform(

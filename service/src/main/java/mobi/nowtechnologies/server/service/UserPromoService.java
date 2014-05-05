@@ -9,5 +9,5 @@ public interface UserPromoService {
     User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token);
 
 
-    User applyInitPromoByFacebook(User user, FacebookProfile facebookProfile);
+    User applyInitPromoByFacebook(User user, FacebookProfile facebookProfile, boolean checkReactivation);
 }

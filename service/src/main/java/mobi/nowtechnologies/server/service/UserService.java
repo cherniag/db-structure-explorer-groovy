@@ -55,6 +55,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import static java.lang.Boolean.TRUE;
 import static mobi.nowtechnologies.server.builder.PromoRequestBuilder.PromoRequest;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -182,10 +183,17 @@ public class UserService {
         user = checkAndApplyPromo(new PromoRequestBuilder(promoRequest).setUser(user).createPromoRequest());
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
+        disableReactivation(promoRequest.checkReactivation, user);
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
         LOGGER.debug("Output parameter user=[{}]", user);
         return user;
+    }
+
+    private void disableReactivation(boolean checkReactivation, User user) {
+        if (checkReactivation){
+            reactivationUserInfoRepository.disableReactivationForUser(user);
+        }
     }
 
     private User checkAndApplyPromo(PromoRequest promoRequest) {
@@ -193,7 +201,7 @@ public class UserService {
         boolean isApplyingWithoutEnterPhone = promoRequest.isApplyingWithoutEnterPhone;
         if (isNull(promoRequest.mobileUser)) {
             if (isApplyingWithoutEnterPhone || (ENTERED_NUMBER.equals(user.getActivationStatus()) && isNotEmail(user.getUserName()))) {
-                user = applyPromoAndCheckReactivation(user, promoRequest.checkReactivation);
+                user = promotionService.applyPotentialPromo(user);
             }else{
                 LOGGER.info("Promo applying procedure is skipped for new user");
             }
@@ -203,14 +211,6 @@ public class UserService {
             LOGGER.info("Promo applying procedure is skipped for existed user");
         }
         return user;
-    }
-
-    private User applyPromoAndCheckReactivation(User user, boolean checkReactivation) {
-        User result = promotionService.applyPotentialPromo(user);
-        if (checkReactivation){
-            reactivationUserInfoRepository.disableReactivationForUser(result);
-        }
-        return result;
     }
 
     private User findAndApplyPromoFromRule(User user) {
@@ -1273,7 +1273,7 @@ public class UserService {
             if (user.getLastSuccesfullPaymentSmsSendingTimestampMillis() == 0)
                 resetLastSuccessfulPaymentSmsSendingTimestampMillis(user.getId());
 
-            result = new AsyncResult<Boolean>(Boolean.TRUE);
+            result = new AsyncResult<Boolean>(TRUE);
 
             LOGGER.debug("Output parameter result=[{}]", result);
             return result;
@@ -1607,7 +1607,9 @@ public class UserService {
         if(isNotBlank(otac)){
             user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).setCheckReactivation(checkReactivation).createPromoRequest());
         }else{
-            user = applyPromoAndCheckReactivation(user, checkReactivation);
+            User result = promotionService.applyPotentialPromo(user);
+            disableReactivation(checkReactivation, result);
+            user = result;
         }
 
         if (!user.isPromotionApplied()){
@@ -1648,11 +1650,7 @@ public class UserService {
     }
 
     private void checkUserReactivation(User user) {
-         ReactivationUserInfo reactivationUserInfo = reactivationUserInfoRepository.findByUser(user);
-        if (reactivationUserInfo != null){
-            if (reactivationUserInfo.isReactivationRequest()){
-                throw new ReactivateUserException();
-            }
-        }
+        if (TRUE.equals(reactivationUserInfoRepository.isUserShouldBeReactivated(user)))
+             throw new ReactivateUserException();
     }
 }

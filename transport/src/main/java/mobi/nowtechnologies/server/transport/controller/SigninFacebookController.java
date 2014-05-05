@@ -40,6 +40,24 @@ public class SigninFacebookController extends CommonController {
             @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, false);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/6.0/SIGN_IN_FACEBOOK"})
+    public ModelAndView applyPromotionByFacebookWithCheckReactivation(
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("ACCESS_TOKEN") String facebookAccessToken,
+            @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, true);
+    }
+
+
+
+    private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean checkReactivation) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
@@ -47,7 +65,7 @@ public class SigninFacebookController extends CommonController {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             FacebookProfile facebookProfile = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
-            user = userPromoService.applyInitPromoByFacebook(user, facebookProfile);
+            user = userPromoService.applyInitPromoByFacebook(user, facebookProfile, checkReactivation);
             return buildModelAndView(accCheckService.processAccCheck(user, true));
         } catch (UserCredentialsException ce) {
             ex = ce;
