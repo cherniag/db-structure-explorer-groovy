@@ -38,7 +38,7 @@ public class AccCheckController extends CommonController {
     private ITunesService iTunesService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/ACC_CHECK"
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-5]{1}\\.[0-9]{1,3}}/ACC_CHECK"
     })
     public ModelAndView accountCheckForO2Client(
             @RequestParam("USER_NAME") String userName,
@@ -132,7 +132,7 @@ public class AccCheckController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6.0}/ACC_CHECK"
+            "**/{community}/{apiVersion:6\\.0}/ACC_CHECK"
     })
     public ModelAndView accountCheckWithPossibilityOfReactivation(
             @PathVariable("apiVersion") String apiVersion,

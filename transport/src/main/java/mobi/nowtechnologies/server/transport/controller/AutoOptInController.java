@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AutoOptInController extends CommonController {
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
+            "**/{communityUri}/{apiVersion:[4-5]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
     })
     public ModelAndView autoOptIn(
             @PathVariable("communityUri") String communityUri,
@@ -29,7 +29,7 @@ public class AutoOptInController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{communityUri}/{apiVersion:6.0}/AUTO_OPT_IN"
+            "**/{communityUri}/{apiVersion:6\\.0}/AUTO_OPT_IN"
     })
     public ModelAndView autoOptInWithCheckReactivation(
             @PathVariable("communityUri") String communityUri,

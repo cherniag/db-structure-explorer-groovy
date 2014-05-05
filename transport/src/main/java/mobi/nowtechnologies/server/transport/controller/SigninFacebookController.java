@@ -32,7 +32,7 @@ public class SigninFacebookController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/5.2/SIGN_IN_FACEBOOK"})
+            "**/{community}/5\\.2/SIGN_IN_FACEBOOK"})
     public ModelAndView applyPromotionByFacebook(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
@@ -44,7 +44,7 @@ public class SigninFacebookController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/6.0/SIGN_IN_FACEBOOK"})
+            "**/{community}/6\\.0/SIGN_IN_FACEBOOK"})
     public ModelAndView applyPromotionByFacebookWithCheckReactivation(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,

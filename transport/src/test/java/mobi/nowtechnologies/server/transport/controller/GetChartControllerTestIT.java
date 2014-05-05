@@ -42,10 +42,50 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     private UserGroupRepository userGroupRepository;
 
     @Test
-    public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
+    public void testGetChart_O2_v5d1AndJsonAndAccCheckInfo_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "5.1";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        generateChartAllTypesForO2();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultJson = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultJson.contains("\"type\":\"VIDEO_CHART\""));
+        assertTrue(resultJson.contains("\"duration\":10000"));
+        assertTrue(!resultJson.contains("\"bonusTrack\""));
+        assertTrue(resultJson.contains("\"tracks\""));
+        assertTrue(resultJson.contains("\"playlists\""));
+        assertTrue(resultJson.contains("\"chart\""));
+        assertTrue(resultJson.contains("\"user\""));
+
+        ResultActions accountCheckCall = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+        checkAccountCheck(resultActions, accountCheckCall);
+    }
+
+    @Test
+    public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
