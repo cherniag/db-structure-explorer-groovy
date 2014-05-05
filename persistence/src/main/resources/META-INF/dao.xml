@@ -201,8 +201,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 	<tx:annotation-driven transaction-manager="persistence.TransactionManager" proxy-target-class="true" />
 	<jpa:repositories base-package="mobi.nowtechnologies.server.persistence.repository" 
 		entity-manager-factory-ref="persistence.EntityManagerFactory"
-		transaction-manager-ref="persistence.TransactionManager">
-        <repository:exclude-filter type="regex" expression="mobi\.nowtechnologies\.server\.persistence\.repository\.social\.Base.*"/>
-	</jpa:repositories>
+		transaction-manager-ref="persistence.TransactionManager"/>
+
 	
 </beans>
