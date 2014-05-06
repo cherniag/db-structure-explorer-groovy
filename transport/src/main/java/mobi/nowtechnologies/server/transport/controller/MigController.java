@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class MigController extends ProfileController {
 
 
 	@RequestMapping(method = RequestMethod.GET, value = "/DRListener")
-	public void callback(@RequestParam(value = "MESSAGEID") String messageId,
+	public @ResponseBody void callback(@RequestParam(value = "MESSAGEID") String messageId,
 			@RequestParam(value = "STATUSTYPE") String statusType,
 			@RequestParam(value = "GUID") String guid,
 			@RequestParam(value = "STATUS") String status,
