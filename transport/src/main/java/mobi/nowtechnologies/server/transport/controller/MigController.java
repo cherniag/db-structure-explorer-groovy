@@ -68,7 +68,7 @@ public class MigController extends ProfileController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/MOListener")
-	public void stopService(@RequestParam(value = "BODY") String action,
+	public @ResponseBody void stopService(@RequestParam(value = "BODY") String action,
 			@RequestParam(value = "OADC") String mobile,
 			@RequestParam(value = "CONNECTION") String operatorMigName) {
 		LOGGER.info("[START] MOLISTENER command processing started");
