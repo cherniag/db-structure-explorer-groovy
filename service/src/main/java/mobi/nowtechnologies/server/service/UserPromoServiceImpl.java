@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepos
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -58,33 +57,25 @@ public class UserPromoServiceImpl implements UserPromoService {
     }
 
     @Override
-    public User applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo) {
-        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS);
+    public User applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo, boolean checkReactivation) {
+        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS, checkReactivation);
         googlePlusUserInfoRepository.save(googleUserInfo);
 
         return userAfterApplyPromo;
     }
 
     @Override
-    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookProfile facebookProfile, boolean checkReactivation) {
-        User userForMerge = getUserForMerge(userAfterSignUp, facebookProfile);
-        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true, checkReactivation);
-        facebookService.saveFacebookInfoForUser(userAfterApplyPromo, facebookProfile);
+    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo facebookProfile, boolean checkReactivation) {
+        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, facebookProfile, facebookUserInfoRepository, ProviderType.FACEBOOK, checkReactivation);
+        facebookUserInfoRepository.save(facebookProfile);
+
         return userAfterApplyPromo;
     }
     
-    @Override
-    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo userInfo) {
-        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, userInfo, facebookUserInfoRepository, ProviderType.FACEBOOK);
-        facebookUserInfoRepository.save(userInfo);
-
-        return userAfterApplyPromo;
-    }
-
-    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType googlePlus) {
+    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType googlePlus, boolean checkReactivation) {
         User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
         User userForMerge = getUserForMerge(baseSocialRepository, refreshedSignUpUser, socialInfo.getEmail());
-        User userAfterApplyPromo = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true);
+        User userAfterApplyPromo = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, checkReactivation);
         baseSocialRepository.deleteByUser(userAfterApplyPromo);
 
         socialInfo.setUser(userAfterApplyPromo);

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>server</artifactId>
-    <version>5.4.X_O2_PROMO</version>
+    <version>5.4.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Now Technologies Java Server</name>
 
@@ -794,7 +794,7 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-facebook</artifactId>
-                <version>1.0.3.RELEASE</version>
+                <version>1.1.0.RELEASE</version>
             </dependency>
 
             <dependency>

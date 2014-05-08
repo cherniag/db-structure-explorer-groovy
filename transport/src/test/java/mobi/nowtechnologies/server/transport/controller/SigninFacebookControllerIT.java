@@ -3,13 +3,11 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
+import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
@@ -28,6 +26,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -54,6 +53,9 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     private ActivationEmailRepository activationEmailRepository;
 
     @Resource
+    private ReactivationUserInfoRepository reactivationUserInfoRepository;
+
+    @Resource(name = "userGroupRepository")
     private UserGroupRepository userGroupRepository;
 
 
@@ -354,6 +356,34 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.response.data[0].user").exists());
 
+    }
+
+
+    @Test
+    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessAndCheckReactivation() throws Exception {
+        String needCheckReactivationApiVersion = "6.0";
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl);
+        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
+        reactivationUserInfo.setUser(user);
+        reactivationUserInfo.setReactivationRequest(true);
+        reactivationUserInfoRepository.save(reactivationUserInfo);
+        String userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl, timestamp, fbUserId, fbEmail, true)
+        ).andExpect(status().isOk());
+        assertNull(reactivationUserInfoRepository.isUserShouldBeReactivated(user));
+        user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        FacebookUserInfo fbDetails = fbDetailsRepository.findByUser(user);
+        assertEquals(fbDetails.getEmail(), fbEmail);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
     }
 
 }

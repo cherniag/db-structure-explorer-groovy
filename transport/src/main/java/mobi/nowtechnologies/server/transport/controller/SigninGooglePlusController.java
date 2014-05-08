@@ -41,9 +41,9 @@ public class SigninGooglePlusController extends CommonController {
         String community = getCurrentCommunityUri();
         try {
             LOGGER.info("APPLY_INIT_PROMO_GOOGLE_PLUS Started for accessToken[{}] in community[{}] ", accessToken, community);
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             GooglePlusUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
-            user = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo);
+            user = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, false);
             return buildModelAndView(accCheckService.processAccCheck(user, true));
         } catch (UserCredentialsException ce) {
             ex = ce;
