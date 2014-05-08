@@ -2,16 +2,12 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 
 /**
  * User: Titov Mykhaylo (titov)
@@ -20,7 +16,7 @@ import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_
 @Controller
 public class AutoOptInController extends CommonController {
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
+            "**/{communityUri}/{apiVersion:[4-5]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
     })
     public ModelAndView autoOptIn(
             @PathVariable("communityUri") String communityUri,
@@ -29,12 +25,29 @@ public class AutoOptInController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam("DEVICE_UID") String deviceUID,
             @RequestParam(value = "OTAC_TOKEN", required = false) String otac) throws Exception {
+        return autoOptInCheckImpl(communityUri, userName, userToken, timestamp, deviceUID, otac, false);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{communityUri}/{apiVersion:6\\.0}/AUTO_OPT_IN"
+    })
+    public ModelAndView autoOptInWithCheckReactivation(
+            @PathVariable("communityUri") String communityUri,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("DEVICE_UID") String deviceUID,
+            @RequestParam(value = "OTAC_TOKEN", required = false) String otac) throws Exception {
+        return autoOptInCheckImpl(communityUri, userName, userToken, timestamp, deviceUID, otac, true);
+    }
+
+    private ModelAndView autoOptInCheckImpl(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) throws Exception {
         User user = null;
         Exception ex = null;
         try {
             LOGGER.info("command processing started");
 
-            user = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac);
+            user = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac, checkReactivation);
             AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false).withHasPotentialPromoCodePromotion(true);
 
             return buildModelAndView(accountCheckDTO);

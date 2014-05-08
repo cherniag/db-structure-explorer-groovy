@@ -50,7 +50,7 @@ public class FileController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
             FileType fileType = FileType.valueOf(fileTypeName);
             if(fileType == FileType.VIDEO){

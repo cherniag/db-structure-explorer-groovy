@@ -12,10 +12,40 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GetNewsControllerTestIT extends AbstractControllerTestIT{
 
     @Test
-    public void testGetNews_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
+    public void testGetNews_v5d1AndJsonAndAccCheckInfo_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "5.1";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists()).
+                andExpect(jsonPath("$.response..news").exists()).
+                andExpect(jsonPath("$.response..user").exists());
+
+
+        ResultActions accountCheckCall = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andDo(print());
+        checkAccountCheck(resultActions, accountCheckCall);
+    }
+
+    @Test
+    public void testGetNews_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

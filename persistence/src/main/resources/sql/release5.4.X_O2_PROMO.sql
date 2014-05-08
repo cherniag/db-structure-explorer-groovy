@@ -25,3 +25,5 @@ INSERT INTO tb_promotions
 INSERT INTO tb_promoCode
 (code                   , promotionId                                                , media_type) VALUES
 ('o2Campaign4G'         , (select i from tb_promotions where label = 'o2Campaign4G') , 'VIDEO_AND_AUDIO');
+
+

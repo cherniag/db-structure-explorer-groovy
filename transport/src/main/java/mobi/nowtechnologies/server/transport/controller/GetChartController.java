@@ -55,7 +55,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, true, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);
@@ -89,7 +89,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, false);
             chartDto = convertToOldVersion(chartDto, apiVersion);
@@ -123,7 +123,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, true);
             chartDto = convertToOldVersion(chartDto, apiVersion);
@@ -142,7 +142,8 @@ public class GetChartController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART",
-            "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART"
+            "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART",
+            "**/{community}/{apiVersion:6\\.0}/GET_CHART"
     })
     public ModelAndView getChart_O2_v4d0(
             HttpServletRequest request,
@@ -223,7 +224,7 @@ public class GetChartController extends CommonController {
             LOGGER.info("command proccessing started");
             throttlingService.throttling(request, userName, deviceUID, community);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, activationStatuses);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
             ChartDto chartDto = chartService.processGetChartCommand(user, community, false, true);
 

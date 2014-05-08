@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepos
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -46,7 +47,7 @@ public class UserPromoServiceImpl implements UserPromoService {
 
         User existingUser = userRepository.findOne(email, user.getUserGroup().getCommunity().getRewriteUrlParameter());
 
-        user = userService.applyInitPromo(user, existingUser, null, false, true);
+        user = userService.applyInitPromo(user, existingUser, null, false, true, false);
 
         user.setProvider(EMAIL);
         user.setUserName(email);
@@ -64,6 +65,14 @@ public class UserPromoServiceImpl implements UserPromoService {
         return userAfterApplyPromo;
     }
 
+    @Override
+    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookProfile facebookProfile, boolean checkReactivation) {
+        User userForMerge = getUserForMerge(userAfterSignUp, facebookProfile);
+        User userAfterApplyPromo = userService.applyInitPromo(userAfterSignUp, userForMerge, null, false, true, checkReactivation);
+        facebookService.saveFacebookInfoForUser(userAfterApplyPromo, facebookProfile);
+        return userAfterApplyPromo;
+    }
+    
     @Override
     public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo userInfo) {
         User userAfterApplyPromo = doApplyPromo(userAfterSignUp, userInfo, facebookUserInfoRepository, ProviderType.FACEBOOK);

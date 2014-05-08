@@ -28,7 +28,7 @@ public class SigninFacebookController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/5.2/SIGN_IN_FACEBOOK"})
+            "**/{community}/{apiVersion:5\\.2}/SIGN_IN_FACEBOOK"})
     public ModelAndView applyPromotionByFacebook(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
@@ -36,14 +36,32 @@ public class SigninFacebookController extends CommonController {
             @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, false);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.0}/SIGN_IN_FACEBOOK"})
+    public ModelAndView applyPromotionByFacebookWithCheckReactivation(
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("ACCESS_TOKEN") String facebookAccessToken,
+            @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, true);
+    }
+
+
+
+    private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean checkReactivation) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
         try {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, checkReactivation, ActivationStatus.REGISTERED);
             FacebookUserInfo userInfo = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
-            user = userPromoService.applyInitPromoByFacebook(user, userInfo);
+            user = userPromoService.applyInitPromoByFacebook(user, userInfo, checkReactivation);
             return buildModelAndView(accCheckService.processAccCheck(user, true));
         } catch (UserCredentialsException ce) {
             ex = ce;

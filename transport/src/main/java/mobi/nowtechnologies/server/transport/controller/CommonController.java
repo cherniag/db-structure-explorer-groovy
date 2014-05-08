@@ -124,6 +124,12 @@ public abstract class CommonController extends ProfileController {
         return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
+    @ExceptionHandler(ReactivateUserException.class)
+    public ModelAndView handleReactivation(ReactivateUserException exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
@@ -306,8 +312,8 @@ public abstract class CommonController extends ProfileController {
     }
 
 
-    public User checkUser(String userName, String userToken, String timestamp, String deviceUID, ActivationStatus... activationStatuses) {
-        return userService.checkUser(getCurrentCommunityUri(), userName, userToken, timestamp, deviceUID, activationStatuses);
+    public User checkUser(String userName, String userToken, String timestamp, String deviceUID, boolean checkReactivation, ActivationStatus... activationStatuses) {
+        return userService.checkUser(getCurrentCommunityUri(), userName, userToken, timestamp, deviceUID, checkReactivation, activationStatuses);
     }
 
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {
