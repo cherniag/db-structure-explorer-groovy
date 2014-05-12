@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
 import mobi.nowtechnologies.server.service.data.SubscriberData;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /** Represents O2 mobile network subscriber information */
 public class O2SubscriberData extends SubscriberData {
@@ -37,13 +38,6 @@ public class O2SubscriberData extends SubscriberData {
 
 	public boolean isIndirect4GChannel() {
 		return !directOrIndirect4GChannel;
-	}
-
-	@Override
-	public String toString() {
-		return "O2SubscriberData [providerO2=" + providerO2 + ", businessOrConsumerSegment="
-				+ businessOrConsumerSegment + ", contractPostPayOrPrePay=" + contractPostPayOrPrePay + ", tariff4G="
-				+ tariff4G + ", directOrIndirect4GChannel=" + directOrIndirect4GChannel + "]";
 	}
 
 	public void copyFrom(O2SubscriberData other) {
@@ -132,5 +126,17 @@ public class O2SubscriberData extends SubscriberData {
     public O2SubscriberData withTariff4G(boolean tariff4g){
         setTariff4G(tariff4g);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("providerO2", providerO2)
+                .append("businessOrConsumerSegment", businessOrConsumerSegment)
+                .append("contractPostPayOrPrePay", contractPostPayOrPrePay)
+                .append("tariff4G", tariff4G)
+                .append("directOrIndirect4GChannel", directOrIndirect4GChannel)
+                .toString();
     }
 }

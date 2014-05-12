@@ -33,7 +33,8 @@ public class O2ServiceImpl implements O2Service {
 		Throwable error = null;
 		O2SubscriberData data = null;
 		try {
-			return getSubscriberDataInternal(originalPhoneNumber);
+            data = getSubscriberDataInternal(originalPhoneNumber);
+			return data;
 		} catch (Exception ex) {
 			LOGGER.error("Can't get subscriber data " + originalPhoneNumber, ex);
 			throw new RuntimeException(ex);
