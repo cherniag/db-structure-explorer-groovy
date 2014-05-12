@@ -73,7 +73,11 @@ public class AccCheckController extends CommonController {
             }
 
             if (isNotBlank(xtifyToken)) {
-                user = deviceUserDataService.saveXtifyToken(xtifyToken, userName, community, deviceUID);
+                try {
+                    deviceUserDataService.saveXtifyToken(user, xtifyToken);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
             }
 
             if (deviceType != null && pushNotificationToken != null)
