@@ -23,7 +23,7 @@ import java.util.List;
  * @author Maksym Chernolevskyi (maksym)
  */
 @Controller
-public class MigController extends ProfileController {
+public class MigController extends CommonController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MigController.class);
 
 	private static final String STOP = "Stop";
