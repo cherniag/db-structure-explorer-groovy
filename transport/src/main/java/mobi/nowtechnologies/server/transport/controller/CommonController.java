@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 import static org.apache.commons.lang.Validate.notNull;
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -139,14 +140,8 @@ public abstract class CommonController extends ProfileController {
 
     @ExceptionHandler({InvalidPhoneNumberException.class})
     public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
-        int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        if (versionPriority <= 0) {
-            status = HttpStatus.OK;
-            exception.setLocalizedMessage("Invalid phone number format");
-        }
-
-        return sendResponse(exception, response, status);
+        exception.setLocalizedMessage("Invalid phone number format");
+        return sendResponse(exception, response, OK);
     }
 
     @ExceptionHandler({ActivationStatusException.class})

@@ -10,10 +10,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-/**
- * @author Titov Mykhaylo (titov)
- */
 public class ChartIT extends AbstractAdminITTest {
 
     @Test
