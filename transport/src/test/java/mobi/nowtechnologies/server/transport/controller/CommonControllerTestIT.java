@@ -51,7 +51,7 @@ public class CommonControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("PHONE", phone)
-        ).andExpect(status().isBadRequest())
+        ).andExpect(status().isOk())
                 .andExpect(xpath("/response/errorMessage/errorCode").number(601d));
     }
 
