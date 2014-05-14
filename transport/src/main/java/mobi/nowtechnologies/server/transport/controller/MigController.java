@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ import java.util.List;
  * @author Maksym Chernolevskyi (maksym)
  */
 @Controller
-public class MigController extends ProfileController {
+public class MigController extends CommonController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MigController.class);
 
 	private static final String STOP = "Stop";
@@ -35,7 +36,7 @@ public class MigController extends ProfileController {
 
 
 	@RequestMapping(method = RequestMethod.GET, value = "/DRListener")
-	public void callback(@RequestParam(value = "MESSAGEID") String messageId,
+	public @ResponseBody void callback(@RequestParam(value = "MESSAGEID") String messageId,
 			@RequestParam(value = "STATUSTYPE") String statusType,
 			@RequestParam(value = "GUID") String guid,
 			@RequestParam(value = "STATUS") String status,
@@ -67,7 +68,7 @@ public class MigController extends ProfileController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/MOListener")
-	public void stopService(@RequestParam(value = "BODY") String action,
+	public @ResponseBody void stopService(@RequestParam(value = "BODY") String action,
 			@RequestParam(value = "OADC") String mobile,
 			@RequestParam(value = "CONNECTION") String operatorMigName) {
 		LOGGER.info("[START] MOLISTENER command processing started");
