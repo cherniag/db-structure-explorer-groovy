@@ -23,8 +23,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="service.DeviceUserDataService" class="mobi.nowtechnologies.server.service.DeviceUserDataService">
 		<property name="deviceUserDataRepository" ref="deviceUserDataRepository" />
-		<property name="userService" ref="service.UserService" />
-		<property name="communityService" ref="service.communityService" />
 	</bean>
 
 	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
