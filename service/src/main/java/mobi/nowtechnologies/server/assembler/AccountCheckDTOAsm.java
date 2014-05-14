@@ -159,7 +159,7 @@ public class AccountCheckDTOAsm {
         result.setEmail(googlePlusUserInfo.getEmail());
         result.setSurname(googlePlusUserInfo.getSurname());
         result.setFirstName(googlePlusUserInfo.getFirstName());
-        result.setPictureUrl(googlePlusUserInfo.getPicture());
+        result.setProfileUrl(googlePlusUserInfo.getPicture());
         return result;
     }
 

@@ -18,7 +18,6 @@ public class GooglePlusUserDetailsDto extends UserDetailsDto{
 
     private String surname;
 
-    private String pictureUrl;
 
     public String getFirstName() {
         return firstName;
@@ -34,14 +33,6 @@ public class GooglePlusUserDetailsDto extends UserDetailsDto{
 
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
-
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
     }
 
 

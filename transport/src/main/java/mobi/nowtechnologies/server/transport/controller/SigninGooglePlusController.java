@@ -27,17 +27,6 @@ public class SigninGooglePlusController extends CommonController {
     @Resource
     private UserPromoService userPromoService;
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:5\\.2}/SIGN_IN_GOOGLE_PLUS"})
-    public ModelAndView applyPromotionBySignInGooglePlus(
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("ACCESS_TOKEN") String accessToken,
-            @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("DEVICE_UID") String deviceUID) {
-        return signInGooglePlus(userToken, timestamp, accessToken, googlePlusUserId, userName, deviceUID, false);
-    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.0}/SIGN_IN_GOOGLE_PLUS"})

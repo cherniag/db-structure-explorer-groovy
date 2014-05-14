@@ -19,7 +19,6 @@ public class FacebookUserDetailsDto extends UserDetailsDto {
 
     private String surname;
 
-    private String profileUrl;
 
     private String facebookId;
 
@@ -70,14 +69,6 @@ public class FacebookUserDetailsDto extends UserDetailsDto {
 
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-
-    public String getProfileUrl() {
-        return profileUrl;
-    }
-
-    public void setProfileUrl(String profileUrl) {
-        this.profileUrl = profileUrl;
     }
 
     public String getFacebookId() {

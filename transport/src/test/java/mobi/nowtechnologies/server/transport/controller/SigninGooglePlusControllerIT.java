@@ -65,7 +65,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
     private final String deviceType = "ANDROID";
-    private final String apiVersion = "5.2";
+    private final String apiVersion = "6.0";
     private final String communityUrl = "hl_uk";
     private final String timestamp = "2011_12_26_07_04_23";
     private final String googlePlusUserId = "1";
@@ -180,7 +180,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 .andExpect(xpath(googlePlusElementXPath + "/email").string(googlePlusEmail))
                 .andExpect(xpath(googlePlusElementXPath + "/firstName").string(firstName))
                 .andExpect(xpath(googlePlusElementXPath + "/surname").string(lastName))
-                .andExpect(xpath(googlePlusElementXPath + "/pictureUrl").string(pictureUrl));
+                .andExpect(xpath(googlePlusElementXPath + "/profileUrl").string(pictureUrl));
     }
 
 
@@ -234,7 +234,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath(googlePlusElementJsonPath + ".email").value(googlePlusEmail))
                 .andExpect(jsonPath(googlePlusElementJsonPath + ".firstName").value(firstName))
                 .andExpect(jsonPath(googlePlusElementJsonPath + ".surname").value(lastName))
-                .andExpect(jsonPath(googlePlusElementJsonPath + ".pictureUrl").value(pictureUrl))
+                .andExpect(jsonPath(googlePlusElementJsonPath + ".profileUrl").value(pictureUrl))
                 .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true));
 
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
@@ -384,9 +384,8 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessAndCheckReactivation() throws Exception {
-        String needCheckReactivationApiVersion = "6.0";
         setTemplateCustomizer(new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken), googlePlusService);
-        ResultActions resultActions = signUpDevice(deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl);
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
         reactivationUserInfo.setUser(user);
@@ -394,7 +393,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         reactivationUserInfoRepository.save(reactivationUserInfo);
         String userToken = getUserToken(resultActions, timestamp);
         mockMvc.perform(
-                buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
+                buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk());
         assertNull(reactivationUserInfoRepository.isUserShouldBeReactivated(user));
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
