@@ -57,25 +57,25 @@ public class UserPromoServiceImpl implements UserPromoService {
     }
 
     @Override
-    public User applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo, boolean checkReactivation) {
-        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS, checkReactivation);
+    public User applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser) {
+        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS, disableReactivationForUser);
         googlePlusUserInfoRepository.save(googleUserInfo);
 
         return userAfterApplyPromo;
     }
 
     @Override
-    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo facebookProfile, boolean checkReactivation) {
-        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, facebookProfile, facebookUserInfoRepository, ProviderType.FACEBOOK, checkReactivation);
+    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo facebookProfile, boolean disableReactivationForUser) {
+        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, facebookProfile, facebookUserInfoRepository, ProviderType.FACEBOOK, disableReactivationForUser);
         facebookUserInfoRepository.save(facebookProfile);
 
         return userAfterApplyPromo;
     }
     
-    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType googlePlus, boolean checkReactivation) {
+    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType googlePlus, boolean disableReactivationForUser) {
         User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
         User userForMerge = getUserForMerge(baseSocialRepository, refreshedSignUpUser, socialInfo.getEmail());
-        User userAfterApplyPromo = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, checkReactivation);
+        User userAfterApplyPromo = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, disableReactivationForUser);
         baseSocialRepository.deleteByUser(userAfterApplyPromo);
 
         socialInfo.setUser(userAfterApplyPromo);

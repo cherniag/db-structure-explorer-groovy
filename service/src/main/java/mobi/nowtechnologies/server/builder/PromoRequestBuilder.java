@@ -20,17 +20,17 @@ public class PromoRequestBuilder {
         public final boolean isMajorApiVersionNumberLessThan4;
         public final boolean isApplyingWithoutEnterPhone;
         public final boolean isSubjectToAutoOptIn;
-        public final boolean checkReactivation;
+        public final boolean disableReactivationForUser;
 
 
-        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn, boolean checkReactivation) {
+        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn, boolean disableReactivationForUser) {
             this.user = user;
             this.mobileUser = mobileUser;
             this.otac = otac;
             this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
             this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
             this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
-            this.checkReactivation = checkReactivation;
+            this.disableReactivationForUser = disableReactivationForUser;
         }
 
         @Override
@@ -56,7 +56,7 @@ public class PromoRequestBuilder {
         isMajorApiVersionNumberLessThan4 = promoRequest.isMajorApiVersionNumberLessThan4;
         isApplyingWithoutEnterPhone = promoRequest.isApplyingWithoutEnterPhone;
         isSubjectToAutoOptIn = promoRequest.isSubjectToAutoOptIn;
-        checkReactivation = promoRequest.checkReactivation;
+        checkReactivation = promoRequest.disableReactivationForUser;
     }
 
     public PromoRequestBuilder setUser(User user) {

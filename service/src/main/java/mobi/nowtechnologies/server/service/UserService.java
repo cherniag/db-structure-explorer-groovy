@@ -183,15 +183,15 @@ public class UserService {
         user = checkAndApplyPromo(new PromoRequestBuilder(promoRequest).setUser(user).createPromoRequest());
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
-        disableReactivation(promoRequest.checkReactivation, user);
+        disableReactivation(promoRequest.disableReactivationForUser, user);
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
         LOGGER.debug("Output parameter user=[{}]", user);
         return user;
     }
 
-    private void disableReactivation(boolean checkReactivation, User user) {
-        if (checkReactivation){
+    private void disableReactivation(boolean disableReactivationForUser, User user) {
+        if (disableReactivationForUser){
             reactivationUserInfoRepository.disableReactivationForUser(user);
         }
     }
@@ -1387,9 +1387,9 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean checkReactivation) {
+    public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
         PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).
-                setIsSubjectToAutoOptIn(false).setCheckReactivation(checkReactivation).createPromoRequest();
+                setIsSubjectToAutoOptIn(false).setCheckReactivation(disableReactivationForUser).createPromoRequest();
         user = applyInitPromoInternal(promoRequest);
 
         user.setHasPromo(user.isPromotionApplied());

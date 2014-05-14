@@ -53,15 +53,15 @@ public class SigninFacebookController extends CommonController {
 
 
 
-    private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean checkReactivation) {
+    private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean disableReactivation) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
         try {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
-            user = checkUser(userName, userToken, timestamp, deviceUID, checkReactivation, ActivationStatus.REGISTERED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             FacebookUserInfo userInfo = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
-            user = userPromoService.applyInitPromoByFacebook(user, userInfo, checkReactivation);
+            user = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
             return buildModelAndView(accCheckService.processAccCheck(user, true));
         } catch (UserCredentialsException ce) {
             ex = ce;

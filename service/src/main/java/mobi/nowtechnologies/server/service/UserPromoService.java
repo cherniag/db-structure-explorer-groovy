@@ -10,8 +10,8 @@ public interface UserPromoService {
     User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token);
 
 
-    User applyInitPromoByFacebook(User user, FacebookUserInfo facebookProfile, boolean checkReactivation);
+    User applyInitPromoByFacebook(User user, FacebookUserInfo facebookProfile, boolean disableReactivationForUser);
     
-    User applyInitPromoByGooglePlus(User user, GooglePlusUserInfo googleUserInfo, boolean checkReactivation);
+    User applyInitPromoByGooglePlus(User user, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser);
     
 }

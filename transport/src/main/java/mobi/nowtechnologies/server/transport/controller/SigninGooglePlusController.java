@@ -28,7 +28,7 @@ public class SigninGooglePlusController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/5.2/SIGN_IN_GOOGLE_PLUS"})
+            "**/{community}/{apiVersion:5\\.2}/SIGN_IN_GOOGLE_PLUS"})
     public ModelAndView applyPromotionBySignInGooglePlus(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
@@ -36,6 +36,22 @@ public class SigninGooglePlusController extends CommonController {
             @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInGooglePlus(userToken, timestamp, accessToken, googlePlusUserId, userName, deviceUID, false);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.0}/SIGN_IN_GOOGLE_PLUS"})
+    public ModelAndView applyPromotionBySignInGooglePlusWithCheckReactivation(
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("ACCESS_TOKEN") String accessToken,
+            @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInGooglePlus(userToken, timestamp, accessToken, googlePlusUserId, userName, deviceUID, true);
+    }
+
+    private ModelAndView signInGooglePlus(String userToken, String timestamp, String accessToken, String googlePlusUserId, String userName, String deviceUID,  boolean disableReactivation) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
@@ -43,7 +59,7 @@ public class SigninGooglePlusController extends CommonController {
             LOGGER.info("APPLY_INIT_PROMO_GOOGLE_PLUS Started for accessToken[{}] in community[{}] ", accessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             GooglePlusUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
-            user = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, false);
+            user = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, disableReactivation);
             return buildModelAndView(accCheckService.processAccCheck(user, true));
         } catch (UserCredentialsException ce) {
             ex = ce;

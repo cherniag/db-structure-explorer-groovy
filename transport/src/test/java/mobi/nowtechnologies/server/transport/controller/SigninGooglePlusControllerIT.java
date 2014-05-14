@@ -3,13 +3,11 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
+import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
@@ -30,6 +28,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,6 +60,8 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     @Resource
     private UserGroupRepository userGroupRepository;
 
+    @Resource
+    private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
     private final String deviceType = "ANDROID";
@@ -78,6 +79,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     private final String userName = "userName";
     private final String locationFromFacebook = "Kyiv, Ukraine";
     private final String fbUserId = "100";
+
 
     private MockHttpServletRequestBuilder buildApplyGooglePlusPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String googlePlusUserId, String accessToken, boolean jsonRequest) throws IOException {
         String userToken = getUserToken(signUpDeviceResultActions, timestamp);
@@ -380,5 +382,31 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
     }
 
+    @Test
+    public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessAndCheckReactivation() throws Exception {
+        String needCheckReactivationApiVersion = "6.0";
+        setTemplateCustomizer(new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken), googlePlusService);
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl);
+        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
+        reactivationUserInfo.setUser(user);
+        reactivationUserInfo.setReactivationRequest(true);
+        reactivationUserInfoRepository.save(reactivationUserInfo);
+        String userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
+        ).andExpect(status().isOk());
+        assertNull(reactivationUserInfoRepository.isUserShouldBeReactivated(user));
+        user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
+        assertEquals(gpDetails.getEmail(), googlePlusEmail);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+    }
 
 }

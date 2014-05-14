@@ -372,11 +372,6 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         String userToken = getUserToken(resultActions, timestamp);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
-        ).andExpect(status().isForbidden());
-        reactivationUserInfo.setReactivationRequest(false);
-        reactivationUserInfoRepository.save(reactivationUserInfo);
-        mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, needCheckReactivationApiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
         ).andExpect(status().isOk());
         assertNull(reactivationUserInfoRepository.isUserShouldBeReactivated(user));
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
