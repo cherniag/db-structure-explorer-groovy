@@ -1389,7 +1389,7 @@ public class UserService {
     @Transactional(propagation = REQUIRED)
     public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
         PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).
-                setIsSubjectToAutoOptIn(false).setCheckReactivation(disableReactivationForUser).createPromoRequest();
+                setIsSubjectToAutoOptIn(false).setDisableReactivationForUser(disableReactivationForUser).createPromoRequest();
         user = applyInitPromoInternal(promoRequest);
 
         user.setHasPromo(user.isPromotionApplied());
@@ -1605,7 +1605,7 @@ public class UserService {
         }
 
         if(isNotBlank(otac)){
-            user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).setCheckReactivation(checkReactivation).createPromoRequest());
+            user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).setDisableReactivationForUser(checkReactivation).createPromoRequest());
         }else{
             User result = promotionService.applyPotentialPromo(user);
             disableReactivation(checkReactivation, result);
