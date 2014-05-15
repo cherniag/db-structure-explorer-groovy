@@ -23,4 +23,4 @@
   drop table device_user_data_to_remove;
 /* END */
 
-alter table device_user_data add constraint `communityURL_userID_deviceUID` UNIQUE(`community_url`, `user_id`, `device_uid`);
+alter table device_user_data add constraint `userID_deviceUID` UNIQUE(`user_id`, `device_uid`);
