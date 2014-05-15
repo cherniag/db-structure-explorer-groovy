@@ -36,7 +36,7 @@ public class MigController extends CommonController {
 
 
 	@RequestMapping(method = RequestMethod.GET, value = "/DRListener")
-	public @ResponseBody void callback(@RequestParam(value = "MESSAGEID") String messageId,
+	public @ResponseBody String callback(@RequestParam(value = "MESSAGEID") String messageId,
 			@RequestParam(value = "STATUSTYPE") String statusType,
 			@RequestParam(value = "GUID") String guid,
 			@RequestParam(value = "STATUS") String status,
@@ -58,6 +58,7 @@ public class MigController extends CommonController {
 			if (submittedPayment != null) {
 				user = submittedPayment.getUser();
 			}
+            return "000";
 		} catch (Exception e) {
 			ex = e;
 			LOGGER.error("error processing DRListener command", e);
@@ -65,6 +66,7 @@ public class MigController extends CommonController {
 			logProfileData(null, null, null, null, user, ex);
 			LOGGER.info("[DONE] invoking DRListener command");
 		}
+        return "";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/MOListener")
