@@ -55,8 +55,12 @@ public class OtacValidationServiceImplIT {
     public void checkResolvingForCommunity(){
         resolveExtractorForCommunity(communityRepository.findByName("o2"), o2ProviderDetailsExtractor);
         resolveExtractorForCommunity(communityRepository.findByName("vf_nz"), vfnzProviderDetailsExtractor);
-        resolveExtractorForCommunity( new Community().withName("ANYTHING"), alwaysNullDetailsExtractor);
+        resolveExtractorForCommunity( new Community().withName("ANYTHING"), null);
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void checkNoDetailsExtractorForCommunity(){
+        otacValidationService.validate("AA", "AA", new Community().withName("ANYTHING"));
+    }
 
 }

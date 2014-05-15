@@ -36,14 +36,14 @@ public class OtacValidationServiceImpl implements OtacValidationService {
         if (detailsExtractor != null) {
             return detailsExtractor.getUserDetails(otac, phoneNumber, community);
         } else {
-            throw new UnsupportedOperationException("Unknown community [" + community + "]");
+            throw new UnsupportedOperationException("Details extractor is not specified for community [" + community + "]");
         }
     }
 
 
     public ProviderDetailsExtractor resolveDetailsExtractorForCommunity(Community community) {
         String beanName = messageSource.getMessage(community.getName(), PROVIDER_DETAILS_EXTRACTOR_BEAN_NAME, null, null);
-        if (!isEmpty(beanName)) {
+        if (!isEmpty(beanName) && !beanName.equals(PROVIDER_DETAILS_EXTRACTOR_BEAN_NAME)) {
             LOGGER.info("Use bean for validation: {}", beanName);
             return (ProviderDetailsExtractor) applicationContext.getBean(beanName);
         }
