@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -17,8 +18,7 @@ public class MigControllerIT extends AbstractControllerTestIT {
                 .param("MESSAGEID", "1")
                 .param("STATUSTYPE", "1")
                 .param("GUID", "1")
-                .param("STATUS", "1")).andExpect(status().isOk()).andDo(print())
-        ;
+                .param("STATUS", "1")).andExpect(status().isOk()).andDo(print()).andExpect(content().string("000"));
     }
 
     @Test
