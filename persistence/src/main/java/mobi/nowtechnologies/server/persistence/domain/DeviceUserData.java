@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="device_user_data", uniqueConstraints =
-        @UniqueConstraint(columnNames = {"community_url", "user_id", "device_uid"})
+        @UniqueConstraint(columnNames = {"user_id", "device_uid"})
 )
 public class DeviceUserData {
 
