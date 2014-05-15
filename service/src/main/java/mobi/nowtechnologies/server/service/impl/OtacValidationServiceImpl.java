@@ -3,38 +3,50 @@ package mobi.nowtechnologies.server.service.impl;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.OtacValidationService;
-import mobi.nowtechnologies.server.service.VFOtacValidationService;
-import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
+import mobi.nowtechnologies.server.service.impl.details.ProviderDetailsExtractor;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
-import static mobi.nowtechnologies.server.dto.ProviderUserDetails.NULL_PROVIDER_USER_DETAILS;
+import javax.annotation.Resource;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * User: Titov Mykhaylo (titov)
  * 27.09.13 14:42
  */
-public class OtacValidationServiceImpl implements OtacValidationService{
-    private static final Logger LOGGER = LoggerFactory.getLogger(OtacValidationServiceImpl.class) ;
+public class OtacValidationServiceImpl implements OtacValidationService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OtacValidationServiceImpl.class);
 
-    private O2ProviderService o2ProviderService;
-    private VFOtacValidationService vfOtacValidationService;
+    private static final String PROVIDER_DETAILS_EXTRACTOR_BEAN_NAME = "providerDetailsExtractor.beanName";
 
-    public void setO2ProviderService(O2ProviderService o2ProviderService) {
-        this.o2ProviderService = o2ProviderService;
-    }
 
-    public void setVfOtacValidationService(VFOtacValidationService vfOtacValidationService) {
-        this.vfOtacValidationService = vfOtacValidationService;
-    }
+    @Resource(name = "serviceMessageSource")
+    private CommunityResourceBundleMessageSource messageSource;
+
+    @Resource
+    private ApplicationContext applicationContext;
 
     @Override
     public ProviderUserDetails validate(String otac, String phoneNumber, Community community) {
         LOGGER.info("Attempt to validate otac [{}] for [{}] phone number and community [{}]", otac, phoneNumber, community.getName());
+        ProviderDetailsExtractor detailsExtractor = resolveDetailsExtractorForCommunity(community);
+        if (detailsExtractor != null) {
+            return detailsExtractor.getUserDetails(otac, phoneNumber, community);
+        } else {
+            throw new UnsupportedOperationException("Unknown community [" + community + "]");
+        }
+    }
 
-        if (community.isO2Community()) return o2ProviderService.getUserDetails(otac, phoneNumber, community);
-        else if (community.isVFNZCommunity()) return vfOtacValidationService.validate(otac, phoneNumber, community);
-        else if (community.isHLZCommunity()) return NULL_PROVIDER_USER_DETAILS;
-        else throw new UnsupportedOperationException("Unknown community [" + community + "]");
+
+    public ProviderDetailsExtractor resolveDetailsExtractorForCommunity(Community community) {
+        String beanName = messageSource.getMessage(community.getName(), PROVIDER_DETAILS_EXTRACTOR_BEAN_NAME, null, null);
+        if (!isEmpty(beanName)) {
+            LOGGER.info("Use bean for validation: {}", beanName);
+            return (ProviderDetailsExtractor) applicationContext.getBean(beanName);
+        }
+        return null;
     }
 }
