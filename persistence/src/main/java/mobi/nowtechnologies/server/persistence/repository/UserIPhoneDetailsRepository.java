@@ -17,14 +17,4 @@ import org.springframework.data.repository.query.Param;
  */
 public interface UserIPhoneDetailsRepository extends UserDeviceDetailsRepository<UserIPhoneDetails> {
 
-	@Query(value="SELECT userIPhoneDetails "
-			+ "FROM UserIPhoneDetails userIPhoneDetails "
-			+ "JOIN userIPhoneDetails.userGroup userGroup "
-			+ "WHERE "
-			+ "userGroup.community=:community "
-			+ "and userIPhoneDetails.lastPushOfContentUpdateMillis<:nearestLatestPublishTimeMillis")
-	List<UserIPhoneDetails> getUserIPhoneDetailsListForPushNotification(@Param("community") Community community, @Param("nearestLatestPublishTimeMillis") final long nearestLatestPublishTimeMillis, Pageable pageable);
-	
-	
-
 }

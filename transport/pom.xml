@@ -69,12 +69,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javapns</groupId>
-			<artifactId>javapns</artifactId>
-		</dependency>
-		<!-- <dependency> <groupId>mobi.nowtechnologies.java.server</groupId> <artifactId>service</artifactId> <type>test-jar</type> <scope>test</scope> </dependency> <dependency> <groupId>mobi.nowtechnologies.java.server</groupId> <artifactId>persistence</artifactId> <type>test-jar</type> <scope>test</scope> </dependency> -->
-
-		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>spymemcached</artifactId>
 		</dependency>

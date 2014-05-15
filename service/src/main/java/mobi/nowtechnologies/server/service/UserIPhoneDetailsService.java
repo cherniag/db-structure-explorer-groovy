@@ -33,29 +33,6 @@ public class UserIPhoneDetailsService extends UserDeviceDetailsService{
 	public void setUserIPhoneDetailsRepository(UserIPhoneDetailsRepository userIPhoneDetailsRepository) {
 		this.userIPhoneDetailsRepository = userIPhoneDetailsRepository;
 	}
-	
-	public List<UserIPhoneDetails> getUserIPhoneDetailsListForPushNotification(Community community, final long nearestLatestPublishTimeMillis, Pageable pageable) {
-		if (community == null)
-			throw new ServiceException("The parameter community is null");
-		LOGGER.debug("input parameters community, nearestLatestPublishTimeMillis, pageable: [{}], [{}], [{}]", community, nearestLatestPublishTimeMillis, pageable);
-		
-		List<UserIPhoneDetails> userIPhoneDetailsList = userIPhoneDetailsRepository.getUserIPhoneDetailsListForPushNotification(community, nearestLatestPublishTimeMillis, pageable);
-		
-		LOGGER.debug("Output parameter userIPhoneDetailsList=[{}]", userIPhoneDetailsList);
-		return userIPhoneDetailsList;
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED)
-	public UserIPhoneDetails markUserIPhoneDetailsAsProcessed(UserIPhoneDetails userIPhoneDetails, long nearestLatestPublishTimeMillis) {
-		if (userIPhoneDetails == null)
-			throw new NullPointerException("The parameter userIPhoneDetails is null");
-		LOGGER.debug("input parameters userIPhoneDetails, nearestLatestPublishTimeMillis: [{}], [{}]", new Object[] { userIPhoneDetails, nearestLatestPublishTimeMillis });
-		userIPhoneDetails.setStatus(0);
-		userIPhoneDetails.setLastPushOfContentUpdateMillis(nearestLatestPublishTimeMillis);
-		UserIPhoneDetails resultUserIPhoneDetails = entityService.updateEntity(userIPhoneDetails);
-		LOGGER.debug("Output parameter resultUserIPhoneDetails=[{}]", resultUserIPhoneDetails);
-		return resultUserIPhoneDetails;
-	}
 
 	public UserDeviceDetails getUserDeviceDetails(int userId) {
 		LOGGER.debug("input parameters userId: [{}]", userId);
