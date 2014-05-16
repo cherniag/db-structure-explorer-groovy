@@ -9,6 +9,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
     <import resource="task.xml"/>
 
+    <import resource="classpath:META-INF\service-details-extractors.xml"/>
+
 	<!-- Application properties -->
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -505,10 +507,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	     <property name="O2TariffService" ref="service.O2TariffService"/>
 	</bean>
 
-    <bean id="service.OtacValidationService" class="mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl">
-        <property name="o2ProviderService" ref="service.O2ClientService" />
-        <property name="vfOtacValidationService" ref="service.VFOtacValidationService" />
-    </bean>
+    <bean id="service.OtacValidationService" class="mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl"/>
 
     <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl">
         <property name="userService" ref="service.UserService" />
