@@ -2,8 +2,6 @@ package mobi.nowtechnologies.server.service;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
 import org.springframework.social.facebook.api.FacebookProfile;
@@ -17,15 +15,14 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 @Transactional
 public class UserPromoServiceImpl implements UserPromoService {
 
+    @Resource
     private ActivationEmailService activationEmailService;
 
+    @Resource(name = "service.UserService")
     private UserService userService;
 
     @Resource
     private FacebookService facebookService;
-
-    @Resource
-    private FacebookUserInfoRepository facebookUserInfoRepository;
 
     @Resource
     private UserRepository userRepository;
@@ -58,19 +55,7 @@ public class UserPromoServiceImpl implements UserPromoService {
     private User getUserForMerge(User userAfterSignUp, FacebookProfile facebookProfile) {
         String url = userAfterSignUp.getUserGroup().getCommunity().getRewriteUrlParameter();
         String email = facebookProfile.getEmail();
-        User userByEmail = userRepository.findOne(email, url);
-        if (userByEmail != null) {
-            return userByEmail;
-        }
-        FacebookUserInfo facebookInfo = facebookUserInfoRepository.findByEmail(email);
-        return facebookInfo == null ? null : facebookInfo.getUser();
+        return userRepository.findOne(email, url);
     }
 
-    public void setActivationEmailService(ActivationEmailService activationEmailService) {
-        this.activationEmailService = activationEmailService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 }

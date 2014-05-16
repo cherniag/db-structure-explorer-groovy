@@ -527,10 +527,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="userService" ref="service.UserService"/>
     </bean>
 
-    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoServiceImpl">
-        <property name="userService" ref="service.UserService"/>
-        <property name="activationEmailService" ref="service.ActivationEmailService"/>
-    </bean>
+    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoServiceImpl"/>
 
     <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService">
         <property name="configuration" ref="configuration.AutoOptIn"/>

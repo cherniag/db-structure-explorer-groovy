@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Iterables;
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
-import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.facebook.FacebookService;
@@ -26,6 +24,9 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -66,9 +67,11 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     private UserGroupRepository userGroupRepository;
 
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
+    private final String deviceUIDForO2 = "b88106713409e92622461a876abcd7";
     private final String deviceType = "ANDROID";
     private final String apiVersion = "5.2";
     private final String communityUrl = "hl_uk";
+    private final String communityO2 = "o2";
     private final String timestamp = "2011_12_26_07_04_23";
     private final String facebookUserId = "1";
     private final String facebookEmail = "ol@ukr.net";
@@ -203,6 +206,44 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
     }
 
+    @Test
+    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSucessForDifferentCommunities() throws Exception {
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(anyString(), anyString(), any(Community.class));
+
+
+        facebookService.setTemplateCustomizer(getTemplateCustomizer(facebookUserId, facebookEmail, locationFromFacebook));
+
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        String userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, facebookUserId, facebookToken, true)
+        ).andExpect(status().isOk());
+        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        FacebookUserInfo fbDetails = fbDetailsRepository.findForUser(user);
+        assertEquals(fbDetails.getEmail(), facebookEmail);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+        resultActions = signUpDevice(deviceUIDForO2, deviceType, apiVersion, communityO2);
+        userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUIDForO2, deviceType, apiVersion, communityO2, timestamp, facebookUserId, facebookToken, true)
+        ).andExpect(status().isOk());
+        mockMvc.perform(
+                post("/" + communityO2 + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUIDForO2)
+        ).andExpect(status().isOk());
+
+    }
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessAndCheckReactivation() throws Exception {
