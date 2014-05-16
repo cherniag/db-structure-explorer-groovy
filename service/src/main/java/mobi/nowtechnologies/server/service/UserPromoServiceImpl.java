@@ -13,9 +13,6 @@ import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
@@ -35,9 +32,6 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Resource
     private UserRepository userRepository;
-
-    @Resource
-    private Collection<BaseSocialRepository> socialRepositories;
 
     @Override
     @Transactional(propagation = REQUIRED)
@@ -72,45 +66,22 @@ public class UserPromoServiceImpl implements UserPromoService {
         return userAfterApplyPromo;
     }
     
-    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType googlePlus, boolean disableReactivationForUser) {
+    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType providerType, boolean disableReactivationForUser) {
         User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
-        User userForMerge = getUserForMerge(baseSocialRepository, refreshedSignUpUser, socialInfo.getEmail());
+        User userForMerge = getUserForMerge(refreshedSignUpUser, socialInfo.getEmail());
         User userAfterApplyPromo = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, disableReactivationForUser);
         baseSocialRepository.deleteByUser(userAfterApplyPromo);
 
         socialInfo.setUser(userAfterApplyPromo);
         userAfterApplyPromo.setUserName(socialInfo.getEmail());
-        userAfterApplyPromo.setProvider(googlePlus);
+        userAfterApplyPromo.setProvider(providerType);
 
         userRepository.save(userAfterApplyPromo);
         return userAfterApplyPromo;
     }
 
-    private User getUserForMerge(BaseSocialRepository baseSocialRepository, User userAfterSignUp, String email) {
-        String url = userAfterSignUp.getCommunityRewriteUrl();
-        User userByEmail = userRepository.findOne(email, url);
-        if (userByEmail != null) {
-            return userByEmail;
-        }
-
-        User user = tryToFindUserByEmail(email, Arrays.asList(baseSocialRepository));
-        if(user != null) {
-            return user;
-        }
-
-        Collection<BaseSocialRepository> filtered = new HashSet<BaseSocialRepository>(socialRepositories);
-        filtered.remove(baseSocialRepository);
-        return tryToFindUserByEmail(email, filtered);
-    }
-
-    private User tryToFindUserByEmail(String email, Collection<BaseSocialRepository> socialRepositories) {
-        for (BaseSocialRepository currentSocialRepository : socialRepositories) {
-            SocialInfo socialInfo = currentSocialRepository.findByEmail(email);
-            if (socialInfo != null) {
-                return socialInfo.getUser();
-            }
-        }
-        return null;
+    private User getUserForMerge(User userAfterSignUp, String email) {
+        return userRepository.findOne(email, userAfterSignUp.getCommunityRewriteUrl());
     }
 
 

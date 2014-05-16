@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "google_plus_user_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"}), @UniqueConstraint(columnNames = {"gp_id"})})
+@Table(name = "google_plus_user_info")
 public class GooglePlusUserInfo extends SocialInfo{
     @Column(name="email",columnDefinition="char(100)", nullable = false)
     private String email;

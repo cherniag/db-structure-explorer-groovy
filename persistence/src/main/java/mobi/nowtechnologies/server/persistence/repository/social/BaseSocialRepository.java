@@ -12,8 +12,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  */
 @NoRepositoryBean
 public  interface BaseSocialRepository<T extends SocialInfo> extends JpaRepository<T, Long> {
-    T findByEmail(String email);
-
     T findByUser(User user);
 
     @Modifying
