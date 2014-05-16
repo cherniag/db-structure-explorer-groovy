@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Iterables;
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
-import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
@@ -29,6 +27,9 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -64,6 +65,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     private final String deviceUID = "b88106713409e92622461a876abcd74b";
+    private final String deviceUIDForO2 = "b88106713409e92622461a876abcd7";
     private final String deviceType = "ANDROID";
     private final String apiVersion = "6.0";
     private final String communityUrl = "hl_uk";
@@ -157,7 +159,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(gpDetails.getEmail(), googlePlusEmail);
-        checkGetChart(userToken, user.getUserName(), timestamp, deviceUID, true);
+        checkGetChart(userToken, user.getUserName(), timestamp, deviceUID, true, communityUrl);
     }
 
 
@@ -258,7 +260,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
         user = userRepository.findOne(googlePlusEmail, communityUrl);
         String userToken1 = Utils.createTimestampToken(user.getToken(), timestamp);
-        checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, true);
+        checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
 
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
@@ -269,8 +271,8 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
         user = userRepository.findOne(googlePlusEmail, communityUrl);
         String userToken2 = Utils.createTimestampToken(user.getToken(), timestamp);
-        checkGetChart(userToken2, googlePlusEmail, timestamp, otherDeviceUID, true);
-        checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, false);
+        checkGetChart(userToken2, googlePlusEmail, timestamp, otherDeviceUID, true, communityUrl);
+        checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, false, communityUrl);
 
     }
 
@@ -307,7 +309,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         applyInitPromoByEmail(activationEmail, timestamp, getUserToken(resultActions, timestamp));
         user = userRepository.findOne(googlePlusEmail, communityUrl);
         String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
-        checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true);
+        checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
     }
 
     private void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer customizer, Object target) {
@@ -331,17 +333,18 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk());
 
-        checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true);
+        checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
     }
 
-    private void checkGetChart(String userToken, String userName, String timestampValue, String deviceUIDValue, boolean isChartAvailable) throws Exception {
+    private void checkGetChart(String userToken, String userName, String timestampValue, String deviceUIDValue, boolean isChartAvailable, String communityUrlValue) throws Exception {
         ResultMatcher statusMatcher = isChartAvailable ? status().isOk() : status().isUnauthorized();
         mockMvc.perform(
-                post("/" + communityUrl + "/5.5/GET_CHART.json")
+                post("/" + communityUrlValue + "/5.5/GET_CHART.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestampValue)
-                        .param("DEVICE_UID", deviceUIDValue))
+                        .param("DEVICE_UID", deviceUIDValue)
+        )
                 .andExpect(statusMatcher);
     }
 
@@ -368,7 +371,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         String userToken = Utils.createTimestampToken(user.getToken(), timestamp);
         GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(gpDetails.getEmail(), googlePlusEmail);
-        checkGetChart(userToken, user.getUserName(), timestamp, deviceUID, true);
+        checkGetChart(userToken, user.getUserName(), timestamp, deviceUID, true, communityUrl);
     }
 
 
@@ -389,7 +392,32 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(gpDetails.getEmail(), googlePlusEmail);
-        checkGetChart(userToken, user.getUserName(), timestamp, deviceUID, true);
+        checkGetChart(userToken, user.getUserName(), timestamp, deviceUID, true, communityUrl);
+    }
+
+
+
+    @Test
+    public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSucessForDifferentCommunities() throws Exception {
+        setTemplateCustomizer(new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken), googlePlusService);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(anyString(), anyString(), any(Community.class));
+
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        String userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
+        ).andExpect(status().isOk());
+        checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
+
+        resultActions = signUpDevice(deviceUIDForO2, deviceType, apiVersion, "o2");
+        String userToken1 = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyGooglePlusPromoRequest(resultActions, deviceUIDForO2, deviceType, apiVersion,  "o2", timestamp, googlePlusUserId, accessToken, true)
+        ).andExpect(status().isOk());
+        checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUIDForO2, true, "o2");
+        checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
     }
 
 }

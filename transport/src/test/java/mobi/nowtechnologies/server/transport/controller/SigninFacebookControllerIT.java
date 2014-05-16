@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Iterables;
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
-import mobi.nowtechnologies.server.persistence.domain.ReactivationUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
@@ -27,6 +25,9 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,6 +69,9 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     private final String fbUserId = "1";
     private final String fbEmail = "ol@ukr.net";
     private final String fbToken = "AA";
+
+    private final String deviceUIDForO2 = "b88106713409e92622461a876abcd7";
+    private final String communityO2 = "o2";
 
     private final String firstName = "firstName";
     private final String lastName = "lastName";
@@ -385,5 +389,44 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk());
     }
+
+    @Test
+    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSucessForDifferentCommunities() throws Exception {
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(anyString(), anyString(), any(Community.class));
+
+        setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
+
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        String userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
+        ).andExpect(status().isOk());
+        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        FacebookUserInfo fbDetails = fbDetailsRepository.findByUser(user);
+        assertEquals(fbDetails.getEmail(), fbEmail);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+        resultActions = signUpDevice(deviceUIDForO2, deviceType, apiVersion, communityO2);
+        userToken = getUserToken(resultActions, timestamp);
+        mockMvc.perform(
+                buildApplyFacebookPromoRequest(resultActions, deviceUIDForO2, deviceType, apiVersion, communityO2, timestamp, fbUserId, fbToken, true)
+        ).andExpect(status().isOk());
+        mockMvc.perform(
+                post("/" + communityO2 + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", user.getUserName())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUIDForO2)
+        ).andExpect(status().isOk());
+
+    }
+
 
 }

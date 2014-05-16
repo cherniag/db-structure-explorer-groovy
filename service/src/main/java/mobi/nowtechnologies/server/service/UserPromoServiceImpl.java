@@ -20,8 +20,10 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 @Transactional
 public class UserPromoServiceImpl implements UserPromoService {
 
+    @Resource
     private ActivationEmailService activationEmailService;
 
+    @Resource(name = "service.UserService")
     private UserService userService;
 
     @Resource
@@ -38,7 +40,7 @@ public class UserPromoServiceImpl implements UserPromoService {
     public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         activationEmailService.activate(activationEmailId, email, token);
 
-        User existingUser = userRepository.findOne(email, user.getUserGroup().getCommunity().getRewriteUrlParameter());
+        User existingUser = userRepository.findOne(email, user.getCommunityRewriteUrl());
 
         user = userService.applyInitPromo(user, existingUser, null, false, true, false);
 
@@ -85,11 +87,4 @@ public class UserPromoServiceImpl implements UserPromoService {
     }
 
 
-    public void setActivationEmailService(ActivationEmailService activationEmailService) {
-        this.activationEmailService = activationEmailService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 }
