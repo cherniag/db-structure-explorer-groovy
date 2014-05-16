@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
+import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
 import org.junit.After;
@@ -108,6 +109,9 @@ public abstract class AbstractControllerTestIT {
     @Resource(name = "messageRepository")
     private MessageRepository messageRepository;
 
+    @Resource
+    private O2ProviderDetailsExtractor o2ProviderDetailsExtractor;
+
     private static  int position = 0;
     private static Promotion promotion;
     private static Message message;
@@ -133,7 +137,7 @@ public abstract class AbstractControllerTestIT {
         o2ProviderServiceSpy.setO2Service(o2ServiceMock);
         userService.setMobileProviderService(o2ProviderServiceSpy);
         userService.setO2ClientService(o2ProviderServiceSpy);
-        otacValidationService.setO2ProviderService(o2ProviderServiceSpy);
+        ReflectionTestUtils.setField(o2ProviderDetailsExtractor, "o2ProviderService", o2ProviderServiceSpy);
         ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
 
         sqlTestInitializer.prepareDynamicTestData("classpath:META-INF/dynamic-test-data.sql");

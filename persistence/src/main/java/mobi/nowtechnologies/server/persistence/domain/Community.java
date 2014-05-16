@@ -125,17 +125,6 @@ public class Community implements Serializable {
 		return CommunityDao.getMapAsNames();
 	}
 
-    public boolean isO2Community(){
-        return O2_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
-    }
-
-    public boolean isVFNZCommunity(){
-        return VF_NZ_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
-    }
-
-    public boolean isHLZCommunity(){
-        return HL_COMMUNITY_REWRITE_URL.equals(rewriteUrlParameter);
-    }
 
     public List<Chart> getCharts() {
         return charts;
