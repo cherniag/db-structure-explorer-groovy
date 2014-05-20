@@ -22,8 +22,16 @@ public class DeviceUserDataService {
             deviceUserDataRepository.save(new DeviceUserData(user, token));
         } else if(!found.getXtifyToken().equals(token)) {
             LOGGER.info("Update data [{}] with new token [{}]", found, token);
+            deleteInCasesMergeUserOrTempRow(token);
+
             found.setXtifyToken(token);
         }
+    }
+
+    @Transactional
+    public void removeDeviceUserData(User user){
+        int count = deviceUserDataRepository.removeByUser(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
+        LOGGER.info("Removed {} records for user id {}", count, user.getId());
     }
 
     private void deleteInCasesMergeUserOrTempRow(String token) {

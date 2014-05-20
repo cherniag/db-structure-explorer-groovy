@@ -1,0 +1,85 @@
+package mobi.nowtechnologies.server.service;
+
+import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml","/META-INF/shared.xml" })
+public class UserServiceMergeIT {
+
+    @Resource(name="service.UserService")
+    private UserService userService;
+
+    @Resource
+    private DeviceUserDataRepository deviceUserDataRepository;
+
+    @Resource
+    private UserRepository userRepository;
+
+    @Test
+    public void testRemoveDeviceUserDataWhenMergeSameDevice() throws Exception {
+        //disable old user
+        User oldUser = userService.findById(102);
+        String deviceUID = oldUser.getDeviceUID();
+        oldUser.setDeviceUID(deviceUID + "disabled_at");
+        oldUser = userRepository.saveAndFlush(oldUser);
+        //register temp user
+        User tempUser = new User();
+        tempUser.setUserName(deviceUID);
+        tempUser.setMobile(oldUser.getMobile());
+        tempUser.setUserGroup(oldUser.getUserGroup());
+        tempUser.setDeviceUID(deviceUID);
+        tempUser.setDeviceType(oldUser.getDeviceType());
+        tempUser.setDeviceModel(oldUser.getDeviceModel());
+        tempUser.setIpAddress(oldUser.getIpAddress());
+        tempUser = userRepository.saveAndFlush(tempUser);
+        deviceUserDataRepository.saveAndFlush(new DeviceUserData(tempUser, "x1"));
+        //merge
+        userService.mergeUser(oldUser, tempUser);
+
+        User temp = userRepository.findOne(tempUser.getId());
+        assertNull(temp);
+        User old = userRepository.findOne(oldUser.getId());
+        assertEquals(deviceUID, old.getDeviceUID());
+        DeviceUserData deviceUserDataForTempUser = deviceUserDataRepository.find(tempUser.getId(), tempUser.getCommunityRewriteUrl(), tempUser.getDeviceUID());
+        assertNull(deviceUserDataForTempUser);
+    }
+
+    @Test
+    public void testRemoveDeviceUserDataWhenMergeAnotherDevice() throws Exception {
+        User oldUser = userService.findById(102);
+        //register temp user
+        String anotherDeviceUID = "ddd2";
+        User tempUser = new User();
+        tempUser.setUserName(anotherDeviceUID);
+        tempUser.setMobile(oldUser.getMobile());
+        tempUser.setUserGroup(oldUser.getUserGroup());
+        tempUser.setDeviceUID(anotherDeviceUID);
+        tempUser.setDeviceType(oldUser.getDeviceType());
+        tempUser.setDeviceModel(oldUser.getDeviceModel());
+        tempUser.setIpAddress(oldUser.getIpAddress());
+        tempUser = userRepository.saveAndFlush(tempUser);
+        deviceUserDataRepository.saveAndFlush(new DeviceUserData(tempUser, "x1"));
+        //merge
+        userService.mergeUser(oldUser, tempUser);
+
+        User temp = userRepository.findOne(tempUser.getId());
+        assertNull(temp);
+        User old = userRepository.findOne(oldUser.getId());
+        assertEquals(anotherDeviceUID, old.getDeviceUID());
+        DeviceUserData deviceUserDataForTempUser = deviceUserDataRepository.find(tempUser.getId(), tempUser.getCommunityRewriteUrl(), tempUser.getDeviceUID());
+        assertNull(deviceUserDataForTempUser);
+    }
+
+}
