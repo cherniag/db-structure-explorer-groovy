@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
@@ -155,12 +156,24 @@ public class AccountCheckDTOAsm {
 
     private UserDetailsDto convertGooglePlusInfoToDetails(GooglePlusUserInfo googlePlusUserInfo) {
         GooglePlusUserDetailsDto result = new GooglePlusUserDetailsDto();
-        result.setGooglePlusId(googlePlusUserInfo.getGooglePlusId());
         result.setEmail(googlePlusUserInfo.getEmail());
-        result.setSurname(googlePlusUserInfo.getSurname());
-        result.setFirstName(googlePlusUserInfo.getFirstName());
+        result.setUserName(googlePlusUserInfo.getDisplayName());
         result.setProfileUrl(googlePlusUserInfo.getPicture());
+        result.setGooglePlusId(googlePlusUserInfo.getGooglePlusId());
+        result.setFirstName(googlePlusUserInfo.getGivenName());
+        result.setSurname(googlePlusUserInfo.getFamilyName());
+        result.setGender(googlePlusUserInfo.getGender());
+        result.setLocation(googlePlusUserInfo.getLocation());
+        result.setBirthDay(convertBirthday(googlePlusUserInfo.getBirthday()));
         return result;
+    }
+
+    private String convertBirthday(Date birthday) {
+        if (birthday != null){
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            return dateFormat.format(birthday);
+        }
+        return null;
     }
 
     private FacebookUserDetailsDto convertFacebookInfoToDetails(FacebookUserInfo details) {
@@ -173,10 +186,7 @@ public class AccountCheckDTOAsm {
         result.setFacebookId(details.getFacebookId());
         result.setLocation(details.getCity());
         result.setGender(details.getGender());
-        if (details.getBirthday() != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            result.setBirthDay(dateFormat.format(details.getBirthday()));
-        }
+        result.setBirthDay(convertBirthday(details.getBirthday()));
         return result;
     }
 

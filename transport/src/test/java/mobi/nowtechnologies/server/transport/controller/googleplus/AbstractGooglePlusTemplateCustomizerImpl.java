@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller.googleplus;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,24 +29,46 @@ public abstract class AbstractGooglePlusTemplateCustomizerImpl implements Abstra
     public final void customize(GoogleTemplate template) {
         RestTemplate mock = template.getRestTemplate();
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(mock);
-        String response = render(prepareBody());
+        String responseForReceivingEmail = renderEmailResponse(prepareBody());
+        String responseForGPlusInfo = renderGooglePlusResponse(prepareGooglePlusBody());
 
-        mockServer.expect(requestTo("https://www.googleapis.com/oauth2/v2/userinfo"))
-                .andExpect(method(HttpMethod.GET)).
-                andExpect(header("Authorization", "Bearer " + goolePlusToken)).
-                andRespond(withStatus(getRespondStatus()).body(response).contentType(MediaType.APPLICATION_JSON));
-    }
-
-    private String prepareBody() {
-        try {
-            File file = new ClassPathResource(provideResourceName()).getFile();
-            return Files.toString(file, Charsets.UTF_8);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!StringUtils.isEmpty(responseForReceivingEmail)) {
+            mockServer.expect(requestTo("https://www.googleapis.com/oauth2/v2/userinfo"))
+                    .andExpect(method(HttpMethod.GET)).
+                    andExpect(header("Authorization", "Bearer " + goolePlusToken)).
+                    andRespond(withStatus(getRespondStatus()).body(responseForReceivingEmail).contentType(MediaType.APPLICATION_JSON));
+        }
+        if (!StringUtils.isEmpty(responseForGPlusInfo)) {
+            mockServer.expect(requestTo("https://www.googleapis.com/plus/v1/people/me"))
+                    .andExpect(method(HttpMethod.GET)).
+                    andExpect(header("Authorization", "Bearer " + goolePlusToken)).
+                    andRespond(withStatus(getRespondStatus()).body(responseForGPlusInfo).contentType(MediaType.APPLICATION_JSON));
         }
     }
 
-    protected String render(String body) {
+   private String getFileContent(String fileName){
+
+       try {
+           File file = new ClassPathResource(fileName).getFile();
+           return Files.toString(file, Charsets.UTF_8);
+       } catch (IOException e) {
+           throw new RuntimeException(e);
+       }
+   }
+
+    private String prepareGooglePlusBody() {
+        return getFileContent(provideResourceNameForGooglePlusResponse());
+    }
+
+    private String prepareBody() {
+        return getFileContent(provideResourceNameForEmailResponse());
+    }
+
+    protected String renderEmailResponse(String body) {
+        return body;
+    }
+
+    protected String renderGooglePlusResponse(String body) {
         return body;
     }
 
@@ -53,5 +76,7 @@ public abstract class AbstractGooglePlusTemplateCustomizerImpl implements Abstra
         return HttpStatus.OK;
     }
 
-    protected abstract String provideResourceName();
+    protected abstract String provideResourceNameForEmailResponse();
+
+    protected abstract String provideResourceNameForGooglePlusResponse();
 }
