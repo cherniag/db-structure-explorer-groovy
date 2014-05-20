@@ -3173,6 +3173,7 @@ public class UserServiceTest {
 
         verify(userDeviceDetailsServiceMock, times(1)).removeUserDeviceDetails(currentUser);
         verify(deviceUserDataService, times(1)).removeDeviceUserData(currentUser);
+        verify(deviceUserDataService, times(1)).removeDeviceUserData(oldUser);
         verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
         verify(userRepositoryMock, times(1)).save(oldUser);
         verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);

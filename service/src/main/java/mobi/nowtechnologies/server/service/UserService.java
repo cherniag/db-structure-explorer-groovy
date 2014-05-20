@@ -599,6 +599,7 @@ public class UserService {
 
         userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
 
+        deviceUserDataService.removeDeviceUserData(oldUser);
         deviceUserDataService.removeDeviceUserData(userByDeviceUID);
 
         int deletedUsers = userRepository.deleteUser(userByDeviceUID.getId());

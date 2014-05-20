@@ -31,7 +31,7 @@ public class DeviceUserDataService {
     @Transactional
     public void removeDeviceUserData(User user){
         int count = deviceUserDataRepository.removeByUser(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
-        LOGGER.info("Removed {} records for user id {}", count, user.getId());
+        LOGGER.info("Removed {} records for User[id={}, deviceUID={}, communityRewriteUrl={}]", count, user.getId(), user.getDeviceUID(), user.getCommunityRewriteUrl());
     }
 
     private void deleteInCasesMergeUserOrTempRow(String token) {

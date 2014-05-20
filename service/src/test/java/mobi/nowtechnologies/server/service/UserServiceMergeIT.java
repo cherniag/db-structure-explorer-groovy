@@ -34,6 +34,7 @@ public class UserServiceMergeIT {
         String deviceUID = oldUser.getDeviceUID();
         oldUser.setDeviceUID(deviceUID + "disabled_at");
         oldUser = userRepository.saveAndFlush(oldUser);
+        deviceUserDataRepository.saveAndFlush(new DeviceUserData(oldUser.getCommunityRewriteUrl(), oldUser.getId(), deviceUID, "x1"));
         //register temp user
         User tempUser = new User();
         tempUser.setUserName(deviceUID);
@@ -44,7 +45,7 @@ public class UserServiceMergeIT {
         tempUser.setDeviceModel(oldUser.getDeviceModel());
         tempUser.setIpAddress(oldUser.getIpAddress());
         tempUser = userRepository.saveAndFlush(tempUser);
-        deviceUserDataRepository.saveAndFlush(new DeviceUserData(tempUser, "x1"));
+        deviceUserDataRepository.saveAndFlush(new DeviceUserData(tempUser, "x2"));
         //merge
         userService.mergeUser(oldUser, tempUser);
 
@@ -58,7 +59,8 @@ public class UserServiceMergeIT {
 
     @Test
     public void testRemoveDeviceUserDataWhenMergeAnotherDevice() throws Exception {
-        User oldUser = userService.findById(102);
+        User oldUser = userService.findById(103);
+        deviceUserDataRepository.saveAndFlush(new DeviceUserData(oldUser, "x1"));
         //register temp user
         String anotherDeviceUID = "ddd2";
         User tempUser = new User();
@@ -70,7 +72,7 @@ public class UserServiceMergeIT {
         tempUser.setDeviceModel(oldUser.getDeviceModel());
         tempUser.setIpAddress(oldUser.getIpAddress());
         tempUser = userRepository.saveAndFlush(tempUser);
-        deviceUserDataRepository.saveAndFlush(new DeviceUserData(tempUser, "x1"));
+        deviceUserDataRepository.saveAndFlush(new DeviceUserData(tempUser, "x2"));
         //merge
         userService.mergeUser(oldUser, tempUser);
 
@@ -80,6 +82,8 @@ public class UserServiceMergeIT {
         assertEquals(anotherDeviceUID, old.getDeviceUID());
         DeviceUserData deviceUserDataForTempUser = deviceUserDataRepository.find(tempUser.getId(), tempUser.getCommunityRewriteUrl(), tempUser.getDeviceUID());
         assertNull(deviceUserDataForTempUser);
+        DeviceUserData deviceUserDataForOldUser = deviceUserDataRepository.find(oldUser.getId(), tempUser.getCommunityRewriteUrl(), anotherDeviceUID);
+        assertNull(deviceUserDataForOldUser);
     }
 
 }
