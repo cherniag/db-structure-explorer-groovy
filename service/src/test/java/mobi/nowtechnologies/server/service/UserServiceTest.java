@@ -136,6 +136,7 @@ public class UserServiceTest {
     private AutoOptInRuleService autoOptInRuleServiceMock;
     private Answer userWithPromoAnswer;
     private Answer userWithoutPromoAnswer;
+    private DeviceUserDataService deviceUserDataService;
 
     @Before
     public void setUp() throws Exception {
@@ -172,6 +173,7 @@ public class UserServiceTest {
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
         userGroupRepositoryMock = PowerMockito.mock(UserGroupRepository.class);
         userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
+        deviceUserDataService = PowerMockito.mock(DeviceUserDataService.class);
         taskService = PowerMockito.mock(TaskService.class);
 
         userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
@@ -211,6 +213,7 @@ public class UserServiceTest {
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
         userServiceSpy.setTaskService(taskService);
         userServiceSpy.setAutoOptInRuleService(autoOptInRuleServiceMock);
+        userServiceSpy.setDeviceUserDataService(deviceUserDataService);
 
         PowerMockito.mockStatic(UserStatusDao.class);
 
@@ -3169,6 +3172,7 @@ public class UserServiceTest {
         assertThat(actualUser.getIpAddress(), is(currentUser.getIpAddress()));
 
         verify(userDeviceDetailsServiceMock, times(1)).removeUserDeviceDetails(currentUser);
+        verify(deviceUserDataService, times(1)).removeDeviceUserData(currentUser);
         verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
         verify(userRepositoryMock, times(1)).save(oldUser);
         verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
