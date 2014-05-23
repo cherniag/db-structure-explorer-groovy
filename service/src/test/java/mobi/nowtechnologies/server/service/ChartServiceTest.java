@@ -845,8 +845,15 @@ public class ChartServiceTest {
 		fixture.setCloudFileService(mockCloudFileService);
 		fixture.setChartDetailRepository(mockChartDetailRepository);
 		fixture.setDrmService(mockDrmService);
-        fixture.setChartDetailsConverter(spy(new ChartDetailsConverter()));
-	}
+        ChartDetailsConverter chartDetailsConverter = new ChartDetailsConverter();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(Community.O2_COMMUNITY_REWRITE_URL, "GB");
+        map.put(Community.VF_NZ_COMMUNITY_REWRITE_URL, "NZ");
+        map.put(Community.HL_COMMUNITY_REWRITE_URL, "GB");
+        chartDetailsConverter.setCommunityCountryMap(map);
+
+        fixture.setChartDetailsConverter(spy(chartDetailsConverter));
+    }
 
 	@After
 	public void tearDown()
