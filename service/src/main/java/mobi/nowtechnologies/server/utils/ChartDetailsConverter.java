@@ -25,17 +25,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class ChartDetailsConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailsConverter.class);
-    private static final Map<String, String> countryCodeForCommunityMap;
     private static final String URL_PARAMETER = "&url=";
     private CommunityResourceBundleMessageSource messageSource;
     private long iTunesLinkFormatCutoverTimeMillis;
-
-    static {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(Community.O2_COMMUNITY_REWRITE_URL, "GB");
-        map.put(Community.VF_NZ_COMMUNITY_REWRITE_URL, "NZ");
-        countryCodeForCommunityMap = Collections.unmodifiableMap(map);
-    }
+    private Map<String, String> communityCountryMap;
 
     public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
 		if (chartDetails == null)
@@ -122,7 +115,7 @@ public class ChartDetailsConverter {
             mediaAmazonUrl = defaultAmazonUrl;
         }
 
-        String newCountryCode = countryCodeForCommunityMap.get(communityRewriteUrlParameter);
+        String newCountryCode = communityCountryMap.get(communityRewriteUrlParameter);
 
         if(isBlank(mediaAmazonUrl) || isBlank(newCountryCode)) {
             return mediaAmazonUrl;
@@ -137,7 +130,7 @@ public class ChartDetailsConverter {
     }
 
     private String getITunesUrl(String existingITunesUrl, String communityRewriteUrl) {
-        String countryCode = countryCodeForCommunityMap.get(communityRewriteUrl);
+        String countryCode = communityCountryMap.get(communityRewriteUrl);
         if(isBlank(existingITunesUrl) || isBlank(countryCode)) {
             LOGGER.warn("Media iTunes url [{}] or new country code [{}] is empty", existingITunesUrl, countryCode);
             return existingITunesUrl;
@@ -214,5 +207,9 @@ public class ChartDetailsConverter {
 
     public void setiTunesLinkFormatCutoverTimeMillis(long iTunesLinkFormatCutoverTimeMillis) {
         this.iTunesLinkFormatCutoverTimeMillis = iTunesLinkFormatCutoverTimeMillis;
+    }
+
+    public void setCommunityCountryMap(Map<String, String> communityCountryMap) {
+        this.communityCountryMap = communityCountryMap;
     }
 }
