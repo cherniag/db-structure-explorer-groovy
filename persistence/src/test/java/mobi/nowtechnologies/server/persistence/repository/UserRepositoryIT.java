@@ -5,11 +5,8 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields;
@@ -26,10 +22,7 @@ import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.U
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.VALIDATE_PHONE_NUMBER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -291,7 +284,7 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser);
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(actualUsers);
 
@@ -328,7 +321,7 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser);
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(actualUsers);
         assertEquals(0, actualUsers.size());
@@ -368,7 +361,7 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser);
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(actualUsers);
         assertEquals(1, actualUsers.size());
@@ -431,7 +424,7 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
         testUser = userRepository.save(testUser);
 
         //when
-        List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds);
+        List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds, pageable);
 
         //then
         assertNotNull(actualUsers);

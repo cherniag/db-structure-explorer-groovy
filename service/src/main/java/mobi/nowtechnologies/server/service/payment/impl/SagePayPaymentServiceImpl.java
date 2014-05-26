@@ -115,7 +115,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
 	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
-	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
+	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) {
 		SagePayCreditCardPaymentDetails paymentDetails = (SagePayCreditCardPaymentDetails) pendingPayment.getPaymentDetails();
 		if (response instanceof SagePayResponse && ((SagePayResponse) response).isSagePaySuccessful() && !paymentDetails.getReleased()) {
 			paymentDetails.setReleased(true);

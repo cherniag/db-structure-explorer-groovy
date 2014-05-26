@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
  * Date: 4/18/2014
  */
 public class InternalErrorResponse extends PaymentSystemResponse {
-    public InternalErrorResponse(BasicResponse response, String errorDescription) {
+    private InternalErrorResponse(BasicResponse response, String errorDescription) {
         super(response, false);
         this.descriptionError = errorDescription;
         this.isSuccessful = false;

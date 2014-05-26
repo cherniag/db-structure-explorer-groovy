@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 	
 	@Transactional(propagation=Propagation.REQUIRED)
 	@Override
-	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws ServiceException {
+	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response){
 		LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
 		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
 

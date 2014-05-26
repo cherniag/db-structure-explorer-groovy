@@ -101,7 +101,7 @@ public class PendingPaymentServiceImplTest {
 				, generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus.SUCCESSFUL, true)
 				);
 
-		Mockito.when(userService.getUsersForPendingPayment()).thenReturn(users);
+		Mockito.when(userService.getUsersForPendingPayment(maxCount)).thenReturn(users);
 
 		List<PendingPayment> createPendingPayments = service.createPendingPayments();
 
@@ -122,7 +122,7 @@ public class PendingPaymentServiceImplTest {
 				, generateUserWithSagePayPaymentDetails((byte) 0, PaymentDetailsStatus.SUCCESSFUL)
 				);
 
-		Mockito.when(userService.getUsersForPendingPayment()).thenReturn(users);
+		Mockito.when(userService.getUsersForPendingPayment(maxCount)).thenReturn(users);
 
 		List<PendingPayment> createPendingPayments = service.createPendingPayments();
 
@@ -139,7 +139,7 @@ public class PendingPaymentServiceImplTest {
         for (int i = 0; i < 10; i++) {
             users.add(generateUserWithSagePayPaymentDetails((byte) 0, PaymentDetailsStatus.NONE));
         }
-        Mockito.when(userService.getUsersForPendingPayment()).thenReturn(users);
+        Mockito.when(userService.getUsersForPendingPayment(maxCount)).thenReturn(users);
         int maxCount = 5;
         ((PendingPaymentServiceImpl)service).setMaxCount(maxCount);
 
@@ -155,7 +155,7 @@ public class PendingPaymentServiceImplTest {
         for (int i = 0; i < 10; i++) {
             users.add(generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus.SUCCESSFUL, true));
         }
-        Mockito.when(userService.getUsersForRetryPayment()).thenReturn(users);
+        Mockito.when(userService.getUsersForRetryPayment(maxCount)).thenReturn(users);
         int maxCount = 5;
         ((PendingPaymentServiceImpl)service).setMaxCount(maxCount);
 

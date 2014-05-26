@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType;
@@ -1868,9 +1869,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> getUsersForPendingPayment() {
-        List<User> users = userRepository.getUsersForPendingPayment(Utils.getEpochSeconds());
-        return users;
+    public ListDataResult<User> getUsersForPendingPayment(int maxCount) {
+        int epochSeconds = Utils.getEpochSeconds();
+
+        List<User> users = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
+
+        ListDataResult<User> result = new ListDataResult<User>(users);
+
+        if (users.size() == maxCount) {
+            long usersForPendingPaymentCount = userRepository.getUsersForPendingPaymentCount(epochSeconds);
+            result.setTotal(usersForPendingPaymentCount);
+        }
+        return result;
     }
 
     @Transactional(readOnly = true)
@@ -1902,12 +1912,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> getUsersForRetryPayment() {
+    public ListDataResult<User> getUsersForRetryPayment(int maxCount) {
+        int epochSeconds = Utils.getEpochSeconds();
 
-        List<User> usersForRetryPayment = userRepository.getUsersForRetryPayment(Utils.getEpochSeconds());
+        List<User> users = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
-        LOGGER.debug("Output parameter usersForRetryPayment=[{}]", usersForRetryPayment);
-        return usersForRetryPayment;
+        ListDataResult<User> result = new ListDataResult<User>(users);
+
+        if(users.size() == maxCount) {
+            long total = userRepository.getUsersForRetryPaymentCount(epochSeconds);
+            result.setTotal(total);
+        }
+        return result;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

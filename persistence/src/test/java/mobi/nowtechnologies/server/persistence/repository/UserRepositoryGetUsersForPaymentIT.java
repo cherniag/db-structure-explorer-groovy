@@ -50,7 +50,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(4);
+        List<User> users = userRepository.getUsersForPendingPayment(4, pageable);
 
         //then
         assertThat(users.size(), is(0));
@@ -65,7 +65,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(5);
+        List<User> users = userRepository.getUsersForPendingPayment(5, pageable);
 
         //then
         assertThat(users.size(), is(1));
@@ -81,7 +81,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(9);
+        List<User> users = userRepository.getUsersForPendingPayment(9, pageable);
 
         //then
         assertThat(users.size(), is(1));
@@ -97,7 +97,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(9);
+        List<User> users = userRepository.getUsersForPendingPayment(9, pageable);
 
         //then
         assertThat(users.size(), is(0));
@@ -112,7 +112,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(11);
+        List<User> users = userRepository.getUsersForPendingPayment(11, pageable);
 
         //then
         assertThat(users.size(), is(1));
@@ -128,7 +128,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(6);
+        List<User> users = userRepository.getUsersForRetryPayment(6, new PageRequest(0, maxCount));
 
         //then
         assertThat(users.size(), is(1));
@@ -144,7 +144,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(9);
+        List<User> users = userRepository.getUsersForRetryPayment(9, new PageRequest(0, maxCount));
 
         //then
         assertThat(users.size(), is(0));
@@ -159,7 +159,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11);
+        List<User> users = userRepository.getUsersForRetryPayment(11, new PageRequest(0, maxCount));
 
         //then
         assertThat(users.size(), is(1));
@@ -175,7 +175,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11);
+        List<User> users = userRepository.getUsersForRetryPayment(11, new PageRequest(0, maxCount));
 
         //then
         assertThat(users.size(), is(0));
@@ -190,7 +190,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(16);
+        List<User> users = userRepository.getUsersForRetryPayment(16, new PageRequest(0, maxCount));
 
         //then
         assertThat(users.size(), is(1));
@@ -206,7 +206,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(14);
+        List<User> users = userRepository.getUsersForRetryPayment(14, new PageRequest(0, maxCount));
 
         //then
         assertThat(users.size(), is(0));

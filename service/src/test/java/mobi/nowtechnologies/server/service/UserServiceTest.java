@@ -2468,9 +2468,9 @@ public class UserServiceTest {
 		
 		List<User> expectedUsers = Collections.<User>emptyList(); 
 		
-		Mockito.when(userRepositoryMock.getUsersForRetryPayment(currentTimeSeconds)).thenReturn(expectedUsers);
+		Mockito.when(userRepositoryMock.getUsersForRetryPayment(currentTimeSeconds, new PageRequest(0, maxCount))).thenReturn(expectedUsers);
 		
-		List<User> users = userServiceSpy.getUsersForRetryPayment();
+		List<User> users = userServiceSpy.getUsersForRetryPayment(maxCount);
 		
 		assertNotNull(users);
 		assertEquals(expectedUsers, users);
