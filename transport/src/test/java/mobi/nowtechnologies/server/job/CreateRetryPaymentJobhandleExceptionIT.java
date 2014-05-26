@@ -31,9 +31,7 @@ import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATE
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Author: Gennadii Cherniaiev
@@ -48,6 +46,7 @@ import static org.mockito.Mockito.when;
 public class CreateRetryPaymentJobHandleExceptionIT {
 
     private static final String UNKNOWN_EXCEPTION = "Unknown exception";
+
     @Resource
     private CreateRetryPaymentJob createRetryPaymentJob;
 
