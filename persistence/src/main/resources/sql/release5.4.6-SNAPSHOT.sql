@@ -1,3 +1,8 @@
+ALTER TABLE `facebook_user_info` DROP INDEX `facebook_user_info_email`;
+
+ALTER TABLE `facebook_user_info` DROP INDEX `facebook_user_info_fb_id`;
+
+
 CREATE TABLE `google_plus_user_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
