@@ -149,8 +149,6 @@ public class TaskRepositoryTestIT extends AbstractRepositoryIT {
         for (int i = 0; i < 20; i++) {
             createAndSaveSendChargeNotificationTask(user1, currentTimeMillis() - 1L);
         }
-        long totalCount = taskRepository.count();
-        assertThat(totalCount, is(20l));
         Pageable pageable = new PageRequest(0, 8);
         List<Task> taskList = taskRepository.findTasksToExecute(currentTimeMillis(), pageable);
         assertThat(taskList.size(), is(8));

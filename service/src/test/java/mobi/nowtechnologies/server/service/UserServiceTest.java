@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service;
 
+import com.google.common.collect.Lists;
+import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -44,6 +46,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -77,6 +80,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -2466,15 +2470,46 @@ public class UserServiceTest {
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		List<User> expectedUsers = Collections.<User>emptyList(); 
+		List<User> expectedUsers = Collections.<User>emptyList();
+
+        int maxCount = 10;
+        Mockito.when(userRepositoryMock.getUsersForRetryPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount)))).thenReturn(expectedUsers);
 		
-		Mockito.when(userRepositoryMock.getUsersForRetryPayment(currentTimeSeconds, new PageRequest(0, maxCount))).thenReturn(expectedUsers);
-		
-		List<User> users = userServiceSpy.getUsersForRetryPayment(maxCount);
+		ListDataResult<User> users = userServiceSpy.getUsersForRetryPayment(maxCount);
 		
 		assertNotNull(users);
-		assertEquals(expectedUsers, users);
+		assertEquals(expectedUsers, users.getData());
 	}
+
+    @Test
+    public void testGetUsersForPendingPaymentMoreThanMaxCount() throws Exception {
+        createUserWithO2PaymentDetails();
+        List<User> list = Lists.newArrayList(user, user, user, user);
+        int maxCount = 4;
+        long total = 7L;
+        when(userRepositoryMock.getUsersForPendingPayment(anyInt(), eq(new PageRequest(0, maxCount)))).thenReturn(list);
+        when(userRepositoryMock.getUsersForPendingPaymentCount(anyInt())).thenReturn(total);
+
+        ListDataResult<User> dataResult = userServiceSpy.getUsersForPendingPayment(maxCount);
+        assertEquals(maxCount, dataResult.getSize());
+        assertEquals(maxCount, dataResult.getData().size());
+        assertEquals(total, dataResult.getTotal());
+    }
+
+    @Test
+    public void testGetUsersForRetryPaymentMoreThanMaxCount() throws Exception {
+        createUserWithO2PaymentDetails();
+        List<User> list = Lists.newArrayList(user, user, user, user);
+        int maxCount = 4;
+        long total = 7L;
+        when(userRepositoryMock.getUsersForRetryPayment(anyInt(), eq(new PageRequest(0, maxCount)))).thenReturn(list);
+        when(userRepositoryMock.getUsersForRetryPaymentCount(anyInt())).thenReturn(total);
+
+        ListDataResult<User> dataResult = userServiceSpy.getUsersForRetryPayment(maxCount);
+        assertEquals(maxCount, dataResult.getSize());
+        assertEquals(maxCount, dataResult.getData().size());
+        assertEquals(total, dataResult.getTotal());
+    }
 
     @Test
     public void shouldApplyInitPromoAndAccCheckWitoutUpdateContractAndProvider() {

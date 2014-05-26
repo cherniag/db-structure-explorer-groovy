@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.payment;
 
+import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
@@ -25,10 +26,12 @@ public class PendingPaymentServiceTest {
 	private PendingPaymentService service;
 	private PaymentDao paymentDao;
 	private UserService userService;
-	
-	@Before
+    private int maxCount = 35;
+
+    @Before
 	public void startup() {
 		PendingPaymentServiceImpl serviceImpl = new PendingPaymentServiceImpl();
+        serviceImpl.setMaxCount(35);
 		paymentDao = Mockito.mock(PaymentDao.class);
 		Mockito.when(paymentDao.savePendingPayment(Mockito.any(PendingPayment.class))).thenAnswer(new Answer<PendingPayment>() {
 			@Override public PendingPayment answer(InvocationOnMock invocation) throws Throwable {
@@ -44,7 +47,8 @@ public class PendingPaymentServiceTest {
 	@Test
 	public void createPendingPaymentsForRetries_Successful() {
 		List<User> users = Arrays.asList(createUser(), createUser(), createUser());
-			Mockito.when(userService.getUsersForRetryPayment(maxCount)).thenReturn(users);
+        ListDataResult<User> dataResult = new ListDataResult<User>(users);
+		Mockito.when(userService.getUsersForRetryPayment(maxCount)).thenReturn(dataResult);
 		List<PendingPayment> paymentsForRetries = service.createRetryPayments();
 		
 		Assert.assertNotNull(paymentsForRetries);

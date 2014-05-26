@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.aop.SMSNotification;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import org.junit.After;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
@@ -27,26 +29,26 @@ import java.io.UnsupportedEncodingException;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 4/17/2014
  */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextHierarchy({
         @ContextConfiguration(locations = {
                 "classpath:transport-root-test.xml", "classpath:jobs-test.xml"}),
         @ContextConfiguration(locations = {
                 "classpath:transport-servlet-test.xml"})})
-public class CreateRetryPaymentJobIT {
+public class CreatePendingPaymentJobHandleExceptionIT {
 
+    private static final String UNKNOWN_EXCEPTION = "Unknown exception";
     @Resource
-    private CreateRetryPaymentJob createRetryPaymentJob;
+    private CreatePendingPaymentJob createPendingPaymentJob;
 
     @Resource(name = "smsNotificationAspect")
     private SMSNotification smsNotification;
@@ -66,8 +68,8 @@ public class CreateRetryPaymentJobIT {
     @Resource
     private SubmitedPaymentRepository submitedPaymentRepository;
 
-    @Mock
-    private PendingPaymentExecutor pendingPaymentExecutorMocked;
+    @Resource
+    private PendingPaymentExecutor pendingPaymentExecutor;
 
     @Mock
     private UserNotificationService userNotificationServiceMocked;
@@ -96,59 +98,59 @@ public class CreateRetryPaymentJobIT {
     public void checkO2PaymentSystemCommitsErrorResponse() throws Exception {
         user = prepareUserForPayment("+44719411945", "deviceUID1", "o2", new O2PSMSPaymentDetails());
 
-        createRetryPaymentJob.execute();
+        createPendingPaymentJob.execute();
 
         SubmittedPayment submittedPayment = getSubmittedPayment(user);
-        assertEquals(ERROR, submittedPayment.getStatus());
+        assertEquals(PaymentDetailsStatus.ERROR, submittedPayment.getStatus());
         assertEquals(O2_PSMS_TYPE, submittedPayment.getPaymentSystem());
-        assertEquals("TaskRejectedException", submittedPayment.getDescriptionError());
+        assertEquals(UNKNOWN_EXCEPTION, submittedPayment.getDescriptionError());
     }
 
     @Test
     public void checkVFPaymentSystemCommitsErrorResponse() throws Exception {
         user = prepareUserForPayment("+6419411945", "deviceUID1", "vf_nz", new VFPSMSPaymentDetails());
 
-        createRetryPaymentJob.execute();
+        createPendingPaymentJob.execute();
 
         SubmittedPayment submittedPayment = getSubmittedPayment(user);
-        assertEquals(ERROR, submittedPayment.getStatus());
+        assertEquals(PaymentDetailsStatus.ERROR, submittedPayment.getStatus());
         assertEquals(VF_PSMS_TYPE, submittedPayment.getPaymentSystem());
-        assertEquals("TaskRejectedException", submittedPayment.getDescriptionError());
+        assertEquals(UNKNOWN_EXCEPTION, submittedPayment.getDescriptionError());
     }
 
     @Test
     public void checkPayPalPaymentSystemCommitsErrorResponse() throws Exception {
         user = prepareUserForPayment("+44719411945", "deviceUID1", "o2", new PayPalPaymentDetails());
 
-        createRetryPaymentJob.execute();
+        createPendingPaymentJob.execute();
 
         SubmittedPayment submittedPayment = getSubmittedPayment(user);
-        assertEquals(ERROR, submittedPayment.getStatus());
+        assertEquals(PaymentDetailsStatus.ERROR, submittedPayment.getStatus());
         assertEquals(PAYPAL_TYPE, submittedPayment.getPaymentSystem());
-        assertEquals("TaskRejectedException", submittedPayment.getDescriptionError());
+        assertEquals(UNKNOWN_EXCEPTION, submittedPayment.getDescriptionError());
     }
 
     @Test
     public void checkSagePayPaymentSystemCommitsErrorResponse() throws Exception {
         user = prepareUserForPayment("+44719411945", "deviceUID1", "o2", new SagePayCreditCardPaymentDetails());
 
-        createRetryPaymentJob.execute();
+        createPendingPaymentJob.execute();
 
         SubmittedPayment submittedPayment = getSubmittedPayment(user);
-        assertEquals(ERROR, submittedPayment.getStatus());
+        assertEquals(PaymentDetailsStatus.ERROR, submittedPayment.getStatus());
         assertEquals(SAGEPAY_CREDITCARD_TYPE, submittedPayment.getPaymentSystem());
-        assertEquals("TaskRejectedException", submittedPayment.getDescriptionError());
+        assertEquals(UNKNOWN_EXCEPTION, submittedPayment.getDescriptionError());
     }
 
     @Test
     public void checkMigPaymentSystemCommitsErrorResponse() throws Exception {
         user = prepareUserForPayment("+44719411945", "deviceUID1", "o2", new MigPaymentDetails());
 
-        createRetryPaymentJob.execute();
+        createPendingPaymentJob.execute();
 
         SubmittedPayment submittedPayment = getSubmittedPayment(user);
-        assertEquals("TaskRejectedException", submittedPayment.getDescriptionError());
-        assertEquals(ERROR, submittedPayment.getStatus());
+        assertEquals(UNKNOWN_EXCEPTION, submittedPayment.getDescriptionError());
+        assertEquals(PaymentDetailsStatus.ERROR, submittedPayment.getStatus());
         assertEquals(MIG_SMS_TYPE, submittedPayment.getPaymentSystem());
     }
 
@@ -157,8 +159,10 @@ public class CreateRetryPaymentJobIT {
     }
 
     private void mockPaymentExecutor() {
-        createRetryPaymentJob.setExecutor(pendingPaymentExecutorMocked);
-        doThrow(TaskRejectedException.class).when(pendingPaymentExecutorMocked).execute(any(PendingPayment.class));
+        TaskExecutor taskExecutor = mock(TaskExecutor.class);
+        doThrow(TaskRejectedException.class).when(taskExecutor).execute(any(Runnable.class));
+        pendingPaymentExecutor.setExecutor(taskExecutor);
+        createPendingPaymentJob.setExecutor(pendingPaymentExecutor);
     }
 
     private void disablePaymentsForExistingUsers() {
@@ -166,7 +170,6 @@ public class CreateRetryPaymentJobIT {
             user.setNextSubPayment(Integer.MAX_VALUE);
             userRepository.save(user);
         }
-        submitedPaymentRepository.deleteAll();
     }
 
     private void mockUserNotificationService() throws UnsupportedEncodingException {
@@ -205,8 +208,7 @@ public class CreateRetryPaymentJobIT {
     private PaymentDetails createAndSavePaymentDetails(User user, PaymentDetails details) {
         details.setActivated(true);
         details.setOwner(user);
-        details.setLastPaymentStatus(ERROR);
-        details.setRetriesOnError(1);
+        details.setLastPaymentStatus(PaymentDetailsStatus.NONE);
         details.setPaymentPolicy(paymentPolicyRepository.findOne(228));
         return paymentDetailsRepository.saveAndFlush(details);
     }

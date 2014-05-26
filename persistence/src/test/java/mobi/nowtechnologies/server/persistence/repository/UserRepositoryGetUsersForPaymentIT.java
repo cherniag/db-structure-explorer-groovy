@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -19,7 +21,6 @@ import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactor
 import static mobi.nowtechnologies.server.persistence.domain.UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -40,6 +41,8 @@ public class UserRepositoryGetUsersForPaymentIT {
 
     @Resource(name = "paymentPolicyRepository")
     private PaymentPolicyRepository paymentPolicyRepository;
+
+    private Pageable pageable = new PageRequest(0, 35);
 
     @Test
     public void shouldNotFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentPlusAdvancedPaymentSecondsIsInTheFuture(){
@@ -128,7 +131,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(6, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForRetryPayment(6, pageable);
 
         //then
         assertThat(users.size(), is(1));
@@ -144,7 +147,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(9, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForRetryPayment(9, pageable);
 
         //then
         assertThat(users.size(), is(0));
@@ -159,7 +162,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForRetryPayment(11, pageable);
 
         //then
         assertThat(users.size(), is(1));
@@ -175,7 +178,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForRetryPayment(11, pageable);
 
         //then
         assertThat(users.size(), is(0));
@@ -190,7 +193,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(16, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForRetryPayment(16, pageable);
 
         //then
         assertThat(users.size(), is(1));
@@ -206,7 +209,7 @@ public class UserRepositoryGetUsersForPaymentIT {
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(14, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForRetryPayment(14, pageable);
 
         //then
         assertThat(users.size(), is(0));

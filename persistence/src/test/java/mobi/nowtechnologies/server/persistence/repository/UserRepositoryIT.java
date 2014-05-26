@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -51,6 +52,9 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Value("35")
+    private int maxCount;
 
     @Test
     public void testFindByMobile(){
@@ -424,7 +428,7 @@ public class UserRepositoryIT  extends AbstractRepositoryIT{
         testUser = userRepository.save(testUser);
 
         //when
-        List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds, pageable);
+        List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
 
         //then
         assertNotNull(actualUsers);
