@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;

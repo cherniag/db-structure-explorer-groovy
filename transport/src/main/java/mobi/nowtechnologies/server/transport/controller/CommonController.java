@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.service.AccCheckService;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.*;
+import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -254,6 +255,12 @@ public abstract class CommonController extends ProfileController {
         } else
             throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());
         return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+    }
+
+
+    @ExceptionHandler(OAuth2ForbiddenException.class)
+    public ModelAndView handleExceptionFromSocialNetwork(Exception exception, HttpServletResponse response) {
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
     }
 
     private String getCommunityUrl(HttpServletRequest httpServletRequest) {

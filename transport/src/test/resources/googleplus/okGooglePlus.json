@@ -1,0 +1,43 @@
+{"organizations": [
+        {
+            "type": "work",
+            "name": "Any organization",
+            "primary": false,
+            "title": "Lead"
+        }
+    ],
+    "kind": "plus#person",
+    "displayName": "%s",
+    "name": {
+        "givenName": "%s",
+        "familyName": "%s"
+    },
+    "language": "ru",
+    "isPlusUser": true,
+    "url": "%s",
+    "gender": "%s",
+    "image": {
+        "url": "%s"
+    },
+    "placesLived": [
+        {
+            "primary": true,
+            "value": "%s"
+        }
+    ],
+    "birthday": "%s",
+    "id": "%s",
+    "etag": "\"YFr-hUROXQN7IOa3dUHg9dQ8eq0/M2HHfZqNgESxOmCL762UtD2_cB8\"",
+    "ageRange": {
+        "min": 21
+    },
+    "verified": false,
+    "circledByCount": 5,
+    "emails": [
+        {
+            "type": "account",
+            "value": "oartyomov@gmail.com"
+        }
+    ],
+    "objectType": "person"
+}
