@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
+
 public class IngestServiceImpl implements IngestService{
 
     protected final static int MAX_SIZE_DATA_BUFFER = 10;
@@ -222,7 +224,7 @@ public class IngestServiceImpl implements IngestService{
 			IParser parser = parserFactory.getParser(ingestor);
 
 			List<DropData> parserDrops = parser.getDrops(true);
-			if (parserDrops != null && parserDrops.size() > 0) {
+			if (!isEmpty(parserDrops)) {
 				for (DropData drop : parserDrops) {
                     DropsData.Drop data = drops.new Drop();
                     data.setName(drop.name);
