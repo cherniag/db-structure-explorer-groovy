@@ -479,12 +479,14 @@ public class UserService {
                 messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.phoneNumber";
             }
         } else if(activationStatus == ACTIVATED){
+            if(!user.hasAllDetails()){
+                message = "User activation status [ACTIVATED] is invalid. User must have all user details";
+                messageCode = "error.604.activation.status.ACTIVATED.invalid.userDetails";
+            }
+            else
             if(!user.isActivatedUserName()){
                 message = "User activation status [ACTIVATED] is invalid. User must have activated userName";
                 messageCode = "error.604.activation.status.ACTIVATED.invalid.userName";
-            } else if(!user.hasAllDetails()){
-                message = "User activation status [ACTIVATED] is invalid. User must have all user details";
-                messageCode = "error.604.activation.status.ACTIVATED.invalid.status";
             }
         }
 

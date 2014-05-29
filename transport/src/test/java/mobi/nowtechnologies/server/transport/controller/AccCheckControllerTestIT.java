@@ -416,4 +416,38 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         ).andExpect(status().isOk()).andDo(print()).
                 andExpect(xpath("/response/user/lockedTrack/media").nodeCount(0));
     }
+
+
+
+    @Test
+    public void testAccountCheckWhenNoProviderForUser() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "6.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        List<Chart> charts = new ArrayList<Chart>();
+        Chart chart = chartRepository.findOne(5);
+        charts.add(chart);
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setSelectedCharts(charts);
+        user.setProvider(null);
+        userService.updateUser(user);
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isForbidden()).andDo(print())
+                .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(604))
+                .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("error.604.activation.status.ACTIVATED.invalid.userDetails"))
+                .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("User activation status [ACTIVATED] is invalid. User must have all user details"));
+    }
+
 }
+
