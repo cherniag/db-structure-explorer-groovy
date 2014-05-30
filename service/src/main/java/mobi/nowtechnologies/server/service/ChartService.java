@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
@@ -41,7 +42,12 @@ public class ChartService {
 	private MediaService mediaService;
 	private CommunityResourceBundleMessageSource messageSource;
 	private CloudFileService cloudFileService;
+    private StreamzineUpdateService streamzineUpdateService;
     private ChartDetailsConverter chartDetailsConverter;
+
+    public void setStreamzineUpdateService(StreamzineUpdateService streamzineUpdateService) {
+        this.streamzineUpdateService = streamzineUpdateService;
+    }
 
     public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
         this.chartDetailsConverter = chartDetailsConverter;
@@ -296,6 +302,15 @@ public class ChartService {
 	}
 	
 	@Transactional(readOnly = true)
+    public List<ChartDetail> getChartsByCommunityAndPublishTime(String communityRewriteUrl, Date publishDate){
+        LOGGER.debug("input parameters communityURL [{}], publishDate [{}]", communityRewriteUrl, publishDate);
+        List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
+        List<ChartDetail> chartDetails = getChartDetails(charts, publishDate, false);
+        LOGGER.info("Output parameter charts=[{}]", charts);
+        return chartDetails;
+    }
+
+	@Transactional(readOnly = true)
     public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime, boolean clone) {
         LOGGER.debug("input parameters charts: [{}]", new Object[]{charts});
 
@@ -403,21 +418,34 @@ public class ChartService {
 		LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
 		if(chartDetail != null){
-			if(chartDetail.getI() != null){
+            if(isChartDetailAlreadyPresent(chartDetail)){
 				ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
 				chartDetail.setVersion(createdOne.getVersion());
+            }else{
+                createCorrespondingStreamzineUpdate(chartDetail);
 			}
 			
 			chartDetail = chartDetailRepository.save(chartDetail);
 			
-			if (null != imageFile && !imageFile.isEmpty())
-				cloudFileService.uploadFile(imageFile, chartDetail.getImageFileName());
+            if (null != imageFile && !imageFile.isEmpty()){
+                cloudFileService.uploadFile(imageFile, chartDetail.getImageFileName());
+            }
+
 		}
 		
 		LOGGER.debug("Output updateChart(Chart chart)", chartDetail);
 		
 		return chartDetail;
 	}
+
+    private boolean isChartDetailAlreadyPresent(ChartDetail chartDetail) {
+        return chartDetail.getI() != null;
+    }
+
+    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail) {
+        Date publishDate = new Date(chartDetail.getPublishTimeMillis());
+        streamzineUpdateService.createOrReplace(publishDate);
+    }
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User selectChartByType(Integer userId, Integer playlistId) {

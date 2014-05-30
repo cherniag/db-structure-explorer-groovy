@@ -243,4 +243,37 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value="select u from User u "
             + "where u.mobile = ?1 and u.deviceUID not like '%_disabled_at_%' and u.deviceUID not like '%_wipe'")
     List<User> findByMobile(String phoneNumber);
+
+    @Query(value = "select user from User user join user.userGroup userGroup " +
+            " join userGroup.community community where " +
+            "user.userName like concat('%',:searchWord,'%') escape '^' and community.rewriteUrlParameter = :rewriteUrlParameter and user.activationStatus='ACTIVATED' order by user.userName ")
+    List<User> findByUserNameAndCommunityRewriteUrl(@Param("searchWord") String searchWord,
+                                                    @Param("rewriteUrlParameter") String rewriteUrlParameter,
+                                                    Pageable pageable);
+
+    @Query(value = "select count(*) from User user where" +
+            " user.userName = ?1 and user.userGroupId=" +
+            "(select userGroup.id from UserGroup userGroup where userGroup.communityId=" +
+            "(select community.id from Community community where community.name=?2))")
+    Long countByUserNameAndCommunityName(String userName, String communityName);
+
+
+
+    @Query(value = "select user from User user where user.facebookId = ?1 " +
+            "and user.userGroupId=(select userGroup.id from UserGroup userGroup " +
+            "where userGroup.communityId=(select community.id from Community community where community.name=?2))")
+    List<User> findByFacebookAndCommunity(String facebookId, String communityName);
+
+
+    @Query(value = "select user from User user where" +
+            " user.userName = ?1 and user.userGroupId=" +
+            "(select userGroup.id from UserGroup userGroup where userGroup.communityId=" +
+            "(select community.id from Community community where community.name=?2))")
+    User findByUserNameAndCommunityName(String userName, String communityName);
+
+
+
+    @Query(value = "select user from User user where" +
+            " user.userName = ?1")
+    List<User> findByUserName(String userName);
 }

@@ -1,0 +1,181 @@
+
+package mobi.nowtechnologies.server.service.streamzine;
+
+import com.google.common.collect.Lists;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
+import org.apache.commons.lang.time.DateUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
+@Transactional
+public class StreamzineUpdateServiceIT {
+
+    @Resource
+    private StreamzineUpdateRepository streamzineUpdateRepository;
+    @Resource
+    public StreamzineUpdateService streamzineUpdateService;
+
+    @Test
+    public void testCreateFirstTime() {
+        final int firstDays = 10;
+        final int avgDays = 11;
+        final int secondDays = 12;
+
+        Date now = new Date();
+        Date firstDate = DateUtils.addDays(now, firstDays);
+        Date avgDate = DateUtils.addDays(now, avgDays);
+        Date secondDate = DateUtils.addDays(now, secondDays);
+
+        long count = streamzineUpdateRepository.count();
+        Assert.assertEquals(0, count);
+
+        streamzineUpdateService.create(avgDate);
+
+        List<Update> allByDate = streamzineUpdateRepository.findAllByDate(firstDate, secondDate);
+        Assert.assertEquals(1, allByDate.size());
+        Assert.assertEquals(avgDate.getTime(), allByDate.get(0).getDate().getTime());
+    }
+
+    @Test
+    public void testCreateSecondTime() {
+        final int firstDays = 10;
+        final int avgDays = 14;
+        final int secondDays = 28;
+
+        Date now = new Date();
+        Date firstDate = DateUtils.addDays(now, firstDays);
+        Date avgDate = DateUtils.addDays(now, avgDays);
+        Date secondDate = DateUtils.addDays(now, secondDays);
+
+        final String title = "title";
+        final Block block = createBlock(title);
+
+        // create
+        Update firstUpdate = streamzineUpdateService.create(avgDate);
+        // fill with blocks from UI
+        streamzineUpdateService.update(firstUpdate.getId(), createWithBlock(firstUpdate, block));
+
+        // and now create second time
+        Date newDate = DateUtils.addDays(now, 25);
+        Update secondUpdate = streamzineUpdateService.create(newDate);
+
+        List<Update> allByDate = streamzineUpdateRepository.findAllByDate(firstDate, secondDate);
+        Assert.assertEquals(2, allByDate.size());
+        // compare IDs
+        Assert.assertEquals(firstUpdate.getId(), allByDate.get(0).getId());
+        Assert.assertEquals(secondUpdate.getId(), allByDate.get(1).getId());
+
+        // and compare blocks by title
+        Assert.assertEquals(title, allByDate.get(0).getBlocks().get(0).getTitle());
+        Assert.assertEquals(title, allByDate.get(1).getBlocks().get(0).getTitle());
+    }
+
+    @Test
+    public void newUpdateShouldReplaceOldOneWithTheSameDate() throws Exception {
+        long publishTimeMillis = System.currentTimeMillis() + 10000L;
+        Date oldUpdateDate = new Date(publishTimeMillis);
+        Date newUpdateDate = new Date(publishTimeMillis);
+        Update oldUpdate = streamzineUpdateService.create(oldUpdateDate);
+        oldUpdate.addBlock(createBlock("title1"));
+        oldUpdate.addBlock(createBlock("title2"));
+        oldUpdate.addBlock(createBlock("title3"));
+        streamzineUpdateService.update(oldUpdate.getId(), oldUpdate);
+        Update newUpdate = streamzineUpdateService.createOrReplace(newUpdateDate);
+        List<Update> updates = Lists.newArrayList(streamzineUpdateService.list(newUpdateDate));
+        assertThat(oldUpdate.getId(), is(not(newUpdate.getId())));
+        assertThat(updates.size(), is(1));
+        assertThat(updates.get(0).getId(), is(newUpdate.getId()));
+    }
+
+    @Test
+    public void testGetUpdatePublishDates() throws Exception {
+        Date selectedUpdateDate = DateUtils.addDays(new Date(), 100);
+        Date pastDateWithinInterval = DateUtils.addDays(selectedUpdateDate, -10);
+        Date pastDateOutOfInterval  = DateUtils.addDays(selectedUpdateDate, -50);
+        Date futureDateWithinInterval = DateUtils.addDays(selectedUpdateDate, 10);
+        Date futureDateOutOfInterval  = DateUtils.addDays(selectedUpdateDate, 50);
+
+        streamzineUpdateService.create(futureDateWithinInterval);
+        streamzineUpdateService.create(futureDateOutOfInterval);
+        streamzineUpdateService.create(pastDateOutOfInterval);
+        streamzineUpdateService.create(pastDateWithinInterval);
+        streamzineUpdateService.create(selectedUpdateDate);
+
+        List<Date> updatesPublishTime = streamzineUpdateService.getUpdatePublishDates(selectedUpdateDate);
+        assertThat(updatesPublishTime, notNullValue());
+
+        assertThat(updatesPublishTime, hasSize(3));
+        assertThat(DateUtils.truncate(updatesPublishTime.get(0), Calendar.DATE), is(DateUtils.truncate(pastDateWithinInterval, Calendar.DATE)));
+        assertThat(DateUtils.truncate(updatesPublishTime.get(1), Calendar.DATE), is(DateUtils.truncate(selectedUpdateDate, Calendar.DATE)));
+        assertThat(DateUtils.truncate(updatesPublishTime.get(2), Calendar.DATE), is(DateUtils.truncate(futureDateWithinInterval, Calendar.DATE)));
+    }
+
+    @Test
+    public void testGetUpdatePublishDatesForMultipleUpdateWithinSameDay() throws Exception {
+        Date calendarTime = normalizeToday();
+        Date selectedUpdateDate = DateUtils.addDays(calendarTime, 100);
+        Date day1 = DateUtils.addDays(selectedUpdateDate, 1);
+        Date day2 = DateUtils.addDays(selectedUpdateDate, 2);
+
+        streamzineUpdateService.create(new Date(day2.getTime() + 1000L));
+        streamzineUpdateService.create(new Date(day2.getTime() + 2000L));
+        streamzineUpdateService.create(new Date(day2.getTime() + 3000L));
+
+        streamzineUpdateService.create(new Date(day1.getTime() + 1000L));
+        streamzineUpdateService.create(new Date(day1.getTime() + 2000L));
+
+        List<Date> updatesPublishTime = streamzineUpdateService.getUpdatePublishDates(selectedUpdateDate);
+        assertThat(updatesPublishTime, notNullValue());
+
+        assertThat(updatesPublishTime, hasSize(2));
+        assertThat(DateUtils.truncate(updatesPublishTime.get(0), Calendar.DATE), is(DateUtils.truncate(day1, Calendar.DATE)));
+        assertThat(DateUtils.truncate(updatesPublishTime.get(1), Calendar.DATE), is(DateUtils.truncate(day2, Calendar.DATE)));
+    }
+
+    private Date normalizeToday() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR, 5);
+        return calendar.getTime();
+    }
+
+    private Update createWithBlock(Update from, Block block) {
+        Update incoming = new Update(from.getDate());
+        incoming.setUser(from.getUser());
+        incoming.addBlock(block);
+
+        return incoming;
+    }
+
+    private Block createBlock(String title) {
+        DeeplinkInfo deeplink = new NotificationDeeplinkInfo(LinkLocationType.INTERNAL_AD, "about");
+        Block block = new Block(0, ShapeType.BUTTON, deeplink);
+        block.setTitle(title);
+        return block;
+    }
+
+
+}

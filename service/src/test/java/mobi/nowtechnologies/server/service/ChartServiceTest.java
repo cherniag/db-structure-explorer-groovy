@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
@@ -41,6 +42,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
@@ -70,6 +72,9 @@ public class ChartServiceTest {
 	@Mock
 	private CloudFileService mockCloudFileService;
 
+    @Mock
+    private StreamzineUpdateService streamzineUpdateService;
+
 	//test data
 	private User testUser;
 
@@ -88,7 +93,7 @@ public class ChartServiceTest {
 		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
 		when(mockUserService.updateUser(eq(user))).thenReturn(user);
 		
-		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
 		
 		assertNotNull(result);
 		assertEquals(user.getId(), result.getId());
@@ -112,7 +117,7 @@ public class ChartServiceTest {
 		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
 		when(mockUserService.updateUser(eq(user))).thenReturn(user);
 		
-		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
 		
 		assertNotNull(result);
 		assertEquals(user.getId(), result.getId());
@@ -139,7 +144,7 @@ public class ChartServiceTest {
 		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
 		when(mockUserService.updateUser(eq(user))).thenReturn(user);
 		
-		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
 		
 		assertNotNull(result);
 		assertEquals(user.getId(), result.getId());
@@ -166,7 +171,7 @@ public class ChartServiceTest {
 		when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(null);
 		when(mockUserService.updateUser(eq(user))).thenReturn(user);
 		
-		User result = fixture.selectChartByType(user.getId(), selectedChart.getI().intValue());
+        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
 		
 		assertNull(result);
 		
@@ -182,7 +187,6 @@ public class ChartServiceTest {
 		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		String communityName = "chartsnow";
-		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 		
@@ -207,7 +211,6 @@ public class ChartServiceTest {
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+48*60*60);
         user.setFreeTrialExpiredMillis(user.getNextSubPayment()*1000L);
-		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
@@ -232,7 +235,6 @@ public class ChartServiceTest {
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
         user.setLastSuccessfulPaymentDetails(paymentDetails);
-		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
@@ -258,7 +260,6 @@ public class ChartServiceTest {
 		user.setCurrentPaymentDetails(paymentDetails);
 		user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
         user.setLastSuccessfulPaymentDetails(paymentDetails);
-		String communityName = "chartsnow";
 		
 		when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
 		when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
@@ -503,7 +504,7 @@ public class ChartServiceTest {
 
 		assertNotNull(result);
 		
-		PlaylistDto[] playlists = ((ChartDto)result).getPlaylistDtos();
+        PlaylistDto[] playlists = result.getPlaylistDtos();
 		assertNotNull(playlists);
 		assertEquals(4, playlists.length);
 		assertEquals(basicChart1.getTitle(), playlists[0].getPlaylistTitle());
@@ -519,7 +520,7 @@ public class ChartServiceTest {
 		assertEquals(topChart.getChart().getI().byteValue(), playlists[1].getId().byteValue());
 		assertEquals(otherChart2.getChart().getI().byteValue(), playlists[2].getId().byteValue());
 
-		ChartDetailDto[] list = ((ChartDto)result).getChartDetailDtos();
+        ChartDetailDto[] list = result.getChartDetailDtos();
 		assertNotNull(list);
 		assertEquals(4, list.length);
 		assertEquals(ChartDetailDto.class, list[0].getClass());
@@ -551,7 +552,7 @@ public class ChartServiceTest {
 		
 		when(mockChartDetailRepository.findOne(eq(chartDetail.getI()))).thenReturn(chartDetail1);
 		when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
-		when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString())).thenReturn(true);
+        when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 		
 		ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
@@ -563,18 +564,21 @@ public class ChartServiceTest {
 		
 		verify(mockChartDetailRepository, times(1)).findOne(eq(chartDetail.getI()));
 		verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
-		verify(mockCloudFileService, times(1)).uploadFile(any(MultipartFile.class), anyString());
+        verify(streamzineUpdateService, never()).createOrReplace(any(Date.class));
+        verify(mockCloudFileService, times(1)).uploadFile(any(MultipartFile.class), anyString());
 	}
 	
 	@Test
 	public void testUpdateChart_FileNull_Success()
 		throws Exception {		
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+        Date publishDate = new Date();
+        chartDetail.setPublishTimeMillis(publishDate.getTime());
 		chartDetail.setI(null);
 		MultipartFile imageFile = new MockMultipartFile("file", "".getBytes());
 		
 		when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
-		when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString())).thenReturn(true);
+        when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 		
 		ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
@@ -585,6 +589,7 @@ public class ChartServiceTest {
 		
 		verify(mockChartDetailRepository, times(0)).findOne(eq(chartDetail.getI()));
 		verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
+        verify(streamzineUpdateService, times(1)).createOrReplace(eq(publishDate));
 		verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString());
 	}
 	
@@ -596,7 +601,7 @@ public class ChartServiceTest {
 		MultipartFile imageFile = null;
 		
 		when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
-		when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString())).thenReturn(true);
+        when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 		
 		ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
@@ -607,7 +612,7 @@ public class ChartServiceTest {
 		
 		verify(mockChartDetailRepository, times(0)).findOne(eq(chartDetail.getI()));
 		verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
-		verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString());
+        verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString(), anyMap());
 	}
 	
 	@Test
@@ -617,14 +622,14 @@ public class ChartServiceTest {
 		MultipartFile imageFile = new MockMultipartFile("file", "1".getBytes());
 		
 		when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
-		when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString())).thenReturn(true);
+        when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 		
 		ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
 		assertNull(result);
 		
 		verify(mockChartDetailRepository, times(0)).save(eq(chartDetail));
-		verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString());
+        verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString(), anyMap());
 	}
 	
 	@Test
@@ -845,6 +850,7 @@ public class ChartServiceTest {
 		fixture.setCloudFileService(mockCloudFileService);
 		fixture.setChartDetailRepository(mockChartDetailRepository);
 		fixture.setDrmService(mockDrmService);
+        fixture.setStreamzineUpdateService(streamzineUpdateService);
         fixture.setChartDetailsConverter(spy(new ChartDetailsConverter()));
 	}
 

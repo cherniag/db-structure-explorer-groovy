@@ -1,0 +1,12 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/styles.css}" />
+
+    <img th:width="${calcWidth}" style="border:none;" th:src="${dto.url}" />
+    <br />
+    <span th:text="${'Width: ' + dto.width + ', height: ' + dto.height + 'px'}"></span>
+    <br />
+    <a th:href="${dto.url}" th:text="${dto.url}" id="postedImageUrlId" target="_blank"></a>
+    <input type="hidden" id="fileNameId" th:value="${dto.fileName}"/>
+</html>

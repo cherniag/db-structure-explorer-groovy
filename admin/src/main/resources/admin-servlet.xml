@@ -140,4 +140,6 @@
 
     <context:annotation-config/>
 
+    <bean name="updateValidator" class="mobi.nowtechnologies.server.admin.validator.UpdateValidator"/>
+
 </beans>

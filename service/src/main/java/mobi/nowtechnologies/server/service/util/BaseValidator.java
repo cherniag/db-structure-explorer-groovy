@@ -19,7 +19,12 @@ public abstract class BaseValidator implements org.springframework.validation.Va
     public abstract boolean customValidate(Object target, Errors errors);
 
     public void validate(Object target, Errors errors) {
-        springValidator.validate(target, errors);
+        baseValidate(target, errors);
         customValidate(target, errors);
     }
+
+    protected void baseValidate(Object target, Errors errors){
+        springValidator.validate(target, errors);
+    }
+
 }
