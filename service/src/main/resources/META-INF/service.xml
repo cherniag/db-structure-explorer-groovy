@@ -85,6 +85,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="sendActivationSMS" value="false"/>
         <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
         <property name="reactivationUserInfoRepository" ref="reactivationUserInfoRepository"/>
+        <property name="deviceUserDataService" ref="service.DeviceUserDataService"/>
 	</bean>
 
     <bean id="vf_nz.service.UserService" class="mobi.nowtechnologies.server.service.UserService" parent="service.UserService">

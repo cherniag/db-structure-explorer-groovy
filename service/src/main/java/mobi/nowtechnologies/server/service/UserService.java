@@ -126,6 +126,7 @@ public class UserService {
     private AutoOptInRuleService autoOptInRuleService;
 
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
+    private DeviceUserDataService deviceUserDataService;
 
     public void setReactivationUserInfoRepository(ReactivationUserInfoRepository reactivationUserInfoRepository) {
         this.reactivationUserInfoRepository = reactivationUserInfoRepository;
@@ -597,6 +598,9 @@ public class UserService {
         LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
 
         userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
+
+        deviceUserDataService.removeDeviceUserData(oldUser);
+        deviceUserDataService.removeDeviceUserData(userByDeviceUID);
 
         int deletedUsers = userRepository.deleteUser(userByDeviceUID.getId());
         if(deletedUsers>1) throw new ServiceException("Couldn't remove user with id ["+userByDeviceUID.getId()+"]. There are ["+deletedUsers +"] users with id ["+userByDeviceUID.getId()+"]");
@@ -1652,5 +1656,9 @@ public class UserService {
     private void checkUserReactivation(User user) {
         if (TRUE.equals(reactivationUserInfoRepository.isUserShouldBeReactivated(user)))
              throw new ReactivateUserException();
+    }
+
+    public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
+        this.deviceUserDataService = deviceUserDataService;
     }
 }
