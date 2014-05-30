@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData.Drop;
-import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors;
+import mobi.nowtechnologies.server.trackrepo.ingest.Ingestors;
 import mobi.nowtechnologies.server.trackrepo.repository.IngestionLogRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;

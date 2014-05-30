@@ -7,7 +7,6 @@ import mobi.nowtechnologies.server.trackrepo.ingest.emi.EmiUmgParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.fuga.FugaParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.ioda.IodaParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.manual.ManualParser;
-import mobi.nowtechnologies.server.trackrepo.ingest.mos.MosDDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyParser;
 import mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParser;
@@ -16,7 +15,7 @@ import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
 
 import java.io.FileNotFoundException;
 
-import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.*;
 
 public class IParserFactory {
     private String sonyRoot;
@@ -58,9 +57,9 @@ public class IParserFactory {
             return new SonyDDEXParser(sonyDDEXRoot);
         } else if (ABSOLUTE == name) {
             return new AbsoluteParser(absoluteRoot);
-        }
-        else if (MOS == name){
-            return new MosDDEXParser(mosRoot);
+        } else if (MOS == name){
+            final String root = mosRoot;
+            return new SonyDDEXParser(root);
         }
         return null;
     }
@@ -126,7 +125,5 @@ public class IParserFactory {
     public void setMosRoot(String mosRoot) {
         this.mosRoot = mosRoot;
     }
-
-    public enum Ingestors {SONY, WARNER_OLD, WARNER, FUGA, UNIVERSAL, EMI, EMI_UMG, IODA, CI, MANUAL, SONY_DDEX, ABSOLUTE, MOS}
 
 }
