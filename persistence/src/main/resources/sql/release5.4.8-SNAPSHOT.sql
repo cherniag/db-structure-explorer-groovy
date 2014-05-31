@@ -1,4 +1,4 @@
-insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.4.1-SN", "5.4.1");
+insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.4.8", "5.4.8");
 
 /**
 Streamzine (Hey list) tables
@@ -15,10 +15,12 @@ CREATE TABLE `sz_update` (
 CREATE TABLE `sz_filename_alias` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `file_name` varchar(128) unique DEFAULT NULL,
-  `name_alias` varchar(128) unique DEFAULT NULL,
+  `name_alias` varchar(128) DEFAULT NULL,
+  `creation_date` datetime DEFAULT NULL,
   `domain` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+alter table sz_filename_alias add constraint `filename_alias_UK_alias_domain` UNIQUE(`name_alias`, `domain`);
 
 CREATE TABLE `sz_block` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,

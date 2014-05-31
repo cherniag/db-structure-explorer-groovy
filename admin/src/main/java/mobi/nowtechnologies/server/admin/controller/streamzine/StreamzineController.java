@@ -3,19 +3,19 @@ package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.ImageDTO;
-import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
 import mobi.nowtechnologies.server.dto.streamzine.MediaDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateDto;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.CloudFileImagesService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.*;
+import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
+import mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -38,18 +38,16 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.admin.controller.ControllerConstants.URL_DATE_FORMAT;
-import static mobi.nowtechnologies.server.admin.controller.ControllerConstants.URL_DATE_TIME_FORMAT;
-
 @Controller
 public class StreamzineController {
+    public static final String URL_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String URL_DATE_TIME_FORMAT = "yyyy-MM-dd_HH:mm:ss";
     private static final PageRequest PAGE_REQUEST_50 = new PageRequest(0, 50);
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
     private StreamzineUpdateAdminAsm streamzineUpdateAdminAsm;
-    @Resource
-    private FileNameAliasDtoAsm fileNameAliasDtoAsm;
     @Resource
     private TypesMappingAsm typesMappingAsm;
 
@@ -82,9 +80,6 @@ public class StreamzineController {
 
     @Resource
     private StreamzineTypesMappingService streamzineTypesMappingService;
-
-    @Resource
-    private BadgesService badgesService;
 
     @RequestMapping(value = "/streamzine/media/list", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView getMediaList(@RequestParam(value = "q", required = false, defaultValue = "") String searchWords,
@@ -127,42 +122,6 @@ public class StreamzineController {
                 ChartDto.CHART_DTO_LIST,
                 streamzineUpdateAdminAsm.toChartListItemDtos(chartDetails)
         );
-    }
-
-    @RequestMapping(value = "/streamzine/badges/list", method = RequestMethod.GET)
-    public ModelAndView getBadges() {
-        List<FilenameAlias> badges = badgesService.findAllBadges();
-        List<FileNameAliasDto> dtos = fileNameAliasDtoAsm.convertMany(badges);
-        return new ModelAndView().addObject("badges", dtos);
-    }
-
-    @RequestMapping(value = "/streamzine/badges/update", method = RequestMethod.GET)
-    public ModelAndView updateBadgeName(@RequestParam(value = "oldName") String oldName, @RequestParam(value = "newName") String newName) {
-        boolean noNameDuplication = badgesService.update(oldName, newName);
-
-        ModelAndView badges = getBadges();
-
-        if(!noNameDuplication) {
-            badges.addObject("notUniqueName", true);
-        }
-
-        return badges;
-    }
-
-    @RequestMapping(value = "/streamzine/badges/delete", method = RequestMethod.GET)
-    public ModelAndView deleteBadge(@RequestParam(value = "name") String name) {
-        badgesService.delete(name);
-
-        return getBadges();
-    }
-
-    @RequestMapping(value = "/streamzine/upload/badge", method = RequestMethod.POST)
-    public ModelAndView uploadBadge(MultipartFile file) {
-        ImageDTO dto = badgesService.upload(file);
-        ModelAndView modelAndView = new ModelAndView("streamzine/image_response");
-        modelAndView.addObject("dto", dto);
-        modelAndView.addObject("calcWidth", calcWidth(dto, 200));
-        return modelAndView;
     }
 
     @RequestMapping(value = "/streamzine/pages/list", method = RequestMethod.GET)

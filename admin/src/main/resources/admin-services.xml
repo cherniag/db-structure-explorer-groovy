@@ -23,10 +23,10 @@
         <property name="cloudFileImagesService" ref="cloudFileImagesService" />
     </bean>
 
-    <bean name="aliasDtoAsm" class="mobi.nowtechnologies.server.service.streamzine.FileNameAliasDtoAsm">
+    <bean name="aliasDtoAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.FileNameAliasDtoAsm">
     </bean>
 
-    <bean name="streamzineUpdateAdminAsm" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateAdminAsm">
+    <bean name="streamzineUpdateAdminAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm">
         <property name="messageSource" ref="messageSource" />
         <property name="deepLinkInfoService" ref="deepLinkInfoService" />
         <property name="userRepository" ref="userRepository"/>
@@ -34,7 +34,7 @@
         <property name="chartService" ref="service.ChartService"/>
     </bean>
 
-    <bean name="typesMappingAsm" class="mobi.nowtechnologies.server.service.streamzine.TypesMappingAsm">
+    <bean name="typesMappingAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm">
         <property name="messageSource" ref="messageSource" />
     </bean>
 

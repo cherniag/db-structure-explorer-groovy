@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.dto.streamzine.error.ErrorDto;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateAdminAsm;
+import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;

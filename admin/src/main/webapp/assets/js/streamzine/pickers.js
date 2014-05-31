@@ -1114,7 +1114,6 @@ if(Pickers == undefined) {
                             } else {
                                 getGrid().empty();
                                 fillGrid(data);
-                                fillGrid(data);
                             }
                         });
                     } else {

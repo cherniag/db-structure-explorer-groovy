@@ -12,7 +12,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.Manual
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
-import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateAdminAsm;
+import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

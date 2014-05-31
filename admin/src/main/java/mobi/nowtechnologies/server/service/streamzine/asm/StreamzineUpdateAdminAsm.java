@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.streamzine;
+package mobi.nowtechnologies.server.service.streamzine.asm;
 
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.ArtistAsm;
@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPo
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.ChartService;
+import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.springframework.context.MessageSource;

@@ -1,12 +1,15 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
-@Table(name = "sz_filename_alias")
+@Table(
+        name = "sz_filename_alias",
+        uniqueConstraints = @UniqueConstraint(name = "alias_with_domain", columnNames = {"name_alias", "domain"}))
 public class FilenameAlias {
     public static enum Domain {
-        ANY, HEY_LIST
+        ANY, HEY_LIST_BADGES
     }
 
     @Id
@@ -22,6 +25,10 @@ public class FilenameAlias {
     @Enumerated(EnumType.STRING)
     @Column(name = "domain", length = 128, nullable = false)
     private Domain domain = Domain.ANY;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "creation_date")
+    private Date created = new Date();
 
     protected FilenameAlias() {
     }

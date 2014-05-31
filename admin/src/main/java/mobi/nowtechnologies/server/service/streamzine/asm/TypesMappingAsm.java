@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.streamzine;
+package mobi.nowtechnologies.server.service.streamzine.asm;
 
 
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;

@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.streamzine;
+package mobi.nowtechnologies.server.service.streamzine.asm;
 
 import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
