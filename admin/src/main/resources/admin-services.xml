@@ -26,12 +26,16 @@
     <bean name="aliasDtoAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.FileNameAliasDtoAsm">
     </bean>
 
+    <bean name="streamzineAdminMediaAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm">
+        <property name="streamzineCommunity" value="${admin.streamzine.enabled.community.url}" />
+        <property name="chartService" ref="service.ChartService"/>
+    </bean>
+
     <bean name="streamzineUpdateAdminAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm">
         <property name="messageSource" ref="messageSource" />
         <property name="deepLinkInfoService" ref="deepLinkInfoService" />
         <property name="userRepository" ref="userRepository"/>
-        <property name="streamzineCommunity" value="${admin.streamzine.enabled.community.url}" />
-        <property name="chartService" ref="service.ChartService"/>
+        <property name="streamzineAdminMediaAsm" ref="streamzineAdminMediaAsm"/>
     </bean>
 
     <bean name="typesMappingAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm">

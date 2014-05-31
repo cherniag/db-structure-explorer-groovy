@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.CloudFileImagesService;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.*;
+import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
@@ -48,6 +49,8 @@ public class StreamzineController {
 
     @Resource
     private StreamzineUpdateAdminAsm streamzineUpdateAdminAsm;
+    @Resource
+    private StreamzineAdminMediaAsm streamzineAdminMediaAsm;
     @Resource
     private TypesMappingAsm typesMappingAsm;
 
@@ -94,7 +97,7 @@ public class StreamzineController {
         Update update = streamzineUpdateService.get(updateId);
         List<Media> medias = mediaService.getMediasForAvailableCommunityCharts(communityRewriteUrl, update.getDate().getTime(), escapeSearchWord(searchWords), mediaIsrcs);
 
-        List<MediaDto> chartItemDtos = streamzineUpdateAdminAsm.toMediaDtos(medias);
+        List<MediaDto> chartItemDtos = streamzineAdminMediaAsm.toMediaDtos(medias);
 
         return new ModelAndView()
                 .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
@@ -120,7 +123,7 @@ public class StreamzineController {
         List<ChartDetail> chartDetails = chartService.getChartsByCommunityAndPublishTime(communityRewriteUrl, update.getDate());
         return new ModelAndView().addObject(
                 ChartDto.CHART_DTO_LIST,
-                streamzineUpdateAdminAsm.toChartListItemDtos(chartDetails)
+                streamzineAdminMediaAsm.toChartListItemDtos(chartDetails)
         );
     }
 

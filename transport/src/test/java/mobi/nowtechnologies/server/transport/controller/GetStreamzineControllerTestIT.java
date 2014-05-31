@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +75,9 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false);
 
         // check json format and the correct order of the blocks
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true)
+        ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true);
+
+        resultActions
                         // check the orders
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.BUTTON.name())))
@@ -88,8 +91,9 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("mq-app://web/aHR0cDovL2V4YW1wbGUuY29t")))
 
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo[0]", is(GrantedToType.LIMITED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo[1]", is(GrantedToType.FREETRIAL.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
+                // .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo[1]", is(GrantedToType.FREETRIAL.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
                         //

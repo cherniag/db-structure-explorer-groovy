@@ -1,10 +1,6 @@
 package mobi.nowtechnologies.server.service.streamzine.asm;
 
-import com.google.common.collect.Lists;
-import mobi.nowtechnologies.server.assembler.ArtistAsm;
 import mobi.nowtechnologies.server.dto.streamzine.*;
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
@@ -13,10 +9,8 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.StringUtils;
@@ -27,8 +21,7 @@ public class StreamzineUpdateAdminAsm {
     private MessageSource messageSource;
     private DeepLinkInfoService deepLinkInfoService;
     private UserRepository userRepository;
-    private String streamzineCommunity;
-    private ChartService chartService;
+    private StreamzineAdminMediaAsm streamzineAdminMediaAsm;
 
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
@@ -42,12 +35,8 @@ public class StreamzineUpdateAdminAsm {
         this.userRepository = userRepository;
     }
 
-    public void setStreamzineCommunity(String streamzineCommunity) {
-        this.streamzineCommunity = streamzineCommunity;
-    }
-
-    public void setChartService(ChartService chartService) {
-        this.chartService = chartService;
+    public void setStreamzineAdminMediaAsm(StreamzineAdminMediaAsm streamzineAdminMediaAsm) {
+        this.streamzineAdminMediaAsm = streamzineAdminMediaAsm;
     }
 
     //
@@ -180,7 +169,7 @@ public class StreamzineUpdateAdminAsm {
             if (i.getChartType() != null) {
                 blockDto.setValue(i.getChartType().name());
             }
-            blockDto.setData(toPlaylistDto(i));
+            blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i));
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));
         }
 
@@ -192,7 +181,7 @@ public class StreamzineUpdateAdminAsm {
             Media media = i.getMedia();
             if (media != null) {
                 blockDto.setValue(media.getIsrc());
-                blockDto.setData(toMediaDto(i.getMedia()));
+                blockDto.setData(streamzineAdminMediaAsm.toMediaDto(i.getMedia()));
             }
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, track));
         }
@@ -203,7 +192,7 @@ public class StreamzineUpdateAdminAsm {
             ManualCompilationDeeplinkInfo i = (ManualCompilationDeeplinkInfo) info;
             DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(i.getMediaIsrc());
             blockDto.setValue(manualCompilationData.toMediasString());
-            blockDto.setData(toMediaDtos(i.getMedias()));
+            blockDto.setData(streamzineAdminMediaAsm.toMediaDtos(i.getMedias()));
             blockDto.setKey(musicType.name());
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, musicType));
         }
@@ -269,59 +258,6 @@ public class StreamzineUpdateAdminAsm {
 
     private <E0 extends Enum<E0>, E extends Enum<E>> String getMessage(E0 prefix, E suffix) {
         return messageSource.getMessage("streamzine.contenttype." + prefix.name() + "." + suffix.name(), null, LocaleContextHolder.getLocale());
-    }
-
-    public List<MediaDto> toMediaDtos(List<Media> medias) {
-        List<MediaDto> dtos = new ArrayList<MediaDto>();
-        for (Media media : medias) {
-            dtos.add(toMediaDto(media));
-        }
-        return dtos;
-    }
-
-    private MediaDto toMediaDto(Media media) {
-        MediaDto mediaDto = new MediaDto();
-        mediaDto.setTitle(media.getTitle());
-        mediaDto.setFileName(media.getImageFileSmall().getFilename());
-        mediaDto.setIsrc(media.getIsrc());
-        mediaDto.setArtistDto(ArtistAsm.toArtistDto(media.getArtist()));
-        return mediaDto;
-    }
-
-    private ChartListItemDto toPlaylistDto(MusicPlayListDeeplinkInfo i) {
-        final ChartType requiredChartType = i.getChartType();
-
-        List<ChartDetail> chartDetails = chartService.getChartsByCommunity(streamzineCommunity, null, null);
-
-        for (ChartListItemDto dto : toChartListItemDtos(chartDetails)) {
-            if(dto.getChartType() == requiredChartType) {
-                return dto;
-            }
-        }
-
-        return null;
-    }
-
-    public List<ChartListItemDto> toChartListItemDtos(List<ChartDetail> chartsByCommunity) {
-        List<ChartListItemDto> chartListItemDtos = Lists.newArrayList();
-        for (ChartDetail chartDetail : chartsByCommunity) {
-            chartListItemDtos.add(toChartListItemDto(chartDetail));
-        }
-
-        Collections.sort(chartListItemDtos);
-
-        return chartListItemDtos;
-    }
-
-    private ChartListItemDto toChartListItemDto(ChartDetail chartDetail) {
-        ChartListItemDto chartListItemDto = new ChartListItemDto();
-        Chart chart = chartDetail.getChart();
-        chartListItemDto.setName(chartDetail.getTitle() != null ? chartDetail.getTitle() : chart.getName());
-        chartListItemDto.setSubtitle(chartDetail.getSubtitle());
-        chartListItemDto.setImageFileName(chartDetail.getImageFileName());
-        chartListItemDto.setTracksCount(chart.getNumTracks());
-        chartListItemDto.setChartType(chartDetail.getChartType());
-        return chartListItemDto;
     }
 
     public List<UserDto> toUserDtos(List<User> users) {
