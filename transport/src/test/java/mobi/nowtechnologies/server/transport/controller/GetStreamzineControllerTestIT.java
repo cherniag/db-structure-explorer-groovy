@@ -49,7 +49,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         // parameters
         String userName = "test@ukr.net";
         String deviceUID = "b88106713409e92622461a876abcd74b1111";
-        String apiVersion = "6.1";
+        String apiVersion = "6.0";
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -140,7 +140,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         // parameters
         String userName = "test@ukr.net";
         String deviceUID = "b88106713409e92622461a876abcd74b1111";
-        String apiVersion = "6.1";
+        String apiVersion = "6.0";
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

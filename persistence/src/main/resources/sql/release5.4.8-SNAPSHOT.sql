@@ -16,7 +16,7 @@ CREATE TABLE `sz_filename_alias` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `file_name` varchar(128) unique DEFAULT NULL,
   `name_alias` varchar(128) DEFAULT NULL,
-  `creation_date` datetime DEFAULT NULL,
+  `creation_date` date DEFAULT NULL,
   `domain` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

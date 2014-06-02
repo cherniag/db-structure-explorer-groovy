@@ -23,7 +23,7 @@ public class GetStreamzineController extends CommonController {
     private StreamzineUpdateAsm streamzineUpdateAsm;
 
     @RequestMapping(method = RequestMethod.POST,
-            value = {"**/{community:hl_uk}/{apiVersion:6.1}/GET_STREAMZINE"})
+            value = {"**/{community:hl_uk}/{apiVersion:6.0}/GET_STREAMZINE"})
     public Response getUpdate(HttpServletResponse response,
                           @RequestParam("APP_VERSION") String appVersion,
                           @PathVariable("community") String community,
