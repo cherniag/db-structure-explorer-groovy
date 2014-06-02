@@ -17,10 +17,7 @@ public interface CloudFileService {
 	
 	boolean uploadFile(File file, String fileName, String contentType, String destinationContainer);
 
-
 	boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName);
-
-	boolean login();
 
     Collection<FilesObject> findFilesStartWith(String prefix, int limit);
 

@@ -97,8 +97,7 @@ public class CloudFileServiceImpl implements CloudFileService {
 		return isConfigured;
 	}
 
-	@Override
-	public synchronized boolean login() {
+	private boolean login() {
 		LOGGER.info("login on cloud");
 
 		boolean isLogged;
