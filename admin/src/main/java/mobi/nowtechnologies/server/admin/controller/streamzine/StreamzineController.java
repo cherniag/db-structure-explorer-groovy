@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.ImageDTO;
 import mobi.nowtechnologies.server.dto.streamzine.MediaDto;

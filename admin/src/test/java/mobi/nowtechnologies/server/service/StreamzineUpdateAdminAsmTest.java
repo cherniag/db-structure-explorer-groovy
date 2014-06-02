@@ -7,11 +7,12 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,7 +71,7 @@ public class StreamzineUpdateAdminAsmTest {
         Media media = new Media();
         ManualCompilationDeeplinkInfo deeplinkInfo = new ManualCompilationDeeplinkInfo(Lists.newArrayList(media));
 
-        when(deepLinkInfoService.create(Matchers.any(DeepLinkInfoService.DeeplinkInfoData.class))).thenReturn(deeplinkInfo);
+        when(deepLinkInfoService.create(Matchers.any(DeeplinkInfoData.class))).thenReturn(deeplinkInfo);
 
         OrdinalBlockDto ordinalBlockDto = new OrdinalBlockDto();
         ordinalBlockDto.setContentType(ContentType.MUSIC);

@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.domain.streamzine.TypeToSubTypePair;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
 import org.junit.Test;

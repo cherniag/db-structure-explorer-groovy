@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import org.apache.commons.net.util.Base64;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +26,12 @@ public class DeepLinkUrlFactory {
     private final static String ACTION = "action";
     private final static String ID = "id";
 
+    private DeepLinkInfoService deepLinkInfoService;
+
+    public void setDeepLinkInfoService(DeepLinkInfoService deepLinkInfoService) {
+        this.deepLinkInfoService = deepLinkInfoService;
+    }
+
     public List<Integer> create(ManualCompilationDeeplinkInfo deeplinkInfo) {
         return deeplinkInfo.getMediaIds();
     }
@@ -35,7 +42,7 @@ public class DeepLinkUrlFactory {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
         uriComponentsBuilder.scheme(PROTOCOL);
         uriComponentsBuilder.host(FeatureValueType.of(deeplinkInfo).getId());
-        uriComponentsBuilder.pathSegment(ContentSubType.of(deeplinkInfo).getName());
+        uriComponentsBuilder.pathSegment(ContentSubType.of(deepLinkInfoService.getSubType(deeplinkInfo)).getName());
         uriComponentsBuilder.pathSegment(decideSubValueForPromotional(deeplinkInfo));
         // query params if needed
         putActionQueryParamIfPromotional(deeplinkInfo, uriComponentsBuilder);

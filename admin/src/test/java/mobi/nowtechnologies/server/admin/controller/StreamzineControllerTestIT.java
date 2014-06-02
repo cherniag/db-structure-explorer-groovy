@@ -1,15 +1,15 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import mobi.nowtechnologies.server.dto.streamzine.MusicType;
-import mobi.nowtechnologies.server.dto.streamzine.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
@@ -22,8 +22,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
 
-import static mobi.nowtechnologies.server.dto.streamzine.MusicType.MANUAL_COMPILATION;
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType.MUSIC;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType.MANUAL_COMPILATION;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.MUSIC;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.WIDE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

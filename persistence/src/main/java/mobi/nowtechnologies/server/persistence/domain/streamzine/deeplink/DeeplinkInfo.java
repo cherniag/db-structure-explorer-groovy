@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 
 import javax.persistence.*;
 

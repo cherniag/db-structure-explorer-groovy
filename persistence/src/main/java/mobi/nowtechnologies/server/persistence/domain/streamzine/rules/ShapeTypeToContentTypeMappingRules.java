@@ -1,15 +1,14 @@
-package mobi.nowtechnologies.server.domain.streamzine.rules;
+package mobi.nowtechnologies.server.persistence.domain.streamzine.rules;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType.*;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.*;
 
 public enum ShapeTypeToContentTypeMappingRules {
     WIDE_RULES(ShapeType.WIDE, MUSIC, /*SOCIAL,*/ NEWS, PROMOTIONAL),
@@ -27,7 +26,7 @@ public enum ShapeTypeToContentTypeMappingRules {
         Assert.notNull(contentTypes);
     }
 
-    public boolean valid(DeepLinkInfoService.DeeplinkInfoData pair) {
+    public boolean valid(DeeplinkInfoData pair) {
         return shapeType == pair.getShapeType() && contentTypes.contains(pair.getContentType());
     }
 

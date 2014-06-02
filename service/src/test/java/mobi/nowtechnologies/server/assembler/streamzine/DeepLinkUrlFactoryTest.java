@@ -4,9 +4,16 @@ import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Date;
 import java.util.List;
@@ -15,14 +22,23 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 /**
  * Author: Gennadii Cherniaiev
  * Date: 3/21/14
  */
 public class DeepLinkUrlFactoryTest {
+    @Mock
+    private DeepLinkInfoService deepLinkInfoService;
 
-    private DeepLinkUrlFactory deepLinkUrlFactory = new DeepLinkUrlFactory();
+    @InjectMocks
+    private DeepLinkUrlFactory deepLinkUrlFactory;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void checkCreateLinkValueForManualCompilation() throws Exception {
@@ -81,6 +97,8 @@ public class DeepLinkUrlFactoryTest {
         Media media = getMedia(10, "TRACK-10");
         MusicTrackDeeplinkInfo musicTrackDeeplinkInfo = new MusicTrackDeeplinkInfo(media);
 
+        when(deepLinkInfoService.getSubType(musicTrackDeeplinkInfo)).thenReturn((Enum) MusicType.TRACK);
+
         //check
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo);
 
@@ -92,6 +110,8 @@ public class DeepLinkUrlFactoryTest {
     public void checkCreateLinkValueForMusicPlayList() throws Exception {
         //prepare data
         MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(ChartType.HOT_TRACKS);
+
+        when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
         String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo);
@@ -106,6 +126,8 @@ public class DeepLinkUrlFactoryTest {
         message.setMessageType(NewsDetailDto.MessageType.NEWS);
         NewsStoryDeeplinkInfo newsStoryDeeplinkInfo = new NewsStoryDeeplinkInfo(message);
 
+        when(deepLinkInfoService.getSubType(newsStoryDeeplinkInfo)).thenReturn((Enum) NewsType.STORY);
+
         //check
         String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo);
         assertThat(o, is("mq-app://content/story?id=10"));
@@ -117,6 +139,7 @@ public class DeepLinkUrlFactoryTest {
         int time = 1419120000;
         Date date = new Date(time);
         NewsListDeeplinkInfo newsListDeeplinkInfo = new NewsListDeeplinkInfo(date);
+        when(deepLinkInfoService.getSubType(newsListDeeplinkInfo)).thenReturn((Enum) NewsType.LIST);
 
         //check
         String o = deepLinkUrlFactory.create(newsListDeeplinkInfo);

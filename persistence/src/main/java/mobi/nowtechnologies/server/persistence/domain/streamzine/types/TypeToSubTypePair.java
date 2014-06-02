@@ -1,9 +1,8 @@
-package mobi.nowtechnologies.server.domain.streamzine;
+package mobi.nowtechnologies.server.persistence.domain.streamzine.types;
 
-import mobi.nowtechnologies.server.dto.streamzine.MusicType;
-import mobi.nowtechnologies.server.dto.streamzine.NewsType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,14 @@ public enum TypeToSubTypePair {
     TypeToSubTypePair(ContentType contentType, Enum<?> subType) {
         this.contentType = contentType;
         this.subType = subType;
+    }
+
+    public Enum<?> getSubType() {
+        return subType;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
     }
 
     public static List<Enum<?>> getAllSubTypesByContentType(ContentType contentType) {

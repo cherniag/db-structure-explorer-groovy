@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.assembler;
 
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
@@ -27,6 +28,9 @@ import static org.mockito.Mockito.mock;
 public class StreamzineUpdateAsmTest {
     @Mock
     private DeepLinkUrlFactory deepLinkUrlFactory;
+    @Mock
+    private DeepLinkInfoService deepLinkInfoService;
+
     @InjectMocks
     private StreamzineUpdateAsm streamzineUpdateAsm;
 

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 
 import javax.persistence.*;
 import java.util.ArrayList;

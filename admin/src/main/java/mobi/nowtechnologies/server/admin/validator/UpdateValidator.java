@@ -2,16 +2,17 @@ package mobi.nowtechnologies.server.admin.validator;
 
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
-import mobi.nowtechnologies.server.dto.streamzine.MusicType;
-import mobi.nowtechnologies.server.dto.streamzine.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.service.MediaService;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
@@ -94,7 +95,7 @@ public class UpdateValidator extends BaseValidator {
         }
     }
 
-    private void validateMapping(DeepLinkInfoService.DeeplinkInfoData blockDto, Errors errors) {
+    private void validateMapping(DeeplinkInfoData blockDto, Errors errors) {
         TypesMappingInfo info = streamzineTypesMappingService.getTypesMappingInfos();
 
         if(!info.matches(blockDto)) {

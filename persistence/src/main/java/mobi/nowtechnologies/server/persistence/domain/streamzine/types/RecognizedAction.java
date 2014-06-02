@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.domain.streamzine;
+package mobi.nowtechnologies.server.persistence.domain.streamzine.types;
 
 public enum RecognizedAction {
     SUBSCRIBE("opensubscription");

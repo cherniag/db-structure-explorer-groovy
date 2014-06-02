@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.dto.streamzine.mapping;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.domain.streamzine;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 
 import java.util.Collections;

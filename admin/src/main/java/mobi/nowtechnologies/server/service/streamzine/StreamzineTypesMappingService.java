@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
-import mobi.nowtechnologies.server.domain.streamzine.rules.ShapeTypeToContentTypeMappingRules;
-import mobi.nowtechnologies.server.domain.streamzine.TypeToSubTypePair;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.ShapeTypeToContentTypeMappingRules;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ExcludedSubTypes;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 

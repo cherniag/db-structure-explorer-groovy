@@ -4,7 +4,7 @@ package mobi.nowtechnologies.server.service.streamzine.asm;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;
 import mobi.nowtechnologies.server.dto.streamzine.mapping.ContentWithSubTypesMappingDto;
 import mobi.nowtechnologies.server.dto.streamzine.mapping.ShapeTypeMappingDto;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 

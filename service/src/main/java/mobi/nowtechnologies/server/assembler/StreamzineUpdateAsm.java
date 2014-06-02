@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.assembler;
 
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.dto.streamzine.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 
 import java.util.Collections;
@@ -14,9 +16,14 @@ import java.util.List;
 
 public class StreamzineUpdateAsm {
     private DeepLinkUrlFactory deepLinkUrlFactory;
+    private DeepLinkInfoService deepLinkInfoService;
 
     public void setDeepLinkUrlFactory(DeepLinkUrlFactory deepLinkUrlFactory) {
         this.deepLinkUrlFactory = deepLinkUrlFactory;
+    }
+
+    public void setDeepLinkInfoService(DeepLinkInfoService deepLinkInfoService) {
+        this.deepLinkInfoService = deepLinkInfoService;
     }
 
     public StreamzineUpdateDto convertOne(Update update) {
@@ -38,9 +45,16 @@ public class StreamzineUpdateAsm {
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
         DeeplinkType deeplinkType = getDeeplinkType(block);
 
+        boolean allowedToAssignBadge =
+                BadgeMappingRules.allowed(block.getShapeType(), deeplinkInfo.getContentType(), deepLinkInfoService.getSubType(deeplinkInfo));
+
         if(deeplinkInfo instanceof ManualCompilationDeeplinkInfo) {
             IdListItemDto dto = new IdListItemDto(generateId(block), deeplinkType);
             dto.setImage(block.getCoverUrl());
+            if(allowedToAssignBadge) {
+                dto.setBadgeIcon(block.getBadgeUrl());
+            }
+            dto.setBadgeIcon(block.getBadgeUrl());
             dto.setTitle(block.getTitle());
             dto.setSubTitle(block.getSubTitle());
             dto.setLinkValue(deepLinkUrlFactory.create((ManualCompilationDeeplinkInfo) deeplinkInfo));
@@ -48,6 +62,10 @@ public class StreamzineUpdateAsm {
         } else {
             DeeplinkValueItemDto dto = new DeeplinkValueItemDto(generateId(block), deeplinkType);
             dto.setImage(block.getCoverUrl());
+            if(allowedToAssignBadge) {
+                dto.setBadgeIcon(block.getBadgeUrl());
+            }
+            dto.setBadgeIcon(block.getBadgeUrl());
             dto.setTitle(block.getTitle());
             dto.setSubTitle(block.getSubTitle());
             dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo));

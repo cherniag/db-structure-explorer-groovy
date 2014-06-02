@@ -24,6 +24,10 @@ public abstract class BaseContentItemDto {
     @JsonProperty(value = "image")
     private String image;
 
+    @XmlElement(name = "badge_icon")
+    @JsonProperty(value = "badge_icon")
+    private String badgeIcon;
+
     @XmlElement(name = "link_type")
     @JsonProperty(value = "link_type")
     private DeeplinkType linkType;
@@ -64,4 +68,11 @@ public abstract class BaseContentItemDto {
         return image;
     }
 
+    public String getBadgeIcon() {
+        return badgeIcon;
+    }
+
+    public void setBadgeIcon(String badgeIcon) {
+        this.badgeIcon = badgeIcon;
+    }
 }

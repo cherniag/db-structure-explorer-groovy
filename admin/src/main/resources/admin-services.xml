@@ -4,11 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService">
-        <property name="mediaRepository" ref="mediaRepository" />
-        <property name="messageRepository" ref="messageRepository"/>
-    </bean>
-
     <bean name="mobileApplicationPagesService" class="mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService">
         <constructor-arg>
             <value>file:#{systemProperties['catalina.base']}/conf/streamzine/pages.txt</value>

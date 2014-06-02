@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType.PROMOTIONAL;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.PROMOTIONAL;
 
 public enum ExcludedSubTypes {
     BUTTON_PROMOTIONAL(ShapeType.BUTTON, PROMOTIONAL, LinkLocationType.EXTERNAL_AD);

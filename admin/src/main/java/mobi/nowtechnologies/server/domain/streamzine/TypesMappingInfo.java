@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.domain.streamzine;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
-import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +15,7 @@ public class TypesMappingInfo {
         return rules;
     }
 
-    public boolean matches(DeepLinkInfoService.DeeplinkInfoData item) {
+    public boolean matches(DeeplinkInfoData item) {
         for (TypesMappingInfoItem rule : rules) {
             if(rule.getShapeType() == item.getShapeType()) {
                 for (Map.Entry<ContentType, List<Enum<?>>> contentTypeListEntry : rule.getTypeWithSubtypes().entrySet()) {

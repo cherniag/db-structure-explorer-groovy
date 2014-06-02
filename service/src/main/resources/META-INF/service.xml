@@ -46,9 +46,18 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
     </bean>
 
-	<bean name="deepLinkUrlFactory" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory" />
+    <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
+        <property name="mediaRepository" ref="mediaRepository" />
+        <property name="messageRepository" ref="messageRepository"/>
+    </bean>
+
+	<bean name="deepLinkUrlFactory" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory">
+        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+	</bean>
+
     <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
         <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory" />
+        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
     </bean>
 
     <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">

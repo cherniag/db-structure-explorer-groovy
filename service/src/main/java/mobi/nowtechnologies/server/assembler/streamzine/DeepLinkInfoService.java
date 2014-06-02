@@ -1,16 +1,17 @@
-package mobi.nowtechnologies.server.service.streamzine;
+package mobi.nowtechnologies.server.assembler.streamzine;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import mobi.nowtechnologies.server.domain.streamzine.RecognizedAction;
-import mobi.nowtechnologies.server.dto.streamzine.HasVip;
-import mobi.nowtechnologies.server.dto.streamzine.MusicType;
-import mobi.nowtechnologies.server.dto.streamzine.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
@@ -36,6 +37,34 @@ public class DeepLinkInfoService {
     //
     // API
     //
+    public Enum<?> getSubType(DeeplinkInfo info) {
+        if(info instanceof MusicPlayListDeeplinkInfo) {
+            return MusicType.PLAYLIST;
+        }
+
+        if(info instanceof MusicTrackDeeplinkInfo) {
+            return MusicType.TRACK;
+        }
+
+        if(info instanceof ManualCompilationDeeplinkInfo) {
+            return MusicType.MANUAL_COMPILATION;
+        }
+
+        if(info instanceof NewsListDeeplinkInfo) {
+            return NewsType.LIST;
+        }
+
+        if(info instanceof NewsStoryDeeplinkInfo) {
+            return NewsType.STORY;
+        }
+
+        if(info instanceof InformationDeeplinkInfo) {
+            return ((InformationDeeplinkInfo) info).getLinkType();
+        }
+
+        throw new IllegalArgumentException("Not known info type: " + info);
+    }
+
     public DeeplinkInfo create(DeeplinkInfoData data) {
         switch (data.getContentType()) {
             case NEWS:
@@ -253,13 +282,4 @@ public class DeepLinkInfoService {
 
     }
 
-    public static interface DeeplinkInfoData {
-        ShapeType getShapeType();
-
-        ContentType getContentType();
-
-        String getKey();
-
-        String getValue();
-    }
 }

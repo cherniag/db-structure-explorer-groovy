@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
@@ -29,6 +30,7 @@ import java.util.Date;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,6 +62,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         // Expected JSON data
         //
         final String externalLink = "http://example.com";
+        final String badgeUrl = "badgeUrl";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
         final ChartType chartType = ChartType.BASIC_CHART;
@@ -67,7 +70,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, user);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, user, badgeUrl);
 
         Thread.sleep(1200L);
 
@@ -77,7 +80,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         // check json format and the correct order of the blocks
         ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true);
 
-        resultActions
+        resultActions.andDo(print())
                         // check the orders
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.BUTTON.name())))
@@ -96,6 +99,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                 // .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo[1]", is(GrantedToType.FREETRIAL.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].badge_icon", is(badgeUrl)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("mq-app://page/subscription_page?action=subscribe")))
@@ -150,13 +154,14 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         // Expected JSON data
         //
         final String externalLink = "http://example.com";
+        final String badgeUrl = "badgeUrl";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
         final ChartType chartType = ChartType.BASIC_CHART;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, user);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, user, badgeUrl);
 
         Thread.sleep(1200L);
 
@@ -174,7 +179,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
 
         user = userRepository.findOne(userName, communityUrl);
         final Date updateDateForSpecificUser = new Date(System.currentTimeMillis() + 1000L);
-        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, user);
+        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, user, badgeUrl);
 
         Thread.sleep(1200L);
 
@@ -218,39 +223,39 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                 andExpect(status().isNotFound());
     }
 
-    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, User user) {
+    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, User user, String badgeUrl) {
         Update update = streamzineUpdateService.create(updateDate);
         update.setUser(user);
 
         streamzineUpdateService.update(update.getId(), update);
 
         // simulate adding blocks
-        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track);
+        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, badgeUrl);
         streamzineUpdateService.update(update.getId(), incomingWithBlocks);
     }
 
-    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track) {
+    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl) {
         Update u = new Update(DateUtils.addDays(new Date(), 1));
         //
         // Not included block
         //
-        Block excludedAdd = newBlock(0, ShapeType.NARROW, createMusicTrackDeeplink(track));
+        Block excludedAdd = newBlock(0, ShapeType.NARROW, createMusicTrackDeeplink(track), badgeUrl);
         excludedAdd.exclude();
         u.addBlock(excludedAdd);
         //
         // Ordinal blocks
         //
-        u.addBlock(newBlock(1, ShapeType.WIDE, createNotificationDeeplink(externalLink)));
-        u.addBlock(newBlock(2, ShapeType.BUTTON, createNotificationDeeplink0()));
-        u.addBlock(newBlock(3, ShapeType.NARROW, createNotificationDeeplink1()));
-        u.addBlock(newBlock(4, ShapeType.SLIM_BANNER, createNewsListDeeplink(publishDate)));
-        u.addBlock(newBlock(5, ShapeType.WIDE, createNewsStoryDeeplink(newsMessage)));
+        u.addBlock(newBlock(1, ShapeType.WIDE, createNotificationDeeplink(externalLink), badgeUrl));
+        u.addBlock(newBlock(2, ShapeType.BUTTON, createNotificationDeeplink0(), badgeUrl));
+        u.addBlock(newBlock(3, ShapeType.NARROW, createNotificationDeeplink1(), badgeUrl));
+        u.addBlock(newBlock(4, ShapeType.SLIM_BANNER, createNewsListDeeplink(publishDate), badgeUrl));
+        u.addBlock(newBlock(5, ShapeType.WIDE, createNewsStoryDeeplink(newsMessage), badgeUrl));
         //
         // Added mixed positions to test that values are added according to positions: 5 and 6
         //
-        u.addBlock(newBlock(7, ShapeType.BUTTON, createMusicPlaylistDeeplink(chartType)));
-        u.addBlock(newBlock(8, ShapeType.BUTTON, createManualCompilationDeeplink(track)));
-        u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track)));
+        u.addBlock(newBlock(7, ShapeType.BUTTON, createMusicPlaylistDeeplink(chartType), badgeUrl));
+        u.addBlock(newBlock(8, ShapeType.BUTTON, createManualCompilationDeeplink(track), badgeUrl));
+        u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track), badgeUrl));
         return u;
     }
 
@@ -306,8 +311,11 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         return d;
     }
 
-    private Block newBlock(int position, ShapeType shapeType, DeeplinkInfo deepLinkInfo) {
+    private Block newBlock(int position, ShapeType shapeType, DeeplinkInfo deepLinkInfo, String badgeUrl) {
         Block b = new Block(position, shapeType, deepLinkInfo);
+        if(badgeUrl != null) {
+            b.setBadgeUrl(badgeUrl);
+        }
         b.setTitle("title");
         b.setSubTitle("sub title");
         b.setCoverUrl("image_" + System.nanoTime() + ".jpg");

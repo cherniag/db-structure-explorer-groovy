@@ -1,37 +1,29 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 
 public enum ContentSubType {
-    NEWS_LIST("news"),
-    NEWS_STORY("story"),
-    PLAYLIST("playlist"),
-    MUSIC_TRACK("track"),
-    NOT_SUPPORTED("");
+    NEWS_LIST("news", NewsType.LIST),
+    NEWS_STORY("story", NewsType.STORY),
+    PLAYLIST("playlist", MusicType.PLAYLIST),
+    MUSIC_TRACK("track", MusicType.TRACK),
+    NOT_SUPPORTED("", null);
 
     private String name;
+    private Enum<?> subType;
 
-    ContentSubType(String name) {
+    ContentSubType(String name, Enum<?> subType) {
         this.name = name;
+        this.subType = subType;
     }
 
-    public static ContentSubType of(DeeplinkInfo info) {
-        if(info instanceof MusicPlayListDeeplinkInfo) {
-            return PLAYLIST;
+    public static ContentSubType of(Enum<?> subType) {
+        for (ContentSubType contentSubType : values()) {
+            if(contentSubType.subType == subType) {
+                return contentSubType;
+            }
         }
-
-        if(info instanceof MusicTrackDeeplinkInfo) {
-            return MUSIC_TRACK;
-        }
-
-        if(info instanceof NewsListDeeplinkInfo) {
-            return NEWS_LIST;
-        }
-
-        if(info instanceof NewsStoryDeeplinkInfo) {
-            return NEWS_STORY;
-        }
-
         return NOT_SUPPORTED;
     }
 

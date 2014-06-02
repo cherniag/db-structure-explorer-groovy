@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.InformationDeeplinkInfo;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 
 public enum FeatureValueType {
     PAGE("page"), WEB("web"), CONTENT("content");

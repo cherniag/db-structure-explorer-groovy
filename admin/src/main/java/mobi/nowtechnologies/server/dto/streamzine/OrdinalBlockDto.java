@@ -1,14 +1,15 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
-import mobi.nowtechnologies.server.service.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Comparator;
 
-public class OrdinalBlockDto extends BlockDto implements DeepLinkInfoService.DeeplinkInfoData, HasVip {
+public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVip {
     public static final Comparator<OrdinalBlockDto> COMPARATOR = new Comparator<OrdinalBlockDto>() {
         @Override
         public int compare(OrdinalBlockDto o1, OrdinalBlockDto o2) {

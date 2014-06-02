@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import org.modelmapper.internal.util.Assert;
 

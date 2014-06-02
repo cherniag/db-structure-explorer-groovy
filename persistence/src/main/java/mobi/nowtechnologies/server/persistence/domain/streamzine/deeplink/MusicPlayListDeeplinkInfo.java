@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 
 import javax.persistence.Column;

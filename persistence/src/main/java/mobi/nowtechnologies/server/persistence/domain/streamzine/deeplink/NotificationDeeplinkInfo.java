@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
