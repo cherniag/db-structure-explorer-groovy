@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.domain.streamzine;
+package mobi.nowtechnologies.server.domain.streamzine.rules;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType.*;
 
-public enum ShapeTypeToContentTypeMapping {
+public enum ShapeTypeToContentTypeMappingRules {
     WIDE_RULES(ShapeType.WIDE, MUSIC, /*SOCIAL,*/ NEWS, PROMOTIONAL),
     NARROW_RULES(ShapeType.NARROW, MUSIC, /*SOCIAL,*/ NEWS, PROMOTIONAL),
     SLIM_BANNER_RULES(ShapeType.SLIM_BANNER, PROMOTIONAL),
@@ -20,7 +20,7 @@ public enum ShapeTypeToContentTypeMapping {
     private final ShapeType shapeType;
     private final List<ContentType> contentTypes;
 
-    ShapeTypeToContentTypeMapping(ShapeType shapeType, ContentType ... contentTypes) {
+    ShapeTypeToContentTypeMappingRules(ShapeType shapeType, ContentType... contentTypes) {
         this.shapeType = shapeType;
         this.contentTypes = Arrays.asList(contentTypes);
 

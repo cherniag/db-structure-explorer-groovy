@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.domain.streamzine.TypeToSubTypeMapping;
+import mobi.nowtechnologies.server.domain.streamzine.TypeToSubTypePair;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
@@ -40,10 +40,10 @@ public class StreamzineTypesMappingServiceTest {
             List<Enum<?>> subTypes = typeWithSubtypes.get(contentType);
 
             // ALL sub types for every Content Type of WIDE shape Type
-            TypeToSubTypeMapping typeToSubTypeMapping = TypeToSubTypeMapping.find(contentType);
+            List<Enum<?>> allSubTypesByContentType = TypeToSubTypePair.getAllSubTypesByContentType(contentType);
             assertTrue(
-                    "[" + shapeType + "-" + contentType + "] does not contain all types of " + typeToSubTypeMapping.getSubTypes(),
-                    subTypes.containsAll(typeToSubTypeMapping.getSubTypes())
+                    "[" + shapeType + "-" + contentType + "] does not contain all types of " + allSubTypesByContentType,
+                    subTypes.containsAll(allSubTypesByContentType)
             );
         }
     }
@@ -64,10 +64,10 @@ public class StreamzineTypesMappingServiceTest {
             List<Enum<?>> subTypes = typeWithSubtypes.get(contentType);
 
             // ALL sub types for every Content Type of WIDE shape Type
-            TypeToSubTypeMapping typeToSubTypeMapping = TypeToSubTypeMapping.find(contentType);
+            List<Enum<?>> allSubTypesByContentType = TypeToSubTypePair.getAllSubTypesByContentType(contentType);
             assertTrue(
-                    "[" + shapeType + "-" + contentType + "] does not contain all types of " + typeToSubTypeMapping.getSubTypes(),
-                    subTypes.containsAll(typeToSubTypeMapping.getSubTypes())
+                    "[" + shapeType + "-" + contentType + "] does not contain all types of " + allSubTypesByContentType,
+                    subTypes.containsAll(allSubTypesByContentType)
             );
         }
     }

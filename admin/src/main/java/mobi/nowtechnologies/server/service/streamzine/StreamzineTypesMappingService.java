@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
-import mobi.nowtechnologies.server.domain.streamzine.ShapeTypeToContentTypeMapping;
-import mobi.nowtechnologies.server.domain.streamzine.TypeToSubTypeMapping;
+import mobi.nowtechnologies.server.domain.streamzine.rules.ShapeTypeToContentTypeMappingRules;
+import mobi.nowtechnologies.server.domain.streamzine.TypeToSubTypePair;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ContentType;
@@ -16,12 +16,12 @@ public class StreamzineTypesMappingService {
     public TypesMappingInfo getTypesMappingInfos() {
         TypesMappingInfo mappingInfo = new TypesMappingInfo();
 
-        for (ShapeTypeToContentTypeMapping shapeTypeToContentMapping : ShapeTypeToContentTypeMapping.values()) {
+        for (ShapeTypeToContentTypeMappingRules shapeTypeToContentMapping : ShapeTypeToContentTypeMappingRules.values()) {
             final ShapeType shapeType = shapeTypeToContentMapping.getShapeType();
 
             TypesMappingInfoItem info = new TypesMappingInfoItem(shapeType);
             for (final ContentType contentType : shapeTypeToContentMapping.getContentTypes()) {
-                List<Enum<?>> all = TypeToSubTypeMapping.find(contentType).getSubTypes();
+                List<Enum<?>> all = TypeToSubTypePair.getAllSubTypesByContentType(contentType);
                 all.removeAll(excluded(shapeType, contentType));
 
                 info.add(contentType, all);
