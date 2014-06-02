@@ -45,9 +45,13 @@
     <bean name="streamzineTypesMappingService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService">
     </bean>
 
+    <bean name="cloudFileMetadaService" class="mobi.nowtechnologies.server.service.file.image.CloudFileMetadataService">
+        <property name="imageService" ref="imageService" />
+    </bean>
+
     <bean name="cloudFileImagesService" class="mobi.nowtechnologies.server.service.CloudFileImagesService">
         <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="imageService" ref="imageService" />
+        <property name="cloudFileMetadataService" ref="cloudFileMetadaService" />
     </bean>
 
     <bean id="adminUserService" class="mobi.nowtechnologies.server.service.impl.AdminUserServiceImpl">

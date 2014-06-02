@@ -3,8 +3,9 @@ package mobi.nowtechnologies.server.service;
 import com.google.common.collect.Lists;
 import com.rackspacecloud.client.cloudfiles.FilesObject;
 import mobi.nowtechnologies.server.dto.ImageDTO;
-import mobi.nowtechnologies.server.service.file.image.ImageInfo;
-import mobi.nowtechnologies.server.service.file.image.ImageService;
+import mobi.nowtechnologies.server.service.file.image.CloudFileMetadataService;
+import mobi.nowtechnologies.server.service.file.image.ImageCloudFileMetadata;
+import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -13,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -22,15 +21,11 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * Created by oar on 2/25/14.
  */
 public class CloudFileImagesService {
-    private static final String FILE_NAME_CONSTANT = "fileName";
-    private static final String IMAGE_WIDTH = "Imagewidth";
-    private static final String IMAGE_HEIGHT = "Imageheight";
-
     private static final int DEFAULT_SIZE = 10000;
 
     private CloudFileService cloudFileService;
 
-    private ImageService imageService;
+    private CloudFileMetadataService cloudFileMetadataService;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -65,57 +60,50 @@ public class CloudFileImagesService {
         this.cloudFileService = cloudFileService;
     }
 
-    public void setImageService(ImageService imageService) {
-        this.imageService = imageService;
+    public void setCloudFileMetadataService(CloudFileMetadataService cloudFileMetadataService) {
+        this.cloudFileMetadataService = cloudFileMetadataService;
     }
 
     private ImageDTO doUploadImage(MultipartFile file, String fileNameInCloud) {
-        Map<String, String> metadata = buildMetadataForFile(file);
-        boolean resultUpload = cloudFileService.uploadFile(file, fileNameInCloud, metadata);
-        logger.info("File with name {} is uploaded: {}", fileNameInCloud, resultUpload);
-        if (resultUpload) {
-            return convertToDTO(metadata);
+        ImageCloudFileMetadata imageCloudFileMetadata = null;
+        try {
+            imageCloudFileMetadata = cloudFileMetadataService.forImage(file.getBytes(), file.getOriginalFilename());
+
+            boolean resultUpload = cloudFileService.uploadFile(file, fileNameInCloud, imageCloudFileMetadata.toMap());
+
+            logger.info("File with name {} is uploaded: {}", fileNameInCloud, resultUpload);
+
+            if (resultUpload) {
+                return convertToDTO(imageCloudFileMetadata);
+            }
+            return null;
+        } catch (IOException e) {
+            logger.error("Got the problem during getting image info for: " + file, e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
 
-    private ImageDTO convertToDTO(Map<String, String> metadata) {
+    private ImageDTO convertToDTO(ImageCloudFileMetadata imageCloudFileMetadata) {
         ImageDTO result = new ImageDTO();
-        result.setFileName(metadata.get(FILE_NAME_CONSTANT));
-        result.setHeight(Integer.valueOf(metadata.get(IMAGE_HEIGHT)));
-        result.setWidth(Integer.valueOf(metadata.get(IMAGE_WIDTH)));
-        result.setUrl(buildImageUrl(result.getFileName().toLowerCase()));
+        result.setFileName(imageCloudFileMetadata.getFileName());
+        result.setHeight(imageCloudFileMetadata.getHeight());
+        result.setWidth(imageCloudFileMetadata.getWidth());
+        result.setUrl(cloudFileService.getFilesURL() + imageCloudFileMetadata.getFileName());
         return result;
     }
 
 
     private ImageDTO convertToDTO(FilesObject filesObject) {
         try {
-            return convertToDTO(filesObject.getMetaData().getMetaData());
-        } catch (Exception e) {
-            logger.error("ERROR", e);
-        }
-        return null;
-    }
-
-
-    private String buildImageUrl(String filesObjectName) {
-        return cloudFileService.getFilesURL() + filesObjectName;
-    }
-
-    private Map<String, String> buildMetadataForFile(MultipartFile file) {
-        Map<String, String> resultMap = new HashMap<String, String>();
-        try {
-            ImageInfo imageInfo = imageService.getImageFormat(file.getBytes());
-            if (imageInfo != null) {
-                resultMap.put(IMAGE_WIDTH, String.valueOf(imageInfo.getDimension().getWidth()));
-                resultMap.put(IMAGE_HEIGHT, String.valueOf(imageInfo.getDimension().getHeight()));
-            }
+            ImageCloudFileMetadata imageCloudFileMetadata = ImageCloudFileMetadata.fromFilesObjectMetaData(filesObject.getMetaData());
+            return convertToDTO(imageCloudFileMetadata);
+        } catch (HttpException e) {
+            logger.error("Got the problem during extracting cloud file metadata for: " + filesObject, e);
+            throw new RuntimeException(e);
         } catch (IOException e) {
-            logger.error("Error during extracting image info", e);
+            logger.error("Got the problem during extracting cloud file metadata for: " + filesObject, e);
+            throw new RuntimeException(e);
         }
-        resultMap.put(FILE_NAME_CONSTANT, file.getOriginalFilename());
-        return resultMap;
     }
 }
