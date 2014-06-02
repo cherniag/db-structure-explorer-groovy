@@ -200,13 +200,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <bean id="service.ChartDetailsConverter" class="mobi.nowtechnologies.server.utils.ChartDetailsConverter">
         <property name="messageSource" ref="serviceMessageSource"/>
         <property name="iTunesLinkFormatCutoverTimeMillis" value="${transport.itunes.affiliate.link.format.cutover.time.millis}"/>
-        <property name="communityCountryMap">
-            <map>
-                <entry key="#{T(mobi.nowtechnologies.server.persistence.domain.Community).O2_COMMUNITY_REWRITE_URL}" value="GB"/>
-                <entry key="#{T(mobi.nowtechnologies.server.persistence.domain.Community).VF_NZ_COMMUNITY_REWRITE_URL}" value="NZ"/>
-                <entry key="#{T(mobi.nowtechnologies.server.persistence.domain.Community).HL_COMMUNITY_REWRITE_URL}" value="GB"/>
-            </map>
-        </property>
     </bean>
 
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">

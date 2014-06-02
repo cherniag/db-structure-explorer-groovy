@@ -28,7 +28,6 @@ public class ChartDetailsConverter {
     private static final String URL_PARAMETER = "&url=";
     private CommunityResourceBundleMessageSource messageSource;
     private long iTunesLinkFormatCutoverTimeMillis;
-    private Map<String, String> communityCountryMap;
 
     public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
 		if (chartDetails == null)
@@ -115,7 +114,7 @@ public class ChartDetailsConverter {
             mediaAmazonUrl = defaultAmazonUrl;
         }
 
-        String newCountryCode = communityCountryMap.get(communityRewriteUrlParameter);
+        String newCountryCode = getCountryCode(communityRewriteUrlParameter);
 
         if(isBlank(mediaAmazonUrl) || isBlank(newCountryCode)) {
             return mediaAmazonUrl;
@@ -129,8 +128,12 @@ public class ChartDetailsConverter {
         }
     }
 
+    private String getCountryCode(String communityRewriteUrlParameter) {
+        return messageSource.getMessage(communityRewriteUrlParameter, "itunes.urlCountryCode", null, null);
+    }
+
     private String getITunesUrl(String existingITunesUrl, String communityRewriteUrl) {
-        String countryCode = communityCountryMap.get(communityRewriteUrl);
+        String countryCode = getCountryCode(communityRewriteUrl);
         if(isBlank(existingITunesUrl) || isBlank(countryCode)) {
             LOGGER.warn("Media iTunes url [{}] or new country code [{}] is empty", existingITunesUrl, countryCode);
             return existingITunesUrl;
@@ -209,7 +212,4 @@ public class ChartDetailsConverter {
         this.iTunesLinkFormatCutoverTimeMillis = iTunesLinkFormatCutoverTimeMillis;
     }
 
-    public void setCommunityCountryMap(Map<String, String> communityCountryMap) {
-        this.communityCountryMap = communityCountryMap;
-    }
 }

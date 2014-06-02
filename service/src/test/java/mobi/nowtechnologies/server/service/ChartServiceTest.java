@@ -846,12 +846,10 @@ public class ChartServiceTest {
 		fixture.setChartDetailRepository(mockChartDetailRepository);
 		fixture.setDrmService(mockDrmService);
         ChartDetailsConverter chartDetailsConverter = new ChartDetailsConverter();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(Community.O2_COMMUNITY_REWRITE_URL, "GB");
-        map.put(Community.VF_NZ_COMMUNITY_REWRITE_URL, "NZ");
-        map.put(Community.HL_COMMUNITY_REWRITE_URL, "GB");
-        chartDetailsConverter.setCommunityCountryMap(map);
-
+        chartDetailsConverter.setMessageSource(mockMessageSource);
+        when(mockMessageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
+        when(mockMessageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
+        when(mockMessageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
         fixture.setChartDetailsConverter(spy(chartDetailsConverter));
     }
 

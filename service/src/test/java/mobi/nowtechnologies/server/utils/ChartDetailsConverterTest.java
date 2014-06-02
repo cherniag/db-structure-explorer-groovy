@@ -14,9 +14,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
@@ -51,12 +49,9 @@ public class ChartDetailsConverterTest {
         when(messageSource.getMessage(eq(Community.O2_COMMUNITY_REWRITE_URL), eq("itunes.campaign.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(CAMPAIGN_TOKEN_O2);
         when(messageSource.getMessage(eq(Community.HL_COMMUNITY_REWRITE_URL), eq("itunes.affiliate.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(AFFILIATE_TOKEN_HL_UK);
         when(messageSource.getMessage(eq(Community.HL_COMMUNITY_REWRITE_URL), eq("itunes.campaign.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(CAMPAIGN_TOKEN_HL_UK);
-
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(Community.O2_COMMUNITY_REWRITE_URL, "GB");
-        map.put(Community.VF_NZ_COMMUNITY_REWRITE_URL, "NZ");
-        map.put(Community.HL_COMMUNITY_REWRITE_URL, "GB");
-        chartDetailsConverter.setCommunityCountryMap(map);
+        when(messageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
+        when(messageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
+        when(messageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
     }
 
 
