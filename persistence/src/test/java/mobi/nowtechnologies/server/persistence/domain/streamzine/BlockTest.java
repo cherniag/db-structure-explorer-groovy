@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeTyp
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class BlockTest {
@@ -13,7 +15,7 @@ public class BlockTest {
         Block block = createBlock(0);
         block.include();
 
-        Assert.assertTrue(block.isIncluded());
+        assertTrue(block.isIncluded());
     }
 
     @Test
@@ -21,7 +23,20 @@ public class BlockTest {
         Block block = createBlock(0);
         block.exclude();
 
-        Assert.assertFalse(block.isIncluded());
+        assertFalse(block.isIncluded());
+    }
+
+    @Test
+    public void shouldCreateBlockAsPassedBlockButIncluded(){
+        //given
+        Block block = createBlock(0);
+        block.exclude();
+
+        //when
+        Block newBlock = new Block(block);
+
+        //then
+        assertTrue(newBlock.isIncluded());
     }
 
     private Block createBlock(int position) {
