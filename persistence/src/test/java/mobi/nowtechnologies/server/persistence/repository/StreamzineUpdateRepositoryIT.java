@@ -8,8 +8,6 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkL
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -18,10 +16,13 @@ import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository.ONE_RECORD_PAGEABLE;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+import static org.apache.commons.lang.time.DateUtils.addDays;
+import static org.apache.commons.lang.time.DateUtils.addHours;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -34,7 +35,7 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
 
     @Test
     public void testSave() {
-        Date startDate = DateUtils.addDays(new Date(), 5);
+        Date startDate = addDays(new Date(), 5);
 
         Update underTest = buildUpdateEntity(startDate, null);
         underTest.addBlock(createBlock());
@@ -50,39 +51,61 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
 
     @Test
     public void testFindAllByDate() {
-        Date startDate = DateUtils.addDays(new Date(), 5);
-        Date lessDate = DateUtils.addDays(startDate, -1);
-        Date moreDate = DateUtils.addDays(startDate, 1);
+        Date startDate = addDays(new Date(), 5);
+        Date lessDate = addDays(startDate, -1);
+        Date moreDate = addDays(startDate, 1);
 
         Update underTest = buildUpdateEntity(startDate, null);
         Update update = streamzineUpdateRepository.saveAndFlush(underTest);
 
         List<Update> all = streamzineUpdateRepository.findAllByDate(lessDate, moreDate);
 
-        Assert.assertEquals(1, all.size());
-        Assert.assertEquals(update.getId(), all.get(0).getId());
+        assertEquals(1, all.size());
+        assertEquals(update.getId(), all.get(0).getId());
     }
 
     @Test
-    public void testFindByMaxDate() throws Exception {
-        final Date startDate = DateUtils.addDays(new Date(), 5);
-        Date lessDate = DateUtils.addDays(startDate, -1);
-        Date moreDate = DateUtils.addDays(startDate, 1);
+     public void shouldFindSecondUpdateWhenItIsInPastAndThirdUpdateIsInTheFuture() throws Exception {
+        //given
+        Date firstUpdateDate = addDays(new Date(), 1);
+        Date secondUpdateDate = addDays(firstUpdateDate, 1);
+        Date thirdUpdateDate = addDays(secondUpdateDate, 1);
 
-        Update lessUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(lessDate, null));
-        Update moreUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(moreDate, null));
+        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(firstUpdateDate, null));
+        Update secondUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(secondUpdateDate, null));
+        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(thirdUpdateDate, null));
 
-        List<Update> all = streamzineUpdateRepository.findByMaxDate(ONE_RECORD_PAGEABLE);
-        Assert.assertEquals(1, all.size());
-        Assert.assertEquals(moreUpdate.getId(), all.get(0).getId());
+        //when
+        Update update = streamzineUpdateRepository.findLatestUpdateBeforeDate(addHours(secondUpdateDate, 2));
+
+        //then
+        assertThat(update.getId(), is(secondUpdate.getId()));
+    }
+
+    @Test
+    public void shouldFindSecondUpdateWhenItIsEqNowAndThirdUpdateIsInTheFuture() throws Exception {
+        //given
+        Date firstUpdateDate = addDays(new Date(), 1);
+        Date secondUpdateDate = addDays(firstUpdateDate, 1);
+        Date thirdUpdateDate = addDays(secondUpdateDate, 1);
+
+        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(firstUpdateDate, null));
+        Update secondUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(secondUpdateDate, null));
+        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(thirdUpdateDate, null));
+
+        //when
+        Update update = streamzineUpdateRepository.findLatestUpdateBeforeDate(secondUpdateDate);
+
+        //then
+        assertThat(update.getId(), is(secondUpdate.getId()));
     }
 
     @Test
     public void testFindLastSincePublished() throws Exception {
-        final Date startDate = DateUtils.addDays(new Date(), 5);
-        Date lessDate = DateUtils.addDays(startDate, -1);
-        Date moreDate = DateUtils.addDays(startDate, 1);
-        Date lastDate = DateUtils.addDays(moreDate, 1);
+        final Date startDate = addDays(new Date(), 5);
+        Date lessDate = addDays(startDate, -1);
+        Date moreDate = addDays(startDate, 1);
+        Date lastDate = addDays(moreDate, 1);
 
         Update entity = buildUpdateEntity(lessDate, null);
 
@@ -91,15 +114,15 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
         Update lastUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(lastDate, null));
 
         List<Update> all = streamzineUpdateRepository.findLastSince(startDate, ONE_RECORD_PAGEABLE);
-        Assert.assertEquals(1, all.size());
-        Assert.assertEquals(lessUpdate.getId(), all.get(0).getId());
+        assertEquals(1, all.size());
+        assertEquals(lessUpdate.getId(), all.get(0).getId());
     }
 
     @Test
     public void testFindLastSinceForUser() throws Exception {
         final Date dateZero = new Date();
-        final Date updateDate = DateUtils.addDays(dateZero, 5);
-        final Date dateToSearch = DateUtils.addDays(updateDate, 1);
+        final Date updateDate = addDays(dateZero, 5);
+        final Date dateToSearch = addDays(updateDate, 1);
         User user = UserFactory.createUser(ACTIVATED);
         user = userRepository.saveAndFlush(user);
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate, null));
@@ -107,16 +130,16 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
         assertTrue(all.isEmpty());
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate, user));
         all = streamzineUpdateRepository.findLastSinceForUser(dateToSearch, user, ONE_RECORD_PAGEABLE);
-        Assert.assertEquals(1, all.size());
+        assertEquals(1, all.size());
 
     }
 
     @Test
     public void testFindUpdatePublishDates() throws Exception {
         Date today = new Date();
-        Date dateWithinMin = DateUtils.addDays(today, 1);
-        Date dateWithinMax = DateUtils.addDays(today, 5);
-        Date dateOutOf = DateUtils.addDays(today, 10);
+        Date dateWithinMin = addDays(today, 1);
+        Date dateWithinMax = addDays(today, 5);
+        Date dateOutOf = addDays(today, 10);
 
         Update updateWithin1 = new Update(dateWithinMin);
         Update updateWithin2 = new Update(dateWithinMax);
@@ -126,8 +149,8 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
         streamzineUpdateRepository.saveAndFlush(updateWithin2);
         streamzineUpdateRepository.saveAndFlush(updateWithin1);
 
-        Date from = DateUtils.addDays(dateWithinMin, -1);
-        Date till = DateUtils.addDays(dateWithinMax, 1);
+        Date from = addDays(dateWithinMin, -1);
+        Date till = addDays(dateWithinMax, 1);
         List<Date> updatePublishDates = streamzineUpdateRepository.findUpdatePublishDates(from, till);
 
         assertThat(updatePublishDates, notNullValue());

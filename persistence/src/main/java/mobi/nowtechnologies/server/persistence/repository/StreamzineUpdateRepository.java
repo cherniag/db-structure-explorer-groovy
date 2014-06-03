@@ -20,8 +20,8 @@ public interface StreamzineUpdateRepository extends JpaRepository<Update, Long> 
     @Query("select u.date from Update u where u.date >= ?1 and u.date < ?2 order by u.date")
     List<Date> findUpdatePublishDates(Date from, Date till);
 
-    @Query("select u from Update u order by u.date desc")
-    List<Update> findByMaxDate(Pageable pageable);
+    @Query("select u from Update u where u.date = ( select max(u2.date) from Update u2 where u2.date <=:beforeDate )")
+    Update findLatestUpdateBeforeDate(@Param("beforeDate") Date beforeDate);
 
     @Query("select u from Update u where u.date <= ?1 order by u.date desc")
     List<Update> findLastSince(Date date, Pageable pageable);
