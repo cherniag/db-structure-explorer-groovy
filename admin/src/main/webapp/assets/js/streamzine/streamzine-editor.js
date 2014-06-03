@@ -14,11 +14,25 @@ if(Streamzine.Presenter.Editor == undefined) {
             }
 
             this.render = function(o) {
+                var notVisibleBadge = true;
+                var rules = Streamzine.Presenter.Editor.badgeMappingRules;
+                if(rules[o.shapeType.$name]) {
+                    var subTypes = rules[o.shapeType.$name][o.contentType.$name];
+                    if(subTypes) {
+                        for(var i=0; i < subTypes.length; i++) {
+                            if(subTypes[i] == o.key) {
+                                notVisibleBadge = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 $('div.streamzinePropertiesEditor > div')
                     .empty()
                     .html(Template.render(template, {
                         id: _id,
-                        notVisibleBadge: (o.shapeType.$name == 'SLIM_BANNER') ? 'sz-not-visible' : ''
+                        notVisibleBadge: (notVisibleBadge) ? 'sz-not-visible' : ''
                     }));
             }
 
@@ -152,7 +166,9 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
-                    '<div class="sz-cover-url-editor-wrapper">' +
+                    '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
+                    '<img id="{id}_badgeUrl" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeUrl\')"/>' +
+                    '</div>' +'<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
                         preProcess: function(incoming) {
@@ -162,7 +178,8 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 title: incoming.title,
                                 subTitle: incoming.subTitle,
                                 value: '' + amount + (  (amount == 1)?' Track':' Tracks'  ),
-                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' )
+                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
+                                badgeUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeUrl) ? ('/' + incoming.badgeUrl) : '' )
                             }
                         }
                     }
@@ -174,6 +191,9 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<input type="text" id="{id}_value" readonly="readonly" />' +
                     '<input placeholder="Title" maxlength="255" type="text" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
+                    '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
+                    '<img id="{id}_badgeUrl" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeUrl\')"/>' +
+                    '</div>' +
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor"  onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
@@ -183,7 +203,8 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 title: incoming.title,
                                 subTitle: incoming.subTitle,
                                 value: incoming.value,
-                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' )
+                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
+                                badgeUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeUrl) ? ('/' + incoming.badgeUrl) : '' )
                             }
                         }
                     })
@@ -192,6 +213,9 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
+                    '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
+                    '<img id="{id}_badgeUrl" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeUrl\')"/>' +
+                    '</div>' +
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
@@ -207,7 +231,8 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 title: incoming.title,
                                 subTitle: incoming.subTitle,
                                 value: m + '/' + d + '/' + y,
-                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' )
+                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
+                                badgeUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeUrl) ? ('/' + incoming.badgeUrl) : '' )
                             };
                         }
                     }
@@ -219,6 +244,9 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
+                    '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
+                    '<img id="{id}_badgeUrl" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeUrl\')"/>' +
+                    '</div>' +
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img  id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')" />' +
                     '</div>', {
@@ -228,7 +256,8 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 title: incoming.title,
                                 subTitle: incoming.subTitle,
                                 value: incoming.value,
-                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' )
+                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
+                                badgeUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeUrl) ? ('/' + incoming.badgeUrl) : '' )
                             }
                         }
                     })
@@ -449,9 +478,10 @@ if(Streamzine.Presenter.Editor == undefined) {
         // Initialization
         //
         //
-        this.init = function(imagesBaseUrl, tracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete) {
+        this.init = function(imagesBaseUrl, tracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete, badgeMappingRules) {
             this.id = id;
             this.imagesBaseUrl = imagesBaseUrl;
+            this.badgeMappingRules = badgeMappingRules;
 
             initPickers(id, imagesBaseUrl, tracksBaseUrl, playListUrl, badgesGetAll, badgesUpdateName, badgesDelete);
 

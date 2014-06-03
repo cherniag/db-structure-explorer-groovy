@@ -10,11 +10,15 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.CloudFileImagesService;
 import mobi.nowtechnologies.server.service.MediaService;
-import mobi.nowtechnologies.server.service.streamzine.*;
+import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
+import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
+import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm;
@@ -36,9 +40,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class StreamzineController {
@@ -223,8 +225,21 @@ public class StreamzineController {
         model.addObject("contentTypeMapping", typesMappingAsm.toDtos(info.getRules()));
         model.addObject("enabledCommunity", streamzineCommunity);
         model.addObject("updatePublishDates", streamzineUpdateService.getUpdatePublishDates(selectedDate));
+        model.addObject("badgeMappingRules", getBadgeMappingInfo());
 
         return model;
+    }
+
+    private Map<String, Map<String, List<String>>> getBadgeMappingInfo() {
+        Map<String, Map<String, List<String>>> info = new HashMap<String, Map<String, List<String>>>();
+
+        for (BadgeMappingRules badgeMappingRules : BadgeMappingRules.values()) {
+            String shapeInfo = badgeMappingRules.getShapeType().name();
+
+            info.put(shapeInfo, toMap(badgeMappingRules.getTypePairs()));
+        }
+
+        return info;
     }
 
     private String escapeSearchWord(String searchWords) {
@@ -255,5 +270,22 @@ public class StreamzineController {
     private String formatDate(Date publishDate, String urlDateFormat) {
         return new SimpleDateFormat(urlDateFormat).format(publishDate);
     }
+
+    public static Map<String, List<String>> toMap(List<TypeToSubTypePair> pairs) {
+        Map<String, List<String>> mapView = new HashMap<String, List<String>>();
+
+        for (TypeToSubTypePair typeToSubTypePair : pairs) {
+            final String key = typeToSubTypePair.getContentType().name();
+
+            if(!mapView.containsKey(key)) {
+                mapView.put(key, new ArrayList<String>());
+            }
+
+            mapView.get(key).add(typeToSubTypePair.getSubType().name());
+        }
+
+        return mapView;
+    }
+
 
 }

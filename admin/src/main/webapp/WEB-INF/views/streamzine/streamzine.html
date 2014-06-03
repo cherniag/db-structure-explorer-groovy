@@ -633,6 +633,7 @@
             var incomingModelCopy = /*[[${incomingUpdate}]]*/'';
             var contentTypeMapping = /*[[${contentTypeMapping}]]*/'';
             var canEdit = /*[[${update.canEdit}]]*/'';
+            var badgeMappingRules = /*[[${badgeMappingRules}]]*/'';
 
             var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
             var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
@@ -657,7 +658,7 @@
                 var updateTmstp = /*[[${(update!=null)?update.date.time:-1}]]*/'';
                 var id = /*[[${update.id}]]*/'';
 
-                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete);
+                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete, badgeMappingRules);
 
                 Streamzine.Presenter.Tile.init();
 

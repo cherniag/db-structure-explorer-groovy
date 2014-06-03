@@ -1,18 +1,21 @@
 package mobi.nowtechnologies.server.admin.validator;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
-import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
-import mobi.nowtechnologies.server.service.MediaService;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
+import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
+import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
@@ -33,6 +36,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.*;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class UpdateValidator extends BaseValidator {
     @Resource
@@ -72,6 +77,7 @@ public class UpdateValidator extends BaseValidator {
 
             // should be validated even if not included
             validateMapping(blockDto, errors);
+            validateBadge(blockDto, errors);
 
             if (blockDto.isIncluded()) {
                 baseValidate(blockDto, errors);
@@ -95,13 +101,27 @@ public class UpdateValidator extends BaseValidator {
         }
     }
 
+    @VisibleForTesting
+    void validateBadge(OrdinalBlockDto blockDto, Errors errors) {
+        Enum<?> subType = TypeToSubTypePair.restoreSubType(blockDto.getContentType(), blockDto.getKey());
+        boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
+
+        if(!allowed && isNotEmpty(blockDto.getBadgeUrl())) {
+            String shapeType = getShapeTypeTitle(blockDto);
+            String contentType = getContentTypeTitle(blockDto);
+            String subTypeValue = getSubTypeTitle(blockDto);
+
+            rejectField("streamzine.error.badge.notallowed", new Object[]{shapeType, contentType, subTypeValue}, errors, "badgeUrl");
+        }
+    }
+
     private void validateMapping(DeeplinkInfoData blockDto, Errors errors) {
         TypesMappingInfo info = streamzineTypesMappingService.getTypesMappingInfos();
 
         if(!info.matches(blockDto)) {
-            String shapeType = messageSource.getMessage("streamzine.shapetype." + blockDto.getShapeType().name(), null, getLocale());
-            String contentType = messageSource.getMessage("streamzine.contenttype." + blockDto.getContentType().name(), null, getLocale());
-            String subTypeValue = messageSource.getMessage("streamzine.contenttype." + blockDto.getContentType().name() + "." + blockDto.getValue(), null, getLocale());
+            String shapeType = getShapeTypeTitle(blockDto);
+            String contentType = getContentTypeTitle(blockDto);
+            String subTypeValue = getSubTypeTitle(blockDto);
 
             rejectField("streamzine.error.types.mapping", new Object[]{shapeType, contentType, subTypeValue}, errors, "contentType");
         }
@@ -253,4 +273,15 @@ public class UpdateValidator extends BaseValidator {
         return LocaleContextHolder.getLocale();
     }
 
+    private String getSubTypeTitle(DeeplinkInfoData blockDto) {
+        return messageSource.getMessage("streamzine.contenttype." + blockDto.getContentType().name() + "." + blockDto.getKey(), null, getLocale());
+    }
+
+    private String getContentTypeTitle(DeeplinkInfoData blockDto) {
+        return messageSource.getMessage("streamzine.contenttype." + blockDto.getContentType().name(), null, getLocale());
+    }
+
+    private String getShapeTypeTitle(DeeplinkInfoData blockDto) {
+        return messageSource.getMessage("streamzine.shapetype." + blockDto.getShapeType().name(), null, getLocale());
+    }
 }

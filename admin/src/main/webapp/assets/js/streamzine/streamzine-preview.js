@@ -34,11 +34,6 @@ if(StreamzinePreview == undefined) {
         var contentType = (block.contentType.$name) ? block.contentType.$name : block.contentType;
         var subType  = block.key;
 
-        // refactor it!!!
-        if(subType == 'TRACK') {
-            subType = 'PLAYLIST';
-        }
-
         // editor is defined if there is in single block preview
         if(editor) {
             editor.empty().show();
@@ -68,6 +63,86 @@ if(StreamzinePreview == undefined) {
                                 .attr('width', 318)
                                 .attr('height', 460)
                                 .css({position: 'absolute'})
+                                .appendTo(view);
+
+                            // badge
+                            $('<img />')
+                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
+                                .css({position: 'absolute', top: 210, left: 4})
+                                .appendTo(view);
+
+                            var number = $('<div class="sz-preview-title-number">17</div>')
+                                .css({ position: "absolute", left: 20, top: 14}).appendTo(view);
+                            var tracks = $('<div class="sz-preview-title-tracks">tracks</div>')
+                                .css({ position: "absolute", left: 20, top: (14 + 46 + 4)}).appendTo(view);
+                            var title = $('<div class="sz-preview-title-title-narrow"></div>')
+                                .css({ position: "absolute", left: 20, top: 364}).appendTo(view).html(block.title);
+
+                            // editor is defined if there is in single block preview
+                            if(editor) {
+                                //
+                                // Editor
+                                //
+                                var textAreaTitle = $('<textarea maxlength="255" />')
+                                    .val(block.title)
+                                    .keyup(function () {
+                                        title.html($(this).val());
+                                    })
+                                    .blur(function () {
+                                        title.html($(this).val());
+                                    })
+                                    .appendTo(editor);
+
+                                //
+                                // Buttons
+                                //
+                                $('#streamzinePreviewSaveId').on('click.own', function(e) {
+                                    e.preventDefault();
+                                    block.title = textAreaTitle.val();
+                                    Events.fire('BLOCK_CHANGED', block);
+                                    $('#streamzinePreviewSaveId').off('click.own');
+                                    $('#previewModalDialogId').modal('hide');
+                                });
+                                $('#streamzinePreviewCancelId').on('click.own', function(e) {
+                                    e.preventDefault();
+                                    if(block.title != textAreaTitle.val() || block.subTitle != textAreaSubTitle.val()) {
+                                        if(confirm('Save changes before quit?')) {
+                                            block.title = textAreaTitle.val();
+                                            Events.fire('BLOCK_CHANGED', block);
+                                            $('#streamzinePreviewCancelId').off('click.own');
+                                        }
+                                    }
+                                    $('#streamzinePreviewCancelId').off('click.own');
+                                });
+                            }
+                        }
+                    },
+                    TRACK: {
+                        render: function() {
+                            //
+                            // Validation
+                            //
+                            var coverUrl = block.coverUrl;
+                            if(!coverUrl) {
+                                alert('No cover url assigned. Please assign before preview');
+                                return;
+                            }
+
+                            //
+                            // View
+                            //
+                            // cover
+                            var cover = $('<img />')
+                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + coverUrl)
+                                .attr('width', 318)
+                                .attr('height', 460)
+                                .css({position: 'absolute'})
+                                .appendTo(view);
+
+                            // badge
+                            $('<img />')
+                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
+                                .css({position: 'absolute', top: 264, left: 0})
                                 .appendTo(view);
 
                             var number = $('<div class="sz-preview-title-number">17</div>')
@@ -140,6 +215,110 @@ if(StreamzinePreview == undefined) {
                                 .attr('width', 640)
                                 .attr('height', 580)
                                 .css({position: 'absolute'})
+                                .appendTo(view);
+
+                            // badge
+                            $('<img />')
+                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
+                                .css({position: 'absolute', top: 320, left: 4})
+                                .appendTo(view);
+
+                            var heylist = $('<div class="sz-preview-title-heylist">heylist</div>')
+                                .css({ position: "relative", top: 22, lineHeight:'44px', fontSize: '44px', textAlign: 'center' }).appendTo(view);
+                            $('<div></div>')
+                                .css({position: "absolute", top: 70, left: 268, width: 52, height: 4, backgroundColor: '#fff'})
+                                .appendTo(view);
+                            $('<div></div>')
+                                .css({position: "absolute", top: 70, left: (268+52), width: 52, height: 4, backgroundColor: '#fff', opacity:'0.5'})
+                                .appendTo(view);
+
+                            // menu icon
+                            $('<img src="../../assets/img/streamzine/buttons/ic_menu_normal.png" width="50" height="32" />')
+                                .css({ position: "absolute", left: 12, top: 36 }).appendTo(view);
+
+                            var number = $('<div class="sz-preview-title-number">17</div>')
+                                .css({ position: "absolute", left: 20, top: 146}).appendTo(view);
+                            var tracks = $('<div class="sz-preview-title-tracks">tracks</div>')
+                                .css({ position: "absolute", left: 20, top: (146 + 46 + 4)}).appendTo(view);
+                            var title = $('<div class="sz-preview-title-title"></div>')
+                                .css({ position: "absolute", left: 20, top: 460}).appendTo(view).html(block.title);
+                            var subTitle = $('<div class="sz-preview-title-sub-title"></div>')
+                                .css({ position: "absolute", left: 20, top: (460 + 36 + 14)}).appendTo(view).html(block.subTitle);
+                            // editor is defined if there is in single block preview
+                            if(editor) {
+                                //
+                                // Editor
+                                //
+                                var textAreaTitle = $('<textarea maxlength="255" />')
+                                    .val(block.title)
+                                    .keyup(function () {
+                                        title.html($(this).val());
+                                    })
+                                    .blur(function () {
+                                        title.html($(this).val());
+                                    })
+                                    .appendTo(editor);
+                                var textAreaSubTitle = $('<textarea maxlength="255" />')
+                                    .val(block.subTitle)
+                                    .keyup(function () { subTitle.html($(this).val()); })
+                                    .blur(function () { subTitle.html($(this).val()); })
+                                    .appendTo(editor);
+
+                                //
+                                // Buttons
+                                //
+                                $('#streamzinePreviewSaveId').on('click.own', function(e) {
+                                    e.preventDefault();
+                                    block.title = textAreaTitle.val();
+                                    block.subTitle = textAreaSubTitle.val();
+                                    Events.fire('BLOCK_CHANGED', block);
+
+                                    $('#streamzinePreviewSaveId').off('click.own');
+                                    $('#streamzinePreviewCancelId').off('click.own');
+
+                                    $('#previewModalDialogId').modal('hide');
+                                });
+                                $('#streamzinePreviewCancelId').on('click.own', function(e) {
+                                    e.preventDefault();
+                                    if(block.title != textAreaTitle.val() || block.subTitle != textAreaSubTitle.val()) {
+                                        if(confirm('Save changes before quit?')) {
+                                            block.title = textAreaTitle.val();
+                                            block.subTitle = textAreaSubTitle.val();
+                                            Events.fire('BLOCK_CHANGED', block);
+                                        }
+                                    }
+                                    $('#streamzinePreviewSaveId').off('click.own');
+                                    $('#streamzinePreviewCancelId').off('click.own');
+                                });
+                            }
+                        }
+                    },
+                    TRACK: {
+                        render: function() {
+                            //
+                            // Validation
+                            //
+                            var coverUrl = block.coverUrl;
+                            if(!coverUrl) {
+                                alert('No cover url assigned. Please assign before preview');
+                                return;
+                            }
+
+                            //
+                            // View
+                            //
+                            // cover
+                            var cover = $('<img />')
+                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + coverUrl)
+                                .attr('width', 640)
+                                .attr('height', 580)
+                                .css({position: 'absolute'})
+                                .appendTo(view);
+
+                            // badge
+                            $('<img />')
+                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
+                                .css({position: 'absolute', top: 380, left: 0})
                                 .appendTo(view);
 
                             var heylist = $('<div class="sz-preview-title-heylist">heylist</div>')

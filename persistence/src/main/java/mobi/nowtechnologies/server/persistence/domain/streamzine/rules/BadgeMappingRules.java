@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentTy
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,6 +18,14 @@ public enum BadgeMappingRules {
     BadgeMappingRules(ShapeType shapeType, TypeToSubTypePair ... pairs) {
         this.shapeType = shapeType;
         this.typePairs = Arrays.asList(pairs);
+    }
+
+    public ShapeType getShapeType() {
+        return shapeType;
+    }
+
+    public List<TypeToSubTypePair> getTypePairs() {
+        return new ArrayList<TypeToSubTypePair>(typePairs);
     }
 
     public static boolean allowed(ShapeType shapeType, ContentType contentType, Enum<?> subType) {

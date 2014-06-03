@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.types;
 
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,15 @@ public enum TypeToSubTypePair {
 
     public ContentType getContentType() {
         return contentType;
+    }
+
+    public static Enum<?> restoreSubType(ContentType contentType, String value) {
+        for (TypeToSubTypePair typeToSubTypePair : values()) {
+            if(typeToSubTypePair.contentType == contentType) {
+                return typeToSubTypePair.subType.valueOf(typeToSubTypePair.subType.getClass(), value);
+            }
+        }
+        throw new IllegalArgumentException("Could not restore sub type for content type: " + contentType + " and value: " + value);
     }
 
     public static List<Enum<?>> getAllSubTypesByContentType(ContentType contentType) {

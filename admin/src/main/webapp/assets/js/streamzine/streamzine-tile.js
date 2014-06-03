@@ -5,8 +5,8 @@ if(Streamzine.Presenter.Tile == undefined) {
         var _transformers = {
             _DEFAULT: function(input) {
                 var cloned = Streamzine.Model.cloneBlock(input);
-                cloned.coverUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + cloned.coverUrl;
-                cloned.badgeUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + cloned.badgeUrl;
+                cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
+                cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
                 return cloned;
             },
 
@@ -19,7 +19,7 @@ if(Streamzine.Presenter.Tile == undefined) {
                     m = (m < 10) ? ('0' + m) : m;
                     var d = (date.getDate() < 10) ? ('0' + date.getDate()) : date.getDate();
                     cloned.value = m + '/' + d + '/' +date.getUTCFullYear();
-                    cloned.coverUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl;
+                    cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
                     return cloned;
                 }
             },
@@ -28,7 +28,7 @@ if(Streamzine.Presenter.Tile == undefined) {
                     var cloned = Streamzine.Model.cloneBlock(input);
                     var amount = (  (cloned.data && cloned.data.length) ? cloned.data.length : 0  );
                     cloned.value = (amount == 1) ? '1 Track' : (amount + ' Tracks');
-                    cloned.coverUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl;
+                    cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
                     return cloned;
                 },
                 TRACK: function(input) {
@@ -39,15 +39,15 @@ if(Streamzine.Presenter.Tile == undefined) {
                     } else {
                         cloned.value = '';
                     }
-                    cloned.coverUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl;
-                    cloned.badgeUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl;
+                    cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
+                    cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
                     return cloned;
                 },
                 PLAYLIST: function(input) {
                     var cloned = Streamzine.Model.cloneBlock(input);
                     cloned.value = (input.data) ? input.data.name : '';
-                    cloned.coverUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl;
-                    cloned.badgeUrl = Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl;
+                    cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
+                    cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
                     return cloned;
                 }
             },
@@ -88,7 +88,7 @@ if(Streamzine.Presenter.Tile == undefined) {
             '    {firstAdditionalInfo}                                             ' +
             '    <div class="streamzine-preview-placeholder sz-tile-title-subtitle" title="{first.title}">{first.title}</div>      ' +
             '    <div class="streamzine-preview-placeholder sz-tile-title-subtitle" title="{first.subTitle}">{first.subTitle}</div>' +
-            '    <div class="streamzine-block-preview-badge-wrapper"><img src="{first.badgeUrl}" class="streamzine-block-preview-badge-wrapper"/></div>' +
+            '    {firstBadge}' +
             '    </div>                                                            ' +
             '</div>' +
             '<div class="streamzine_block_common streamzine_block_NARROW_second {inSecondEdit}" id="{second.id}_value_holder">' +
@@ -106,7 +106,7 @@ if(Streamzine.Presenter.Tile == undefined) {
             '    {secondAdditionalInfo}                                             ' +
             '    <div class="streamzine-preview-placeholder sz-tile-title-subtitle" title="{second.title}">{second.title}</div>      ' +
             '    <div class="streamzine-preview-placeholder sz-tile-title-subtitle" title="{second.subTitle}">{second.subTitle}</div>' +
-            '    <div class="streamzine-block-preview-badge-wrapper"><img src="{second.badgeUrl}" class="streamzine-block-preview-badge-wrapper"/></div>' +
+            '    {secondBadge}' +
             '    </div>                                                             ' +
             '</div>' +
             '</div>' +
@@ -250,7 +250,9 @@ if(Streamzine.Presenter.Tile == undefined) {
                     secondVip: (s.vip) ? 'VIP' : '',
                     toggle: (f.expanded) ? 'Collapse' : 'Expand',
                     expandStyle: (f.expanded) ? '' : 'height:14px',
-                    shortDescription: (f.expanded) ? '' : Streamzine.Model.getShortInfo(f)
+                    shortDescription: (f.expanded) ? '' : Streamzine.Model.getShortInfo(f),
+                    firstBadge: (f.badgeUrl) ? Template.render('<div class="streamzine-block-preview-badge-wrapper"><img src="{badgeUrl}" class="streamzine-block-preview-badge-icon"/></div>', {badgeUrl: f.badgeUrl}) : '',
+                    secondBadge: (s.badgeUrl) ? Template.render('<div class="streamzine-block-preview-badge-wrapper"><img src="{badgeUrl}" class="streamzine-block-preview-badge-icon"/></div>', {badgeUrl: s.badgeUrl}): ''
                 });
         }
 
@@ -283,7 +285,9 @@ if(Streamzine.Presenter.Tile == undefined) {
                     toggle: (transformed.expanded) ? 'Collapse' : 'Expand',
                     expandStyle: (transformed.expanded) ? '' : 'height:14px',
                     shortDescription: (transformed.expanded) ? '' : Streamzine.Model.getShortInfo(transformed),
-                    badge: (transformed.shapeType.$name=='SLIM_BANNER') ? '' : Template.render('<div class="streamzine-block-preview-badge-wrapper"><img src="{badgeUrl}" class="streamzine-block-preview-badge-wrapper"/></div>', {badgeUrl: transformed.badgeUrl})
+                    badge: (transformed.shapeType.$name=='SLIM_BANNER') ? '' : (
+                        (transformed.badgeUrl)?(Template.render('<div class="streamzine-block-preview-badge-wrapper"><img src="{badgeUrl}" class="streamzine-block-preview-badge-icon"/></div>', {badgeUrl: transformed.badgeUrl})):''
+                    )
                 }
             );
         }
