@@ -100,7 +100,19 @@ public class Update {
         Assert.isTrue(canEdit());
 
         if(lastOne != null) {
-            copyBlocks(lastOne);
+            copyBlocksForClone(lastOne);
+        }
+    }
+
+    private void copyBlocksForClone(Update incoming) {
+        copyBlocks(incoming);
+
+        includeAllBlocks();
+    }
+
+    private void includeAllBlocks() {
+        for (Block block : blocks) {
+            block.include();
         }
     }
 

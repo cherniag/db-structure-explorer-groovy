@@ -26,19 +26,6 @@ public class BlockTest {
         assertFalse(block.isIncluded());
     }
 
-    @Test
-    public void shouldCreateBlockAsPassedBlockButIncluded(){
-        //given
-        Block block = createBlock(0);
-        block.exclude();
-
-        //when
-        Block newBlock = new Block(block);
-
-        //then
-        assertTrue(newBlock.isIncluded());
-    }
-
     private Block createBlock(int position) {
         return new Block(position, ShapeType.BUTTON, mock(NotificationDeeplinkInfo.class));
     }

@@ -68,7 +68,7 @@ public class Block {
         subTitle = block.subTitle;
         coverUrl = block.coverUrl;
         badgeUrl = block.badgeUrl;
-        included = true;
+        included = block.included;
         expanded = block.expanded;
         shapeType = block.shapeType;
 
