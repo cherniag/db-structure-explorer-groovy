@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import org.apache.commons.lang.time.DateUtils;
@@ -8,6 +9,10 @@ import org.junit.Test;
 
 import java.util.Date;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.BUTTON;
+import static org.apache.commons.lang3.time.DateUtils.addDays;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,11 +57,29 @@ public class UpdateTest {
         Assert.assertEquals(position, update.getIncludedBlocks().get(0).getPosition());
     }
 
+    @Test
+    public void shouldCloneBlocksAsIncluded(){
+        //given
+        Update updateWithBlocks = new Update(addDays(new Date(), 1));
+        Block block = createBlock(5);
+        block.exclude();
+        updateWithBlocks.addBlock(block);
+
+        Update updateBlocksAcceptor = new Update(addDays(new Date(), 1));
+
+        //when
+        updateBlocksAcceptor.cloneBlocks(updateWithBlocks);
+
+        //then
+        assertThat(updateBlocksAcceptor.getBlocks().size(), is(1));
+        assertThat(updateBlocksAcceptor.getBlocks().get(0).isIncluded(), is(true));
+    }
+
     private Block createBlock(int position) {
         NotificationDeeplinkInfo deeplinkInfo = mock(NotificationDeeplinkInfo.class);
         when(deeplinkInfo.copy(any(Block.class))).thenReturn(deeplinkInfo);
 
-        Block block = new Block(position, ShapeType.BUTTON, deeplinkInfo);
+        Block block = new Block(position, BUTTON, deeplinkInfo);
         block.include();
         return block;
     }

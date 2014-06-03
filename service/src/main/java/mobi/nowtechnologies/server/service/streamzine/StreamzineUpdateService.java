@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
+import mobi.nowtechnologies.server.shared.ObjectUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -11,6 +12,7 @@ import org.springframework.util.Assert;
 import java.util.*;
 
 import static mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository.ONE_RECORD_PAGEABLE;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class StreamzineUpdateService {
@@ -19,13 +21,13 @@ public class StreamzineUpdateService {
 
     @Transactional
     public Update create(Date date) {
-        List<Update> lastOne = streamzineUpdateRepository.findByMaxDate(ONE_RECORD_PAGEABLE);
+        Update lastOne = streamzineUpdateRepository.findLatestUpdateBeforeDate(date);
 
         Update clonedOrCreated = new Update(date);
 
-        boolean firstUpdate = lastOne.isEmpty();
+        boolean firstUpdate = isNull(lastOne);
         if (!firstUpdate) {
-            clonedOrCreated.cloneBlocks(lastOne.get(0));
+            clonedOrCreated.cloneBlocks(lastOne);
         }
 
         return streamzineUpdateRepository.saveAndFlush(clonedOrCreated);
