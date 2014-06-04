@@ -5,10 +5,22 @@ if(Pickers == undefined) {
         //
         // Model
         //
+        // the value selected
         var _value;
+        // optional means that dialog does not ask before cancel (if dialog asks before cancel - that means it is not optional and must be picked up anyway)
+        var _optional = false;
+        // the value which is the copy of the original value which could be return back if:
+        // a) dialog is optional,
+        // b) dialog was cancelled
+        var _originalValue;
+        var okayClicked = true;
 
         //
         // Dialog Binding
+        $('div#' + dialogId + ' div.modal-footer button[class="btn"][data-dismiss="modal"]').click(function() {
+            okayClicked = false;
+        });
+
         // 1) on show
         $('#' + dialogId).on('show.bs.modal', function (e) {
             $('#' + dialogId + ' div[data-content="modal-dialog-body"]').empty();
@@ -50,6 +62,12 @@ if(Pickers == undefined) {
         }
 
         function _onHide() {
+            // additional check for the optional if cancels
+            if(!okayClicked && _optional) {
+                saveHandler(_originalValue);
+                return false;
+            }
+
             if(_value) {
                 if(confirm('Selected value will be lost. Proceed?')) {
                     _value = null;
@@ -63,7 +81,9 @@ if(Pickers == undefined) {
         }
 
         function _onSave() {
-            if(_value) {
+            okayClicked = true;
+
+            if(_value || okayClicked && _optional) {
                 saveHandler(_value);
                 _value = null;
                 $('#' + dialogId).modal('hide');
@@ -79,12 +99,23 @@ if(Pickers == undefined) {
             $('#' + dialogId).modal('show').draggable({handle: ".modal-header"});
         }
 
+        // one time function
+        this.markAsOptional = function() {
+            _optional = true;
+            return this;
+        }
+
         this.setValue = function(val){
             _value = val;
         }
 
         this.getValue = function(){
             return _value;
+        }
+
+        this.originalValue = function(originalValue) {
+            _originalValue = originalValue;
+            return this;
         }
 
         this.setTitle = function(title) {
@@ -942,7 +973,7 @@ if(Pickers == undefined) {
     //
     Pickers.createBadgePicker = function(dialogId, formId, holderId, okHandler, badgesGetAll, badgesUpdateName, badgesDelete) {
         return new function() {
-            var _genericDialog = new GenericDialog(dialogId, okHandler, beforeShow);
+            var _genericDialog = new GenericDialog(dialogId, okHandler, beforeShow).markAsOptional();
 
             var _rowTemplate = '<li class="streamzine-playlist-picker-item" data-id="{alias}" data-name="{fileName}"><div><img src="{src}" height="50px"/></div></li>';
             var _renTemplate = '<a href="javascript:;" data-id="{alias}">{alias}</a>';
@@ -979,6 +1010,15 @@ if(Pickers == undefined) {
                         _genericDialog.setValue(alias);
                     }
                 });
+
+                $('div#' + dialogId + ' button.btn-warning').click(unAssignBadgeHandler);
+            }
+
+            function unAssignBadgeHandler() {
+                if(_genericDialog.getValue()) {
+                    _genericDialog.setValue(null);
+                    loadNames();
+                }
             }
 
             function _getFrame() {
@@ -1051,7 +1091,6 @@ if(Pickers == undefined) {
                     data: data || {},
                     success : function(d, t) {
                         success(d, t);
-                        _genericDialog.setValue(null);
                     },
                     error: function() {
                         alert('Server error');
@@ -1066,7 +1105,15 @@ if(Pickers == undefined) {
                 request(badgesGetAll, null, function(data, textStatus) {
                     _hideLoadingBar();
                     fillGrid(data);
+                    highlightBadge();
                 });
+            }
+
+            function highlightBadge() {
+                var theValue = _genericDialog.getValue();
+                if(theValue) {
+                    $('#' + dialogId + ' li[data-name="' + theValue + '"]').addClass('ui-selected');
+                }
             }
 
             function _hideLoadingBar() {
@@ -1128,9 +1175,9 @@ if(Pickers == undefined) {
             // API
             //
             this.show = function(block) {
-                if(block.data) {
-                    _genericDialog.setValue(block.data);
-                }
+                _genericDialog.originalValue(block.badgeUrl);
+                _genericDialog.setValue(block.badgeUrl);
+
                 _genericDialog.show();
             }
         };

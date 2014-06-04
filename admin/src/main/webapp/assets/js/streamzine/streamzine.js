@@ -409,6 +409,9 @@ if(Streamzine == undefined) {
                 }, {
                     ctx: Streamzine.Presenter.Tile,
                     callback: Streamzine.Presenter.Tile.updateDraggableBlock
+                }, {
+                    ctx: Streamzine.Presenter.Editor,
+                    callback: Streamzine.Presenter.Editor.widgetTypeChanged
                 }],
                 BLOCK_EDITED: [{
                     ctx: Streamzine.Presenter.Tile,
