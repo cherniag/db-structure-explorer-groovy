@@ -1,0 +1,2107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ernm:NewReleaseMessage 
+MessageSchemaVersionId="ern/37D2" LanguageAndScriptCode="en" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ernm="http://ddex.net/xml/ern/37D2"
+ xmlns:avs="http://ddex.net/xml/avs/avs" xsi:schemaLocation="http://ddex.net/xml/ern/37D2 http://ddex.net/xml/ern/37D2/release-notification.xsd"
+    ReleaseProfileVersionId="CommonReleaseTypesTypes/12/AudioAlbum">
+<MessageHeader>
+   <MessageThreadId>GJR001205957147</MessageThreadId>
+   <MessageId>GJR00120595714720140529131547930</MessageId>
+   <MessageSender>
+      <PartyId>PADPIDA2009101501Y</PartyId>
+      <PartyName>
+         <FullName>Sony DADC</FullName>
+      </PartyName>
+   </MessageSender>
+   <SentOnBehalfOf>
+      <PartyId>N/A</PartyId>
+      <PartyName>
+         <FullName>Ministry of Sound</FullName>
+      </PartyName>
+   </SentOnBehalfOf>
+   <MessageRecipient>
+      <PartyId>PADPIDA2011063001G</PartyId>
+      <PartyName>
+         <FullName>MusicQubed</FullName>
+      </PartyName>
+   </MessageRecipient>
+   <MessageCreatedDateTime>2014-05-29T13:15:47+01:00</MessageCreatedDateTime>
+</MessageHeader>
+<UpdateIndicator>OriginalMessage</UpdateIndicator>  
+<ResourceList>  
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>BEQ751300008</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A1</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Take Me Higher</TitleText>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Take Me Higher</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Art Of Tones</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Ludovic Llorca</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Ludovic Llorca</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Copyright Control</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>We Play House Recordings</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T1</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-001.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBUM71306413</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A10</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Help Me Lose My Mind (Paul Woolford Remix)</TitleText>
+        <SubTitle>Paul Woolford Remix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT7M8S</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Help Me Lose My Mind (Paul Woolford Remix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Disclosure Feat. London Grammar</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Howard Lawrence</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Guy Lawrence</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Hannah Reid</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Disclosure</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Universal Music Publishing</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Warner Chappell Music Publishing Ltd</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Universal Island Records, a division of Universal Music Operations Limited.</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T2</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-010.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>SEWUG0800401</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A11</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Everything Is Alright (Original Mix)</TitleText>
+        <SubTitle>Original Mix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Everything Is Alright (Original Mix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Rasmus Faber Feat. Linda Sundblad</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>L. Sundblad</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>R. Faber</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>A. Holmgren</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Rasmus Faber 
+</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Warner Chappell Music</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Farplane Compositions</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Lido Music</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2008</Year>
+          <PLineText>Farplane Records</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T3</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-011.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBEFR1208150</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A12</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Rush (Original Mix[dontuse])</TitleText>
+        <SubTitle>Original Mix[dontuse]</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Rush (Original Mix[dontuse])</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Doorly Feat. Soraya Vivian</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Soraya Vivian</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Doorly</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Doorly</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Mad Decent Publishing</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2012</Year>
+          <PLineText>PigeonHole This!</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T4</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-012.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>QMHDW1300007</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A13</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Believe In Love (My Digital Enemy Remix)</TitleText>
+        <SubTitle>My Digital Enemy Remix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Believe In Love (My Digital Enemy Remix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>House Of Virus &amp; Marshall Jefferson Feat. Soliaris</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Justinas Chachlauskas</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>James Fennings</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Marshall Jefferson</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Justinas Chachlauskas</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>James Fennings</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Marshall Jefferson</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Boucin Music</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Karmic Power Records</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T5</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-013.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GB9AT1300032</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A14</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Right Now (Dirty Freek, Frater &amp; Stent Remix)</TitleText>
+        <SubTitle>Dirty Freek, Frater &amp; Stent Remix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Right Now (Dirty Freek, Frater &amp; Stent Remix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Andy S &amp; Raffaell Feat. Max C </FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Andy S</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Raffaell</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Max C</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Copyright Control</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Disco Bomb </PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T6</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-014.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBKQU1310699</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A15</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Dancing (Original Mix)</TitleText>
+        <SubTitle>Original Mix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Dancing (Original Mix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Jorge Montia</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Jorge Montia</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Jorge Montia</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Marfil Records</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Marfil Records</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T7</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-015.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBCEN1301330</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A16</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Hed Kandi Live NYE Amsterdam (Continuous Bonus Mix)</TitleText>
+        <SubTitle>Continuous Bonus Mix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT1H17M7S</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Hed Kandi Live NYE Amsterdam (Continuous Bonus Mix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Various Artists</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Copyright Control</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Hed Kandi Records/Ministry of Sound Recordings Ltd</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T8</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-016.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GB3FT1300026</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A2</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Party Right</TitleText>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Party Right</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Carl Hanaghan &amp; Darryl D’Bonneau</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Carl Hanaghan</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Darryl D’Bonneau</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Carl Hanaghan</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Copyright Control</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Ny-O-Dae Music (BMI)</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Mullette Hall Publishing</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Discopolis Recordings Limited</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T9</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-002.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>USATE1306801</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A3</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Get On Down (Yogi &amp; Husky's RSR Remix)</TitleText>
+        <SubTitle>Yogi &amp; Husky's RSR Remix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Get On Down (Yogi &amp; Husky's RSR Remix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Dutchican Soul</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Niels Schroder</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Talpa Music (buma)</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Deluxe Tempo Music (ascap)</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>administered by Atal Music (prs)</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Salted Music</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T10</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-003.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBCPZ1306890</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A4</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Should Be</TitleText>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Should Be</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Sonny Fodera Feat. Natalie Conway</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Simon Whitelock</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Natalie Conway</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Sonny Fodera in Melbourne, Australia</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Defected Music</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Defected Records Limited</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T11</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-004.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBF8H1300196</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A5</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Let The Fire Burn</TitleText>
+      </ReferenceTitle>
+<Duration>PT5M43S</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Let The Fire Burn</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Long &amp; Harris</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Shane Long</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Kane Harris</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Shane Long</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Kane Harris</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Copyright Control</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Maquina Music </PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T12</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-005.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBCEN1300917</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A6</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Mind Control</TitleText>
+      </ReferenceTitle>
+<Duration>PT5M4S</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Mind Control</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>LKiD</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Lewis Jermaine Kyle Harris</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>LKiD</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Copyright Control</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>2013 HK Records / Ministry of Sound Recordings Ltd.</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T13</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-006.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBKQU1316978</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A7</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Everybody Loves (Monte Remix)</TitleText>
+        <SubTitle>Monte Remix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Everybody Loves (Monte Remix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Phil &amp; Dan</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Phil &amp; Dan</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Phil &amp; Dan</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Copyright Control</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Blacksoul Music</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T14</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-007.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBPN71200010</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A8</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Just Come (K-Klass Homage Mix)</TitleText>
+        <SubTitle>K-Klass Homage Mix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT6M28S</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Just Come (K-Klass Homage Mix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>K-Klass &amp; Todd Terry</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Paolo Visnadi</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Thomas Beecher Hooker</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Angelo Albanese</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Paul Roberts</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Russell Morgan</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Todd Terry</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Gnomi Gli Ed Mus S.r.l.</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Universal/MCA Music Ltd</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Klass Action</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T15</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-008.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<SoundRecording>
+<SoundRecordingType>MusicalWorkSoundRecording</SoundRecordingType>
+<SoundRecordingId>
+        <ISRC>GBSCL1313031</ISRC>
+      </SoundRecordingId>
+<ResourceReference>A9</ResourceReference>
+<ReferenceTitle>
+        <TitleText>Bigger Than Prince (The Martinez Brothers Remix)</TitleText>
+        <SubTitle>The Martinez Brothers Remix</SubTitle>
+      </ReferenceTitle>
+<Duration>PT5M</Duration>
+<SoundRecordingDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<Title TitleType="DisplayTitle">
+          <TitleText>Bigger Than Prince (The Martinez Brothers Remix)</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Green Velvet</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Curtis Jones aka Green Velvet</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Writer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<ResourceContributor>
+          <PartyName>
+            <FullName>Green Velvet</FullName>
+          </PartyName>
+          <ResourceContributorRole Namespace="PADPIDA2013110403G" UserDefinedValue="Producer">UserDefined</ResourceContributorRole>
+        </ResourceContributor>
+<IndirectResourceContributor>
+          <PartyName>
+            <FullName>Cajual Music (ASCAP)</FullName>
+          </PartyName>
+          <IndirectResourceContributorRole>MusicPublisher</IndirectResourceContributorRole>
+        </IndirectResourceContributor>
+<LabelName>Hed Kandi Records</LabelName>
+<PLine>
+          <Year>2013</Year>
+          <PLineText>Circus Recordings</PLineText>
+        </PLine>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<TechnicalSoundRecordingDetails>
+<TechnicalResourceDetailsReference>T16</TechnicalResourceDetailsReference>
+<AudioCodecType>MP3</AudioCodecType>
+<BitRate>320</BitRate>
+<NumberOfChannels>2</NumberOfChannels>
+<IsPreview>false</IsPreview>
+<File>
+<FileName>5026535923756_T-67_SoundRecording_01-009.mp3</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalSoundRecordingDetails>
+</SoundRecordingDetailsByTerritory>
+</SoundRecording>    
+<Image>
+<ImageType>FrontCoverImage</ImageType>
+<ImageId>
+        <ProprietaryId Namespace="PADPIDA2013110403G">f8aae39a3974434eafb95285b048dc3c</ProprietaryId>
+      </ImageId>
+<ResourceReference>A17</ResourceReference>
+<ImageDetailsByTerritory>      
+<TerritoryCode>Worldwide</TerritoryCode>
+<TechnicalImageDetails>
+<TechnicalResourceDetailsReference>T17</TechnicalResourceDetailsReference>
+<ImageCodecType>JPEG</ImageCodecType>
+<ImageHeight>800</ImageHeight>
+<ImageWidth>800</ImageWidth>
+<File>
+<FileName>5026535923756_T-12420_Image.jpg</FileName>
+<FilePath>resources/</FilePath>
+<HashSum>
+<HashSum></HashSum>
+<HashSumAlgorithmType>MD5</HashSumAlgorithmType>
+</HashSum>
+</File>
+</TechnicalImageDetails>
+</ImageDetailsByTerritory>
+</Image>    
+</ResourceList>
+<ReleaseList>  
+<Release IsMainRelease="true">
+  <ReleaseId>
+        <ICPN IsEan="false">5026535923756</ICPN>
+
+
+<CatalogNumber Namespace="PADPIDA2013110403G">HEDKD16E</CatalogNumber>
+
+  </ReleaseId>
+<ReleaseReference>R0</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Hed Kandi NYE Live Amsterdam</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A13</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A14</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A15</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A16</ReleaseResourceReference>
+        <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A17</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>Album</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Various Artists</DisplayArtistName>
+<LabelName>Hed Kandi Records</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Hed Kandi NYE Live Amsterdam</TitleText>
+        </Title>
+<DisplayArtist>
+          <PartyName>
+            <FullName>Various Artists</FullName>
+          </PartyName>
+          <ArtistRole>MainArtist</ArtistRole>
+        </DisplayArtist>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>01</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>02</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>03</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>04</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>05</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>06</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>07</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>08</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>09</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>10</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>11</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>12</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>13</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A13</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>14</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A14</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>15</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A15</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+            <ResourceGroupContentItem>
+              <SequenceNumber>16</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A16</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+          <ResourceGroupContentItem>
+            <ResourceType>Image</ResourceType>
+            <ReleaseResourceReference ReleaseResourceType="SecondaryResource">A17</ReleaseResourceReference>
+          </ResourceGroupContentItem>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+   <ReleaseDate>2013-12-29</ReleaseDate>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Hed Kandi Records/Ministry of Sound Recordings Ltd</PLineText>
+      </PLine>
+<CLine>
+        <Year>2013</Year>
+        <CLineText>Hed Kandi Records/Ministry of Sound Recordings Ltd</CLineText>
+      </CLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>BEQ751300008</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R1</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Take Me Higher</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Art Of Tones</DisplayArtistName>
+<LabelName>We Play House Recordings</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Take Me Higher</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A1</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>We Play House Recordings</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBUM71306413</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R10</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Help Me Lose My Mind (Paul Woolford Remix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Disclosure Feat. London Grammar</DisplayArtistName>
+<LabelName>Universal International Music B.V.</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Help Me Lose My Mind (Paul Woolford Remix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A10</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Universal Island Records, a division of Universal Music Operations Limited.</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>SEWUG0800401</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R11</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Everything Is Alright (Original Mix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Rasmus Faber Feat. Linda Sundblad</DisplayArtistName>
+<LabelName>Farplane Records</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Everything Is Alright (Original Mix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A11</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2008</Year>
+        <PLineText>Farplane Records</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBEFR1208150</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R12</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Rush (Original Mix[dontuse])</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Doorly Feat. Soraya Vivian</DisplayArtistName>
+<LabelName>PigeonHole This!</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Rush (Original Mix[dontuse])</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A12</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2012</Year>
+        <PLineText>PigeonHole This!</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>QMHDW1300007</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R13</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Believe In Love (My Digital Enemy Remix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A13</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>House Of Virus &amp; Marshall Jefferson Feat. Soliaris</DisplayArtistName>
+<LabelName>Karmic Power Records</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Believe In Love (My Digital Enemy Remix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A13</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Karmic Power Records</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GB9AT1300032</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R14</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Right Now (Dirty Freek, Frater &amp; Stent Remix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A14</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Andy S &amp; Raffaell Feat. Max C </DisplayArtistName>
+<LabelName>Disco Bomb</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Right Now (Dirty Freek, Frater &amp; Stent Remix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A14</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Disco Bomb </PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBKQU1310699</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R15</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Dancing (Original Mix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A15</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Jorge Montia</DisplayArtistName>
+<LabelName>Marfil Records</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Dancing (Original Mix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A15</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Marfil Records</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBCEN1301330</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R16</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Hed Kandi Live NYE Amsterdam (Continuous Bonus Mix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A16</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Various Artists</DisplayArtistName>
+<LabelName>Ministry of Sound Recordings Ltd</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Hed Kandi Live NYE Amsterdam (Continuous Bonus Mix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A16</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Hed Kandi Records/Ministry of Sound Recordings Ltd</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GB3FT1300026</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R2</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Party Right</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Carl Hanaghan &amp; Darryl D’Bonneau</DisplayArtistName>
+<LabelName>Discopolis Recordings Limited</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Party Right</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A2</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Discopolis Recordings Limited</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>USATE1306801</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R3</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Get On Down (Yogi &amp; Husky's RSR Remix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Dutchican Soul</DisplayArtistName>
+<LabelName>Salted Music</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Get On Down (Yogi &amp; Husky's RSR Remix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A3</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Salted Music</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBCPZ1306890</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R4</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Should Be</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Sonny Fodera Feat. Natalie Conway</DisplayArtistName>
+<LabelName>Defected Records Limited</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Should Be</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A4</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Defected Records Limited</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBF8H1300196</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R5</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Let The Fire Burn</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Long &amp; Harris</DisplayArtistName>
+<LabelName>Maquina Music</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Let The Fire Burn</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A5</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Maquina Music </PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBCEN1300917</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R6</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Mind Control</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>LKiD</DisplayArtistName>
+<LabelName>Ministry of Sound Recordings Ltd</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Mind Control</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A6</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>2013 HK Records / Ministry of Sound Recordings Ltd.</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBKQU1316978</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R7</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Everybody Loves (Monte Remix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Phil &amp; Dan</DisplayArtistName>
+<LabelName>Blacksoul Music</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Everybody Loves (Monte Remix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A7</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Blacksoul Music</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBPN71200010</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R8</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Just Come (K-Klass Homage Mix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>K-Klass &amp; Todd Terry</DisplayArtistName>
+<LabelName>Klass Action</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Just Come (K-Klass Homage Mix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A8</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Klass Action</PLineText>
+      </PLine>
+</Release>    
+<Release>
+  <ReleaseId>
+<ISRC>GBSCL1313031</ISRC>
+
+
+  </ReleaseId>
+<ReleaseReference>R9</ReleaseReference>
+<ReferenceTitle>
+        <TitleText>Bigger Than Prince (The Martinez Brothers Remix)</TitleText>
+      </ReferenceTitle>
+<ReleaseResourceReferenceList>
+        <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+      </ReleaseResourceReferenceList>
+	<ReleaseType>TrackRelease</ReleaseType>
+  <ReleaseDetailsByTerritory>
+<TerritoryCode>Worldwide</TerritoryCode>
+<DisplayArtistName>Green Velvet</DisplayArtistName>
+<LabelName>Circus Recordings</LabelName>
+<Title TitleType="DisplayTitle">
+          <TitleText>Bigger Than Prince (The Martinez Brothers Remix)</TitleText>
+        </Title>
+<ParentalWarningType>NotExplicit</ParentalWarningType>
+<ResourceGroup>
+          <ResourceGroup>
+            <SequenceNumber>1</SequenceNumber>
+            <ResourceGroupContentItem>
+              <SequenceNumber>1</SequenceNumber>
+              <ResourceType>SoundRecording</ResourceType>
+              <ReleaseResourceReference ReleaseResourceType="PrimaryResource">A9</ReleaseResourceReference>
+            </ResourceGroupContentItem>
+          </ResourceGroup>
+        </ResourceGroup>
+<Genre>
+  <GenreText>Dance</GenreText>
+</Genre>
+  </ReleaseDetailsByTerritory>
+<PLine>
+        <Year>2013</Year>
+        <PLineText>Circus Recordings</PLineText>
+      </PLine>
+</Release>    
+</ReleaseList>
+<DealList><ReleaseDeal>
+<DealReleaseReference>R0</DealReleaseReference>
+<Deal>
+<DealTerms>
+<CommercialModelType>PayAsYouGoModel</CommercialModelType>
+<Usage>
+<UseType>PermanentDownload</UseType>
+</Usage>
+<TerritoryCode>GB</TerritoryCode>
+<TerritoryCode>IE</TerritoryCode>
+<PriceInformation>
+<PriceType Namespace="PADPIDA2013110403G">Front</PriceType>
+</PriceInformation>
+<ValidityPeriod>
+<StartDate>2013-12-29</StartDate>
+</ValidityPeriod>
+<PreOrderReleaseDate>2013-12-29</PreOrderReleaseDate>
+<PreOrderPreviewDate>2013-12-29</PreOrderPreviewDate>
+</DealTerms>
+</Deal>
+</ReleaseDeal>
+<ReleaseDeal>
+<DealReleaseReference>R1</DealReleaseReference>
+<DealReleaseReference>R11</DealReleaseReference>
+<DealReleaseReference>R12</DealReleaseReference>
+<DealReleaseReference>R13</DealReleaseReference>
+<DealReleaseReference>R14</DealReleaseReference>
+<DealReleaseReference>R15</DealReleaseReference>
+<DealReleaseReference>R16</DealReleaseReference>
+<DealReleaseReference>R2</DealReleaseReference>
+<DealReleaseReference>R3</DealReleaseReference>
+<DealReleaseReference>R5</DealReleaseReference>
+<DealReleaseReference>R6</DealReleaseReference>
+<DealReleaseReference>R7</DealReleaseReference>
+<DealReleaseReference>R8</DealReleaseReference>
+<Deal>
+<DealTerms>
+<CommercialModelType>PayAsYouGoModel</CommercialModelType>
+<Usage>
+<UseType>PermanentDownload</UseType>
+</Usage>
+<TerritoryCode>GB</TerritoryCode>
+<TerritoryCode>IE</TerritoryCode>
+<PriceInformation>
+<PriceType Namespace="PADPIDA2013110403G">Premium</PriceType>
+</PriceInformation>
+<ValidityPeriod>
+<StartDate>2013-12-29</StartDate>
+</ValidityPeriod>
+<PreOrderReleaseDate>2013-12-29</PreOrderReleaseDate>
+<PreOrderPreviewDate>2013-12-29</PreOrderPreviewDate>
+</DealTerms>
+</Deal>
+</ReleaseDeal>
+</DealList></ernm:NewReleaseMessage>

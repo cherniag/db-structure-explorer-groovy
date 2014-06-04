@@ -10,7 +10,7 @@ public class DropsData {
 		private String name;
 		private Boolean selected = false;
 		private IParser parser;
-		private IParserFactory.Ingestors ingestor;
+		private Ingestors ingestor;
 		private DropData drop;
 		private IngestData ingestdata;
 
@@ -47,11 +47,11 @@ public class DropsData {
 			this.drop = drop;
 		}
 
-		public IParserFactory.Ingestors getIngestor() {
+		public Ingestors getIngestor() {
 			return ingestor;
 		}
 
-		public void setIngestor(IParserFactory.Ingestors ingestor) {
+		public void setIngestor(Ingestors ingestor) {
 			this.ingestor = ingestor;
 		}
 
