@@ -876,6 +876,7 @@ if(Pickers == undefined) {
                     d.push({
                         chartType: e.chartType,
                         imageFileUrl: (e.imageFileName) ? Streamzine.Presenter.Editor.imagesBaseUrl + '/' + e.imageFileName : '',
+                        imageFileName: e.imageFileName,
                         name: e.name,
                         tracksCount: e.tracksCount
                     });

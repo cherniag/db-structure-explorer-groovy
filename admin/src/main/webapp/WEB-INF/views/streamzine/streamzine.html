@@ -195,10 +195,10 @@
     </style>
 	<body>
 		<div th:substituteby="tpl::navbar"></div>
-<!--        <div style="padding: 60px; color: red;" class="container" th:unless="${enabledCommunity} == ${activeCommunity}">
+        <div style="padding: 60px; color: red;" class="container" th:unless="${enabledCommunity} == ${activeCommunity}">
             Streamzine is not enabled for current community <span th:text="${activeCommunity}"/>. You should select <span th:text="${enabledCommunity}"/>.
-        </div>-->
-		<div class="container" th:unless="${enabledCommunity} == ${activeCommunity}">
+        </div>
+        <div class="container" th:if="${enabledCommunity} == ${activeCommunity}">
             <div style="margin-bottom: 15px;"></div>
 
             <div class="streamzineEditor">

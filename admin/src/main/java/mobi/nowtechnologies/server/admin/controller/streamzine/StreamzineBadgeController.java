@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.service.streamzine.asm.FileNameAliasDtoAsm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,8 +21,6 @@ import java.util.List;
 public class StreamzineBadgeController {
     @Resource
     private FileNameAliasDtoAsm fileNameAliasDtoAsm;
-    @Value("${admin.streamzine.enabled.community.url}")
-    private String streamzineCommunity;
     @Resource
     private BadgesService badgesService;
 

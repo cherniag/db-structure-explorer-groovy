@@ -593,7 +593,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     'subtitle': playlistDto.subtitle,
                     'tracksCount': playlistDto.tracksCount
                 }
-                fireValuePickedEvent('coverUrl')(playlistDto.imageFileUrl);
+                fireValuePickedEvent('coverUrl')(playlistDto.imageFileName);
                 fireValuePickedEvent('value')(playlistDto.chartType.$name);
                 fireValuePickedEvent('title')(playlistDto.name);
                 fireValuePickedEvent('subTitle')(playlistDto.subtitle);
