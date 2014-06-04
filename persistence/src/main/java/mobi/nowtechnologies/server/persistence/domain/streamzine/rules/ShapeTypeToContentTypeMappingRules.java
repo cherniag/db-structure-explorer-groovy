@@ -13,8 +13,7 @@ import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.Co
 public enum ShapeTypeToContentTypeMappingRules {
     WIDE_RULES(ShapeType.WIDE, MUSIC, /*SOCIAL,*/ NEWS, PROMOTIONAL),
     NARROW_RULES(ShapeType.NARROW, MUSIC, /*SOCIAL,*/ NEWS, PROMOTIONAL),
-    SLIM_BANNER_RULES(ShapeType.SLIM_BANNER, PROMOTIONAL),
-    BUTTON_RULES(ShapeType.BUTTON, PROMOTIONAL);
+    SLIM_BANNER_RULES(ShapeType.SLIM_BANNER, PROMOTIONAL);
 
     private final ShapeType shapeType;
     private final List<ContentType> contentTypes;

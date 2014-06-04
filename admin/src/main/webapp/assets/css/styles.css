@@ -1104,9 +1104,6 @@ ul.table li div.path_asset_columns {
 .streamzine_shape_NARROW {
     height: 20px;
 }
-.streamzine_shape_BUTTON {
-    height: 12px;
-}
 .streamzine_shape_PROMOTIONAL {
     height: 12px;
 }
@@ -1165,11 +1162,6 @@ ul.table_streamzine{
 
 .streamzine_block_PROMOTIONAL {
     height:90px;
-}
-
-.streamzine_block_BUTTON {
-    height:90px;
-    border-radius: 10px;
 }
 
 .streamzinePropertiesEditor {
@@ -1433,19 +1425,6 @@ block icons and info
     overflow: hidden;
 }
 .streamzine_block_SLIM_BANNER .streamzine-block-preview-info {
-    margin-left: 65px;
-}
-
-.streamzine_block_BUTTON .streamzine-block-preview-icon img {
-    height: 60px;
-}
-.streamzine_block_BUTTON .streamzine-block-preview-icon {
-    width: 60px;
-    height: 60px;
-    float: left;
-    overflow: hidden;
-}
-.streamzine_block_BUTTON .streamzine-block-preview-info {
     margin-left: 65px;
 }
 

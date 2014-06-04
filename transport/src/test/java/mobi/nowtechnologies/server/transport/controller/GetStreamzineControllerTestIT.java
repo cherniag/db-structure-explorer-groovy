@@ -83,11 +83,11 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         resultActions.andDo(print())
                         // check the orders
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.BUTTON.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.BUTTON.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
@@ -246,15 +246,15 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         // Ordinal blocks
         //
         u.addBlock(newBlock(1, ShapeType.WIDE, createNotificationDeeplink(externalLink), badgeUrl));
-        u.addBlock(newBlock(2, ShapeType.BUTTON, createNotificationDeeplink0(), badgeUrl));
+        u.addBlock(newBlock(2, ShapeType.SLIM_BANNER, createNotificationDeeplink0(), badgeUrl));
         u.addBlock(newBlock(3, ShapeType.NARROW, createNotificationDeeplink1(), badgeUrl));
         u.addBlock(newBlock(4, ShapeType.SLIM_BANNER, createNewsListDeeplink(publishDate), badgeUrl));
         u.addBlock(newBlock(5, ShapeType.WIDE, createNewsStoryDeeplink(newsMessage), badgeUrl));
         //
         // Added mixed positions to test that values are added according to positions: 5 and 6
         //
-        u.addBlock(newBlock(7, ShapeType.BUTTON, createMusicPlaylistDeeplink(chartType), badgeUrl));
-        u.addBlock(newBlock(8, ShapeType.BUTTON, createManualCompilationDeeplink(track), badgeUrl));
+        u.addBlock(newBlock(7, ShapeType.SLIM_BANNER, createMusicPlaylistDeeplink(chartType), badgeUrl));
+        u.addBlock(newBlock(8, ShapeType.SLIM_BANNER, createManualCompilationDeeplink(track), badgeUrl));
         u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track), badgeUrl));
         return u;
     }

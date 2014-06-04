@@ -1,15 +1,13 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Date;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.BUTTON;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -79,7 +77,7 @@ public class UpdateTest {
         NotificationDeeplinkInfo deeplinkInfo = mock(NotificationDeeplinkInfo.class);
         when(deeplinkInfo.copy(any(Block.class))).thenReturn(deeplinkInfo);
 
-        Block block = new Block(position, BUTTON, deeplinkInfo);
+        Block block = new Block(position, SLIM_BANNER, deeplinkInfo);
         block.include();
         return block;
     }

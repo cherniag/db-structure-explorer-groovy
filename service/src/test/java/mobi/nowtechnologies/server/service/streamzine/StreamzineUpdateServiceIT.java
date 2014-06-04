@@ -5,9 +5,8 @@ import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
@@ -23,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -172,7 +172,7 @@ public class StreamzineUpdateServiceIT {
 
     private Block createBlock(String title) {
         DeeplinkInfo deeplink = new NotificationDeeplinkInfo(LinkLocationType.INTERNAL_AD, "about");
-        Block block = new Block(0, ShapeType.BUTTON, deeplink);
+        Block block = new Block(0, SLIM_BANNER, deeplink);
         block.setTitle(title);
         return block;
     }

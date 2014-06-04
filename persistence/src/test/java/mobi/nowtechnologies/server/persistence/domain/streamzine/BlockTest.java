@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -27,6 +26,6 @@ public class BlockTest {
     }
 
     private Block createBlock(int position) {
-        return new Block(position, ShapeType.BUTTON, mock(NotificationDeeplinkInfo.class));
+        return new Block(position, ShapeType.SLIM_BANNER, mock(NotificationDeeplinkInfo.class));
     }
 }

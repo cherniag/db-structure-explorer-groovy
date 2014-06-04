@@ -481,7 +481,7 @@ if(Streamzine == undefined) {
         });
 
         if(Streamzine.canEdit) {
-            $("#wideRangeId, #narrowShapeId, #slimShapeId, #buttonShapeTypeId").draggable({
+            $("#wideRangeId, #narrowShapeId, #slimShapeId").draggable({
                 helper: 'clone',
                 connectToSortable: '#sortableGrid'
             });

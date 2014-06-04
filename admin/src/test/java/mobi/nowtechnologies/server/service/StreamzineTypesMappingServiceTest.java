@@ -73,27 +73,6 @@ public class StreamzineTypesMappingServiceTest {
     }
 
     @Test
-    public void testGetTypesMappingInfosCreatedForSubtypesOfButton() throws Exception {
-        final ShapeType shapeType = ShapeType.BUTTON;
-
-        Map<ContentType, List<Enum<?>>> typeWithSubtypes = find(shapeType).getTypeWithSubtypes();
-
-        // PROMOTIONAL content type only for BUTTON:
-        final ContentType promotional = ContentType.PROMOTIONAL;
-
-        assertEquals(1, typeWithSubtypes.size());
-        assertTrue(
-                "Mapping for:" + shapeType + " does not contain: " + promotional,
-                typeWithSubtypes.containsKey(promotional)
-        );
-
-        List<Enum<?>> subTypes = typeWithSubtypes.get(promotional);
-        // INTERNAL AD link sub type only for PROMOTIONAL Type of BUTTON shape type
-        subTypes.contains(LinkLocationType.INTERNAL_AD);
-        assertEquals(1, subTypes.size());
-    }
-
-    @Test
     public void testGetTypesMappingInfosCreatedForSubtypesOfSLimBanner() throws Exception {
         final ShapeType shapeType = ShapeType.SLIM_BANNER;
 

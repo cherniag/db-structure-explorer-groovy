@@ -3,31 +3,24 @@ package mobi.nowtechnologies.server.service.streamzine;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
-import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Date;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.BUTTON;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.SLIM_BANNER;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.verifyNew;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 public class StreamzineUpdateServiceTest {
@@ -53,7 +46,7 @@ public class StreamzineUpdateServiceTest {
     public void shouldCreateNewIncludedUpdateWhenPreviousUpdateExists() throws Exception {
         //given
         Update prevUpdate = new Update(addDays(new Date(), 2));
-        Block block = new Block(666, BUTTON, new MusicTrackDeeplinkInfo(null));
+        Block block = new Block(666, SLIM_BANNER, new MusicTrackDeeplinkInfo(null));
         block.exclude();
         prevUpdate.addBlock(block);
 

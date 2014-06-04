@@ -41,7 +41,7 @@ public class StreamzineUpdateAsmTest {
         Block block0 = getBlock(0, ShapeType.WIDE, true);
         Block block2 = getBlock(2, ShapeType.NARROW, true);
         Block block1 = getBlock(1, ShapeType.SLIM_BANNER, true);
-        Block block3 = getBlock(4, ShapeType.BUTTON, true);
+        Block block3 = getBlock(4, ShapeType.SLIM_BANNER, true);
         Block block4 = getBlock(3, ShapeType.WIDE, false);
         update.addBlock(block0);
         update.addBlock(block1);
@@ -56,7 +56,7 @@ public class StreamzineUpdateAsmTest {
         assertThat(streamzineUpdateDto.getBlocks().get(0).getShapeType(), is(ShapeType.WIDE));
         assertThat(streamzineUpdateDto.getBlocks().get(1).getShapeType(), is(ShapeType.SLIM_BANNER));
         assertThat(streamzineUpdateDto.getBlocks().get(2).getShapeType(), is(ShapeType.NARROW));
-        assertThat(streamzineUpdateDto.getBlocks().get(3).getShapeType(), is(ShapeType.BUTTON));
+        assertThat(streamzineUpdateDto.getBlocks().get(3).getShapeType(), is(ShapeType.SLIM_BANNER));
     }
 
     private Block getBlock(int position, ShapeType shapeType, boolean include) {
