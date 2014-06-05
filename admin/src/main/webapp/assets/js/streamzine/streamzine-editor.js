@@ -518,6 +518,7 @@ if(Streamzine.Presenter.Editor == undefined) {
             currentBlock.subTitle = "";
             currentBlock.coverUrl = "";
             currentBlock.badgeUrl = "";
+            currentBlock.vip = false;
             currentBlock.data = null;
 
             Events.fire('WIDGET_TYPE_CHANGED');
