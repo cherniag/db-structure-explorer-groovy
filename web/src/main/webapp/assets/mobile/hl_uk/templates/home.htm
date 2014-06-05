@@ -1,0 +1,39 @@
+<div class="wide color-swap-bg">
+<div class="height-header color-swap-header" xmlns="http://www.w3.org/1999/html">
+    <div style="left: 121px; top: 12px" class="absolute font-main S18 text-shadow">
+    	<img src="<%=Messages['assetPath']%>imgs/ic_backstage_header.png" width="9px" height="15px" style="margin-right: 6px" /><%=Messages['page.playlists.home.header.text']%>
+    </div>
+    <a href="#back" style="top:8px;left:6px;" class="absolute border-swap transparent button-swap S11"><%=Messages['page.playlists.home.button.back.text']%></a>
+</div>
+<div class="pad8-rl" style="margin-bottom: 30px;">
+ 
+<div class="swapPlaylistMainHeader font-main S20 color-current-theme">
+	<%=Messages['page.playlists.home.title.text']%>
+</div>
+
+<div>
+	<img style="width: 100%" src="<%=Messages['assetPath']%>imgs/img_swap.png" />
+</div>
+
+<div class="S15 swapPlaylistMiddleText">
+	<%=Messages['page.playlists.home.info.middle.text']%>
+</div>
+
+<div onclick="location.href='#allPlaylists'" class="marg-T15 button-turquoise font-light S15 shadow">
+	<%=Messages['page.playlists.home.button.go.text']%>
+</div>
+
+<div style="margin-top: 14px;" onclick="ChckboxElement.switchState(); this.blur();">
+	<div style="margin: auto;width: 250px">
+		<img id="doNotShowCheckboxOff" src="<%=Messages['assetPath']%>imgs/ic_tick_off.png" width="35px" height="35px" align="left" />
+		<img id="doNotShowCheckboxOn" style="display: none" src="<%=Messages['assetPath']%>imgs/ic_tick_on.png" width="35px" height="35px" align="left" />
+		
+		<div class="frL13" style="color: #fff; padding-top: 9px;">
+			<span style="margin-left: 8px"><%=Messages['page.playlists.home.checkbox.text']%></span>
+		</div>
+		<div class="clr">&nbsp;</div>
+	</div>
+</div>
+
+</div>
+</div>
