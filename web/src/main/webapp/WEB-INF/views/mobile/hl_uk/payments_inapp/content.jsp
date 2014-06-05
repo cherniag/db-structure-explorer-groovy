@@ -59,7 +59,14 @@
 	</div>
 	<c:if test="${paymentsPage.paymentDetailsActivated}">
         <div class="rel" style="padding: 0px 5px 10px 5px;">
-            <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html"><s:message code='pays.deactivate.submit' /></a>
+            <c:choose>
+                <c:when test="${paymentsPage.awaitingPaymentStatus}">
+                    <a class="button-disabled no-margin pie"><s:message code='pays.deactivate.submit' /></a>
+                </c:when>
+                <c:otherwise>
+                    <a class="button-grey no-margin pie" href="${pageContext.request.contextPath}/payments_inapp/unsubscribe.html"><s:message code='pays.deactivate.submit' /></a>
+                </c:otherwise>
+            </c:choose>
         </div>
     </c:if>
 </div>

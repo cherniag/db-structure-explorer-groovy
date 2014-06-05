@@ -20,8 +20,14 @@
     </c:if>
 
 	<div class="rel tapArea" data-hasvideo="${paymentPolicy.videoAndAudio4GSubscription ? '1' : '0'}" id="paymentOption${paymentPolicy.id}">
+
+        <c:set var="hrefToSubscribeWhenIsNotInAwaiting" value="" />
+        <c:if test="${paymentsPage.awaitingPaymentStatus eq false}">
+            <c:set var="hrefToSubscribeWhenIsNotInAwaiting" value="href=\"${pageContext.request.contextPath}/${callingPage}/${method_name}.html?paymentPolicyId=${paymentPolicy.id}\"" />
+        </c:if>
+
 		<div class="subscription-container">
-		    <a class="subscription-selector option-3" style="margin-bottom: 0px;" href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" type="button">
+		    <a class="subscription-selector option-3" style="margin-bottom: 0px;" ${hrefToSubscribeWhenIsNotInAwaiting} type="button">
 		 		<img width="51px" height="51px" style="margin-right: 6px" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/ic_option_other.png" />
 		         <div class="rel o2BusinessSubscription">
 		             <span class="frR15"><s:message code="${payment_label}" /></span>

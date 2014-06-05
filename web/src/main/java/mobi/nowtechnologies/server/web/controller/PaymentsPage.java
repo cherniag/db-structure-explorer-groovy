@@ -28,8 +28,9 @@ public class PaymentsPage {
 	private boolean appleIOSAndNotBusiness;
 	private PaymentPageData paymentPageData;
 	private boolean freeTrialPeriod;
+    private boolean awaitingPaymentStatus;
 
-	public String getMobilePhoneNumber() {
+    public String getMobilePhoneNumber() {
 		return mobilePhoneNumber;
 	}
 
@@ -142,4 +143,7 @@ public class PaymentsPage {
 		this.freeTrialPeriod = freeTrialPeriod;
 	}
 
+    public void setAwaitingPaymentStatus(boolean awaitingPaymentStatus) {
+        this.awaitingPaymentStatus = awaitingPaymentStatus;
+    }
 }
