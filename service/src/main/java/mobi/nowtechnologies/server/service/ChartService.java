@@ -405,7 +405,7 @@ public class ChartService {
 		if(chartDetail != null){
 			if(chartDetail.getI() != null){
 				ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
-				chartDetail.setVersion(createdOne.getVersion());
+				chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
 			}
 			
 			chartDetail = chartDetailRepository.save(chartDetail);

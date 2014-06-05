@@ -30,9 +30,17 @@ public class MediaFile implements Serializable {
     private int duration;
 
 	@Version
-	private int version;
+	private Integer version;
 
-	public MediaFile() {
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public MediaFile() {
 	}
 
 	public Integer getI() {
@@ -72,11 +80,13 @@ public class MediaFile implements Serializable {
 		this.size = size;
 	}
 
-	public int getVersion() {
-		return version;
+    @Deprecated
+    public int getVersionAsPrimitive() {
+        return version != null ? version: 0;
 	}
 
-	public void setVersion(int version) {
+    @Deprecated
+    public void setVersionAsPrimitive(int version) {
 		this.version = version;
 	}
 

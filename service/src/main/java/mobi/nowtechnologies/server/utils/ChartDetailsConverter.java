@@ -74,11 +74,11 @@ public class ChartDetailsConverter {
         chartDetailDto.setMedia(media.getIsrc());
         chartDetailDto.setTitle(media.getTitle());
         chartDetailDto.setTrackSize(headerSize + audioSize - 2);
-        chartDetailDto.setChartDetailVersion(chartDetail.getVersion());
-        chartDetailDto.setHeaderVersion(headerFile != null ? headerFile.getVersion() : 0);
-        chartDetailDto.setAudioVersion(media.getAudioFile().getVersion());
-        chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersion());
-        chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
+        chartDetailDto.setChartDetailVersion(chartDetail.getVersionAsPrimitive());
+        chartDetailDto.setHeaderVersion(headerFile != null ? headerFile.getVersionAsPrimitive() : 0);
+        chartDetailDto.setAudioVersion(media.getAudioFile().getVersionAsPrimitive());
+        chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersionAsPrimitive());
+        chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersionAsPrimitive());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
         chartDetailDto.setAmazonUrl(getAmazonUrl(media.getAmazonUrl(), defaultAmazonUrl, community.getRewriteUrlParameter()));

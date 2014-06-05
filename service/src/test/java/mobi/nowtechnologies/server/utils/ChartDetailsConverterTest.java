@@ -51,7 +51,7 @@ public class ChartDetailsConverterTest {
         when(messageSource.getMessage(eq(Community.HL_COMMUNITY_REWRITE_URL), eq("itunes.campaign.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(CAMPAIGN_TOKEN_HL_UK);
         when(messageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
         when(messageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
-        when(messageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
+        when(messageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn("GB");
     }
 
 
@@ -171,11 +171,11 @@ public class ChartDetailsConverterTest {
         assertThat(chartDetailDto.getMedia(), Is.is(media.getIsrc()));
         assertThat(chartDetailDto.getTitle(), Is.is(media.getTitle()));
         assertThat(chartDetailDto.getTrackSize(), Is.is(headerSize + audioSize - 2));
-        assertThat(chartDetailDto.getChartDetailVersion(), Is.is(chartDetail.getVersion()));
+        assertThat(chartDetailDto.getChartDetailVersion(), Is.is(chartDetail.getVersionAsPrimitive()));
         assertThat(chartDetailDto.getHeaderVersion(), Is.is(0));
-        assertThat(chartDetailDto.getAudioVersion(), Is.is(media.getAudioFile().getVersion()));
-        assertThat(chartDetailDto.getImageLargeVersion(), Is.is(media.getImageFIleLarge().getVersion()));
-        assertThat(chartDetailDto.getImageSmallVersion(), Is.is(media.getImageFileSmall().getVersion()));
+        assertThat(chartDetailDto.getAudioVersion(), Is.is(media.getAudioFile().getVersionAsPrimitive()));
+        assertThat(chartDetailDto.getImageLargeVersion(), Is.is(media.getImageFIleLarge().getVersionAsPrimitive()));
+        assertThat(chartDetailDto.getImageSmallVersion(), Is.is(media.getImageFileSmall().getVersionAsPrimitive()));
         assertThat(chartDetailDto.getDuration(), Is.is(media.getAudioFile().getDuration()));
         assertThat(chartDetailDto.getAmazonUrl(), Is.is("https%3A%2F%2Fm.7digital.com%2FGB%2Freleases%2F1425249%23t15720039%3Fpartner%3D3734"));
         assertThat(chartDetailDto.getiTunesUrl(), Is.is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttps%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Finhaler%2Fid573269843%3Fi%3D573269988%26uo%3D4%26partnerId%3D2003"));

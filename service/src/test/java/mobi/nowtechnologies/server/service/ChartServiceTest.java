@@ -546,7 +546,7 @@ public class ChartServiceTest {
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		ChartDetail chartDetail1 = ChartDetailFactory.createChartDetail();
 		chartDetail1.setI(chartDetail.getI());
-		chartDetail1.setVersion(5);
+		chartDetail1.setVersionAsPrimitive(5);
 		MultipartFile imageFile = new MockMultipartFile("file", "1".getBytes());
 		
 		when(mockChartDetailRepository.findOne(eq(chartDetail.getI()))).thenReturn(chartDetail1);
@@ -556,7 +556,7 @@ public class ChartServiceTest {
 		ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
 		assertNotNull(result);
-		assertEquals(chartDetail1.getVersion(), result.getVersion());
+		assertEquals(chartDetail1.getVersionAsPrimitive(), result.getVersionAsPrimitive());
 		assertEquals(chartDetail.getTitle(), result.getTitle());
 		assertEquals(chartDetail.getSubtitle(), result.getSubtitle());
 		assertEquals(chartDetail.getImageFileName(), result.getImageFileName());
@@ -869,7 +869,7 @@ public class ChartServiceTest {
 		originalChartDetail.setPosition((byte)i);
 		originalChartDetail.setPrevPosition((byte)0);
 		originalChartDetail.setPublishTimeMillis(publishTimeMillis);
-		originalChartDetail.setVersion(i);
+		originalChartDetail.setVersionAsPrimitive(i);
 		return originalChartDetail;
 	}
 	
