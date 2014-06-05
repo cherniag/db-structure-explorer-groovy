@@ -167,10 +167,11 @@ public class StreamzineController {
     public ModelAndView addUpdate(@PathVariable(value = "publishDate") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date publishDate, RedirectAttributes redirectAttributes) {
         if(publishDate.before(new Date()) || streamzineUpdateService.get(publishDate) != null) {
             redirectAttributes.addFlashAttribute("notValidDate", publishDate);
+            return redirectToMainPage(publishDate);
         } else {
-            streamzineUpdateService.create(publishDate);
+            Update update = streamzineUpdateService.create(publishDate);
+            return new ModelAndView("redirect:/streamzine/edit/" + update.getId());
         }
-        return redirectToMainPage(publishDate);
     }
 
     @RequestMapping(value = "/streamzine/edit/{id}", method = RequestMethod.GET)
