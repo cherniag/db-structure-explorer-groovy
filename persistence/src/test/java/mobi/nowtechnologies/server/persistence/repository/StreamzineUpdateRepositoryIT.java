@@ -119,17 +119,17 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
     }
 
     @Test
-    public void testFindLastSinceForUser() throws Exception {
+    public void testFindFirstAfterForUser() throws Exception {
         final Date dateZero = new Date();
         final Date updateDate = addDays(dateZero, 5);
         final Date dateToSearch = addDays(updateDate, 1);
         User user = UserFactory.createUser(ACTIVATED);
         user = userRepository.saveAndFlush(user);
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate, null));
-        List<Update> all = streamzineUpdateRepository.findLastSinceForUser(dateToSearch, user, ONE_RECORD_PAGEABLE);
+        List<Update> all = streamzineUpdateRepository.findFirstAfterForUser(dateToSearch, user, ONE_RECORD_PAGEABLE);
         assertTrue(all.isEmpty());
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate, user));
-        all = streamzineUpdateRepository.findLastSinceForUser(dateToSearch, user, ONE_RECORD_PAGEABLE);
+        all = streamzineUpdateRepository.findFirstAfterForUser(dateZero, user, ONE_RECORD_PAGEABLE);
         assertEquals(1, all.size());
 
     }
@@ -161,7 +161,9 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
 
     private Update buildUpdateEntity(Date lessDate, User user) {
         Update result = new Update(lessDate);
-        result.setUser(user);
+        if (user != null){
+           result.addUser(user);
+        }
         return result;
     }
 }

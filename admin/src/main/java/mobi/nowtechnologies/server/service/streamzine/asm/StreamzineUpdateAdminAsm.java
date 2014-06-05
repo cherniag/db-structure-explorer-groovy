@@ -1,19 +1,19 @@
 package mobi.nowtechnologies.server.service.streamzine.asm;
 
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.dto.streamzine.*;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -81,7 +81,7 @@ public class StreamzineUpdateAdminAsm {
 
         if (!StringUtils.isEmpty(dto.getUserName())) {
             User user = userRepository.findOne(dto.getUserName(), community);
-            u.setUser(user);
+            u.addUser(user);
         }
 
         return u;
@@ -254,8 +254,8 @@ public class StreamzineUpdateAdminAsm {
         dto.setId(update.getId());
         dto.setDate(update.getDate());
 
-        if(update.getUser() != null) {
-            dto.setUserName(update.getUser().getUserName());
+        if(update.getUsers() != null && update.getUsers().size() != 0) {
+            dto.setUserName(update.getUsers().get(0).getUserName());
         }
         return dto;
     }

@@ -1,19 +1,23 @@
 package mobi.nowtechnologies.server.service;
 
 import com.google.common.collect.Lists;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
+import mobi.nowtechnologies.server.dto.streamzine.UpdateDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,6 +25,9 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
+
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
@@ -49,8 +56,9 @@ public class StreamzineUpdateAdminAsmTest {
         UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
         updateIncomingDto.setUserName(null);
         Update update = streamzineUpdateAdminAsm.fromIncomingDto(updateIncomingDto, COMMUNITY);
-        assertNull(update.getUser());
+        assertEquals(0, update.getUsers().size());
     }
+
     @Test
     public void checkFromIncomingDtoWithUser() throws Exception {
         int id = 15;
@@ -61,9 +69,10 @@ public class StreamzineUpdateAdminAsmTest {
         updateIncomingDto.setUserName(userName);
 
         Update update = streamzineUpdateAdminAsm.fromIncomingDto(updateIncomingDto, COMMUNITY);
-        assertNotNull(update.getUser());
-        assertEquals(id, update.getUser().getId());
-        assertEquals(userName, update.getUser().getUserName());
+        List<User> users = update.getUsers();
+        assertEquals(1, users.size());
+        assertEquals(id, users.get(0).getId());
+        assertEquals(userName, users.get(0).getUserName());
     }
 
     @Test
@@ -90,6 +99,19 @@ public class StreamzineUpdateAdminAsmTest {
         assertEquals(ShapeType.WIDE, block.getShapeType());
         assertTrue(block.getDeeplinkInfo() instanceof ManualCompilationDeeplinkInfo);
 
+    }
+
+    @Test
+    public void testConvertOneToDtoWithBlocks() throws Exception {
+        Update update = new Update(DateUtils.addDays(new Date(), 1));
+        update.addUser(getUser(1, "murka"));
+        update.addUser(getUser(2, "burka"));
+        update.addBlock(new Block(0, ShapeType.SLIM_BANNER, new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "www.uuu.ua")));
+
+        UpdateDto updateDto = streamzineUpdateAdminAsm.convertOneWithBlocks(update);
+
+        String userNames = updateDto.getUserName();
+        assertEquals("murka", userNames);
     }
 
     private User getUser(int id, String userName) {

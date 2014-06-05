@@ -16,7 +16,6 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeTyp
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.apache.commons.lang.time.DateUtils;
@@ -28,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 
+import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -55,7 +55,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String userToken = createTimestampToken(storedToken, timestamp);
         User user = null;
 
         //
@@ -70,7 +70,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, user, badgeUrl);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
 
         Thread.sleep(1200L);
 
@@ -138,7 +138,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
 
 
     @Test
-    public void testGetStreamzineForSpecificMQUser_Success() throws Exception {
+     public void testGetStreamzineForSpecificMQUser_Success() throws Exception {
         final Date updateDate = new Date(System.currentTimeMillis() + 1000L);
 
         // parameters
@@ -148,7 +148,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String userToken = createTimestampToken(storedToken, timestamp);
         User user = null;
         //
         // Expected JSON data
@@ -161,7 +161,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, user, badgeUrl);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
 
         Thread.sleep(1200L);
 
@@ -179,7 +179,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
 
         user = userRepository.findOne(userName, communityUrl);
         final Date updateDateForSpecificUser = new Date(System.currentTimeMillis() + 1000L);
-        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, user, badgeUrl);
+        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
 
         Thread.sleep(1200L);
 
@@ -196,7 +196,74 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateForSpecificUser.getTime()));
     }
 
+    @Test
+    public void testGetStreamzineForSeveralMQUsers_Success() throws Exception {
+        final Date updateDatePast = new Date(System.currentTimeMillis() + 1000L);
+        final Date updateDateFuture = new Date(System.currentTimeMillis() + 10000L);
 
+        // parameters
+        String userName1 = "test@ukr.net";
+        String userName2 = "dnepr@i.ua";
+        String userName3 = "mq@mq.com";
+        String apiVersion = "6.0";
+        String appVersion = "1.0";
+        String communityUrl = "hl_uk";
+        String timestamp = System.currentTimeMillis() + "";
+        User user1 = userRepository.findOne(userName1, communityUrl);
+        User user2 = userRepository.findOne(userName2, communityUrl);
+        User user3 = userRepository.findOne(userName3, communityUrl);
+        //
+        // Expected JSON data
+        //
+        final String externalLink = "http://example.com";
+        final String badgeUrl = "badgeUrl";
+        final Message newsMessage = createNewsMessage();
+        final Date publishDate = new Date();
+        final ChartType chartType = ChartType.BASIC_CHART;
+        final int existingTrackId = 49;
+        final Media existingMedia = mediaRepository.findOne(existingTrackId);
+
+        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user1, user2);
+        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user1, user2);
+
+        Thread.sleep(1200L);
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                        .param("APP_VERSION", appVersion)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", user1.getDeviceUID())
+                        .param("USER_NAME", userName1)
+                        .param("USER_TOKEN", createTimestampToken(user1.getToken(), timestamp))
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk()).
+                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                        .param("APP_VERSION", appVersion)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", user2.getDeviceUID())
+                        .param("USER_NAME", userName2)
+                        .param("USER_TOKEN",  createTimestampToken(user2.getToken(), timestamp))
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk()).
+                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                        .param("APP_VERSION", appVersion)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", user3.getDeviceUID())
+                        .param("USER_NAME", userName3)
+                        .param("USER_TOKEN",  createTimestampToken(user3.getToken(), timestamp))
+                        .param("TIMESTAMP", timestamp))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
+    }
     @Test
     public void testGetStreamzineForO2User_Fail() throws Exception {
         Date now = new Date();
@@ -210,7 +277,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "o2";
         String timestamp = "" + futureDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String userToken = createTimestampToken(storedToken, timestamp);
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
                         .param("APP_VERSION", userName)
@@ -223,18 +290,15 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                 andExpect(status().isNotFound());
     }
 
-    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, User user, String badgeUrl) {
+    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, User... users) {
         Update update = streamzineUpdateService.create(updateDate);
-        update.setUser(user);
-
-        streamzineUpdateService.update(update.getId(), update);
 
         // simulate adding blocks
-        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, badgeUrl);
+        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, badgeUrl, users);
         streamzineUpdateService.update(update.getId(), incomingWithBlocks);
     }
 
-    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl) {
+    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, User... users) {
         Update u = new Update(DateUtils.addDays(new Date(), 1));
         //
         // Not included block
@@ -256,6 +320,13 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         u.addBlock(newBlock(7, ShapeType.SLIM_BANNER, createMusicPlaylistDeeplink(chartType), badgeUrl));
         u.addBlock(newBlock(8, ShapeType.SLIM_BANNER, createManualCompilationDeeplink(track), badgeUrl));
         u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track), badgeUrl));
+
+        if(users != null){
+            for (User user : users) {
+                u.addUser(user);
+            }
+        }
+
         return u;
     }
 

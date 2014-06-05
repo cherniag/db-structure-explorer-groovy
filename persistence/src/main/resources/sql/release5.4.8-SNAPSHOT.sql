@@ -6,10 +6,8 @@ Streamzine (Hey list) tables
 CREATE TABLE `sz_update` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `updated` datetime DEFAULT NULL,
-  `user_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `sz_update` (`updated`),
-  FOREIGN KEY (user_id) REFERENCES tb_users(i)
+  UNIQUE KEY `sz_update` (`updated`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `sz_filename_alias` (
@@ -128,4 +126,11 @@ CREATE TABLE `sz_man_compilation_items` (
   CONSTRAINT `SZ-MAN_COMP_ITEM-MAN_COMP-FK` FOREIGN KEY (`man_compilation_id`) REFERENCES `sz_deeplink_man_compilation` (`id`),
   CONSTRAINT `SZ-MAN_COMP_ITEM-MEDIA_ID-FK` FOREIGN KEY (`media_id`) REFERENCES `tb_media` (`i`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `sz_update_users` (
+  `update_id` bigint(20) not null,
+  `user_id` int(10) unsigned not null,
+  CONSTRAINT `SZ_UPD_USERS-UPD` FOREIGN KEY (`update_id`) REFERENCES `sz_update` (`id`),
+  CONSTRAINT `SZ_UPD_USERS-USER` FOREIGN KEY (`user_id`) REFERENCES `tb_users` (`i`)
+)
 

@@ -22,9 +22,13 @@ public class Update {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(
+            name = "sz_update_users",
+            joinColumns = @JoinColumn(name = "update_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "i")
+    )
+    private List<User> users = new ArrayList<User>();
 
     @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
@@ -40,11 +44,6 @@ public class Update {
         Assert.isTrue(date.after(new Date()));
         this.date = date;
     }
-
-    public User getUser() {
-        return user;
-    }
-
 
     public long getId() {
         return id;
@@ -85,14 +84,10 @@ public class Update {
         return date.after(now);
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public void updateFrom(Update incoming) {
         Assert.isTrue(canEdit());
 
-        this.user = incoming.user;
+        copyUsers(incoming);
         copyBlocks(incoming);
     }
 
@@ -124,6 +119,19 @@ public class Update {
         for (Block block : incoming.getBlocks()) {
             this.blocks.add(new Block(block));
         }
+    }
+
+    private void copyUsers(Update incoming){
+        this.users.clear();
+        this.users.addAll(incoming.users);
+    }
+
+    public List<User> getUsers() {
+        return new ArrayList<User>(users);
+    }
+
+    public void addUser(User user){
+        users.add(user);
     }
 
     @Override

@@ -2,6 +2,7 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
 import com.google.common.collect.Lists;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
@@ -164,7 +165,9 @@ public class StreamzineUpdateServiceIT {
 
     private Update createWithBlock(Update from, Block block) {
         Update incoming = new Update(from.getDate());
-        incoming.setUser(from.getUser());
+        for (User user: from.getUsers()){
+            incoming.addUser(user);
+        }
         incoming.addBlock(block);
 
         return incoming;

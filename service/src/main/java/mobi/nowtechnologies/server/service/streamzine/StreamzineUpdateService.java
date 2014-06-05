@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
-import mobi.nowtechnologies.server.shared.ObjectUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -84,8 +83,13 @@ public class StreamzineUpdateService {
         streamzineUpdateRepository.save(existing);
     }
 
+    @Transactional(readOnly = true)
     public Update get(long id) {
-        return streamzineUpdateRepository.findById(id);
+        Update update = streamzineUpdateRepository.findById(id);
+        if (update != null){
+            update.getUsers().size();
+        }
+        return update;
     }
 
     public Update get(Date publishDate) {
@@ -97,7 +101,7 @@ public class StreamzineUpdateService {
         Assert.notNull(date);
         Assert.notNull(user);
 
-        List<Update> result = streamzineUpdateRepository.findLastSinceForUser(date, user, ONE_RECORD_PAGEABLE);
+        List<Update> result = streamzineUpdateRepository.findFirstAfterForUser(date, user, ONE_RECORD_PAGEABLE);
         if (isEmpty(result)){
             result = streamzineUpdateRepository.findLastSince(date, ONE_RECORD_PAGEABLE);
         }
