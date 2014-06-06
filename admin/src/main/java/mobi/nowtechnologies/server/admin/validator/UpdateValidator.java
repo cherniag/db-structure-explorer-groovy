@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class UpdateValidator extends BaseValidator {
@@ -60,6 +62,42 @@ public class UpdateValidator extends BaseValidator {
         return UpdateIncomingDto.class.isAssignableFrom(clazz);
     }
 
+    private class BlocksDuplicationContentValidator {
+        Map<String, Block> blockMap = new HashMap<String, Block>();
+
+        String contentSubType;
+        String contentValue;
+
+        class Block{
+            final String value;
+            final String title;
+
+            Block(String value, String title){
+                this.value = value;
+                this.title = title;
+            }
+        }
+
+        void validate(OrdinalBlockDto blockDto, Errors errors) {
+            contentSubType = blockDto.provideKeyString();
+            contentValue = blockDto.provideValueString();
+
+            if (isNull(contentSubType) || isNull(contentValue)) return;
+
+            Block firstContentSubTypeValueBlock = blockMap.get(getBlockKey());
+            if (isNotNull(firstContentSubTypeValueBlock) && contentValue.equals(firstContentSubTypeValueBlock.value)) {
+                rejectField("streamzine.error.duplicate.content", new Object[]{blockDto.getTitle(), firstContentSubTypeValueBlock.title}, errors, "value");
+            } else {
+                blockMap.put(getBlockKey(), new Block(contentValue, blockDto.getTitle()));
+            }
+        }
+
+        String getBlockKey(){
+            return contentSubType + "_" + contentValue;
+        }
+    };
+
+
     @Override
     @Transactional(readOnly = true)
     public boolean customValidate(Object target, Errors errors) {
@@ -70,6 +108,7 @@ public class UpdateValidator extends BaseValidator {
     private void validateValues(UpdateIncomingDto dto, Errors errors) {
         Collections.sort(dto.getBlocks(), OrdinalBlockDto.COMPARATOR);
 
+        BlocksDuplicationContentValidator blocksDuplicationContentValidator = new BlocksDuplicationContentValidator();
         for (int index = 0; index < dto.getBlocks().size(); index++) {
             OrdinalBlockDto blockDto = dto.getBlocks().get(index);
 
@@ -82,6 +121,7 @@ public class UpdateValidator extends BaseValidator {
             if (blockDto.isIncluded()) {
                 baseValidate(blockDto, errors);
                 validateValue(dto, errors, blockDto);
+                blocksDuplicationContentValidator.validate(blockDto, errors);
             }
 
             errors.popNestedPath();
