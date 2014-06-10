@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonTypeName;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Map;

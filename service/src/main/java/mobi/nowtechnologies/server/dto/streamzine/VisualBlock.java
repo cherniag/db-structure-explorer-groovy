@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

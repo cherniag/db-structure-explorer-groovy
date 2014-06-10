@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
@@ -11,7 +12,6 @@ import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;

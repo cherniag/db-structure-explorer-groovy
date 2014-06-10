@@ -19,7 +19,7 @@ import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.*;
-import mobi.nowtechnologies.server.service.facebook.FacebookService;
+import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -184,15 +184,15 @@ public class UserService {
         user = checkAndApplyPromo(new PromoRequestBuilder(promoRequest).setUser(user).createPromoRequest());
 
         user = userRepository.save(user.withActivationStatus(ACTIVATED).withUserName(user.getMobile()));
-        disableReactivation(promoRequest.checkReactivation, user);
+        disableReactivation(promoRequest.disableReactivationForUser, user);
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
         LOGGER.debug("Output parameter user=[{}]", user);
         return user;
     }
 
-    private void disableReactivation(boolean checkReactivation, User user) {
-        if (checkReactivation){
+    private void disableReactivation(boolean disableReactivationForUser, User user) {
+        if (disableReactivationForUser){
             reactivationUserInfoRepository.disableReactivationForUser(user);
         }
     }
@@ -479,12 +479,14 @@ public class UserService {
                 messageCode = "error.604.activation.status.ENTERED_NUMBER.invalid.phoneNumber";
             }
         } else if(activationStatus == ACTIVATED){
+            if(!user.hasAllDetails()){
+                message = "User activation status [ACTIVATED] is invalid. User must have all user details";
+                messageCode = "error.604.activation.status.ACTIVATED.invalid.userDetails";
+            }
+            else
             if(!user.isActivatedUserName()){
                 message = "User activation status [ACTIVATED] is invalid. User must have activated userName";
                 messageCode = "error.604.activation.status.ACTIVATED.invalid.userName";
-            } else if(!user.hasAllDetails()){
-                message = "User activation status [ACTIVATED] is invalid. User must have all user details";
-                messageCode = "error.604.activation.status.ACTIVATED.invalid.status";
             }
         }
 
@@ -1391,9 +1393,9 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean checkReactivation) {
+    public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
         PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).
-                setIsSubjectToAutoOptIn(false).setCheckReactivation(checkReactivation).createPromoRequest();
+                setIsSubjectToAutoOptIn(false).setDisableReactivationForUser(disableReactivationForUser).createPromoRequest();
         user = applyInitPromoInternal(promoRequest);
 
         user.setHasPromo(user.isPromotionApplied());
@@ -1609,7 +1611,7 @@ public class UserService {
         }
 
         if(isNotBlank(otac)){
-            user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).setCheckReactivation(checkReactivation).createPromoRequest());
+            user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).setDisableReactivationForUser(checkReactivation).createPromoRequest());
         }else{
             User result = promotionService.applyPotentialPromo(user);
             disableReactivation(checkReactivation, result);

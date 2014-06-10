@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Comparator;
 

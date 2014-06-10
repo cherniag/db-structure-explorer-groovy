@@ -196,7 +196,7 @@ public class ChartDetailServiceTest {
 		originalChartDetail.setPosition((byte) i);
 		originalChartDetail.setPrevPosition((byte) 0);
 		originalChartDetail.setPublishTimeMillis(publishTimeMillis);
-		originalChartDetail.setVersion(i);
+		originalChartDetail.setVersionAsPrimitive(i);
 		return originalChartDetail;
 	}
 

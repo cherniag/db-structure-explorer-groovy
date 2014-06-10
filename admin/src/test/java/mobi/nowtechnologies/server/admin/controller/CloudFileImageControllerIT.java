@@ -1,9 +1,9 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mobi.nowtechnologies.server.dto.ImageDTO;
 import org.apache.commons.io.FileUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

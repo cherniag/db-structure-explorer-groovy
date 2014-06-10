@@ -70,6 +70,7 @@
 				<value>mobi.nowtechnologies.server.shared.dto.PlaylistDto</value>
                 <value>mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto</value>
                 <value>mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.AccessPolicyDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.DeeplinkValueItemDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>
@@ -97,9 +98,9 @@
         <property name="defaultViews">
             <list>
                 <ref bean="transport.JaxbMarshallingView"/>
-                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
                     <property name="objectMapper">
-                        <bean class="org.codehaus.jackson.map.ObjectMapper">
+                        <bean class="com.fasterxml.jackson.databind.ObjectMapper">
                             <property name="serializationInclusion" value="NON_EMPTY"/>
                         </bean>
                     </property>

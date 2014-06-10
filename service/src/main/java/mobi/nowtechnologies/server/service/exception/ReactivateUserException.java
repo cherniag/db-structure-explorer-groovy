@@ -6,7 +6,7 @@ package mobi.nowtechnologies.server.service.exception;
 public class ReactivateUserException extends ServiceException {
 
     public ReactivateUserException() {
-        super("604", "Reactivation required");
+        super("604", "Reactivation required", "Reactivation required");
     }
 
 

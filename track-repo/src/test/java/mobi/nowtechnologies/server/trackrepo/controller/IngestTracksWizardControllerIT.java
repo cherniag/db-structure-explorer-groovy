@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -130,4 +130,29 @@ public class IngestTracksWizardControllerIT extends AbstractTrackRepoITTest {
         Set<Territory> ters = track.getTerritories();
         assertEquals(2, ters.size());
     }
+
+    @Test
+    public void testCommitDropsForMOS_Success() throws Exception {
+        ResultActions resultActions = mockMvc.perform(
+                get("/drops.json")
+                        .param("ingestors", "MOS")
+        ).andExpect(status().isOk());
+        resultActions = mockMvc.perform(
+                post("/drops/select.json").
+                        content(markAllTracksAsSelected(resultActions)).
+                        accept(MediaType.APPLICATION_JSON).
+                        contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+        resultActions = mockMvc.perform(
+                post("/drops/commit.json").
+                        content(markAllTracksAsSelected(resultActions)).
+                        accept(MediaType.APPLICATION_JSON).
+                        contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString().equals("true"));
+        Track track = trackRepository.findByISRC("GB3FT1300026");
+        Set<Territory> ters = track.getTerritories();
+        assertEquals(2, ters.size());
+    }
+
 }

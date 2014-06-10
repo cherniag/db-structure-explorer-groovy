@@ -420,10 +420,10 @@ public class ChartService {
 		if(chartDetail != null){
             if(isChartDetailAlreadyPresent(chartDetail)){
 				ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
-				chartDetail.setVersion(createdOne.getVersion());
-            }else{
+				chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
+			} else{
                 createCorrespondingStreamzineUpdate(chartDetail);
-			}
+            }
 			
 			chartDetail = chartDetailRepository.save(chartDetail);
 			
