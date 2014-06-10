@@ -1,0 +1,15 @@
+{
+    "id": "%s",
+    "email": "%s",
+    "first_name": "%s",
+    "last_name": "%s",
+    "link": "https://www.facebook.com/blah blah",
+    "username": "%s",
+    "gender": "male",
+    "birthday": "12/01/1990",
+    "type": "user",
+    "location": {
+        "id": "111227078906045",
+        "name": "%s"
+    }
+}

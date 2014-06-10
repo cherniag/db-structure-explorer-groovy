@@ -22,6 +22,7 @@ public abstract class SocialInfo {
     @ManyToOne
     private User user;
 
+    public abstract String getEmail();
 
     public Long getId() {
         return id;

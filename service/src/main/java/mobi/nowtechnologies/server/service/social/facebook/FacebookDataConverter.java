@@ -1,8 +1,7 @@
-package mobi.nowtechnologies.server.service.facebook;
+package mobi.nowtechnologies.server.service.social.facebook;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.shared.CollectionUtils;
 import mobi.nowtechnologies.server.shared.enums.Gender;
@@ -22,13 +21,12 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 /**
  * Created by oar on 3/14/14.
  */
-public class FacebookDataConverter {
+class FacebookDataConverter {
+    private static final String DATE_FORMAT = "MM/dd/yyyy";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-
-    public FacebookUserInfo convertForUser(User user, FacebookProfile profile) {
+    public FacebookUserInfo convert(FacebookProfile profile) {
         FacebookUserInfo details = new FacebookUserInfo();
         details.setEmail(profile.getEmail());
         details.setFirstName(profile.getFirstName());
@@ -36,7 +34,6 @@ public class FacebookDataConverter {
         details.setFacebookId(profile.getId());
         details.setUserName(profile.getUsername());
         details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture?type=large");
-        details.setUser(user);
         details.setGender(extractGender(profile));
         details.setBirthday(extractBirthDay(profile));
         assignCityAndCountry(profile, details);
@@ -47,7 +44,7 @@ public class FacebookDataConverter {
         String birthDay = profile.getBirthday();
         if (!isEmpty(birthDay)) {
             try {
-                return dateFormat.parse(birthDay);
+                return new SimpleDateFormat(DATE_FORMAT).parse(birthDay);
             } catch (ParseException e) {
                 logger.error("ERROR during parse", e);
             }

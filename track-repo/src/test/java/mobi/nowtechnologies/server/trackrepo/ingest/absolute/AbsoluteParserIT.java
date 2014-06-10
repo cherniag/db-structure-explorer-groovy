@@ -16,7 +16,7 @@ import java.util.List;
 
 import static java.io.File.*;
 import static junit.framework.Assert.assertNotNull;
-import static mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.Ingestors.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 

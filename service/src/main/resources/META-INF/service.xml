@@ -268,11 +268,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="entityService" ref="service.EntityService" />
 	</bean>
 
-	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.facebook.FacebookService">
-            <property name="facebookDataConverter" ref="service.FacebookDataConverter"/>
-    </bean>
+	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService"/>
 
-    <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.facebook.FacebookDataConverter"/>
+    <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.social.facebook.FacebookDataConverter"/>
+
+    <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userService" ref="service.UserService" />
@@ -526,10 +526,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="userService" ref="service.UserService"/>
     </bean>
 
-    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoServiceImpl">
-        <property name="userService" ref="service.UserService"/>
-        <property name="activationEmailService" ref="service.ActivationEmailService"/>
-    </bean>
+    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoServiceImpl"/>
 
     <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService">
         <property name="configuration" ref="configuration.AutoOptIn"/>
