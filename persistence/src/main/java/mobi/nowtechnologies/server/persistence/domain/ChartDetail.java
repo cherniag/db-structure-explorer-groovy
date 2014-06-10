@@ -74,7 +74,15 @@ public class ChartDetail {
 	private Boolean defaultChart;
 
 	@Version
-	private int version;
+	private Integer version;
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
     public ChartDetail() {
 	}
@@ -229,11 +237,13 @@ public class ChartDetail {
 		this.publishTimeMillis = publishTimeMillis;
 	}
 
-	public int getVersion() {
-		return version;
+	@Deprecated
+    public int getVersionAsPrimitive() {
+        return version != null ? version: 0;
 	}
 
-	public void setVersion(int version) {
+    @Deprecated
+    public void setVersionAsPrimitive(int version) {
 		this.version = version;
 	}
 

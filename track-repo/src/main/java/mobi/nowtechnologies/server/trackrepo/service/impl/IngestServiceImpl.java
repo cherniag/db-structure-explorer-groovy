@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData.Drop;
-import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors;
+import mobi.nowtechnologies.server.trackrepo.ingest.Ingestors;
 import mobi.nowtechnologies.server.trackrepo.repository.IngestionLogRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
@@ -31,6 +31,8 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
 
 public class IngestServiceImpl implements IngestService{
 
@@ -222,7 +224,7 @@ public class IngestServiceImpl implements IngestService{
 			IParser parser = parserFactory.getParser(ingestor);
 
 			List<DropData> parserDrops = parser.getDrops(true);
-			if (parserDrops != null && parserDrops.size() > 0) {
+			if (!isEmpty(parserDrops)) {
 				for (DropData drop : parserDrops) {
                     DropsData.Drop data = drops.new Drop();
                     data.setName(drop.name);

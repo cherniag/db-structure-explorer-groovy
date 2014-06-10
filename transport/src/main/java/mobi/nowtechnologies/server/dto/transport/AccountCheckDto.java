@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.dto.transport;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonTypeName;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

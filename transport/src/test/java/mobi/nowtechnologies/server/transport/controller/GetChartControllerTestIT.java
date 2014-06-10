@@ -20,8 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
-    private static final String OLD_ITUNES_URL = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
-    private static final String NEW_ITUNES_URL = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
+    private static final String OLD_ITUNES_URL_O2 = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
+    private static final String OLD_ITUNES_URL_HL_UK = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_hl_uk%26ct%3Dct_for_hl_uk";
+    private static final String NEW_ITUNES_URL_O2 = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
 
     @Resource
     private ChartRepository chartRepository;
@@ -142,8 +143,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk()).andDo(print())
                 .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists())
                 .andExpect(xpath("/response/chart/track[duration=10000]").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                 .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
@@ -168,8 +169,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("APP_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
         ).andExpect(status().isOk())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                 .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
                 .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
@@ -195,8 +196,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("APP_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
         ).andExpect(status().isOk())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                 .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
                 .andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
                 .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist())
@@ -355,7 +356,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                 .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_1']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1));
+                .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1))
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_HL_UK.replace("%", "%%") + "']").exists());
     }
 
     private void generateChartAllTypesForO2() {

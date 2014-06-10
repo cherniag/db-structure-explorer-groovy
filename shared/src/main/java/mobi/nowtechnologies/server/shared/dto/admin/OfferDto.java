@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import mobi.nowtechnologies.server.shared.dto.ItemDto;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
