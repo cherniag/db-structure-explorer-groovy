@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserI
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
-import mobi.nowtechnologies.server.shared.CgLibHelper;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.util.DateUtils;
 import mobi.nowtechnologies.server.transport.controller.facebook.FacebookTemplateCustomizerImpl;
@@ -30,7 +29,7 @@ import java.util.TimeZone;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
-import static mobi.nowtechnologies.server.service.social.googleplus.GooglePlusConstants.GOOGLE_PLUS_URL;
+import static mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService.GOOGLE_PLUS_URL;
 import static mobi.nowtechnologies.server.shared.enums.Gender.MALE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -348,8 +347,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     }
 
     private void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer customizer, Object target) {
-        CgLibHelper helper = new CgLibHelper(target);
-        ReflectionTestUtils.setField(helper.getTargetObject(), "templateCustomizer", customizer);
+        ReflectionTestUtils.setField(target, "templateCustomizer", customizer);
     }
 
 
