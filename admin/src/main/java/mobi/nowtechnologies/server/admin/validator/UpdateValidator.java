@@ -4,12 +4,14 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
+import mobi.nowtechnologies.server.dto.streamzine.DuplicatedContentKey;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
@@ -27,18 +29,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class UpdateValidator extends BaseValidator {
@@ -57,50 +52,17 @@ public class UpdateValidator extends BaseValidator {
     @Resource
     private StreamzineTypesMappingService streamzineTypesMappingService;
 
+    @Resource
+    private CookieUtil cookieUtil;
+
     @Override
     public boolean supports(Class<?> clazz) {
         return UpdateIncomingDto.class.isAssignableFrom(clazz);
     }
 
-    private class BlocksDuplicationContentValidator {
-        Map<String, Block> blockMap = new HashMap<String, Block>();
-
-        String contentSubType;
-        String contentValue;
-
-        class Block{
-            final String value;
-            final String title;
-
-            Block(String value, String title){
-                this.value = value;
-                this.title = title;
-            }
-        }
-
-        void validate(OrdinalBlockDto blockDto, Errors errors) {
-            contentSubType = blockDto.provideKeyString();
-            contentValue = blockDto.provideValueString();
-
-            if (isNull(contentSubType) || isNull(contentValue)) return;
-
-            Block firstContentSubTypeValueBlock = blockMap.get(getBlockKey());
-            if (isNotNull(firstContentSubTypeValueBlock) && contentValue.equals(firstContentSubTypeValueBlock.value)) {
-                rejectField("streamzine.error.duplicate.content", new Object[]{blockDto.getTitle(), firstContentSubTypeValueBlock.title}, errors, "value");
-            } else {
-                blockMap.put(getBlockKey(), new Block(contentValue, blockDto.getTitle()));
-            }
-        }
-
-        String getBlockKey(){
-            return contentSubType + "_" + contentValue;
-        }
-    };
-
-
     @Override
     @Transactional(readOnly = true)
-    public boolean customValidate(Object target, Errors errors) {
+    protected boolean customValidate(Object target, Errors errors) {
         validateValues((UpdateIncomingDto) target, errors);
         return errors.hasErrors();
     }
@@ -108,7 +70,9 @@ public class UpdateValidator extends BaseValidator {
     private void validateValues(UpdateIncomingDto dto, Errors errors) {
         Collections.sort(dto.getBlocks(), OrdinalBlockDto.COMPARATOR);
 
-        BlocksDuplicationContentValidator blocksDuplicationContentValidator = new BlocksDuplicationContentValidator();
+        final Map<DuplicatedContentKey, OrdinalBlockDto> isrcs = new HashMap<DuplicatedContentKey, OrdinalBlockDto>();
+        final Map<DuplicatedContentKey, OrdinalBlockDto> playlists = new HashMap<DuplicatedContentKey, OrdinalBlockDto>();
+
         for (int index = 0; index < dto.getBlocks().size(); index++) {
             OrdinalBlockDto blockDto = dto.getBlocks().get(index);
 
@@ -121,10 +85,35 @@ public class UpdateValidator extends BaseValidator {
             if (blockDto.isIncluded()) {
                 baseValidate(blockDto, errors);
                 validateValue(dto, errors, blockDto);
-                blocksDuplicationContentValidator.validate(blockDto, errors);
+                validateDuplicatedContent(blockDto, errors, isrcs, playlists);
             }
 
             errors.popNestedPath();
+        }
+    }
+
+    private void validateDuplicatedContent(OrdinalBlockDto blockDto, Errors errors, Map<DuplicatedContentKey, OrdinalBlockDto> isrcs, Map<DuplicatedContentKey, OrdinalBlockDto> playlists) {
+        if(blockDto.getContentType() == ContentType.MUSIC) {
+            final MusicType musicType = MusicType.valueOf(blockDto.getKey());
+            final DuplicatedContentKey contentKey = new DuplicatedContentKey(blockDto);
+
+            if(musicType == MusicType.PLAYLIST) {
+                if(playlists.containsKey(contentKey)) {
+                    OrdinalBlockDto first = playlists.get(contentKey);
+                    rejectField("streamzine.error.duplicate.content", new Object[]{blockDto.getTitle(), first.getTitle()}, errors, "value");
+                } else {
+                    playlists.put(contentKey, blockDto);
+                }
+            }
+
+            if(musicType == MusicType.TRACK) {
+                if(isrcs.containsKey(contentKey)) {
+                    OrdinalBlockDto first = isrcs.get(contentKey);
+                    rejectField("streamzine.error.duplicate.content", new Object[]{blockDto.getTitle(), first.getTitle()}, errors, "value");
+                } else {
+                    isrcs.put(contentKey, blockDto);
+                }
+            }
         }
     }
 
@@ -214,6 +203,8 @@ public class UpdateValidator extends BaseValidator {
     // Internal validations
     //
     private void validateMusic(OrdinalBlockDto blockDto, Errors errors, long publishTimeMillis) {
+        final String communityRewriteUrl = cookieUtil.get(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
+
         final String key = blockDto.provideKeyString();
         final String value = blockDto.provideValueString();
 
@@ -230,7 +221,7 @@ public class UpdateValidator extends BaseValidator {
         }
 
         if(musicType == MusicType.TRACK) {
-            Set<Media> media = mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(getCommunityRewriteUrlFromCookie(), publishTimeMillis, Lists.newArrayList(value));
+            Set<Media> media = mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(communityRewriteUrl, publishTimeMillis, Lists.newArrayList(value));
             boolean notFoundMedia = (media == null || media.size() == 0);
             if(notFoundMedia) {
                 Object[] args = {value};
@@ -242,7 +233,7 @@ public class UpdateValidator extends BaseValidator {
         if(musicType == MusicType.MANUAL_COMPILATION) {
             DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(value);
             List<String> mediaIsrcs = manualCompilationData.getMediaIsrcs();
-            Set<Media> medias = mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(getCommunityRewriteUrlFromCookie(), publishTimeMillis, mediaIsrcs);
+            Set<Media> medias = mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(communityRewriteUrl, publishTimeMillis, mediaIsrcs);
             if(medias.size() != mediaIsrcs.size()){
                 for (Media media : medias) {
                     mediaIsrcs.remove(media.getIsrc());
@@ -253,13 +244,6 @@ public class UpdateValidator extends BaseValidator {
         }
 
         throw new IllegalArgumentException("No validation for music type: " + musicType);
-    }
-
-    private String getCommunityRewriteUrlFromCookie() {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = requestAttributes.getRequest();
-        Cookie cookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
-        return cookie.getValue();
     }
 
     private void validateNews(OrdinalBlockDto blockDto, Errors errors) {

@@ -147,7 +147,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
         if(value == null) {
             return "";
         }
-        return value.toString().trim();
+        return value.trim();
     }
 
     @Override
