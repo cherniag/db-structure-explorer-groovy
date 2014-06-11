@@ -2,12 +2,16 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div class="header pie">
-    <a href="${pageContext.request.contextPath}/payments_inapp.html" class="button-small button-left"><s:message code='m.page.main.menu.back' /></a>
-    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" /></span>
+<div class="header pie-pp">
+    <a href="${pageContext.request.contextPath}/payments_inapp.html" class="back-pp">Back</a>
+    <span class="logo-pp">Manage Account</span>
 </div>
-<div class="container">
-	<div class="content">
+<div class="container-pp-mq">
+    <script>
+        function _submitForm() {
+            document.getElementById('paypalFormId').submit();
+        }
+    </script>
 	<c:choose>
 		<c:when test="${result!=null&&result!='fail'}">
 			<h1><s:message code='pay.paypal.dialog.successful.title' /></h1>
@@ -20,22 +24,19 @@
 				<span class="button-arrow"/>
 			</div>
 		</c:when>
-		<c:otherwise>		
-			<form:form modelAttribute="payPalDto" method="post">
+		<c:otherwise>
+            <div class="header-message-pp">
+                <div style="float:left;width:60%;">
+                    <span class="pay-pp" style="vertical-align: middle;">Pay using</span>
+                    <img class="paypal-logo-pp" style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_paypal_logo.png" />
+                </div>
+                <div class="price-pp">&pound;1.49 per week</div>
+            </div>
+            <div class="body-message-pp">Tap the button  below to gain full access to new music, big hits, exclusives, top album tracks and feel good playlists</div>
+            <a href="javascript:;" onclick="_submitForm()" class="button-pp"><span class="button-text-pp">Pay now</span></a>
+
+			<form:form modelAttribute="payPalDto" method="post" id="paypalFormId">
 				<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
-				<h1><s:message code="pay.paypal.form.title" /></h1>
-				<div class="payDetails">
-					<p><s:message code="pay.paypal.form.description"
-								arguments="${paymentPolicy.subweeks};${paymentPolicy.subcost}"
-       							htmlEscape="false"
-       							argumentSeparator=";"/>
-					</p>
-					<!--end one record in profile-->			
-				</div>
-				
-				<!--button-->
-				<p><input type="image" style="with:145px; height:42px; border: none!important;" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></p>		
-				<!--button-->
 				<c:choose>
 					<c:when test="${result=='fail'}">
 						<div class="note" id="note">
@@ -53,5 +54,4 @@
 			</form:form>
 		</c:otherwise>
 	</c:choose>
-	</div>
 </div>

@@ -45,7 +45,7 @@ body {
 	-webkit-text-size-adjust: none;
 	color: #1d3150;
 	font-size: 14px;
-    background-color: #003399;
+    background-color: #232323;
 }
 
 a { color: #1d3150; }
@@ -196,19 +196,19 @@ img.centered{
     text-align: center;
     height: 47px;
 /*     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000057', endColorstr='#000061'); for IE */
-    background-image: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -o-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -moz-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -webkit-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    background-image: -ms-linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
-    -pie-background: linear-gradient(bottom, rgb(0,0,97) 24%, rgb(0,0,87) 62%);
+    background-image: linear-gradient(bottom, rgb(23,23,23) 24%, rgb(23,23,23) 62%);
+    background-image: -o-linear-gradient(bottom, rgb(23,23,23) 24%, rgb(23,23,23) 62%);
+    background-image: -moz-linear-gradient(bottom, rgb(23,23,23) 24%, rgb(23,23,23) 62%);
+    background-image: -webkit-linear-gradient(bottom, rgb(23,23,23) 24%, rgb(23,23,23) 62%);
+    background-image: -ms-linear-gradient(bottom, rgb(23,23,23) 24%, rgb(23,23,23) 62%);
+    -pie-background: linear-gradient(bottom, rgb(23,23,23) 24%, rgb(23,23,23) 62%);
 
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.24, rgb(0,0,97)),
-        color-stop(0.62, rgb(0,0,87))
+        color-stop(0.24, rgb(23,23,23)),
+        color-stop(0.62, rgb(23,23,23))
     );
 }		
 .logo {
@@ -2154,3 +2154,129 @@ p.itemsTrackName {
 	border: none;
 	height: 1px;
 }
+
+@font-face {
+    font-family: 'open_sansregular';
+    src: url('../fonts/opensans-regular-webfont.eot');
+    src: url('../fonts/opensans-regular-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/opensans-regular-webfont.woff') format('woff'),
+    url('../fonts/opensans-regular-webfont.ttf') format('truetype'),
+    url('../fonts/opensans-regular-webfont.svg#open_sansregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'open_sanslight';
+    src: url('../fonts/opensans-light-webfont.eot');
+    src: url('../fonts/opensans-light-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/opensans-light-webfont.woff') format('woff'),
+    url('../fonts/opensans-light-webfont.ttf') format('truetype'),
+    url('../fonts/opensans-light-webfont.svg#open_sanslight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'quicksandbook';
+    src: url('../fonts/quicksand_book-webfont.eot');
+    src: url('../fonts/quicksand_book-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/quicksand_book-webfont.woff') format('woff'),
+    url('../fonts/quicksand_book-webfont.ttf') format('truetype'),
+    url('../fonts/quicksand_book-webfont.svg#quicksandbook') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.container-pp-mq {
+    background-color: #fff;
+    padding: 10px;
+}
+
+.content-pp-mq {
+    background-color: #fff;
+}
+
+.header-message-pp {
+    padding: 12px 12px 0px 12px;
+    font-family: 'open_sansregular';
+    height: 28px;
+}
+
+.body-message-pp {
+    padding: 12px 12px 0px 12px;
+    color: #3b414a;
+    font-family: 'open_sanslight';
+    font-size: 14px;
+}
+
+.button-pp {
+    display: block;
+    margin: 15px 7px 20px 7px;
+    height: 53px;
+    background-color: #e4497a;
+    border-radius: 3px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 53px;
+    text-decoration: none;
+}
+
+.button-pp:active {
+    display: block;
+    margin: 15px 7px 20px 7px;
+    height: 53px;
+    background-color: #d9235c;
+    border-radius: 3px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 53px;
+    text-decoration: none;
+}
+
+.button-text-pp {
+    font-family: 'open_sansregular';
+    font-size: 18px;
+    color: #fff;
+}
+
+.logo-pp {
+    font-family: 'quicksandbook';
+    font-size: 23px;
+    color: #fff;
+}
+
+.back-pp {
+    text-decoration: none;
+    font-family: 'open_sansregular';
+    font-size: 14px;
+    color: #fff;
+    float: left;
+    margin-left: 15px;
+}
+
+.pie-pp {
+    padding-top: 15px;
+}
+
+.pay-pp {
+    font-family: 'quicksandbook';
+    font-size: 18px;
+    color: #e4497a;
+}
+
+.paypal-logo-pp {
+    width: 65px;
+    height: 28px;
+    margin-left: 12px;
+}
+
+.price-pp {
+    width:40%;
+    margin-left:60%;
+    text-align: right;
+    font-family: 'open_sansregular';
+    font-size: 17px;
+}
+
+
