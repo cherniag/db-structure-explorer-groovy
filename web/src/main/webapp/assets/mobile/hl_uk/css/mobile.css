@@ -2193,6 +2193,12 @@ p.itemsTrackName {
     padding: 10px;
 }
 
+.container-pp-mq-footer {
+    background-color: #232323;
+    padding: 10px;
+    text-align: center;
+}
+
 .content-pp-mq {
     background-color: #fff;
 }
@@ -2320,4 +2326,10 @@ p.itemsTrackName {
     font-family: 'open_sansregular';
     font-size: 18px;
     color: #232323;
+}
+
+.logo-hl {
+    width: 65px;
+    height: 28px;
+    margin-left: 12px;
 }

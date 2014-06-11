@@ -48,4 +48,7 @@
                 <a href="javascript:;" onclick="returnToApp()" class="button-pp"><span class="button-text-pp"><s:message code='m.pay.paypal.dialog.successful.button.inapp' /></span></a>
 			</c:otherwise>
 		</c:choose>
-	</div>	
+	</div>
+<div class="container-pp-mq-footer">
+    <img class="logo-hl" style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_footer.png" />
+</div>
