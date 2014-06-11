@@ -1,39 +1,51 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<div class="header pie">
-<div class="gradient_border">&#160;</div>
-    <span class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="" /></span>
+<div class="header pie-pp">
+    <a href="javascript:;" onclick="closeForm()" class="close-pp"><s:message code='pay.paypal.form.close' /></a>
+    <span class="logo-pp"><s:message code='page.account.title' /></span>
 </div>
-<div class="container">		
-	<div class="content">
+
+<div class="container-pp-mq">
+    <script>
+        function _submitForm() {
+            document.getElementById('unsubscribeFormId').submit();
+        }
+        function returnToApp() {
+            window.location = "${pageContext.request.contextPath}/payments_inapp.html";
+        }
+        function closeForm(){
+            window.close();
+        }
+     </script>
 		<c:choose>
 			<c:when test="${result == null||result == 'fail'}">
-				<h1><s:message code="unsub.page.header" /></h1>
-				<p class="centered"><s:message code="unsub.page.description" /></p>
-				
-				<form:form modelAttribute="unsubscribeDto" method="post">							
+                <div class="header-message-pp">
+                    <div style="float:left;width:60%;">
+                        <span class="pay-pp" style="vertical-align: middle;"><s:message code='unsub.page.header' /></span>
+                    </div>
+                </div>
+                <div class="body-message-pp"><s:message code='unsub.page.description' /></div>
+                <a href="javascript:;" onclick="_submitForm()" class="button-uns"><span class="button-text-uns"><s:message code='unsub.page.form.submit' /></span></a>
+                <a href="javascript:;" onclick="returnToApp()" class="button-uns"><span class="button-text-uns"><s:message code='unsub.page.form.btn.cancel' /></span></a>
+
+				<form:form modelAttribute="unsubscribeDto" method="post" id="unsubscribeFormId">
 
 					<s:hasBindErrors name="unsubscribeDto">
 							<div class="note" id="note">
 								<form:errors path="reason" />
 							</div>
 					</s:hasBindErrors>
-					<div class="rel" style="margin-top: 20px;">
-						<input type="submit" class="button-turquoise pie" value="<s:message code='unsub.page.form.submit' />" />
-						<input class="button-grey pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.cancel' />" />
-					</div>
 				</form:form>
 			</c:when>
 			<c:otherwise>
-				<h1><s:message code="unsub.page.header" /></h1>
-				<p><s:message code="unsub.page.description.unsubscribed" /></p>
-				<div class="addSpace"></div>			
-				<div class="rel" >
-					<input class="button-turquoise pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='unsub.page.form.btn.back.payments' />" />
-					<span class="button-arrow"/>
-				</div>
+                <div class="header-message-pp">
+                    <div style="float:left;width:60%;">
+                        <span class="pay-pp" style="vertical-align: middle;"><s:message code='unsub.page.sucess.header' /></span>
+                    </div>
+                </div>
+                <div class="body-message-pp"><s:message code='unsub.page.description.unsubscribed' /></div>
+                <a href="javascript:;" onclick="returnToApp()" class="button-pp"><span class="button-text-pp"><s:message code='m.pay.paypal.dialog.successful.button.inapp' /></span></a>
 			</c:otherwise>
 		</c:choose>
 	</div>	
-</div>

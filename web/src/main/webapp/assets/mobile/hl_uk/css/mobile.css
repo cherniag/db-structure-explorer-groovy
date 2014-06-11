@@ -2289,3 +2289,35 @@ p.itemsTrackName {
 }
 
 
+.button-uns {
+    display: block;
+    margin: 15px 7px 20px 7px;
+    height: 53px;
+    background-color: #fff;
+    border-radius: 3px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 53px;
+    text-decoration: none;
+    outline:#3b414a solid thin;
+}
+
+.button-uns:active {
+    display: block;
+    margin: 15px 7px 20px 7px;
+    height: 53px;
+    background-color: #fff;
+    border-radius: 3px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 53px;
+    text-decoration: none;
+    outline:#3b414a solid thin;
+    opacity:0.5;
+}
+
+.button-text-uns {
+    font-family: 'open_sansregular';
+    font-size: 18px;
+    color: #232323;
+}
