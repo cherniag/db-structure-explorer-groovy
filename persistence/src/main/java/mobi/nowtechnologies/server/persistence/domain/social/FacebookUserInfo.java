@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "facebook_user_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"}), @UniqueConstraint(columnNames = {"fb_id"})})
+@Table(name = "facebook_user_info")
 public class FacebookUserInfo extends SocialInfo {
     private static final long serialVersionUID = 2546198857668889092L;
 
@@ -63,6 +63,7 @@ public class FacebookUserInfo extends SocialInfo {
         this.gender = gender;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }

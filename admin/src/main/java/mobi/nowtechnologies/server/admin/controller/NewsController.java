@@ -207,7 +207,7 @@ public class NewsController extends AbstractMessageController {
 			modelAndView.addObject(NewsItemDto.NEWS_ITEM_DTO, newsItemDto);
 			return modelAndView;
 		}
-		throw new ResourceNotFoundException("Can't find news for this id " + messageId);
+		throw new ResourceNotFoundException("Can't find news for this id " + messageId, "Can't find news for this id " + messageId);
 	}
 
 	/**

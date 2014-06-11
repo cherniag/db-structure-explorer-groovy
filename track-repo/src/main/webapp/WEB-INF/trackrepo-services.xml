@@ -53,6 +53,7 @@
         <property name="iodaRoot" value="${trackRepo.ingest.ioda.root}" />
         <property name="manualRoot" value="${trackRepo.ingest.manual.root}" />
         <property name="absoluteRoot" value="${trackRepo.ingest.absolute.root}" />
+        <property name="mosRoot" value="${trackRepo.ingest.mos.root}" />
 	</bean>
 
     <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl">
