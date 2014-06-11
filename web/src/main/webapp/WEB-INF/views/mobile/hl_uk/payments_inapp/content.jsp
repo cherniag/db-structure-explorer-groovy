@@ -45,9 +45,6 @@
             <c:when test="${paymentsPage.appleIOSAndNotBusiness}">
                 <%--we are not including the iTunes payment option because this is an external page and the link will not be intercepted (as it's happening in the page loaded by O2 Tracks app...) --%>
             </c:when>
-			<c:when test="${paymentsPage.appleIOSAndNotBusiness}">
-				<%--we are not including the iTunes payment option because this is an external page and the link will not be intercepted (as it's happening in the page loaded by O2 Tracks app...) --%>
-			</c:when>
 			<c:otherwise>
 				<%-- CreditCard/Paypal  --%>
 				<jsp:include page="../payments_common/content_paymentoptions_business.jsp">

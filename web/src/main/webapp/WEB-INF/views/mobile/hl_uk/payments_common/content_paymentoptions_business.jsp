@@ -23,7 +23,7 @@
 
         <c:set var="hrefToSubscribeWhenIsNotInAwaiting" value="" />
         <c:if test="${paymentsPage.awaitingPaymentStatus eq false}">
-            <c:set var="hrefToSubscribeWhenIsNotInAwaiting" value="href=\"${pageContext.request.contextPath}/${callingPage}/${method_name}.html?paymentPolicyId=${paymentPolicy.id}\"" />
+            <c:set var="hrefToSubscribeWhenIsNotInAwaiting" value="href=\"${pageContext.request.contextPath}/${param.callingPage}/${method_name}.html?paymentPolicyId=${paymentPolicy.id}\"" />
         </c:if>
 
 		<div class="subscription-container">
