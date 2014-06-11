@@ -8,7 +8,7 @@
 <c:set var="monthlyOrWeekly" value="${paymentPolicy.monthly}" />
 
 <div class="header pie-pp">
-    <a href="${pageContext.request.contextPath}/payments_inapp.html" class="back-pp">Back</a>
+    <a href="javascript:;" onclick="closeForm()" class="close-pp"><s:message code='pay.paypal.form.close' /></a>
     <span class="logo-pp"><s:message code='page.account.title' /></span>
 </div>
 <div class="container-pp-mq">
@@ -18,6 +18,9 @@
         }
         function returnToApp() {
             window.location = "${pageContext.request.contextPath}/payments_inapp.html";
+        }
+        function closeForm(){
+          window.close();
         }
 
     </script>

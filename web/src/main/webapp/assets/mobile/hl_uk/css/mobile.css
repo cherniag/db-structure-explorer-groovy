@@ -2255,6 +2255,15 @@ p.itemsTrackName {
     margin-left: 15px;
 }
 
+.close-pp {
+    text-decoration: none;
+    font-family: 'open_sansregular';
+    font-size: 14px;
+    color: #fff;
+    float: right;
+    margin-right: 15px;
+}
+
 .pie-pp {
     padding-top: 15px;
 }
