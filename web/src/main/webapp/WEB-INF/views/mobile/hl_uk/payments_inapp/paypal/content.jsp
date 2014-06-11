@@ -16,18 +16,21 @@
         function _submitForm() {
             document.getElementById('paypalFormId').submit();
         }
+        function returnToApp() {
+            window.location = "${pageContext.request.contextPath}/payments_inapp.html";
+        }
+
     </script>
 	<c:choose>
 		<c:when test="${result!=null&&result!='fail'}">
-			<h1><s:message code='pay.paypal.dialog.successful.title' /></h1>
-			<p><s:message code='pay.paypal.dialog.successful.body.inapp' /></p>
-			<div class="clr"></div>				
-			<div class="addSmallSpace"></div>		
-			<!--button-->
-			<div class="contentButton formButton rad10 rel" >
-				<input class="button accounts button-turquoise pie" title="${pageContext.request.contextPath}/payments_inapp.html" type="button" onClick="location.href=this.title" value="<s:message code='m.pay.paypal.dialog.successful.button.payments' />" />
-				<span class="button-arrow"/>
-			</div>
+            <div class="header-message-pp">
+                <div style="float:left;width:60%;">
+                    <span class="pay-pp" style="vertical-align: middle;"><s:message code='pay.paypal.result.successful.title' /></span>
+                    <img class="paypal-logo-pp" style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_paypal_logo.png" />
+                </div>
+            </div>
+            <div class="body-message-pp"><s:message code='pay.paypal.result.successful.description.inapp' /></div>
+            <a href="javascript:;" onclick="returnToApp()" class="button-pp"><span class="button-text-pp"><s:message code='m.pay.paypal.dialog.successful.button.inapp' /></span></a>
 		</c:when>
 		<c:otherwise>
             <div class="header-message-pp">
