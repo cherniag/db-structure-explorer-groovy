@@ -16,13 +16,6 @@
         function _submitForm() {
             document.getElementById('paypalFormId').submit();
         }
-        function returnToApp() {
-            window.location = "${pageContext.request.contextPath}/payments_inapp.html";
-        }
-        function closeForm(){
-          window.close();
-        }
-
     </script>
 	<c:choose>
 		<c:when test="${result!=null&&result!='fail'}">
@@ -75,4 +68,7 @@
 			</form:form>
 		</c:otherwise>
 	</c:choose>
+</div>
+<div class="container-pp-mq-footer">
+    <img class="logo-hl" style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_footer.png" />
 </div>

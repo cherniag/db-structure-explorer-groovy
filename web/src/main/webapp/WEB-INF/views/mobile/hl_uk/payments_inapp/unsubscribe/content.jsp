@@ -11,12 +11,6 @@
         function _submitForm() {
             document.getElementById('unsubscribeFormId').submit();
         }
-        function returnToApp() {
-            window.location = "${pageContext.request.contextPath}/payments_inapp.html";
-        }
-        function closeForm(){
-            window.close();
-        }
      </script>
 		<c:choose>
 			<c:when test="${result == null||result == 'fail'}">
