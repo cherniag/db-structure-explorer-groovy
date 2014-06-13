@@ -30,7 +30,7 @@ public class PaymentsPayPalController extends CommonController {
 
 	public static final String PAGE_PAYMENTS_PAYPAL = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_PAYPAL + PAGE_EXT;
 
-    public static final String PAGE_PAYMENTS_START_PAYPAL = PaymentsController.SCOPE_PREFIX + "/startPaypal" + PAGE_EXT;
+    public static final String PAGE_PAYMENTS_START_PAYPAL = PaymentsController.SCOPE_PREFIX + "/startPayPal" + PAGE_EXT;
 	public static final String PAGE_PAYMENTS_PAYPAL_INAPP = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_PAYPAL + PAGE_EXT;
 
 	public static final String PAYPAL_BILLING_AGREEMENT_DESCRIPTION = "pay.paypal.billing.agreement.description";
