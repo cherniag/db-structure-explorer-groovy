@@ -18,7 +18,7 @@
         }
     </script>
     <div class="header-message-pp">
-        <div style="float:left;width:60%;">
+        <div style="float:left;width:100%;">
             <span class="pay-pp" style="vertical-align: middle;"><s:message code='unsub.page.start.header' /></span>
             <img class="paypal-logo-pp" style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_paypal_logo.png" />
         </div>
