@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<div class="header pie-pp">
+<div class="header pie-pp" id="header">
     <a href="javascript:;" onclick="closeForm()" class="close-pp"><s:message code='pay.paypal.form.close' /></a>
     <span class="logo-pp"><s:message code='page.account.title' /></span>
 </div>
@@ -20,8 +20,8 @@
                     </div>
                 </div>
                 <div class="body-message-pp"><s:message code='unsub.page.description' /></div>
-                <a href="javascript:;" onclick="_submitForm()" class="button-uns"><span class="button-text-uns"><s:message code='unsub.page.form.submit' /></span></a>
-                <a href="javascript:;" onclick="returnToApp()" class="button-uns"><span class="button-text-uns"><s:message code='unsub.page.form.btn.cancel' /></span></a>
+                <a href="javascript:;" onclick="_submitForm()" class="button-unsubscribe-pp button-uns"><span class="button-text-uns"><s:message code='unsub.page.form.submit' /></span></a>
+                <a href="javascript:;" onclick="returnToApp()" class="button-unsubscribe-pp button-uns"><span class="button-text-uns"><s:message code='unsub.page.form.btn.cancel' /></span></a>
 
 				<form:form modelAttribute="unsubscribeDto" method="post" id="unsubscribeFormId">
 
@@ -34,7 +34,7 @@
 			</c:when>
 			<c:otherwise>
                 <div class="header-message-pp">
-                    <div style="float:left;width:60%;">
+                    <div class="unsubscribed-title">
                         <span class="pay-pp" style="vertical-align: middle;"><s:message code='unsub.page.sucess.header' /></span>
                     </div>
                 </div>

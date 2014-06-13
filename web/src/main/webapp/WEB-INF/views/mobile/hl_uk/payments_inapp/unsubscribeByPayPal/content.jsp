@@ -6,7 +6,7 @@
 <c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
 
 
-<div class="header pie-pp">
+<div class="header pie-pp" id="header">
     <a href="javascript:;" onclick="closeForm()" class="close-pp"><s:message code='pay.paypal.form.close' /></a>
     <span class="logo-pp"><s:message code='page.account.title' /></span>
 </div>

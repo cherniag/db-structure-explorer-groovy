@@ -2221,7 +2221,7 @@ p.itemsTrackName {
     margin: 15px 7px 20px 7px;
     height: 53px;
     background-color: #e4497a;
-    border-radius: 3px;
+    border-radius: 5px;
     text-align: center;
     vertical-align: middle;
     line-height: 53px;
@@ -2233,7 +2233,7 @@ p.itemsTrackName {
     margin: 15px 7px 20px 7px;
     height: 53px;
     background-color: #d9235c;
-    border-radius: 3px;
+    border-radius: 5px;
     text-align: center;
     vertical-align: middle;
     line-height: 53px;
@@ -2250,6 +2250,7 @@ p.itemsTrackName {
     font-family: 'quicksandbook';
     font-size: 23px;
     color: #fff;
+    margin: 0px 0px 0px 65px;
 }
 
 .back-pp {
@@ -2287,39 +2288,35 @@ p.itemsTrackName {
 }
 
 .price-pp {
-    width:40%;
-    margin-left:60%;
+    width:50%;
     text-align: right;
-    font-family: 'open_sansregular';
+    vertical-align: middle;
+    font-family: 'quicksandbook';
     font-size: 17px;
+    margin-top: 4px;
+    color: #000000;
+    float: right;
 }
 
-
-.button-uns {
+.button-unsubscribe-pp {
     display: block;
     margin: 15px 7px 20px 7px;
     height: 53px;
     background-color: #fff;
-    border-radius: 3px;
+    border-radius: 5px;
     text-align: center;
     vertical-align: middle;
     line-height: 53px;
     text-decoration: none;
-    outline:#3b414a solid thin;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.button-uns {
 }
 
 .button-uns:active {
-    display: block;
-    margin: 15px 7px 20px 7px;
-    height: 53px;
-    background-color: #fff;
-    border-radius: 3px;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 53px;
-    text-decoration: none;
-    outline:#3b414a solid thin;
-    opacity:0.5;
+    opacity:0.4;
 }
 
 .button-text-uns {
@@ -2328,8 +2325,28 @@ p.itemsTrackName {
     color: #232323;
 }
 
+.button-uns:active .button-text-uns {
+    font-family: 'open_sansregular';
+    font-size: 18px;
+    color: #232323;
+    opacity:0.8;
+}
+
+
 .logo-hl {
     width: 65px;
     height: 28px;
     margin-left: 12px;
 }
+
+
+.paypal-title {
+    float:left;
+    width:50%
+}
+
+.unsubscribed-title {
+    float:left;
+    width:100%
+}
+

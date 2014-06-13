@@ -7,7 +7,7 @@
 <c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
 <c:set var="monthlyOrWeekly" value="${paymentPolicy.monthly}" />
 
-<div class="header pie-pp">
+<div class="header pie-pp" id="header">
     <a href="javascript:;" onclick="closeForm()" class="close-pp"><s:message code='pay.paypal.form.close' /></a>
     <span class="logo-pp"><s:message code='page.account.title' /></span>
 </div>
@@ -20,7 +20,7 @@
 	<c:choose>
 		<c:when test="${result!=null&&result!='fail'}">
             <div class="header-message-pp">
-                <div style="float:left;width:60%;">
+                <div class="paypal-title">
                     <span class="pay-pp" style="vertical-align: middle;"><s:message code='pay.paypal.result.successful.title' /></span>
                     <img class="paypal-logo-pp" style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_paypal_logo.png" />
                 </div>
@@ -30,7 +30,7 @@
 		</c:when>
 		<c:otherwise>
             <div class="header-message-pp">
-                <div style="float:left;width:60%;">
+                <div class="paypal-title">
                     <span class="pay-pp" style="vertical-align: middle;"><s:message code='pay.paypal.form.title' /></span>
                     <img class="paypal-logo-pp" style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_paypal_logo.png" />
                 </div>
