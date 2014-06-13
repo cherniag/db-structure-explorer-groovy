@@ -30,7 +30,7 @@
             <s:message code='pays.page.header.txt.business_2.weeks' arguments="${numWeeks}"/>
             <s:message code='unsub.page.start.description.finish' />
     </div>
-    <a href="javascript:;" onclick="_submitForm()" class="button-uns"><span class="button-text-uns"><s:message code='unsub.page.start.button.title' /></span></a>
+    <a href="javascript:;" onclick="_submitForm()" class="button-unsubscribe-pp button-uns"><span class="button-text-uns"><s:message code='unsub.page.start.button.title' /></span></a>
 
 </div>
 <div class="container-pp-mq-footer">
