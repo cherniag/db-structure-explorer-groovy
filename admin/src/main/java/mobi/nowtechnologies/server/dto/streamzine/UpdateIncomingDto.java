@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +43,11 @@ public class UpdateIncomingDto {
 
     @Override
     public String toString() {
-        return "UpdateIncomingDto{" +
-                "id=" + id +
-                ", timestamp=" + timestamp +
-                ", userName='" + userName + '\'' +
-                ", blocks=" + blocks +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("timestamp", timestamp)
+                .append("userName", userName)
+                .append("blocks", blocks)
+                .toString();
     }
 }

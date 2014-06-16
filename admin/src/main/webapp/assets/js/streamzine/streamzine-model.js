@@ -165,6 +165,9 @@ var UpdateModel = function(model) {
 
         for(var i=0; i < _model.blocks.length; i++) {
             var b = _model.blocks[i];
+            if(!b) {
+                continue;
+            }
             if(b.shapeType.$name == 'NARROW') {
                 first = !first;
             }

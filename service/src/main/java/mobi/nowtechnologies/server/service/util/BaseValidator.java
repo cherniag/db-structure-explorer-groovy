@@ -1,12 +1,13 @@
 package mobi.nowtechnologies.server.service.util;
 
 import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 
-public abstract class BaseValidator implements org.springframework.validation.Validator {
+public abstract class BaseValidator implements Validator {
 	
 	private static SpringValidatorAdapter springValidator;
 
@@ -16,7 +17,7 @@ public abstract class BaseValidator implements org.springframework.validation.Va
         springValidator = new SpringValidatorAdapter(validator);
     }
 
-    public abstract boolean customValidate(Object target, Errors errors);
+    protected abstract boolean customValidate(Object target, Errors errors);
 
     public void validate(Object target, Errors errors) {
         baseValidate(target, errors);

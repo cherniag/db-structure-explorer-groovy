@@ -1,6 +1,10 @@
 package mobi.nowtechnologies.server.admin.validator;
 
+import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
+import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
@@ -8,45 +12,61 @@ import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.Errors;
 
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
+
+@RunWith(PowerMockRunner.class)
 public class UpdateValidatorTest {
+    private static final String HL_UK = "hl_uk";
+
     @Mock
     MessageSource messageSource;
-
     @Mock
     MessageRepository messageRepository;
-
     @Mock
     MediaService mediaService;
-
     @Mock
     MobileApplicationPagesService mobileApplicationPagesService;
-
     @Mock
     StreamzineTypesMappingService streamzineTypesMappingService;
-
+    @Mock
+    CookieUtil cookieUtil;
     @InjectMocks
     UpdateValidator updateValidator;
+
+    @Mock
+    OrdinalBlockDto blockDto;
+    @Mock
+    Errors errors;
+    @Mock
+    TypesMappingInfo typesMappingInfoMock;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        when(streamzineTypesMappingService.getTypesMappingInfos()).thenReturn(typesMappingInfoMock);
+        when(typesMappingInfoMock.matches(any(DeeplinkInfoData.class))).thenReturn(true);
+        when(cookieUtil.get(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME)).thenReturn(HL_UK);
     }
 
     @Test
     public void testValidateBadgeWhenAllowed() throws Exception {
-        OrdinalBlockDto blockDto = mock(OrdinalBlockDto.class);
-        Errors errors = mock(Errors.class);
-
         // allowed
         when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
         when(blockDto.getKey()).thenReturn(MusicType.TRACK.name());
@@ -59,9 +79,6 @@ public class UpdateValidatorTest {
 
     @Test
     public void testValidateBadgeWhenNotAllowedAndBadgeUrlNotProvided() throws Exception {
-        OrdinalBlockDto blockDto = mock(OrdinalBlockDto.class);
-        Errors errors = mock(Errors.class);
-
         // allowed
         when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
         when(blockDto.getKey()).thenReturn(MusicType.TRACK.name());
@@ -76,9 +93,6 @@ public class UpdateValidatorTest {
 
     @Test
     public void testValidateBadgeWhenNotAllowedAndBadgeUrlProvided() throws Exception {
-        OrdinalBlockDto blockDto = mock(OrdinalBlockDto.class);
-        Errors errors = mock(Errors.class);
-
         // not allowed
         when(blockDto.getShapeType()).thenReturn(ShapeType.SLIM_BANNER);
         when(blockDto.getKey()).thenReturn(MusicType.TRACK.name());
@@ -90,4 +104,85 @@ public class UpdateValidatorTest {
 
         verify(errors).rejectValue("badgeUrl", "streamzine.error.badge.notallowed", null);
     }
+
+    @Test
+    public void shouldNotValidateWhenTracksAreTheSame(){
+        // given
+        OrdinalBlockDto musicTrackBlock = createMusicTypeBlock(MusicType.TRACK, "SOME_ISRC_1");
+        UpdateIncomingDto update = createUpdate(musicTrackBlock, musicTrackBlock);
+
+        HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(1)).rejectValue("value", "streamzine.error.duplicate.content", null);
+    }
+
+    @Test
+    public void shouldNotValidateWhenTracksAreNotTheSame(){
+        // given
+        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "SOME_ISRC_1");
+        OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "SOME_ISRC_2");
+        UpdateIncomingDto update = createUpdate(musicTrackBlock1, musicTrackBlock2);
+
+        HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(0)).rejectValue("value", "streamzine.error.duplicate.content", null);
+    }
+
+    @Test
+    public void shouldNotValidateWhenPlaylistsAreTheSame(){
+        // given
+        OrdinalBlockDto musicPlaylistBlock = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1");
+        UpdateIncomingDto update = createUpdate(musicPlaylistBlock, musicPlaylistBlock);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(1)).rejectValue("value", "streamzine.error.duplicate.content", null);
+    }
+
+    @Test
+    public void shouldNotValidateWhenPlaylistsAreNotTheSame(){
+        // given
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1");
+        OrdinalBlockDto musicPlaylistBlock2 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_2");
+        UpdateIncomingDto update = createUpdate(musicPlaylistBlock1, musicPlaylistBlock2);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(0)).rejectValue("value", "streamzine.error.duplicate.content", null);
+    }
+
+
+    private UpdateIncomingDto createUpdate(OrdinalBlockDto ... blocks) {
+        UpdateIncomingDto updateIncomingDtoMock = mock(UpdateIncomingDto.class);
+        when(updateIncomingDtoMock.getBlocks()).thenReturn(new ArrayList<OrdinalBlockDto>(Arrays.asList(blocks)));
+        return updateIncomingDtoMock;
+    }
+
+    private OrdinalBlockDto createMusicTypeBlock(MusicType type, String value) {
+        OrdinalBlockDto blockDto = mock(OrdinalBlockDto.class);
+        when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
+        when(blockDto.getKey()).thenReturn(type.name());
+        when(blockDto.provideKeyString()).thenReturn(type.name());
+        when(blockDto.provideValueString()).thenReturn(value);
+        when(blockDto.getValue()).thenReturn(value);
+        when(blockDto.getContentType()).thenReturn(ContentType.MUSIC);
+        when(blockDto.isIncluded()).thenReturn(true);
+        return blockDto;
+    }
+
+
 }

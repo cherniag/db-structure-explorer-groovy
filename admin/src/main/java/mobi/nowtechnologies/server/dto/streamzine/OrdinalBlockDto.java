@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkI
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Comparator;
 
@@ -146,7 +147,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
         if(value == null) {
             return "";
         }
-        return value.toString().trim();
+        return value.trim();
     }
 
     @Override
@@ -170,24 +171,26 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
         return badgeUrl;
     }
 
-    @Override
-    public String toString() {
-        return "OrdinalBlockDto{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", subTitle='" + subTitle + '\'' +
-                ", coverUrl='" + coverUrl + '\'' +
-                ", badgeUrl='" + badgeUrl + '\'' +
-                ", position=" + position +
-                ", contentType=" + contentType +
-                ", key='" + key + '\'' +
-                ", value=" + value +
-                ", data=" + data +
-                ", contentTypeTitle='" + contentTypeTitle + '\'' +
-                '}';
-    }
-
     public void setBadgeUrl(String badgeUrl) {
         this.badgeUrl = badgeUrl;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("title", title)
+                .append("subTitle", subTitle)
+                .append("coverUrl", coverUrl)
+                .append("position", position)
+                .append("contentType", contentType)
+                .append("key", key)
+                .append("value", value)
+                .append("data", data)
+                .append("vip", vip)
+                .append("expanded", expanded)
+                .append("contentTypeTitle", contentTypeTitle)
+                .append("badgeUrl", badgeUrl)
+                .toString();
     }
 }
