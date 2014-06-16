@@ -21,15 +21,14 @@ import java.util.Collection;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by oar on 2/25/14.
  */
-@Ignore
 public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
     @Value("classpath:testData\\testImageUpload.jpg")
@@ -62,10 +61,9 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
 
     private MvcResult uploadAndWait(String communityUrl, File fileResource, String fileName) throws Exception {
-        MvcResult result = mockMvc.perform(fileUpload("/images/upload").with(buildProcessorForFileUpload("file", fileName, fileResource)).
-                cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))
-        ).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
+        MvcResult result = mockMvc.perform(post("/streamzine/upload/image").with(buildProcessorForFileUpload("file", fileName, fileResource)).
+                        cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))
+        ).andExpect(status().isOk()).andReturn();
         Thread.sleep(3000);
         return result;
     }
@@ -82,7 +80,7 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
         String communityUrl = "nowtop40";
         String fileName = file.getName();
         MvcResult result = uploadAndWait(communityUrl, file, fileName);
-        ImageDTO imageDTO = mapper.readValue(result.getResponse().getContentAsByteArray(), ImageDTO.class);
+        ImageDTO imageDTO = (ImageDTO)result.getModelAndView().getModel().get("dto");
         ResponseEntity<byte[]> downloadedImage = template.getForEntity(imageDTO.getUrl(), byte[].class);
         assertTrue(Arrays.equals(downloadedImage.getBody(), content));
     }
