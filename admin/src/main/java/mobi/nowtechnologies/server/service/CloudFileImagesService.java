@@ -48,7 +48,7 @@ public class CloudFileImagesService {
 
     public ImageDTO uploadImage(MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
-        String fileNameInCloud = originalFileName.toLowerCase();
+        String fileNameInCloud = originalFileName;
         return doUploadImage(file, fileNameInCloud);
     }
 
@@ -67,7 +67,7 @@ public class CloudFileImagesService {
     private ImageDTO doUploadImage(MultipartFile file, String fileNameInCloud) {
         ImageCloudFileMetadata imageCloudFileMetadata = null;
         try {
-            imageCloudFileMetadata = cloudFileMetadataService.forImage(file.getBytes(), file.getOriginalFilename());
+            imageCloudFileMetadata = cloudFileMetadataService.forImage(file.getBytes(),fileNameInCloud);
 
             boolean resultUpload = cloudFileService.uploadFile(file, fileNameInCloud, imageCloudFileMetadata.toMap());
 
