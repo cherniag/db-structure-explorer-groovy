@@ -2339,3 +2339,22 @@ p.itemsTrackName {
     width:100%
 }
 
+
+
+@media all and (max-width: 423px) {
+    .price-pp {
+        width:100%;
+        text-align: left;
+        vertical-align: middle;
+        font-family: 'quicksandbook';
+        font-size: 17px;
+        margin-top: 4px;
+        color: #000000;
+        float: left;
+    }
+
+    .paypal-title {
+        float:left;
+        width:100%
+    }
+}
