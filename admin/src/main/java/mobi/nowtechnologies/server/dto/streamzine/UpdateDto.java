@@ -1,14 +1,11 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class UpdateDto {
     private Date date;
     private long id;
-    private String userName;
+    private List<String> userNames = new ArrayList<String>();
 
     private Set<BlockDto> blocks = new LinkedHashSet<BlockDto>();
     private boolean canEdit;
@@ -48,11 +45,11 @@ public class UpdateDto {
         return canEdit;
     }
 
-    public String getUserName() {
-        return userName;
+    public List<String> getUserNames() {
+        return userNames;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void addUserName(String userName){
+        this.userNames.add(userName);
     }
 }

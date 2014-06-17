@@ -121,7 +121,7 @@ public class Update {
         }
     }
 
-    private void copyUsers(Update incoming){
+    public void copyUsers(Update incoming){
         this.users.clear();
         this.users.addAll(incoming.users);
     }

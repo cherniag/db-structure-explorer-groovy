@@ -280,8 +280,6 @@
                 </div>
 
                 <div id="selectedUserId" class="updateButton">
-                    <span th:if="${update != null and update.userName != null}" th:text="${update.userName + ' | '}"></span>
-                    <a th:if="${update != null and update.userName != null}" href="javascript:;" onclick="return Events.fire('USER_PICKED', null);">Delete</a>
                 </div>
 
                 <div class="streamzine-buttons" th:if="${update != null and update.canEdit}">

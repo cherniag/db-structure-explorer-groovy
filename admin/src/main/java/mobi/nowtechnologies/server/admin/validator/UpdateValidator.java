@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -17,6 +18,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkL
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
@@ -53,6 +55,9 @@ public class UpdateValidator extends BaseValidator {
     private StreamzineTypesMappingService streamzineTypesMappingService;
 
     @Resource
+    private UserRepository userRepository;
+
+    @Resource
     private CookieUtil cookieUtil;
 
     @Override
@@ -69,6 +74,9 @@ public class UpdateValidator extends BaseValidator {
 
     private void validateValues(UpdateIncomingDto dto, Errors errors) {
         Collections.sort(dto.getBlocks(), OrdinalBlockDto.COMPARATOR);
+        dto.removeUserNameDuplicates();
+
+        validateUsers(dto, errors);
 
         final Map<DuplicatedContentKey, OrdinalBlockDto> isrcs = new HashMap<DuplicatedContentKey, OrdinalBlockDto>();
         final Map<DuplicatedContentKey, OrdinalBlockDto> playlists = new HashMap<DuplicatedContentKey, OrdinalBlockDto>();
@@ -89,6 +97,28 @@ public class UpdateValidator extends BaseValidator {
             }
 
             errors.popNestedPath();
+        }
+    }
+
+    @VisibleForTesting
+    void validateUsers(UpdateIncomingDto dto, Errors errors) {
+        List<String> userNames = dto.getUserNames();
+        if(userNames.isEmpty()){
+            return;
+        }
+        String communityRewriteUrl = cookieUtil.get(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
+        List<User> found = userRepository.findByUserNameAndCommunity(userNames, communityRewriteUrl);
+
+        removeFoundInDatabaseFromIncoming(userNames, found);
+
+        if(!userNames.isEmpty()) {
+            rejectField("streamzine.error.not.found.filtered.username", new Object[]{userNames.toString(), communityRewriteUrl}, errors, "userNames");
+        }
+    }
+
+    private void removeFoundInDatabaseFromIncoming(List<String> userNames, List<User> found) {
+        for(User user: found){
+            userNames.remove(user.getUserName());
         }
     }
 
@@ -246,7 +276,7 @@ public class UpdateValidator extends BaseValidator {
         throw new IllegalArgumentException("No validation for music type: " + musicType);
     }
 
-    private void validateNews(OrdinalBlockDto blockDto, Errors errors) {
+   private void validateNews(OrdinalBlockDto blockDto, Errors errors) {
         final String key = blockDto.provideKeyString();
         final String value = blockDto.provideValueString();
 

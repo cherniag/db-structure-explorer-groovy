@@ -11,16 +11,26 @@ if(Streamzine == undefined) {
     //
     // User Management
     //
-    Streamzine.Presenter.selectedUser = function(userName) {
-        var ui = $('#selectedUserId').empty();
+    Streamzine.Presenter.selectedUser = function(dataArray) {
 
-        Streamzine.Model.updateUser(userName);
-
-        if(userName) {
-            ui.html(
-                Template.render('<span>{userName} | </span> <a href="javascript:;" onclick="return Events.fire(\'USER_PICKED\', null);">Delete</a>', {userName: userName})
-            );
+        if(dataArray[0]){
+            Streamzine.Model.addUser(dataArray[1]);
+        }else{
+            Streamzine.Model.removeUser(dataArray[1]);
         }
+        Streamzine.Presenter.renderUsers();
+    }
+
+    Streamzine.Presenter.renderUsers = function() {
+        var userNames = Streamzine.Model.getUsers().sort();
+
+        var innerHtml = "";
+        if(userNames) {
+            for (var i = 0; i < userNames.length; i++){
+                innerHtml+= Template.render('<div><span>{userName} | </span> <a href="javascript:;" onclick="return Events.fire(\'USER_PICKED\', [false,\'{userName}\']);">Delete</a></div>', {userName: userNames[i]})
+            }
+        }
+        $('#selectedUserId').empty().html(Template.render(innerHtml));
     }
 
     Streamzine.Presenter.valueTyped = function(data) {
@@ -291,7 +301,7 @@ if(Streamzine == undefined) {
             contentType: 'application/json',
             type: "POST",
             // fill the filter value for some versions of Chrome browser to exclude '__proto__' property
-            data : JSON.stringify(modelToSend, ["id", "timestamp", "userName", "blocks", "contentType", "coverUrl", "badgeUrl", "included", "key", "value", "position", "shapeType", "subTitle", "title", "vip", "expanded"]),
+            data : JSON.stringify(modelToSend, ["id", "timestamp", "userNames", "blocks", "contentType", "coverUrl", "badgeUrl", "included", "key", "value", "position", "shapeType", "subTitle", "title", "vip", "expanded"]),
             success : function(data, textStatus, status) {
                        alert('Your changes has been successfully saved. This page will be refreshed');
                        window.location.reload();

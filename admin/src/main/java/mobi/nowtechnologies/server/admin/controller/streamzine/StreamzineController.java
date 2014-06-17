@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.ImageDTO;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -105,11 +107,12 @@ public class StreamzineController {
                 .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
     }
 
-    @RequestMapping(value = "/streamzine/user/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/streamzine/user/list", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView getUserList(@RequestParam(value = "q", required = false) String searchWords,
+                                    @RequestParam(value = "ids", required = false, defaultValue = "") String excludedUserNames,
                                     @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) {
-        logger.info("input parameters: searchWords [{}], communityRewriteUrl [{}]", searchWords, communityRewriteUrl);
-        List<User> users = userRepository.findByUserNameAndCommunityRewriteUrl(escapeSearchWord(searchWords), communityRewriteUrl, PAGE_REQUEST_50);
+        logger.info("input parameters: searchWords [{}], communityRewriteUrl [{}], excludedUserNames [{}]", searchWords, communityRewriteUrl, excludedUserNames);
+        List<User> users = findUsers(searchWords, excludedUserNames, communityRewriteUrl);
         return new ModelAndView()
                 .addObject(
                         UserDto.USER_DTO_LIST,
@@ -285,6 +288,14 @@ public class StreamzineController {
         }
 
         return mapView;
+    }
+
+    private List<User> findUsers(String searchWords, String excludedUserNames, String communityRewriteUrl) {
+        if(!StringUtils.isEmpty(excludedUserNames)){
+            return userRepository.findByUserNameAndCommunity(escapeSearchWord(searchWords), communityRewriteUrl, Lists.newArrayList(excludedUserNames.split("#")), PAGE_REQUEST_50);
+        }else{
+            return userRepository.findByUserNameAndCommunity(escapeSearchWord(searchWords), communityRewriteUrl, PAGE_REQUEST_50);
+        }
     }
 
 

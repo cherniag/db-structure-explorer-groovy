@@ -66,8 +66,22 @@ var UpdateModel = function(model) {
         return _model.blocks;
     }
 
-    this.updateUser = function(userName) {
-        _model.userName = userName;
+    this.addUser = function(userName) {
+        var i = $.inArray(userName, _model.userNames);
+        if(i == -1){
+            _model.userNames.push(userName);
+        }
+    }
+
+    this.removeUser = function(userName) {
+        var i = $.inArray(userName, _model.userNames);
+        if(i >= 0) {
+            _model.userNames.splice(i, 1);
+        }
+    }
+
+    this.getUsers = function(){
+        return _model.userNames;
     }
 
     this.getShortInfo = function(m) {
@@ -214,7 +228,7 @@ var UpdateModel = function(model) {
 
         // 1) set the header of
         normalized.id = _model.id;
-        normalized.userName = _model.userName;
+        normalized.userNames = _model.userNames;
         normalized.timestamp = _model.date.time;
         normalized.blocks = [];
 
@@ -285,6 +299,17 @@ var UpdateModel = function(model) {
         // add method to compare
         normalized.equalTo = function(another) {
             // actually compare them:
+            //      userNames:
+            if(this.userNames.length != another.userNames.length){
+                return false;
+            }else{
+                for(var i = 0; i < this.userNames.length; i++){
+                    if(this.userNames[i] != another.userNames[i]){
+                        return false;
+                    }
+                }
+            }
+
             //      blocks:
             if(this.blocks.length != another.blocks.length) {
                 return false;

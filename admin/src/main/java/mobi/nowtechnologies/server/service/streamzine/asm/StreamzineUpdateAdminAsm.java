@@ -17,7 +17,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.util.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -70,6 +70,7 @@ public class StreamzineUpdateAdminAsm {
         return updateDto;
     }
 
+    @Transactional
     public Update fromIncomingDto(UpdateIncomingDto dto, String community) {
         Update u = new Update(new Date(dto.getTimestamp()));
 
@@ -79,8 +80,8 @@ public class StreamzineUpdateAdminAsm {
             u.addBlock(block);
         }
 
-        if (!StringUtils.isEmpty(dto.getUserName())) {
-            User user = userRepository.findOne(dto.getUserName(), community);
+        for (String userName : dto.getUserNames()) {
+            User user = userRepository.findOne(userName, community);
             u.addUser(user);
         }
 
@@ -254,8 +255,8 @@ public class StreamzineUpdateAdminAsm {
         dto.setId(update.getId());
         dto.setDate(update.getDate());
 
-        if(update.getUsers() != null && update.getUsers().size() != 0) {
-            dto.setUserName(update.getUsers().get(0).getUserName());
+        for (User user : update.getUsers()) {
+            dto.addUserName(user.getUserName());
         }
         return dto;
     }
