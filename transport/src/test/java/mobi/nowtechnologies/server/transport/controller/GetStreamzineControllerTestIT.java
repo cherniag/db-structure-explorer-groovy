@@ -131,7 +131,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-                        .param("widthxheight", "320x800")
+                        .param("WIDTHXHEIGHT", "320x800")
         ).andExpect(status().isOk())
                 ;
     }
@@ -173,7 +173,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
-                        .param("widthxheight", "320x800")
+                        .param("WIDTHXHEIGHT", "320x800")
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isOk()).
                 andExpect(jsonPath("$.response.data[0].value.updated").value(updateDate.getTime()));
@@ -190,7 +190,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
                         .param("DEVICE_UID", deviceUID)
-                        .param("widthxheight", "320x800")
+                        .param("WIDTHXHEIGHT", "320x800")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -238,7 +238,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", user1.getDeviceUID())
                         .param("USER_NAME", userName1)
                         .param("USER_TOKEN", createTimestampToken(user1.getToken(), timestamp))
-                        .param("widthxheight", "320x800")
+                        .param("WIDTHXHEIGHT", "320x800")
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isOk()).
                 andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
@@ -250,7 +250,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                         .param("API_VERSION", apiVersion)
                         .param("DEVICE_UID", user2.getDeviceUID())
                         .param("USER_NAME", userName2)
-                        .param("widthxheight", "320x800")
+                        .param("WIDTHXHEIGHT", "320x800")
                         .param("USER_TOKEN",  createTimestampToken(user2.getToken(), timestamp))
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isOk()).
@@ -263,7 +263,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                         .param("API_VERSION", apiVersion)
                         .param("DEVICE_UID", user3.getDeviceUID())
                         .param("USER_NAME", userName3)
-                        .param("widthxheight", "320x800")
+                        .param("WIDTHXHEIGHT", "320x800")
                         .param("USER_TOKEN",  createTimestampToken(user3.getToken(), timestamp))
                         .param("TIMESTAMP", timestamp))
                 .andExpect(status().isOk())
