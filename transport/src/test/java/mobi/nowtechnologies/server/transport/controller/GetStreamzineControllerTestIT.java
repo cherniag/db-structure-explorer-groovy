@@ -74,7 +74,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         Thread.sleep(1200L);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false);
+        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false).andDo(print());
 
         // check json format and the correct order of the blocks
         ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true);
