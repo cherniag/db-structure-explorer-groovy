@@ -48,6 +48,9 @@ public class UnsubscribeController extends CommonController {
     public ModelAndView getUnsubscribePageForPayPal(@PathVariable("scopePrefix") String scopePrefix) {
         ModelAndView modelAndView = new ModelAndView(scopePrefix + VIEW_UNSUBSCRIBE_BY_PAYPAL);
         User user = userService.findById(getSecurityContextDetails().getUserId());
+        if (userService.isUnsubscribedUser(user)){
+            return new ModelAndView("redirect:/payments_inapp/startPayPal.html") ;
+        }
         PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
         PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicyDto(paymentPolicy.getId());
         if (paymentPolicyDto != null){
