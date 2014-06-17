@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.dto.streamzine.DeeplinkType;
+import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -22,7 +23,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -35,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@Transactional
 public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
     @Resource
     private StreamzineUpdateService streamzineUpdateService;
@@ -167,7 +166,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         Thread.sleep(1200L);
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", userName)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
@@ -186,7 +185,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         Thread.sleep(1200L);
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", userName)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
@@ -285,7 +284,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", userName)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
@@ -375,6 +374,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
         newsStory.setPosition(1);
         newsStory.setPublishTimeMillis(new Date().getTime());
         newsStory.setMessageType(NewsDetailDto.MessageType.NEWS);
+        newsStory.setCommunity(CommunityDao.getCommunity("hl_uk"));
         return messageRepository.saveAndFlush(newsStory);
     }
 
