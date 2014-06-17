@@ -31,7 +31,7 @@ public class GetStreamzineController extends CommonController {
                           @RequestParam("USER_NAME") String userName,
                           @RequestParam("USER_TOKEN") String userToken,
                           @RequestParam("TIMESTAMP") String timestamp,
-                          @RequestParam("widthxheight") String resolution,
+                          @RequestParam("WIDTHXHEIGHT") String resolution,
                           @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
