@@ -37,6 +37,8 @@
         <property name="messageSource" ref="messageSource" />
     </bean>
 
+    <bean name="rulesInfoAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.RulesInfoAsm" />
+
     <bean name="streamzineTypesMappingService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService">
     </bean>
 
