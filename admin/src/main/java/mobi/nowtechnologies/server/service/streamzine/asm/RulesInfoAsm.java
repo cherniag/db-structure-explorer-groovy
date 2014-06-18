@@ -23,14 +23,14 @@ public class RulesInfoAsm {
         return info;
     }
 
-    public List<TilesMappingInfo> getTitlesMappingInfo() {
-        List<TilesMappingInfo> infos = new ArrayList<TilesMappingInfo>();
+    public Map<String, TilesMappingInfo> getTitlesMappingInfo() {
+        Map<String, TilesMappingInfo> infos = new HashMap<String, TilesMappingInfo>();
         for (TitlesMappingRules titlesMappingRule : TitlesMappingRules.values()) {
             TilesMappingInfo info = new TilesMappingInfo();
-            info.setShapeType(titlesMappingRule.getShapeType().name());
             info.setTitle(titlesMappingRule.isTitle());
             info.setSubTitle(titlesMappingRule.isSubTitle());
-            infos.add(info);
+
+            infos.put(titlesMappingRule.getShapeType().name(), info);
         }
         return infos;
     }
