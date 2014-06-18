@@ -45,32 +45,35 @@ public class StreamzineUpdateAsm {
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
         DeeplinkType deeplinkType = getDeeplinkType(block);
 
-        boolean allowedToAssignBadge =
-                BadgeMappingRules.allowed(block.getShapeType(), deeplinkInfo.getContentType(), deepLinkInfoService.getSubType(deeplinkInfo));
-
         if(deeplinkInfo instanceof ManualCompilationDeeplinkInfo) {
             IdListItemDto dto = new IdListItemDto(generateId(block), deeplinkType);
-            dto.setImage(block.getCoverUrl());
-            if(allowedToAssignBadge) {
-                dto.setBadgeIcon(block.getBadgeUrl());
-            }
-            dto.setBadgeIcon(block.getBadgeUrl());
-            dto.setTitle(block.getTitle());
-            dto.setSubTitle(block.getSubTitle());
             dto.setLinkValue(deepLinkUrlFactory.create((ManualCompilationDeeplinkInfo) deeplinkInfo));
+
+            assignValuesToItemDto(dto, block);
+
             return dto;
         } else {
             DeeplinkValueItemDto dto = new DeeplinkValueItemDto(generateId(block), deeplinkType);
-            dto.setImage(block.getCoverUrl());
-            if(allowedToAssignBadge) {
-                dto.setBadgeIcon(block.getBadgeUrl());
-            }
-            dto.setBadgeIcon(block.getBadgeUrl());
-            dto.setTitle(block.getTitle());
-            dto.setSubTitle(block.getSubTitle());
             dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo));
+
+            assignValuesToItemDto(dto, block);
+
             return dto;
         }
+    }
+
+    private void assignValuesToItemDto(BaseContentItemDto dto, Block block) {
+        DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
+        boolean allowedToAssignBadge =
+                BadgeMappingRules.allowed(block.getShapeType(), deeplinkInfo.getContentType(), deepLinkInfoService.getSubType(deeplinkInfo));
+
+        dto.setImage(block.getCoverUrl());
+        if(allowedToAssignBadge && block.getBadgeUrl() != null && !block.getBadgeUrl().isEmpty()) {
+            dto.setBadgeIcon(block.getBadgeUrl());
+        }
+        dto.setBadgeIcon(block.getBadgeUrl());
+        dto.setTitle(block.getTitle());
+        dto.setSubTitle(block.getSubTitle());
     }
 
     private DeeplinkType getDeeplinkType(Block block) {

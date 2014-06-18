@@ -486,6 +486,8 @@ if(Streamzine.Presenter.Editor == undefined) {
             initPickers(id, imagesBaseUrl, tracksBaseUrl, playListUrl, badgesGetAll, badgesUpdateName, badgesDelete);
 
             initPropertiesEditors(updateTmstp);
+
+            Streamzine.Presenter.renderUsers();
         }
         //
         // Init helpers
@@ -560,7 +562,9 @@ if(Streamzine.Presenter.Editor == undefined) {
         }
 
         function initPickers(id, imagesBaseUrl, tracksBaseUrl, playListUrl, badgesGetAll, badgesUpdateName, badgesDelete) {
-            editorRef.userPicker = Pickers.createUserPicker('userPickerId', function(userName){Events.fire('USER_PICKED', userName)});
+            editorRef.userPicker = Pickers.createUserPicker('userPickerId', function(userName){
+                Events.fire('USER_PICKED', [true, userName]);
+            });
 
             editorRef.imagePicker = Pickers.createImagePicker('rackspaceImagePickerId', 'rackspaceImagePickerFormId', 'imageUploadResponseHolderId', 'rackspaceImagePickerSaveId', fireValuePickedEvent('coverUrl'));
             editorRef.badgePicker = Pickers.createBadgePicker('badgePickerId', 'badgePickerFormId', 'badgeUploadResponseHolderId', fireValuePickedEvent('badgeUrl'), badgesGetAll, badgesUpdateName, badgesDelete);

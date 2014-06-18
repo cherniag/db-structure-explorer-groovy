@@ -27,6 +27,7 @@ public class StreamzineUpdateService {
         boolean firstUpdate = isNull(lastOne);
         if (!firstUpdate) {
             clonedOrCreated.cloneBlocks(lastOne);
+            clonedOrCreated.copyUsers(lastOne);
         }
 
         return streamzineUpdateRepository.saveAndFlush(clonedOrCreated);

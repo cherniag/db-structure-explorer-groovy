@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class UpdateIncomingDto {
@@ -11,8 +12,8 @@ public class UpdateIncomingDto {
     private long id;
     @JsonProperty(value = "timestamp")
     private long timestamp;
-    @JsonProperty(value = "userName")
-    private String userName;
+    @JsonProperty(value = "userNames")
+    private List<String> userNames = new ArrayList<String>();
 
     @JsonProperty(value = "blocks")
     private List<OrdinalBlockDto> blocks = new ArrayList<OrdinalBlockDto>();
@@ -25,20 +26,28 @@ public class UpdateIncomingDto {
         return timestamp;
     }
 
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public List<OrdinalBlockDto> getBlocks() {
         return blocks;
     }
 
-    public String getUserName() {
-        return userName;
+    public List<String> getUserNames() {
+        return new ArrayList<String>(userNames);
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserNames(List<String> userNames) {
+        this.userNames = userNames;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void addUserName(String userName){
+        this.userNames.add(userName);
+    }
+
+    public void removeUserNameDuplicates() {
+        this.userNames = new ArrayList<String>(new HashSet<String>(userNames));
     }
 
     @Override
@@ -46,7 +55,7 @@ public class UpdateIncomingDto {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("timestamp", timestamp)
-                .append("userName", userName)
+                .append("userNames", userNames)
                 .append("blocks", blocks)
                 .toString();
     }

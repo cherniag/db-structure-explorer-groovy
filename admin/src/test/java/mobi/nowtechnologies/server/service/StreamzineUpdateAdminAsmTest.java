@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class StreamzineUpdateAdminAsmTest {
     @Test
     public void checkFromIncomingDtoWithoutUser() throws Exception {
         UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
-        updateIncomingDto.setUserName(null);
+        updateIncomingDto.setUserNames(new ArrayList<String>());
         Update update = streamzineUpdateAdminAsm.fromIncomingDto(updateIncomingDto, COMMUNITY);
         assertEquals(0, update.getUsers().size());
     }
@@ -66,7 +67,7 @@ public class StreamzineUpdateAdminAsmTest {
         User user = getUser(id, userName);
         when(userRepository.findOne(eq(userName), eq(COMMUNITY))).thenReturn(user);
         UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
-        updateIncomingDto.setUserName(userName);
+        updateIncomingDto.addUserName(userName);
 
         Update update = streamzineUpdateAdminAsm.fromIncomingDto(updateIncomingDto, COMMUNITY);
         List<User> users = update.getUsers();
@@ -110,8 +111,9 @@ public class StreamzineUpdateAdminAsmTest {
 
         UpdateDto updateDto = streamzineUpdateAdminAsm.convertOneWithBlocks(update);
 
-        String userNames = updateDto.getUserName();
-        assertEquals("murka", userNames);
+        List<String> userNames = updateDto.getUserNames();
+        assertEquals("murka", userNames.get(0));
+        assertEquals("burka", userNames.get(1));
     }
 
     private User getUser(int id, String userName) {

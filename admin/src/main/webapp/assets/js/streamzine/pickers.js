@@ -545,6 +545,9 @@ if(Pickers == undefined) {
             },
             preprocessData: function(a) {
                 return a['USER_DTO_LIST'];
+            },
+            paramsCallback: function(owner) {
+                return {ids:Streamzine.Model.getUsers().join('#')};
             }
         });
     }

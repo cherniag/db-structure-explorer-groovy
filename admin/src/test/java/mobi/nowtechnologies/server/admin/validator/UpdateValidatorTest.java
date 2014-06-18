@@ -1,14 +1,17 @@
 package mobi.nowtechnologies.server.admin.validator;
 
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
@@ -45,9 +48,12 @@ public class UpdateValidatorTest {
     @Mock
     StreamzineTypesMappingService streamzineTypesMappingService;
     @Mock
+    UserRepository userRepository;
+    @Mock
     CookieUtil cookieUtil;
+    
     @InjectMocks
-    UpdateValidator updateValidator;
+    UpdateValidator updateValidator ;
 
     @Mock
     OrdinalBlockDto blockDto;
@@ -103,6 +109,42 @@ public class UpdateValidatorTest {
         updateValidator.validateBadge(blockDto, errors);
 
         verify(errors).rejectValue("badgeUrl", "streamzine.error.badge.notallowed", null);
+    }
+
+    @Test
+    public void testValidateUsersSuccess() throws Exception {
+        UpdateIncomingDto updateIncomingDto = createUpdateIncomingDto("first", "second", "third");
+        Errors errors = mock(Errors.class);
+        // not allowed
+        when(userRepository.findByUserNameAndCommunity(anyList(), eq("hl_uk"))).thenReturn(Lists.newArrayList(createUser("first"), createUser("third"), createUser("second")));
+
+        updateValidator.validateUsers(updateIncomingDto, errors);
+
+        verify(errors, never()).rejectValue("userNames", "streamzine.error.not.found.filtered.username", null);
+    }
+
+    @Test
+    public void testValidateUsersFail() throws Exception {
+        UpdateIncomingDto updateIncomingDto = createUpdateIncomingDto("first", "fourth", "third", "second");
+        Errors errors = mock(Errors.class);
+        // not allowed
+        when(userRepository.findByUserNameAndCommunity(anyList(), eq("hl_uk"))).thenReturn(Lists.newArrayList(createUser("second"), createUser("first"), createUser("third")));
+
+        updateValidator.validateUsers(updateIncomingDto, errors);
+
+        verify(errors).rejectValue("userNames", "streamzine.error.not.found.filtered.username", null);
+    }
+
+    private UpdateIncomingDto createUpdateIncomingDto(String... userNames) {
+        UpdateIncomingDto updateIncomingDto = new UpdateIncomingDto();
+        updateIncomingDto.setUserNames(Lists.newArrayList(userNames));
+        return updateIncomingDto;
+    }
+
+    private User createUser(String userName) {
+        User user = new User();
+        user.setUserName(userName);
+        return user;
     }
 
     @Test
