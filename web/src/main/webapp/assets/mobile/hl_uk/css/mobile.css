@@ -2177,8 +2177,8 @@ p.itemsTrackName {
 .container-pp-mq {
     background-color: #fff;
     padding: 5px;
-    margin-left: 8px;
-    margin-right: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .container-pp-mq-footer {
@@ -2201,7 +2201,7 @@ p.itemsTrackName {
     padding: 12px 0px 0px 0px;
     color: #3b414a;
     font-family: 'open_sanslight';
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .button-pp {
@@ -2230,7 +2230,7 @@ p.itemsTrackName {
 
 .button-text-pp {
     font-family: 'open_sansregular';
-    font-size: 18px;
+    font-size: 17px;
     color: #fff;
 }
 
@@ -2266,14 +2266,13 @@ p.itemsTrackName {
 
 .pay-pp {
     font-family: 'quicksandbook';
-    font-size: 18px;
+    font-size: 16px;
     color: #e4497a;
 }
 
 .paypal-logo-pp {
     width: 65px;
     height: 28px;
-    margin-left: 12px;
 }
 
 .price-pp {
@@ -2281,8 +2280,8 @@ p.itemsTrackName {
     text-align: right;
     vertical-align: middle;
     font-family: 'quicksandbook';
-    font-size: 17px;
-    margin-top: 4px;
+    font-size: 15px;
+    margin-top: 7px;
     color: #000000;
     float: right;
 }
@@ -2310,7 +2309,7 @@ p.itemsTrackName {
 
 .button-text-uns {
     font-family: 'open_sansregular';
-    font-size: 18px;
+    font-size: 17px;
     color: #232323;
 }
 
@@ -2341,13 +2340,13 @@ p.itemsTrackName {
 
 
 
-@media all and (max-width: 423px) {
+@media all and (max-width: 354px) {
     .price-pp {
         width:100%;
         text-align: left;
         vertical-align: middle;
         font-family: 'quicksandbook';
-        font-size: 17px;
+        font-size: 15px;
         margin-top: 6px;
         color: #000000;
         float: left;
