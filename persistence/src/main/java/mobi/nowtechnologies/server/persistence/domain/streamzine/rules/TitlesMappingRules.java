@@ -30,7 +30,6 @@ public enum TitlesMappingRules {
             if(titlesMappingRule.shapeType == shapeType) {
                 return titlesMappingRule;
             }
-            return titlesMappingRule;
         }
         throw new IllegalArgumentException("Unknown shapeType: " + shapeType);
     }

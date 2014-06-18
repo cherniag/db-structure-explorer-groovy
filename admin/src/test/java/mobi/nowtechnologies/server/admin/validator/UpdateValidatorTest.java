@@ -78,7 +78,7 @@ public class UpdateValidatorTest {
         when(blockDto.getKey()).thenReturn(MusicType.TRACK.name());
         when(blockDto.getContentType()).thenReturn(ContentType.MUSIC);
 
-        updateValidator.validateBadge(blockDto, errors);
+        updateValidator.validateBadgeMapping(blockDto, errors);
 
         verifyNoMoreInteractions(errors);
     }
@@ -92,7 +92,7 @@ public class UpdateValidatorTest {
         // not assigned
         when(blockDto.getBadgeUrl()).thenReturn(null);
 
-        updateValidator.validateBadge(blockDto, errors);
+        updateValidator.validateBadgeMapping(blockDto, errors);
 
         verifyNoMoreInteractions(errors);
     }
@@ -106,7 +106,7 @@ public class UpdateValidatorTest {
         // not assigned
         when(blockDto.getBadgeUrl()).thenReturn("not-empty-badge-url");
 
-        updateValidator.validateBadge(blockDto, errors);
+        updateValidator.validateBadgeMapping(blockDto, errors);
 
         verify(errors).rejectValue("badgeUrl", "streamzine.error.badge.notallowed", null);
     }

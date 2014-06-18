@@ -2,16 +2,12 @@ package mobi.nowtechnologies.server.dto.streamzine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.Comparator;
 
 public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVip {
@@ -26,12 +22,10 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     @JsonProperty(value = "title")
     private String id;
 
-    @Length(max = Block.TITLE_MAX_LENGTH)
     @JsonProperty(value = "title")
     private String title;
 
     @JsonProperty(value = "subTitle")
-    @Length(max = Block.SUBTITLE_MAX_LENGTH)
     private String subTitle;
 
     @JsonProperty(value = "coverUrl")
@@ -63,28 +57,6 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
     @JsonProperty(value = "badgeUrl")
     private String badgeUrl;
-
-    @AssertTrue(message = "streamzine.error.title.not.provided")
-    public boolean isTitle() {
-        boolean titleAllowed = TitlesMappingRules.hasTitle(getShapeType());
-
-        if(titleAllowed) {
-            return title != null && !title.isEmpty();
-        }
-
-        return title == null || title.isEmpty();
-    }
-
-    @AssertTrue(message = "streamzine.error.subtitle.not.provided")
-    public boolean isSubTitle() {
-        boolean titleAllowed = TitlesMappingRules.hasSubTitle(getShapeType());
-
-        if(titleAllowed) {
-            return subTitle != null && !subTitle.isEmpty();
-        }
-
-        return subTitle == null || subTitle.isEmpty();
-    }
 
     public String getTitle() {
         return title;

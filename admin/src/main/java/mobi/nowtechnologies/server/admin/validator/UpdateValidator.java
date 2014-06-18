@@ -88,7 +88,7 @@ public class UpdateValidator extends BaseValidator {
 
             // should be validated even if not included
             validateMapping(blockDto, errors);
-            validateBadge(blockDto, errors);
+            validateBadgeMapping(blockDto, errors);
 
             if (blockDto.isIncluded()) {
                 baseValidate(blockDto, errors);
@@ -161,7 +161,7 @@ public class UpdateValidator extends BaseValidator {
     }
 
     @VisibleForTesting
-    void validateBadge(OrdinalBlockDto blockDto, Errors errors) {
+    void validateBadgeMapping(OrdinalBlockDto blockDto, Errors errors) {
         Enum<?> subType = TypeToSubTypePair.restoreSubType(blockDto.getContentType(), blockDto.getKey());
         boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
 
