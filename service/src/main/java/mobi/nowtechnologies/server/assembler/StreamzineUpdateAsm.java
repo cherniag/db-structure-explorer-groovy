@@ -9,10 +9,15 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.Deepli
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
+import static org.springframework.util.StringUtils.isEmpty;
 
 public class StreamzineUpdateAsm {
     private DeepLinkUrlFactory deepLinkUrlFactory;
@@ -64,16 +69,21 @@ public class StreamzineUpdateAsm {
 
     private void assignValuesToItemDto(BaseContentItemDto dto, Block block) {
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
+        ShapeType shapeType = block.getShapeType();
         boolean allowedToAssignBadge =
-                BadgeMappingRules.allowed(block.getShapeType(), deeplinkInfo.getContentType(), deepLinkInfoService.getSubType(deeplinkInfo));
+                BadgeMappingRules.allowed(shapeType, deeplinkInfo.getContentType(), deepLinkInfoService.getSubType(deeplinkInfo));
 
         dto.setImage(block.getCoverUrl());
         if(allowedToAssignBadge && block.getBadgeUrl() != null && !block.getBadgeUrl().isEmpty()) {
             dto.setBadgeIcon(block.getBadgeUrl());
         }
         dto.setBadgeIcon(block.getBadgeUrl());
-        dto.setTitle(block.getTitle());
-        dto.setSubTitle(block.getSubTitle());
+        if(hasTitle(shapeType) && !isEmpty(block.getTitle())){
+            dto.setTitle(block.getTitle());
+        }
+        if(hasSubTitle(shapeType) && !isEmpty(block.getSubTitle())) {
+            dto.setSubTitle(block.getSubTitle());
+        }
     }
 
     private DeeplinkType getDeeplinkType(Block block) {

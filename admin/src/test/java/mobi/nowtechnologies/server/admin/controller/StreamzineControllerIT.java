@@ -27,6 +27,7 @@ import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.su
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.WIDE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Author: Gennadii Cherniaiev
  * Date: 4/4/2014
  */
-public class StreamzineControllerTestIT extends AbstractAdminITTest {
+public class StreamzineControllerIT extends AbstractAdminITTest {
 
 
     @Value("${cloudFile.filesURL}")
@@ -126,9 +127,10 @@ public class StreamzineControllerTestIT extends AbstractAdminITTest {
                         .headers(getHttpHeaders(true))
                         .content(objectMapper.writeValueAsString(dto)).
                         cookie(getCommunityCoockie(communityUrl))
-        ).andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[3].message").value("Value does not look like URL: "));
-
+        )
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$[3].message").value("Value does not look like URL: "));
     }
 
 

@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -17,6 +18,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSub
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MediaService;
@@ -36,7 +38,11 @@ import javax.annotation.Resource;
 import java.net.URI;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.isEmpty;
 
 public class UpdateValidator extends BaseValidator {
     @Resource
@@ -89,14 +95,48 @@ public class UpdateValidator extends BaseValidator {
             // should be validated even if not included
             validateMapping(blockDto, errors);
             validateBadgeMapping(blockDto, errors);
+            validateTitlesMapping(blockDto, errors);
 
             if (blockDto.isIncluded()) {
                 baseValidate(blockDto, errors);
                 validateValue(dto, errors, blockDto);
                 validateDuplicatedContent(blockDto, errors, isrcs, playlists);
+                validateTitlesValues(blockDto, errors);
             }
 
             errors.popNestedPath();
+        }
+    }
+
+    @VisibleForTesting
+    void validateTitlesMapping(OrdinalBlockDto blockDto, Errors errors) {
+        ShapeType shapeType = blockDto.getShapeType();
+        if(!hasTitle(shapeType) && hasLength(blockDto.getTitle())){
+            rejectField("streamzine.error.title.not.allowed", new Object[]{shapeType}, errors, "title");
+        }
+
+        if(!hasSubTitle(shapeType) && hasLength(blockDto.getSubTitle())){
+            rejectField("streamzine.error.subtitle.not.allowed", new Object[]{shapeType}, errors, "subTitle");
+        }
+    }
+
+    @VisibleForTesting
+    void validateTitlesValues(OrdinalBlockDto blockDto, Errors errors) {
+        ShapeType shapeType = blockDto.getShapeType();
+        if (hasTitle(shapeType)) {
+            if (isEmpty(blockDto.getTitle())) {
+                rejectField("streamzine.error.title.not.provided", new Object[]{}, errors, "title");
+            } else if(blockDto.getTitle().length()> Block.TITLE_MAX_LENGTH){
+                rejectField("streamzine.error.title.too.long", new Object[]{Block.TITLE_MAX_LENGTH}, errors, "title");
+            }
+        }
+
+        if (hasSubTitle(shapeType)) {
+            if (isEmpty(blockDto.getSubTitle())) {
+                rejectField("streamzine.error.subtitle.not.provided", new Object[]{}, errors, "subTitle");
+            } else if(blockDto.getSubTitle().length()> Block.SUBTITLE_MAX_LENGTH){
+                rejectField("streamzine.error.subtitle.too.long", new Object[]{Block.SUBTITLE_MAX_LENGTH}, errors, "subTitle");
+            }
         }
     }
 

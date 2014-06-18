@@ -135,18 +135,6 @@ public class UpdateValidatorTest {
         verify(errors).rejectValue("userNames", "streamzine.error.not.found.filtered.username", null);
     }
 
-    private UpdateIncomingDto createUpdateIncomingDto(String... userNames) {
-        UpdateIncomingDto updateIncomingDto = new UpdateIncomingDto();
-        updateIncomingDto.setUserNames(Lists.newArrayList(userNames));
-        return updateIncomingDto;
-    }
-
-    private User createUser(String userName) {
-        User user = new User();
-        user.setUserName(userName);
-        return user;
-    }
-
     @Test
     public void shouldNotValidateWhenTracksAreTheSame(){
         // given
@@ -207,6 +195,67 @@ public class UpdateValidatorTest {
         verify(errors, times(0)).rejectValue("value", "streamzine.error.duplicate.content", null);
     }
 
+    @Test
+    public void testValidateTitlesWhenNotAllowed() throws Exception {
+        // titles not allowed
+        when(blockDto.getShapeType()).thenReturn(ShapeType.SLIM_BANNER);
+        when(blockDto.getTitle()).thenReturn("Achtung!");
+        when(blockDto.getSubTitle()).thenReturn("Achtung!");
+
+        updateValidator.validateTitlesMapping(blockDto, errors);
+
+        verify(errors).rejectValue("title", "streamzine.error.title.not.allowed", null);
+        verify(errors).rejectValue("subTitle", "streamzine.error.subtitle.not.allowed", null);
+    }
+
+    @Test
+    public void testValidateTitlesWhenAllowed() throws Exception {
+        // titles are allowed
+        when(blockDto.getShapeType()).thenReturn(ShapeType.SLIM_BANNER);
+
+        updateValidator.validateTitlesMapping(blockDto, errors);
+
+        verify(errors, never()).rejectValue("title", "streamzine.error.title.not.allowed", null);
+        verify(errors, never()).rejectValue("subTitle", "streamzine.error.subtitle.not.allowed", null);
+    }
+
+    @Test
+    public void testValidateTitlesWhenAllowedButEmpty() throws Exception {
+        // titles are allowed
+        when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
+        when(blockDto.getTitle()).thenReturn(null);
+        when(blockDto.getSubTitle()).thenReturn("");
+
+        updateValidator.validateTitlesValues(blockDto, errors);
+
+        verify(errors).rejectValue("title", "streamzine.error.title.not.provided", null);
+        verify(errors).rejectValue("subTitle", "streamzine.error.subtitle.not.provided", null);
+    }
+
+    @Test
+    public void testValidateTitlesWhenAllowedButLong() throws Exception {
+        // titles are allowed
+        when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
+        when(blockDto.getTitle()).thenReturn(new String(new char[1000]));
+        when(blockDto.getSubTitle()).thenReturn(new String(new char[1000]));
+
+        updateValidator.validateTitlesValues(blockDto, errors);
+
+        verify(errors).rejectValue("title", "streamzine.error.title.too.long", null);
+        verify(errors).rejectValue("subTitle", "streamzine.error.subtitle.too.long", null);
+    }
+
+    private UpdateIncomingDto createUpdateIncomingDto(String... userNames) {
+        UpdateIncomingDto updateIncomingDto = new UpdateIncomingDto();
+        updateIncomingDto.setUserNames(Lists.newArrayList(userNames));
+        return updateIncomingDto;
+    }
+
+    private User createUser(String userName) {
+        User user = new User();
+        user.setUserName(userName);
+        return user;
+    }
 
     private UpdateIncomingDto createUpdate(OrdinalBlockDto ... blocks) {
         UpdateIncomingDto updateIncomingDtoMock = mock(UpdateIncomingDto.class);

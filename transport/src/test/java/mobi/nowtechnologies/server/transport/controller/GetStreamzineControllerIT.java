@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
+public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     @Resource
     private StreamzineUpdateService streamzineUpdateService;
     @Resource
