@@ -2192,13 +2192,13 @@ p.itemsTrackName {
 }
 
 .header-message-pp {
-    padding: 12px 12px 0px 0px;
+    padding: 12px 12px 0px 10px;
     font-family: 'open_sansregular';
     height: 28px;
 }
 
 .body-message-pp {
-    padding: 12px 0px 0px 0px;
+    padding: 12px 0px 0px 10px;
     color: #3b414a;
     font-family: 'open_sanslight';
     font-size: 13px;
@@ -2206,7 +2206,7 @@ p.itemsTrackName {
 
 .button-pp {
     display: block;
-    margin: 15px 0px 20px 0px;
+    margin: 15px 10px 20px 10px;
     height: 53px;
     background-color: #e4497a;
     border-radius: 5px;
@@ -2288,7 +2288,7 @@ p.itemsTrackName {
 
 .button-unsubscribe-pp {
     display: block;
-    margin: 15px 0px 20px 0px;
+    margin: 15px 10px 20px 10px;
     height: 53px;
     background-color: #fff;
     border-radius: 5px;
