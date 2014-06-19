@@ -119,7 +119,7 @@ public abstract class CommonController extends ProfileController {
 
     @ExceptionHandler(ReactivateUserException.class)
     public ModelAndView handleReactivation(ReactivateUserException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.FORBIDDEN, true);
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN, false);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -131,10 +131,17 @@ public abstract class CommonController extends ProfileController {
     }
 
     @ExceptionHandler({InvalidPhoneNumberException.class})
-    public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
+    public ModelAndView handleInvalidPhoneNumberException(InvalidPhoneNumberException exception, HttpServletResponse response) {
         exception.setLocalizedMessage("Invalid phone number format");
-        return sendResponse(exception, response, OK, true);
+        return sendResponse(exception, response, OK, false);
     }
+
+    @ExceptionHandler({LimitPhoneNumberValidationException.class})
+    public ModelAndView handleLimitPhoneNumberValidationException(LimitPhoneNumberValidationException exception, HttpServletResponse response) {
+        LOGGER.warn("Limit phone_number calls is exceeded for[{}] url[{}]", exception.getPhoneNumber(), exception.getUrl());
+        return sendResponse(exception, response, OK, false);
+    }
+
 
     @ExceptionHandler({ActivationStatusException.class})
     public ModelAndView handleException(ActivationStatusException exception, HttpServletResponse response) {
@@ -251,7 +258,7 @@ public abstract class CommonController extends ProfileController {
 
     @ExceptionHandler(OAuth2ForbiddenException.class)
     public ModelAndView handleExceptionFromSocialNetwork(Exception exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.FORBIDDEN, false);
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN, true);
     }
 
     private String getCommunityUrl(HttpServletRequest httpServletRequest) {

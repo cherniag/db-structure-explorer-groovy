@@ -36,9 +36,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 
 
 public class O2ProviderServiceImpl implements O2ProviderService {
@@ -205,8 +203,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
             Long countPerDay = userLogRepository.countByPhoneNumberAndDay(validatedPhoneNumber, UserLogType.VALIDATE_PHONE_NUMBER, curDay);
             if(countPerDay >= limitValidatePhoneNumber){
-                LOGGER.error("VALIDATE_PHONE_NUMBER limit phone_number calls is exceeded for[{}] url[{}]", phoneNumber, url);
-                throw new LimitPhoneNumberValidationException();
+                throw new LimitPhoneNumberValidationException(phoneNumber, url);
             }else{
                 userLog = userLogRepository.findByPhoneNumber(validatedPhoneNumber, UserLogType.VALIDATE_PHONE_NUMBER);
                 userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
