@@ -18,7 +18,7 @@ import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
  */
 public class InMemoryEventAppender extends AppenderSkeleton {
 
-    private HashMap<String, Collection<LoggingEvent>> map = new HashMap();
+    private Map<String, Collection<LoggingEvent>> map = new HashMap<String, Collection<LoggingEvent>>();
 
 
     @Override
@@ -41,11 +41,6 @@ public class InMemoryEventAppender extends AppenderSkeleton {
         return false;
     }
 
-    public void reset() {
-        map.clear();
-    }
-
-
     public int countOfErrorsWithStackTraceForLogger(Class loggerClass) {
         return countOfInfoWithLevelWithStackTraceForLogger(Level.ERROR, loggerClass);
     }
@@ -61,16 +56,17 @@ public class InMemoryEventAppender extends AppenderSkeleton {
         for (Map.Entry<String, Collection<LoggingEvent>> currentEntry : map.entrySet()) {
             for (LoggingEvent event : currentEntry.getValue()) {
                 ThrowableInformation throwableInformation = event.getThrowableInformation();
-                if (throwableInformation != null && throwableInformation.getThrowable().getClass() == throwableClass)
+                if (throwableInformation != null && throwableInformation.getThrowable().getClass() == throwableClass) {
                     result++;
+                }
             }
         }
         return result;
     }
 
     private int countOfInfoWithLevelWithStackTraceForLogger(Level level, Class loggerClass) {
-        String loggerName = loggerClass.getName();
-        Collection<LoggingEvent> events = map.get(loggerName);
+        Collection<LoggingEvent> events = map.get(loggerClass.getName());
+
         int result = 0;
         if (!isEmpty(events)) {
             for (LoggingEvent currentEvent : events) {

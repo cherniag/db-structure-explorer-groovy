@@ -574,7 +574,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                         .param("TIMESTAMP", timestamp)
                         .param("PHONE", phone)
         );
-        validateLoggingForClass(PhoneNumberController.class, false, LimitPhoneNumberValidationException.class);
+        validateLoggingForClass(PhoneNumberController.class, LimitPhoneNumberValidationException.class, 0, 1, 1);
     }
 
 
@@ -598,7 +598,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
-        validateLoggingForClass(PhoneNumberController.class, false, InvalidPhoneNumberException.class);
+        validateLoggingForClass(PhoneNumberController.class, InvalidPhoneNumberException.class, 0, 1, 1);
     }
 
     private void resetMobile(String userName) {

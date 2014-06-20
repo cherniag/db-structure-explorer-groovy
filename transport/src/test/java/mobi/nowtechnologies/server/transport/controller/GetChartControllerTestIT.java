@@ -388,7 +388,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("API_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
         );
-        validateLoggingForClass(GetChartController.class, false, ActivationStatusException.class);
+        validateLoggingForClass(GetChartController.class, ActivationStatusException.class, 0, 1, 1);
     }
 
 

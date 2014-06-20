@@ -13,7 +13,7 @@ import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -114,7 +114,7 @@ public abstract class AbstractControllerTestIT {
     @Resource
     private O2ProviderDetailsExtractor o2ProviderDetailsExtractor;
 
-    protected InMemoryEventAppender inMemoryEventAppender = new InMemoryEventAppender();
+    private InMemoryEventAppender inMemoryEventAppender = new InMemoryEventAppender();
 
     private static int position = 0;
     private static Promotion promotion;
@@ -127,12 +127,13 @@ public abstract class AbstractControllerTestIT {
         userService.setMobileProviderService(o2ProviderService);
         ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
         sqlTestInitializer.cleanDynamicTestData();
-        inMemoryEventAppender.reset();
+        Logger.getRootLogger().removeAppender(inMemoryEventAppender);
     }
 
     @Before
     public void setUp() throws Exception {
-        BasicConfigurator.configure(inMemoryEventAppender);
+        Logger.getRootLogger().addAppender(inMemoryEventAppender);
+
         mockMvc = webAppContextSetup(applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
@@ -177,13 +178,10 @@ public abstract class AbstractControllerTestIT {
         assertEquals(getAccCheckContentAsJsonObject(actionCall), getAccCheckContentAsJsonObject(accountCheckCall));
     }
 
-    protected void validateLoggingForClass(Class loggerClass, boolean isCriticalError, Class throwablClass) {
-        if (isCriticalError) {
-            assertEquals(1, inMemoryEventAppender.countOfErrorsWithStackTraceForLogger(loggerClass));
-        } else {
-            assertEquals(1, inMemoryEventAppender.countOfWarnWithStackTraceForLogger(loggerClass));
-        }
-        assertEquals(1, inMemoryEventAppender.totalCountOfMessagesWithStackTraceForException(throwablClass));
+    protected void validateLoggingForClass(Class loggerClass, Class throwableClass, int expectedForCritical, int expectedForWarn, int totalCountWithStackTrace) {
+        assertEquals(expectedForCritical, inMemoryEventAppender.countOfErrorsWithStackTraceForLogger(loggerClass));
+        assertEquals(expectedForWarn, inMemoryEventAppender.countOfWarnWithStackTraceForLogger(loggerClass));
+        assertEquals(totalCountWithStackTrace, inMemoryEventAppender.totalCountOfMessagesWithStackTraceForException(throwableClass));
     }
 
 }
