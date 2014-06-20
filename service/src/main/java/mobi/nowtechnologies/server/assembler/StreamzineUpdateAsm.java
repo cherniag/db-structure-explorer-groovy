@@ -71,7 +71,6 @@ public class StreamzineUpdateAsm {
         if(allowedToAssignBadge && block.getBadgeUrl() != null && !block.getBadgeUrl().isEmpty()) {
             dto.setBadgeIcon(block.getBadgeUrl());
         }
-        dto.setBadgeIcon(block.getBadgeUrl());
         dto.setTitle(block.getTitle());
         dto.setSubTitle(block.getSubTitle());
     }
