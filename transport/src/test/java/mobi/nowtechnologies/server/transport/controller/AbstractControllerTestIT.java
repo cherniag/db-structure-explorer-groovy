@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
+import mobi.nowtechnologies.server.log4j.InMemoryEventAppender;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
@@ -12,6 +13,7 @@ import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
+import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -56,7 +58,7 @@ public abstract class AbstractControllerTestIT {
     private WebApplicationContext applicationContext;
 
     @Autowired
-    private O2ProviderServiceImpl o2ProviderService;
+    protected O2ProviderServiceImpl o2ProviderService;
 
     @Autowired
     private OtacValidationServiceImpl otacValidationService;
@@ -112,7 +114,9 @@ public abstract class AbstractControllerTestIT {
     @Resource
     private O2ProviderDetailsExtractor o2ProviderDetailsExtractor;
 
-    private static  int position = 0;
+    protected InMemoryEventAppender inMemoryEventAppender = new InMemoryEventAppender();
+
+    private static int position = 0;
     private static Promotion promotion;
     private static Message message;
     private static ChartDetail chartDetail;
@@ -123,10 +127,12 @@ public abstract class AbstractControllerTestIT {
         userService.setMobileProviderService(o2ProviderService);
         ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
         sqlTestInitializer.cleanDynamicTestData();
+        inMemoryEventAppender.reset();
     }
 
     @Before
     public void setUp() throws Exception {
+        BasicConfigurator.configure(inMemoryEventAppender);
         mockMvc = webAppContextSetup(applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
@@ -144,7 +150,7 @@ public abstract class AbstractControllerTestIT {
 
         UserGroup userGroup = userGroupRepository.findOne(9);
 
-        if(isNull(promotion)) {
+        if (isNull(promotion)) {
             promotion = promotionRepository.save(new Promotion().withUserGroup(userGroup).withDescription("").withEndDate(Integer.MAX_VALUE).withIsActive(true).withFreeWeeks((byte) 8).withType(ADD_FREE_WEEKS_PROMOTION));
 
             promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
@@ -170,4 +176,14 @@ public abstract class AbstractControllerTestIT {
     protected void checkAccountCheck(ResultActions actionCall, ResultActions accountCheckCall) throws IOException {
         assertEquals(getAccCheckContentAsJsonObject(actionCall), getAccCheckContentAsJsonObject(accountCheckCall));
     }
+
+    protected void validateLoggingForClass(Class loggerClass, boolean isCriticalError, Class throwablClass) {
+        if (isCriticalError) {
+            assertEquals(1, inMemoryEventAppender.countOfErrorsWithStackTraceForLogger(loggerClass));
+        } else {
+            assertEquals(1, inMemoryEventAppender.countOfWarnWithStackTraceForLogger(loggerClass));
+        }
+        assertEquals(1, inMemoryEventAppender.totalCountOfMessagesWithStackTraceForException(throwablClass));
+    }
+
 }
