@@ -15,6 +15,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
+import static org.springframework.util.StringUtils.isEmpty;
+
 public class StreamzineUpdateAsm {
     private DeepLinkUrlFactory deepLinkUrlFactory;
     private DeepLinkInfoService deepLinkInfoService;
