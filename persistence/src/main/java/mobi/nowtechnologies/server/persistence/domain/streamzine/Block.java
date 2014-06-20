@@ -12,6 +12,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "sz_block")
 public class Block {
+    public static final int TITLE_MAX_LENGTH = 255;
+    public static final int SUBTITLE_MAX_LENGTH = 255;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -19,10 +22,10 @@ public class Block {
     @Column(name = "position", nullable = false)
     private int position;
 
-    @Column(name = "title", length = 255)
+    @Column(name = "title", length = TITLE_MAX_LENGTH)
     private String title;
 
-    @Column(name = "sub_title", length = 255)
+    @Column(name = "sub_title", length = SUBTITLE_MAX_LENGTH)
     private String subTitle;
 
     @Column(name = "cover_url", length = 1024)
