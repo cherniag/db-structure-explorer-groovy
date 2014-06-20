@@ -2,9 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
-import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -361,37 +359,6 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                 .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1))
                 .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_HL_UK.replace("%", "%%") + "']").exists());
     }
-
-    @Test
-    public void testGetChartWhenUserInInvalidState() throws Exception {
-        String userName = "+447111111114";
-        String deviceUID = "b88106713409e92622461a876abcd74b";
-        String apiVersion = "5.2";
-        String communityUrl = "hl_uk";
-        String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        Community hlCommunity = communityRepository.findByRewriteUrlParameter(HL_COMMUNITY_REWRITE_URL);
-        Community o2Community = communityRepository.findByRewriteUrlParameter(O2_COMMUNITY_REWRITE_URL);
-        UserGroup hlUserGroup = userGroupRepository.findByCommunity(hlCommunity);
-        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, o2Community);
-        user.setUserGroup(hlUserGroup);
-        user.setActivationStatus(ActivationStatus.PENDING_ACTIVATION);
-        userRepository.saveAndFlush(user);
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("APP_VERSION", apiVersion)
-                        .param("API_VERSION", apiVersion)
-                        .param("COMMUNITY_NAME", apiVersion)
-        );
-        validateLoggingForClass(GetChartController.class, ActivationStatusException.class, 0, 1, 1);
-    }
-
-
 
     private void generateChartAllTypesForO2() {
         Community o2Community = communityRepository.findOne(7);

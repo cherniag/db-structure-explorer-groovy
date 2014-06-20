@@ -556,51 +556,6 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         ).andExpect(status().isNotFound());
     }
 
-    @Test
-    public void testValidateLogsForLimitPhoneException() throws Exception {
-        String userName = "b88106713409e92622461a876abcd74a444";
-        String phone = "+447111111113";
-        String apiVersion = "4.0";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-        o2ProviderServiceSpy.setLimitValidatePhoneNumber(-1);
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        );
-        validateLoggingForClass(PhoneNumberController.class, LimitPhoneNumberValidationException.class, 0, 1, 1);
-    }
-
-
-    @Test
-    @Transactional
-    public void testValidateInvalidNumberException() throws Exception {
-        String userName = "b88106713409e92622461a876abcd74b444";
-        String apiVersion = "4.0";
-        String communityName = "o2";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-        resetMobile(userName);
-
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
-        validateLoggingForClass(PhoneNumberController.class, InvalidPhoneNumberException.class, 0, 1, 1);
-    }
-
     private void resetMobile(String userName) {
         User user = userService.findByName(userName);
         user.setMobile(null);

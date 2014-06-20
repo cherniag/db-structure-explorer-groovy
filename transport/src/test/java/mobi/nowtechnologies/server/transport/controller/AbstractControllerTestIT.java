@@ -114,8 +114,6 @@ public abstract class AbstractControllerTestIT {
     @Resource
     private O2ProviderDetailsExtractor o2ProviderDetailsExtractor;
 
-    private InMemoryEventAppender inMemoryEventAppender = new InMemoryEventAppender();
-
     private static int position = 0;
     private static Promotion promotion;
     private static Message message;
@@ -127,13 +125,10 @@ public abstract class AbstractControllerTestIT {
         userService.setMobileProviderService(o2ProviderService);
         ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
         sqlTestInitializer.cleanDynamicTestData();
-        Logger.getRootLogger().removeAppender(inMemoryEventAppender);
     }
 
     @Before
     public void setUp() throws Exception {
-        Logger.getRootLogger().addAppender(inMemoryEventAppender);
-
         mockMvc = webAppContextSetup(applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
@@ -176,12 +171,6 @@ public abstract class AbstractControllerTestIT {
 
     protected void checkAccountCheck(ResultActions actionCall, ResultActions accountCheckCall) throws IOException {
         assertEquals(getAccCheckContentAsJsonObject(actionCall), getAccCheckContentAsJsonObject(accountCheckCall));
-    }
-
-    protected void validateLoggingForClass(Class loggerClass, Class throwableClass, int expectedForCritical, int expectedForWarn, int totalCountWithStackTrace) {
-        assertEquals(expectedForCritical, inMemoryEventAppender.countOfErrorsWithStackTraceForLogger(loggerClass));
-        assertEquals(expectedForWarn, inMemoryEventAppender.countOfWarnWithStackTraceForLogger(loggerClass));
-        assertEquals(totalCountWithStackTrace, inMemoryEventAppender.totalCountOfMessagesWithStackTraceForException(throwableClass));
     }
 
 }
