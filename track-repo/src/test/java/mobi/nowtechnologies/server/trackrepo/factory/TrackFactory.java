@@ -3,6 +3,7 @@
  */
 package mobi.nowtechnologies.server.trackrepo.factory;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
@@ -29,6 +30,7 @@ public class TrackFactory {
         track.setInfo("Cool song");
 		track.setIngestionDate(new Date());
 		track.setStatus(TrackStatus.NONE);
+        track.setMediaType(AssetFile.FileType.PREVIEW);
 
         Territory territory = new Territory();
         territory.setCode("Worldwide");

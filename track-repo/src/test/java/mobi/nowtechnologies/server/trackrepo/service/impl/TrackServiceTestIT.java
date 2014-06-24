@@ -1,9 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoITTest;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
@@ -14,6 +16,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -33,13 +37,31 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 	@Resource(name = "trackRepo.TrackServiceStub")
 	private TrackServiceImpl trackService;
 
+
+    @Resource(name = "trackRepo.TrackService")
+    private TrackServiceImpl trackServiceWithDB;
+
+
     @Resource
 	private TrackRepository trackRepository;
 
     @Resource
 	private CloudFileService cloudFileService;
-	
-	@Test
+
+    @Test
+    public void testSearchByTrackId() throws Exception {
+        Track prepared = prepareTrackForSearch();
+        SearchTrackDto criteria = new SearchTrackDto();
+        criteria.setTrackIds(Lists.newArrayList(prepared.getId().intValue()));
+        PageRequest request = new PageRequest(0, 1);
+        Page<Track> result =  trackServiceWithDB.find(criteria, request);
+        assertEquals(result.getNumberOfElements(), 1);
+        Track track = trackRepository.findOne(prepared.getId());
+        assertEquals(result.getContent().get(0), track);
+    }
+
+
+    @Test
 	public void testPull_Success() throws Exception {
 		//test preparation
 		Track anyTrack = TrackFactory.anyTrack();
@@ -102,4 +124,10 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 		
 		return file;
 	}
+
+    private Track prepareTrackForSearch() {
+        Track track = TrackFactory.anyTrack();
+        return trackRepository.save(track);
+    }
+
 }

@@ -22,6 +22,9 @@
             <div class="input-prepend">
                 <span class="add-on">Album</span><input type="text" id="album" name="album" th:value="${param.album!=null ? param.album[0] : ''}" />
             </div>
+            <div class="input-prepend">
+                <span class="add-on">Track ID</span><input type="text" id="trackIds" name="trackIds" th:value="${param.trackIds!=null ? param.trackIds[0] : ''}" />
+            </div>
 		</div>
 		<div class="rel">
 			<div class="input-prepend">
