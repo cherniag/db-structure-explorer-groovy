@@ -288,7 +288,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl>https://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
+        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl>http://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
     }
 
     @Test
