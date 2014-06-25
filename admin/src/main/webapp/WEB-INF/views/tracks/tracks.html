@@ -117,6 +117,7 @@
 					<div class="product_id_repo_columns" th:text="#{tracks.page.trackList.head.ingestorAndLabel}">Ingestor/Label</div>
 					<div class="image_repo_columns" th:text="#{tracks.page.trackList.head.image}">Image</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.isrc}">ISRC</div>
+                    <div class="repo_columns" th:text="#{tracks.page.trackList.head.trackId}">Track ID</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.title}">Title</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.subtitle}">SubTitle</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.artist}">Artist</div>
@@ -194,6 +195,8 @@
                             <span class="details-value" th:text="${trackDto.copyright}">Copyright</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.isrc}">ISRC:</strong></label>
                             <span class="details-value" th:text="${trackDto.isrc}">ISRC</span>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.trackId}">Track ID:</strong></label>
+                            <span class="details-value" th:text="${trackDto.id}">ISRC</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.productCode}">Product Code:</strong></label>
                             <span class="details-value" th:text="${trackDto.productCode}">Product Code</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.productId}">Product ID:</strong></label>
@@ -246,6 +249,7 @@
                         <div th:substituteby="tpl::videoPlayer"></div>
                     </div>
 					<div class="repo_columns" th:id="${'isrcDiv_'+trackDto.id}" th:text="${trackDto.isrc}">ISRC</div>
+                    <div class="repo_columns" th:id="${'idDiv_'+trackDto.id}" th:text="${trackDto.id}">ID</div>
 					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
 					<div class="repo_columns" th:text="${trackDto.explicit != null and trackDto.explicit ? (trackDto.subTitle == null ? '' : trackDto.subTitle) + ' (EXPLICIT)' : trackDto.subTitle}">SubTitle</div>
 					<div class="repo_columns" th:id="${'artistDiv_'+trackDto.id}" th:text="${trackDto.artist}">Artist</div>
