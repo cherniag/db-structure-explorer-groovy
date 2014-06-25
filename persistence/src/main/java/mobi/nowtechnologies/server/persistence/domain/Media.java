@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ItemType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import mobi.nowtechnologies.server.persistence.domain.Label;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +17,8 @@ import java.util.List;
 @Table(name = "tb_media")
 public class Media extends Item implements Serializable {
 	private static final long serialVersionUID = 416356472074800767L;
+
+    public static final String ISRC_TRACK_ID_DELIMITER = "_";
 
     public static enum Fields {
 		isrc, i;
@@ -69,7 +72,9 @@ public class Media extends Item implements Serializable {
 	@Column(name = "isrc", columnDefinition = "char(15)")
 	private String isrc;
 
-	private byte label;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "label")
+    private Label label;
 
 	@Column(name = "price_currency", columnDefinition = "char(4)")
 	private String price_currency;
@@ -190,11 +195,11 @@ public class Media extends Item implements Serializable {
 		this.isrc = isrc;
 	}
 
-	public byte getLabel() {
+	public Label getLabel() {
 		return this.label;
 	}
 
-	public void setLabel(byte label) {
+	public void setLabel(Label label) {
 		this.label = label;
 	}
 
@@ -370,8 +375,22 @@ public class Media extends Item implements Serializable {
 		this.trackId = trackId;
 	}
 
+    public String getIsrcTrackId() {
+        return isrc + ISRC_TRACK_ID_DELIMITER + trackId;
+    }
+
     public Media withDrms(List<Drm> drms) {
         setDrms(drms);
+        return this;
+    }
+
+    public Media withIsrc(String isrc){
+        setIsrc(isrc);
+        return this;
+    }
+
+    public Media withTitle(String title){
+        setTitle(title);
         return this;
     }
 
@@ -405,6 +424,16 @@ public class Media extends Item implements Serializable {
         return this;
     }
 
+    public Media withTrackId(Long trackId){
+        setTrackId(trackId);
+        return this;
+    }
+
+    public Media withLabel(Label label){
+        setLabel(label);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -416,7 +445,6 @@ public class Media extends Item implements Serializable {
                 .append("imageFIleLargeId", imageFIleLargeId)
                 .append("imageFileSmallId", imageFileSmallId)
                 .append("isrc", isrc)
-                .append("label", label)
                 .append("price_currency", price_currency)
                 .append("imgFileResolutionId", imgFileResolutionId)
                 .append("purchasedFileId", purchasedFileId)

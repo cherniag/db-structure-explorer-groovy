@@ -229,6 +229,7 @@ public class ChartDetailServiceTest {
 		Media media = new Media();
 		media.setArtist(artist);
 		media.setImageFileSmall(mediaFile);
+        media.setLabel(new Label().withName("label name"));
 		
 		media.setAudioFile(audioFile);
 		

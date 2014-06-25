@@ -166,7 +166,6 @@ public class ChartItemController extends AbstractCommonController {
         List<Media> medias = getMedias(searchWords, mediaType);
         List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtosFromMedia(selectedPublishDateTime, chartId, medias);
 
-
         PageRequest pageRequest  = new PageRequest(0, 10000);
         Map<Integer, String> terCodes = new HashMap<Integer, String>();
 
@@ -195,9 +194,6 @@ public class ChartItemController extends AbstractCommonController {
         modelAndView.addObject("territories", terCodes);
 
         return modelAndView;
-
-//        return new ModelAndView()
-//                .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos);
     }
 
     public List<Media> getMedias(String searchWords, String mediaType) {

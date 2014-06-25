@@ -20,6 +20,15 @@
 		font-size: 10px;
     	width: 150px;
 	}
+    .trackId_chartItemBasket {
+        font-size: 10px;
+        width: 150px;
+    }
+    .label_chartItemBasket {
+        font-size: 10px;
+        width: 150px;
+    }
+
 	.cover_media {
     	font-size: 11px;
     	width: 50px;
@@ -94,7 +103,7 @@
 	
 	.chartControl {
 		/*margin-left: 920px;*/ 
-		width: 580px; 
+		width: 880px;
 		height: 300px; 
 		top: 75px;
     	left: 920px;
@@ -165,12 +174,26 @@
 	}
 	
 	#chartItemsTable li div.info_chartItem {
-	    font-size: 10px;
-	    height: 60px !important;
-	    overflow: hidden;
-	    width: 15%;
-	}
-	
+        font-size: 10px;
+        height: 60px !important;
+        overflow: hidden;
+        width: 15%;
+    }
+
+    #chartItemsTable li div.trackId_chartItem {
+        font-size: 10px;
+        height: 60px !important;
+        overflow: hidden;
+        width: 15%;
+    }
+
+    #chartItemsTable li div.label_chartItem {
+        font-size: 10px;
+        height: 60px !important;
+        overflow: hidden;
+        width: 15%;
+    }
+
 	#chartItemsTable li div.publishDate_chartItem {
 	    font-size: 10px;
 	    width: 12%;
@@ -218,7 +241,9 @@
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 					<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
-					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
+                    <div class="trackId_chartItem" th:text="#{chartItems.page.chartItemsTable.head.trackId}">Track Id</div>
+                    <div class="label_chartItem" th:text="#{chartItems.page.chartItemsTable.head.label}">Label</div>
+                    <div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -242,6 +267,12 @@
 					<div class="locked_chartItem toggleButton">
     					<input type="checkbox" th:checked="${chartItemDto.locked}"/>
     				</div>
+                    <div class="trackId_chartItem" style="display:inline-block" th:text="${chartItemDto.mediaDto.trackId}">
+                        GB28K1100052_666
+                    </div>
+                    <div class="label_chartItem" style="display:inline-block" th:text="${chartItemDto.mediaDto.label}">
+                        GAD RECORDS
+                    </div>
 					<div class="publishDate_chartItem" style="display:inline-block">
 						<span th:text="${chartItemDto.isrc}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
@@ -277,7 +308,9 @@
 							<li class="title">
 								<div class="image_chartItemBasket" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
 								<div class="ArtistTitle_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
-								<div class="info_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+                                <div class="trackId_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.trackId}">Track Id</div>
+                                <div class="label_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.label}">Lable</div>
+                                <div class="info_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 							</li>
 						</ul>
 						<ul class="table table_up" id="chartItemsBasketSortable" style="min-height: 50px;">
@@ -313,6 +346,10 @@
 									th:text="#{chartItems.page.mediasTable.head.isrc}">
 									isrc
 								</div>
+                                <div class="trackId_media"
+                                     th:text="#{chartItems.page.mediasTable.head.trackId}">
+                                    track id
+                                </div>
 								<div class="title_media"
 									th:text="#{chartItems.page.mediasTable.head.title}">
 									Title
@@ -321,6 +358,10 @@
 									th:text="#{chartItems.page.mediasTable.head.artist}">
 									Artist
 								</div>
+                                <div class="label_media"
+                                     th:text="#{chartItems.page.mediasTable.head.label}">
+                                    Label
+                                </div>
                                 <div class="terr_code"
                                      th:text="#{chartItems.page.mediasTable.head.code}">
                                     Artist22
@@ -597,6 +638,8 @@
 		var imageDiv = item.find("div.image_chartItem, div.image_chartItemBasket, div.cover_media");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
 		var publishDateDiv = item.find("div.publishDate_chartItem");
+        var trackIdDiv = item.find("div.trackId_chartItem");
+        var labelDiv = item.find("div.label_chartItem");
 		
 		imageDiv.detach().insertBefore(artistTitleDiv);
 		
@@ -608,6 +651,8 @@
 		positionPrevDiv.css("display","inline-block");
 		chgPositionDiv.css("display","inline-block");
 		publishDateDiv.css("display","inline-block");
+        trackIdDiv.css("display","inline-block");
+        labelDiv.css("display","inline-block");
 		
 		artistTitleDiv.attr("class","ArtistTitle_chartItem");
 		imageDiv.attr("class","image_chartItem");
@@ -932,6 +977,9 @@
 		$('<div>').attr({
 			"class":"isrc_media",
 		}).text(chartItem.mediaDto.isrc).appendTo(li);
+        $('<div>').attr({
+            "class":"trackId_media",
+        }).text(chartItem.mediaDto.trackId).appendTo(li);
 		$('<div>').attr({
 			"class":"title_media",
 		}).text(chartItem.mediaDto.title).appendTo(li);
@@ -939,6 +987,10 @@
 		var artistMediaDiv = $('<div>').attr({
 			"class":"artist_media"
 		}).text(chartItem.mediaDto.artistDto.name).appendTo(li);
+
+        $('<div>').attr({
+            "class":"label_media",
+        }).text(chartItem.mediaDto.label).appendTo(li);
 
         var code_text = "";
         if (chartItem.code!=null)
