@@ -39,7 +39,8 @@ public class ExternalCommand {
         }
         else
         {
-            thread.setCommand(command.getFile().getAbsolutePath());
+            thread.addParam("bash");
+            thread.addParam(command.getFile().getAbsolutePath());
         }
     }
 
