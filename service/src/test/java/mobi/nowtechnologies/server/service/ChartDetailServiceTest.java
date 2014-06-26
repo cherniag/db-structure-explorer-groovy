@@ -1464,7 +1464,7 @@ public class ChartDetailServiceTest {
 		Integer chartId = 1;
 		Date selectedPublishDateTime=new Date();
 		Date nearestPublishDateTime=new Date();
-		List<String> ids = Collections.singletonList("ISRC");
+		List<String> ids = Collections.singletonList("TRACK_ID");
 		
 		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(nearestPublishDateTime.getTime());
 		Mockito.when(mockChartDetailRepository.getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
@@ -1485,7 +1485,7 @@ public class ChartDetailServiceTest {
 		Integer chartId = 1;
 		Date selectedPublishDateTime=new Date();
 		Date nearestPublishDateTime=new Date();
-		List<String> ids = Collections.singletonList("ISRC");
+		List<String> ids = Collections.singletonList("TRACK_ID");
 		
 		Mockito.when(mockChartDetailRepository.findNearestLatestPublishDate(eq(selectedPublishDateTime.getTime()), eq(chartId))).thenReturn(null);
 		Mockito.when(mockChartDetailRepository.getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
@@ -1506,7 +1506,7 @@ public class ChartDetailServiceTest {
 		Integer chartId = 1;
 		Date selectedPublishDateTime=null;
 		Date nearestPublishDateTime=new Date();
-		List<String> ids = Collections.singletonList("ISRC");
+		List<String> ids = Collections.singletonList("TRACK_ID");
 		
 		Mockito.when(mockChartDetailRepository.getLockedChartItemISRCByDate(eq(chartId), eq(nearestPublishDateTime.getTime()))).thenReturn(ids);
 		
