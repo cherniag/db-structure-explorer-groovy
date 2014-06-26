@@ -56,11 +56,14 @@ public class TrackDto {
 	private String publishArtist;
 	private String itunesUrl;
 	private String amazonUrl;
-	private boolean areArtistUrls;
+    private String uniqueTrackId;
+
+    private boolean areArtistUrls;
 	private AudioResolution resolution;
 	private String territoryCodes;
 	private List<ResourceFileDto> files;
     private List<TerritoryDto> territories;
+
 
 	public TrackDto() {
 
@@ -93,6 +96,7 @@ public class TrackDto {
 		this.publishArtist = track.publishArtist;
         this.explicit = track.explicit;
         this.territories = track.territories;
+        this.uniqueTrackId = track.uniqueTrackId;
 	}
 
 	public Long getId() {
@@ -371,7 +375,16 @@ public class TrackDto {
     public void setMediaType(FileType mediaType) {
         this.mediaType = mediaType;
     }
-    
+
+    public String getUniqueTrackId() {
+        return uniqueTrackId;
+    }
+
+    public void setUniqueTrackId(String uniqueTrackId) {
+        this.uniqueTrackId = uniqueTrackId;
+    }
+
+
     public String getFormattedDuration() {
     	
     	if (files == null) {

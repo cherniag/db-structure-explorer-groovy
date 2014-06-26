@@ -22,9 +22,6 @@
             <div class="input-prepend">
                 <span class="add-on">Album</span><input type="text" id="album" name="album" th:value="${param.album!=null ? param.album[0] : ''}" />
             </div>
-            <div class="input-prepend">
-                <span class="add-on">Track ID</span><input type="text" id="trackIds" name="trackIds" th:value="${param.trackIds!=null ? param.trackIds[0] : ''}" />
-            </div>
 		</div>
 		<div class="rel">
 			<div class="input-prepend">
@@ -117,12 +114,12 @@
 					<div class="product_id_repo_columns" th:text="#{tracks.page.trackList.head.ingestorAndLabel}">Ingestor/Label</div>
 					<div class="image_repo_columns" th:text="#{tracks.page.trackList.head.image}">Image</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.isrc}">ISRC</div>
-                    <div class="repo_columns" th:text="#{tracks.page.trackList.head.trackId}">Track ID</div>
-					<div class="repo_columns" th:text="#{tracks.page.trackList.head.title}">Title</div>
+                    <div class="track_id_repo_columns" th:text="#{tracks.page.trackList.head.trackId}">Track ID</div>
+					<div class="title_repo_columns" th:text="#{tracks.page.trackList.head.title}">Title</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.subtitle}">SubTitle</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.artist}">Artist</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.duration}">Duration</div>
-					<div class="repo_columns" th:text="#{tracks.page.trackList.head.releaseDate}">Release Date</div>
+					<div class="release_date_repo_columns" th:text="#{tracks.page.trackList.head.releaseDate}">Release Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.publishDate}">Publish Date</div>
 					<div class="repo_columns" th:text="#{tracks.page.trackList.head.territories}">Territories</div>
 
@@ -196,7 +193,7 @@
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.isrc}">ISRC:</strong></label>
                             <span class="details-value" th:text="${trackDto.isrc}">ISRC</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.trackId}">Track ID:</strong></label>
-                            <span class="details-value" th:text="${trackDto.id}">ISRC</span>
+                            <span class="details-value" th:text="${trackDto.uniqueTrackId}">ISRC</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.productCode}">Product Code:</strong></label>
                             <span class="details-value" th:text="${trackDto.productCode}">Product Code</span>
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.productId}">Product ID:</strong></label>
@@ -249,12 +246,12 @@
                         <div th:substituteby="tpl::videoPlayer"></div>
                     </div>
 					<div class="repo_columns" th:id="${'isrcDiv_'+trackDto.id}" th:text="${trackDto.isrc}">ISRC</div>
-                    <div class="repo_columns" th:id="${'idDiv_'+trackDto.id}" th:text="${trackDto.id}">ID</div>
-					<div class="repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
+                    <div class="track_id_repo_columns" th:id="${'idDiv_'+trackDto.id}" th:text="${trackDto.uniqueTrackId}">Track ID</div>
+					<div class="title_repo_columns" th:id="${'titleDiv_'+trackDto.id}" th:text="${trackDto.title}">Title</div>
 					<div class="repo_columns" th:text="${trackDto.explicit != null and trackDto.explicit ? (trackDto.subTitle == null ? '' : trackDto.subTitle) + ' (EXPLICIT)' : trackDto.subTitle}">SubTitle</div>
 					<div class="repo_columns" th:id="${'artistDiv_'+trackDto.id}" th:text="${trackDto.artist}">Artist</div>
 					<div class="repo_columns" th:text="${trackDto.formattedDuration}">Duration</div>
-					<div class="repo_columns" th:text="${trackDto.releaseDate != null ? #dates.format(trackDto.releaseDate, '__#{tracks.date.format}__') : ''}">Release Date</div>
+					<div class="release_date_repo_columns" th:text="${trackDto.releaseDate != null ? #dates.format(trackDto.releaseDate, '__#{tracks.date.format}__') : ''}">Release Date</div>
 					<div class="repo_columns" th:id="${'publishDateDiv_'+trackDto.id}"  th:text="${trackDto.publishDate != null ? #dates.format(trackDto.publishDate, '__#{tracks.datetime.format}__') : ''}">Publish
 						Date</div>
 					<div class="repo_columns" th:text="${trackDto.territoryCodes}">Territories</div>
