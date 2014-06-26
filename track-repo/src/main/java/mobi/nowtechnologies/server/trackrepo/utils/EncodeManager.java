@@ -1,18 +1,17 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.utils.image.ImageGenerator;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
-import mobi.nowtechnologies.server.trackrepo.domain.Track;
-import mobi.nowtechnologies.server.trackrepo.utils.image.ImageGenerator;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EncodeManager {
 
@@ -55,15 +54,14 @@ public class EncodeManager {
 		List<String> filesToData = new ArrayList<String>();
 		
 		//Thumbnails generation
-		try {
-			
+		try {			
 			if (licensed) {
 				filesToPrivate.addAll(imageGenerator.generateThumbnails(track.getFileName(AssetFile.FileType.IMAGE), 
-												  						track.getIsrc(), 
+												  						track.getUniqueTrackId(),
 												  						isVideo));
 			} else {
 				filesToPrivate.addAll(imageGenerator.generateThumbnailsWithWatermark(track.getFileName(AssetFile.FileType.IMAGE), 
-  																					 track.getIsrc(), 
+  																					 track.getUniqueTrackId(),
   																					 isVideo));
 			}
 		} catch (Exception e) {
@@ -88,14 +86,14 @@ public class EncodeManager {
 								
 				LOGGER.debug("Tryng to fix unknown audio file: " + audioFilePath);
 				
-				String fixedFileName = getWorkDir() + track.getIsrc() + "_fix.mp3";
+				String fixedFileName = getWorkDir() + track.getUniqueTrackId() + "_fix.mp3";
 				commandEncodeUnknown.executeCommand(audioFilePath, fixedFileName);
 				audioFilePath = fixedFileName;
 				encoding = getEncoding(audioFilePath);
 				LOGGER.debug("Encoding after fixing is " + encoding);
 			}
 
-			String purchasedFileName = getPurchasedDir() + track.getIsrc() + ".mp3";
+			String purchasedFileName = getPurchasedDir() + track.getUniqueTrackId() + ".mp3";
 			LOGGER.debug("Purchased file name: " + purchasedFileName);
 			
 			if (MP3_ENCODING.equalsIgnoreCase(encoding)) {
@@ -112,7 +110,7 @@ public class EncodeManager {
 			}
 			LOGGER.debug("Purchased file is created: " + new File(purchasedFileName).exists());
 			
-			String tempFileName = getWorkDir() + track.getIsrc() + ".mp3";
+			String tempFileName = getWorkDir() + track.getUniqueTrackId() + ".mp3";
 			LOGGER.debug("Temp file is " + tempFileName);
 			commandUITS.executeDownloadFiles(purchasedFileName, tempFileName);
 			
@@ -132,7 +130,7 @@ public class EncodeManager {
 				
 				LOGGER.debug("MP3 decoding to wav");
 				
-				String decodedMP3File = getWorkDir() + track.getIsrc() + ".wav";
+				String decodedMP3File = getWorkDir() + track.getUniqueTrackId() + ".wav";
 				LOGGER.debug("MP3 decoded file: " + decodedMP3File);
 				commandDecodeMP3.executeCommand(decodedMP3File, audioFilePath);
 				encodeInputFile = decodedMP3File;
@@ -142,14 +140,14 @@ public class EncodeManager {
 			
 			//Encoding with 48 and 96 bitrate 
 			
-			String coverImageFileName = getImageDir() + track.getIsrc() + "_cover.png";
+			String coverImageFileName = getImageDir() + track.getUniqueTrackId() + "_cover.png";
 			LOGGER.debug("Cover file: " + coverImageFileName + " and it exists: " + new File(coverImageFileName).exists()); 
 
 			for (String bitrate : new String[] {"48", "96"}) {
 			
 				LOGGER.debug("Start converting for bitrate " + bitrate);
 				
-				String bitrateFileName = getWorkDir() + track.getIsrc() + "_"+ bitrate + ".m4a";
+				String bitrateFileName = getWorkDir() + track.getUniqueTrackId() + "_"+ bitrate + ".m4a";
 				commandEncodeMobileAudio.executeCommand(encodeInputFile, bitrate, bitrateFileName);
 				LOGGER.debug("Encoded file to bitrate " + bitrate + ": " + bitrateFileName + "and it exists: " + new File(bitrateFileName).exists());
 				
@@ -162,13 +160,13 @@ public class EncodeManager {
 											 emptyNull(track.getYear()),
 											 "",
 											 emptyNull(track.getCopyright()),
-											 emptyNull(track.getIsrc()),
+											 emptyNull(track.getUniqueTrackId()),
 											 coverImageFileName);
 				LOGGER.debug("Encoded file to bitrate " + bitrate + " with tag: " + bitrateFileName + "and it exists: " + new File(bitrateFileName).exists());
 				
-				String audFileName = track.getIsrc() + "_"+ bitrate + ".aud";
-				String hdrFileName = track.getIsrc() + "_"+ bitrate + ".hdr";
-				String encFileName = track.getIsrc() + "_"+ bitrate + ".enc";
+				String audFileName = track.getUniqueTrackId() + "_"+ bitrate + ".aud";
+				String hdrFileName = track.getUniqueTrackId() + "_"+ bitrate + ".hdr";
+				String encFileName = track.getUniqueTrackId() + "_"+ bitrate + ".enc";
 				
 				commandUITS.executeMobileFiles(bitrateFileName, getWorkDir() + audFileName, getWorkDir() + hdrFileName, getWorkDir() + encFileName);
 				
@@ -195,8 +193,8 @@ public class EncodeManager {
 
 				if (isHighRate == (bitrate == "96")){
 				
-					String targetAudFileNameNoBitrate = getAudioDir() + track.getIsrc() + ".aud";
-					String targetEncFileNameNoBitrate = getEncodedDir() + track.getIsrc() + ".enc";
+					String targetAudFileNameNoBitrate = getAudioDir() + track.getUniqueTrackId() + ".aud";
+					String targetEncFileNameNoBitrate = getEncodedDir() + track.getUniqueTrackId() + ".enc";
 					
 					FileUtils.copyFile(new File(targetAudFileName),  new File(targetAudFileNameNoBitrate));
 					filesToPrivate.add(targetAudFileNameNoBitrate);
@@ -209,7 +207,7 @@ public class EncodeManager {
 			}
 			
 			//Generating preview audio
-			String previewFileName = getWorkDir() + track.getIsrc() + "P.m4a";
+			String previewFileName = getWorkDir() + track.getUniqueTrackId() + "P.m4a";
 			LOGGER.debug("Preview file is " + previewFileName);
 			commandEncodePreviewAudio.executeCommand(encodeInputFile, previewFileName);
 			LOGGER.debug("Preview file is " + previewFileName + " and exists: " + new File(previewFileName).exists());
@@ -223,14 +221,14 @@ public class EncodeManager {
 					 					 emptyNull(track.getYear()),
 					 					 "",
 					 					 emptyNull(track.getCopyright()),
-					 					 emptyNull(track.getIsrc()),
+					 					 emptyNull(track.getUniqueTrackId()),
 					 					 coverImageFileName);
 			LOGGER.debug("Preview file with tag is " + previewFileName + " and exists: " + new File(previewFileName).exists());
 			
-			String resultPreviewFileName = getPreviewDir() + track.getIsrc() + "P.m4a";
+			String resultPreviewFileName = getPreviewDir() + track.getUniqueTrackId() + "P.m4a";
 			moveFile(previewFileName, resultPreviewFileName);
 			filesToData.add(resultPreviewFileName);
-			LOGGER.debug("Preview file moved to " + getPreviewDir() + track.getIsrc() + "P.m4a" + " and exists: " + new File(getPreviewDir() + track.getIsrc() + "P.m4a").exists());
+			LOGGER.debug("Preview file moved to " + getPreviewDir() + track.getUniqueTrackId() + "P.m4a" + " and exists: " + new File(getPreviewDir() + track.getUniqueTrackId() + "P.m4a").exists());
 		}
 
 		cloudUploadFileManager.uploadFilesToCloud(track, filesToPrivate, filesToData);
@@ -253,8 +251,7 @@ public class EncodeManager {
 		}
 	}
 	
-	private void moveFile(String source, String target) {
-		
+	private void moveFile(String source, String target) throws IOException {
 		new File(target).delete();
 		new File(source).renameTo(new File(target));
 	}
@@ -321,25 +318,25 @@ public class EncodeManager {
 		this.previewDir = previewDir;
 	}
 	private String getWorkDir() throws IOException {
-		return workDir.getFile().getAbsolutePath() + "/";
+		return workDir.getFile().getAbsolutePath() + File.separator;
 	}
 	private String getPurchasedDir() throws IOException {
-		return purchasedDir.getFile().getAbsolutePath() + "/";
+		return purchasedDir.getFile().getAbsolutePath() + File.separator;
 	}
 	private String getImageDir() throws IOException {
-		return imageDir.getFile().getAbsolutePath() + "/";
+		return imageDir.getFile().getAbsolutePath() +File.separator;
 	}
 	private String getHeaderDir() throws IOException {
-		return headerDir.getFile().getAbsolutePath() + "/";
+		return headerDir.getFile().getAbsolutePath() + File.separator;
 	}
 	private String getAudioDir() throws IOException {
-		return audioDir.getFile().getAbsolutePath() + "/";
+		return audioDir.getFile().getAbsolutePath() + File.separator;
 	}
 	private String getEncodedDir() throws IOException {
-		return encodedDir.getFile().getAbsolutePath() + "/";
+		return encodedDir.getFile().getAbsolutePath() + File.separator;
 	}
 	private String getPreviewDir() throws IOException {
-		return previewDir.getFile().getAbsolutePath() + "/";
+		return previewDir.getFile().getAbsolutePath() + File.separator;
 	}
 	public void setNeroHome(Resource neroHome) {
 		this.neroHome = neroHome;

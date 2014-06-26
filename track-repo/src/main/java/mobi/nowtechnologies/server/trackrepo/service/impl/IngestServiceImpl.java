@@ -533,6 +533,7 @@ public class IngestServiceImpl implements IngestService{
         String result = "--------------------------------- \n";
         result += "Ingestor: " + track.getIngestor() + "\n";
         result += "Track isrc: " + track.getIsrc() + "\n";
+        result += "Track id: " + track.getUniqueTrackId() + "\n";
         result += "Product code: " + track.getProductCode() + "\n";
         result += "Track title: " + track.getTitle() + "\n";
         result += "Track artist: " + track.getArtist() + "\n";

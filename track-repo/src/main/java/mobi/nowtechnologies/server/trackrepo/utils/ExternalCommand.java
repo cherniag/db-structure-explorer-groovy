@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
-import java.io.IOException;
-
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+
+import java.io.IOException;
 
 public class ExternalCommand {
 	
@@ -13,10 +14,9 @@ public class ExternalCommand {
 	public String executeCommand(String ... params) throws IOException, InterruptedException {
 		
 		ExternalCommandThread thread = new ExternalCommandThread();
-		thread.setCommand(command.getFile().getAbsolutePath());
-		
+        appendCodeDependsFromOS(thread);
 		for (String param : params) {
-			thread.addParam(param);
+            thread.addParam(param);
 		}
 		
 		thread.run();
@@ -31,8 +31,19 @@ public class ExternalCommand {
 			throw new RuntimeException("Cannot encode track files or create zip package: execution of " +thread.getExitCode() + " returned exit code " + thread.getExitCode());
 		}
 	}
-	
-	private Resource command;
+
+    private void appendCodeDependsFromOS(ExternalCommandThread thread) throws IOException {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            thread.addParam("sh");
+            thread.addParam(command.getFile().getAbsolutePath());
+        }
+        else
+        {
+            thread.setCommand(command.getFile().getAbsolutePath());
+        }
+    }
+
+    private Resource command;
 
 	public void setCommand(Resource command) {
 		this.command = command;

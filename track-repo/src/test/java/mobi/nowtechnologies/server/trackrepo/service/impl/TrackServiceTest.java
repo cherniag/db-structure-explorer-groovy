@@ -254,10 +254,10 @@ public class TrackServiceTest {
         assertNotNull(videoFile.getExternalId());
 
         verify(service, times(1)).createVideo(any(Track.class));
-        verify(cloudFileServiceMock, times(1)).copyFile(eq(track.getIsrc() + ImageResolution.SIZE_22.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString());
-        verify(cloudFileServiceMock, times(1)).copyFile(eq(track.getIsrc() + ImageResolution.SIZE_21.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString());
-        verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getIsrc() +"."+ FileType.MOBILE_AUDIO.getExt()), anyString(), anyString(), anyString());
-        verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getIsrc() +"."+ FileType.MOBILE_ENCODED.getExt()), anyString(), anyString(), anyString());
+        verify(cloudFileServiceMock, times(1)).copyFile(eq(track.getUniqueTrackId() + ImageResolution.SIZE_22.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString());
+        verify(cloudFileServiceMock, times(1)).copyFile(eq(track.getUniqueTrackId() + ImageResolution.SIZE_21.getSuffix()+"."+ FileType.IMAGE.getExt()), anyString(), anyString(), anyString());
+        verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getUniqueTrackId() +"."+ FileType.MOBILE_AUDIO.getExt()), anyString(), anyString(), anyString());
+        verify(cloudFileServiceMock, times(0)).copyFile(eq(track.getUniqueTrackId() +"."+ FileType.MOBILE_ENCODED.getExt()), anyString(), anyString(), anyString());
 
     }
     

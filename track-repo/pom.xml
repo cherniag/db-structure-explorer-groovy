@@ -19,6 +19,17 @@
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.sh</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.sh</exclude>
+                </excludes>
             </testResource>
             <testResource>
                 <directory>src/main/webapp</directory>
@@ -87,6 +98,7 @@
 	</build>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <shFileSeparator>/</shFileSeparator>
 	</properties>
 	<dependencies>
 
@@ -99,6 +111,12 @@
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared</artifactId>
+            <exclusions>
+              <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 
         <dependency>
@@ -208,6 +226,25 @@
             <version>0.8.1</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 	</dependencies>
+
+<profiles>
+    <profile>
+        <id>Linux</id>
+        <activation>
+            <os>
+                <family>Windows</family>
+            </os>
+        </activation>
+        <properties>
+            <shFileSeparator>\\</shFileSeparator>
+        </properties>
+    </profile>
+
+</profiles>
 </project>
