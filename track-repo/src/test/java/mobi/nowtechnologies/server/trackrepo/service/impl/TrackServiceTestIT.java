@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoITTest;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
-import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
@@ -16,8 +14,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -38,27 +34,11 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 	private TrackServiceImpl trackService;
 
 
-    @Resource(name = "trackRepo.TrackService")
-    private TrackServiceImpl trackServiceWithDB;
-
-
     @Resource
 	private TrackRepository trackRepository;
 
     @Resource
 	private CloudFileService cloudFileService;
-
-    @Test
-    public void testSearchByTrackId() throws Exception {
-        Track prepared = prepareTrackForSearch();
-        SearchTrackDto criteria = new SearchTrackDto();
-        criteria.setTrackIds(Lists.newArrayList(prepared.getId().intValue()));
-        PageRequest request = new PageRequest(0, 1);
-        Page<Track> result =  trackServiceWithDB.find(criteria, request);
-        assertEquals(result.getNumberOfElements(), 1);
-        Track track = trackRepository.findOne(prepared.getId());
-        assertEquals(result.getContent().get(0), track);
-    }
 
 
     @Test
@@ -68,23 +48,23 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 		anyTrack.setStatus(TrackStatus.ENCODED);
         anyTrack.setMediaType(AssetFile.FileType.MOBILE);
 		anyTrack = trackRepository.save(anyTrack);
-		
+
 		String isrc = anyTrack.getIsrc();
 		Long trackId = anyTrack.getId();
-		
-		MultipartFile audioFile = createTestFile(trackId+"_"+isrc+"."+FileType.MOBILE_AUDIO.getExt());		
+
+		MultipartFile audioFile = createTestFile(trackId+"_"+isrc+"."+FileType.MOBILE_AUDIO.getExt());
 		MultipartFile encodedFile = createTestFile(trackId+"_"+isrc+"."+FileType.MOBILE_ENCODED.getExt());
 		MultipartFile largeImageFile = createTestFile(trackId+"_"+isrc+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt());
 		MultipartFile smallImageFile = createTestFile(trackId+"_"+isrc+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt());
-		
+
 		cloudFileService.uploadFile(audioFile, audioFile.getName());
 		cloudFileService.uploadFile(encodedFile, encodedFile.getName());
 		cloudFileService.uploadFile(largeImageFile, largeImageFile.getName());
 		cloudFileService.uploadFile(smallImageFile, smallImageFile.getName());
-		
+
 		//call test method
 		Track track = trackService.pull(anyTrack.getId());
-		
+
 		//assertion
 		long curTime = System.currentTimeMillis();
 		assertNotNull(track);
@@ -120,14 +100,10 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 		InputStream srcFile = getClass().getClassLoader().getResourceAsStream(DEFAULT_FILE_NAME);
 		FileItem fileItem = new DiskFileItemFactory().createItem(fileName, "application/octet-stream", true, fileName);
 		IOUtils.copy(srcFile, fileItem.getOutputStream());
-		MultipartFile file = new CommonsMultipartFile(fileItem); 
-		
+		MultipartFile file = new CommonsMultipartFile(fileItem);
+
 		return file;
 	}
 
-    private Track prepareTrackForSearch() {
-        Track track = TrackFactory.anyTrack();
-        return trackRepository.save(track);
-    }
 
 }

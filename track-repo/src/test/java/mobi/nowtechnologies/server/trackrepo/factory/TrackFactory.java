@@ -24,7 +24,7 @@ public class TrackFactory {
 		track.setTitle("Deth");
 		track.setArtist("Slot");
 		track.setIngestor("EMI");
-		track.setIsrc("TESTISRC");
+		track.setIsrc("ISRC" + System.nanoTime());
         track.setInfo("Cool song");
 		track.setIngestionDate(new Date());
 		track.setStatus(TrackStatus.NONE);
