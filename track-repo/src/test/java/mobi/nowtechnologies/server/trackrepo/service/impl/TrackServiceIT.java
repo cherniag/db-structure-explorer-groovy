@@ -25,11 +25,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -60,7 +60,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
 
     private boolean isFileInCloudExists(String fileName) {
         String cloudFileName = cloudUrl + fileName;
-        logger.info("Check file in cloud: {}", fileName);
+        logger.info("Check file in cloud: {}", cloudFileName);
         try {
             ResponseEntity<byte[]> result = template.getForEntity(cloudFileName, byte[].class);
             return result.getStatusCode().equals(HttpStatus.OK) && ArrayUtils.isNotEmpty(result.getBody());
@@ -77,7 +77,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     }
 
 
-    private Track encode() throws IOException {
+    private Track encode() throws Exception {
         AssetFileFactory assetFileFactory = new AssetFileFactory();
         assetFileFactory.setFileDir(publishDir.getFile());
         AssetFile image = assetFileFactory.anyAssetFile();
@@ -143,7 +143,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     }
 
 
-    private void checkFilesNotExistsInCloudBeforePill(Track track) {
+    private void checkFilesNotExistsInCloudBeforePull(Track track) {
         Collection<String> filesInCloud = getFilesAfterPull(track);
         for (String currentFile : filesInCloud) {
             assertFalse(isFileInCloudExists(currentFile));
@@ -168,7 +168,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     @Test
     public void testPull() throws Exception {
         Track resultEncoding = encode();
-        checkFilesNotExistsInCloudBeforePill(resultEncoding);
+        checkFilesNotExistsInCloudBeforePull(resultEncoding);
         trackService.pull(resultEncoding.getId());
         long curTime = System.currentTimeMillis();
         Track track = trackRepository.findOne(resultEncoding.getId());

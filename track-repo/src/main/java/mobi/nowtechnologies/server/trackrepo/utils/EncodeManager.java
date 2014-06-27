@@ -251,7 +251,7 @@ public class EncodeManager {
 		}
 	}
 	
-	private void moveFile(String source, String target) throws IOException {
+	private void moveFile(String source, String target) {
 		new File(target).delete();
 		new File(source).renameTo(new File(target));
 	}
