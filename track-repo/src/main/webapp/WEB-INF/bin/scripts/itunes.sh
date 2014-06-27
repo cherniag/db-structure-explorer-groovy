@@ -1,3 +1,4 @@
+#!/bin/bash
 
 cd /tmp/
 DATA=`echo $1 $2 | sed "s/ /+/g"`
