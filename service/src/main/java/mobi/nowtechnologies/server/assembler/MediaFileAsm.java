@@ -24,6 +24,7 @@ public class MediaFileAsm {
 		
 		LOGGER.info("Output parameter mediaFileDto=[{}]", mediaFileDto);
 		return mediaFileDto;
+
 	}
 
 }
