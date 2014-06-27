@@ -1,38 +1,19 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import com.jayway.jsonpath.JsonPath;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.FileType;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.ChgPosition;
-import mobi.nowtechnologies.server.trackrepo.enums.*;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.stereotype.Repository;
 import org.springframework.test.web.servlet.ResultActions;
 
 import javax.annotation.Resource;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import static com.google.common.base.Charsets.UTF_8;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.IMAGE;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -48,7 +29,6 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
     @Resource GenreRepository genreRepository;
     @Resource CommunityRepository communityRepository;
     @Resource LabelRepository labelRepository;
-    private String rememberMeToken;
 
     @Test
     public void shouldReturnMediaAsIsrc_TrackId() throws Exception {
@@ -68,12 +48,18 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
         MediaFile imageFileLargeMediaFile = mediaFileRepository.save(new MediaFile().withFileName("file name").withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
         Label label = labelRepository.findOne((byte)1);
 
-        Media media = mediaRepository.save(new Media().withIsrc("isrc").withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile).withGenre(rockGenre).withLabel(label).withTrackId(666L));
+        final String isrc = "isrc";
+        final long trackId = 666L;
+        Media media = mediaRepository.save(
+                new Media().withIsrc(isrc).withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile).withGenre(rockGenre).withLabel(label).withTrackId(trackId)
+        );
 
         Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         Chart chart = chartRepository.save(new Chart().withName("chart name").withGenre(rockGenre).withCommunity(community));
 
-        ChartDetail chartDetail = chartDetailRepository.save(new ChartDetail().withMedia(media).withChart(chart).withPrevPosition(Byte.MAX_VALUE).withChgPosition(DOWN));
+        chartDetailRepository.save(
+                new ChartDetail().withMedia(media).withChart(chart).withPrevPosition(Byte.MAX_VALUE).withChgPosition(DOWN).withPosition(18)
+        );
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -85,33 +71,11 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
         );
 
         //then
-        resultActions.andExpect(status().isOk());
-
-        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
-        String resultJson = aHttpServletResponse.getContentAsString();
-        rememberMeToken = JsonPath.read(resultJson, "$.response.data[?(@.user)][0].user.rememberMeToken");
-
-        String expectedJson = getExpectedJson(chartDetail);
-        assertEquals(expectedJson, resultJson, false);
+        resultActions
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.response.data[1].chart.tracks[(@.length-1)].media").value(isrc + "_" + trackId));
 
     }
 
-    private String getExpectedJson(ChartDetail chartDetail) throws Exception {
-        String jsonFormat = getFileContent("chart/chart.json");
-
-        String json = jsonFormat.replace("{rememberMeToken}", rememberMeToken);
-        json = json.replace("{media}", chartDetail.getMedia().getIsrcTrackId());
-        json = json.replace("{title}", chartDetail.getMedia().getTitle());
-        json = json.replace("{artist}", chartDetail.getMedia().getArtistName());
-        json = json.replace("{genre1}", chartDetail.getMedia().getGenreName());
-        json = json.replace("{genre2}", chartDetail.getChart().getGenreName());
-        json = json.replace("{changePosition}", chartDetail.getChgPosition().getLabel());
-
-        return json;
-    }
-
-    private String getFileContent(String fileName) throws IOException {
-            File file = new ClassPathResource(fileName).getFile();
-            return Files.toString(file, UTF_8);
-    }
 }

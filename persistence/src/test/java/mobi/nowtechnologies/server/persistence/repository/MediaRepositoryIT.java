@@ -1,20 +1,14 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.FileType;
-import mobi.nowtechnologies.server.trackrepo.enums.*;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
-import static mobi.nowtechnologies.server.trackrepo.enums.FileType.VIDEO;
-import static mobi.nowtechnologies.server.trackrepo.enums.FileType.IMAGE;
+import static mobi.nowtechnologies.server.trackrepo.enums.FileType.*;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /*
  * @author Titov Mykhaylo (titov)
