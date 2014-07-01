@@ -185,7 +185,11 @@
 	</bean>
 
 
-    <bean id="uits" class="mobi.nowtechnologies.java.server.uits.UITS"/>
+    <bean id="uits" class="mobi.nowtechnologies.java.server.uits.UITS">
+        <property name="mp4Manager" ref="mp4Manager"/>
+    </bean>
+
+    <bean id="mp4Manager" class="mobi.nowtechnologies.java.server.uits.MP4Manager"/>
 
 	<bean id="service.encode.cloudUploadFileManager" class="mobi.nowtechnologies.server.trackrepo.utils.UploadToCloudFileManager">
 		<property name="dataContainerName" value="${trackRepo.pull.cdn.container.dest}"/>

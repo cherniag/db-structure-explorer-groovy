@@ -11,10 +11,10 @@ import java.security.spec.PKCS8EncodedKeySpec;
 public class UITS {
 
 
-    private Mp4Mock mock;
+    private MP4ManagerIntf mp4Manager;
 
-    public void setMock(Mp4Mock mock) {
-        this.mock = mock;
+    public void setMp4Manager(MP4ManagerIntf mp4Manager) {
+        this.mp4Manager = mp4Manager;
     }
 
     public void main(String[] args) {
@@ -83,14 +83,7 @@ public class UITS {
                 String hash = mp3Manager.mp3GetMediaHash(inputFile);
                 mp3Manager.process(in, out, params, hash);
             } else { // Assume AAC.....
-                if (mock != null) {
-                    mock.execute(inputFile, encodedFile, audioFile, headerFile);
-                } else {
-                    OutputStream header = new FileOutputStream(headerFile);
-                    OutputStream encoded = new FileOutputStream(encodedFile);
-                    MP4Manager mp4manager = new MP4Manager();
-                    mp4manager.process(in, out, header, encoded, params, null, encrypt);
-                }
+                mp4Manager.process(inputFile, audioFile, headerFile, encodedFile, params, null, encrypt);
             }
             in.close();
             out.close();

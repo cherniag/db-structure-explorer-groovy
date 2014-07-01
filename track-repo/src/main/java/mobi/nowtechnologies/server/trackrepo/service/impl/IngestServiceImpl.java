@@ -46,12 +46,7 @@ public class IngestServiceImpl implements IngestService{
         this.parserFactory = parserFactory;
     }
 
-    @Override
-	public IngestWizardData getDrops(String parserName) throws Exception {
-        LOGGER.debug("getDrops [parserName:{}]", parserName);
-		return getDrops(parserName);
-	}
-    
+
     @Override
 	public IngestWizardData getDrops(String... ingestors) throws Exception {
         LOGGER.debug("getDrops [ingestors:{}]", Arrays.toString(ingestors));

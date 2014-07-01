@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
-import static mobi.nowtechnologies.common.util.TrackUtils.buildUniqueTrackId;
+import static mobi.nowtechnologies.common.util.TrackIdGenerator.buildUniqueTrackId;
 
 /**
  * 
