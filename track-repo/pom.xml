@@ -111,12 +111,6 @@
 		<dependency>
 			<groupId>mobi.nowtechnologies.java.server</groupId>
 			<artifactId>shared</artifactId>
-            <exclusions>
-              <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
 		</dependency>
 
         <dependency>
@@ -225,11 +219,6 @@
             <artifactId>json-path</artifactId>
             <version>0.8.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
         </dependency>
 	</dependencies>
 

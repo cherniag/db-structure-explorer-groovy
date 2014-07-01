@@ -55,7 +55,7 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
 		if (StringUtils.isBlank(sourceFilePath)) {
 			throw new RuntimeException("Image Generation: source file path is null or emmpty");
 		}
-		if (trackId == null) {
+		if (StringUtils.isBlank(trackId)) {
 			throw new RuntimeException("Image Generation: Track id is null or empty");
 		}
 		
