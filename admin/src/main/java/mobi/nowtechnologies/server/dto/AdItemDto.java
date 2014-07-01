@@ -171,13 +171,13 @@ public class AdItemDto {
 
     private static AdActionType actionType(Message message) {
 			String title = message.getTitle();
-        if(isIsrcOrUnknownAdActionType(title)){
+        if(isTrackIdOrUnknownAdActionType(title)){
             return AdActionType.TRACK_ID;
 			}
         return actionTypeMap.get(substringBefore(title, ":"));
 		}
 
-    private static boolean isIsrcOrUnknownAdActionType(String title) {
+    private static boolean isTrackIdOrUnknownAdActionType(String title) {
         return title.indexOf(':') == -1 || !actionTypeMap.containsKey(substringBefore(title, ":"));
 	}
 
