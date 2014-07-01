@@ -31,4 +31,7 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
 
 	@Query(value = "select media from Media media where media.isrc in :isrcs")
 	List<Media> findByIsrcs(@Param("isrcs")Collection<String> isrcs);
+
+    @Query(value = "select media from Media media where media.trackId = ?1")
+    Media findByTrackId(Long trackId);
 }

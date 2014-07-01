@@ -43,9 +43,4 @@ public interface IngestService {
      */
     boolean commitDrops(IngestWizardData data) throws Exception;
 
-    /**
-     * Do all process in one iteration. Consequentially perform all steps search drops of all ingestors, select all drops and their tracks and commit all found drops
-     */
-    void processAllDrops() throws Exception;
-
 }

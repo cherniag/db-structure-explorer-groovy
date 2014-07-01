@@ -7,7 +7,6 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.*;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
-
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -20,8 +19,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import mobi.nowtechnologies.server.trackrepo.utils.EncodeManager;
-import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommandThread;
-
+import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
@@ -37,13 +35,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * 
@@ -172,25 +169,25 @@ public class TrackServiceImpl implements TrackService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	protected Track pull(Track track) {
-		LOGGER.info("start pull process: [trackId:{}, isrc:{}]", track.getId(), track.getIsrc());
+		LOGGER.info("start pull process: [trackId:{}, isrc:{}]", track.getUniqueTrackId(), track.getIsrc());
 
 		try {
 			
-			String isrc = track.getIsrc();
+			String trackId = track.getUniqueTrackId();
 
             AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
 			String[] pullFiles = new String[]{
-						audioFile != null ? isrc+"."+FileType.MOBILE_AUDIO.getExt() : null,
-                        audioFile != null ? isrc+"."+FileType.MOBILE_ENCODED.getExt() : null,
-						isrc+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt(),
-						isrc+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()
+						audioFile != null ? trackId+"."+FileType.MOBILE_AUDIO.getExt() : null,
+                        audioFile != null ? trackId+"."+FileType.MOBILE_ENCODED.getExt() : null,
+						trackId+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt(),
+						trackId+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt()
 					};
 			
 			LOGGER.info("files to pull: {}", Arrays.toString(pullFiles));
 			
 			for (int i = 0; i < pullFiles.length; i++) {
                 if(pullFiles[i] != null)
-				    cloudFileService.copyFile(pullFiles[i], destPullContainer, track.getId()+"_"+pullFiles[i], srcPullContainer);
+                    cloudFileService.copyFile(pullFiles[i], destPullContainer, track.getId()+"_"+pullFiles[i], srcPullContainer);
 			}
 
             //upload video on brightcove if it exists
@@ -301,7 +298,7 @@ public class TrackServiceImpl implements TrackService {
         video.setLinkText("Brightcove");
         video.setLinkUrl("http://www.brightcove.com");
         video.setLongDescription(track.getInfo());
-        video.setReferenceId(track.getIsrc());
+        video.setReferenceId(track.getUniqueTrackId());
         video.setStartDate(track.getIngestionDate());
 
         // ---- Complex (and optional) fields ----
@@ -364,17 +361,14 @@ public class TrackServiceImpl implements TrackService {
     }
 
 	private String getITunesUrl(String artist, String title) throws IOException, InterruptedException {
-		File itunesScriptFile = itunesScript.getFile();
-		ExternalCommandThread thread = new ExternalCommandThread();
-		thread.setCommand(itunesScriptFile.getAbsolutePath());
-		thread.addParam(artist);
-		thread.addParam(title);
-		thread.run();
-		if (thread.getExitCode() == 0) {
-			return thread.getOutBuffer();
-		}
-
-		return null;
+        ExternalCommand command = new ExternalCommand();
+        command.setCommand(itunesScript);
+        try {
+            return command.executeCommand(artist, title);
+        }
+        catch(Exception e){
+            return null;
+        }
 	}
 	
 	String getAmazonUrl(String isrc) {

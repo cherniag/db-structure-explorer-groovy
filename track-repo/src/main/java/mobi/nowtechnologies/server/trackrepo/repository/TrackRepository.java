@@ -4,10 +4,9 @@ import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 /**
  * 
@@ -15,20 +14,14 @@ import java.util.List;
  *
  */
 public interface TrackRepository extends JpaRepository<Track, Long>, TrackRepositoryCustom {
-			
-	@Query("SELECT t FROM Track t WHERE t.artist = :artist")
-	List<Track> listByArtist(@Param("artist")String artist);
-	
-	@Query("SELECT t FROM Track t WHERE t.isrc = :isrc")
+
+    @Query("SELECT t FROM Track t WHERE t.isrc = :isrc")
 	Track findByISRC(@Param("isrc")String isrc);
 	
 	@Query("SELECT t FROM Track t WHERE t.isrc = :isrc and t.productCode = :code and t.ingestor = :ingestor")
 	Track findByKey(@Param("isrc")String isrc, @Param("code")String productCode, @Param("ingestor")String ingestor);
-	
-	@Query("SELECT t FROM Track t WHERE t.isrc = :isrc and t.ingestor = :ingestor")
-	Track findByShortKey(@Param("isrc")String isrc, @Param("ingestor")String ingestor);
 
-	@Query("SELECT t FROM Track t WHERE t.productCode = :code")
+    @Query("SELECT t FROM Track t WHERE t.productCode = :code")
 	Track findByProductCode(@Param("code")String productCode);
 	
 	@Query("SELECT t FROM Track t left join t.territories as ter WHERE t.isrc like :query or t.title like :query or t.artist like :query or t.ingestor like :query or ter.label like :query or ter.distributor like :query")
