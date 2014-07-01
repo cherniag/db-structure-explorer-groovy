@@ -92,70 +92,27 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     private final String fbUserId = "100";
 
 
-    private MockHttpServletRequestBuilder buildApplyGooglePlusPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String googlePlusUserId, String accessToken, boolean jsonRequest) throws IOException {
-        String userToken = getUserToken(signUpDeviceResultActions, timestamp);
-        String userName = getAccCheckContent(signUpDeviceResultActions).userName;
-        String extension = jsonRequest ? ".json" : "";
-        return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_GOOGLE_PLUS" + extension)
-                .param("ACCESS_TOKEN", accessToken)
-                .param("USER_TOKEN", userToken)
-                .param("TIMESTAMP", timestamp)
-                .param("DEVICE_TYPE", deviceType)
-                .param("GOOGLE_PLUS_USER_ID", googlePlusUserId)
-                .param("USER_NAME", userName)
-                .param("DEVICE_UID", deviceUID);
-    }
-
-    private String getUserToken(ResultActions resultActions, String timestamp) throws IOException {
-        AccountCheckDto dto = getAccCheckContent(resultActions);
-        String storedToken = dto.userToken;
-        return Utils.createTimestampToken(storedToken, timestamp);
-    }
-
-    private ResultActions signUpDevice(String deviceUID, String deviceType, String apiVersion, String communityUrl) throws Exception {
-        return mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
-                        .param("DEVICE_TYPE", deviceType)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk());
-    }
-
-    private MvcResult emailGenerate(User user, String email) throws Exception {
-        return mockMvc.perform(
-                post("/" + communityUrl + "/4.0/EMAIL_GENERATE.json")
-                        .param("EMAIL", email)
-                        .param("USER_NAME", user.getDeviceUID())
-                        .param("DEVICE_UID", user.getDeviceUID())
-        ).andExpect(status().isOk()).andReturn();
-    }
-
-    private void applyInitPromoByEmail(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/" + communityUrl + "/4.0/SIGN_IN_EMAIL")
-                .param("USER_TOKEN", userToken)
-                .param("TIMESTAMP", timestamp)
-                .param("EMAIL_ID", activationEmail.getId().toString())
-                .param("EMAIL", activationEmail.getEmail())
-                .param("TOKEN", activationEmail.getToken())
-                .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isOk());
-    }
-
-    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken, boolean jsonRequest) throws IOException {
-        String userToken = getUserToken(signUpDeviceResultActions, timestamp);
-        String userName = getAccCheckContent(signUpDeviceResultActions).userName;
-        String extension = jsonRequest ? ".json" : "";
-        return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_FACEBOOK" + extension)
-                .param("ACCESS_TOKEN", facebookToken)
-                .param("USER_TOKEN", userToken)
-                .param("TIMESTAMP", timestamp)
-                .param("DEVICE_TYPE", deviceType)
-                .param("FACEBOOK_USER_ID", facebookUserId)
-                .param("USER_NAME", userName)
-                .param("DEVICE_UID", deviceUID);
-    }
-
-
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessWithJSON() throws Exception {
+        setTemplateCustomizer(new GooglePlusTemplateCustomizerImpl
+                (googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId) ), googlePlusService);
+
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
+        String userToken = getUserToken(resultActions, timestamp);
+
+        mockMvc.perform(
+                buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
+        ).andExpect(status().isOk());
+
+        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
+        GooglePlusUserInfo gpDetails = googlePlusUserInfoRepository.findByUser(user);
+        assertEquals(gpDetails.getEmail(), googlePlusEmail);
+        checkGetChart(userToken, user.getUserName(), timestamp, deviceUID, true, communityUrl);
+    }
+
+    @Test
+    public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessWithJSON_v6_1() throws Exception {
+        String apiVersion = "6.1";
         setTemplateCustomizer(new GooglePlusTemplateCustomizerImpl
                 (googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId) ), googlePlusService);
 
@@ -239,7 +196,6 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(761))
                 .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("invalid user google plus id"));
     }
-
 
 
     @Test
@@ -347,12 +303,6 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
     }
 
-    private void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer customizer, Object target) {
-        CgLibHelper helper = new CgLibHelper(target);
-        ReflectionTestUtils.setField(helper.getTargetObject(), "templateCustomizer", customizer);
-    }
-
-
     @Test
     public void testGooglePlusApplyAfterEmailRegistration() throws Exception {
         setTemplateCustomizer(new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)), googlePlusService);
@@ -370,19 +320,6 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
         checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
     }
-
-    private void checkGetChart(String userToken, String userName, String timestampValue, String deviceUIDValue, boolean isChartAvailable, String communityUrlValue) throws Exception {
-        ResultMatcher statusMatcher = isChartAvailable ? status().isOk() : status().isUnauthorized();
-        mockMvc.perform(
-                post("/" + communityUrlValue + "/5.5/GET_CHART.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestampValue)
-                        .param("DEVICE_UID", deviceUIDValue)
-        )
-                .andExpect(statusMatcher);
-    }
-
 
     @Test
     public void testSignUpAndApplyPromoForGooglePlusAfterLoginToFacebook() throws Exception {
@@ -431,7 +368,6 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     }
 
 
-
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSucessForDifferentCommunities() throws Exception {
         setTemplateCustomizer(new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)), googlePlusService);
@@ -453,6 +389,84 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
         checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUIDForO2, true, "o2");
         checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
+    }
+
+    private void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer customizer, Object target) {
+        CgLibHelper helper = new CgLibHelper(target);
+        ReflectionTestUtils.setField(helper.getTargetObject(), "templateCustomizer", customizer);
+    }
+
+    private void checkGetChart(String userToken, String userName, String timestampValue, String deviceUIDValue, boolean isChartAvailable, String communityUrlValue) throws Exception {
+        ResultMatcher statusMatcher = isChartAvailable ? status().isOk() : status().isUnauthorized();
+        mockMvc.perform(
+                post("/" + communityUrlValue + "/5.5/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestampValue)
+                        .param("DEVICE_UID", deviceUIDValue)
+        )
+                .andExpect(statusMatcher);
+    }
+
+    private MockHttpServletRequestBuilder buildApplyGooglePlusPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String googlePlusUserId, String accessToken, boolean jsonRequest) throws IOException {
+        String userToken = getUserToken(signUpDeviceResultActions, timestamp);
+        String userName = getAccCheckContent(signUpDeviceResultActions).userName;
+        String extension = jsonRequest ? ".json" : "";
+        return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_GOOGLE_PLUS" + extension)
+                .param("ACCESS_TOKEN", accessToken)
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("DEVICE_TYPE", deviceType)
+                .param("GOOGLE_PLUS_USER_ID", googlePlusUserId)
+                .param("USER_NAME", userName)
+                .param("DEVICE_UID", deviceUID);
+    }
+
+    private String getUserToken(ResultActions resultActions, String timestamp) throws IOException {
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+        String storedToken = dto.userToken;
+        return Utils.createTimestampToken(storedToken, timestamp);
+    }
+
+    private ResultActions signUpDevice(String deviceUID, String deviceType, String apiVersion, String communityUrl) throws Exception {
+        return mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+    }
+
+    private MvcResult emailGenerate(User user, String email) throws Exception {
+        return mockMvc.perform(
+                post("/" + communityUrl + "/4.0/EMAIL_GENERATE.json")
+                        .param("EMAIL", email)
+                        .param("USER_NAME", user.getDeviceUID())
+                        .param("DEVICE_UID", user.getDeviceUID())
+        ).andExpect(status().isOk()).andReturn();
+    }
+
+    private void applyInitPromoByEmail(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
+        mockMvc.perform(post("/" + communityUrl + "/4.0/SIGN_IN_EMAIL")
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("EMAIL_ID", activationEmail.getId().toString())
+                .param("EMAIL", activationEmail.getEmail())
+                .param("TOKEN", activationEmail.getToken())
+                .param("DEVICE_UID", activationEmail.getDeviceUID())).andExpect(status().isOk());
+    }
+
+    private MockHttpServletRequestBuilder buildApplyFacebookPromoRequest(ResultActions signUpDeviceResultActions, String deviceUID, String deviceType, String apiVersion, String communityUrl, String timestamp, String facebookUserId, String facebookToken, boolean jsonRequest) throws IOException {
+        String userToken = getUserToken(signUpDeviceResultActions, timestamp);
+        String userName = getAccCheckContent(signUpDeviceResultActions).userName;
+        String extension = jsonRequest ? ".json" : "";
+        return post("/" + communityUrl + "/" + apiVersion + "/SIGN_IN_FACEBOOK" + extension)
+                .param("ACCESS_TOKEN", facebookToken)
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("DEVICE_TYPE", deviceType)
+                .param("FACEBOOK_USER_ID", facebookUserId)
+                .param("USER_NAME", userName)
+                .param("DEVICE_UID", deviceUID);
     }
 
 }
