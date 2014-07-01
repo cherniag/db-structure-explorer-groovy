@@ -19,7 +19,7 @@ import java.util.Locale;
 import static java.util.Collections.singletonList;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.UNCHANGED;
-import static mobi.nowtechnologies.server.persistence.domain.Media.ISRC_TRACK_ID_DELIMITER;
+import static mobi.nowtechnologies.common.util.TrackIdGenerator.ISRC_TRACK_ID_DELIMITER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;

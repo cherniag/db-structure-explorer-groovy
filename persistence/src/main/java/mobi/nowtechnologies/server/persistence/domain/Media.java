@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import mobi.nowtechnologies.common.util.TrackIdGenerator;
 import mobi.nowtechnologies.server.shared.enums.ItemType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import mobi.nowtechnologies.server.persistence.domain.Label;
@@ -7,6 +8,8 @@ import mobi.nowtechnologies.server.persistence.domain.Label;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+
+import static mobi.nowtechnologies.common.util.TrackIdGenerator.buildUniqueTrackId;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -17,8 +20,6 @@ import java.util.List;
 @Table(name = "tb_media")
 public class Media extends Item implements Serializable {
 	private static final long serialVersionUID = 416356472074800767L;
-
-    public static final String ISRC_TRACK_ID_DELIMITER = "_";
 
     public static enum Fields {
 		isrc, i;
@@ -376,7 +377,7 @@ public class Media extends Item implements Serializable {
 	}
 
     public String getIsrcTrackId() {
-        return isrc + ISRC_TRACK_ID_DELIMITER + trackId;
+        return buildUniqueTrackId(isrc, trackId);
     }
 
     public Media withDrms(List<Drm> drms) {
