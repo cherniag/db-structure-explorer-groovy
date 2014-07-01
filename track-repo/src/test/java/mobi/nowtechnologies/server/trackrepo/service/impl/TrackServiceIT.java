@@ -108,7 +108,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
 
     private Collection<String> getFilesAfterEncoding(Track track) {
         String uniqueTrackId = track.getUniqueTrackId();
-        String prefix = uniqueTrackId + "_" + uniqueTrackId;
+        String prefix = track.getId() + "_" + uniqueTrackId;
         List<String> result = Lists.newArrayList();
         result.add(prefix + "S.jpg");
         result.add(prefix + "_22.jpg");

@@ -187,7 +187,7 @@ public class TrackServiceImpl implements TrackService {
 			
 			for (int i = 0; i < pullFiles.length; i++) {
                 if(pullFiles[i] != null)
-				    cloudFileService.copyFile(pullFiles[i], destPullContainer, track.getUniqueTrackId()+"_"+pullFiles[i], srcPullContainer);
+                    cloudFileService.copyFile(pullFiles[i], destPullContainer, track.getId()+"_"+pullFiles[i], srcPullContainer);
 			}
 
             //upload video on brightcove if it exists
