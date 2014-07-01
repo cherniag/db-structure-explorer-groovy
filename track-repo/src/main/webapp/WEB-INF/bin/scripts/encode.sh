@@ -1,6 +1,3 @@
-#!/bin/bash
-
-
 FFMPEG=ffmpeg
 #FFMPEG=/usr/bin/ffmpeg
 

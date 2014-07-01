@@ -1,5 +1,3 @@
-#!/bin/bash
-
 cd /tmp/
 DATA=`echo $1 $2 | sed "s/ /+/g"`
 wget -O itunes.data "http://ax.phobos.apple.com.edgesuite.net/WebObjects/MZStoreServices.woa/wa/wsSearch?term=${DATA}&country=gb"

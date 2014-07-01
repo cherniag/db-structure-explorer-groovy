@@ -1,5 +1,3 @@
-#!/bin/bash
-
 dmg --input-file "$1" \
     --mp4-chunk-span 900 \
     --overwrite \

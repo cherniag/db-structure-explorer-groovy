@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,19 +33,9 @@ public class ExternalCommand {
     }
 
     private void appendCodeDependsFromOS(ExternalCommandThread thread) throws IOException {
-        boolean isRunOnBamboo = !StringUtils.isEmpty(System.getProperty("bambooBuildDir"));
-        LOGGER.info("On Bamboo: {}", isRunOnBamboo);
-        if (SystemUtils.IS_OS_WINDOWS) {
-            thread.addParam("sh");
-            thread.addParam(command.getFile().getAbsolutePath());
-        } else {
-            if (isRunOnBamboo) {
-                thread.addParam("bash");
-                thread.addParam(command.getFile().getAbsolutePath());
-            } else {
-                thread.setCommand(command.getFile().getAbsolutePath());
-            }
-        }
+        String scriptsCommand = SystemUtils.IS_OS_WINDOWS ? "sh" : "bash";
+        thread.addParam(scriptsCommand);
+        thread.addParam(command.getFile().getAbsolutePath());
     }
 
     private Resource command;
