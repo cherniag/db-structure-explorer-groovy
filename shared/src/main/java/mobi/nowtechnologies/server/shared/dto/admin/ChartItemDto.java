@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
@@ -139,9 +140,20 @@ public class ChartItemDto {
     }
 
     @Override
-	public String toString() {
-		return "ChartItemDto [id=" + id + ", chartId=" + chartId + ", mediaDto=" + mediaDto + ", info=" + info + ", position=" + position + ", prevPosition=" + prevPosition + ", chgPosition="
-				+ chgPosition + ", channel=" + channel + ", isrc=" + isrc + ", publishTime=" + publishTime + ", locked=" + locked + "]";
-	}
-
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("chartId", chartId)
+                .append("mediaDto", mediaDto)
+                .append("info", info)
+                .append("position", position)
+                .append("prevPosition", prevPosition)
+                .append("chgPosition", chgPosition)
+                .append("channel", channel)
+                .append("isrc", isrc)
+                .append("publishTime", publishTime)
+                .append("locked", locked)
+                .append("code", code)
+                .toString();
+    }
 }

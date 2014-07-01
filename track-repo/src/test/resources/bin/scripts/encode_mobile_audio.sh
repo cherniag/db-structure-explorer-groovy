@@ -1,0 +1,1 @@
+cp ${project.build.testOutputDirectory}${shFileSeparator}bin${shFileSeparator}nero${shFileSeparator}linux${shFileSeparator}test.m4a ${3}

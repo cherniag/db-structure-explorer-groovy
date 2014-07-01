@@ -179,14 +179,14 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	}
 
     protected Media createOrUpdateMedia(TrackDto track, TrackDto config){
-        Media media = mediaRepository.getByIsrc(track.getIsrc());
+        Media media = mediaRepository.findByTrackId(track.getId());
 
         if (media == null) {
             media = new Media();
             media.setIsrc(track.getIsrc());
+            media.setTrackId(track.getId());
         }
 
-        media.setTrackId(config.getId());
         media.setTitle(config.getTitle());
 
         // Building genre
