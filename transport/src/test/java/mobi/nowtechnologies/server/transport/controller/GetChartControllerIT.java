@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -31,6 +32,7 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
     @Resource LabelRepository labelRepository;
 
     @Test
+    @Transactional
     public void shouldReturnMediaAsIsrc_TrackId() throws Exception {
         //given
         String userName = "+447111111114";
