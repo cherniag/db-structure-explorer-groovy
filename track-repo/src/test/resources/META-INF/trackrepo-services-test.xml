@@ -20,13 +20,7 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 
     <import resource="../WEB-INF/trackrepo-services.xml"/>
 
-
-    <bean id="mockMp4" class="mobi.nowtechnologies.java.server.uits.Mp4Mock"/>
-
-    <bean id="uits" class="mobi.nowtechnologies.java.server.uits.UITS">
-       <property name="mock" ref="mockMp4"/>
-    </bean>
-
+    <bean id="mp4Manager" class="mobi.nowtechnologies.server.trackrepo.service.impl.MP4ManagerMock"/>
 
 
 </beans>

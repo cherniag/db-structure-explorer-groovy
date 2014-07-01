@@ -367,6 +367,7 @@ public class TrackServiceImpl implements TrackService {
             return command.executeCommand(artist, title);
         }
         catch(Exception e){
+            LOGGER.error("ERROR", e);
             return null;
         }
 	}

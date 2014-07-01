@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.trackrepo.dto.builder;
 
 import mobi.nowtechnologies.java.server.uits.MP3Manager;
 import mobi.nowtechnologies.java.server.uits.MP4Manager;
+import mobi.nowtechnologies.java.server.uits.MP4ManagerIntf;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -26,7 +27,7 @@ public class ResourceFileDtoBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
 	
 	private MP3Manager mp3Manager = new MP3Manager();
-	private MP4Manager mp4manager = new MP4Manager();
+	private MP4ManagerIntf mp4manager = new MP4Manager();
 
 	private Resource publishDir;
 	private Resource workDir;
