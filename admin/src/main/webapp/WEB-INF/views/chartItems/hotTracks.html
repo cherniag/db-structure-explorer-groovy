@@ -22,24 +22,24 @@
 	}
 	.cover_media {
     	font-size: 11px;
-    	width: 50px;
+    	width: 50px!important;
 	}
 	.isrc_media {
     	font-size: 11px;
-    	width: 100px;
+    	width: 140px!important;
 	}
 	.title_media {
     	font-size: 11px;
-    	width: 150px;
+    	width: 80px!important;
 	}
 	.artist_media {
     	font-size: 11px;
-    	width: 150px;
+    	width: 100px!important;
 	}
 
     .terr_code {
         font-size: 11px;
-        width: 30px;
+        width: 50px!important;
     }
 	
 	.basket_button {
@@ -94,7 +94,7 @@
 	
 	.chartControl {
 		/*margin-left: 920px;*/ 
-		width: 580px; 
+		width: 580px;
 		height: 300px; 
 		top: 75px;
     	left: 920px;
@@ -164,10 +164,10 @@
 	    overflow: hidden;
 	    width: 15%;
 	}
-	
+
 	#chartItemsTable li div.publishDate_chartItem {
 	    font-size: 10px;
-	    width: 12%;
+	    width: 17%;
 	}
 	
 </style>
@@ -211,7 +211,7 @@
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 					<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
-					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
+					<div class="publishDate_chartItem" th:text="#{chartItems.page.mediasTable.head.trackId}">ISRC</div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -235,7 +235,7 @@
     					<input type="checkbox" th:checked="${chartItemDto.locked}"/>
     				</div>
 					<div class="publishDate_chartItem" style="display:inline-block">
-						<span th:text="${chartItemDto.isrc}">GB28K1100052</span>
+						<span th:text="${chartItemDto.mediaDto.trackId}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
 					</div>
 				</li>
@@ -303,7 +303,7 @@
 									Cover
 								</div>
 								<div class="isrc_media"
-									th:text="#{chartItems.page.mediasTable.head.isrc}">
+									th:text="#{chartItems.page.mediasTable.head.trackId}">
 									isrc
 								</div>
 								<div class="title_media"
@@ -599,7 +599,7 @@
 		var channelDiv = item.find("div.channel_chartItem, div.channel_chartItemBasket");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
 		var publishDateDiv = item.find("div.publishDate_chartItem");
-		
+
 		imageDiv.detach().insertBefore(channelDiv);
 		
 		artistTitleDiv.css("display","inline-block");
@@ -609,7 +609,7 @@
 		infoDiv.css("display","inline-block");
 		positionDiv.css("display","inline-block");
 		publishDateDiv.css("display","inline-block");
-		
+
 		artistTitleDiv.attr("class","ArtistTitle_chartItem");
 		imageDiv.attr("class","image_chartItem");
 		channelDiv.attr("class","channel_chartItem");
@@ -935,7 +935,7 @@
 			"style":"display:none;"
 		}).appendTo(li);
 //		$('<span>').text(dateFormat(chartItem.publishTime, $dateformat)).appendTo(publishDateDiv);
-        $('<span>').text(chartItem.mediaDto.isrc).appendTo(publishDateDiv);
+        $('<span>').text(chartItem.mediaDto.trackId).appendTo(publishDateDiv);
 		$('<button>').attr({
 			"type":"button",
 			"onclick":"onToBasketClick(this, false)",
@@ -955,7 +955,7 @@
 		
 		$('<div>').attr({
 			"class":"isrc_media",
-		}).text(chartItem.mediaDto.isrc).appendTo(li);
+		}).text(chartItem.mediaDto.trackId).appendTo(li);
 		$('<div>').attr({
 			"class":"title_media",
 		}).text(chartItem.mediaDto.title).appendTo(li);

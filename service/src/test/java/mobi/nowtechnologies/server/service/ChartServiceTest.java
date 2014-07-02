@@ -178,7 +178,7 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_NotSubscribedNotPendingNotExpiring_Success()
 			throws Exception {
-		List<String> chartDetailIds = singletonList("ISRC");
+		List<String> chartDetailIds = singletonList("TRACK_ID");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		String communityName = "chartsnow";
@@ -199,7 +199,7 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_UserSubscribedOnFreeTrial_Success()
 			throws Exception {
-		List<String> chartDetailIds = singletonList("ISRC");
+		List<String> chartDetailIds = singletonList("TRACK_ID");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -224,7 +224,7 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_UserPending_Success()
 			throws Exception {
-		List<String> chartDetailIds = singletonList("ISRC");
+		List<String> chartDetailIds = singletonList("TRACK_ID");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -249,7 +249,7 @@ public class ChartServiceTest {
 	@Test
 	public void testGetLockedChartItems_UserExpiring_Success()
 			throws Exception {
-		List<String> chartDetailIds = singletonList("ISRC");
+		List<String> chartDetailIds = singletonList("TRACK_ID");
 		List<Chart> charts = singletonList(ChartFactory.createChart());
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
 		PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();

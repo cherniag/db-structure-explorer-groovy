@@ -41,6 +41,11 @@ public class Genre implements Serializable {
 		this.name = name;
 	}
 
+    public Genre withName(String name){
+        setName(name);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
