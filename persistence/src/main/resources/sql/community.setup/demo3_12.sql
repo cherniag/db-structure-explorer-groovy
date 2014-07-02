@@ -24,7 +24,7 @@ delete from tb_chartDetail where chart in (
   )
 );
 
-update tb_userGroups set chart=null where community = (select id from tb_communities where name = 'demo3');
+update tb_userGroups set chart=(select i from tb_charts limit 1) where community = (select id from tb_communities where name = 'demo3');
 delete from tb_charts where name in (
   'BASIC_CHART - DEMO3',
   'HOT_TRACKS - DEMO3',
