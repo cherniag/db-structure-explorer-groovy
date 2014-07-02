@@ -20,7 +20,7 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
     @Query(value = "select media from Media media " +
             "join FETCH media.artist artist " +
             "join FETCH media.imageFileSmall imageFileSmall " +
-            "join FETCH media.label label " +
+            "left join FETCH media.label label " +
             "where " +
             "media.audioFile.fileType.i = :type " +
             "and (media.title like :searchWords or media.isrc like :searchWords or artist.name like :searchWords)")
