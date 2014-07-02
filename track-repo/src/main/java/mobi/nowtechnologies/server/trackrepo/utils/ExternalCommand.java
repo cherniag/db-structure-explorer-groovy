@@ -33,8 +33,9 @@ public class ExternalCommand {
     }
 
     private void appendCodeDependsFromOS(ExternalCommandThread thread) throws IOException {
-        String scriptsCommand = SystemUtils.IS_OS_WINDOWS ? "sh" : "bash";
-        thread.addParam(scriptsCommand);
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            thread.addParam("bash");
+        }
         thread.addParam(command.getFile().getAbsolutePath());
     }
 

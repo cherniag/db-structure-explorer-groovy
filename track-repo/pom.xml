@@ -22,6 +22,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>**/*.sh</include>
+                    <include>**/*.bat</include>
                 </includes>
             </testResource>
             <testResource>
@@ -29,6 +30,7 @@
                 <filtering>false</filtering>
                 <excludes>
                     <exclude>**/*.sh</exclude>
+                    <exclude>**/*.bat</exclude>
                 </excludes>
             </testResource>
             <testResource>
@@ -98,7 +100,6 @@
 	</build>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <shFileSeparator>/</shFileSeparator>
 	</properties>
 	<dependencies>
 
@@ -222,18 +223,4 @@
         </dependency>
 	</dependencies>
 
-<profiles>
-    <profile>
-        <id>Linux</id>
-        <activation>
-            <os>
-                <family>Windows</family>
-            </os>
-        </activation>
-        <properties>
-            <shFileSeparator>\\</shFileSeparator>
-        </properties>
-    </profile>
-
-</profiles>
 </project>
