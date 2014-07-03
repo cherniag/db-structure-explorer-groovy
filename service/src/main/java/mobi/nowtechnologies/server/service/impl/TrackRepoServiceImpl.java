@@ -1,13 +1,7 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.Artist;
-import mobi.nowtechnologies.server.persistence.domain.Genre;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.MediaFile;
-import mobi.nowtechnologies.server.persistence.repository.ArtistRepository;
-import mobi.nowtechnologies.server.persistence.repository.GenreRepository;
-import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
-import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -21,7 +15,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +43,12 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	private ArtistRepository artistRepository;
 	private GenreRepository genreRepository;
     private long iTunesLinkFormatCutoverTimeMillis;
+
+    private LabelRepository labelRepository;
+
+    public void setLabelRepository(LabelRepository labelRepository) {
+        this.labelRepository = labelRepository;
+    }
 
     public void setiTunesLinkFormatCutoverTimeMillis(long iTunesLinkFormatCutoverTimeMillis) {
         this.iTunesLinkFormatCutoverTimeMillis = iTunesLinkFormatCutoverTimeMillis;
@@ -187,6 +187,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
             media.setTrackId(track.getId());
         }
 
+        media.setLabel(getLabel(track));
         media.setTitle(config.getTitle());
 
         // Building genre
@@ -235,6 +236,14 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         mediaRepository.save(media);
 
         return media;
+    }
+
+    private Label getLabel(TrackDto track) {
+        String label = track.getLabel();
+        if (!StringUtils.isEmpty(label)){
+          return labelRepository.findByName(label);
+        }
+        return null;
     }
 
     private String getiTunesURL(TrackDto sourceTrackDto) {
