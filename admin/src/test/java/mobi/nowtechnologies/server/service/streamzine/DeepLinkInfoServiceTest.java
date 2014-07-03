@@ -23,10 +23,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -84,15 +82,16 @@ public class DeepLinkInfoServiceTest {
         OrdinalBlockDto blockDto = createOrdinalBlockDto(ContentType.MUSIC, MusicType.MANUAL_COMPILATION.name(), "ISRC10#ISRC12#ISRC11#ISRC12");
 
         DeeplinkInfo deeplinkInfo = deepLinkInfoService.create(blockDto);
-        assertThat(deeplinkInfo, notNullValue());
-        assertThat(deeplinkInfo, instanceOf(ManualCompilationDeeplinkInfo.class));
+        assertNotNull(deeplinkInfo);
+        assertTrue(deeplinkInfo instanceof ManualCompilationDeeplinkInfo);
         ManualCompilationDeeplinkInfo i = (ManualCompilationDeeplinkInfo) deeplinkInfo;
-        assertThat(i.getMediaIds(), hasSize(3));
+        assertEquals(3, i.getMediaIds().size());
+
         List<Media> medias = i.getMedias();
-        assertThat(medias, hasSize(3));
-        assertThat(medias.get(0).getI(), is(10));
-        assertThat(medias.get(1).getI(), is(12));
-        assertThat(medias.get(2).getI(), is(11));
+        assertEquals(3, medias.size());
+        assertEquals(10, medias.get(0).getI().intValue());
+        assertEquals(12, medias.get(1).getI().intValue());
+        assertEquals(11, medias.get(2).getI().intValue());
     }
 
     @Test(expected = IllegalArgumentException.class)
