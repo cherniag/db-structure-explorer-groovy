@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.Label;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static mobi.nowtechnologies.server.assembler.ArtistAsm.toArtistDto;
 import static mobi.nowtechnologies.server.assembler.MediaFileAsm.toMediaFileDto;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -32,7 +34,10 @@ public class MediaAsm {
 		mediaDto.setIsrc(media.getIsrc());
 		mediaDto.setITunesUrl(media.getiTunesUrl());
 		mediaDto.setPriceCurrency(media.getPrice_currency());
-        mediaDto.setLabel(media.getLabel().getName());
+
+        Label label = media.getLabel();
+        if (isNotNull(label))
+            mediaDto.setLabel(label.getName());
         mediaDto.setTrackId(media.getIsrcTrackId());
 		mediaDto.setPublishDate(new Date(media.getPublishDate()*1000L));
 		mediaDto.setTitle(media.getTitle());
