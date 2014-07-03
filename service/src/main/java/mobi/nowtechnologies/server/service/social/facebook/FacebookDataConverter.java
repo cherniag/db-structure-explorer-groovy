@@ -21,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 /**
  * Created by oar on 3/14/14.
  */
-class FacebookDataConverter {
+public class FacebookDataConverter {
     private static final String DATE_FORMAT = "MM/dd/yyyy";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -34,7 +34,7 @@ class FacebookDataConverter {
         details.setFacebookId(profile.getId());
         details.setUserName(profile.getUsername());
         details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture?type=large");
-        details.setGender(extractGender(profile));
+        details.setGender(extractGender(profile.getGender()));
         details.setBirthday(extractBirthDay(profile));
         assignCityAndCountry(profile, details);
         return details;
@@ -52,8 +52,7 @@ class FacebookDataConverter {
         return null;
     }
 
-    private Gender extractGender(FacebookProfile profile) {
-        String gender = profile.getGender();
+    public Gender extractGender(String gender) {
         if (!isEmpty(gender)) {
             return gender.equals("male") ? Gender.MALE : Gender.FEMALE;
         }

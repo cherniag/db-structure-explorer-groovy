@@ -20,6 +20,7 @@
         <module>track-repo</module>
         <module>uits</module>
         <module>dtos</module>
+        <module>application-tests</module>
     </modules>
 
     <scm>
