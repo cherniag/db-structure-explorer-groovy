@@ -103,7 +103,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo);
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("mq-app://content/track?id=TRACK-10"));
+        assertThat((String)o, is("mq-app://content/track?id=TRACK-10_null"));
     }
 
     @Test
