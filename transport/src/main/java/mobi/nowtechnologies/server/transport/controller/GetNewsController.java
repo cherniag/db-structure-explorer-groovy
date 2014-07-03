@@ -27,7 +27,8 @@ public class GetNewsController extends CommonController {
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}}/GET_NEWS",
             "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_NEWS",
-            "**/{community}/{apiVersion:6\\.0}/GET_NEWS"
+            "**/{community}/{apiVersion:6\\.0}/GET_NEWS",
+            "**/{community}/{apiVersion:6\\.1}/GET_NEWS"
     })
     public ModelAndView getNews_O2(
             @RequestParam("USER_NAME") String userName,

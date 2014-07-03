@@ -490,6 +490,28 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
+    public void testActivatePhoneNumber_v6d1_Json_Success() throws Exception {
+        String userName = "b88106713409e92622461a876abcd74a";
+        String phone = "+64279000456";
+        String apiVersion = "6.1";
+        String communityUrl = "vf_nz";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("PHONE", phone)
+        ).andExpect(status().isOk()).andExpect(content().string(("{\"response\":{\"data\":" +
+                "[{\"phoneActivation\":" +
+                "{\"activation\":\"ENTERED_NUMBER\",\"phoneNumber\":\"+64279000456\"}" +
+                "}]}}")));
+    }
+
+    @Test
     public void testActivatePhoneNumber_401_Failure() throws Exception {
         String userName = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
         String phone = "+6xxxxxxxxxxxxxx";
