@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
-public class FacebookService {
+public class FacebookService implements FacebookServiceInterface {
     @Resource
     private FacebookDataConverter facebookDataConverter;
     @Resource
@@ -23,6 +23,7 @@ public class FacebookService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
     public FacebookUserInfo getAndValidateFacebookProfile(String facebookAccessToken, String inputFacebookId) {
         try {
             FacebookTemplate facebookTemplate = facebookTemplateProvider.provide(facebookAccessToken);

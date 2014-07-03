@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(CustomCucumberRunner.class)
 @CucumberOptions(
-/*        tags = "@Test12",*/
+        /*tags = "@TestActivation",*/
         glue = "mobi.nowtechnologies.applicationtests.features",
         monochrome = false,
         format = {"html:target/build/reports/tests/cucumber"},

@@ -13,6 +13,7 @@ public class JsonHelper {
     public static final String USER_PATH = "$.response.data[0].user";
     public static final String ERROR_MESSAGE_PATH = "$.response.data[0].errorMessage";
     public static final String USER_DETAILS_PATH = "$.response.data[0].user.userDetails";
+    public static final String PHONE_NUMBER_PATH = "$.response.data[0].phoneActivation";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

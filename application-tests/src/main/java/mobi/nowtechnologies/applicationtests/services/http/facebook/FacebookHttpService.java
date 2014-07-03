@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 
@@ -46,16 +45,8 @@ public class FacebookHttpService extends AbstractHttpService {
     }
 
     private ResponseEntity<String> doLogin(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, String timestamp, RequestFormat format, String accessToken, String facebookUserId, String userName) {
-        //
-        // Build url
-        //
-        UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(environmentUrl);
-        b.pathSegment("transport");
-        b.pathSegment("service");
-        b.pathSegment(deviceData.getCommunityUrl());
-        b.pathSegment(deviceData.getApiVersion().getApiVersion());
-        b.pathSegment("SIGN_IN_FACEBOOK" + format.getExt());
 
+        String uri = getUri(deviceData.getCommunityUrl(), deviceData.getApiVersion().getApiVersion(), "SIGN_IN_FACEBOOK", format);
         //
         // Build parameters
         //
@@ -69,8 +60,6 @@ public class FacebookHttpService extends AbstractHttpService {
         request.add("FACEBOOK_USER_ID", facebookUserId);
         request.add("USER_NAME", userName);
         request.add("DEVICE_UID", deviceUID);
-
-        String uri = b.build().toUriString();
 
         logger.info("Posting to [" + uri + "] request: [" + request + "]");
 

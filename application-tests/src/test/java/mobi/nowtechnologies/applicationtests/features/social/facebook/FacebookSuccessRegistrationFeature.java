@@ -5,6 +5,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.DeviceTypesTransformer;
+import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.social.facebook.transformers.CommunityTransformer;
 import mobi.nowtechnologies.applicationtests.features.social.facebook.transformers.VersionsTransformer;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
@@ -46,13 +47,13 @@ public class FacebookSuccessRegistrationFeature {
     private List<UserDeviceData> currentUserDevices;
 
     @Resource
-    FacebookRegistrationFlowResult json;
+    MQAppClientDeviceSet json;
     @Resource
-    FacebookRegistrationFlowResult xml;
+    MQAppClientDeviceSet xml;
     @Resource
-    FacebookRegistrationFlowResult city;
+    MQAppClientDeviceSet city;
 
-    FacebookRegistrationFlowResult currentFlow;
+    MQAppClientDeviceSet currentFlow;
 
     @Given("^First time user with device using (\\w+) format for all facebook (\\w+) and facebook (\\w+) and all (\\w+) available$")
     public void firstTimeUserUsingJsonAndXmlFormats(RequestFormat format,

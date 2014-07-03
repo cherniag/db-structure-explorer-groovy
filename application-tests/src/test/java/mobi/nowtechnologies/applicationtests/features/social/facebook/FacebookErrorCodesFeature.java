@@ -5,6 +5,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.VersionTransformer;
+import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.domain.HasVersion;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
@@ -29,7 +30,7 @@ public class FacebookErrorCodesFeature {
     private JsonHelper jsonHelper;
 
     @Resource
-    FacebookRegistrationFlowResult flow;
+    MQAppClientDeviceSet flow;
 
     @Given("^First time user with device using (\\w+) format for ([\\w\\.]+) version and (\\w+) community and (\\w+) device$")
     public void given(RequestFormat format, @Transform(VersionTransformer.class) HasVersion version, String community, String deviceType) throws Throwable {

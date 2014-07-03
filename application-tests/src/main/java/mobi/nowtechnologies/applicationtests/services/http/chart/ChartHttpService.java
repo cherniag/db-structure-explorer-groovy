@@ -1,23 +1,19 @@
 package mobi.nowtechnologies.applicationtests.services.http.chart;
 
+import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class ChartHttpService extends AbstractHttpService {
-    public String getChart(String communityUrl, String apiVersion, String userName, String userToken, String timestamp, String deviceUID) {
+
+    public String getChart(String communityUrl, String apiVersion, String userName, String userToken, String timestamp, String deviceUID, RequestFormat format) {
         //
         // Build url
         //
-        UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(environmentUrl);
-        b.pathSegment("transport");
-        b.pathSegment("service");
-        b.pathSegment(communityUrl);
-        b.pathSegment(apiVersion);
-        b.pathSegment("GET_CHART.json");
+        String uri = getUri(communityUrl, apiVersion, "GET_CHART", format);
 
         //
         // Build parameters
@@ -27,8 +23,6 @@ public class ChartHttpService extends AbstractHttpService {
         request.add("USER_TOKEN", userToken);
         request.add("TIMESTAMP", timestamp);
         request.add("DEVICE_UID", deviceUID);
-
-        String uri = b.build().toUriString();
 
         logger.info("Posting to [" + uri + "] request: [" + request + "]");
 
