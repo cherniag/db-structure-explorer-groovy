@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Comparator;
 
@@ -22,12 +22,10 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     @JsonProperty(value = "title")
     private String id;
 
-    @NotEmpty
     @JsonProperty(value = "title")
     private String title;
 
     @JsonProperty(value = "subTitle")
-    @NotEmpty
     private String subTitle;
 
     @JsonProperty(value = "coverUrl")

@@ -296,7 +296,7 @@
             <div class="modal fade streamzine-modal" id="previewModalDialogId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <div style="min-height: 150px;" id="previewModalDialogCommonId">
+                        <div style="min-height: 50px;" id="previewModalDialogCommonId">
                             <div id="previewModalDialogViewId" style="float:left;width:100%;height:100%;"></div>
                             <div id="previewModalDialogEditorId" class="streamzine-modal-property-editor"></div>
                         </div>
@@ -631,6 +631,7 @@
             var contentTypeMapping = /*[[${contentTypeMapping}]]*/'';
             var canEdit = /*[[${update.canEdit}]]*/'';
             var badgeMappingRules = /*[[${badgeMappingRules}]]*/'';
+            var titlesMappingRules = /*[[${titlesMappingRules}]]*/'';
 
             var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
             var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
@@ -655,7 +656,7 @@
                 var updateTmstp = /*[[${(update!=null)?update.date.time:-1}]]*/'';
                 var id = /*[[${update.id}]]*/'';
 
-                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete, badgeMappingRules);
+                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete, badgeMappingRules, titlesMappingRules);
 
                 Streamzine.Presenter.Tile.init();
 

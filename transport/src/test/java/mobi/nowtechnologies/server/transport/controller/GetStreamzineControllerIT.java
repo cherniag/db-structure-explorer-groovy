@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
+public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     @Resource
     private StreamzineUpdateService streamzineUpdateService;
     @Resource
@@ -98,7 +98,7 @@ public class GetStreamzineControllerTestIT extends AbstractControllerTestIT {
                 // .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo[1]", is(GrantedToType.FREETRIAL.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].badge_icon", is(badgeUrl)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].badge_icon", is(badgeUrl)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("mq-app://page/subscription_page?action=subscribe")))

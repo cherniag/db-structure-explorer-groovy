@@ -1211,6 +1211,10 @@ Editor
     height: 600px;
     overflow-y: auto;
 }
+.streamzine-modal-common-editor-slim_banner {
+    width: 640px;
+    height: 84px;
+}
 .streamzine-modal-common-editor-wide {
     width: 640px;
     height: 580px;
@@ -1228,6 +1232,11 @@ Editor
 .streamzine-modal-preview-wide {
     width: 890px; !important;
 }
+
+.streamzine-modal-preview-slim_banner {
+    width: 640px; !important;
+}
+
 
 .streamzine-modal-preview-narrow {
     width: 568px; !important;

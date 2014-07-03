@@ -9,26 +9,6 @@ if(StreamzinePreview == undefined) {
         $('#' + id).removeAttr('class');
     }
 
-    function _allowed(b, type) {
-        var key = b.key;
-
-        //
-        // filter by shape type
-        //
-        if(type != 'WIDE' && type != 'NARROW') {
-            return false;
-        }
-
-        //
-        // filter by content type: only track music are allowed as for now
-        //
-        if(! (key == 'PLAYLIST' || key == 'TRACK') ) {
-            return false;
-        }
-
-        return true;
-    }
-
     var _decideRenderer = function(editor, view, block) {
         var type = (block.shapeType.$name) ? block.shapeType.$name : block.shapeType;
         var contentType = (block.contentType.$name) ? block.contentType.$name : block.contentType;
@@ -38,9 +18,42 @@ if(StreamzinePreview == undefined) {
         if(editor) {
             editor.empty().show();
         }
-        view.empty();
+        if(view) {
+            view.empty();
+        }
+
+        var slimBannerRenderer =  {
+            render: function() {
+                var coverUrl = block.coverUrl;
+                if(!coverUrl) {
+                    alert('No cover url assigned. Please assign before preview');
+                    return;
+                }
+                var cover = $('<img />')
+                    .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + coverUrl)
+                    .attr('width', 640)
+                    .attr('height', 84)
+                    .css({position: 'absolute'})
+                    .appendTo(view);
+            }
+        };
 
         var found = {
+            SLIM_BANNER: {
+                MUSIC: {
+                    MANUAL_COMPILATION: slimBannerRenderer,
+                    PLAYLIST: slimBannerRenderer,
+                    TRACK: slimBannerRenderer
+                },
+                PROMOTIONAL: {
+                    INTERNAL_AD: slimBannerRenderer,
+                    EXTERNAL_AD: slimBannerRenderer
+                },
+                NEWS: {
+                    STORY: slimBannerRenderer,
+                    LIST: slimBannerRenderer
+                }
+            },
             NARROW: {
                 MUSIC: {
                     PLAYLIST: {
@@ -396,19 +409,16 @@ if(StreamzinePreview == undefined) {
         }[type];
 
         if(!found) {
-            alert('Preview is not supported for type:' + type);
             return null;
         }
 
         found = found[contentType];
         if(!found) {
-            alert('Preview is not supported for content type:' + contentType);
             return null;
         }
 
         found = found[subType];
         if(!found) {
-            alert('Preview is not supported for sub type:' + subType);
             return null;
         }
 
@@ -430,11 +440,6 @@ if(StreamzinePreview == undefined) {
         var block = Streamzine.Model.findBlockById(id);
         var type = block.shapeType.$name;
 
-        if(!_allowed(block, type)) {
-            alert('Preview for ' + block.shapeType.$name + ' of ' + block.contentType.$name + ' not implemented');
-            return;
-        }
-
         //
         // Dialog
         //
@@ -453,14 +458,18 @@ if(StreamzinePreview == undefined) {
         editor.addClass("streamzine-modal-property-editor streamzine-modal-property-editor-" + type.toLowerCase());
         $('#previewModalDialogCommonId').addClass("streamzine-modal-common-editor-" + type.toLowerCase());
 
+        var renderer = _decideRenderer(editor, view, block);
+        if(renderer == null) {
+            alert('Preview for ' + block.shapeType.$name + ' of ' + block.contentType.$name + ' not implemented');
+            return;
+        }
+        renderer.render();
+
         modal.modal('show').css({
             'margin-top': function () {
                 return '-300px';
             }
         });
-
-        var renderer = _decideRenderer(editor, view, block);
-        renderer.render();
     }
 
     StreamzinePreview.Presenter.previewUpdate = function() {
@@ -477,7 +486,7 @@ if(StreamzinePreview == undefined) {
         var foundSupported = [];
         for(var i=0; i < blocks.length; i++) {
             var block = blocks[i];
-            if(_allowed(block, block.shapeType) && block.included) {
+            if(_decideRenderer(null, null, block)) {
                 foundSupported.push(block);
             }
         }
@@ -518,7 +527,7 @@ if(StreamzinePreview == undefined) {
         for(var i = 0; i < blocks.length; i++) {
             var block = blocks[i];
 
-            if(!_allowed(block, block.shapeType) || !block.included) {
+            if(!_decideRenderer(null, null, block)) {
                 continue;
             }
 
