@@ -19,6 +19,7 @@ import java.util.Locale;
 import static java.util.Collections.singletonList;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.UNCHANGED;
+import static mobi.nowtechnologies.common.util.TrackIdGenerator.ISRC_TRACK_ID_DELIMITER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -168,7 +169,7 @@ public class ChartDetailsConverterTest {
         assertThat(chartDetailDto.getImageLargeSize(), Is.is(media.getImageLargeSize()));
         assertThat(chartDetailDto.getImageSmallSize(), Is.is(media.getImageSmallSize()));
         assertThat(chartDetailDto.getInfo(), Is.is(chartDetail.getInfo()));
-        assertThat(chartDetailDto.getMedia(), Is.is(media.getIsrc()));
+        assertThat(chartDetailDto.getMedia(), Is.is(media.getIsrc() + ISRC_TRACK_ID_DELIMITER + media.getTrackId()));
         assertThat(chartDetailDto.getTitle(), Is.is(media.getTitle()));
         assertThat(chartDetailDto.getTrackSize(), Is.is(headerSize + audioSize - 2));
         assertThat(chartDetailDto.getChartDetailVersion(), Is.is(chartDetail.getVersionAsPrimitive()));

@@ -299,6 +299,11 @@ public class ChartDetail {
         return this;
     }
 
+    public ChartDetail withPosition(int position) {
+        this.position = (byte) position;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

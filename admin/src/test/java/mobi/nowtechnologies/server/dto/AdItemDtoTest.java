@@ -182,7 +182,7 @@ public class AdItemDtoTest {
 	public void testSetActionType_Success()
 		throws Exception {
 		AdItemDto fixture = AdItemDtoFactory.createAdItemDto("https://i.ua", AdActionType.URL);
-		AdActionType actionType = AdActionType.ISRC;
+		AdActionType actionType = AdActionType.TRACK_ID;
 
 		fixture.setActionType(actionType);
 		
@@ -302,13 +302,13 @@ public class AdItemDtoTest {
 		AdItemDto result = AdItemDto.toDtoItem(message);
 
 		assertNotNull(result);
-		assertEquals("AdItemDto [id=1, action=file://ggg, message=body, activated=true, imageFileName=imageFileName, actionType=ISRC, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
+		assertEquals("AdItemDto [id=1, action=file://ggg, message=body, activated=true, imageFileName=imageFileName, actionType=TRACK_ID, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
 		assertEquals("body", result.getMessage());
 		assertEquals(new Integer(1), result.getId());
 		assertEquals(null, result.getFile());
 		assertEquals(true, result.isActivated());
 		assertEquals(title, result.getAction());
-		assertEquals(AdActionType.ISRC, result.getActionType());
+		assertEquals(AdActionType.TRACK_ID, result.getActionType());
 		assertEquals("imageFileName", result.getImageFileName());
 		assertEquals(false, result.isRemoveImage());
 	}

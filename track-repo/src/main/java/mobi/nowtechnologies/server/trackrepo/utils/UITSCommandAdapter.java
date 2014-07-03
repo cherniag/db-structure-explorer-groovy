@@ -1,30 +1,29 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
+import mobi.nowtechnologies.java.server.uits.UITS;
 import org.springframework.core.io.Resource;
 
-import mobi.nowtechnologies.java.server.uits.UITS;
+import java.io.IOException;
 
 public class UITSCommandAdapter {
 
 	private Resource privateKey;
-	
-	public void executeDownloadFiles(String sourceFileName, String tempFileName) throws IOException {
-		
-		UITS.main(new String [] {privateKey.getFile().getAbsolutePath(), sourceFileName, tempFileName});
+
+
+    private UITS uitc;
+
+    public void setUitc(UITS uitc) {
+        this.uitc = uitc;
+    }
+
+    public void executeDownloadFiles(String sourceFileName, String tempFileName) throws IOException {
+
+        uitc.main(new String [] {privateKey.getFile().getAbsolutePath(), sourceFileName, tempFileName});
 	}
 
 	public void executeMobileFiles(String sourceFileName, String audFileName, String hdrFileName, String encFileName) throws IOException {
-		
-		UITS.main(new String [] {privateKey.getFile().getAbsolutePath(), sourceFileName, audFileName, hdrFileName, encFileName});
-	}
-	
-	public static void main(String[] args) throws IOException {
-		
-		FileUtils.moveFileToDirectory(new File("f:\\Works\\Projects\\musicqubed\\tmp\\beans.txt"), new File("f:\\Works\\Projects\\musicqubed\\tmp\\trackhttp"), true);
+
+        uitc.main(new String [] {privateKey.getFile().getAbsolutePath(), sourceFileName, audFileName, hdrFileName, encFileName});
 	}
 
 	public void setPrivateKey(Resource privateKey) {

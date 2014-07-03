@@ -1,0 +1,1 @@
+copy ${project.build.testOutputDirectory}\\bin\\nero\\linux\\test.m4a %3

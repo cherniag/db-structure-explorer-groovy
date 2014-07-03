@@ -19,6 +19,19 @@
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.sh</include>
+                    <include>**/*.bat</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.sh</exclude>
+                    <exclude>**/*.bat</exclude>
+                </excludes>
             </testResource>
             <testResource>
                 <directory>src/main/webapp</directory>
@@ -208,6 +221,6 @@
             <version>0.8.1</version>
             <scope>test</scope>
         </dependency>
-
 	</dependencies>
+
 </project>

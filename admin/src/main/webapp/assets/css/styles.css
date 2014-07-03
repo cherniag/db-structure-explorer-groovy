@@ -687,8 +687,18 @@ img {
 
 
 ul.table li div.repo_columns {
-  width: 8%;
+    width: 7%;
 	border: none;
+}
+
+ul.table li div.track_id_repo_columns {
+    width: 12%;
+    border: none;
+}
+
+ul.table li div.title_repo_columns {
+    width: 12%;
+    border: none;
 }
 
 ul.table li div.repo_columns_check {
@@ -708,8 +718,13 @@ ul.table li div.image_repo_columns {
 }
 
 ul.table li div.product_id_repo_columns {
-  width: 11%;
+  width: 6%;
   border: none;
+}
+
+ul.table li div.release_date_repo_columns {
+    width: 6%;
+    border: none;
 }
 
 ul.table li div.buttons_repo_columns {

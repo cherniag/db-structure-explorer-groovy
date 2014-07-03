@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
+import mobi.nowtechnologies.server.service.CloudFileService;
+import mobi.nowtechnologies.server.trackrepo.domain.Track;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-
-import mobi.nowtechnologies.server.service.CloudFileService;
-import mobi.nowtechnologies.server.trackrepo.domain.Track;
 
 public class UploadToCloudFileManager {
 

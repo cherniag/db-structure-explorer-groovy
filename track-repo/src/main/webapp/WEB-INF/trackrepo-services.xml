@@ -85,27 +85,32 @@
 					<property name="fileNameTail" value="S"/>
 					<property name="imageSize" value="70"/>
 					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-70.png"/>
+                    <property name="additionalParams" value="${coming-soon.additionalParams}"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_22"/>
 					<property name="imageSizeForAudio" value="200"/>
 					<property name="imageSizeForVideo" value="640"/>
 					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-200.png"/>
+                    <property name="additionalParams" value="${coming-soon.additionalParams}"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_21"/>
 					<property name="imageSize" value="90"/>
 					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-90.png"/>
+                    <property name="additionalParams" value="${coming-soon.additionalParams}"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_3"/>
 					<property name="imageSize" value="240"/>
 					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-240.png"/>
+                    <property name="additionalParams" value="${coming-soon.additionalParams}"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_6"/>
 					<property name="imageSize" value="60"/>
 					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-60.png"/>
+                    <property name="additionalParams" value="${coming-soon.additionalParams}"/>
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_cover"/>
@@ -141,43 +146,51 @@
 	</bean>
 	
 	<bean id="service.encode.getEncoding" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/get_encoding.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/get_encoding.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.encodeUnknown" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/encode_unknown.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_unknown.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.encodeMP3" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/encode_mp3.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_mp3.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.encodeACC" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/encode_acc.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_acc.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.encodeWAV" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/encode_wav.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_wav.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.decodeMP3" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/decode_mp3.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/decode_mp3.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.encodeMobileAudio" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/encode_mobile_audio.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_mobile_audio.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.addTag" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/add_tag.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/add_tag.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.encodePreviewAudio" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/encode_preview_audio.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/encode_preview_audio.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.resizeImage" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/resize_image.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/resize_image.${scriptsExtension}"/>
 	</bean>
 	<bean id="service.encode.coverPreviewImage" class="mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand">
-		<property name="command" value="${trackrepo.encode.scriptDir}/cover_preview_image.sh"/>
+		<property name="command" value="${trackrepo.encode.scriptDir}/cover_preview_image.${scriptsExtension}"/>
 	</bean>
 	
 	<bean id="service.encode.uitsAdapter" class="mobi.nowtechnologies.server.trackrepo.utils.UITSCommandAdapter">
 		<property name="privateKey" value="${trackRepo.encode.privkey}"/>
+        <property name="uitc" ref="uits"/>
 	</bean>
-	
+
+
+    <bean id="uits" class="mobi.nowtechnologies.java.server.uits.UITS">
+        <property name="mp4Manager" ref="mp4Manager"/>
+    </bean>
+
+    <bean id="mp4Manager" class="mobi.nowtechnologies.java.server.uits.MP4Manager"/>
+
 	<bean id="service.encode.cloudUploadFileManager" class="mobi.nowtechnologies.server.trackrepo.utils.UploadToCloudFileManager">
 		<property name="dataContainerName" value="${trackRepo.pull.cdn.container.dest}"/>
 		<property name="privateContainerName" value="${trackRepo.pull.cdn.container.src}"/>

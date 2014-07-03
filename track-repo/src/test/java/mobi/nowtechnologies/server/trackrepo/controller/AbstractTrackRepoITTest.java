@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
+import mobi.nowtechnologies.server.trackrepo.TrackRepoEnvironmentInitializer;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextHierarchy({
-        @ContextConfiguration("classpath:META-INF/application-test.xml"),
+        @ContextConfiguration(value = "classpath:META-INF/application-test.xml", initializers = TrackRepoEnvironmentInitializer.class),
         @ContextConfiguration("classpath:META-INF/trackrepo-servlet-test.xml")
 }
 )

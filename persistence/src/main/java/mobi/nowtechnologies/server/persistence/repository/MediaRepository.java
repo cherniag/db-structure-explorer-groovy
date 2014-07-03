@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +17,13 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
 	@Query(value = "select media from Media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where media.title like :searchWords or media.isrc like :searchWords or artist.name like :searchWords")
 	List<Media> getMedias(@Param("searchWords") String searchWords);
 
-    @Query(value = "select media from Media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where media.audioFile.fileType.i = :type and (media.title like :searchWords or media.isrc like :searchWords or artist.name like :searchWords)")
+    @Query(value = "select media from Media media " +
+            "join FETCH media.artist artist " +
+            "join FETCH media.imageFileSmall imageFileSmall " +
+            "left join FETCH media.label label " +
+            "where " +
+            "media.audioFile.fileType.i = :type " +
+            "and (media.title like :searchWords or media.isrc like :searchWords or artist.name like :searchWords)")
     List<Media> getMedias(@Param("searchWords") String searchWords, @Param("type")Byte type);
 
 	@Query(value = "select media from Media media where media.isrc = :isrc")
@@ -53,6 +58,6 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
                                                             @Param("publishTimeMillis") long publishTimeMillis,
                                                             @Param("mediaIsrcs") Collection<String> mediaIsrcs);
 
-    @Query(value = "select media from Media media where media.isrc=?1")
-    List<Media> findByIsrc(String mediaIsrc);
+    @Query(value = "select media from Media media where media.trackId = ?1")
+    Media findByTrackId(Long trackId);
 }

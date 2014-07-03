@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
 import mobi.nowtechnologies.server.shared.enums.ItemType;
-import mobi.nowtechnologies.server.shared.enums.Label;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
@@ -32,7 +32,7 @@ public class MediaDto {
 
 	private String isrc;
 
-	private Label label;
+	private String label;
 
 	private String priceCurrency;
 
@@ -56,6 +56,8 @@ public class MediaDto {
 
 	@DateTimeFormat(iso = ISO.DATE)
 	private Date publishDate;
+
+    private String trackId;
 
 	public ArtistDto getArtistDto() {
 		return artistDto;
@@ -105,11 +107,11 @@ public class MediaDto {
 		this.isrc = isrc;
 	}
 
-	public Label getLabel() {
+	public String getLabel() {
 		return label;
 	}
 
-	public void setLabel(Label label) {
+	public void setLabel(String label) {
 		this.label = label;
 	}
 
@@ -209,13 +211,37 @@ public class MediaDto {
 		this.id = id;
 	}
 
-	@Override
-	public String toString() {
-		return "MediaDto [artistDto=" + artistDto + ", audioFileDto=" + audioFileDto + ", audioPreviewFileDto=" + audioPreviewFileDto + ", headerFileDto="
-				+ headerFileDto + ", headerPreviewFileDto=" + headerPreviewFileDto + ", ITunesUrl=" + ITunesUrl + ", id=" + id + ", imageFIleLargeDto="
-				+ imageFIleLargeDto + ", imageFileSmallDto=" + imageFileSmallDto + ", imgFileResolutionDto=" + imgFileResolutionDto + ", info=" + info
-				+ ", isrc=" + isrc + ", label=" + label + ", price=" + price + ", priceCurrency=" + priceCurrency + ", publishDate=" + publishDate
-				+ ", purchasedFileDto=" + purchasedFileDto + ", title=" + title + ", type=" + type + "]";
-	}
+    public String getTrackId() {
+        return trackId;
+    }
 
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("artistDto", artistDto)
+                .append("audioFileDto", audioFileDto)
+                .append("headerFileDto", headerFileDto)
+                .append("imageFIleLargeDto", imageFIleLargeDto)
+                .append("imageFileSmallDto", imageFileSmallDto)
+                .append("isrc", isrc)
+                .append("label", label)
+                .append("priceCurrency", priceCurrency)
+                .append("imgFileResolutionDto", imgFileResolutionDto)
+                .append("purchasedFileDto", purchasedFileDto)
+                .append("audioPreviewFileDto", audioPreviewFileDto)
+                .append("headerPreviewFileDto", headerPreviewFileDto)
+                .append("info", info)
+                .append("ITunesUrl", ITunesUrl)
+                .append("title", title)
+                .append("price", price)
+                .append("type", type)
+                .append("publishDate", publishDate)
+                .append("trackId", trackId)
+                .toString();
+    }
 }
