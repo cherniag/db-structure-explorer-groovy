@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
-import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -22,6 +22,8 @@ public class UserDeviceRegDetailsDto {
 	private String ipAddress;
 
     private String communityUri;
+
+    private String xtifyToken;
 
     public void setCommunityUri(String communityUri) {
         this.communityUri = communityUri;
@@ -69,6 +71,14 @@ public class UserDeviceRegDetailsDto {
 		this.deviceModel = deviceModel;
 	}
 
+    public String getXtifyToken() {
+        return xtifyToken;
+    }
+
+    public void setXTIFY_TOKEN(String xtifyToken) {
+        this.xtifyToken = xtifyToken;
+    }
+
     public UserDeviceRegDetailsDto withDeviceUID(String deviceUID) {
         this.deviceUID = deviceUID;
         return this;
@@ -84,12 +94,14 @@ public class UserDeviceRegDetailsDto {
         return this;
     }
 
-	@Override
-	public String toString() {
-        return Objects.toStringHelper(this)
-                .add("deviceUID", deviceUID)
-                .add("deviceType", deviceType)
-                .add("IP", ipAddress)
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("deviceUID", deviceUID)
+                .append("deviceType", deviceType)
+                .append("ipAddress", ipAddress)
+                .append("communityUri", communityUri)
+                .append("xtifyToken", xtifyToken)
                 .toString();
-	}
+    }
 }

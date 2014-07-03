@@ -109,7 +109,6 @@ public class AccCheckController extends CommonController {
             "**/{community:o2}/{apiVersion:3.9}/ACC_CHECK"
     })
     public ModelAndView accountCheckForO2Client_v3d9(
-            @PathVariable("apiVersion") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
@@ -136,10 +135,10 @@ public class AccCheckController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.0}/ACC_CHECK"
+            "**/{community}/{apiVersion:6\\.0}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.1}/ACC_CHECK"
     })
     public ModelAndView accountCheckWithPossibilityOfReactivation(
-            @PathVariable("apiVersion") String apiVersion,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
@@ -149,10 +148,7 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
             @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa,
-            @PathVariable("community") String community) throws Exception {
-
-        ///
+            @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
 
         return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true);
     }
