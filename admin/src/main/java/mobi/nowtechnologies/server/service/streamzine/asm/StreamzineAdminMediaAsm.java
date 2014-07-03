@@ -43,6 +43,7 @@ public class StreamzineAdminMediaAsm {
         mediaDto.setTitle(media.getTitle());
         mediaDto.setFileName(media.getImageFileSmall().getFilename());
         mediaDto.setIsrc(media.getIsrc());
+        mediaDto.setTrackId(media.getIsrcTrackId());
         mediaDto.setArtistDto(ArtistAsm.toArtistDto(media.getArtist()));
         return mediaDto;
     }

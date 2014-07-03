@@ -561,6 +561,9 @@ if(Pickers == undefined) {
             '    <div class="sz-tracks-dialog-isrc">'    +
             '        {isrc}        '                     +
             '    </div>'                                 +
+            '    <div class="sz-tracks-dialog-trackId">'    +
+            '        {trackId}        '                     +
+            '    </div>'                                 +
             '    <div class="sz-tracks-dialog-title">'   +
             '     {title}                  '             +
             '    </div>                    '             +
@@ -773,6 +776,9 @@ if(Pickers == undefined) {
             '    </div>'                                 +
             '    <div class="isrc_media">'               +
             '        <p>{isrc}</p>       '               +
+            '    </div>'                                 +
+            '    <div class="trackId_media">'            +
+            '        <p>{trackId}</p>       '            +
             '    </div>'                                 +
             '    <div class="title_media"> '             +
             '        {title}               '             +

@@ -113,7 +113,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("mq-app://content/playlist?id=" + ChartType.BASIC_CHART.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("mq-app://content/track?id=" + String.valueOf(existingMedia.getIsrc()))))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("mq-app://content/track?id=" + String.valueOf(existingMedia.getIsrcTrackId()))))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));

@@ -1557,6 +1557,12 @@ block icons and info
     overflow-x: hidden;
 }
 
+.sz-tracks-dialog-trackId {
+    width: 100px;
+    font-size: 11px;
+    overflow-x: hidden;
+}
+
 .sz-tracks-dialog-title {
     width: 100px;
     font-size: 11px;
