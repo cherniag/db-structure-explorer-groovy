@@ -19,7 +19,6 @@ import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.*;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -27,6 +26,7 @@ import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
+import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -39,6 +39,7 @@ import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,8 @@ import static java.lang.Boolean.TRUE;
 import static mobi.nowtechnologies.server.builder.PromoRequestBuilder.PromoRequest;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
@@ -71,7 +73,8 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
 import static mobi.nowtechnologies.server.shared.util.EmailValidator.isNotEmail;
-import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.*;
+import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
+import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
@@ -443,10 +446,9 @@ public class UserService {
 
     public void checkActivationStatus(User user, ActivationStatus... availableActivationStatuses){
         ActivationStatus activationStatus = user.getActivationStatus();
-        if(availableActivationStatuses != null && availableActivationStatuses.length > 0){
+        if(ArrayUtils.isNotEmpty(availableActivationStatuses)){
             List<ActivationStatus> statusList = Arrays.asList(availableActivationStatuses);
             if(!statusList.contains(activationStatus)){
-                LOGGER.error("User activation status ["+activationStatus+"] is invalid. User must have one of activation statuses" + statusList);
                 throw new ActivationStatusException(activationStatus, availableActivationStatuses[0]);
             }
         }
@@ -491,7 +493,6 @@ public class UserService {
         }
 
         if(message != null){
-            LOGGER.error(message);
             throw new ActivationStatusException(message, messageCode);
         }
     }

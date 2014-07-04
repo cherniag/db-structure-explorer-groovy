@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-init-method="init" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+<beans default-init-method="init" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd 
-http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
-http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/task
+http://www.springframework.org/schema/task/spring-task-3.1.xsd
+http://www.springframework.org/schema/aop
+http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+http://www.springframework.org/schema/util
+http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <import resource="task.xml"/>
 
@@ -289,9 +295,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="entityService" ref="service.EntityService" />
 	</bean>
 
-	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService"/>
-
-    <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.social.facebook.FacebookDataConverter"/>
+	<import resource="social.xml" />
 
     <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 

@@ -157,7 +157,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         //given
         String userName = "imei_351722057812748";
         User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "5.2";
+        String apiVersion = "6.1";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();

@@ -19,13 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -41,24 +39,18 @@ import static org.springframework.http.HttpStatus.OK;
  */
 public abstract class CommonController extends ProfileController {
     private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
-    private static final String INTERNAL_SERVER_ERROR = "internal.server.error";
+
     public static final String MODEL_NAME = "response";
     public static final int VERSION_4 = 4;
     public static final String VERSION_5_2 = "5.2";
 
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    @Resource(name = "transport.JaxbMarshallingView")
-    protected View view;
-
     @Resource(name = "serviceMessageSource")
     protected CommunityResourceBundleMessageSource messageSource;
 
     @Resource(name = "service.UserService")
     protected UserService userService;
-
-    @Resource(name = "transport.JaxbMarshaller")
-    protected Jaxb2Marshaller jaxb2Marshaller;
 
     @Resource(name = "service.communityService")
     protected CommunityService communityService;
@@ -70,7 +62,6 @@ public abstract class CommonController extends ProfileController {
     protected ApplicationContext applicationContext;
 
 
-    private String defaultViewName = "default";
     private ThreadLocal<String> apiVersionThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> communityUriThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
@@ -110,7 +101,7 @@ public abstract class CommonController extends ProfileController {
     }
 
     protected ModelAndView buildModelAndView(Object... objs) {
-        return new ModelAndView(defaultViewName, MODEL_NAME, new Response(objs));
+        return new ModelAndView("default", MODEL_NAME, new Response(objs));
     }
 
 
@@ -122,13 +113,13 @@ public abstract class CommonController extends ProfileController {
 
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR, true);
     }
 
 
     @ExceptionHandler(ReactivateUserException.class)
     public ModelAndView handleReactivation(ReactivateUserException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN, false);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -136,18 +127,25 @@ public abstract class CommonController extends ProfileController {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
         HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        return sendResponse(exception, response, status);
+        return sendResponse(exception, response, status, true);
     }
 
     @ExceptionHandler({InvalidPhoneNumberException.class})
-    public ModelAndView handleException(InvalidPhoneNumberException exception, HttpServletResponse response) {
+    public ModelAndView handleInvalidPhoneNumberException(InvalidPhoneNumberException exception, HttpServletResponse response) {
         exception.setLocalizedMessage("Invalid phone number format");
-        return sendResponse(exception, response, OK);
+        return sendResponse(exception, response, OK, false);
     }
+
+    @ExceptionHandler({LimitPhoneNumberValidationException.class})
+    public ModelAndView handleLimitPhoneNumberValidationException(LimitPhoneNumberValidationException exception, HttpServletResponse response) {
+        LOGGER.warn("Limit phone_number calls is exceeded for[{}] url[{}]", exception.getPhoneNumber(), exception.getUrl());
+        return sendResponse(exception, response, OK, false);
+    }
+
 
     @ExceptionHandler({ActivationStatusException.class})
     public ModelAndView handleException(ActivationStatusException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN, false);
     }
 
 
@@ -260,7 +258,7 @@ public abstract class CommonController extends ProfileController {
 
     @ExceptionHandler(OAuth2ForbiddenException.class)
     public ModelAndView handleExceptionFromSocialNetwork(Exception exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.FORBIDDEN);
+        return sendResponse(exception, response, HttpStatus.FORBIDDEN, true);
     }
 
     private String getCommunityUrl(HttpServletRequest httpServletRequest) {
@@ -291,7 +289,7 @@ public abstract class CommonController extends ProfileController {
         return buildModelAndView(errorMessage);
     }
 
-    protected ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status) {
+    protected ModelAndView sendResponse(Exception exception, HttpServletResponse response, HttpStatus status, boolean isCriticalException) {
         final String localizedDisplayMessage = exception.getLocalizedMessage();
         final String message = exception.getMessage();
         Integer errorCode;
@@ -301,7 +299,11 @@ public abstract class CommonController extends ProfileController {
             errorCode = null;
         }
         ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
-        LOGGER.error(message, exception);
+        if (isCriticalException) {
+            LOGGER.error(message, exception);
+        } else {
+            LOGGER.warn(message, exception);
+        }
 
         return sendResponse(errorMessage, status, response);
     }

@@ -52,7 +52,7 @@ public class Promotion implements Serializable {
 
 	private boolean showPromotion;
 
-	@Column(length = 20, nullable = true)
+	@Column(length = 50, nullable = true)
 	private String label;
 
 	@OneToMany(mappedBy = "promotion", fetch = FetchType.LAZY)

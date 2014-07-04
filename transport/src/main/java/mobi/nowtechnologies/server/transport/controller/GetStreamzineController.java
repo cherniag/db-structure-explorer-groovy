@@ -8,10 +8,12 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Controller
@@ -23,16 +25,15 @@ public class GetStreamzineController extends CommonController {
     private StreamzineUpdateAsm streamzineUpdateAsm;
 
     @RequestMapping(method = RequestMethod.POST,
-            value = {"**/{community:hl_uk}/{apiVersion:6.0}/GET_STREAMZINE"})
-    public Response getUpdate(HttpServletResponse response,
-                          @RequestParam("APP_VERSION") String appVersion,
-                          @PathVariable("community") String community,
-                          @PathVariable("apiVersion") String apiVersion,
-                          @RequestParam("USER_NAME") String userName,
-                          @RequestParam("USER_TOKEN") String userToken,
-                          @RequestParam("TIMESTAMP") String timestamp,
-                          @RequestParam("WIDTHXHEIGHT") String resolution,
-                          @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
+            value = {"**/{community:hl_uk}/{apiVersion:6.1}/GET_STREAMZINE"})
+    public Response getUpdate(@RequestParam("APP_VERSION") String appVersion,
+                              @PathVariable("community") String community,
+                              @PathVariable("apiVersion") String apiVersion,
+                              @RequestParam("USER_NAME") String userName,
+                              @RequestParam("USER_TOKEN") String userToken,
+                              @RequestParam("TIMESTAMP") String timestamp,
+                              @RequestParam("WIDTHXHEIGHT") String resolution,
+                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
         try {
