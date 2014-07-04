@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -52,5 +53,14 @@ public class StreamzineUpdateDto {
 
     public List<BaseContentItemDto> getItems() {
         return Lists.newArrayList(items);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("updated", updated)
+                .append("blocks", blocks)
+                .append("items", items)
+                .toString();
     }
 }

@@ -50,7 +50,7 @@ public class StreamzineUpdateAsmTest {
         update.addBlock(block3);
         update.addBlock(block4);
 
-        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update);
+        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk");
         assertThat(streamzineUpdateDto.getUpdated(), is(publishTime));
         assertThat(streamzineUpdateDto.getBlocks(), hasSize(4));
         assertThat(streamzineUpdateDto.getItems(), hasSize(4));
@@ -71,7 +71,7 @@ public class StreamzineUpdateAsmTest {
         update.addBlock(getBlock(4, ShapeType.SLIM_BANNER, true, "title", "subTitle"));
         update.addBlock(getBlock(5, ShapeType.SLIM_BANNER, true, null, ""));
 
-        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update);
+        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk");
         assertThat(streamzineUpdateDto.getItems(), hasSize(6));
         // WIDE
         assertThat(streamzineUpdateDto.getBlocks().get(0).getShapeType(), is(ShapeType.WIDE));
