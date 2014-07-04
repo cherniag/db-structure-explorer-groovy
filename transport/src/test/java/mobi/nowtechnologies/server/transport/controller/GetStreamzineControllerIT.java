@@ -50,7 +50,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         // parameters
         String userName = "test@ukr.net";
         String deviceUID = "b88106713409e92622461a876abcd74b1111";
-        String apiVersion = "6.0";
+        String apiVersion = "6.1";
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -144,7 +144,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         // parameters
         String userName = "test@ukr.net";
         String deviceUID = "b88106713409e92622461a876abcd74b1111";
-        String apiVersion = "6.0";
+        String apiVersion = "6.1";
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -207,7 +207,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String userName1 = "test@ukr.net";
         String userName2 = "dnepr@i.ua";
         String userName3 = "mq@mq.com";
-        String apiVersion = "6.0";
+        String apiVersion = "6.1";
         String appVersion = "1.0";
         String communityUrl = "hl_uk";
         String timestamp = System.currentTimeMillis() + "";
@@ -278,7 +278,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         // parameters
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-        String apiVersion = "6.0";
+        String apiVersion = "6.1";
         String communityUrl = "o2";
         String timestamp = "" + futureDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
