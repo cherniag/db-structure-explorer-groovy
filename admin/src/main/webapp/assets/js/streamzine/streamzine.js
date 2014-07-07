@@ -42,7 +42,11 @@ if(Streamzine == undefined) {
         } else {
             value = data.value;
         }
+        var shapeType = currentBlock.shapeType;
 
+        if (shapeType != undefined && shapeType.$name == 'NARROW'){
+            if (data.field == 'subTitle') return;
+        }
         Streamzine.Model.updateCurrentBlock(data.field, value);
     }
 
