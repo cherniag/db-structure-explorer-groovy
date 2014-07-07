@@ -4,6 +4,8 @@ import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
+import mobi.nowtechnologies.server.service.chart.ChartSupporter;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
@@ -16,6 +18,9 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,13 +29,14 @@ import java.util.*;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
+ *
  */
-public class ChartService {
+public class ChartService implements ApplicationContextAware {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartService.class);
 
 	private UserService userService;
@@ -43,6 +49,8 @@ public class ChartService {
 	private CloudFileService cloudFileService;
     private ChartDetailsConverter chartDetailsConverter;
 
+    private ApplicationContext applicationContext;
+
     public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
         this.chartDetailsConverter = chartDetailsConverter;
     }
@@ -54,7 +62,7 @@ public class ChartService {
     public void setCloudFileService(CloudFileService cloudFileService) {
 		this.cloudFileService = cloudFileService;
 	}
-	
+
 	public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
 		this.chartDetailRepository = chartDetailRepository;
 	}
@@ -105,7 +113,7 @@ public class ChartService {
 		LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
 
 		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
-		
+
 		Map<ChartType, Integer> chartGroups = new HashMap<ChartType, Integer>();
 		for(ChartDetail chart:charts){
 			Integer count = chartGroups.get(chart.getChart().getType());
@@ -115,13 +123,14 @@ public class ChartService {
 
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
 		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
-		for (ChartDetail chart : charts) {	
-			Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1 ? true : false;
-			if(!switchable || user.isSelectedChart(chart)){
-				chartDetails.addAll(chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked));
-				playlistDtos.add(ChartAsm.toPlaylistDto(chart, switchable));
-			}
-		}
+        ChartSupporter supporter = resolveChartSupporter(communityName);
+		for (ChartDetail chart : charts) {
+            ChartSupportResult result = supporter.support(user, chartGroups, chart);
+            if (result.isSupport()){
+                    chartDetails.addAll(chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked));
+                    playlistDtos.add(ChartAsm.toPlaylistDto(chart, result.isSwitchable()));
+                }
+            }
 
 		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
@@ -143,7 +152,15 @@ public class ChartService {
 		return chartDto;
 	}
 
-	@Transactional(readOnly = true)
+    private ChartSupporter resolveChartSupporter(String communityName) {
+        String beanName = messageSource.getMessage(communityName, "chartSupporter.beanName", null, null);
+        if (!isEmpty(beanName)) {
+            return  (ChartSupporter) applicationContext.getBean(beanName);
+        }
+        throw new RuntimeException("Supporter is not specified");
+    }
+
+    @Transactional(readOnly = true)
 	public List<Long> getAllPublishTimeMillis(Integer chartId) {
 		LOGGER.debug("input parameters chartId: [{}]", chartId);
 
@@ -158,12 +175,12 @@ public class ChartService {
 	public List<ChartDetail> getLockedChartItems(User user) {
         String communityName = user.getUserGroup().getCommunity().getName();
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
-		
+
 		if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial())
 			return Collections.EMPTY_LIST;
-		
+
 		List<Chart> charts = chartRepository.getByCommunityName(communityName);
-		
+
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
 		for (Chart chart : charts) {
 			List<String> chartDetailISRCs = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
@@ -175,11 +192,11 @@ public class ChartService {
 				chartDetails.add(chartDetail);
 			}
 		}
-		
+
 		LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
 		return chartDetails;
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<ChartDetail> getActualChartItems(Integer chartId, Date selectedPublishDate) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
@@ -294,7 +311,7 @@ public class ChartService {
 		LOGGER.info("Output parameter charts=[{}]", charts);
 		return chartDetails;
 	}
-	
+
 	@Transactional(readOnly = true)
     public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime, boolean clone) {
         LOGGER.debug("input parameters charts: [{}]", new Object[]{charts});
@@ -348,7 +365,7 @@ public class ChartService {
 		LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] { chartId });
 
 		Chart chart = chartRepository.findOne(chartId);
-		
+
 		LOGGER.info("Output parameter chart=[{}]", chart);
 		return chart;
 	}
@@ -407,25 +424,25 @@ public class ChartService {
 				ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
 				chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
 			}
-			
+
 			chartDetail = chartDetailRepository.save(chartDetail);
-			
+
 			if (null != imageFile && !imageFile.isEmpty())
 				cloudFileService.uploadFile(imageFile, chartDetail.getImageFileName());
 		}
-		
+
 		LOGGER.debug("Output updateChart(Chart chart)", chartDetail);
-		
+
 		return chartDetail;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public User selectChartByType(Integer userId, Integer playlistId) {
 		LOGGER.info("select chart by type input  [{}] [{}]", userId, playlistId);
-		
+
 		Chart chart = chartRepository.findOne(playlistId);
 		User user = userService.getUserWithSelectedCharts(userId);
-		
+
 		if(user != null && chart != null){
 			List<Chart> playlists = new ArrayList<Chart>();
 			if(user.getSelectedCharts() != null){
@@ -435,15 +452,20 @@ public class ChartService {
 					}
 				}
 			}
-			
+
 			playlists.add(chart);
 			user.setSelectedCharts(playlists);
-			
+
 			userService.updateUser(user);
-			
+
 			LOGGER.info("select chart by type done [{}] [{}]", chart, user);
 		}
-		
+
 		return user;
 	}
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }
