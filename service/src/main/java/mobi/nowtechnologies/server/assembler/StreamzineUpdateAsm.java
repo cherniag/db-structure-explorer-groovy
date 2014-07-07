@@ -31,13 +31,13 @@ public class StreamzineUpdateAsm {
         this.deepLinkInfoService = deepLinkInfoService;
     }
 
-    public StreamzineUpdateDto convertOne(Update update) {
+    public StreamzineUpdateDto convertOne(Update update, String community) {
         StreamzineUpdateDto dto = new StreamzineUpdateDto(update.getDate().getTime());
 
         List<Block> blocks = update.getIncludedBlocks();
         Collections.sort(blocks, getComparator());
         for (Block block : blocks) {
-            BaseContentItemDto contentItemDto = convertToContentItemDto(block);
+            BaseContentItemDto contentItemDto = convertToContentItemDto(block, community);
 
             dto.addContentItem(contentItemDto);
             dto.addVisualBlock(convertToVisualBlock(block, contentItemDto));
@@ -46,7 +46,7 @@ public class StreamzineUpdateAsm {
         return dto;
     }
 
-    private BaseContentItemDto convertToContentItemDto(Block block) {
+    private BaseContentItemDto convertToContentItemDto(Block block, String community) {
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
         DeeplinkType deeplinkType = getDeeplinkType(block);
 
@@ -59,7 +59,7 @@ public class StreamzineUpdateAsm {
             return dto;
         } else {
             DeeplinkValueItemDto dto = new DeeplinkValueItemDto(generateId(block), deeplinkType);
-            dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo));
+            dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo, community));
 
             assignValuesToItemDto(dto, block);
 

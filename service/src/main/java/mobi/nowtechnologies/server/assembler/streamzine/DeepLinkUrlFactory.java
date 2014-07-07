@@ -21,26 +21,21 @@ import java.util.List;
  *
  */
 public class DeepLinkUrlFactory {
-    private final static String PROTOCOL = "mq-app";
 
     private final static String ACTION = "action";
     private final static String ID = "id";
 
     private DeepLinkInfoService deepLinkInfoService;
 
-    public void setDeepLinkInfoService(DeepLinkInfoService deepLinkInfoService) {
-        this.deepLinkInfoService = deepLinkInfoService;
-    }
-
     public List<Integer> create(ManualCompilationDeeplinkInfo deeplinkInfo) {
         return deeplinkInfo.getMediaIds();
     }
 
-    public String create(DeeplinkInfo deeplinkInfo) {
+    public String create(DeeplinkInfo deeplinkInfo, String community) {
         Assert.isTrue(!(deeplinkInfo instanceof ManualCompilationDeeplinkInfo));
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
-        uriComponentsBuilder.scheme(PROTOCOL);
+        uriComponentsBuilder.scheme(community);
         uriComponentsBuilder.host(FeatureValueType.of(deeplinkInfo).getId());
         uriComponentsBuilder.pathSegment(ContentSubType.of(deepLinkInfoService.getSubType(deeplinkInfo)).getName());
         uriComponentsBuilder.pathSegment(decideSubValueForPromotional(deeplinkInfo));
@@ -104,4 +99,7 @@ public class DeepLinkUrlFactory {
         throw new IllegalArgumentException("Not recognized deeplink info type: " + deeplinkInfo.getClass());
     }
 
+    public void setDeepLinkInfoService(DeepLinkInfoService deepLinkInfoService) {
+        this.deepLinkInfoService = deepLinkInfoService;
+    }
 }

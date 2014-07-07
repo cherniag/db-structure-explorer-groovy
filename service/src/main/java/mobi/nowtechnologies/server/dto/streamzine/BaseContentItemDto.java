@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -75,5 +76,17 @@ public abstract class BaseContentItemDto {
 
     public void setBadgeIcon(String badgeIcon) {
         this.badgeIcon = badgeIcon;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("title", title)
+                .append("subTitle", subTitle)
+                .append("image", image)
+                .append("badgeIcon", badgeIcon)
+                .append("linkType", linkType)
+                .toString();
     }
 }

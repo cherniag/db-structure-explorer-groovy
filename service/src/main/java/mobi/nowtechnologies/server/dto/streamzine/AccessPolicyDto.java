@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,5 +32,13 @@ public class AccessPolicyDto {
 
     public List<GrantedToType> getGrantedTo() {
         return grantedTo;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("permission", permission)
+                .append("grantedTo", grantedTo)
+                .toString();
     }
 }

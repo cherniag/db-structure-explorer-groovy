@@ -28,7 +28,6 @@ public class GetStreamzineController extends CommonController {
             value = {"**/{community:hl_uk}/{apiVersion:6.1}/GET_STREAMZINE"})
     public Response getUpdate(@RequestParam("APP_VERSION") String appVersion,
                               @PathVariable("community") String community,
-                              @PathVariable("apiVersion") String apiVersion,
                               @RequestParam("USER_NAME") String userName,
                               @RequestParam("USER_TOKEN") String userToken,
                               @RequestParam("TIMESTAMP") String timestamp,
@@ -37,6 +36,8 @@ public class GetStreamzineController extends CommonController {
         User user = null;
         Exception ex = null;
         try {
+            LOGGER.info("Input params: userName [{}] community [{}] resolution [{}] deviceUID [{}]", userName, community, resolution, deviceUID);
+
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
             Date date = new Date();
@@ -45,7 +46,9 @@ public class GetStreamzineController extends CommonController {
 
             LOGGER.debug("found update {} for {}", update, date);
 
-            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update);
+            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community);
+
+            LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 
             return new Response(new Object[]{dto});
         } catch (Exception e) {
