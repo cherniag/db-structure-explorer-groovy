@@ -4,7 +4,6 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
-import mobi.nowtechnologies.server.service.merge.OperationResult;
 
 public interface UserPromoService {
 

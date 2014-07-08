@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
-import mobi.nowtechnologies.server.service.merge.OperationResult;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.transaction.annotation.Transactional;
 

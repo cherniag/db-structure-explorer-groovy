@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.merge;
+package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 
