@@ -93,7 +93,7 @@ public class AccCheckController extends CommonController {
                 LOGGER.error(e.getMessage(), e);
             }
 
-            mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false);
+            mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, null);
 
             return buildModelAndView(accountCheck);
         } catch (Exception e) {

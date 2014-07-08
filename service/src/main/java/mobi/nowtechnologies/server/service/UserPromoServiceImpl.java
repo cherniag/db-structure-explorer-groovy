@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
+import mobi.nowtechnologies.server.service.merge.OperationResult;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,41 +38,42 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Override
     @Transactional(propagation = REQUIRED)
-    public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
+    public OperationResult applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         activationEmailService.activate(activationEmailId, email, token);
 
         User existingUser = userRepository.findOne(email, user.getCommunityRewriteUrl());
-
-        user = userService.applyInitPromo(user, existingUser, null, false, true, false);
+        OperationResult mergeResult = userService.applyInitPromo(user, existingUser, null, false, true, false);
+        user = mergeResult.getResultOfOperation();
 
         user.setProvider(EMAIL);
         user.setUserName(email);
 
         userService.updateUser(user);
 
-        return user;
+        return new OperationResult(mergeResult.isMergeDone(), user);
     }
 
     @Override
-    public User applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser) {
-        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS, disableReactivationForUser);
+    public OperationResult applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser) {
+        OperationResult userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS, disableReactivationForUser);
         googlePlusUserInfoRepository.save(googleUserInfo);
 
         return userAfterApplyPromo;
     }
 
     @Override
-    public User applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo facebookProfile, boolean disableReactivationForUser) {
-        User userAfterApplyPromo = doApplyPromo(userAfterSignUp, facebookProfile, facebookUserInfoRepository, ProviderType.FACEBOOK, disableReactivationForUser);
+    public OperationResult applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo facebookProfile, boolean disableReactivationForUser) {
+        OperationResult mergeResult = doApplyPromo(userAfterSignUp, facebookProfile, facebookUserInfoRepository, ProviderType.FACEBOOK, disableReactivationForUser);
         facebookUserInfoRepository.save(facebookProfile);
 
-        return userAfterApplyPromo;
+        return mergeResult;
     }
     
-    private User doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType providerType, boolean disableReactivationForUser) {
+    private OperationResult doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType providerType, boolean disableReactivationForUser) {
         User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
         User userForMerge = getUserForMerge(refreshedSignUpUser, socialInfo.getEmail());
-        User userAfterApplyPromo = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, disableReactivationForUser);
+        OperationResult mergeResult = userService.applyInitPromo(refreshedSignUpUser, userForMerge, null, false, true, disableReactivationForUser);
+        User userAfterApplyPromo = mergeResult.getResultOfOperation();
         baseSocialRepository.deleteByUser(userAfterApplyPromo);
 
         socialInfo.setUser(userAfterApplyPromo);
@@ -79,7 +81,7 @@ public class UserPromoServiceImpl implements UserPromoService {
         userAfterApplyPromo.setProvider(providerType);
 
         userRepository.save(userAfterApplyPromo);
-        return userAfterApplyPromo;
+        return new OperationResult(mergeResult.isMergeDone(), userAfterApplyPromo);
     }
 
     private User getUserForMerge(User userAfterSignUp, String email) {

@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
@@ -21,7 +20,6 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 public class UserPromoServiceTest {
 
     private UserPromoService userPromoService;
@@ -41,7 +39,7 @@ public class UserPromoServiceTest {
 
         when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
 
-        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(user);
+        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(OperationResultFactory.getOperationResult(false, user));
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");
 
@@ -54,7 +52,7 @@ public class UserPromoServiceTest {
     public void testApplyInitPromoByEmailActivateError() {
         User user = UserFactory.createUser(ACTIVATED);
 
-        when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(user);
+        when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(OperationResultFactory.getOperationResult(false, user));
         doThrow(ValidationException.class).when(activationEmailService).activate(anyLong(), anyString(), anyString());
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");

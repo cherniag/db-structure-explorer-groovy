@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.service.merge.OperationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +45,18 @@ public class AccCheckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
 
 
-    public AccountCheckDto processAccCheck(User user, boolean withUserDetails) {
+    public AccountCheckDto processAccCheck(OperationResult operationResult, boolean withUserDetails) {
+        return processAccCheck(operationResult.getResultOfOperation(), withUserDetails, !operationResult.isMergeDone());
+    }
+
+    public AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation) {
 
         user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         Community community = user.getUserGroup().getCommunity();
 
         List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user), withUserDetails);
+        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user), withUserDetails, firstActivation);
 
         accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
         accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;

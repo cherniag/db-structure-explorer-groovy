@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.merge.OperationResult;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
@@ -2517,7 +2518,8 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        OperationResult resultOfOperation = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        User result = resultOfOperation.getResultOfOperation();
 
         //then
         assertNotNull(result);
@@ -2553,7 +2555,8 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        OperationResult opResult = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        User result = opResult.getResultOfOperation();
 
         //then
         assertNotNull(result);
@@ -2587,7 +2590,8 @@ public class UserServiceTest {
 		
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 		
-		User result = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+		OperationResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+        User result = opResult.getResultOfOperation();
 		
 		assertNotNull(result);
 		assertEquals(user, result);
@@ -2622,7 +2626,9 @@ public class UserServiceTest {
 
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
-		User result = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+        OperationResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+
+        User result = opResult.getResultOfOperation();
 		
 		assertNotNull(result);
 		assertEquals(user, result);
@@ -3230,7 +3236,8 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).save(expectedUser);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        OperationResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertNotNull(actualUser);
@@ -3264,7 +3271,8 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        OperationResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertNotNull(actualUser);
@@ -3382,7 +3390,8 @@ public class UserServiceTest {
         doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac, false);
+        OperationResult opResult = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertNotNull(actualUser);
@@ -3691,7 +3700,8 @@ public class UserServiceTest {
         });
 
         //when
-        User actualUser = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
+        OperationResult opResult = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertThat(actualUser, is (user));

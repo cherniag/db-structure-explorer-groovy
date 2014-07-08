@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.*;
+import mobi.nowtechnologies.server.service.merge.OperationResult;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -139,13 +140,15 @@ public class UserService {
         this.autoOptInRuleService = autoOptInRuleService;
     }
 
-    private User checkAndMerge(User user, User mobileUser) {
+    private OperationResult checkAndMerge(User user, User mobileUser) {
+        boolean mergeIsDone = false;
         if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
+            mergeIsDone = true;
             user = mergeUser(mobileUser, user);
         }else{
             LOGGER.info("User merge procedure is skipped");
         }
-        return user;
+        return new OperationResult(mergeIsDone, user);
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
@@ -175,13 +178,14 @@ public class UserService {
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
-    private User applyInitPromoInternal(PromoRequest promoRequest){
+    private OperationResult applyInitPromoInternal(PromoRequest promoRequest){
         User user = promoRequest.user;
         boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
         ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, user.getMobile(), user.getUserGroup().getCommunity());
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
-        user = checkAndMerge(user, promoRequest.mobileUser);
+        OperationResult mergeResult = checkAndMerge(user, promoRequest.mobileUser);
+        user = mergeResult.getResultOfOperation();
         user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
         user = checkAndApplyPromo(new PromoRequestBuilder(promoRequest).setUser(user).createPromoRequest());
@@ -191,7 +195,7 @@ public class UserService {
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
         LOGGER.debug("Output parameter user=[{}]", user);
-        return user;
+        return new OperationResult(mergeResult.isMergeDone(), user);
     }
 
     private void disableReactivation(boolean disableReactivationForUser, User user) {
@@ -1384,23 +1388,22 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User applyInitPromo(User user, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean checkReactivation) {
+    public OperationResult applyInitPromo(User user, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean checkReactivation) {
         LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], isMajorApiVersionNumberLessThan4=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), isMajorApiVersionNumberLessThan4);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
 
         return applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, checkReactivation);
-
     }
 
     @Transactional(propagation = REQUIRED)
-    public User applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
+    public OperationResult applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
         PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).
                 setIsSubjectToAutoOptIn(false).setDisableReactivationForUser(disableReactivationForUser).createPromoRequest();
-        user = applyInitPromoInternal(promoRequest);
-
+        OperationResult mergeResult = applyInitPromoInternal(promoRequest);
+        user = mergeResult.getResultOfOperation();
         user.setHasPromo(user.isPromotionApplied());
-        return user;
+        return new OperationResult(mergeResult.isMergeDone(), user);
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1596,15 +1599,16 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User autoOptIn(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) {
+    public OperationResult autoOptIn(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) {
         User user = checkUser(communityUri, userName, userToken, timestamp, deviceUID, false, ENTERED_NUMBER, ACTIVATED);
         return autoOptIn(user, otac, checkReactivation);
     }
 
-    private User  autoOptIn(User user, String otac, boolean checkReactivation) {
+    private OperationResult autoOptIn(User user, String otac, boolean checkReactivation) {
         LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
+        OperationResult resultObject = null;
 
         user.withOldUser(mobileUser);
         if(!autoOptInRuleService.isSubjectToAutoOptIn(ALL, user)) {
@@ -1612,7 +1616,8 @@ public class UserService {
         }
 
         if(isNotBlank(otac)){
-            user = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).setDisableReactivationForUser(checkReactivation).createPromoRequest());
+            resultObject = applyInitPromoInternal(new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(false).setIsApplyingWithoutEnterPhone(false).setIsSubjectToAutoOptIn(true).setDisableReactivationForUser(checkReactivation).createPromoRequest());
+            user = resultObject.getResultOfOperation();
         }else{
             User result = promotionService.applyPotentialPromo(user);
             disableReactivation(checkReactivation, result);
@@ -1624,7 +1629,11 @@ public class UserService {
         }
 
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
-        return paymentDetails.getOwner();
+        user =  paymentDetails.getOwner();
+        if (resultObject != null){
+            return new OperationResult(resultObject.isMergeDone(), user);
+        }
+        return new OperationResult(false, user);
     }
 
     @Transactional(propagation = REQUIRED)

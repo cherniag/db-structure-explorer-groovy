@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.merge.OperationResult;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,9 +66,9 @@ public class ApplyInitPromoController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ENTERED_NUMBER);
 
-            user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4, false, checkReactivation);
+            OperationResult mergeResult = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4, false, checkReactivation);
 
-            AccountCheckDTO accountCheckDTO = getAccountCheckDTOAfterApplyPromo(user);
+            AccountCheckDTO accountCheckDTO = getAccountCheckDTOAfterApplyPromo(mergeResult);
 
             if (isMajorApiVersionNumberLessThan4) {
                 updateO2UserTask.handleUserUpdate(user);
@@ -88,8 +89,9 @@ public class ApplyInitPromoController extends CommonController {
         }
     }
 
-    private AccountCheckDTO getAccountCheckDTOAfterApplyPromo(User user) {
-        AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false);
+    private AccountCheckDTO getAccountCheckDTOAfterApplyPromo(OperationResult mergeResult) {
+        User user = mergeResult.getResultOfOperation();
+        AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false);
         accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
         return accountCheckDTO;
     }

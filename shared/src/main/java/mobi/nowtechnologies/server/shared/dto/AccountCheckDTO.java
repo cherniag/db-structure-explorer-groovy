@@ -82,6 +82,8 @@ public class AccountCheckDTO {
 
     public transient Object user;
 
+    public Boolean firstActivation;
+
     public AccountCheckDTO(){
 		
 	}
@@ -140,6 +142,7 @@ public class AccountCheckDTO {
         this.tariff = accountCheckDTO.tariff;
         this.setUserDetails(accountCheckDTO.getUserDetails());
         accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
+        this.firstActivation = accountCheckDTO.firstActivation;
 	}
 
     public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
@@ -212,6 +215,7 @@ public class AccountCheckDTO {
                 .append("subscriptionChanged", subscriptionChanged)
                 .append("subjectToAutoOptIn", subjectToAutoOptIn)
                 .append("userDetails", userDetails)
+                .append("firstActivation", firstActivation)
                 .toString();
     }
 }

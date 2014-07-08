@@ -69,7 +69,7 @@ public class SignUpDeviceController extends CommonController {
                 deviceUserDataService.saveXtifyToken(user, userDeviceDetailsDto.getXtifyToken());
             }
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, null);
 
             return buildModelAndView(accountCheck);
         } catch (ValidationException ve) {

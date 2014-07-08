@@ -4,6 +4,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.merge.OperationResult;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,9 @@ public class SignInEmailController extends CommonController {
                     activationEmailId, email, deviceUID);
             user = checkUser(deviceUID, userToken, timestamp, deviceUID, false, ActivationStatus.PENDING_ACTIVATION);
 
-            user = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
+            OperationResult operationResult = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 
-            return buildModelAndView(accCheckService.processAccCheck(user, false));
+            return buildModelAndView(accCheckService.processAccCheck(operationResult, false));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("SIGN_IN_EMAIL can not find deviceUID: [{}] in community: [{}]", deviceUID, community);
