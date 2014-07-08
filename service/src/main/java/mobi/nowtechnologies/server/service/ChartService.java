@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
-import mobi.nowtechnologies.server.service.chart.ChartSupporter;
+import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
@@ -23,13 +23,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -123,7 +123,7 @@ public class ChartService implements ApplicationContextAware {
 
 		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
 		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
-        ChartSupporter supporter = resolveChartSupporter(communityName);
+        GetChartContentManager supporter = resolveChartSupporter(communityName);
 		for (ChartDetail chart : charts) {
             ChartSupportResult result = supporter.support(user, chartGroups, chart);
             if (result.isSupport()){
@@ -152,12 +152,12 @@ public class ChartService implements ApplicationContextAware {
 		return chartDto;
 	}
 
-    private ChartSupporter resolveChartSupporter(String communityName) {
-        String beanName = messageSource.getMessage(communityName, "chartSupporter.beanName", null, null);
-        if (!isEmpty(beanName)) {
-            return  (ChartSupporter) applicationContext.getBean(beanName);
-        }
-        throw new RuntimeException("Supporter is not specified");
+    private GetChartContentManager resolveChartSupporter(String communityName) {
+        String beanName = messageSource.getMessage(communityName, "getChartContentManager.beanName", null, null);
+
+        Assert.hasText(beanName);
+
+        return applicationContext.getBean(beanName, GetChartContentManager.class);
     }
 
     @Transactional(readOnly = true)

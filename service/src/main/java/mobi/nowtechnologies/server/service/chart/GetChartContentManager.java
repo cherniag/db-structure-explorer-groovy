@@ -9,6 +9,6 @@ import java.util.Map;
 /**
  * Created by Oleg Artomov on 7/7/2014.
  */
-public interface ChartSupporter {
+public interface GetChartContentManager {
     ChartSupportResult support(User user, Map<ChartType, Integer> chartGroups, ChartDetail chart);
 }

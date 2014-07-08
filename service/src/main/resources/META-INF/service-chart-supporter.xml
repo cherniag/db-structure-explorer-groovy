@@ -4,10 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-   <bean id="communityChartSupporter"
-         class="mobi.nowtechnologies.server.service.chart.CommunityChartSupporter"/>
+   <bean id="communityChartManager"
+         class="mobi.nowtechnologies.server.service.chart.CommunityGetChartContentManager"/>
 
-    <bean id="alwaysChartSupporter"
-          class="mobi.nowtechnologies.server.service.chart.AlwaysChartSupporter"/>
+    <bean id="alwaysChartManager"
+          class="mobi.nowtechnologies.server.service.chart.AlwaysGetChartContentManager"/>
+
+    <alias name="alwaysChartManager" alias="defaultChartManager" />
 
 </beans>

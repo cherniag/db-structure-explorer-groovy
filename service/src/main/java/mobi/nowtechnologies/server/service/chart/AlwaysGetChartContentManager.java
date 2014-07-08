@@ -9,11 +9,13 @@ import java.util.Map;
 /**
  * Created by Oleg Artomov on 7/7/2014.
  */
-public class CommunityChartSupporter implements ChartSupporter {
+public class AlwaysGetChartContentManager implements GetChartContentManager {
+
+    private static ChartSupportResult chartSupportResult = new ChartSupportResult(true, false);
+
     @Override
     public ChartSupportResult support(User user, Map<ChartType, Integer> chartGroups, ChartDetail chart) {
-        Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1;
-        boolean support = (!switchable || user.isSelectedChart(chart));
-        return new ChartSupportResult(support, switchable);
+        return chartSupportResult;
     }
+
 }
