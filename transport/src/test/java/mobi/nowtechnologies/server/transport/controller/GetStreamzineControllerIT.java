@@ -90,7 +90,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("mq-app://web/aHR0cDovL2V4YW1wbGUuY29t")))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl_uk://web/aHR0cDovL2V4YW1wbGUuY29t")))
 
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
@@ -101,16 +101,16 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].badge_icon", is(badgeUrl)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("mq-app://page/subscription_page?action=subscribe")))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl_uk://page/subscription_page?action=subscribe")))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("mq-app://content/news?id=" + String.valueOf(publishDate.getTime()))))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl_uk://content/news?id=" + String.valueOf(publishDate.getTime()))))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("mq-app://content/story?id=" + String.valueOf(newsMessage.getId()))))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl_uk://content/story?id=" + String.valueOf(newsMessage.getId()))))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("mq-app://content/playlist?id=" + ChartType.BASIC_CHART.name())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl_uk://content/playlist?id=" + ChartType.BASIC_CHART.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("mq-app://content/track?id=" + String.valueOf(existingMedia.getIsrcTrackId()))))

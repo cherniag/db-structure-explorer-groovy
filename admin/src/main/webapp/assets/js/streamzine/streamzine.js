@@ -42,7 +42,6 @@ if(Streamzine == undefined) {
         } else {
             value = data.value;
         }
-
         Streamzine.Model.updateCurrentBlock(data.field, value);
     }
 

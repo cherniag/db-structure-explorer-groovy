@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,5 +26,13 @@ public class IdListItemDto extends BaseContentItemDto {
 
     public void setLinkValue(List<Integer> linkValue) {
         this.linkValue.addAll(linkValue);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("linkValue", linkValue)
+                .toString();
     }
 }

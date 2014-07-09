@@ -62,8 +62,8 @@ public class DeepLinkUrlFactoryTest {
         InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.INTERNAL_AD, "about");
 
         //check
-        String o = deepLinkUrlFactory.create(informationDeeplinkInfo);
-        assertThat(o, is("mq-app://page/about"));
+        String o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk");
+        assertThat(o, is("hl_uk://page/about"));
     }
 
     @Test
@@ -73,10 +73,10 @@ public class DeepLinkUrlFactoryTest {
         informationDeeplinkInfo.setAction("subscribe");
 
         //check
-        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo);
+        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("mq-app://page/account?action=subscribe"));
+        assertThat((String)o, is("hl_uk://page/account?action=subscribe"));
     }
 
     @Test
@@ -85,10 +85,10 @@ public class DeepLinkUrlFactoryTest {
         InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "http://bear.ru");
 
         //check
-        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo);
+        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("mq-app://web/aHR0cDovL2JlYXIucnU="));
+        assertThat((String)o, is("hl_uk://web/aHR0cDovL2JlYXIucnU="));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicTrackDeeplinkInfo)).thenReturn((Enum) MusicType.TRACK);
 
         //check
-        Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo);
+        Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
         assertThat((String)o, is("mq-app://content/track?id=TRACK-10_null"));
@@ -114,8 +114,8 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
-        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo);
-        assertThat(o, is("mq-app://content/playlist?id=HOT_TRACKS"));
+        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk");
+        assertThat(o, is("hl_uk://content/playlist?id=HOT_TRACKS"));
     }
 
     @Test
@@ -129,8 +129,8 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(newsStoryDeeplinkInfo)).thenReturn((Enum) NewsType.STORY);
 
         //check
-        String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo);
-        assertThat(o, is("mq-app://content/story?id=10"));
+        String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo, "hl_uk");
+        assertThat(o, is("hl_uk://content/story?id=10"));
     }
 
     @Test
@@ -142,8 +142,8 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(newsListDeeplinkInfo)).thenReturn((Enum) NewsType.LIST);
 
         //check
-        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo);
-        assertThat(o, is("mq-app://content/news?id=1419120000"));
+        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo, "hl_uk");
+        assertThat(o, is("hl_uk://content/news?id=1419120000"));
     }
 
     private Media getMedia(Integer id, String isrc) {

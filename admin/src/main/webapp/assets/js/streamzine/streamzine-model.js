@@ -9,6 +9,13 @@ var UpdateModel = function(model) {
     //
     // internals
     //
+    calcSubTitle = function(block) {
+        var shapeType = block.shapeType.$name;
+        var subTitle = block.subTitle;
+
+        return (Streamzine.Presenter.Editor.titlesMappingRules[shapeType].subTitle) ? subTitle : null;
+    }
+
     function init(blocks) {
         // generate ids for every block
         for(var i=0; i < blocks.length; i++) {
@@ -275,7 +282,7 @@ var UpdateModel = function(model) {
                     included: b.included,
                     //
                     title: b.title,
-                    subTitle: b.subTitle,
+                    subTitle: calcSubTitle(b),
                     coverUrl: b.coverUrl,
                     badgeUrl: b.badgeUrl,
                     position: b.position,
