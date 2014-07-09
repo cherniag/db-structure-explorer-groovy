@@ -83,7 +83,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         long publishTime = System.currentTimeMillis() + 100 * 1000;
         String communityUrl = "hl_uk";
         Update update = streamzineUpdateService.create(new Date(publishTime));
-        UpdateIncomingDto dto = getUpdateIncomingDto(update, MUSIC, WIDE, MANUAL_COMPILATION.name(), "US-UM7-11-00062");
+        UpdateIncomingDto dto = getUpdateIncomingDto(update, MUSIC, WIDE, MANUAL_COMPILATION.name(), "70");
 
         //chart update before nearest - not valid
         createAndSaveChartDetail(publishTime - 100 * 1000, null, 11);
@@ -154,11 +154,11 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
     }
 
 
-    private void checkSave(String communityUrl, UpdateIncomingDto dto, ShapeType currentType, ContentType contentType, String linkLocationType) throws Exception {
+    private void checkSave(String communityUrl, UpdateIncomingDto dto, ShapeType currentType, ContentType contentType, String key) throws Exception {
         OrdinalBlockDto block = new OrdinalBlockDto();
         block.setShapeType(currentType);
         block.setContentType(contentType);
-        block.setKey(linkLocationType);
+        block.setKey(key);
         block.setIncluded(false);
         dto.getBlocks().clear();
         dto.getBlocks().add(block);

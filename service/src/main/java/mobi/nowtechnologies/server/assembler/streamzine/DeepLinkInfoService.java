@@ -120,31 +120,35 @@ public class DeepLinkInfoService {
         String key = data.getKey();
 
         final MusicType musicType = MusicType.valueOf(key.trim());
-        String value = data.getValue() != null ? data.getValue().toString() : "";
+        String value = data.getValue() != null ? data.getValue().trim() : "";
 
         if (musicType == MusicType.PLAYLIST) {
             ChartType chartType = null;
             if (!value.isEmpty()) {
-                chartType = ChartType.valueOf(value.trim());
+                chartType = ChartType.valueOf(value);
             }
             return new MusicPlayListDeeplinkInfo(chartType);
         }
 
         if (musicType == MusicType.TRACK) {
-            final int id = Integer.parseInt(value.trim());
-            final Media restored = mediaRepository.findOne(id);
-            Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
+            Media restored = null;
+            if (!value.isEmpty()) {
+                final int id = Integer.parseInt(value);
+                restored = mediaRepository.findOne(id);
+                Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
+            }
             return new MusicTrackDeeplinkInfo(restored);
         }
 
         if (musicType == MusicType.MANUAL_COMPILATION) {
-            String mediaIdsAsString = value.trim();
-            ManualCompilationData manualCompilationData = new ManualCompilationData(mediaIdsAsString);
-            List<Integer> mediaIds = manualCompilationData.getMediaIds();
+            List<Media> medias = new ArrayList<Media>();
+            if (!value.isEmpty()) {
+                ManualCompilationData manualCompilationData = new ManualCompilationData(value);
+                List<Integer> mediaIds = manualCompilationData.getMediaIds();
 
-            List<Media> medias = getOrderedMediasById(mediaIds);
-
-            Assert.isTrue(medias.size() == mediaIds.size(), "Can not find all medias from media ids: " + mediaIdsAsString);
+                medias.addAll(getOrderedMediasById(mediaIds));
+                Assert.isTrue(medias.size() == mediaIds.size(), "Can not find all medias from media ids: " + value);
+            }
 
             return new ManualCompilationDeeplinkInfo(medias);
         }
