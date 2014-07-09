@@ -6,6 +6,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.service.chart.CommunityGetChartContentManager;
+import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
@@ -26,6 +28,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,8 +73,13 @@ public class ChartServiceTest {
 	@Mock
 	private CloudFileService mockCloudFileService;
 
+    @Mock
+    private ApplicationContext mockApplicationContext;
+
 	//test data
 	private User testUser;
+
+    private CommunityGetChartContentManager getChartContentManager = new CommunityGetChartContentManager();
 
     @Test
 	public void testSelectChartByType_NotNullChartNotNullUserNotNullSelectedCharts_Success()
@@ -497,7 +505,9 @@ public class ChartServiceTest {
                 return media.getDrms().get(0);
             }
         });
-		when(mockMessageSource.getMessage(anyString(), anyString(), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
+        when(mockMessageSource.getMessage(anyString(), eq("getChartContentManager.beanName"), any(Object[].class), any(Locale.class))).thenReturn("communityChartManager");
+        when(mockMessageSource.getMessage(anyString(), eq("get.chart.command.default.amazon.url"), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
+        when(mockApplicationContext.getBean("communityChartManager", GetChartContentManager.class)).thenReturn(getChartContentManager);
 		
 		ChartDto result = fixture.processGetChartCommand(testUser, communityName, true, true);
 
@@ -532,7 +542,7 @@ public class ChartServiceTest {
 		assertEquals(topChart.getChart().getI().byteValue(), list[1].getPlaylistId().byteValue());
 		assertEquals(otherChart2.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
 		
-		verify(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
+		verify(fixture).getChartsByCommunity(eq((String) null), anyString(), any(ChartType.class));
 		verify(mockChartDetailService).findChartDetailTree(eq(5), any(Date.class), anyBoolean());
 		verify(mockChartDetailService).findChartDetailTree(eq(2), any(Date.class), anyBoolean());
 		verify(mockChartDetailService, times(0)).findChartDetailTree(eq(3), any(Date.class), anyBoolean());
@@ -845,6 +855,8 @@ public class ChartServiceTest {
 		fixture.setCloudFileService(mockCloudFileService);
 		fixture.setChartDetailRepository(mockChartDetailRepository);
 		fixture.setDrmService(mockDrmService);
+        fixture.setApplicationContext(mockApplicationContext);
+
         ChartDetailsConverter chartDetailsConverter = new ChartDetailsConverter();
         chartDetailsConverter.setMessageSource(mockMessageSource);
         when(mockMessageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
