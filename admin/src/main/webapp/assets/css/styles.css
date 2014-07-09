@@ -1551,13 +1551,13 @@ block icons and info
 }
 
 .sz-tracks-dialog-trackId {
-    width: 160px;
+    width: 150px;
     font-size: 11px;
     overflow-x: hidden;
 }
 
 .sz-tracks-dialog-title {
-    width: 100px;
+    width: 150px;
     font-size: 11px;
     overflow-x: hidden;
 }

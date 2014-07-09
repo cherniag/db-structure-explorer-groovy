@@ -131,15 +131,10 @@ public class DeepLinkInfoService {
         }
 
         if (musicType == MusicType.TRACK) {
-            final String isrc = value.trim();
-            Media media = null;
-            if (!isEmpty(isrc)) {
-                media = mediaRepository.getByIsrc(isrc);
-                Assert.notNull(media, "Can not find media during restoring deep link info from isrc: " + isrc);
-            }
-
-
-            return new MusicTrackDeeplinkInfo(media);
+            final int id = Integer.parseInt(value.trim());
+            final Media restored = mediaRepository.findOne(id);
+            Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
+            return new MusicTrackDeeplinkInfo(restored);
         }
 
         if (musicType == MusicType.MANUAL_COMPILATION) {

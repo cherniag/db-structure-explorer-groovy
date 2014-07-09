@@ -185,7 +185,7 @@ public class StreamzineUpdateAdminAsm {
             blockDto.setKey(track.name());
             Media media = i.getMedia();
             if (media != null) {
-                blockDto.setValue(media.getIsrc());
+                blockDto.setValue(media.getI() + "");
                 blockDto.setData(streamzineAdminMediaAsm.toMediaDto(i.getMedia()));
             }
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, track));

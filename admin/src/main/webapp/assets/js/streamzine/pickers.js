@@ -554,7 +554,7 @@ if(Pickers == undefined) {
 
     Pickers.createMediaTracksPicker = function(id, dialogId, mediaImgBaseUrl, saveHandler) {
         var _rowTemplate =
-            '<li id="media_picker_{isrc}">'              +
+            '<li id="media_picker_{id}">'              +
             '    <div>                    '              +
             '        <img alt="Media picture" src="{url}" width="50" />' +
             '    </div>'                                 +
@@ -582,13 +582,13 @@ if(Pickers == undefined) {
             return cutId(id, 'media_picker_');
         }
 
-        function _restoreMediaDtoFromIsrc(isrc) {
-            return _dataCopy[_findIndex(_dataCopy, isrc)];
+        function _restoreMediaDtoFromIsrc(id) {
+            return _dataCopy[_findIndex(_dataCopy, id)];
         }
 
-        function _findIndex(where, isrc) {
+        function _findIndex(where, id) {
             for(var j=0; j < where.length; j++) {
-                if(where[j].isrc == isrc) {
+                if(where[j].id == id) {
                     return j;
                 }
             }
@@ -678,8 +678,8 @@ if(Pickers == undefined) {
             if(selected.length > 0) {
                 if(confirm("Selected values will be deleted. Continue?")) {
                     for(var j=0; j < selected.length; j++) {
-                        var isrc = selected[j].isrc;
-                        $('#' + generateSelectedId(isrc)).remove();
+                        var sid = selected[j].id;
+                        $('#' + generateSelectedId(sid)).remove();
                     }
 
                     owner.setValue(null);
@@ -712,10 +712,9 @@ if(Pickers == undefined) {
                     var items = owner.getValue();
                     for(var j=0; j < items.length; j++) {
                         var item = items[j];
-                        //item.url = mediaImgBaseUrl + '/';
                         $(Template.render(_rowTemplate, item))
-                            .append(createSelectedItem(owner, item.isrc))
-                            .attr('id', generateSelectedId(item.isrc))
+                            .append(createSelectedItem(owner, item.id))
+                            .attr('id', generateSelectedId(item.id))
                             .appendTo(grid);
                     }
                 }
@@ -729,7 +728,7 @@ if(Pickers == undefined) {
                 if(owner.getValue()) {
                     var ids = [];
                     $.each(owner.getValue(), function(i, o) {
-                        ids.push(o.isrc);
+                        ids.push(o.id);
                     });
                     return {ids:ids.join('#')};
                 } else {
@@ -767,7 +766,7 @@ if(Pickers == undefined) {
 
     Pickers.createMediaTrackPicker = function(id, dialogId, mediaImgBaseUrl, saveHandler) {
         var _rowTemplate =
-            '<li id="media_picker_{isrc}">'              +
+            '<li id="media_picker_{id}">'              +
             '    <div class="cover_media">'              +
             '        <img alt="Media picture" src="{fileName}" width="50" />' +
             '    </div>'                                 +
@@ -794,10 +793,10 @@ if(Pickers == undefined) {
             restoreIdCallback: function(id) {
                 var startIndex = 'media_picker_'.length;
                 var endIndex = id.length;
-                var isrc = id.substring(startIndex, endIndex);
+                var sid = id.substring(startIndex, endIndex);
                 // search by id
                 for(var i=0; i<reference.gridData.length;i++) {
-                    if(reference.gridData[i].isrc == isrc) {
+                    if(reference.gridData[i].id == sid) {
                         return reference.gridData[i];
                     }
                 }
