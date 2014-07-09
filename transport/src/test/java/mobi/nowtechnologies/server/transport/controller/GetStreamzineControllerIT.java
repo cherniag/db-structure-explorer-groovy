@@ -71,7 +71,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
 
-        Thread.sleep(1200L);
+        Thread.sleep(2000L);
 
         // check xml format
         doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false).andDo(print());
@@ -104,16 +104,16 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl_uk://page/subscription_page?action=subscribe")))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl_uk://content/news?id=" + String.valueOf(publishDate.getTime()))))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl_uk://content/news?id=" + publishDate.getTime())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl_uk://content/story?id=" + String.valueOf(newsMessage.getId()))))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl_uk://content/story?id=" + newsMessage.getId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl_uk://content/playlist?id=" + ChartType.BASIC_CHART.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("mq-app://content/track?id=" + String.valueOf(existingMedia.getIsrcTrackId()))))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl_uk://content/track?id=" + existingMedia.getIsrcTrackId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
