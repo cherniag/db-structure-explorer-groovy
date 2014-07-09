@@ -574,7 +574,7 @@ if(Streamzine.Presenter.Editor == undefined) {
 
             editorRef.mediaTrackPicker = Pickers.createMediaTrackPicker(id, 'mediaTrackPickerId', tracksBaseUrl, function(mediaDto) {
                 Streamzine.Model.getCurrentBlock().data = mediaDto;
-                fireValuePickedEvent('value')(mediaDto.isrc);
+                fireValuePickedEvent('value')(mediaDto.id);
                 fireValuePickedEvent('title')(mediaDto.title);
                 fireValuePickedEvent('subTitle')(mediaDto.artistDto.name);
                 //fireValuePickedEvent('coverUrl')(mediaDto.fileName);

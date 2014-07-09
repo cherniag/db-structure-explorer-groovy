@@ -36,10 +36,10 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
     @Query("select media from ChartDetail chartDetail join chartDetail.media media left join media.artist artist where " +
             "chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis " +
             "and (media.title like :searchWords escape '^' or media.isrc like :searchWords escape '^' or artist.name like :searchWords escape '^') " +
-            "and media.isrc not in :excludedIsrcs order by media.title")
+            "and media.i not in :excludedIds order by media.title")
     List<Media> findMediaByChartAndPublishTimeAndSearchWord(@Param("chartId") int chartId,
                                                             @Param("publishTimeMillis") long publishTimeMillis,
-                                                            @Param("excludedIsrcs") Collection<String> excludedIsrcs,
+                                                            @Param("excludedIds") Collection<Integer> excludedIds,
                                                             @Param("searchWords") String searchWords,
                                                             Pageable pageable);
 
@@ -53,11 +53,15 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
                                                             Pageable pageable);
 
 
-    @Query("select media from ChartDetail chartDetail join chartDetail.media media where chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis " +
-            "and media.isrc in :mediaIsrcs")
-    List<Media> findMediaByChartAndPublishTimeAndMediaIsrcs(@Param("chartId") int chartId,
+    @Query("select media from ChartDetail chartDetail " +
+            "join chartDetail.media media " +
+            "where " +
+            "chartDetail.chart.i=:chartId " +
+            "and chartDetail.publishTimeMillis=:publishTimeMillis " +
+            "and media.i in :mediaIds")
+    List<Media> findMediaByChartAndPublishTimeAndMediaIds(@Param("chartId") int chartId,
                                                             @Param("publishTimeMillis") long publishTimeMillis,
-                                                            @Param("mediaIsrcs") Collection<String> mediaIsrcs);
+                                                            @Param("mediaIds") Collection<Integer> mediaIds);
 
     @Query(value = "select media from Media media where media.trackId = ?1")
     Media findByTrackId(Long trackId);

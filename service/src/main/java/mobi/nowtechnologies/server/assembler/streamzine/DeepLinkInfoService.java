@@ -145,11 +145,11 @@ public class DeepLinkInfoService {
         if (musicType == MusicType.MANUAL_COMPILATION) {
             String mediaIdsAsString = value.trim();
             ManualCompilationData manualCompilationData = new ManualCompilationData(mediaIdsAsString);
-            List<String> mediaIsrcs = manualCompilationData.getMediaIsrcs();
+            List<Integer> mediaIds = manualCompilationData.getMediaIds();
 
-            List<Media> medias = getOrderedMediasByIsrc(mediaIsrcs);
+            List<Media> medias = getOrderedMediasById(mediaIds);
 
-            Assert.isTrue(medias.size() == mediaIsrcs.size(), "Can not find all medias from media ids: " + mediaIdsAsString);
+            Assert.isTrue(medias.size() == mediaIds.size(), "Can not find all medias from media ids: " + mediaIdsAsString);
 
             return new ManualCompilationDeeplinkInfo(medias);
         }
@@ -157,10 +157,10 @@ public class DeepLinkInfoService {
         throw new IllegalArgumentException("Not supported music type: " + musicType);
     }
 
-    private List<Media> getOrderedMediasByIsrc(List<String> mediaIsrcs) {
+    private List<Media> getOrderedMediasById(List<Integer> mediaIds) {
         List<Media> medias = Lists.newArrayList();
-        for (String mediaIsrc : mediaIsrcs) {
-            Media media = mediaRepository.getByIsrc(mediaIsrc);
+        for (Integer mediaId : mediaIds) {
+            Media media = mediaRepository.findOne(mediaId);
             if (media != null) {
                 medias.add(media);
             }
@@ -257,26 +257,26 @@ public class DeepLinkInfoService {
 
     public static class ManualCompilationData {
         public static final String TOKEN = "#";
-        private Set<String> mediaIsrcs = new LinkedHashSet<String>();
+        private Set<Integer> mediaIds = new LinkedHashSet<Integer>();
 
-        public ManualCompilationData(Collection<String> mediaIsrcs) {
-            this.mediaIsrcs.addAll(mediaIsrcs);
+        public ManualCompilationData(Collection<Integer> mediaIds) {
+            this.mediaIds.addAll(mediaIds);
         }
 
         public ManualCompilationData(String mediaIdsAsString) {
             if (!isEmpty(mediaIdsAsString)) {
-                for (String isrc : mediaIdsAsString.split(TOKEN)) {
-                    mediaIsrcs.add(isrc);
+                for (String id : mediaIdsAsString.split(TOKEN)) {
+                    mediaIds.add(Integer.valueOf(id));
                 }
             }
         }
 
         public String toMediasString() {
-            return Joiner.on(TOKEN).join(mediaIsrcs);
+            return Joiner.on(TOKEN).join(mediaIds);
         }
 
-        public List<String> getMediaIsrcs() {
-            return Lists.newArrayList(mediaIsrcs);
+        public List<Integer> getMediaIds() {
+            return Lists.newArrayList(mediaIds);
         }
 
 

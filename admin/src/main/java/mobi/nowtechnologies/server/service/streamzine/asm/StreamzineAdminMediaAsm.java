@@ -11,9 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicP
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class StreamzineAdminMediaAsm {
     private String streamzineCommunity;
@@ -30,7 +28,7 @@ public class StreamzineAdminMediaAsm {
     //
     // API
     //
-    public List<MediaDto> toMediaDtos(List<Media> medias) {
+    public List<MediaDto> toMediaDtos(Collection<Media> medias) {
         List<MediaDto> dtos = new ArrayList<MediaDto>();
         for (Media media : medias) {
             dtos.add(toMediaDto(media));
@@ -40,6 +38,7 @@ public class StreamzineAdminMediaAsm {
 
     public MediaDto toMediaDto(Media media) {
         MediaDto mediaDto = new MediaDto();
+        mediaDto.setId(media.getI());
         mediaDto.setTitle(media.getTitle());
         mediaDto.setFileName(media.getImageFileSmall().getFilename());
         mediaDto.setIsrc(media.getIsrc());

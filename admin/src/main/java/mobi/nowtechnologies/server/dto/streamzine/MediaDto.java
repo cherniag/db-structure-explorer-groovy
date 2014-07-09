@@ -4,11 +4,21 @@ import mobi.nowtechnologies.server.shared.dto.admin.ArtistDto;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class MediaDto {
+
+    private Integer id;
     private String isrc;
     private String trackId;
     private ArtistDto artistDto;
     private String fileName;
     private String title;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getIsrc() {
         return isrc;
@@ -53,6 +63,7 @@ public class MediaDto {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .append("id", id)
                 .append("isrc", isrc)
                 .append("trackId", trackId)
                 .append("artistDto", artistDto)

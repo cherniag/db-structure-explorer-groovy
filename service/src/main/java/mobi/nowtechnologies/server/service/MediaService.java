@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mobi.nowtechnologies.server.persistence.dao.MediaDao;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
@@ -108,15 +107,15 @@ public class MediaService {
 	}
 
     @Transactional(readOnly = true)
-    public List<Media> getMediasForAvailableCommunityCharts(String communityRewriteUrl, long timeMillis, String searchWord, Collection<String> excludedIsrcs){
-        LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] searchWord [{}] excludedIsrcs [{}]", communityRewriteUrl, timeMillis, searchWord, excludedIsrcs);
-        List<Media> medias = Lists.newArrayList();
+    public Set<Media> getMediasForAvailableCommunityCharts(String communityRewriteUrl, long timeMillis, String searchWord, Collection<Integer> excludedIds){
+        LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] searchWord [{}] excludedIds [{}]", communityRewriteUrl, timeMillis, searchWord, excludedIds);
+        Set<Media> medias = Sets.newHashSet();
 
         List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
         for (Chart chart : charts) {
             Long latestPublishDate = chartDetailRepository.findNearestLatestPublishDate(timeMillis, chart.getI());
             if (latestPublishDate != null){
-                medias.addAll(findMedias(searchWord, excludedIsrcs, chart, latestPublishDate));
+                medias.addAll(findMedias(searchWord, excludedIds, chart, latestPublishDate));
             }
         }
         LOGGER.debug("Output parameter mediaList [{}]", medias);
@@ -124,15 +123,15 @@ public class MediaService {
     }
 
     @Transactional(readOnly = true)
-    public Set<Media> getMediasByChartAndPublishTimeAndMediaIsrcs(String communityRewriteUrl, long timeMillis, Collection<String> isrcs){
-        LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] isrcs [{}]", communityRewriteUrl, timeMillis, isrcs);
+    public Set<Media> getMediasByChartAndPublishTimeAndMediaIds(String communityRewriteUrl, long timeMillis, Collection<Integer> ids){
+        LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] ids [{}]", communityRewriteUrl, timeMillis, ids);
         Set<Media> medias = Sets.newHashSet();
         List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
         for (Chart chart : charts) {
             Long latestPublishDate = chartDetailRepository.findNearestLatestPublishDate(timeMillis, chart.getI());
             if (latestPublishDate != null){
                 medias.addAll(
-                        mediaRepository.findMediaByChartAndPublishTimeAndMediaIsrcs(chart.getI(), latestPublishDate, isrcs)
+                        mediaRepository.findMediaByChartAndPublishTimeAndMediaIds(chart.getI(), latestPublishDate, ids)
                 );
             }
         }
@@ -140,11 +139,11 @@ public class MediaService {
         return medias;
     }
 
-    private List<Media> findMedias(String searchWord, Collection<String> excludedIsrcs, Chart chart, Long latestPublishDate) {
+    private List<Media> findMedias(String searchWord, Collection<Integer> excludedIds, Chart chart, Long latestPublishDate) {
         final String searchWordsLike = "%" + searchWord + "%";
 
-        if(excludedIsrcs!=null && !excludedIsrcs.isEmpty()){
-            return mediaRepository.findMediaByChartAndPublishTimeAndSearchWord(chart.getI(), latestPublishDate, excludedIsrcs, searchWordsLike, PAGE_REQUEST_50);
+        if(excludedIds !=null && !excludedIds.isEmpty()){
+            return mediaRepository.findMediaByChartAndPublishTimeAndSearchWord(chart.getI(), latestPublishDate, excludedIds, searchWordsLike, PAGE_REQUEST_50);
         }else{
             return mediaRepository.findMediaByChartAndPublishTimeAndSearchWord(chart.getI(), latestPublishDate, searchWordsLike, PAGE_REQUEST_50);
         }

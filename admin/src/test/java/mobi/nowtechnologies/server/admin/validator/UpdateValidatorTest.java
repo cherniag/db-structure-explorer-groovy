@@ -142,7 +142,7 @@ public class UpdateValidatorTest {
         UpdateIncomingDto update = createUpdate(musicTrackBlock, musicTrackBlock);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
-        when(mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIds(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
 
         //when
         updateValidator.customValidate(update, errors);
@@ -159,7 +159,7 @@ public class UpdateValidatorTest {
         UpdateIncomingDto update = createUpdate(musicTrackBlock1, musicTrackBlock2);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
-        when(mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIds(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
 
         //when
         updateValidator.customValidate(update, errors);

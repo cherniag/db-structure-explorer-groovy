@@ -43,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class StreamzineController {
@@ -93,16 +94,16 @@ public class StreamzineController {
 
     @RequestMapping(value = "/streamzine/media/list", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView getMediaList(@RequestParam(value = "q", required = false, defaultValue = "") String searchWords,
-                                     @RequestParam(value = "ids", required = false, defaultValue = "") String excludedIsrcsString,
+                                     @RequestParam(value = "ids", required = false, defaultValue = "") String excludedIdsString,
                                      @RequestParam(value = "id") long updateId ,
                                      @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) {
 
-        logger.info("Input params: searchWords [{}] excludedIsrcs [{}] updateId [{}] communityRewriteUrl [{}]", searchWords, excludedIsrcsString, updateId, communityRewriteUrl);
+        logger.info("Input params: searchWords [{}] excludedIds [{}] updateId [{}] communityRewriteUrl [{}]", searchWords, excludedIdsString, updateId, communityRewriteUrl);
 
-        List<String> mediaIsrcs = extractExcludedIsrcs(excludedIsrcsString);
+        List<Integer> mediaIds = extractExcludedIds(excludedIdsString);
 
         Update update = streamzineUpdateService.get(updateId);
-        List<Media> medias = mediaService.getMediasForAvailableCommunityCharts(communityRewriteUrl, update.getDate().getTime(), escapeSearchWord(searchWords), mediaIsrcs);
+        Set<Media> medias = mediaService.getMediasForAvailableCommunityCharts(communityRewriteUrl, update.getDate().getTime(), escapeSearchWord(searchWords), mediaIds);
 
         List<MediaDto> chartItemDtos = streamzineAdminMediaAsm.toMediaDtos(medias);
 
@@ -210,9 +211,9 @@ public class StreamzineController {
         return redirectToMainPage(publishDate);
     }
 
-    private List<String> extractExcludedIsrcs(String excludedIsrcs) {
-        DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(excludedIsrcs);
-        return manualCompilationData.getMediaIsrcs();
+    private List<Integer> extractExcludedIds(String excludedIds) {
+        DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(excludedIds);
+        return manualCompilationData.getMediaIds();
     }
 
     private int calcWidth(ImageDTO dto, int width) {

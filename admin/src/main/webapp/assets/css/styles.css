@@ -1548,17 +1548,11 @@ block icons and info
 }
 
 .sz-tracks-dialog {
-    width: 1000px;
-}
-
-.sz-tracks-dialog-isrc {
-    width: 100px;
-    font-size: 11px;
-    overflow-x: hidden;
+    width: 1150px;
 }
 
 .sz-tracks-dialog-trackId {
-    width: 100px;
+    width: 160px;
     font-size: 11px;
     overflow-x: hidden;
 }

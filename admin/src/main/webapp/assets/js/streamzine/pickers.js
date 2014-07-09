@@ -558,11 +558,8 @@ if(Pickers == undefined) {
             '    <div>                    '              +
             '        <img alt="Media picture" src="{url}" width="50" />' +
             '    </div>'                                 +
-            '    <div class="sz-tracks-dialog-isrc">'    +
-            '        {isrc}        '                     +
-            '    </div>'                                 +
-            '    <div class="sz-tracks-dialog-trackId">'    +
-            '        {trackId}        '                     +
+            '    <div class="sz-tracks-dialog-trackId">' +
+            '        {trackId}        '                  +
             '    </div>'                                 +
             '    <div class="sz-tracks-dialog-title">'   +
             '     {title}                  '             +
@@ -773,9 +770,6 @@ if(Pickers == undefined) {
             '<li id="media_picker_{isrc}">'              +
             '    <div class="cover_media">'              +
             '        <img alt="Media picture" src="{fileName}" width="50" />' +
-            '    </div>'                                 +
-            '    <div class="isrc_media">'               +
-            '        <p>{isrc}</p>       '               +
             '    </div>'                                 +
             '    <div class="trackId_media">'            +
             '        <p>{trackId}</p>       '            +
