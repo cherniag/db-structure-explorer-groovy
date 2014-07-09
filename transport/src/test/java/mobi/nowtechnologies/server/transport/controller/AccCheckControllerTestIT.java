@@ -23,6 +23,7 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
@@ -505,6 +506,60 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isOk()).andDo(print());
 
+    }
+
+
+    @Test
+    public void testNoFirstActivationFlagInXML() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "4.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        List<Chart> charts = new ArrayList<Chart>();
+        Chart chart = chartRepository.findOne(5);
+        charts.add(chart);
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setSelectedCharts(charts);
+        userService.updateUser(user);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk()).
+                andExpect(xpath(AccountCheckResponseConstants.USER_X_PATH + "/firstActivation").doesNotExist());
+    }
+
+
+    @Test
+    public void testNoFirstActivationFlagInJSON() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "4.0";
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        List<Chart> charts = new ArrayList<Chart>();
+        Chart chart = chartRepository.findOne(5);
+        charts.add(chart);
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setSelectedCharts(charts);
+        userService.updateUser(user);
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk()).
+                andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH + ".firstActivation").doesNotExist());
     }
 }
 
