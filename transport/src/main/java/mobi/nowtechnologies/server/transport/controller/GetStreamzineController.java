@@ -36,7 +36,7 @@ public class GetStreamzineController extends CommonController {
         User user = null;
         Exception ex = null;
         try {
-            LOGGER.info("Input params: userName [{}] community [{}] resolution [{}] deviceUID [{}]", userName, community, resolution, deviceUID);
+            LOGGER.info("GET_STREAMZINE started: userName [{}], community [{}], resolution [{}], deviceUID [{}]", userName, community, resolution, deviceUID);
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
@@ -56,7 +56,7 @@ public class GetStreamzineController extends CommonController {
             throw e;
         } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("command processing finished");
+            LOGGER.info("GET_STREAMZINE  finished");
         }
     }
 }
