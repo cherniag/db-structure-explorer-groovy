@@ -39,7 +39,8 @@ public class UserPromoServiceTest {
 
         when(userRepository.findOne(anyString(), anyString())).thenReturn(user);
 
-        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(OperationResultFactory.getOperationResult(false, user));
+        MergeResult mergeResult = OperationResultFactory.createOperationResult(false, user);
+        when(userService.applyInitPromo(any(User.class), any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(mergeResult);
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");
 
@@ -52,7 +53,8 @@ public class UserPromoServiceTest {
     public void testApplyInitPromoByEmailActivateError() {
         User user = UserFactory.createUser(ACTIVATED);
 
-        when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(OperationResultFactory.getOperationResult(false, user));
+        MergeResult mergeResult = OperationResultFactory.createOperationResult(false, user);
+        when(userService.applyInitPromo(any(User.class), isNull(String.class), eq(false), eq(true), eq(false))).thenReturn(mergeResult);
         doThrow(ValidationException.class).when(activationEmailService).activate(anyLong(), anyString(), anyString());
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");

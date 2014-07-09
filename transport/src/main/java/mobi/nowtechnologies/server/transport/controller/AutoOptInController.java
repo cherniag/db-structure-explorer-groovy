@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.OperationResult;
+import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +49,7 @@ public class AutoOptInController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            OperationResult mergeResult = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac, checkReactivation);
+            MergeResult mergeResult = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac, checkReactivation);
             AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false).withHasPotentialPromoCodePromotion(true);
 
             return buildModelAndView(accountCheckDTO);

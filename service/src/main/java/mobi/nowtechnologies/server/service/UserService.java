@@ -139,7 +139,7 @@ public class UserService {
         this.autoOptInRuleService = autoOptInRuleService;
     }
 
-    private OperationResult checkAndMerge(User user, User mobileUser) {
+    private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
         if (isNotNull(mobileUser) && mobileUser.getId() != user.getId()) {
             mergeIsDone = true;
@@ -147,7 +147,7 @@ public class UserService {
         }else{
             LOGGER.info("User merge procedure is skipped");
         }
-        return new OperationResult(mergeIsDone, user);
+        return new MergeResult(mergeIsDone, user);
     }
 
     private User updateContractAndProvider(User user, ProviderUserDetails providerUserDetails) {
@@ -177,13 +177,13 @@ public class UserService {
         return userRepository.detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
-    private OperationResult applyInitPromoInternal(PromoRequest promoRequest){
+    private MergeResult applyInitPromoInternal(PromoRequest promoRequest){
         User user = promoRequest.user;
         boolean updateWithProviderUserDetails = promoRequest.isMajorApiVersionNumberLessThan4 || user.isVFNZCommunityUser();
         ProviderUserDetails providerUserDetails = otacValidationService.validate(promoRequest.otac, user.getMobile(), user.getUserGroup().getCommunity());
         LOGGER.info("[{}], u.contract=[{}], u.mobile=[{}], u.operator=[{}], u.activationStatus=[{}] , updateWithProviderUserDetails=[{}]", providerUserDetails, user.getContract(), user.getMobile(), user.getOperator(), user.getActivationStatus(), updateWithProviderUserDetails);
 
-        OperationResult mergeResult = checkAndMerge(user, promoRequest.mobileUser);
+        MergeResult mergeResult = checkAndMerge(user, promoRequest.mobileUser);
         user = mergeResult.getResultOfOperation();
         user = checkAndUpdateWithProviderUserDetails(user, updateWithProviderUserDetails, providerUserDetails);
 
@@ -194,7 +194,7 @@ public class UserService {
         LOGGER.info("Save user with new activationStatus (should be ACTIVATED) and userName (should be as mobile) [{}]", user);
 
         LOGGER.debug("Output parameter user=[{}]", user);
-        return new OperationResult(mergeResult.isMergeDone(), user);
+        return new MergeResult(mergeResult.isMergeDone(), user);
     }
 
     private void disableReactivation(boolean disableReactivationForUser, User user) {
@@ -1387,7 +1387,7 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public OperationResult applyInitPromo(User user, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean checkReactivation) {
+    public MergeResult applyInitPromo(User user, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean checkReactivation) {
         LOGGER.info("apply init promo o2 userId = [{}], mobile = [{}], activationStatus = [{}], isMajorApiVersionNumberLessThan4=[{}]", user.getId(), user.getMobile(), user.getActivationStatus(), isMajorApiVersionNumberLessThan4);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
@@ -1396,13 +1396,13 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public OperationResult applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
+    public MergeResult applyInitPromo(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean disableReactivationForUser) {
         PromoRequest promoRequest = new PromoRequestBuilder().setUser(user).setMobileUser(mobileUser).setOtac(otac).setIsMajorApiVersionNumberLessThan4(isMajorApiVersionNumberLessThan4).setIsApplyingWithoutEnterPhone(isApplyingWithoutEnterPhone).
                 setIsSubjectToAutoOptIn(false).setDisableReactivationForUser(disableReactivationForUser).createPromoRequest();
-        OperationResult mergeResult = applyInitPromoInternal(promoRequest);
+        MergeResult mergeResult = applyInitPromoInternal(promoRequest);
         user = mergeResult.getResultOfOperation();
         user.setHasPromo(user.isPromotionApplied());
-        return new OperationResult(mergeResult.isMergeDone(), user);
+        return new MergeResult(mergeResult.isMergeDone(), user);
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1598,16 +1598,16 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public OperationResult autoOptIn(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) {
+    public MergeResult autoOptIn(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) {
         User user = checkUser(communityUri, userName, userToken, timestamp, deviceUID, false, ENTERED_NUMBER, ACTIVATED);
         return autoOptIn(user, otac, checkReactivation);
     }
 
-    private OperationResult autoOptIn(User user, String otac, boolean checkReactivation) {
+    private MergeResult autoOptIn(User user, String otac, boolean checkReactivation) {
         LOGGER.info("Attempt to auto opt in, otac {}", otac);
 
         User mobileUser = userRepository.findByUserNameAndCommunityAndOtherThanPassedId(user.getMobile(), user.getUserGroup().getCommunity(), user.getId());
-        OperationResult resultObject = null;
+        MergeResult resultObject = null;
 
         user.withOldUser(mobileUser);
         if(!autoOptInRuleService.isSubjectToAutoOptIn(ALL, user)) {
@@ -1630,9 +1630,9 @@ public class UserService {
         PaymentDetails paymentDetails = paymentDetailsService.createDefaultO2PsmsPaymentDetails(user);
         user =  paymentDetails.getOwner();
         if (resultObject != null){
-            return new OperationResult(resultObject.isMergeDone(), user);
+            return new MergeResult(resultObject.isMergeDone(), user);
         }
-        return new OperationResult(false, user);
+        return new MergeResult(false, user);
     }
 
     @Transactional(propagation = REQUIRED)

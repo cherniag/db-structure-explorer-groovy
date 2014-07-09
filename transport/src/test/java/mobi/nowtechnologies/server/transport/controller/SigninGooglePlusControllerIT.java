@@ -142,12 +142,12 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)
         ).andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/socialInfoType").string("GooglePlus"))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/googlePlusId").string(googlePlusUserId))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/email").string(googlePlusEmail))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/firstName").string(firstName))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/surname").string(lastName))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/profileUrl").string(pictureUrl));
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/socialInfoType").string("GooglePlus"))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/googlePlusId").string(googlePlusUserId))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/email").string(googlePlusEmail))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/firstName").string(firstName))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/surname").string(lastName))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/profileUrl").string(pictureUrl));
     }
 
 
@@ -397,7 +397,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)
-        ).andExpect(status().isOk()).andExpect(xpath(USER_X_PATH + "/firstActivation").booleanValue(true));
+        ).andExpect(status().isOk()).andExpect(xpath(USER_XML_PATH + "/firstActivation").booleanValue(true));
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), googlePlusEmail);
@@ -408,7 +408,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)
-        ).andExpect(status().isOk()).andExpect(xpath(USER_X_PATH + "/firstActivation").booleanValue(false));;
+        ).andExpect(status().isOk()).andExpect(xpath(USER_XML_PATH + "/firstActivation").booleanValue(false));;
     }
 
     @Test

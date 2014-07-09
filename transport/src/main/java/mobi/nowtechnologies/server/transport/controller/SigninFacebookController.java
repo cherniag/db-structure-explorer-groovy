@@ -2,9 +2,9 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.OperationResult;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
@@ -63,7 +63,7 @@ public class SigninFacebookController extends CommonController {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             FacebookUserInfo userInfo = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
-            OperationResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
+            MergeResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
             return buildModelAndView(accCheckService.processAccCheck(mergeResult, true));
         } catch (UserCredentialsException ce) {
             ex = ce;

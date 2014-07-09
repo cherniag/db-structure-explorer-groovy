@@ -130,7 +130,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessWithXML() throws Exception {
         setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
-        String facebookElementXPath = "//userDetails";
+        String facebookElementXPath = AccountCheckResponseConstants.USER_DETAILS_XML_PATH;
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, false)
@@ -153,16 +153,16 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, false)
         ).andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/socialInfoType").string("Facebook"))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/facebookId").string(fbUserId))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/email").string(fbEmail))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/firstName").string(firstName))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/surname").string(lastName))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/userName").string(userName))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture?type=large"))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/location").string(locationInResponse))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/gender").string("MALE"))
-                .andExpect(xpath(USER_DETAILS_X_PATH + "/birthDay").string("12/01/1990")
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/socialInfoType").string("Facebook"))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/facebookId").string(fbUserId))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/email").string(fbEmail))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/firstName").string(firstName))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/surname").string(lastName))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/userName").string(userName))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/profileUrl").string("https://graph.facebook.com/" + userName + "/picture?type=large"))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/location").string(locationInResponse))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/gender").string("MALE"))
+                .andExpect(xpath(USER_DETAILS_XML_PATH + "/birthDay").string("12/01/1990")
                 );
     }
 
@@ -298,7 +298,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.response.data[0].user").exists());
+                .andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH).exists());
     }
 
 
@@ -326,7 +326,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.response.data[0].user").exists());
+                .andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH).exists());
 
     }
 
@@ -403,14 +403,14 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, false)
-        ).andExpect(status().isOk()).andExpect(xpath(USER_X_PATH + "/firstActivation").booleanValue(true));
+        ).andExpect(status().isOk()).andExpect(xpath(USER_XML_PATH + "/firstActivation").booleanValue(true));
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), fbEmail);
         resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, false)
-        ).andDo(print()).andExpect(status().isOk()).andExpect(xpath(USER_X_PATH + "/firstActivation").booleanValue(false));
+        ).andDo(print()).andExpect(status().isOk()).andExpect(xpath(USER_XML_PATH + "/firstActivation").booleanValue(false));
     }
 
 

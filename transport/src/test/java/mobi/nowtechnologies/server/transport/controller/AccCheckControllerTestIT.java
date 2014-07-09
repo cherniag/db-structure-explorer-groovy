@@ -532,7 +532,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isOk()).
-                andExpect(xpath(AccountCheckResponseConstants.USER_X_PATH + "/firstActivation").doesNotExist());
+                andExpect(xpath(AccountCheckResponseConstants.USER_XML_PATH + "/firstActivation").doesNotExist());
     }
 
 

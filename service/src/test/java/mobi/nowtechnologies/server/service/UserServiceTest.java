@@ -2517,7 +2517,7 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        OperationResult resultOfOperation = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        MergeResult resultOfOperation = userServiceSpy.applyInitPromo(user, otac, false, false, false);
         User result = resultOfOperation.getResultOfOperation();
 
         //then
@@ -2554,7 +2554,7 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        OperationResult opResult = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, false, false, false);
         User result = opResult.getResultOfOperation();
 
         //then
@@ -2589,7 +2589,7 @@ public class UserServiceTest {
 		
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 		
-		OperationResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+		MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
         User result = opResult.getResultOfOperation();
 		
 		assertNotNull(result);
@@ -2625,7 +2625,7 @@ public class UserServiceTest {
 
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
-        OperationResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+        MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
 
         User result = opResult.getResultOfOperation();
 		
@@ -3235,7 +3235,7 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).save(expectedUser);
 
         //when
-        OperationResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        MergeResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
         User actualUser = opResult.getResultOfOperation();
 
         //then
@@ -3270,7 +3270,7 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
 
         //when
-        OperationResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        MergeResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
         User actualUser = opResult.getResultOfOperation();
 
         //then
@@ -3389,7 +3389,7 @@ public class UserServiceTest {
         doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
 
         //when
-        OperationResult opResult = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac, false);
+        MergeResult opResult = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac, false);
         User actualUser = opResult.getResultOfOperation();
 
         //then
@@ -3699,7 +3699,7 @@ public class UserServiceTest {
         });
 
         //when
-        OperationResult opResult = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
+        MergeResult opResult = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
         User actualUser = opResult.getResultOfOperation();
 
         //then
