@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.dto.ImageDTO;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.service.CloudFileImagesService;
-import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,9 @@ public class BadgesService {
         return filenameAliasRepository.findAllByDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
     }
 
-
     public boolean update(String oldName, String newName) {
+        logger().info("Updating alias: " + oldName + " to: " + newName);
+
         FilenameAlias found = filenameAliasRepository.findByAlias(oldName);
 
         Assert.notNull(found);
@@ -50,19 +50,17 @@ public class BadgesService {
 
     @Transactional
     public void delete(String name) {
+        logger().info("Deleting alias for: " + name);
+
         FilenameAlias byAlias = filenameAliasRepository.findByAlias(name);
 
         filenameAliasRepository.delete(byAlias);
-
-        try {
-            cloudFileImagesService.deleteImage(byAlias.getFileName());
-        } catch (ExternalServiceException e) {
-            logger().error("Error during deleting badge: ", e);
-        }
     }
 
     @Transactional
     public ImageDTO upload(MultipartFile file) {
+        logger().info("Uploading " + file);
+
         final String fileNameInCloud = generateUniqueFileName(file);
 
         filenameAliasRepository.save(new FilenameAlias(fileNameInCloud, fileNameInCloud).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
