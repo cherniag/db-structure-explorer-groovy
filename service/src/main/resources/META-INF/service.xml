@@ -17,6 +17,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <import resource="classpath:META-INF\service-details-extractors.xml"/>
 
+    <import resource="classpath:META-INF\service-chart-supporter.xml"/>
+
 	<!-- Application properties -->
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">

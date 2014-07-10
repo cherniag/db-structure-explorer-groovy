@@ -50,6 +50,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                                     <includes>
                                         <include>**/*IT.java</include>
                                     </includes>
@@ -70,6 +71,7 @@
                 <version>2.16</version>
                 <configuration>
                     <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
             <plugin>
