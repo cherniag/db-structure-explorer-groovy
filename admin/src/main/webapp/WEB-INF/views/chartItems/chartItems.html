@@ -28,6 +28,10 @@
     	font-size: 11px;
     	width: 140px!important;
 	}
+    .label_media {
+        font-size: 11px;
+        width: 50px !important;
+    }
 	.title_media {
     	font-size: 11px;
     	width: 80px!important;
@@ -41,7 +45,7 @@
         font-size: 11px;
         width: 50px!important;
     }
-	
+
 	.basket_button {
 		font-size: 11px;
     	width: 10px;
@@ -325,6 +329,10 @@
                                      th:text="#{chartItems.page.mediasTable.head.code}">
                                     Artist22
                                 </div>
+                                <div class="label_media"
+                                     th:text="#{chartItems.page.mediasTable.head.label}">
+                                    The label
+                                </div>
 							</li>
 						</ul>
 						<ul class="table table_up" id="mediaList">
@@ -521,7 +529,7 @@
  		$("#chartItemsBasketSortable li#emptyList").css("display","none");
  		
  		
- 		var hiddendiv = item.find("div.position_chartItem, div.prev_position_chartItem, div.locked_chartItem, div.change_position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button");
+ 		var hiddendiv = item.find("div.position_chartItem, div.prev_position_chartItem, div.locked_chartItem, div.change_position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button, div.label_media");
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
@@ -586,7 +594,7 @@
 		item.removeAttr("class");
 		item.removeAttr("style");
 		
-		var hiddendiv = item.find("div.isrc_media, div.title_media, div.artist_media, div.basket_button, div.terr_code");
+		var hiddendiv = item.find("div.isrc_media, div.title_media, div.artist_media, div.basket_button, div.terr_code, div.label_media");
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
@@ -947,9 +955,13 @@
         var artistMediaDiv = $('<div>').attr({
             "class":"terr_code"
         }).text(code_text).appendTo(li);
-		
+        $('<div>').attr({
+            "class":"label_media"
+        }).text(chartItem.mediaDto.label).appendTo(li);
+
 		var artistMediaDiv = $('<div>').attr({
-			"class":"basket_button"
+			"class":"basket_button",
+            "style": "margin-left:80%"
 		}).appendTo(li);
 		$('<button>').attr({
 			"type":"button",
