@@ -350,11 +350,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("COMMUNITY_NAME", apiVersion)
         ).andDo(print())
                 .andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath("//chart/playlist").nodeCount(6))
+                .andExpect(xpath("//chart/playlist").nodeCount(7))
                 .andExpect(xpath("//chart/playlist[type/text()='HOT_TRACKS']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='FIFTH_CHART']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_1']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(2))
                 .andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1))
                 .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_HL_UK.replace("%", "%%") + "']").exists());

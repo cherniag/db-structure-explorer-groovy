@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>server</artifactId>
 		<groupId>mobi.nowtechnologies.java</groupId>
-		<version>5.4.6-SNAPSHOT</version>
+		<version>5.4.7-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 

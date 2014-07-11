@@ -4,6 +4,8 @@ import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
+import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
@@ -286,7 +288,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl>https://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
+        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl>http://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
     }
 
     @Test
