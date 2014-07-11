@@ -29,6 +29,7 @@ insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, typ
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (14,'Default Chart',21,1,1321452650,6, 'HL_UK_PLAYLIST_1');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (15,'Default Chart',21,1,1321452650,6, 'HL_UK_PLAYLIST_2');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (16,'Default Chart',21,1,1321452650,6, 'OTHER_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (17,'Default Chart',21,1,1321452650,6, 'HL_UK_PLAYLIST_2');
 
 insert into community_charts (chart_id, community_id) values (1,1);
 insert into community_charts (chart_id, community_id) values (1,2);
@@ -49,6 +50,7 @@ insert into community_charts (chart_id, community_id) values (13,9);
 insert into community_charts (chart_id, community_id) values (14,9);
 insert into community_charts (chart_id, community_id) values (15,9);
 insert into community_charts (chart_id, community_id) values (16,9);
+insert into community_charts (chart_id, community_id) values (17,9);
 
 insert into tb_files (i, filename, size, fileType, version, duration) values (1894,'US-UM7-11-00061.aud',1464070,2,1, 0);
 insert into tb_files (i, filename, size, fileType, version, duration) values (1893,'US-UM7-11-00061.hdr',162676,1,666, 0);
