@@ -86,7 +86,7 @@ public abstract class AbstractControllerTestIT {
     @Autowired
     private SQLTestInitializer sqlTestInitializer;
 
-    private JsonPath jsonPath = JsonPath.compile("$.response.data[0].user");
+    private JsonPath jsonPath = JsonPath.compile(AccountCheckResponseConstants.USER_JSON_PATH);
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

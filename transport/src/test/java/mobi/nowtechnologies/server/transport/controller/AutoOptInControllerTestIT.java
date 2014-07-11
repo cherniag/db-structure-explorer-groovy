@@ -324,7 +324,7 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isOk()).andExpect(xpath(AccountCheckResponseConstants.USER_X_PATH + "/firstActivation").booleanValue(true));
+        ).andExpect(status().isOk()).andExpect(xpath(AccountCheckResponseConstants.USER_XML_PATH + "/firstActivation").booleanValue(true));
     }
 
     @Test

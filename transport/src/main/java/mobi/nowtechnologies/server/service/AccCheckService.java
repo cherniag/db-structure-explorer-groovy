@@ -44,11 +44,15 @@ public class AccCheckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
 
 
-    public AccountCheckDto processAccCheck(OperationResult operationResult, boolean withUserDetails) {
-        return processAccCheck(operationResult.getResultOfOperation(), withUserDetails, !operationResult.isMergeDone());
+    public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails) {
+        return processAccCheck(mergeResult.getResultOfOperation(), withUserDetails, !mergeResult.isMergeDone());
     }
 
-    public AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation) {
+    public AccountCheckDto processAccCheck(User user, boolean withUserDetails) {
+        return processAccCheck(user, withUserDetails, null);
+    }
+
+    private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation) {
 
         user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
 

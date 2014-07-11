@@ -1,16 +1,14 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import org.springframework.util.Assert;
 
 /**
  * Created by Oleg Artomov on 7/8/2014.
  */
-public class OperationResult {
-
+public class MergeResult {
     private boolean mergeDone;
-
     private User resultOfOperation;
-
 
     public boolean isMergeDone() {
         return mergeDone;
@@ -20,7 +18,9 @@ public class OperationResult {
         return resultOfOperation;
     }
 
-    public OperationResult(boolean mergeDone, User resultOfMerge) {
+    public MergeResult(boolean mergeDone, User resultOfMerge) {
+        Assert.notNull(resultOfMerge);
+
         this.mergeDone = mergeDone;
         this.resultOfOperation = resultOfMerge;
     }
@@ -30,11 +30,10 @@ public class OperationResult {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OperationResult that = (OperationResult) o;
+        MergeResult result = (MergeResult) o;
 
-        if (mergeDone != that.mergeDone) return false;
-        if (resultOfOperation != null ? !resultOfOperation.equals(that.resultOfOperation) : that.resultOfOperation != null)
-            return false;
+        if (mergeDone != result.mergeDone) return false;
+        if (!resultOfOperation.equals(result.resultOfOperation)) return false;
 
         return true;
     }
@@ -42,8 +41,7 @@ public class OperationResult {
     @Override
     public int hashCode() {
         int result = (mergeDone ? 1 : 0);
-        result = 31 * result + (resultOfOperation != null ? resultOfOperation.hashCode() : 0);
+        result = 31 * result + resultOfOperation.hashCode();
         return result;
     }
-
 }

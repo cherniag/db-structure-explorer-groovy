@@ -495,7 +495,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andExpect(xpath(AccountCheckResponseConstants.USER_X_PATH + "/firstActivation").booleanValue(true));
+        ).andExpect(status().isOk()).andExpect(xpath(AccountCheckResponseConstants.USER_XML_PATH + "/firstActivation").booleanValue(true));
     }
 
 
