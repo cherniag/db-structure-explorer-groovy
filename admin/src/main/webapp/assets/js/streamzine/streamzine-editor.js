@@ -67,7 +67,11 @@ if(Streamzine.Presenter.Editor == undefined) {
                                     e.attr('src', r[m]);
                                     e.removeAttr('alt').removeAttr('class').addClass( ((thisIsCover)?'sz-cover-url-editor':'sz-badge-url-editor') );
                                 } else {
-                                    e.attr('alt', 'No image');
+                                    if(m == 'badgeUrl') {
+                                        e.attr('alt', 'No badge');
+                                    } else {
+                                        e.attr('alt', 'No image');
+                                    }
                                     e.removeAttr('class').addClass( ((thisIsCover)?'sz-no-cover-url-editor':'sz-no-badge-url-editor') );
                                 }
                                 continue;

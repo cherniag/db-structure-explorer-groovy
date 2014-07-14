@@ -63,7 +63,7 @@ public class DeepLinkUrlFactoryTest {
 
         //check
         String o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk");
-        assertThat(o, is("hl_uk://page/about"));
+        assertThat(o, is("hl-uk://page/about"));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl_uk://page/account?action=subscribe"));
+        assertThat((String)o, is("hl-uk://page/account?action=subscribe"));
     }
 
     @Test
@@ -85,10 +85,10 @@ public class DeepLinkUrlFactoryTest {
         InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "http://bear.ru");
 
         //check
-        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk");
+        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "o2");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl_uk://web/aHR0cDovL2JlYXIucnU="));
+        assertThat((String)o, is("o2://web/aHR0cDovL2JlYXIucnU="));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl_uk://content/track?id=TRACK-10"));
+        assertThat((String)o, is("hl-uk://content/track?id=TRACK-10"));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class DeepLinkUrlFactoryTest {
 
         //check
         String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk");
-        assertThat(o, is("hl_uk://content/playlist?id=HOT_TRACKS"));
+        assertThat(o, is("hl-uk://content/playlist?id=HOT_TRACKS"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class DeepLinkUrlFactoryTest {
 
         //check
         String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo, "hl_uk");
-        assertThat(o, is("hl_uk://content/story?id=10"));
+        assertThat(o, is("hl-uk://content/story?id=10"));
     }
 
     @Test
@@ -142,8 +142,8 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(newsListDeeplinkInfo)).thenReturn((Enum) NewsType.LIST);
 
         //check
-        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo, "hl_uk");
-        assertThat(o, is("hl_uk://content/news?id=1419120000"));
+        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo, "hl-uk");
+        assertThat(o, is("hl-uk://content/news?id=1419120000"));
     }
 
     private Media getMedia(Integer id, String isrc) {

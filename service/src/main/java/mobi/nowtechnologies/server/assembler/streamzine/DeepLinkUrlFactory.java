@@ -35,7 +35,7 @@ public class DeepLinkUrlFactory {
         Assert.isTrue(!(deeplinkInfo instanceof ManualCompilationDeeplinkInfo));
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
-        uriComponentsBuilder.scheme(community);
+        uriComponentsBuilder.scheme(createScheme(community));
         uriComponentsBuilder.host(FeatureValueType.of(deeplinkInfo).getId());
         uriComponentsBuilder.pathSegment(ContentSubType.of(deepLinkInfoService.getSubType(deeplinkInfo)).getName());
         uriComponentsBuilder.pathSegment(decideSubValueForPromotional(deeplinkInfo));
@@ -44,6 +44,10 @@ public class DeepLinkUrlFactory {
         putIdQueryParamIfNotPromotional(deeplinkInfo, uriComponentsBuilder);
 
         return uriComponentsBuilder.build().toUriString();
+    }
+
+    private String createScheme(String community) {
+        return community.replace('_', '-');
     }
 
     private String decideSubValueForPromotional(DeeplinkInfo deeplinkInfo) {
@@ -102,4 +106,5 @@ public class DeepLinkUrlFactory {
     public void setDeepLinkInfoService(DeepLinkInfoService deepLinkInfoService) {
         this.deepLinkInfoService = deepLinkInfoService;
     }
+
 }
