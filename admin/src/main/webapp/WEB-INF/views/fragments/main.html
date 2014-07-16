@@ -88,6 +88,7 @@ section {
 					<ul class="nav" th:object="${#httpServletRequest}">
 						<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
 						<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
+						<li th:class="*{pathInfo}=='streamzine' or *{pathInfo}=='/streamzine' or *{pathInfo}=='/streamzine/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/streamzine}">Magazine Channel</a></li>
 						<li th:class="*{pathInfo}=='users' or *{pathInfo}=='/users' or *{pathInfo}=='/users/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/users}" ref="#" th:text="#{navbar.users}">Users</a></li>
 						<li th:class="*{pathInfo}=='news' or *{pathInfo}=='/news/' or *{pathInfo}=='/news/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/news}">News</a></li>
 						<li th:class="*{pathInfo}=='/messages' or *{pathInfo}=='/messages/' or *{pathInfo}=='/messages/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/messages}">Messages</a></li>
@@ -109,7 +110,7 @@ section {
 
 						<li class="pull-right" th:if="*{userPrincipal}">
 							<form class="navbar-form pull-right">
-								<select class="span2" th:title="@{/(community='')}" onChange="location.href=this.title+this.value">
+								<select style="width:auto;" th:title="@{/(community='')}" onChange="location.href=this.title+this.value">
 									<option th:each="commnity : ${communities}" th:value="${commnity.url}" th:text="${commnity.url}" th:selected="${commnity.active}?'selected'" />
 								</select>
 							</form>

@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -18,7 +19,7 @@ public class ChartIT extends AbstractAdminITTest {
         String name = "Basic Chart Name";
         String subtitle = "Basic Chart Subtitle";
         byte[] file = "1".getBytes();
-        String requestURI = "/charts/" + id + "/" + new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date());
+        String requestURI = "/charts/" + id + "/" + new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(DateUtils.addHours(new Date(), 10));
         String communityUrl = "nowtop40";
         String imageFileName = "someImageFileName";
 

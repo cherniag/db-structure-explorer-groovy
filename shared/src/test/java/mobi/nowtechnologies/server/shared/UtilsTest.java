@@ -28,12 +28,6 @@ public class UtilsTest {
     private static final int WEEK_SECONDS = 7 * ONE_DAY_SECONDS;
 
     @Test
-    public void testUtils_1() throws Exception {
-        Utils result = new Utils();
-        assertNotNull(result);
-    }
-
-    @Test
     public void testCreateStoredToken_1() throws Exception {
         String username = "";
         String password = "";

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean name="mobileApplicationPagesService" class="mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService">
+        <constructor-arg>
+            <value>file:#{systemProperties['catalina.base']}/conf/streamzine/pages.txt</value>
+        </constructor-arg>
+        <constructor-arg>
+            <value>file:#{systemProperties['catalina.base']}/conf/streamzine/actions.txt</value>
+        </constructor-arg>
+    </bean>
+
+    <bean name="fileNameAliasService" class="mobi.nowtechnologies.server.service.streamzine.BadgesService">
+        <property name="filenameAliasRepository" ref="filenameAliasRepository" />
+        <property name="cloudFileImagesService" ref="cloudFileImagesService" />
+    </bean>
+
+    <bean name="aliasDtoAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.FileNameAliasDtoAsm">
+    </bean>
+
+    <bean name="streamzineAdminMediaAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm">
+        <property name="streamzineCommunity" value="${admin.streamzine.enabled.community.url}" />
+        <property name="chartService" ref="service.ChartService"/>
+    </bean>
+
+    <bean name="streamzineUpdateAdminAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm">
+        <property name="messageSource" ref="messageSource" />
+        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+        <property name="userRepository" ref="userRepository"/>
+        <property name="streamzineAdminMediaAsm" ref="streamzineAdminMediaAsm"/>
+    </bean>
+
+    <bean name="typesMappingAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm">
+        <property name="messageSource" ref="messageSource" />
+    </bean>
+
+    <bean name="rulesInfoAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.RulesInfoAsm" />
+
+    <bean name="streamzineTypesMappingService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService">
+    </bean>
+
+    <bean name="cloudFileMetadaService" class="mobi.nowtechnologies.server.service.file.image.CloudFileMetadataService">
+        <property name="imageService" ref="imageService" />
+    </bean>
+
+    <bean name="cloudFileImagesService" class="mobi.nowtechnologies.server.service.CloudFileImagesService">
+        <property name="cloudFileService" ref="service.CloudFileService" />
+        <property name="cloudFileMetadataService" ref="cloudFileMetadaService" />
+    </bean>
+
+    <bean id="adminUserService" class="mobi.nowtechnologies.server.service.impl.AdminUserServiceImpl">
+        <property name="dataSource" ref="securityDataSource"/>
+    </bean>
+
+    <!-- Application Message Bundle -->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames" value="file:#{systemProperties['catalina.base']}/conf/i18n/admin/messages, /i18n/messages" />
+        <property name="defaultEncoding" value="UTF-8" />
+        <property name="fileEncodings" value="UTF-8" />
+        <property name="cacheSeconds" value="180" />
+        <property name="useCodeAsDefaultMessage" value="true" />
+    </bean>
+
+    <alias name="messageSource" alias="rootMessageSource"/>
+</beans>

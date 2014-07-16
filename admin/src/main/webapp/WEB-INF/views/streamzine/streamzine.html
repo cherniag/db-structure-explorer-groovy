@@ -1,0 +1,680 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+    <script th:src="@{/assets/js/streamzine/events.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/template.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/streamzine-model.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/pickers.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/streamzine.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/streamzine-editor.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/streamzine-preview.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/streamzine-validation.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/streamzine-tile.js}">
+    </script>
+    <script th:src="@{/assets/js/streamzine/streamzine-mapping.js}">
+    </script>
+    <style type="text/css">
+        .image_chartItemBasket {
+            font-size: 10px;
+            width: 50px;
+        }
+        .channel_chartItemBasket {
+            font-size: 9px;
+            font-weight: bold;
+            width: 80px;
+        }
+        .ArtistTitle_chartItemBasket {
+            font-size: 9px;
+            font-weight: bold;
+            width: 150px;
+        }
+        .info_chartItemBasket {
+            font-size: 10px;
+            width: 150px;
+        }
+        .cover_media {
+            font-size: 11px;
+            width: 50px;
+        }
+        .isrc_media {
+            font-size: 11px;
+            width: 100px;
+        }
+        .title_media {
+            font-size: 11px;
+            width: 150px;
+        }
+        .artist_media {
+            font-size: 11px;
+            width: 150px;
+        }
+
+        .basket_button {
+            font-size: 11px;
+            width: 10px;
+        }
+
+        #emptyList {
+            border: 1px dotted #cccccc!important;
+            height: 70px;
+            text-align: center;
+            cursor: auto!important;
+        }
+
+        #emptyList span {
+            line-height: 70px;
+            font-size: 16px;
+            color: #cccccc;
+        }
+
+        .nav-pills > li > a {
+            border-radius: 5px 5px 5px 5px;
+            margin-bottom: 2px;
+            margin-top: 2px;
+            padding: 10px 30px;
+        }
+
+        .navButtonsWithoutBorder {
+            margin-left: 920px;
+            margin-left: 0;
+        }
+
+        .navButtonsWithoutBorder form {
+            margin-left: 20px;
+        }
+
+        ul.headerFrame li.title {
+            background: url("../../assets/img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+            border: none;
+            box-shadow: none;
+            margin-bottom: 25px;
+        }
+
+        .wellWithoutBorder {
+            background: url("../../assets/img/calendar_bg.png") repeat scroll 0 0 padding-box transparent;
+            border: none;
+            box-shadow: none;
+            margin-bottom: 20px;
+            min-height: 20px;
+            padding: 19px;
+        }
+
+        .chartControl {
+            /*margin-left: 920px;*/
+            width: 580px;
+            height: 300px;
+            top: 75px;
+            left: 920px;
+            position: absolute;
+            overflow-y: none;
+        }
+
+        #chartItemsTable li div {
+            border: medium none;
+            display: inline-block;
+            width: 100px;
+            height: 100%;
+            vertical-align: top;
+        }
+
+        #chartItemsTable li {
+            background-color: #FFFFFF;
+            padding: 10px 0;
+            margin-top: -1px;
+        }
+
+        #chartItemsTable {
+            list-style-type: none;
+        }
+
+        #chartItemsTable li div.position_chartItem {
+            font-size: 9px;
+            font-weight: bold;
+            padding-left: 4px;
+            width: 5%;
+        }
+
+        #chartItemsTable li div.prev_position_chartItem {
+            font-size: 9px;
+            font-weight: bold;
+            height: 60px !important;
+            width: 5%;
+        }
+
+        #chartItemsTable li div.change_position_chartItem {
+            font-size: 9px;
+            font-weight: bold;
+            width: 9%;
+        }
+
+        #chartItemsTable li div.locked_chartItem {
+            font-size: 9px;
+            font-weight: bold;
+            width: 9%;
+        }
+
+        #chartItemsTable li div.image_chartItem {
+            font-size: 10px;
+            width: 9%;
+        }
+
+        #chartItemsTable li div.channel_chartItem {
+            font-size: 9px;
+            font-weight: bold;
+            height: 60px !important;
+            width: 15%;
+        }
+
+        #chartItemsTable li div.ArtistTitle_chartItem {
+            font-size: 9px;
+            font-weight: bold;
+            width: 18%;
+        }
+
+        #chartItemsTable li div.info_chartItem {
+            font-size: 10px;
+            height: 60px !important;
+            overflow: hidden;
+            width: 15%;
+        }
+
+        #chartItemsTable li div.publishDate_chartItem {
+            font-size: 10px;
+            width: 12%;
+        }
+
+    </style>
+	<body>
+		<div th:substituteby="tpl::navbar"></div>
+        <div style="padding: 60px; color: red;" class="container" th:unless="${enabledCommunity} == ${activeCommunity}">
+            Streamzine is not enabled for current community <span th:text="${activeCommunity}"/>. You should select <span th:text="${enabledCommunity}"/>.
+        </div>
+        <div class="container" th:if="${enabledCommunity} == ${activeCommunity}">
+            <div style="margin-bottom: 15px;"></div>
+
+            <div class="streamzineEditor">
+                <div id="blocksEditorId" th:if="${update != null}">
+                    <div id="wideRangeId" data-shapeType="WIDE" th:class="${(update.canEdit)?'streamzine_shape streamzine_shape_WIDE':'ui-state-disabled streamzine_shape streamzine_shape_WIDE'}">Wide</div>
+                    <div id="narrowShapeId" data-shapeType="NARROW" th:class="${(update.canEdit)?'streamzine_shape streamzine_shape_NARROW':'ui-state-disabled streamzine_shape streamzine_shape_NARROW'}">Narrow | Narrow</div>
+                    <div id="slimShapeId" data-shapeType="SLIM_BANNER" th:class="${(update.canEdit)?'streamzine_shape streamzine_shape_SLIM_BANNER':'ui-state-disabled streamzine_shape streamzine_shape_SLIM_BANNER'}">Slim Banner</div>
+                </div>
+                <div id="blocksEditorId" th:unless="${update != null}">
+                    <div id="wideRangeId" class="streamzine_shape streamzine_shape_WIDE" data-shapeType="WIDE">Wide</div>
+                    <div id="narrowShapeId" class="streamzine_shape streamzine_shape_NARROW" data-shapeType="NARROW">Narrow | Narrow</div>
+                    <div id="slimShapeId" class="streamzine_shape streamzine_shape_SLIM_BANNER" data-shapeType="SLIM_BANNER">Slim Banner</div>
+                </div>
+
+                <div class="streamzinePropertiesEditor">
+                    <select id="contentTypeId" disabled="disabled">
+                    </select>
+                    <select id="subTypeId" disabled="disabled">
+                    </select>
+                    <div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="streamzineList">
+                <div class="streamzineListWide">
+                    <ul th:if="${update != null}" class="table_streamzine table_up" id="sortableGrid"  style="margin:5px 0px 0px 0px">
+                        <div style="width:100%;" id="firstBlockId" th:class="${'streamzine_placeholder_' + update.blocks.empty}">No blocks. Drag here to create new one</div>
+
+                        <div th:each="block, it: ${update.blocks}" th:id="${'block_item_' + block.position}" th:class="${(update.canEdit)?'':'ui-state-disabled'}">
+
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="newsCalendar">
+                <div>
+                    <div id="datepicker" class="datepicker"></div><br/><br/>
+                </div>
+
+                <div th:if="${notValidDate != null}" class="streamzine-error-title" style="margin:0px 30px;">
+                    Can not create update for time <br/> <span th:text="${#dates.format(notValidDate, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+                <div th:if="${notValidPublishedDate != null}" class="streamzine-error-title" style="margin:0px 30px;">
+                    This update is already published. You cannot remove this update <br/>
+                </div>
+
+                <div>
+                    <div th:each="updateDto, it: ${list}" class="updateButton">
+                        <form th:id="'editFormId_'+${updateDto.id}"
+                              th:action="@{/streamzine/edit/__${updateDto.id}__}"
+                              class="edit_btn"
+                              method="get">
+                            <button
+                                    style="padding: 10px 80px;"
+                                    class="btn btn-primary"
+                                    type="button"
+                                    th:onClick="'Streamzine.Presenter.onEditUpdateSubmit('+${updateDto.id}+',\'editFormId_'+${updateDto.id}+'\');'"
+                                    th:text="${#dates.format(updateDto.date, 'HH:mm')}">Edit for this time</button>
+                        </form>
+                        <form th:id="'updateListFormId_'+${updateDto.id}" class="edit_btn" th:action="@{/streamzine/delete/__${updateDto.id}__/__${#dates.format(updateDto.date, 'yyyy-MM-dd')}__/}" method="get">
+                            <a href="javascript:;" th:onClick="'Streamzine.Presenter.deleteUpdate(\'updateListFormId_'+${updateDto.id}+'\','+${updateDto.id}+',\''+${#dates.format(updateDto.date, 'yyyy-MM-dd HH:mm')}+'\')'">
+                                <img th:src="@{/assets/img/icon_delete.png}" th:alt="#{chartItems.page.deleteChartItemsSetForm.submit.text}" width="32" height="32"/>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+
+                <div>
+                    <form class="paddingTop" id="createStreamzineUpdateForm">
+                        <input class="u" type="text" style="width: 70px" id="timepicker_customrange" />
+                        <button class="u_btn" type="button" value="Edit Chart" th:onClick="'Streamzine.Presenter.onAddUpdateSubmit();'">Add</button>
+                    </form>
+                </div>
+
+                <div id="errorsEditor" class="updateButton">
+                </div>
+
+                <div id="selectedUserId" class="updateButton">
+                </div>
+
+                <div class="streamzine-buttons" th:if="${update != null and update.canEdit}">
+                    <button class="btn btn-warning" type="button" id="publishUpdateButtonId" onclick="Events.fire('USER_PICKING')">Filter update</button>
+                    <button class="btn btn-info" type="button" onclick="return StreamzinePreview.Presenter.previewUpdate()">Preview</button>
+                    <button class="btn btn-danger" type="submit" id="cancelBlocksButtonId" onclick="Events.fire('CANCEL')">Cancel</button>
+                    <button class="btn btn-success" type="submit" id="saveBlocksButtonId" onclick="Events.fire('SAVE')">Save</button>
+                </div>
+            </div>
+
+            <!-- Modals -->
+
+            <!-- PREVIEW: -->
+            <div class="modal fade streamzine-modal" id="previewModalDialogId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div style="min-height: 50px;" id="previewModalDialogCommonId">
+                            <div id="previewModalDialogViewId" style="float:left;width:100%;height:100%;"></div>
+                            <div id="previewModalDialogEditorId" class="streamzine-modal-property-editor"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" id="streamzinePreviewSaveId">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true" id="streamzinePreviewCancelId">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badge picker -->
+            <div class="modal fade sz-dialog-init" id="badgePickerId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Manage badges</h4>
+                        </div>
+                        <div class="badges-image-picker">
+                            <form
+                                  th:action="@{/streamzine/badges/upload}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  accept-charset="UTF-8"
+                                  id="badgePickerFormId">
+                                <input name="file" type="file" accept="image" />
+                                <br />
+                            </form>
+                            <div id="badgeUploadResponseHolderId">
+
+                            </div>
+                        </div>
+                        <div>
+                            <h5>Saved badges</h5>
+                            <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
+                            <ul class="table headerFrame sz-badges-grid">
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-warning">Unassign</button>
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COVER PICKER: -->
+            <div class="modal fade sz-dialog-init" id="rackspaceImagePickerId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Select cover to upload</h4>
+                        </div>
+                        <div class="streamzine-image-picker">
+                            <form name="saveOrUpdateAdForm"
+                                  th:action="@{/streamzine/upload/image}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  accept-charset="UTF-8"
+                                  id="rackspaceImagePickerFormId">
+                                <input name="file" type="file" accept="image" />
+                                <br />
+                            </form>
+                            <div id="imageUploadResponseHolderId">
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" id="rackspaceImagePickerSaveId">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Track Picker -->
+            <div class="modal fade sz-dialog-init" id="mediaTrackPickerId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Search and select tracks</h4>
+                        </div>
+                        <div>
+                            <div class="wellWithoutBorder">
+                                <input type="text" name="q" class="q" style="margin-bottom: 0!important;"/>
+                                <button class="btn btn-primary s_btn" type="button">
+                                    Search
+                                </button>
+                            </div>
+                            <div id="searchResult">
+                                <ul class="table headerFrame">
+                                    <li class="title">
+                                        <div class="cover_media"
+                                             th:text="#{chartItems.page.mediasTable.head.smallImage}">
+                                            Cover
+                                        </div>
+                                        <div class="isrc_media"
+                                             th:text="#{chartItems.page.mediasTable.head.isrc}">
+                                            isrc
+                                        </div>
+                                        <div class="title_media"
+                                             th:text="#{chartItems.page.mediasTable.head.title}">
+                                            Title
+                                        </div>
+                                        <div class="artist_media"
+                                             th:text="#{chartItems.page.mediasTable.head.artist}">
+                                            Artist
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
+                                <ul class="table table_up" style="overflow-y: auto; height:250px;">
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Tracks Picker -->
+            <div class="modal fade sz-dialog-init" id="mediaTracksPickerId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Search and select tracks</h4>
+                        </div>
+                        <div>
+                            <div class="wellWithoutBorder">
+                                <input type="text" name="q" class="q" style="margin-bottom: 0!important;"/>
+                                <button class="btn btn-primary s_btn" type="button">
+                                    Search
+                                </button>
+                            </div>
+                            <div id="searchResult">
+                                <div style="float:left;width:50%;">
+                                    <ul class="table headerFrame" style="margin-top: 0px;">
+                                        <li class="title">
+                                            <div class="cover_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.smallImage}">
+                                                Cover
+                                            </div>
+                                            <div class="isrc_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.isrc}">
+                                                isrc
+                                            </div>
+                                            <div class="title_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.title}">
+                                                Title
+                                            </div>
+                                            <div class="artist_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.artist}">
+                                                Artist
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
+                                    <ul class="table table_up" style="overflow-y: auto; height:150px; min-height: 150px;">
+                                    </ul>
+                                </div>
+
+                                <div style="width:50%;margin-left:50%;">
+                                    <ul class="table headerFrame" style="margin-top: 0px;">
+                                        <li class="title">
+                                            <div class="cover_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.smallImage}">
+                                                Cover
+                                            </div>
+                                            <div class="isrc_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.isrc}">
+                                                isrc
+                                            </div>
+                                            <div class="title_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.title}">
+                                                Title
+                                            </div>
+                                            <div class="artist_media"
+                                                 th:text="#{chartItems.page.mediasTable.head.artist}">
+                                                Artist
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <ul class="table table_up" style="overflow-y: auto; height:150px; min-height: 150px;">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-warning">Clear</button>
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Playlist Picker -->
+            <div class="modal fade sz-dialog-init" id="mediaPlaylistPickerId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Select playlist</h4>
+                        </div>
+
+                        <div id="mediaPlaylistsContainerId">
+                            <ul class="table headerFrame" style="min-height:100px;">
+                            </ul>
+                            <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Picker -->
+            <div class="modal fade sz-dialog-init" id="userPickerId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Users</h4>
+                        </div>
+                        <div>
+                            <div class="wellWithoutBorder">
+                                <input type="text" name="q" class="q" style="margin-bottom: 0!important;"/>
+                                <button class="btn btn-primary s_btn" type="button">
+                                    Search
+                                </button>
+                            </div>
+                            <div id="searchResult">
+                                <ul class="table headerFrame">
+                                    <li class="title">
+                                        <div class="sz-title-email">
+                                            Email
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
+                                <ul class="table table_up" style="overflow-y: auto; height:250px;">
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- External Ad dialog -->
+            <div class="modal fade sz-dialog-init" id="externalAdPicker" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title"></h4>
+                        </div>
+
+                        <div>
+                            <div class="wellWithoutBorder" onsubmit="return false;">
+                                <input type="text" name="q" class="q" style="margin-bottom: 0!important;"/>
+                                <button class="btn btn-primary s_btn" type="button">
+                                    Check
+                                </button>
+                            </div>
+
+                            <div data-header="modal-dialog-header" class="streamzine-url-picker-checked"></div>
+
+                            <div data-content="modal-dialog-body">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internal Ad dialog -->
+            <div class="modal fade sz-dialog-init" id="internalAdPicker" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header draggable-cursor">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Internal pages</h4>
+                        </div>
+                        <div style="height:450px;">
+                            <div style="height:70%; overflow-y:auto;">
+                                <ul class="table table_up" style="overflow-y: auto; margin-top:10px;">
+                                </ul>
+                                <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
+                            </div>
+                            <div style="padding-left: 15px;"><input type="checkbox"/>Add action</div>
+                            <div style="height:30%; overflow-y:auto;">
+                                <ul class="streamzine-app-page-picker-checked-action table table_up" style="overflow-y: auto; margin-top:10px;">
+                                </ul>
+                                <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <script th:if="${update != null}" th:inline="javascript">
+            Streamzine.Presenter.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
+
+            var incomingModel = /*[[${incomingUpdate}]]*/'';
+            var incomingModelCopy = /*[[${incomingUpdate}]]*/'';
+            var contentTypeMapping = /*[[${contentTypeMapping}]]*/'';
+            var canEdit = /*[[${update.canEdit}]]*/'';
+            var badgeMappingRules = /*[[${badgeMappingRules}]]*/'';
+            var titlesMappingRules = /*[[${titlesMappingRules}]]*/'';
+
+            var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
+            var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
+
+
+            Streamzine.Presenter.Mapping.init(contentTypeMapping);
+            Streamzine.Presenter.initModel(incomingModel, incomingModelCopy, canEdit);
+
+            $(function() {
+                Streamzine.Presenter.initInEditMode(selectedPublishDate, selectedPublishDateString);
+
+                //
+                // Picker init
+                //
+                var mediaTracksBaseUrl = /*[[@{__${filesURL}__}]]*/ '#';
+                var imagesBaseUrl = /*[[@{__${imageURL}__}]]*/ '#';
+
+                var playListUrl = /*[[@{__${'/streamzine/chart/list.json'}__}]]*/ '#';
+                var badgesGetAll = /*[[@{__${'/streamzine/badges/list.json'}__}]]*/ '#';
+                var badgesUpdateName = /*[[@{__${'/streamzine/badges/update.json'}__}]]*/ '#';
+                var badgesDelete = /*[[@{__${'/streamzine/badges/delete.json'}__}]]*/ '#';
+                var updateTmstp = /*[[${(update!=null)?update.date.time:-1}]]*/'';
+                var id = /*[[${update.id}]]*/'';
+
+                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete, badgeMappingRules, titlesMappingRules);
+
+                Streamzine.Presenter.Tile.init();
+
+                Streamzine.Presenter.initEvents(canEdit);
+            });
+        </script>
+
+        <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+        Streamzine.Presenter.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
+
+        $(function() {
+            var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
+            var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
+            var updatePublishDates = /*[[${updatePublishDates}]]*/'';
+
+            Streamzine.Presenter.init(selectedPublishDate, selectedPublishDateString, updatePublishDates);
+        });
+        /*]]>*/</script>
+        </div>
+	</body>
+</html>

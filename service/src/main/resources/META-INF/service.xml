@@ -54,6 +54,24 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
     </bean>
 
+    <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
+        <property name="mediaRepository" ref="mediaRepository" />
+        <property name="messageRepository" ref="messageRepository"/>
+    </bean>
+
+	<bean name="deepLinkUrlFactory" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory">
+        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+	</bean>
+
+    <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
+        <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory" />
+        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+    </bean>
+
+    <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">
+        <property name="streamzineUpdateRepository" ref="streamzineUpdateRepository" />
+    </bean>
+
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
 		<property name="deviceTypeService" ref="service.DeviceTypeService" />
@@ -220,7 +238,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
         <property name="chartDetailsConverter" ref="service.ChartDetailsConverter"/>
-	</bean>
+	<property name="streamzineUpdateService" ref="streamzineUpdateService"/>
+    </bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
 		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
@@ -249,6 +268,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
 		<property name="mediaLogService" ref="service.MediaLogService" />
 		<property name="mediaRepository" ref="mediaRepository" />
+		<property name="chartRepository" ref="chartRepository" />
+		<property name="chartDetailRepository" ref="chartDetailRepository" />
 	</bean>
 
 	<bean id="service.FileService" class="mobi.nowtechnologies.server.service.FileService">
@@ -519,6 +540,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl">
         <property name="userService" ref="service.UserService" />
     </bean>
+
+	   <bean id="imageService" class="mobi.nowtechnologies.server.service.file.image.ImageService" />
 
 	<task:annotation-driven executor="service.Executor"/>
 	<task:executor id="service.Executor" pool-size="20"/>
