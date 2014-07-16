@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -53,7 +52,6 @@ public class UserServiceActivationTest {
     private O2ProviderService o2ClientServiceMock;
     private O2Service o2ServiceMock;
     private DeviceService deviceServiceMock;
-    private FacebookService facebookServiceMock;
     private ITunesService iTunesServiceMock;
     private UserBannedRepository userBannedRepositoryMock;
     private RefundService refundServiceMock;
@@ -81,7 +79,6 @@ public class UserServiceActivationTest {
         entityServiceMock = PowerMockito.mock(EntityService.class);
         MigPaymentService migPaymentServiceMock = PowerMockito.mock(MigPaymentService.class);
         DrmService drmServiceMock = PowerMockito.mock(DrmService.class);
-        facebookServiceMock = PowerMockito.mock(FacebookService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
         deviceServiceMock = PowerMockito.mock(DeviceService.class);
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
@@ -110,7 +107,6 @@ public class UserServiceActivationTest {
         userServiceSpy.setEntityService(entityServiceMock);
         userServiceSpy.setMigPaymentService(migPaymentServiceMock);
         userServiceSpy.setDrmService(drmServiceMock);
-        userServiceSpy.setFacebookService(facebookServiceMock);
         userServiceSpy.setCommunityService(communityServiceMock);
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);

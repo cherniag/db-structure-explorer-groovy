@@ -6,6 +6,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ import java.io.InputStream;
 @ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
+@Ignore
 public class CloudFileServiceIT {
-    private final String DEFAULT_FILE_NAME = "testData/image/USJAY1100032S_fileResolution.jpg";
 
     @Autowired
     private CloudFileService cloudFileService;

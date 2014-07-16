@@ -498,8 +498,8 @@ public class UserService {
     }
 
     public User checkCredentials(String userName, String userToken, String timestamp, String communityName, String deviceUID) {
-        LOGGER.debug("input parameters userName, userToken, timestamp, communityName, deviceUID: [{}], [{}], [{}], [{}], [{}]", new Object[] { userName, userToken, timestamp, communityName,
-                deviceUID });
+        LOGGER.debug("input parameters userName, userToken, timestamp, communityName, deviceUID: [{}], [{}], [{}], [{}], [{}]", userName, userToken, timestamp, communityName,
+                deviceUID);
         User user = checkCredentials(userName, userToken, timestamp, communityName);
         final String foundDeviceUID = user.getDeviceUID();
         if (deviceUID != null && foundDeviceUID != null && !deviceUID.equalsIgnoreCase(foundDeviceUID)) {//return user info only if foundDeviceUID is null or deviceUID and foundDeviceUID are equals

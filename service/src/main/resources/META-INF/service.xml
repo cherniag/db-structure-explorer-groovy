@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-init-method="init" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+<beans default-init-method="init" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd 
-http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
-http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/task
+http://www.springframework.org/schema/task/spring-task-3.1.xsd
+http://www.springframework.org/schema/aop
+http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+http://www.springframework.org/schema/util
+http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <import resource="task.xml"/>
 
@@ -46,6 +52,24 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <bean id="accountCheckDTOAsm" class="mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm">
         <property name="autoOptInExemptPhoneNumberRepository" ref="autoOptInExemptPhoneNumberRepository" />
         <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
+    </bean>
+
+    <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
+        <property name="mediaRepository" ref="mediaRepository" />
+        <property name="messageRepository" ref="messageRepository"/>
+    </bean>
+
+	<bean name="deepLinkUrlFactory" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory">
+        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+	</bean>
+
+    <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
+        <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory" />
+        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+    </bean>
+
+    <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">
+        <property name="streamzineUpdateRepository" ref="streamzineUpdateRepository" />
     </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
@@ -214,7 +238,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
         <property name="chartDetailsConverter" ref="service.ChartDetailsConverter"/>
-	</bean>
+	<property name="streamzineUpdateService" ref="streamzineUpdateService"/>
+    </bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
 		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
@@ -243,6 +268,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="mediaLogTypeService" ref="service.MediaLogTypeService" />
 		<property name="mediaLogService" ref="service.MediaLogService" />
 		<property name="mediaRepository" ref="mediaRepository" />
+		<property name="chartRepository" ref="chartRepository" />
+		<property name="chartDetailRepository" ref="chartDetailRepository" />
 	</bean>
 
 	<bean id="service.FileService" class="mobi.nowtechnologies.server.service.FileService">
@@ -270,9 +297,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="entityService" ref="service.EntityService" />
 	</bean>
 
-	<bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService"/>
-
-    <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.social.facebook.FacebookDataConverter"/>
+	<import resource="social.xml" />
 
     <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 
@@ -515,6 +540,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <bean id="service.VFOtacValidationService" class="mobi.nowtechnologies.server.service.impl.VFOtacValidationServiceImpl">
         <property name="userService" ref="service.UserService" />
     </bean>
+
+	   <bean id="imageService" class="mobi.nowtechnologies.server.service.file.image.ImageService" />
 
 	<task:annotation-driven executor="service.Executor"/>
 	<task:executor id="service.Executor" pool-size="20"/>

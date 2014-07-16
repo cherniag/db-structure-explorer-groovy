@@ -140,4 +140,7 @@
 
     <context:annotation-config/>
 
+    <bean name="cookieUtil" class="mobi.nowtechnologies.server.admin.validator.CookieUtil"/>
+    <bean name="updateValidator" class="mobi.nowtechnologies.server.admin.validator.UpdateValidator"/>
+
 </beans>

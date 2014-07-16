@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import javax.servlet.http.HttpServletRequest;
-
 import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.service.ThrottlingService;
 import net.spy.memcached.CASMutation;
@@ -10,10 +8,11 @@ import net.spy.memcached.CASValue;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.transcoders.IntegerTranscoder;
 import net.spy.memcached.transcoders.SerializingTranscoder;
-
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ThrottlingServiceImpl implements ThrottlingService {
 
@@ -45,7 +44,7 @@ public class ThrottlingServiceImpl implements ThrottlingService {
 
 	@Override
 	public boolean handle(HttpServletRequest request, String username, String communityUrl) throws ThrottlingException {
-		if (isActive() && request.getHeader(THROTTLING_HEADER) != null && request.getHeader(THROTTLING_HEADER).equalsIgnoreCase("true")) {
+		if (request.getHeader(THROTTLING_HEADER) != null && request.getHeader(THROTTLING_HEADER).equalsIgnoreCase("true") && isActive()) {
 			try {
 				int maxRequests = getMaxAmountOfRequests();
 				int i = 0;

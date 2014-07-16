@@ -17,10 +17,11 @@ import java.util.Date;
 import java.util.Map;
 
 import static java.lang.Boolean.TRUE;
-import static mobi.nowtechnologies.server.service.social.googleplus.GooglePlusConstants.GOOGLE_PLUS_URL;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class GooglePlusService {
+    public static final String GOOGLE_PLUS_URL = "https://plus.google.com/";
+
     private AbstractOAuth2ApiBindingCustomizer<GoogleTemplate> templateCustomizer;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
