@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
-import mobi.nowtechnologies.server.shared.CgLibHelper;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.transport.controller.facebook.FacebookTemplateCustomizerImpl;
 import mobi.nowtechnologies.server.transport.controller.facebook.ProblematicFacebookTemplateCustomizer;
@@ -129,8 +128,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     }
 
     private void setTemplateCustomizer(AbstractOAuth2ApiBindingCustomizer customizer) {
-        CgLibHelper helper = new CgLibHelper(facebookService);
-        ReflectionTestUtils.setField(helper.getTargetObject(), "templateCustomizer", customizer);
+        ReflectionTestUtils.setField(facebookService, "templateCustomizer", customizer);
     }
 
     @Test

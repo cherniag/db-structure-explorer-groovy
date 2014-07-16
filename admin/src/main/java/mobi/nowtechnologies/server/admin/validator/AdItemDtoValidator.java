@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AdItemDtoValidator extends BaseValidator {
 
 	@Override
-	public boolean customValidate(Object target, Errors errors) {
+	protected boolean customValidate(Object target, Errors errors) {
 
 		AdItemDto adItemDto = (AdItemDto) target;
 

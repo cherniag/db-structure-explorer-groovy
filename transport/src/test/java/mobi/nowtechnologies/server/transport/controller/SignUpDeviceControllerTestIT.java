@@ -1,18 +1,28 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
+import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.springframework.http.MediaType;
-
 public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
+
+    @Resource
+    private DeviceUserDataRepository deviceUserDataRepository;
 
     @Test
     public void testSignUpDevice_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
@@ -39,6 +49,83 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk());
         checkAccountCheck(resultActions, accountCheckCall);
+    }
+
+    @Test
+    public void signUpDevice_6d1_WithXtifyShouldCreateDeviceUserData() throws Exception {
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String deviceType = "ANDROID";
+        String apiVersion = "6.1";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String xtifyToken = "dsfhosduyajdfy78cyuaidyfo67vc6754g5";
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("XTIFY_TOKEN", xtifyToken)
+        ).andExpect(status().isOk());
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+        String storedToken = dto.userToken;
+        String userName = dto.userName;
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions accountCheckCall = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+        checkAccountCheck(resultActions, accountCheckCall);
+
+        DeviceUserData found = deviceUserDataRepository.findByXtifyToken(xtifyToken);
+        assertNotNull(found);
+        assertEquals(deviceUID, found.getDeviceUid());
+        assertEquals(xtifyToken, found.getXtifyToken());
+    }
+
+
+    @Test
+    public void signUpDevice_6d1_WithoutXtifyShouldNotCreateDeviceUserData() throws Exception {
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String deviceType = "ANDROID";
+        String apiVersion = "6.1";
+        String communityUrl = "o2";
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+
+        User one = userRepository.findOne(dto.userName, communityUrl);
+        assertNotNull(one);
+        DeviceUserData found = deviceUserDataRepository.find(one.getId(), communityUrl, deviceUID);
+        assertNull(found);
+    }
+
+    @Test
+    public void signUpDevice_6d0_WithXtifyShouldNotCreateDeviceUserData() throws Exception {
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String deviceType = "ANDROID";
+        String apiVersion = "6.0";
+        String communityUrl = "o2";
+        String xtifyToken = "dsfhosduyajdfy78cyuaidyfo67vc6754g5";
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("XTIFY_TOKEN", xtifyToken)
+        ).andExpect(status().isOk());
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+
+        User one = userRepository.findOne(dto.userName, communityUrl);
+        assertNotNull(one);
+        DeviceUserData found = deviceUserDataRepository.find(one.getId(), communityUrl, deviceUID);
+        assertNull(found);
     }
 
     @Test
