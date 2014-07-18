@@ -396,6 +396,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 					if (amazonUrl != null && !amazonUrl.isEmpty()) {
 						track.setAmazonUrl(amazonUrl);
 					}
+                    track.setItunesUrl(media.getiTunesUrl());
 					if (media.getiTunesUrl() != null && !"".equals(media.getiTunesUrl())) {
 						try {
 							Matcher m = Pattern.compile("url=.*\\%26").matcher(media.getiTunesUrl());
@@ -407,7 +408,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 								}
 							}
 						} catch (Exception e) {
-							LOGGER.warn("Can't get iTunes URL from media.");
+							LOGGER.warn("Can't get iTunes URL from media for original value: " + media.getiTunesUrl(), e);
 						}
 					}
 				}
