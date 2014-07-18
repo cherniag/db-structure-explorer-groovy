@@ -172,6 +172,9 @@
 		<definition name="payments_inapp/unsubscribe" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/unsubscribe/content.jsp"/>
 		</definition>
+    <definition name="payments_inapp/unsubscribeByPayPal" extends="payments_inapp" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/unsubscribeByPayPal/content.jsp"/>
+    </definition>
 		<definition name="payments_inapp/notimplemented" extends="payments_inapp" preparer="web.CommunityViewPreparer">
 			<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_inapp/notimplemented/content.jsp"/>
 		</definition>
