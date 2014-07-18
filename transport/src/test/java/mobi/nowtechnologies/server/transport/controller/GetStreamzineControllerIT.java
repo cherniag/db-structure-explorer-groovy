@@ -228,7 +228,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user1, user2);
         prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user1, user2);
 
-        Thread.sleep(1200L);
+        Thread.sleep(2500L);
 
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
