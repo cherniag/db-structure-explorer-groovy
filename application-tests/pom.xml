@@ -21,9 +21,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
                     <excludes>
                         <exclude>**/*ApplicationTestsEntryPoint.java</exclude>
                     </excludes>
@@ -66,7 +63,7 @@
 
     <profiles>
         <profile>
-            <id>application-tests</id>
+            <id>application-tests-run</id>
             <build>
                 <plugins>
                     <plugin>

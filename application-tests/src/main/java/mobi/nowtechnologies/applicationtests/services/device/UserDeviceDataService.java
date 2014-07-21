@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -26,5 +27,15 @@ public class UserDeviceDataService {
         }
 
         return userDeviceData;
+    }
+
+    public List<UserDeviceData> table(List<HasVersion> version, String community, List<String> deviceTypes) {
+        Assert.hasText(community);
+        return table(version, Arrays.asList(community), deviceTypes);
+    }
+
+    public List<UserDeviceData> table(HasVersion version, List<String> communities, List<String> deviceTypes) {
+        Assert.notNull(version);
+        return table(Arrays.asList(version), communities, deviceTypes);
     }
 }

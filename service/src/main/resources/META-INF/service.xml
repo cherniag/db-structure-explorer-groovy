@@ -219,10 +219,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="communityService" ref="service.communityService"/>
     </bean>
 
-	<bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
-		<property name="mailSender" ref="service.MailSender" />
-	</bean>
-
     <bean id="service.ChartDetailsConverter" class="mobi.nowtechnologies.server.utils.ChartDetailsConverter">
         <property name="messageSource" ref="serviceMessageSource"/>
         <property name="iTunesLinkFormatCutoverTimeMillis" value="${transport.itunes.affiliate.link.format.cutover.time.millis}"/>
@@ -297,6 +293,11 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="entityService" ref="service.EntityService" />
 	</bean>
 
+    <bean id="service.O2Service" class="mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl">
+        <property name="O2TariffService" ref="service.O2TariffService"/>
+        <property name="restTemplate" ref="service.RestTemplate" />
+    </bean>
+
 	<import resource="social.xml" />
 
     <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
@@ -323,20 +324,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<bean id="service.CountryByIpService" class="mobi.nowtechnologies.server.service.CountryByIpService">
 		<property name="storePath" value="${store.path}" />
-	</bean>
-
-	<!-- Application properties -->
-	<bean id="serviceMessageSource" class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
-		<property name="basenames">
-			<list>
-				<value>file:#{systemProperties['catalina.base']}/conf/services</value>
-				<value>classpath:services</value>
-			</list>
-		</property>
-		<property name="defaultEncoding" value="utf-8" />
-		<property name="fileEncodings" value="utf-8" />
-		<property name="cacheSeconds" value="180" />
-		<property name="useCodeAsDefaultMessage" value="true" />
 	</bean>
 
 	<!-- AOP Services -->
@@ -438,7 +425,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="redeemServerO2Url" value="${o2.server.redeem.url}" />
 		<property name="limitValidatePhoneNumber" value="${o2.server.validation.phonenumber.limit}" />
 		<property name="redeemPromotedServerO2Url" value="${o2.server.redeem.promoted.url}" />
-		<property name="restTemplate" ref="service.RestTemplate" />
 		<property name="deviceService" ref="service.DeviceService" />
 		<property name="userLogRepository" ref="userLogRepository" />
 		<property name="communityService" ref="service.communityService" />		
@@ -529,10 +515,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="username" value="${o2.service.security.token.username}"/>
 		<property name="password" value="${o2.service.security.token.password}"/>        
 		<property name="soaConsumerTransactionID" value="${o2.service.security.costumerTransactionId}"/>        
-	</bean>
-
-	<bean id="service.O2Service" class="mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl">
-	     <property name="O2TariffService" ref="service.O2TariffService"/>
 	</bean>
 
     <bean id="service.OtacValidationService" class="mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl"/>

@@ -2,6 +2,8 @@ package mobi.nowtechnologies.applicationtests.services.http.phonenumber;
 
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
+import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -14,15 +16,16 @@ import org.springframework.util.MultiValueMap;
 @Service
 public class PhoneNumberHttpService extends AbstractHttpService {
 
-    public void phoneNumber(UserDeviceData deviceData, String phoneNumber, String userName, String userToken, String timestamp, RequestFormat format){
+    public PhoneActivationDto phoneNumber(UserDeviceData deviceData, String phoneNumber, String userName, String userToken, RequestFormat format){
+        final UserDataCreator.TimestampTokenData token = createUserToken(userToken);
 
-        String uri = getUri(deviceData.getCommunityUrl(), deviceData.getApiVersion().getApiVersion(), "PHONE_NUMBER", format);
+        String uri = getUri(deviceData, "PHONE_NUMBER", format);
 
         MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
         request.add("PHONE", phoneNumber);
         request.add("USER_NAME", userName);
-        request.add("USER_TOKEN", userToken);
-        request.add("TIMESTAMP", timestamp);
+        request.add("USER_TOKEN", token.getTimestampToken());
+        request.add("TIMESTAMP", token.getTimestamp());
 
         logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
 
@@ -30,8 +33,7 @@ public class PhoneNumberHttpService extends AbstractHttpService {
 
         logger.info("Response is [{}]", body);
 
-        //jsonHelper.extractObjectValueByPath(body, JsonHelper.PHONE_NUMBER_PATH, AccountCheckDTO.class);
-
+        return jsonHelper.extractObjectValueByPath(body, JsonHelper.PHONE_NUMBER_PATH, PhoneActivationDto.class);
     }
 
 }

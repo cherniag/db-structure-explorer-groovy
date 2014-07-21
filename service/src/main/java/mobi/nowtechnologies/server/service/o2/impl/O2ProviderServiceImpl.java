@@ -20,10 +20,7 @@ import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.DOMException;
 import uk.co.o2.soa.chargecustomerdata.BillSubscriber;
 import uk.co.o2.soa.chargecustomerservice.BillSubscriberFault;
@@ -31,7 +28,6 @@ import uk.co.o2.soa.coredata.SOAFaultType;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata.GetSubscriberProfileResponse;
 
-import javax.xml.transform.dom.DOMSource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -56,8 +52,6 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
 	private String promotedServerO2Url;
 
-	private RestTemplate restTemplate;
-
 	private String redeemServerO2Url;
 
 	private String redeemPromotedServerO2Url;
@@ -77,10 +71,6 @@ public class O2ProviderServiceImpl implements O2ProviderService {
     private O2Service o2Service;
 
     private GBCellNumberValidator gbCellNumberValidator = new GBCellNumberValidator();
-
-	public void init() {
-		restTemplate = new RestTemplate();
-	}
 
     public void setO2Service(O2Service o2Service) {
         this.o2Service = o2Service;
@@ -116,10 +106,6 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
 	public void setWebServiceGateway(WebServiceGateway webServiceGateway) {
 		this.webServiceGateway = webServiceGateway;
-	}
-
-	public void setRestTemplate(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
 	}
 
     public void setUserService(UserService userService) {
@@ -209,10 +195,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
                 userLog = userLog != null && curDay.intValue() - Utils.toEpochDays(userLog.getLastUpdateMillis()) > 0 ? userLog : null;
             }
 
-            MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-            request.add("phone_number", validatedPhoneNumber);
-            DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
-			String result = response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
+            String result = o2Service.validatePhoneNumber(url, validatedPhoneNumber);
 			
 			userLogRepository.save(new UserLog(userLog, validatedPhoneNumber, UserLogStatus.SUCCESS, UserLogType.VALIDATE_PHONE_NUMBER, VALIDATE_PHONE_NUMBER_DESC));
 			
@@ -236,18 +219,16 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		}
 	}
 
-	@Override
+    @Override
 	public ProviderUserDetails getUserDetails(String token, String phoneNumber, Community community) {
-        if (userService.isPromotedDevice(phoneNumber, community)) return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
+        if (userService.isPromotedDevice(phoneNumber, community)) {
+            return new ProviderUserDetails().withContract(PAYM.name()).withOperator("o2");
+        }
 
 		String serverO2Url = getServerO2Url(phoneNumber);
 
-		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
-		request.add("otac_auth_code", token);
 		try {
-			DOMSource response = restTemplate.postForObject(serverO2Url + GET_USER_DETAILS_REQ, request, DOMSource.class);
-			return new ProviderUserDetails().withOperator(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue()).withContract(response.getNode().getFirstChild().getFirstChild().getNextSibling()
-					.getFirstChild().getNodeValue());
+            return o2Service.getProviderUserDetails(serverO2Url + GET_USER_DETAILS_REQ, token);
 		} catch (Exception e) {
 			LOGGER.error("Error of the number validation [{}]: [{}]", phoneNumber, e.getMessage());
 			throw new ExternalServiceException("602", "O2 server cannot be reached");

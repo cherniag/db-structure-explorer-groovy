@@ -7,6 +7,7 @@ import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.VersionTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
+import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.HasVersion;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
@@ -15,15 +16,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 @Component
 public class FacebookErrorCodesFeature {
-    private String timestamp = new Date().getTime() + "";
-
     private UserDeviceData deviceData;
 
     @Resource
@@ -47,28 +45,28 @@ public class FacebookErrorCodesFeature {
     @Then("^Temporary registration info is available$")
     public void temporaryRegistrationInfoIsAvailable() throws Throwable {
         PhoneState phoneState = flow.getPhoneState(deviceData);
-        assertFalse(phoneState.getAccountCheck().userToken.isEmpty());
+        assertFalse(phoneState.getLastAccountCheckResponse().userToken.isEmpty());
     }
 
     @When("^User enters facebook info on his device and facebook returns empty email$")
     public void userEntersFacebookInfoOnHisDeviceAndFacebookReturnsEmptyEmail() throws Throwable {
-        flow.loginUsingFacebookWithEmptyEmail(deviceData, timestamp);
+        flow.loginUsingFacebookWithEmptyEmail(deviceData);
     }
 
     @When("^User enters facebook info on his device and facebook returns the response with different id$")
     public void userEntersFacebookInfoOnHisDeviceAndFacebookReturnsResponseWithDifferentId() throws Throwable {
-        flow.loginUsingFacebookWithDifferentId(deviceData, timestamp);
+        flow.loginUsingFacebookWithDifferentId(deviceData);
     }
 
     @When("^User enters facebook info on his device and facebook returns the response with invalid access token$")
     public void userEntersFacebookInfoOnHisDeviceAndFacebookReturnsResponseWithInvalidAccesstoken() throws Throwable {
-        flow.loginUsingFacebookWithInvalidAccessToken(deviceData, timestamp);
+        flow.loginUsingFacebookWithInvalidAccessToken(deviceData);
     }
 
     @Then("^User gets (\\d+) http error code and (\\d+) error code and (.*) message$")
     public void userGetsError(final int httpErrorCode, final int errorCode, final String errorBody) throws Throwable {
         // check the http status code
-        HttpClientErrorException lastFacebookError = flow.getPhoneState(deviceData).getLastFacebookError();
+        HttpClientErrorException lastFacebookError = flow.getPhoneState(deviceData).getLastFacebookErrorResponse();
         assertEquals(httpErrorCode, lastFacebookError.getStatusCode().value());
 
         // check the message and the code

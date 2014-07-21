@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
+import mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xerces.dom.ElementImpl;
@@ -32,14 +33,14 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ O2ProviderServiceImpl.class})
 public class O2ClientServiceImplTest {
+
 	private O2ProviderServiceImpl fixture;
-	
 	private O2ProviderServiceImpl fixture2;
 	
 	@Mock
@@ -56,9 +57,39 @@ public class O2ClientServiceImplTest {
 	
 	@Mock
 	private UserLogRepository mockUserLogRepository;
-	
 
-	@SuppressWarnings("unchecked")
+    private O2ServiceImpl o2serviceImpl = new O2ServiceImpl();
+
+    @Before
+    public void setUp()
+            throws Exception {
+        final Community community = CommunityFactory.createCommunity();
+        community.setRewriteUrlParameter("o2");
+        community.setName("o2");
+        when(mockCommunityService.getCommunityByName(eq("o2"))).thenReturn(community);
+
+        fixture = new O2ProviderServiceImpl();
+        fixture.setCommunityService(mockCommunityService);
+        fixture.setDeviceService(mockDeviceService);
+        fixture.setServerO2Url("https://prod.mqapi.com");
+        fixture.setRedeemServerO2Url("https://identity.o2.co.uk");
+        fixture.setPromotedServerO2Url("https://uat.mqapi.com");
+        fixture.setRedeemPromotedServerO2Url("https://uat.mqapi.com");
+        fixture.setUserLogRepository(mockUserLogRepository);
+        fixture.setLimitValidatePhoneNumber(9);
+        fixture.setUserService(userServiceMock);
+        fixture.setO2Service(o2serviceImpl);
+
+        fixture2 = new O2ProviderServiceImpl();
+        fixture2.setServerO2Url("https://uat.mqapi.com");
+        fixture2.setCommunityService(mockCommunityService);
+        fixture2.setUserService(userServiceMock);
+        fixture2.setO2Service(o2serviceImpl);
+        o2serviceImpl.setRestTemplate(mockRestTemplate);
+    }
+
+
+    @SuppressWarnings("unchecked")
 	//@Test
 	public void testValidatePhoneNumber_NotPromoted_Success()
 			throws Exception {
@@ -333,30 +364,4 @@ public class O2ClientServiceImplTest {
 		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), anyString());
 	}
 	
-	@Before
-	public void setUp()
-			throws Exception {
-		final Community community = CommunityFactory.createCommunity();		
-		community.setRewriteUrlParameter("o2");
-		community.setName("o2");
-		when(mockCommunityService.getCommunityByName(eq("o2"))).thenReturn(community);
-		
-		fixture = new O2ProviderServiceImpl();
-		fixture.setCommunityService(mockCommunityService);
-		fixture.setDeviceService(mockDeviceService);
-		fixture.setServerO2Url("https://prod.mqapi.com");
-		fixture.setRedeemServerO2Url("https://identity.o2.co.uk");
-		fixture.setPromotedServerO2Url("https://uat.mqapi.com");
-		fixture.setRedeemPromotedServerO2Url("https://uat.mqapi.com");
-		fixture.setUserLogRepository(mockUserLogRepository);
-		fixture.setLimitValidatePhoneNumber(9);
-        fixture.setUserService(userServiceMock);
-		fixture.setRestTemplate(mockRestTemplate);
-		
-		fixture2 = new O2ProviderServiceImpl();
-		fixture2.setServerO2Url("https://uat.mqapi.com");
-		fixture2.setCommunityService(mockCommunityService);
-		fixture2.setRestTemplate(new RestTemplate());
-        fixture2.setUserService(userServiceMock);
-	}
 }

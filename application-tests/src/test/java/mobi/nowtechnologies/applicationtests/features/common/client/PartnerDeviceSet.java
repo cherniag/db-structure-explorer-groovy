@@ -1,8 +1,11 @@
 package mobi.nowtechnologies.applicationtests.features.common.client;
 
-import mobi.nowtechnologies.applicationtests.features.social.facebook.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountCheckHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.activate.ApplyInitPromoHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.activate.AutoOptInHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneNumberHttpService;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,12 +23,34 @@ public class PartnerDeviceSet extends ClientDevicesSet {
     @Resource
     private PhoneNumberHttpService phoneNumberHttpService;
 
-    public void enterPhoneNumber(UserDeviceData userDeviceData){
-        final PhoneState state = states.get(userDeviceData);
+    @Resource
+    private AccountCheckHttpService accountCheckHttpService;
 
-        phoneNumberHttpService.phoneNumber(userDeviceData, "", state.getAccountCheck().userName, state.getAccountCheck().userToken, "", format);
+    @Resource
+    private AutoOptInHttpService autoOptInHttpService;
 
+    @Resource
+    private ApplyInitPromoHttpService applyInitPromoHttpService;
+
+    public void enterPhoneNumber(UserDeviceData userDeviceData, String phoneNumber){
+        final PhoneStateImpl state = states.get(userDeviceData);
+
+        state.phoneActivationDto = phoneNumberHttpService.phoneNumber(userDeviceData, phoneNumber, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, format);
+        state.accountCheck = accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, format);
     }
 
+    public void activate(UserDeviceData userDeviceData, String otac){
+        final PhoneStateImpl state = states.get(userDeviceData);
 
+        if(state.getLastAccountCheckResponse().subjectToAutoOptIn) {
+            AccountCheckDTO response = autoOptInHttpService.autoOptIn(state.getLastAccountCheckResponse(), userDeviceData, otac, format);
+
+            state.accountCheck = response;
+            state.activationResponse = response;
+        } else {
+            AccountCheckDTO response = applyInitPromoHttpService.applyInitPromo(state.getLastAccountCheckResponse(), userDeviceData, otac, format);
+            state.accountCheck = response;
+            state.activationResponse = response;
+        }
+    }
 }

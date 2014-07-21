@@ -42,34 +42,35 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
         activationEmail.setActivated(true);
 
         activationEmailRepository.save(activationEmail);
-        LOGGER.info("Email activated");
+        LOGGER.info("Email activated: " + email);
     }
 
     public ActivationEmail sendEmail(String email, String userName, String deviceUID, String community) {
         LOGGER.info("Sending email to [{}]", email);
-        ActivationEmail activationEmail;
-        if (EmailValidator.isEmail(email)) {
-            User user = userService.findByNameAndCommunity(userName, community);
-            String token = ActivationEmail.generateToken(email, deviceUID);
 
-            activationEmail = new ActivationEmail(email, deviceUID, token);
-            activationEmailRepository.save(activationEmail);
-
-            user.setActivationStatus(ActivationStatus.PENDING_ACTIVATION);
-            userService.updateUser(user);
-
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(ActivationEmail.ID, activationEmail.getId().toString());
-            params.put(ActivationEmail.TOKEN, token);
-            String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
-            String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
-            String body = messageSource.getMessage(community, user.getDeviceType().getName()
-                    + ".activation.email.body", null, null, null);
-            mailService.sendMail(from, new String[]{email}, subject, body, params);
-            LOGGER.info("Email to [{}] sent", email);
-        } else {
+        if(!EmailValidator.isEmail(email)) {
             throw new ValidationException("Email " + email + " is not valid!");
         }
+
+        User user = userService.findByNameAndCommunity(userName, community);
+        String token = ActivationEmail.generateToken(email, deviceUID);
+
+        ActivationEmail activationEmail = new ActivationEmail(email, deviceUID, token);
+        activationEmailRepository.save(activationEmail);
+
+        user.setActivationStatus(ActivationStatus.PENDING_ACTIVATION);
+        userService.updateUser(user);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ActivationEmail.ID, activationEmail.getId().toString());
+        params.put(ActivationEmail.TOKEN, activationEmail.getToken());
+
+        String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
+        String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
+        String body = messageSource.getMessage(community, user.getDeviceType().getName()
+                + ".activation.email.body", null, null, null);
+        mailService.sendMail(from, new String[]{email}, subject, body, params);
+        LOGGER.info("Email to [{}] sent", email);
         return activationEmail;
     }
 

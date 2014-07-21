@@ -61,6 +61,10 @@ public class ApiVersion implements HasVersion {
         return v.toString();
     }
 
+    public HasVersion asHasVersion() {
+        return this;
+    }
+
     @Override
     public String toString() {
         return getApiVersion();

@@ -1,6 +1,9 @@
-package mobi.nowtechnologies.server.service;
+package mobi.nowtechnologies.server.transport.controller;
 
 
+import com.google.common.base.Joiner;
+import mobi.nowtechnologies.server.service.MailService;
+import mobi.nowtechnologies.server.service.MailTemplateProcessor;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +27,15 @@ public class MailServiceMocked extends MailService {
         String processedSubject = MailTemplateProcessor.processTemplateString(subject, model);
         String processedBody = MailTemplateProcessor.processTemplateString(body, model);
 
-        File file = new File(temporaryFolder, "activationEmail." + System.currentTimeMillis());
+        File file = new File(temporaryFolder, "activationEmail-" + Thread.currentThread().getName() + "."+ System.currentTimeMillis());
         List<String> params = new ArrayList<String>();
         params.add("from: " + from);
-        params.add("to: " + to[0]);
+        params.add("to: " + Joiner.on(',').join(to));
         params.add("subject: " + processedSubject);
         params.add("body: " + processedBody);
 
         try {
+            LOGGER.info("Writing to: " + file);
             FileUtils.writeLines(file, params);
         } catch (IOException e) {
             LOGGER.error("error", e);
