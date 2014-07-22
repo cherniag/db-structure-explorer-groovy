@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 /**
  * @author Titov Mykhaylo (titov) on 25.06.2014.
  */
-public interface LabelRepository extends JpaRepository<Label, Byte> {
+public interface LabelRepository extends JpaRepository<Label, Integer> {
 
-    @Query(value = "select a from Label a where a.name = :name")
+    @Query(value = "select a from Label a where a.name = ?1")
     Label findByName(String name);
 }
