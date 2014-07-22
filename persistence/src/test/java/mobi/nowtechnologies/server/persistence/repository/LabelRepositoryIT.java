@@ -4,8 +4,9 @@ import mobi.nowtechnologies.server.persistence.domain.Label;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import java.util.List;
 
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by Oleg Artomov on 7/22/2014.
@@ -17,10 +18,9 @@ public class LabelRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void testFindByName() {
-        Label label = new Label();
-        label.setName("Sony");
-        labelRepository.saveAndFlush(label);
-        Label result = labelRepository.findByName(label.getName());
-        assertNotNull(result);
+        List<Label> labels =  labelRepository.findAll();
+        Label label = labels.get(0);
+        Label label1 = labelRepository.findByName(label.getName());
+        assertEquals(label.getName(), label1.getName());
     }
 }
