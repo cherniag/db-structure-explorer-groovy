@@ -27,17 +27,26 @@ class FacebookDataConverter {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     public FacebookUserInfo convert(FacebookProfile profile) {
+        final String usernameOrId = getFacebookUserName(profile);
+
         FacebookUserInfo details = new FacebookUserInfo();
         details.setEmail(profile.getEmail());
         details.setFirstName(profile.getFirstName());
         details.setSurname(profile.getLastName());
         details.setFacebookId(profile.getId());
-        details.setUserName(profile.getUsername());
-        details.setProfileUrl(GraphApi.GRAPH_API_URL + profile.getUsername() + "/picture?type=large");
+        details.setUserName(usernameOrId);
+        details.setProfileUrl(GraphApi.GRAPH_API_URL + usernameOrId + "/picture?type=large");
         details.setGender(extractGender(profile));
         details.setBirthday(extractBirthDay(profile));
         assignCityAndCountry(profile, details);
         return details;
+    }
+
+    private String getFacebookUserName(FacebookProfile profile) {
+        // After 30 Apr 2014 username is null
+        boolean beforeVersion2 = profile.getUsername() != null;
+
+        return beforeVersion2 ? profile.getUsername() : profile.getId();
     }
 
     private Date extractBirthDay(FacebookProfile profile) {
