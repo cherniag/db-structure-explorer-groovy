@@ -183,11 +183,11 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
         if (media == null) {
             media = new Media();
-            media.setIsrc(track.getIsrc());
-            media.setTrackId(track.getId());
+            media.setIsrc(config.getIsrc());
+            media.setTrackId(config.getId());
         }
 
-        media.setLabel(getLabel(track));
+        media.setLabel(getLabel(config));
         media.setTitle(config.getTitle());
 
         // Building genre
@@ -238,8 +238,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         return media;
     }
 
-    private Label getLabel(TrackDto track) {
-        String label = track.getLabel();
+    private Label getLabel(TrackDto config) {
+        String label = config.getLabel();
         if (!StringUtils.isEmpty(label)){
           return labelRepository.findByName(label);
         }
