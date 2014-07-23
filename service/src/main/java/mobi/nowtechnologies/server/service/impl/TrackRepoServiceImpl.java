@@ -179,7 +179,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	}
 
     protected Media createOrUpdateMedia(TrackDto track, TrackDto config){
-        Media media = mediaRepository.findByTrackId(track.getId());
+        Media media = mediaRepository.findByTrackId(config.getId());
 
         if (media == null) {
             media = new Media();
