@@ -2,11 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:repository="http://www.springframework.org/schema/data/repository"
 
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/data/jpa
+http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
 	<bean id="persistence.UserDao" class="mobi.nowtechnologies.server.persistence.dao.UserDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
@@ -102,19 +104,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 		</property>
 	</bean>
 
-	<bean id="persistence.DataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="removeAbandoned" value="${jdbc.removeAbandoned}" />
-		<property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
-		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
-		<property name="validationQuery" value="${jdbc.validationQuery}" />
-		<property name="maxActive" value="${jdbc.maxActive}" />
-		<property name="maxIdle" value="${jdbc.maxIdle}" />
-		<property name="maxWait" value="${jdbc.maxWait}" />
-		<property name="username" value="${jdbc.username}" />
-		<property name="password" value="${jdbc.password}" />
-		<property name="driverClassName" value="${jdbc.driverClassName}" />
-		<property name="url" value="${jdbc.url}" />
-	</bean>
+    <import resource="data-source.xml"/>
 
 	<bean id="persistence.TransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />

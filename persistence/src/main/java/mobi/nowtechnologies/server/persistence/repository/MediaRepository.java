@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,33 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
 
 	@Query(value = "select media from Media media where media.isrc in :isrcs")
 	List<Media> findByIsrcs(@Param("isrcs")Collection<String> isrcs);
+
+    @Query("select media from ChartDetail chartDetail join chartDetail.media media left join media.artist artist where " +
+            "chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis " +
+            "and (media.title like :searchWords escape '^' or media.isrc like :searchWords escape '^' or artist.name like :searchWords escape '^') " +
+            "and media.isrc not in :excludedIsrcs order by media.title")
+    List<Media> findMediaByChartAndPublishTimeAndSearchWord(@Param("chartId") int chartId,
+                                                            @Param("publishTimeMillis") long publishTimeMillis,
+                                                            @Param("excludedIsrcs") Collection<String> excludedIsrcs,
+                                                            @Param("searchWords") String searchWords,
+                                                            Pageable pageable);
+
+    @Query("select media from ChartDetail chartDetail join chartDetail.media media left join media.artist artist where " +
+            "chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis " +
+            "and (media.title like :searchWords escape '^' or media.isrc like :searchWords escape '^' or artist.name like :searchWords escape '^') " +
+            "order by media.title")
+    List<Media> findMediaByChartAndPublishTimeAndSearchWord(@Param("chartId") int chartId,
+                                                            @Param("publishTimeMillis") long publishTimeMillis,
+                                                            @Param("searchWords") String searchWords,
+                                                            Pageable pageable);
+
+
+    @Query("select media from ChartDetail chartDetail join chartDetail.media media where chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis " +
+            "and media.isrc in :mediaIsrcs")
+    List<Media> findMediaByChartAndPublishTimeAndMediaIsrcs(@Param("chartId") int chartId,
+                                                            @Param("publishTimeMillis") long publishTimeMillis,
+                                                            @Param("mediaIsrcs") Collection<String> mediaIsrcs);
+
+    @Query(value = "select media from Media media where media.isrc=?1")
+    List<Media> findByIsrc(String mediaIsrc);
 }

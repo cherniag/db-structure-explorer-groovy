@@ -30,9 +30,9 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
     private PromoCode promoCode;
 
     @Test
-    public void testActivateVideoAudioFreeTrial_WithAccCheckDetailsAndVersionMore50_Success() throws Exception {
+    public void testActivateVideoAudioFreeTrial_WithAccCheckDetailsAndMaxVersion_Success() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "6.0";
+        String apiVersion = "6.1";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

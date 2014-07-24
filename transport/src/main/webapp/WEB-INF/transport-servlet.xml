@@ -71,6 +71,11 @@
                 <value>mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto</value>
                 <value>mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto</value>
                 <value>mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.AccessPolicyDto</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.DeeplinkValueItemDto</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.VisualBlock</value>
 			</list>
 		</property>
 	</bean>

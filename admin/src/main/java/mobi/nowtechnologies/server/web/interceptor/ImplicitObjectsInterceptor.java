@@ -1,20 +1,18 @@
 package mobi.nowtechnologies.server.web.interceptor;
 
-import java.util.List;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import mobi.nowtechnologies.server.dto.CommunityDto;
 import mobi.nowtechnologies.server.service.AdminUserService;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * ImplicitObjectsInterceptor stands for adding business objects to all pages and templates
@@ -37,6 +35,7 @@ public class ImplicitObjectsInterceptor extends HandlerInterceptorAdapter {
 					for (CommunityDto communityDto : communitiesbyUser) {
 						if (cookie.getValue().equals(communityDto.getUrl())) {
 							communityDto.setActive(true);
+                            modelAndView.getModel().put("activeCommunity", communityDto.getUrl());
 							break;
 						}
 					}

@@ -122,6 +122,47 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         checkAccountCheck(resultActions, accountCheckCall);
     }
 
+
+    @Test
+    public void testGetChart_O2_v6d1AndJsonAndAccCheckInfo_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.1";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        generateChartAllTypesForO2();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultJson = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultJson.contains("\"type\":\"VIDEO_CHART\""));
+        assertTrue(resultJson.contains("\"duration\":10000"));
+        assertTrue(!resultJson.contains("\"bonusTrack\""));
+        assertTrue(resultJson.contains("\"tracks\""));
+        assertTrue(resultJson.contains("\"playlists\""));
+        assertTrue(resultJson.contains("\"chart\""));
+        assertTrue(resultJson.contains("\"user\""));
+
+        ResultActions accountCheckCall = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+        checkAccountCheck(resultActions, accountCheckCall);
+    }
+
     @Test
     public void testGetChart_O2_v4d0_Success() throws Exception {
         String userName = "+447111111114";
@@ -350,11 +391,11 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("COMMUNITY_NAME", apiVersion)
         ).andDo(print())
                 .andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath("//chart/playlist").nodeCount(6))
+                .andExpect(xpath("//chart/playlist").nodeCount(7))
                 .andExpect(xpath("//chart/playlist[type/text()='HOT_TRACKS']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='FIFTH_CHART']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_1']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(2))
                 .andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1))
                 .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_HL_UK.replace("%", "%%") + "']").exists());

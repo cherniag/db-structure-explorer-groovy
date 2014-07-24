@@ -21,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 /**
  * Created by oar on 3/14/14.
  */
-class FacebookDataConverter {
+public class FacebookDataConverter {
     private static final String DATE_FORMAT = "MM/dd/yyyy";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
