@@ -187,7 +187,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
             media.setTrackId(config.getId());
         }
 
-        media.setLabel(getLabel(config));
+        media.setLabel(getLabel(track));
         media.setTitle(config.getTitle());
 
         // Building genre
@@ -238,8 +238,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         return media;
     }
 
-    private Label getLabel(TrackDto config) {
-        String label = config.getLabel();
+    private Label getLabel(TrackDto trackDto) {
+        String label = trackDto.getLabel();
         if (!StringUtils.isEmpty(label)){
           return labelRepository.findByName(label);
         }
@@ -295,7 +295,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 				throw new IllegalArgumentException("Given track is illegal");
 			}
 
-			Media media = mediaRepository.getByIsrc(config.getIsrc());
+			Media media = mediaRepository.findByTrackId(config.getId());
 			if (media != null) {
 				media.setPublishDate(0);
 				mediaRepository.save(media);
@@ -431,7 +431,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
                     throw new IllegalArgumentException("Given track is illegal");
                 }
 
-                Media media = mediaRepository.getByIsrc(track.getIsrc());
+                Media media = mediaRepository.findByTrackId(track.getId());
                 if (media != null) {
                     media.setPublishDate(0);
                     mediaRepository.save(media);
