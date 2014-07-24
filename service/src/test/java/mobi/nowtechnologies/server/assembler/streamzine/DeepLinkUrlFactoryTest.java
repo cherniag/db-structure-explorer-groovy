@@ -1,3 +1,4 @@
+
 package mobi.nowtechnologies.server.assembler.streamzine;
 
 import com.google.common.collect.Lists;
@@ -103,7 +104,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl-uk://content/track?id=TRACK-10"));
+        assertThat((String)o, is("hl_uk://content/track?id=TRACK-10_null"));
     }
 
     @Test
