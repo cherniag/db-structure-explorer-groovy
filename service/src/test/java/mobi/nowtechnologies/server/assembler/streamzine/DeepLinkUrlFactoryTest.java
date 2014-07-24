@@ -104,7 +104,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl_uk://content/track?id=TRACK-10_null"));
+        assertThat((String)o, is("hl-uk://content/track?id=TRACK-10_null"));
     }
 
     @Test
