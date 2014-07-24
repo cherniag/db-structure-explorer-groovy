@@ -104,16 +104,16 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl_uk://content/news?id=" + publishDate.getTime())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl_uk://content/story?id=" + newsMessage.getId())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?id=" + ChartType.BASIC_CHART.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl_uk://content/track?id=" + existingMedia.getIsrcTrackId())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?id=" + existingMedia.getIsrcTrackId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
