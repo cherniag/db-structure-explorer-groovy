@@ -64,10 +64,7 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
                                                           @Param("publishTimeMillis") long publishTimeMillis,
                                                           @Param("mediaIds") Collection<Integer> mediaIds);
 
-    <<<<<<< HEAD
-
-    =======
     @Query(value = "select media from Media media where media.trackId = ?1")
     Media findByTrackId(Long trackId);
-    >>>>>>> feature/GO-2008_JADMIN_Use_Track_ID_instead_of_ISRC_under_Magazine_Channel_tab
+
 }
