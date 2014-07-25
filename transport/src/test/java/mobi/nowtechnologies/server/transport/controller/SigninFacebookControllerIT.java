@@ -207,7 +207,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
     }
 
     @Test
-    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookIdSuccess() throws Exception {
+    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithInvalidFacebookId() throws Exception {
         final String invalidFacebookUserId = "2";
         setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);

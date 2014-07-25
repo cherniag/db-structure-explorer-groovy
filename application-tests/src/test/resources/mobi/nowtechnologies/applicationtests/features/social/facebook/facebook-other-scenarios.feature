@@ -1,4 +1,4 @@
-Feature: Facebook registration success flow
+Feature: Facebook registration success flow different scenarios
 
   Scenario: Sign up with facebook with the same account but with different devices
     Given First time user with device using XML format for all facebook versions and facebook communities and all devices available
