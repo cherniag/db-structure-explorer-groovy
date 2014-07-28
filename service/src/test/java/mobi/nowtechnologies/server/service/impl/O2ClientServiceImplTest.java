@@ -315,7 +315,7 @@ public class O2ClientServiceImplTest {
 		
 		String result = fixture.getRedeemServerO2Url(user.getMobile());
 	
-		assertEquals("https://uat.mqapi.com", result);
+		assertEquals("http://uat.mqapi.com", result);
 		
 		Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), anyString());
 	}
@@ -346,15 +346,15 @@ public class O2ClientServiceImplTest {
 		fixture.setDeviceService(mockDeviceService);
 		fixture.setServerO2Url("https://prod.mqapi.com");
 		fixture.setRedeemServerO2Url("https://identity.o2.co.uk");
-		fixture.setPromotedServerO2Url("https://uat.mqapi.com");
-		fixture.setRedeemPromotedServerO2Url("https://uat.mqapi.com");
+		fixture.setPromotedServerO2Url("http://uat.mqapi.com");
+		fixture.setRedeemPromotedServerO2Url("http://uat.mqapi.com");
 		fixture.setUserLogRepository(mockUserLogRepository);
 		fixture.setLimitValidatePhoneNumber(9);
         fixture.setUserService(userServiceMock);
 		fixture.setRestTemplate(mockRestTemplate);
 		
 		fixture2 = new O2ProviderServiceImpl();
-		fixture2.setServerO2Url("https://uat.mqapi.com");
+		fixture2.setServerO2Url("http://uat.mqapi.com");
 		fixture2.setCommunityService(mockCommunityService);
 		fixture2.setRestTemplate(new RestTemplate());
         fixture2.setUserService(userServiceMock);
