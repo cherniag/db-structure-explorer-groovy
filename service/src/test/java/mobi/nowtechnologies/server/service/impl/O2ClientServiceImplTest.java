@@ -61,6 +61,7 @@ public class O2ClientServiceImplTest {
 
     private O2ServiceImpl o2serviceImpl = new O2ServiceImpl();
 
+
     @Before
     public void setUp()
             throws Exception {
@@ -346,7 +347,7 @@ public class O2ClientServiceImplTest {
 
         String result = fixture.getRedeemServerO2Url(user.getMobile());
 
-        assertEquals("http://uat.mqapi.com", result);
+        assertEquals("https://uat.mqapi.com", result);
 
         Mockito.verify(mockDeviceService, times(1)).isPromotedDevicePhone(any(Community.class), anyString(), anyString());
     }
