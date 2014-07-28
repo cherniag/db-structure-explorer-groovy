@@ -1,21 +1,24 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
+import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,10 +26,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +42,8 @@ public class DeepLinkInfoServiceTest {
     private MessageRepository messageRepository;
     @InjectMocks
     private DeepLinkInfoService deepLinkInfoService;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testTryToHandleSecuredTileForSecuredAction() throws Exception {
@@ -74,12 +76,16 @@ public class DeepLinkInfoServiceTest {
     }
 
     @Test
-    public void createManualCompilationDLInfoWithIsrcDuplicates() throws Exception {
-        when(mediaRepository.getByIsrc(eq("ISRC10"))).thenReturn(getMedia(10, "ISRC10"));
-        when(mediaRepository.getByIsrc(eq("ISRC11"))).thenReturn(getMedia(11, "ISRC11"));
-        when(mediaRepository.getByIsrc(eq("ISRC12"))).thenReturn(getMedia(12, "ISRC12"));
+    public void createManualCompilationDLInfoWithIdsDuplicates() throws Exception {
+        final int firstMediaId = 10;
+        final int secondMediaId = 11;
+        final int thirdMediaId = 12;
 
-        OrdinalBlockDto blockDto = createOrdinalBlockDto(ContentType.MUSIC, MusicType.MANUAL_COMPILATION.name(), "ISRC10#ISRC12#ISRC11#ISRC12");
+        when(mediaRepository.findOne(firstMediaId)).thenReturn(getMedia(firstMediaId));
+        when(mediaRepository.findOne(secondMediaId)).thenReturn(getMedia(secondMediaId));
+        when(mediaRepository.findOne(thirdMediaId)).thenReturn(getMedia(thirdMediaId));
+
+        OrdinalBlockDto blockDto = createOrdinalBlockDto(ContentType.MUSIC, MusicType.MANUAL_COMPILATION.name(), composeIds(firstMediaId, secondMediaId, thirdMediaId, firstMediaId));
 
         DeeplinkInfo deeplinkInfo = deepLinkInfoService.create(blockDto);
         assertNotNull(deeplinkInfo);
@@ -89,19 +95,29 @@ public class DeepLinkInfoServiceTest {
 
         List<Media> medias = i.getMedias();
         assertEquals(3, medias.size());
-        assertEquals(10, medias.get(0).getI().intValue());
-        assertEquals(12, medias.get(1).getI().intValue());
-        assertEquals(11, medias.get(2).getI().intValue());
+        assertEquals(firstMediaId, medias.get(0).getI().intValue());
+        assertEquals(secondMediaId, medias.get(1).getI().intValue());
+        assertEquals(thirdMediaId, medias.get(2).getI().intValue());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createManualCompilationDLInfoWithNotExistingIsrc() throws Exception {
-        when(mediaRepository.getByIsrc(eq("ISRC11"))).thenReturn(getMedia(11, "ISRC11"));
-        when(mediaRepository.getByIsrc(eq("ISRC12"))).thenReturn(getMedia(12, "ISRC12"));
+    @Test
+    public void createManualCompilationDLInfoWithNotExistingIds() throws Exception {
+        final int nonExistingMediaId = 10;
+        final int secondMediaId = 11;
+        final int thirdMediaId = 12;
 
-        OrdinalBlockDto blockDto = createOrdinalBlockDto(ContentType.MUSIC, MusicType.MANUAL_COMPILATION.name(), "ISRC10#ISRC11#ISRC12");
+        when(mediaRepository.findOne(secondMediaId)).thenReturn(getMedia(secondMediaId));
+        when(mediaRepository.findOne(thirdMediaId)).thenReturn(getMedia(thirdMediaId));
+
+        OrdinalBlockDto blockDto = createOrdinalBlockDto(ContentType.MUSIC, MusicType.MANUAL_COMPILATION.name(), composeIds(nonExistingMediaId, secondMediaId, thirdMediaId));
+
+        thrown.expect(IllegalArgumentException.class);
 
         deepLinkInfoService.create(blockDto);
+    }
+
+    private String composeIds(Integer ... ids) {
+        return Joiner.on('#').join(ids);
     }
 
     private OrdinalBlockDto createOrdinalBlockDto(ContentType contentType, String key, String value) {
@@ -112,10 +128,9 @@ public class DeepLinkInfoServiceTest {
         return blockDto;
     }
 
-    private Media getMedia(int i, String isrc) {
+    private Media getMedia(int i) {
         Media media1 = new Media();
         media1.setI(i);
-        media1.setIsrc(isrc);
         return media1;
     }
 }

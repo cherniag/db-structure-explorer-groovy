@@ -33,36 +33,38 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 	@Resource(name = "trackRepo.TrackServiceStub")
 	private TrackServiceImpl trackService;
 
+
     @Resource
 	private TrackRepository trackRepository;
 
     @Resource
 	private CloudFileService cloudFileService;
-	
-	@Test
+
+
+    @Test
 	public void testPull_Success() throws Exception {
 		//test preparation
 		Track anyTrack = TrackFactory.anyTrack();
 		anyTrack.setStatus(TrackStatus.ENCODED);
         anyTrack.setMediaType(AssetFile.FileType.MOBILE);
 		anyTrack = trackRepository.save(anyTrack);
-		
+
 		String isrc = anyTrack.getIsrc();
 		Long trackId = anyTrack.getId();
-		
-		MultipartFile audioFile = createTestFile(trackId+"_"+isrc+"."+FileType.MOBILE_AUDIO.getExt());		
+
+		MultipartFile audioFile = createTestFile(trackId+"_"+isrc+"."+FileType.MOBILE_AUDIO.getExt());
 		MultipartFile encodedFile = createTestFile(trackId+"_"+isrc+"."+FileType.MOBILE_ENCODED.getExt());
 		MultipartFile largeImageFile = createTestFile(trackId+"_"+isrc+ImageResolution.SIZE_22.getSuffix()+"."+FileType.IMAGE.getExt());
 		MultipartFile smallImageFile = createTestFile(trackId+"_"+isrc+ImageResolution.SIZE_21.getSuffix()+"."+FileType.IMAGE.getExt());
-		
+
 		cloudFileService.uploadFile(audioFile, audioFile.getName());
 		cloudFileService.uploadFile(encodedFile, encodedFile.getName());
 		cloudFileService.uploadFile(largeImageFile, largeImageFile.getName());
 		cloudFileService.uploadFile(smallImageFile, smallImageFile.getName());
-		
+
 		//call test method
 		Track track = trackService.pull(anyTrack.getId());
-		
+
 		//assertion
 		long curTime = System.currentTimeMillis();
 		assertNotNull(track);
@@ -98,8 +100,10 @@ public class TrackServiceTestIT extends AbstractTrackRepoITTest{
 		InputStream srcFile = getClass().getClassLoader().getResourceAsStream(DEFAULT_FILE_NAME);
 		FileItem fileItem = new DiskFileItemFactory().createItem(fileName, "application/octet-stream", true, fileName);
 		IOUtils.copy(srcFile, fileItem.getOutputStream());
-		MultipartFile file = new CommonsMultipartFile(fileItem); 
-		
+		MultipartFile file = new CommonsMultipartFile(fileItem);
+
 		return file;
 	}
+
+
 }

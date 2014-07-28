@@ -138,11 +138,11 @@ public class UpdateValidatorTest {
     @Test
     public void shouldNotValidateWhenTracksAreTheSame(){
         // given
-        OrdinalBlockDto musicTrackBlock = createMusicTypeBlock(MusicType.TRACK, "SOME_ISRC_1");
+        OrdinalBlockDto musicTrackBlock = createMusicTypeBlock(MusicType.TRACK, "1");
         UpdateIncomingDto update = createUpdate(musicTrackBlock, musicTrackBlock);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
-        when(mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIds(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
 
         //when
         updateValidator.customValidate(update, errors);
@@ -154,12 +154,12 @@ public class UpdateValidatorTest {
     @Test
     public void shouldNotValidateWhenTracksAreNotTheSame(){
         // given
-        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "SOME_ISRC_1");
-        OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "SOME_ISRC_2");
+        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "1");
+        OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "2");
         UpdateIncomingDto update = createUpdate(musicTrackBlock1, musicTrackBlock2);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
-        when(mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIds(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
 
         //when
         updateValidator.customValidate(update, errors);
