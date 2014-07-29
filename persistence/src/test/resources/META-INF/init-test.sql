@@ -9,7 +9,7 @@ insert into tb_appVersionCountry (appVersion_id, country_id) values(1, 2), (2, 1
 
 INSERT INTO `tb_genres` (`i`, `name`) VALUES (1,'Default');
 
-insert into tb_fileTypes (i,name) values (1,'Header'),(2,'Audio'),(3,'Image');
+insert into tb_fileTypes (i,name) values (1,'Header'),(2,'Audio'),(3,'Image'),(4, 'VIDEO');
 
 insert into tb_labels (i,name) values (9,'INTERSCOPE');
 

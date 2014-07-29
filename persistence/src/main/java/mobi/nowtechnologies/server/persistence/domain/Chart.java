@@ -152,6 +152,16 @@ public class Chart implements Serializable {
         return this;
     }
 
+    public Chart withName(String name) {
+        setName(name);
+        return this;
+    }
+
+    public Chart withCommunity(Community community) {
+        communities.add(community);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

@@ -391,6 +391,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="mediaFileRepository" ref="mediaFileRepository" />
 		<property name="genreRepository" ref="genreRepository" />
 		<property name="artistRepository" ref="artistRepository" />
+        <property name="labelRepository" ref="labelRepository" />
 		<property name="client" ref="trackRepoClient" />
         <property name="iTunesLinkFormatCutoverTimeMillis" value="${trackRepo.itunes.affiliate.link.format.cutover.time.millis}"/>
     </bean>

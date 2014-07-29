@@ -11,10 +11,6 @@ public class BaseJpaRepository {
 		return entityManager;
 	}
 
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
-
 	protected void addCriteria(StringBuilder cause, String criteria){
 		cause.append(cause.length() == 0 ? "" : " and ");
 		cause.append(criteria);

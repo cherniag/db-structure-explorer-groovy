@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.dto;
 
 import java.util.*;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import com.google.common.collect.ImmutableMap;
@@ -172,13 +171,13 @@ public class AdItemDto {
 
     private static AdActionType actionType(Message message) {
 			String title = message.getTitle();
-        if(isIsrcOrUnknownAdActionType(title)){
-            return AdActionType.ISRC;
+        if(isTrackIdOrUnknownAdActionType(title)){
+            return AdActionType.TRACK_ID;
 			}
         return actionTypeMap.get(substringBefore(title, ":"));
 		}
 
-    private static boolean isIsrcOrUnknownAdActionType(String title) {
+    private static boolean isTrackIdOrUnknownAdActionType(String title) {
         return title.indexOf(':') == -1 || !actionTypeMap.containsKey(substringBefore(title, ":"));
 	}
 
