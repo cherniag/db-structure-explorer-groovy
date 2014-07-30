@@ -1,4 +1,4 @@
-insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.4.8.2", "5.4.8.2");
+insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.5.0", "5.5.0");
 
 create table fat_email(
 	id bigint primary key auto_increment,
