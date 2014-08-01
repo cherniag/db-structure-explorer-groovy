@@ -76,7 +76,9 @@ set trackId = 681426 where ISRC = 'GBCRL0800322';
 update cn_service.tb_media
 set trackId = 353146 where ISRC = 'VIDEO181020';
 
-
+update cn_service.tb_media tb
+set tb.trackId = (select tm.id from cn_cms.Track tm where tm.isrc = tb.isrc order by tm.id limit 1)
+where tb.trackId is null;
 
 alter table tb_media drop index `isrc`;
 
