@@ -271,6 +271,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	<bean id="service.FileService" class="mobi.nowtechnologies.server.service.FileService">
 		<property name="userService" ref="service.UserService" />
 		<property name="mediaService" ref="service.MediaService" />
+        <property name="mediaRepository" ref="mediaRepository" />
 		<property name="storePath" value="${store.path}" />
 		<property name="brightcoveReadToken" value="${brightcove.token.read}" />
 	</bean>
