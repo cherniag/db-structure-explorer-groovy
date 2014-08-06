@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,6 +250,16 @@ public class Message {
 
     public Message withMessageType(MessageType messageType) {
         this.messageType = messageType;
+        return this;
+    }
+
+    public Message withActionType(MessageActionType actionType) {
+        this.actionType = actionType;
+        return this;
+    }
+
+    public Message withAction(String action) {
+        this.action = action;
         return this;
     }
 

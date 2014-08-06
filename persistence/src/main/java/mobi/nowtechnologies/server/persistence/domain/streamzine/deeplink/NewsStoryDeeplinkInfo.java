@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.modelmapper.internal.util.Assert;
 
 import javax.persistence.Entity;
@@ -22,7 +22,7 @@ public class NewsStoryDeeplinkInfo extends DeeplinkInfo {
 
     public NewsStoryDeeplinkInfo(Message message) {
         if (message != null) {
-            Assert.isTrue(message.getMessageType() == NewsDetailDto.MessageType.NEWS);
+            Assert.isTrue(message.getMessageType() == MessageType.NEWS);
         }
 
         this.message = message;

@@ -1,9 +1,8 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -15,7 +14,7 @@ import static junit.framework.Assert.assertTrue;
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class MessageRepositoryTest extends AbstractRepositoryIT {
+public class MessageRepositoryIT extends AbstractRepositoryIT {
 
     @Resource(name = "messageRepository")
     private MessageRepository messageRepository;

@@ -1,15 +1,56 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static mobi.nowtechnologies.server.shared.enums.MessageActionType.A_SPECIFIC_TRACK;
+import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GetNewsControllerTestIT extends AbstractControllerTestIT{
+
+    @Autowired CommunityRepository communityRepository;
+
+    @Test
+    public void shouldReturnBannerMessage() throws Exception {
+        //given
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "5.1";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
+        Message message = messageRepository.save(new Message().withTitle("title").withMessageType(MessageType.LIMITED_BANNER).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
+
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        );
+
+        //then
+        resultActions.
+                andExpect(status().isOk()).andDo(print()).
+                andExpect(jsonPath("$.response.data[1].news.items[0].messageType", is(message.getMessageType().name()))).
+                andExpect(jsonPath("$.response.data[1].news.items[0].actionType", is(message.getActionType().name()))).
+                andExpect(jsonPath("$.response.data[1].news.items[0].action", is(message.getAction()))).
+                andExpect(jsonPath("$.response.data[1].news.items[0].body", is(message.getBody())));
+    }
 
     @Test
     public void testGetNews_v5d1AndJsonAndAccCheckInfo_Success() throws Exception {

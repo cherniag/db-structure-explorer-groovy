@@ -17,8 +17,8 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeTyp
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
@@ -163,7 +163,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
 
-        Thread.sleep(1200L);
+        Thread.sleep(2500L);
 
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
@@ -373,7 +373,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         newsStory.setBody("very interesting new story");
         newsStory.setPosition(1);
         newsStory.setPublishTimeMillis(new Date().getTime());
-        newsStory.setMessageType(NewsDetailDto.MessageType.NEWS);
+        newsStory.setMessageType(MessageType.NEWS);
         newsStory.setCommunity(CommunityDao.getCommunity("hl_uk"));
         return messageRepository.saveAndFlush(newsStory);
     }

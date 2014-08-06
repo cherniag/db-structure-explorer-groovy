@@ -1,22 +1,21 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import mobi.nowtechnologies.server.validator.constraints.FileSize;
-
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class NewsItemDto {
 	
@@ -139,10 +138,20 @@ public class NewsItemDto {
 		this.imageFileName = imageFileName;
 	}
 
-	@Override
-	public String toString() {
-		return "NewsItemDto [activated=" + activated + ", body=" + body + ", file=" + file + ", filterDtos=" + filterDtos + ", frequence=" + frequence + ", headline=" + headline + ", id=" + id
-				+ ", messageType=" + messageType + ", position=" + position + ", publishTime=" + publishTime +", imageFileName="+ imageFileName+"]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("position", position)
+                .append("id", id)
+                .append("headline", headline)
+                .append("body", body)
+                .append("activated", activated)
+                .append("frequence", frequence)
+                .append("messageType", messageType)
+                .append("publishTime", publishTime)
+                .append("filterDtos", filterDtos)
+                .append("file", file)
+                .append("imageFileName", imageFileName)
+                .toString();
+    }
 }

@@ -4,10 +4,10 @@ import mobi.nowtechnologies.server.service.FilterService;
 import mobi.nowtechnologies.server.service.MessageService;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomCollectionEditor;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -72,14 +73,13 @@ public abstract class AbstractMessageController extends AbstractCommonController
 	}
 
 	@ModelAttribute("allMessageDtoTypes")
-	public MessageType[] populateAllMessageDtoTypes() {
-		return new MessageType[] { MessageType.NOTIFICATION, MessageType.POPUP, MessageType.RICH_POPUP };
+	public List<MessageType> populateAllMessageDtoTypes() {
+		return MessageType.getMessageTypes();
 	}
 	
 	protected Date validateSelectedPublishDate(String selectedPublishDate) {
 		try {
-			Date choosedPublishDate = new SimpleDateFormat(URL_DATE_FORMAT).parse(selectedPublishDate);
-			return choosedPublishDate;
+            return new SimpleDateFormat(URL_DATE_FORMAT).parse(selectedPublishDate);
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ServiceException("messages.pages.invalidSelectedPublishDateFormat", "Invalid selectedPublishDate format. It muse be in " + URL_DATE_FORMAT + " format");

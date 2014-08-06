@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import java.util.Date;
-
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
+
+import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)
