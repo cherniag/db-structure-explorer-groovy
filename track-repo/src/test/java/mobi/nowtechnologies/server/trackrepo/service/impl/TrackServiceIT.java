@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import org.apache.commons.lang.ArrayUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,6 +167,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
 
 
     @Test
+    @Ignore
     public void testPull() throws Exception {
         Track resultEncoding = encode();
         checkFilesNotExistsInCloudBeforePull(resultEncoding);
