@@ -48,7 +48,7 @@ public class ResourceFileDtoBuilder {
 	}
 	
 	public List<ResourceFileDto> build(Track track) throws IOException{
-        String isrc = track.getIsrc();
+        String uniqueTrackId = track.getUniqueTrackId();
 
 		String workDirPath = workDir.getFile().getAbsolutePath();
 		String distDirPath = publishDir.getFile().getAbsolutePath();
@@ -57,17 +57,17 @@ public class ResourceFileDtoBuilder {
 
         AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
 		if(audioFile != null){
-            String mp3hash = getMediaHash(getFilePath(FileType.ORIGINAL_MP3, AudioResolution.RATE_ORIGINAL, workDirPath, isrc));
-            String aac48hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_48, workDirPath, isrc));
-            String aac96hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_96, workDirPath, isrc));
+            String mp3hash = getMediaHash(getFilePath(FileType.ORIGINAL_MP3, AudioResolution.RATE_ORIGINAL, workDirPath, uniqueTrackId));
+            String aac48hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_48, workDirPath, uniqueTrackId));
+            String aac96hash = getMediaHash(getFilePath(FileType.ORIGINAL_ACC, AudioResolution.RATE_96, workDirPath, uniqueTrackId));
 
-            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_48, distDirPath, isrc, null));
-            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_96, distDirPath, isrc, null));
-            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW, distDirPath, isrc, null));
-            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_48, distDirPath, isrc, aac48hash));
-            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_96, distDirPath, isrc, aac96hash));
-            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW, distDirPath, isrc, null));
-            files.add(build(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL, distDirPath, isrc, mp3hash));
+            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_48, distDirPath, uniqueTrackId, null));
+            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_96, distDirPath, uniqueTrackId, null));
+            files.add(build(FileType.MOBILE_HEADER, AudioResolution.RATE_PREVIEW, distDirPath, uniqueTrackId, null));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_48, distDirPath, uniqueTrackId, aac48hash));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_96, distDirPath, uniqueTrackId, aac96hash));
+            files.add(build(FileType.MOBILE_AUDIO, AudioResolution.RATE_PREVIEW, distDirPath, uniqueTrackId, null));
+            files.add(build(FileType.DOWNLOAD, AudioResolution.RATE_ORIGINAL, distDirPath, uniqueTrackId, mp3hash));
         }
 
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
@@ -77,14 +77,14 @@ public class ResourceFileDtoBuilder {
             files.add(videoFileDto);
         }
 
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL, distDirPath, isrc, null));
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_LARGE, distDirPath, isrc, null));
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_SMALL, distDirPath, isrc, null));
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_22, distDirPath, isrc, null));
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_21, distDirPath, isrc, null));
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_11, distDirPath, isrc, null));
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_6, distDirPath, isrc, null));
-		files.add(build(FileType.IMAGE, ImageResolution.SIZE_3, distDirPath, isrc, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_ORIGINAL, distDirPath, uniqueTrackId, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_LARGE, distDirPath, uniqueTrackId, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_SMALL, distDirPath, uniqueTrackId, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_22, distDirPath, uniqueTrackId, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_21, distDirPath, uniqueTrackId, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_11, distDirPath, uniqueTrackId, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_6, distDirPath, uniqueTrackId, null));
+		files.add(build(FileType.IMAGE, ImageResolution.SIZE_3, distDirPath, uniqueTrackId, null));
 		
 		return files;
 	}
