@@ -37,6 +37,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Oleg Artomov on 6/25/2014.
  */
+@Ignore
 public class TrackServiceIT extends AbstractTrackRepoITTest {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
