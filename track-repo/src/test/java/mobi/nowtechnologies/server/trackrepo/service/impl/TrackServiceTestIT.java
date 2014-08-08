@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class TrackServiceTestIT extends AbstractTrackRepoITTest{
-	private final String DEFAULT_FILE_NAME = "work/APPCASTP.m4a";
+	private final String DEFAULT_FILE_NAME = "work/APPCASTP_777.m4a";
 
 	@Resource(name = "trackRepo.TrackServiceStub")
 	private TrackServiceImpl trackService;
