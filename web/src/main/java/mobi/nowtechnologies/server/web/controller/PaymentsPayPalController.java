@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import java.util.Locale;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
+import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
@@ -14,19 +13,15 @@ import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 @Controller
 public class PaymentsPayPalController extends CommonController {
@@ -34,6 +29,8 @@ public class PaymentsPayPalController extends CommonController {
 	public static final String VIEW_PAYMENTS_PAYPAL = "/paypal";
 
 	public static final String PAGE_PAYMENTS_PAYPAL = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_PAYPAL + PAGE_EXT;
+
+    public static final String PAGE_PAYMENTS_START_PAYPAL = PaymentsController.SCOPE_PREFIX + "/startPayPal" + PAGE_EXT;
 	public static final String PAGE_PAYMENTS_PAYPAL_INAPP = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_PAYPAL + PAGE_EXT;
 
 	public static final String PAYPAL_BILLING_AGREEMENT_DESCRIPTION = "pay.paypal.billing.agreement.description";
@@ -68,7 +65,15 @@ public class PaymentsPayPalController extends CommonController {
 		return modelAndModel;
 	}
 
-	@RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.POST)
+
+    @RequestMapping(value = PAGE_PAYMENTS_START_PAYPAL, method = RequestMethod.GET)
+    public String startPaypal(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+        Community community = CommunityDao.getCommunity(communityUrl.getValue());
+        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(-1, UserRegInfo.PaymentType.PAY_PAL, community.getId());
+        return "redirect:/payments_inapp/paypal.html?"+REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId() ;
+    }
+
+    @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.POST)
 	public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, 
 			@ModelAttribute(PayPalDto.NAME) PayPalDto dto,
 			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {

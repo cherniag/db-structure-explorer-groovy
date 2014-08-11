@@ -282,6 +282,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
+        o2ProviderServiceSpy.setO2Service(o2Service);
+
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
                         .param("COMMUNITY_NAME", communityName)

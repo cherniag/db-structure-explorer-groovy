@@ -67,7 +67,7 @@ public abstract class AbstractControllerTestIT {
     private ApplyInitPromoController applyInitPromoController;
 
     @Autowired
-    private O2Service o2Service;
+    protected O2Service o2Service;
 
     @Autowired
     private UpdateO2UserTask updateO2UserTask;

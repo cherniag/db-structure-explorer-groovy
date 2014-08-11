@@ -1,0 +1,46 @@
+<div class="wide color-bg">
+<div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
+    <a href="#allPlaylists" style="top:8px;left:4px;" class="button-small absolute"><%=Messages['page.playlists.tracks.menu.back']%></a>
+    <div class="header-position font-main S17">
+        <div class="in-middle icon-playlist"/>
+        <div class="in-middle text-header middle"><%=Messages['page.playlists.tracks.header.text']%></div>
+    </div>
+</div>
+<div class="pad5">
+    <%
+    var color = 'color-main';
+    if(playlist.selected)
+        color = 'color-selected';
+    %>
+    <div style="height: 94px;" class="pane <%= color %>">
+        <div style="margin-left: -2px;margin-top: 3px;" class="in-middle icon-playlist-filled"/>
+        <img class="in-middle cover" style="margin-left: 5px; margin-top: 11px" src="<%= playlist.cover %>"/>
+        <div class="line04 in-middle marg-L10">
+            <span class="font-main S15"><%= Strings.cut(playlist.title, 20) %></span><br/>
+            <pre class="line1 font-main S13"><%= Strings.cutLn(playlist.description, 2, 18)%></pre>
+            <span class="font-main S13"><%= playlist.length%> <%=Messages['page.playlists.tracks.item.tracks']%></span>
+        </div>
+        <% if(!playlist.selected){ %>
+            <div onclick="location.href='#swap/<%= playlist.id%>'"style="margin-top: -51px; right: 14px;" class="btn absolute font-main S12 color-apply"><%=Messages['page.playlists.tracks.item.select']%></div>
+        <% } %>
+    </div>
+
+    <% data.forEach(function (track) { 
+    	var trackClass = track.id == Player.current ? 'color-player' : 'color-main';
+    	var playerClass = track.id == Player.current ? '' : 'hidden';
+    %>
+    <div id="track<%= track.id %>" class="pane height-track <%= trackClass %>" onclick="Player.playTrack(<%= track.id %>)">
+        <div class="inline middle text-center">
+            <img class="in-middle cover-track" src="<%= track.cover %>">
+            <span id="icon-speakers<%= track.id %>" class="<%= playerClass %> icon-speakers"/>
+        </div>
+        <div class="line1 in-middle font-main marg-L5">
+            <span class="S16"><%= track.title %></span><br/>
+            <span class="S11"><%= track.artist%></span><br/>
+            <span class="line04 b S9 color-channel"><%= track.channel%></span>
+        </div>
+        <div class="icon-clock"/>
+    </div>
+    <% }); %>
+</div>
+</div>

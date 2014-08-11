@@ -67,7 +67,7 @@ public class StreamTest {
 				String hash = mp3Manager.mp3GetMediaHash(args[0]);
 				mp3Manager.process(in, out, params, hash);
 			} else { // Assume AAC.....
-				MP4Manager mp4manager = new MP4Manager();
+				MP4ManagerIntf mp4manager = new MP4Manager();
 				String hash = mp4manager.getMediaHash(new FileInputStream(args[3]));
 				mp4manager.processHeader(in, out, params, hash);
 			}

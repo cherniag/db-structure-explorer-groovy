@@ -1,5 +1,3 @@
-#!/bin/bash
-
 ${1}/neroAacTag "$2" \
 	"-meta:title=$3" \
 	"-meta:artist=$4" \

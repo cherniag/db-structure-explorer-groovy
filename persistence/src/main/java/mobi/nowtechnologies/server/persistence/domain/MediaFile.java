@@ -98,6 +98,16 @@ public class MediaFile implements Serializable {
         this.duration = duration;
     }
 
+    public MediaFile withFileType(FileType fileType){
+        setFileType(fileType);
+        return this;
+    }
+
+    public MediaFile withFileName(String fileName){
+        setFilename(fileName);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

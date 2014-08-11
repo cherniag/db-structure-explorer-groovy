@@ -673,6 +673,12 @@ public class UserService {
         return user;
     }
 
+
+    public boolean isUnsubscribedUser(User user){
+        return user != null && user.getCurrentPaymentDetails() != null && !user.getCurrentPaymentDetails().isActivated();
+    }
+
+
     @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
         LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);

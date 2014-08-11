@@ -16,7 +16,6 @@ public interface IngestService {
      *
      * @return IngestWizardData drop data without drop tracks
      */
-	IngestWizardData getDrops(String ingestor) throws Exception;
 	
 	IngestWizardData getDrops(String... ingestors) throws Exception;
 
@@ -42,10 +41,5 @@ public interface IngestService {
      * @return whether tracks saved to database or not
      */
     boolean commitDrops(IngestWizardData data) throws Exception;
-
-    /**
-     * Do all process in one iteration. Consequentially perform all steps search drops of all ingestors, select all drops and their tracks and commit all found drops
-     */
-    void processAllDrops() throws Exception;
 
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="businessTaskTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.quartz.JobDetail">
+                <property name="jobClass" value="mobi.nowtechnologies.server.job.ft.FtJob"/>
+                <property name="name" value="name"/>
+            </bean>
+        </property>
+        <property name="jobName" value="ft"/>
+        <property name="startDelay" value="1" />
+        <property name="repeatInterval" value="500" />
+    </bean>
+
+    <bean name="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="autoStartup" value="true" />
+        <property name="triggers">
+            <list>
+                <ref bean="businessTaskTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

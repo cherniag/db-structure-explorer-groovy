@@ -602,11 +602,6 @@ INSERT INTO tb_userGroups (id, name, community, chart, news, drmPolicy) VALUES (
 INSERT INTO tb_userGroups (id, name, community, chart, news, drmPolicy) VALUES (12, 'HL UK', 12, 42,       12, 12);
 INSERT INTO tb_userGroups (id, name, community, chart, news, drmPolicy) VALUES (13, 'DEMO', 13, 48,        13, 13);
 
-INSERT INTO tb_promotions (description         , numUsers, maxUsers, startDate , endDate   , isActive, freeWeeks, subWeeks, userGroup, type       , showPromotion, label                  , is_white_listed) VALUES ('o2Campaign3G'      , 0       , 0       , 1356342064, 1606780800, true    , 1        , 0       , 10       , 'promoCode', false        , 'o2Campaign3G'         , false);
-INSERT INTO tb_promotions (description         , numUsers, maxUsers, startDate , endDate   , isActive, freeWeeks, subWeeks, userGroup, type       , showPromotion, label                  , is_white_listed) VALUES ('o2Campaign4G'      , 0       , 0       , 1356342064, 1606780800, true    , 1        , 0       , 10       , 'promoCode', false        , 'o2Campaign4G'         , false);
-INSERT INTO tb_promoCode (code                 , promotionId                                                , media_type) VALUES ('o2Campaign3G'         , (select i from tb_promotions where label = 'o2Campaign3G') , 'AUDIO');
-INSERT INTO tb_promoCode (code                 , promotionId                                                , media_type) VALUES ('o2Campaign4G'         , (select i from tb_promotions where label = 'o2Campaign4G') , 'VIDEO_AND_AUDIO');
-
 
 INSERT INTO tb_operators (i, name, migName) VALUES (1, 'Orange UK', 'MIG01OU');
 INSERT INTO tb_operators (i, name, migName) VALUES (2, 'Vodafone UK', 'MIG00VU');
@@ -701,8 +696,6 @@ INSERT INTO tb_promoCode (id, code, promotionId, media_type) VALUES (56, 'o2Camp
 INSERT INTO tb_promoCode (id, code, promotionId, media_type) VALUES (57, 'GO1121', 62, 'VIDEO_AND_AUDIO');
 INSERT INTO tb_promoCode (id, code, promotionId, media_type) VALUES (58, 'demo.promo.26weeks.audio', 63, 'AUDIO');
 
-INSERT INTO tb_promotions (i, description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label, is_white_listed) VALUES (64, 'o2Campaign4G', 4, 0, 1356342064, 1606780800, 1, 1, 0, 12, 'promoCode', 0, 'o2Campaign4G', false);
-INSERT INTO tb_promoCode (id, code, promotionId, media_type) VALUES (59, 'promo8', 64, 'AUDIO');
 
 INSERT INTO qrtz_locks (LOCK_NAME) VALUES ('CALENDAR_ACCESS');
 INSERT INTO qrtz_locks (LOCK_NAME) VALUES ('JOB_ACCESS');
@@ -719,4 +712,13 @@ INSERT INTO qrtz_triggers (TRIGGER_NAME, TRIGGER_GROUP, JOB_NAME, JOB_GROUP, IS_
 INSERT INTO qrtz_simple_triggers (TRIGGER_NAME, TRIGGER_GROUP, REPEAT_COUNT, REPEAT_INTERVAL, TIMES_TRIGGERED) VALUES ('jobTrigger.updateO2User', 'DEFAULT', -1, 60000, 0);
 
 INSERT INTO qrtz_cron_triggers (TRIGGER_NAME, TRIGGER_GROUP, CRON_EXPRESSION, TIME_ZONE_ID) VALUES ('jobTrigger.ForkO2UsersForUpdateJob', 'DEFAULT', '0/1 * * * * ?', 'Europe/Helsinki');
+
+
+
+INSERT INTO `tb_paymentpolicy` (`communityID`,`subWeeks`,`subCost`,`paymentType`,`operator`,`shortCode`,`currencyISO`,`availableInStore`,`app_store_product_id`,`contract`,`segment`,`content_category`,`content_type`,`content_description`,`sub_merchant_id`,`provider`,`tariff`,`media_type`,`is_default`,`advanced_payment_seconds`,`after_next_sub_payment_seconds`,`online`)
+values
+(10,2,'2','o2Psms',NULL,'3107055','GBP',1,NULL,'PAYG','CONSUMER','other','mqbed_tracks_3107055','Description of content','O2 Tracks','O2','_3G','AUDIO',1,86400,172800,1),
+(10,2,'2','o2Psms',NULL,'3107055','GBP',1,NULL,'PAYM','CONSUMER','other','mqbed_tracks_3107055','Description of content','O2 Tracks','O2','_3G','AUDIO',1,86400,0,1),
+(10,1,'1.5','o2Psms',NULL,'3107057','GBP',1,NULL,'PAYG','CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','O2','_4G','VIDEO_AND_AUDIO',1,86400,172800,1),
+(10,1,'1.5','o2Psms',NULL,'3107057','GBP',1,NULL,'PAYM','CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','O2','_4G','VIDEO_AND_AUDIO',1,86400,0,1);
 

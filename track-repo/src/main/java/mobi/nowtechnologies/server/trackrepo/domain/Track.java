@@ -4,11 +4,11 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
 
 import javax.persistence.*;
-
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
+
+import static mobi.nowtechnologies.common.util.TrackIdGenerator.buildUniqueTrackId;
 
 /**
  * 
@@ -436,6 +436,10 @@ public class Track extends AbstractEntity {
         this.coverFile = coverFile;
 
         this.coverFileId = coverFile != null ? coverFile.getId() : null;
+    }
+
+    public String getUniqueTrackId(){
+        return buildUniqueTrackId(isrc, id);
     }
 
     public Long getCoverFileId() {

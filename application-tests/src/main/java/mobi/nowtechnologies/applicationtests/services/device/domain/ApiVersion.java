@@ -6,58 +6,37 @@ import org.modelmapper.internal.util.Assert;
 
 import java.util.List;
 
-public class ApiVersion implements HasVersion {
-    private Integer version;
-    private Integer major;
-    private Integer minor;
+public class ApiVersion implements HasVersion, Comparable<ApiVersion> {
+    private int major;
+    private int minor;
 
     private ApiVersion() {
     }
 
     public static ApiVersion from(String versionString) {
         List<String> versions = Lists.newArrayList(Splitter.on(".").omitEmptyStrings().split(versionString));
-        Assert.isTrue(versions.size() < 4 && versions.size() > 0, "Versions does not match (v.mj.mn) format: " + versionString);
+        Assert.isTrue(versions.size() == 2, "Version does not match (major.minor) format: " + versionString);
 
-        ApiVersion restored = version(digit(versions.get(0)));
-        if(versions.size() > 1) {
-            return restored.major(digit(versions.get(1)));
-        }
-        if(versions.size() > 2) {
-            return restored.minor(digit(versions.get(2)));
-        }
-
-        return restored;
+        return version(digit(versions.get(0)), digit(versions.get(1)));
     }
 
-    public static ApiVersion version(int version) {
-        Assert.isTrue(version >= 0);
+    public static ApiVersion version(int major, int minor) {
+        Assert.isTrue(major > 0);
+        Assert.isTrue(minor >= 0);
+
         ApiVersion api = new ApiVersion();
-        api.version = version;
+        api.major = major;
+        api.minor = minor;
+
         return api;
-    }
-
-    public ApiVersion major(int major) {
-        this.major = major;
-        return this;
-    }
-
-    public ApiVersion minor(int minor) {
-        this.minor = minor;
-        return this;
     }
 
     @Override
     public String getApiVersion() {
         StringBuilder v = new StringBuilder();
-        v.append(version);
-        if(major != null) {
-            v.append('.');
-            v.append(major);
-        }
-        if(minor != null) {
-            v.append('.');
-            v.append(minor);
-        }
+        v.append(major);
+        v.append('.');
+        v.append(minor);
         return v.toString();
     }
 
@@ -73,22 +52,25 @@ public class ApiVersion implements HasVersion {
 
         ApiVersion that = (ApiVersion) o;
 
-        if (major != null ? !major.equals(that.major) : that.major != null) return false;
-        if (minor != null ? !minor.equals(that.minor) : that.minor != null) return false;
-        if (!version.equals(that.version)) return false;
+        if (major != that.major) return false;
+        if (minor != that.minor) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = version.hashCode();
-        result = 31 * result + (major != null ? major.hashCode() : 0);
-        result = 31 * result + (minor != null ? minor.hashCode() : 0);
+        int result = major;
+        result = 31 * result + minor;
         return result;
     }
 
     private static int digit(String v) {
         return Integer.parseInt(v);
+    }
+
+    @Override
+    public int compareTo(ApiVersion other) {
+        return getApiVersion().compareTo(other.getApiVersion());
     }
 }
