@@ -166,6 +166,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
 
 
     @Test
+    @Ignore
     public void testPull() throws Exception {
         Track resultEncoding = encode();
         checkFilesNotExistsInCloudBeforePull(resultEncoding);
