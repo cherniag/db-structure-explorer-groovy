@@ -73,7 +73,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         messageRepository.save(new Message().withTitle("title").withMessageType(AD).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
         messageRepository.save(new Message().withTitle("title").withMessageType(NOTIFICATION).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
-        messageRepository.save(new Message().withTitle("title").withMessageType(LIMITED_BANNER).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
+        messageRepository.save(new Message().withTitle("title").withMessageType(FREE_TRIAL_BANNER).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
 
         //when
         ResultActions resultActions = mockMvc.perform(
