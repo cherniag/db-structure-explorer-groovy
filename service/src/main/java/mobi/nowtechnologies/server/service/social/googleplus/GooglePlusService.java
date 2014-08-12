@@ -48,13 +48,21 @@ public class GooglePlusService {
         result.setGooglePlusId(personFromGooglePlus.getId());
         result.setBirthday(extractDateInUTC(personFromGooglePlus));
         result.setDisplayName(personFromGooglePlus.getDisplayName());
-        result.setPicture(personFromGooglePlus.getImageUrl());
+        result.setPicture(extractImageUrl(personFromGooglePlus));
         result.setGender(extractGender(personFromGooglePlus));
         result.setLocation(extractLocation(personFromGooglePlus));
         result.setGivenName(personFromGooglePlus.getGivenName());
         result.setFamilyName(personFromGooglePlus.getFamilyName());
         result.setHomePage(buildHomepageUrl(personFromGooglePlus));
         return result;
+    }
+
+    private String extractImageUrl(Person personFromGooglePlus) {
+        String imageUrl = personFromGooglePlus.getImageUrl();
+        if (!isEmpty(imageUrl)){
+            return imageUrl.replace("sz=50", "sz=200");
+        }
+        return imageUrl;
     }
 
     private Date extractDateInUTC(Person personFromGooglePlus) {
