@@ -72,7 +72,7 @@ public class AccountCheckDTOAsm {
                 .getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
                 && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
-        String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem, status);
+        String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
 
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
