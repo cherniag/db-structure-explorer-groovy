@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.enums.MessageType.getBannerTypes;
+
 public class MessageService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
@@ -75,8 +77,7 @@ public class MessageService {
 		return newsDto;
 	}
 
-	@Transactional(readOnly = true)
-	public NewsDto getNews(User user, Community community, Long lastUpdateNewsTimeMillis, boolean withBanners) {
+	private NewsDto getNews(User user, Community community, Long lastUpdateNewsTimeMillis, boolean withBanners) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 		LOGGER.debug("input parameters user, community, lastUpdateNewsTimeMillis, withAds, withBanners: [{}], [{}], [{}], [{}]", new Object[] { user, community, lastUpdateNewsTimeMillis, withBanners });
@@ -95,7 +96,7 @@ public class MessageService {
 		if (withBanners) {
 			messages = messageRepository.findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis);
 		} else {
-			messages = messageRepository.findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis);
+			messages = messageRepository.findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis, getBannerTypes());
 		}
 
 		List<NewsDetailDto> newsDetailDtos = NewsAsm.toNewsDetailDtos(user, messages);

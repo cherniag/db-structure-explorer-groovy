@@ -14,6 +14,7 @@ import static junit.framework.Assert.assertTrue;
 import static mobi.nowtechnologies.server.shared.enums.MessageActionType.A_SPECIFIC_TRACK;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.FREE_TRIAL_BANNER;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.LIMITED_BANNER;
+import static mobi.nowtechnologies.server.shared.enums.MessageType.getBannerTypes;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.collection.IsIn.isIn;
 import static org.junit.Assert.assertThat;
@@ -57,11 +58,11 @@ public class MessageRepositoryIT extends AbstractRepositoryIT {
         messageRepository.save(new Message().withPublishTimeMillis(publishTimeMillis).withTitle("title").withMessageType(LIMITED_BANNER).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
 
         //when
-        List<Message> messages = messageRepository.findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, publishTimeMillis);
+        List<Message> messages = messageRepository.findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, publishTimeMillis, getBannerTypes());
 
         //then
         for (Message actualMessage : messages) {
-            assertThat(actualMessage.getMessageType(), not(isIn(MessageType.getBannerTypes())));
+            assertThat(actualMessage.getMessageType(), not(isIn(getBannerTypes())));
         }
     }
 
