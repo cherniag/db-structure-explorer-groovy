@@ -42,8 +42,10 @@ public abstract class CommonController extends ProfileController {
 
     public static final String MODEL_NAME = "response";
     public static final int VERSION_4 = 4;
-    public static final String VERSION_5_2 = "5.2";
+    public static final String WWW_AUTHENTICATE_HEADER = "WWW-Authenticate";
 
+    public static final String VERSION_5_2 = "5.2";
+    public static final String OAUTH_REALM_USERS = "OAuth realm=\"users\"";
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Resource(name = "serviceMessageSource")
@@ -212,6 +214,7 @@ public abstract class CommonController extends ProfileController {
         ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
         LOGGER.info(message);
 
+        response.setHeader(WWW_AUTHENTICATE_HEADER, OAUTH_REALM_USERS);
         return sendResponse(errorMessage, HttpStatus.UNAUTHORIZED, response);
     }
 
