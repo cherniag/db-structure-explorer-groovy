@@ -13,6 +13,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+
 /**
  * @author Titov Mykhaylo (titov)
  */
@@ -21,6 +24,19 @@ public class GetNewsController extends CommonController {
 
     @Resource
     private MessageService messageService;
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.2}/GET_NEWS"
+    })
+    public ModelAndView getNewsWithBanners(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
+    ) throws Exception {
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, ACTIVATED);
+    }
 
 
     // Support community o2, apiVersion 3.6 and higher
@@ -37,8 +53,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID,
-                ActivationStatus.ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, ACTIVATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -52,8 +67,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID,
-                ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, REGISTERED, ACTIVATED);
     }
 
     private ModelAndView getNews(String userName,
@@ -61,6 +75,7 @@ public class GetNewsController extends CommonController {
                                  String timestamp,
                                  Long lastUpdateNewsTimeMillis,
                                  String deviceUID,
+                                 boolean withBanners,
                                  ActivationStatus... activationStatuses) throws Exception {
         User user = null;
         Exception ex = null;
@@ -70,7 +85,7 @@ public class GetNewsController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
-            NewsDto newsDto = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, true);
+            NewsDto newsDto = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, withBanners);
 
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
 

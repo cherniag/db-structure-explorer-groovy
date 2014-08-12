@@ -144,7 +144,8 @@ public class GetChartController extends CommonController {
             "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART",
             "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART",
             "**/{community}/{apiVersion:6\\.0}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.1}/GET_CHART"
+            "**/{community}/{apiVersion:6\\.1}/GET_CHART",
+            "**/{community}/{apiVersion:6\\.2}/GET_CHART"
     })
     public ModelAndView getChart_O2_v4d0(
             HttpServletRequest request,
