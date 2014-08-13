@@ -1,4 +1,3 @@
-
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.ChartAsm;
@@ -189,12 +188,10 @@ public class ChartService implements ApplicationContextAware {
 
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
         for (Chart chart : charts) {
-            List<String> chartDetailISRCs = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
-            for(String isrc : chartDetailISRCs){
-                Media media = new Media();
-                media.setIsrc(isrc);
+            List<Media> locakedItems = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
+            for(Media locakedItem : locakedItems){
                 ChartDetail chartDetail = new ChartDetail();
-                chartDetail.setMedia(media);
+                chartDetail.setMedia(locakedItem);
                 chartDetails.add(chartDetail);
             }
         }
