@@ -1,9 +1,11 @@
 package mobi.nowtechnologies.server.service;
 
+import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import com.rackspacecloud.client.cloudfiles.FilesObject;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 
@@ -24,5 +26,7 @@ public interface CloudFileService {
     void deleteByPrefix(String prefix);
 
     void deleteFile(String fileName);
+
+    InputStream getInputStream(String fileName) throws FilesNotFoundException;
 
 }

@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.FileService;
 import mobi.nowtechnologies.server.service.FileService.FileType;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.View;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import java.io.InputStream;
 
 /**
  * FileController
@@ -70,9 +71,15 @@ public class FileController extends CommonController {
     }
 
     private View processGetFile(User user, String mediaId, FileType fileType, String resolution,final HttpServletRequest request){
-        final File file = fileService.getFileByTrackId(mediaId, fileType, resolution, user);
-        final String contentType = fileService.getContentType(file.getName());
-        return new FileInResponseView(contentType, file);
+
+        Media media = fileService.getMedia(mediaId, fileType, resolution, user);
+
+        String mediaFileName = fileService.getFileName(media, fileType, user.getDeviceTypeId());
+
+        final InputStream fileStream = fileService.getFileStreamForMedia(media, mediaId, resolution, mediaFileName, fileType, user);
+
+        final String contentType = fileService.getContentType(mediaFileName);
+        return new FileInResponseView(contentType, fileStream);
     }
 
 }

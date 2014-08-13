@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.impl;
 
 import com.rackspacecloud.client.cloudfiles.FilesClient;
+import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import com.rackspacecloud.client.cloudfiles.FilesObject;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
@@ -10,11 +11,13 @@ import org.apache.http.HttpException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -158,7 +161,26 @@ public class CloudFileServiceImpl implements CloudFileService {
         }
     }
 
-	@SuppressWarnings("unchecked")
+    @Override
+    public InputStream getInputStream(String fileName) throws  FilesNotFoundException{
+        LOGGER.info("get InputStream for file file in container [] by fileName", containerName, fileName);
+        Assert.hasText(fileName);
+            login();
+            try {
+                return filesClient.getObjectAsStream(containerName, fileName);
+            }
+            catch (FilesNotFoundException e) {
+                LOGGER.error(e.getMessage(), e);
+                throw e;
+            }
+            catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Coudn't find  file");
+            }
+
+    }
+
+    @SuppressWarnings("unchecked")
 	@Override
     public synchronized boolean uploadFile(MultipartFile file, String fileName, Map metadata) {
 		LOGGER.info("Updating file {} on cloud with name {}", file, fileName);
@@ -180,7 +202,7 @@ public class CloudFileServiceImpl implements CloudFileService {
 
 		return uploaded;
 	}
-	
+
 	@Override
     public synchronized boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName) {
         LOGGER.info("Copy file {} from one cloud container to other container {}", new Object[]{destFileName, destContainerName, srcFileName, srcContainerName});
@@ -222,7 +244,7 @@ public class CloudFileServiceImpl implements CloudFileService {
 	@Override
     public synchronized boolean uploadFile(File file, String fileName, String contentType, String destinationContainer) {
         LOGGER.info("Updating file {} on cloud with name {}", file.getAbsolutePath(), fileName);
-		
+
         boolean uploaded = false;
         if (file != null && file.exists()) {
 
