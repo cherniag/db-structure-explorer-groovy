@@ -131,14 +131,7 @@ public class FileService {
         String mediaFileName = getFileName(media, fileType, user.getDeviceTypeId());
 
         File file = getFileFromLocalStorage(mediaIsrc, fileType, resolution, mediaFileName);
-
-        if (fileType.equals(FileType.PURCHASED))
-            mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
-
-        if (fileType.equals(FileType.HEADER)) {
-            LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", userId, media.getI());
-            mediaService.conditionalUpdateByUserAndMedia(userId, media.getI());
-        }
+        logEvents(media, fileType, user);
         return file;
     }
 
@@ -178,14 +171,7 @@ public class FileService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public InputStream getFileStreamForMedia(Media media, String mediaId, String resolution, String mediaFileName, FileType fileType, User user) {
-        if (fileType.equals(FileType.PURCHASED))
-            mediaService.logMediaEvent(user.getId(), media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
-
-        if (fileType.equals(FileType.HEADER)) {
-            LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", user.getId(), media.getI());
-            mediaService.conditionalUpdateByUserAndMedia(user.getId(), media.getI());
-        }
-
+        logEvents(media, fileType, user);
         try {
             return cloudFileService.getInputStream(mediaFileName);
         } catch (FilesNotFoundException e) {
@@ -197,6 +183,16 @@ public class FileService {
                 LOGGER.error("ERROR find on local storage[{}]", mediaFileName);
                 throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Coudn't find  file");
             }
+        }
+    }
+
+    private void logEvents(Media media, FileType fileType, User user) {
+        if (fileType.equals(FileType.PURCHASED))
+            mediaService.logMediaEvent(user.getId(), media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
+
+        if (fileType.equals(FileType.HEADER)) {
+            LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", user.getId(), media.getI());
+            mediaService.conditionalUpdateByUserAndMedia(user.getId(), media.getI());
         }
     }
 
