@@ -7,12 +7,15 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.MediaDeliveryEn
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncodeToEnum;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+import mobi.nowtechnologies.common.util.TrackIdGenerator;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -50,6 +53,12 @@ public class FileService {
 
     private ReadApi brightcoveReadService;
     private String brightcoveReadToken;
+
+    private MediaRepository mediaRepository;
+
+    public void setMediaRepository(MediaRepository mediaRepository) {
+        this.mediaRepository = mediaRepository;
+    }
 
     public static enum FileType {
         IMAGE_LARGE("image"),
@@ -130,6 +139,62 @@ public class FileService {
         }
         File file = fileName;
         isTrue(file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + mediaIsrc +
+                "], path="+file.getAbsolutePath());
+
+        if (fileType.equals(FileType.PURCHASED))
+            mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
+
+        if (fileType.equals(FileType.HEADER)) {
+            LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", userId, media.getI());
+            mediaService.conditionalUpdateByUserAndMedia(userId, media.getI());
+        }
+        return file;
+    }
+
+    private Media getMediaByTrackId(String trackId) {
+        try {
+            Pair<String, Long> stringLongPair = TrackIdGenerator.parseUniqueTrackId(trackId);
+            return mediaRepository.findByTrackId(stringLongPair.getRight());
+        }
+        catch(Exception e){
+            LOGGER.error("Problem with track id [{}]", trackId, e);
+            return mediaService.findByIsrc(trackId);
+        }
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public File getFileByTrackId(String trackId, FileType fileType, String resolution, User user) {
+        notNull(trackId, "The parameter mediaIsrc is null");
+        notNull(fileType, "The parameter fileType is null");
+        notNull(user, "The parameter user is null");
+
+        int userId = user.getId();
+
+
+        Media media = getMediaByTrackId(trackId);
+
+        notNull(media, "error finding filename in db, mediaId=" + trackId + ", fileType=" + fileType +
+                ", resolution=" + resolution + ", userId=" + userId);
+        String mediaFileName = getFilename(media, fileType, user.getDeviceTypeId());
+
+        String folderPath = getFolder(fileType.getFolderName());
+
+        File fileName;
+        if (fileType.equals(FileType.IMAGE_RESOLUTION)) {
+            notNull(resolution, "The parameter fileResolution is null");
+            isTrue(!containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
+
+            StringBuilder builder = new StringBuilder(mediaFileName);
+            builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE
+                    + resolution);
+            builder.insert(0, folderPath + SEPARATOR);
+            fileName = new File(builder.toString());
+        } else{
+            fileName = new File(folderPath, mediaFileName);
+        }
+        File file = fileName;
+        isTrue(file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + trackId +
                 "], path="+file.getAbsolutePath());
 
         if (fileType.equals(FileType.PURCHASED))

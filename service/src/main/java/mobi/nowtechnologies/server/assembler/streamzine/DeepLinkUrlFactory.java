@@ -97,7 +97,7 @@ public class DeepLinkUrlFactory {
 
         if(deeplinkInfo instanceof MusicTrackDeeplinkInfo) {
             MusicTrackDeeplinkInfo info = (MusicTrackDeeplinkInfo) deeplinkInfo;
-            return info.getMedia().getIsrc();
+            return info.getMedia().getIsrcTrackId();
         }
 
         throw new IllegalArgumentException("Not recognized deeplink info type: " + deeplinkInfo.getClass());

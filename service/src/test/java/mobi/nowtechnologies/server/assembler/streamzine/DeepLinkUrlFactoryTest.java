@@ -1,3 +1,4 @@
+
 package mobi.nowtechnologies.server.assembler.streamzine;
 
 import com.google.common.collect.Lists;
@@ -7,8 +8,8 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -103,7 +104,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl-uk://content/track?id=TRACK-10"));
+        assertThat((String)o, is("hl-uk://content/track?id=TRACK-10_null"));
     }
 
     @Test
@@ -123,7 +124,7 @@ public class DeepLinkUrlFactoryTest {
         //prepare data
         Message message = new Message();
         message.setId(10);
-        message.setMessageType(NewsDetailDto.MessageType.NEWS);
+        message.setMessageType(MessageType.NEWS);
         NewsStoryDeeplinkInfo newsStoryDeeplinkInfo = new NewsStoryDeeplinkInfo(message);
 
         when(deepLinkInfoService.getSubType(newsStoryDeeplinkInfo)).thenReturn((Enum) NewsType.STORY);

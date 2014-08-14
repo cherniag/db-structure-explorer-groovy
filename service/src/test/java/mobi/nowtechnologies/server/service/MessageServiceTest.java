@@ -1,39 +1,13 @@
 package mobi.nowtechnologies.server.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import mobi.nowtechnologies.server.factory.admin.FilterDtoFactory;
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
-import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.persistence.domain.MessageFactory;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MessageDtoFactory;
-
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +17,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Titov Mykhaylo (titov)

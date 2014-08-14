@@ -4,8 +4,11 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
+import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MailTemplateProcessor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -13,16 +16,12 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,19 +31,11 @@ import java.util.Map;
 import static junit.framework.Assert.*;
 import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.DeviceType.ANDROID;
-import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType.NEWS;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.PENDING_ACTIVATION;
-import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED;
 import static mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class EmailRegistrationIT extends AbstractControllerTestIT {
 
@@ -340,7 +331,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", user.getDeviceUID())
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061"));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061_null"));
     }
 
 

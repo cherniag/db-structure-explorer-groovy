@@ -1,10 +1,8 @@
 package mobi.nowtechnologies.server.admin.validator;
 
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
-
-import org.junit.Before;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -12,13 +10,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
 
-import java.util.*;
+import java.util.Collections;
 
 import static junit.framework.Assert.assertFalse;
 import static mobi.nowtechnologies.server.admin.validator.MessageDtoValidator.*;
-import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence.*;
-import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType.*;
+import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence.ONCE_AFTER_1ST_TRACK_DOWNLOAD;
 import static mobi.nowtechnologies.server.shared.enums.MessageActionType.*;
+import static mobi.nowtechnologies.server.shared.enums.MessageType.NEWS;
+import static mobi.nowtechnologies.server.shared.enums.MessageType.RICH_POPUP;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -28,19 +27,12 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(PowerMockRunner.class)
 public class MessageDtoValidatorTest {
+    private MessageDto messageDto = new MessageDto();
 
-    private MessageDto messageDto;
-    private Errors errors;
+    private Errors errors = new MapBindingResult(Collections.emptyMap(), "");
+    private MessageDtoValidator messageDtoValidator = new MessageDtoValidator();
     private boolean actualHasErrors;
-    private MessageDtoValidator messageDtoValidator;
 
-    @Before
-    public void setUp(){
-        messageDto = new MessageDto();
-        errors = new MapBindingResult(Collections.emptyMap(), "");
-
-        messageDtoValidator = new MessageDtoValidator();
-    }
 
     @Test
 	public void shouldValidateAsNoErrorsNews() {
@@ -207,11 +199,13 @@ public class MessageDtoValidatorTest {
 
     private MessageDtoValidatorTest news() {
         messageDto.setMessageType(NEWS);
+        messageDto.setHeadline("the head line");
         return this;
     }
     
     private MessageDtoValidatorTest richPopup() {
         messageDto.setMessageType(RICH_POPUP);
+        messageDto.setHeadline("the head line");
         return this;
     }
     
@@ -367,7 +361,7 @@ public class MessageDtoValidatorTest {
     }
     
     private String getChars(int size) {
-		return new String(new char[size]).replace('\0', 'm');
+		return StringUtils.repeat('m', size);
 	}
 
 }

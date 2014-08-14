@@ -60,6 +60,11 @@ public class Artist implements Serializable {
 		this.realName = realName;
 	}
 
+    public Artist withName(String name){
+        this.name = name;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

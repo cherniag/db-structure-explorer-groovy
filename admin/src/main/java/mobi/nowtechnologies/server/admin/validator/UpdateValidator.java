@@ -291,7 +291,7 @@ public class UpdateValidator extends BaseValidator {
         }
 
         if(musicType == MusicType.TRACK) {
-            Set<Media> media = mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(communityRewriteUrl, publishTimeMillis, Lists.newArrayList(value));
+            Set<Media> media = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, Lists.newArrayList(Integer.valueOf(value)));
             boolean notFoundMedia = (media == null || media.size() == 0);
             if(notFoundMedia) {
                 Object[] args = {value};
@@ -302,13 +302,13 @@ public class UpdateValidator extends BaseValidator {
 
         if(musicType == MusicType.MANUAL_COMPILATION) {
             DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(value);
-            List<String> mediaIsrcs = manualCompilationData.getMediaIsrcs();
-            Set<Media> medias = mediaService.getMediasByChartAndPublishTimeAndMediaIsrcs(communityRewriteUrl, publishTimeMillis, mediaIsrcs);
-            if(medias.size() != mediaIsrcs.size()){
+            List<Integer> ids = manualCompilationData.getMediaIds();
+            Set<Media> medias = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, ids);
+            if(medias.size() != ids.size()){
                 for (Media media : medias) {
-                    mediaIsrcs.remove(media.getIsrc());
+                    ids.remove(media.getIsrc());
                 }
-                rejectValue("streamzine.error.notfound.manual.compilation.isrc", new String[]{mediaIsrcs.toString()}, errors);
+                rejectValue("streamzine.error.notfound.manual.compilation.isrc", new String[]{ids.toString()}, errors);
             }
             return;
         }

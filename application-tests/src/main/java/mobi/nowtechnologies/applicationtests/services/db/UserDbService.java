@@ -19,4 +19,8 @@ public class UserDbService {
         Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         return userRepository.findByDeviceUIDAndCommunity(deviceUID, community);
     }
+
+    public User getUserByUserNameAndCommunity(String userName, String communityUrl) {
+        return userRepository.findOne(userName, communityUrl);
+    }
 }

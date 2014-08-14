@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.applicationtests.services.http;
 
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
+import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
+import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,9 @@ public abstract class AbstractHttpService {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
+    protected UserDataCreator userDataCreator;
+
+    @Resource
     protected RestTemplate restTemplate;
 
     @Value("${environment.url}")
@@ -22,13 +27,17 @@ public abstract class AbstractHttpService {
     @Resource
     protected JsonHelper jsonHelper;
 
-    protected String getUri(String communityUrl, String apiVersion, String commandName, RequestFormat format) {
+    protected String getUri(UserDeviceData deviceData, String commandName, RequestFormat format) {
         UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(environmentUrl);
         b.pathSegment("transport");
         b.pathSegment("service");
-        b.pathSegment(communityUrl);
-        b.pathSegment(apiVersion);
+        b.pathSegment(deviceData.getCommunityUrl());
+        b.pathSegment(deviceData.getApiVersion().getApiVersion());
         b.pathSegment(commandName + format.getExt());
         return b.build().toUriString();
+    }
+
+    protected UserDataCreator.TimestampTokenData createUserToken(String userToken) {
+        return userDataCreator.createUserToken(userToken);
     }
 }

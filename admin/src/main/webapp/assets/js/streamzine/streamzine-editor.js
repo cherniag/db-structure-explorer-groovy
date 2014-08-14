@@ -578,7 +578,7 @@ if(Streamzine.Presenter.Editor == undefined) {
 
             editorRef.mediaTrackPicker = Pickers.createMediaTrackPicker(id, 'mediaTrackPickerId', tracksBaseUrl, function(mediaDto) {
                 Streamzine.Model.getCurrentBlock().data = mediaDto;
-                fireValuePickedEvent('value')(mediaDto.isrc);
+                fireValuePickedEvent('value')(mediaDto.id);
                 fireValuePickedEvent('title')(mediaDto.title);
                 fireValuePickedEvent('subTitle')(mediaDto.artistDto.name);
                 //fireValuePickedEvent('coverUrl')(mediaDto.fileName);
@@ -587,11 +587,11 @@ if(Streamzine.Presenter.Editor == undefined) {
             editorRef.mediaTracksPicker = Pickers.createMediaTracksPicker(id, 'mediaTracksPickerId', tracksBaseUrl, function(v) {
                 Streamzine.Model.getCurrentBlock().data = v;
 
-                var isrcs = [];
+                var ids = [];
                 $.each(v, function(i, o) {
-                    isrcs.push(o.isrc);
+                    ids.push(o.id);
                 });
-                fireValuePickedEvent('value')(isrcs.join('#'));
+                fireValuePickedEvent('value')(ids.join('#'));
             });
 
             editorRef.mediaTypePicker = Pickers.createMediaPlaylistTypePicker(id, 'mediaPlaylistPickerId', playListUrl, function(playlistDto) {

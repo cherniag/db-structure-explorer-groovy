@@ -60,6 +60,10 @@ public class User implements Serializable {
 
     public static final String NONE = "NONE";
 
+    public boolean isSubscribedUserByPaymentType(String paymentType){
+        return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated() && getCurrentPaymentDetails().getPaymentType().equals(paymentType);
+    }
+
     public static enum Fields {
         userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
     }

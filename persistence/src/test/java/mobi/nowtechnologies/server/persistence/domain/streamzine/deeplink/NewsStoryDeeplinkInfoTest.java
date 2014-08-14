@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class NewsStoryDeeplinkInfoTest {
     }
 
     private Message createNotNewsMessage() {
-        final NewsDetailDto.MessageType notNewsType = NewsDetailDto.MessageType.POPUP;
+        final MessageType notNewsType = MessageType.POPUP;
 
         Message m = mock(Message.class);
         when(m.getMessageType()).thenReturn(notNewsType);
@@ -33,7 +33,7 @@ public class NewsStoryDeeplinkInfoTest {
     }
 
     private Message createNewsMessage(int id) {
-        final NewsDetailDto.MessageType newsType = NewsDetailDto.MessageType.NEWS;
+        final MessageType newsType = MessageType.NEWS;
 
         Message m = mock(Message.class);
         when(m.getMessageType()).thenReturn(newsType);

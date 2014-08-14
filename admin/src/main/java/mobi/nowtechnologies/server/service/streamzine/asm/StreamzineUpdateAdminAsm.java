@@ -185,7 +185,7 @@ public class StreamzineUpdateAdminAsm {
             blockDto.setKey(track.name());
             Media media = i.getMedia();
             if (media != null) {
-                blockDto.setValue(media.getIsrc());
+                blockDto.setValue(media.getI() + "");
                 blockDto.setData(streamzineAdminMediaAsm.toMediaDto(i.getMedia()));
             }
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, track));
@@ -195,7 +195,7 @@ public class StreamzineUpdateAdminAsm {
             final MusicType musicType = MusicType.MANUAL_COMPILATION;
 
             ManualCompilationDeeplinkInfo i = (ManualCompilationDeeplinkInfo) info;
-            DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(i.getMediaIsrc());
+            DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(i.getMediaIds());
             blockDto.setValue(manualCompilationData.toMediasString());
             blockDto.setData(streamzineAdminMediaAsm.toMediaDtos(i.getMedias()));
             blockDto.setKey(musicType.name());

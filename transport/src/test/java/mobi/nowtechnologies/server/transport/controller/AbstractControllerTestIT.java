@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
-import mobi.nowtechnologies.server.log4j.InMemoryEventAppender;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
@@ -13,7 +12,6 @@ import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -34,9 +32,9 @@ import java.io.IOException;
 
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType.NEWS;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.MessageType.NEWS;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -67,7 +65,7 @@ public abstract class AbstractControllerTestIT {
     private ApplyInitPromoController applyInitPromoController;
 
     @Autowired
-    private O2Service o2Service;
+    protected O2Service o2Service;
 
     @Autowired
     private UpdateO2UserTask updateO2UserTask;
@@ -109,7 +107,7 @@ public abstract class AbstractControllerTestIT {
     private MediaRepository mediaRepository;
 
     @Resource(name = "messageRepository")
-    private MessageRepository messageRepository;
+    MessageRepository messageRepository;
 
     @Resource
     private O2ProviderDetailsExtractor o2ProviderDetailsExtractor;

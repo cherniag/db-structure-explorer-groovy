@@ -130,7 +130,7 @@ public class CustomRuntimeGlue extends RuntimeGlue {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not restore class for path: " + featurePath);
+            throw new RuntimeException("Could not restore class for path: " + featurePath + ", should be: [" + className + "]");
         }
     }
 }

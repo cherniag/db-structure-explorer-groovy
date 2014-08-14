@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.trackrepo.repository.TrackRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Query;
 import java.util.Iterator;
@@ -73,7 +74,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
         Query query = getEntityManager().createQuery(queryText);
 
-        if (trackCriteria.getTrackIds() != null && trackCriteria.getTrackIds().size() > 0) {
+        if (!CollectionUtils.isEmpty(trackCriteria.getTrackIds())) {
             query = query.setParameter("id", trackCriteria.getTrackIds().get(0).longValue());
         } else {
             setParamLike("genre", trackCriteria.getGenre(), query);
@@ -112,7 +113,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
         }
 
         StringBuilder criteria = new StringBuilder();
-        if (trackCriteria.getTrackIds() != null && trackCriteria.getTrackIds().size() > 0)
+        if (!CollectionUtils.isEmpty(trackCriteria.getTrackIds()))
             addCriteria(criteria, " t.id = :id");
         else {
             if (trackCriteria.getLabel() != null && !trackCriteria.getLabel().isEmpty())

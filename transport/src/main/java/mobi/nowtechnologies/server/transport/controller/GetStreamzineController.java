@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.annotation.Resource;
 import java.util.Date;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Controller
 public class GetStreamzineController extends CommonController {
     @Resource(name = "streamzineUpdateService")
@@ -24,8 +26,11 @@ public class GetStreamzineController extends CommonController {
     @Resource(name = "streamzineUpdateAsm")
     private StreamzineUpdateAsm streamzineUpdateAsm;
 
-    @RequestMapping(method = RequestMethod.POST,
-            value = {"**/{community:hl_uk}/{apiVersion:6.1}/GET_STREAMZINE"})
+    @RequestMapping(method = POST,
+            value = {
+                    "**/{community:hl_uk}/{apiVersion:6.1}/GET_STREAMZINE",
+                    "**/{community:hl_uk}/{apiVersion:6.2}/GET_STREAMZINE"
+            })
     public Response getUpdate(@RequestParam("APP_VERSION") String appVersion,
                               @PathVariable("community") String community,
                               @RequestParam("USER_NAME") String userName,

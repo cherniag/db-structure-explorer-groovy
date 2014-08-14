@@ -22,26 +22,30 @@
 	}
 	.cover_media {
     	font-size: 11px;
-    	width: 50px;
+    	width: 50px!important;
 	}
 	.isrc_media {
     	font-size: 11px;
-    	width: 100px;
+    	width: 140px!important;
 	}
+    .label_media {
+        font-size: 11px;
+        width: 50px !important;
+    }
 	.title_media {
     	font-size: 11px;
-    	width: 150px;
+    	width: 80px!important;
 	}
 	.artist_media {
     	font-size: 11px;
-    	width: 150px;
+    	width: 100px!important;
 	}
 
     .terr_code {
         font-size: 11px;
-        width: 30px;
+        width: 50px!important;
     }
-	
+
 	.basket_button {
 		font-size: 11px;
     	width: 10px;
@@ -94,7 +98,7 @@
 	
 	.chartControl {
 		/*margin-left: 920px;*/ 
-		width: 580px; 
+		width: 580px;
 		height: 300px; 
 		top: 75px;
     	left: 920px;
@@ -105,7 +109,7 @@
 	#chartItemsTable li div {
     	border: medium none;
     	display: inline-block;
-    	width: 100px;
+    	width: 80px;
     	height: 100%;
     	vertical-align: top;
 	}
@@ -165,15 +169,15 @@
 	}
 	
 	#chartItemsTable li div.info_chartItem {
-	    font-size: 10px;
-	    height: 60px !important;
-	    overflow: hidden;
-	    width: 15%;
-	}
-	
+        font-size: 10px;
+        height: 60px !important;
+        overflow: hidden;
+        width: 15%;
+    }
+
 	#chartItemsTable li div.publishDate_chartItem {
 	    font-size: 10px;
-	    width: 12%;
+	    width: 17%;
 	}
 	
 </style>
@@ -218,7 +222,7 @@
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 					<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
-					<div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.isrc}">ISRC</div>
+                    <div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.trackId}">Track id</div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -243,7 +247,7 @@
     					<input type="checkbox" th:checked="${chartItemDto.locked}"/>
     				</div>
 					<div class="publishDate_chartItem" style="display:inline-block">
-						<span th:text="${chartItemDto.isrc}">GB28K1100052</span>
+						<span th:text="${chartItemDto.mediaDto.trackId}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
 					</div>
 				</li>
@@ -277,7 +281,7 @@
 							<li class="title">
 								<div class="image_chartItemBasket" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
 								<div class="ArtistTitle_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
-								<div class="info_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+                                <div class="info_chartItemBasket" style="width: 150px;" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 							</li>
 						</ul>
 						<ul class="table table_up" id="chartItemsBasketSortable" style="min-height: 50px;">
@@ -310,7 +314,7 @@
 									Cover
 								</div>
 								<div class="isrc_media"
-									th:text="#{chartItems.page.mediasTable.head.isrc}">
+									th:text="#{chartItems.page.mediasTable.head.trackId}">
 									isrc
 								</div>
 								<div class="title_media"
@@ -324,6 +328,10 @@
                                 <div class="terr_code"
                                      th:text="#{chartItems.page.mediasTable.head.code}">
                                     Artist22
+                                </div>
+                                <div class="label_media"
+                                     th:text="#{chartItems.page.mediasTable.head.label}">
+                                    The label
                                 </div>
 							</li>
 						</ul>
@@ -521,7 +529,7 @@
  		$("#chartItemsBasketSortable li#emptyList").css("display","none");
  		
  		
- 		var hiddendiv = item.find("div.position_chartItem, div.prev_position_chartItem, div.locked_chartItem, div.change_position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button");
+ 		var hiddendiv = item.find("div.position_chartItem, div.prev_position_chartItem, div.locked_chartItem, div.change_position_chartItem, div.publishDate_chartItem, div.isrc_media, div.title_media, div.artist_media, div.basket_button, div.label_media");
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
@@ -586,7 +594,7 @@
 		item.removeAttr("class");
 		item.removeAttr("style");
 		
-		var hiddendiv = item.find("div.isrc_media, div.title_media, div.artist_media, div.basket_button, div.terr_code");
+		var hiddendiv = item.find("div.isrc_media, div.title_media, div.artist_media, div.basket_button, div.terr_code, div.label_media");
 		hiddendiv.css("display", "none");
 		
 		var positionDiv = item.find("div.position_chartItem");
@@ -597,7 +605,7 @@
 		var imageDiv = item.find("div.image_chartItem, div.image_chartItemBasket, div.cover_media");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
 		var publishDateDiv = item.find("div.publishDate_chartItem");
-		
+
 		imageDiv.detach().insertBefore(artistTitleDiv);
 		
 		artistTitleDiv.css("display","inline-block");
@@ -608,7 +616,7 @@
 		positionPrevDiv.css("display","inline-block");
 		chgPositionDiv.css("display","inline-block");
 		publishDateDiv.css("display","inline-block");
-		
+
 		artistTitleDiv.attr("class","ArtistTitle_chartItem");
 		imageDiv.attr("class","image_chartItem");
 		infoDiv.attr("class","info_chartItem");
@@ -911,7 +919,7 @@
 			"class":"publishDate_chartItem",
 			"style":"display:none;"
 		}).appendTo(li);
-		$('<span>').text(chartItem.mediaDto.isrc).appendTo(publishDateDiv);
+		$('<span>').text(chartItem.mediaDto.trackId).appendTo(publishDateDiv);
 		$('<button>').attr({
 			"type":"button",
 			"onclick":"onToBasketClick(this, false)",
@@ -931,8 +939,8 @@
 		
 		$('<div>').attr({
 			"class":"isrc_media",
-		}).text(chartItem.mediaDto.isrc).appendTo(li);
-		$('<div>').attr({
+		}).text(chartItem.mediaDto.trackId).appendTo(li);
+        $('<div>').attr({
 			"class":"title_media",
 		}).text(chartItem.mediaDto.title).appendTo(li);
 		
@@ -947,9 +955,13 @@
         var artistMediaDiv = $('<div>').attr({
             "class":"terr_code"
         }).text(code_text).appendTo(li);
-		
+        $('<div>').attr({
+            "class":"label_media"
+        }).text(chartItem.mediaDto.label).appendTo(li);
+
 		var artistMediaDiv = $('<div>').attr({
-			"class":"basket_button"
+			"class":"basket_button",
+            "style": "margin-left:80%"
 		}).appendTo(li);
 		$('<button>').attr({
 			"type":"button",

@@ -215,8 +215,8 @@ function find(trackId, callback, withFiles, withTerritories){
 
 function onEncodeSuccess(data, trackId){
     var status = data.status;
-
-    if(status == "ENCODED"){
+    var isFinished = ((status == "ENCODED") ||  (status == "PUBLISHED"));
+    if(isFinished){
         var pulltrackButtonId = "#pulltrackButton_" + trackId;
         var encodetrackButtonId = "#encodetrackButton_" + trackId;
         var publishTitleDivId = "#publishTitleDiv_" + trackId;

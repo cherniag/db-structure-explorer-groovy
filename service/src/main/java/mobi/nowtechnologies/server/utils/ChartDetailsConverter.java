@@ -71,7 +71,7 @@ public class ChartDetailsConverter {
         chartDetailDto.setImageLargeSize(media.getImageLargeSize());
         chartDetailDto.setImageSmallSize(media.getImageSmallSize());
         chartDetailDto.setInfo(chartDetail.getInfo());
-        chartDetailDto.setMedia(media.getIsrc());
+        chartDetailDto.setMedia(media.getIsrcTrackId());
         chartDetailDto.setTitle(media.getTitle());
         chartDetailDto.setTrackSize(headerSize + audioSize - 2);
         chartDetailDto.setChartDetailVersion(chartDetail.getVersionAsPrimitive());

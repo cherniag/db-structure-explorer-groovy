@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
-import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 @Transactional
 public class UserPromoServiceImpl implements UserPromoService {
@@ -36,8 +35,7 @@ public class UserPromoServiceImpl implements UserPromoService {
     private UserRepository userRepository;
 
     @Override
-    @Transactional(propagation = REQUIRED)
-    public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
+     public User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         activationEmailService.activate(activationEmailId, email, token);
 
         User existingUser = userRepository.findOne(email, user.getCommunityRewriteUrl());

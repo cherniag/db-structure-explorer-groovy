@@ -12,50 +12,42 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 
-import javax.annotation.Resource;
-
 @Service
 public class FacebookHttpService extends AbstractHttpService {
-    @Resource
-    private UserDataCreator userDataCreator;
-
-    public FacebookUserDetailsDto login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, String timestamp, RequestFormat format, String accessToken, String facebookUserId) {
-        ResponseEntity<String> stringResponseEntity = doLogin(deviceData, deviceUID, accountCheck, timestamp, format, accessToken, facebookUserId, accountCheck.userName);
+    public FacebookUserDetailsDto login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
+        ResponseEntity<String> stringResponseEntity = doLogin(deviceData, deviceUID, accountCheck, format, accessToken, facebookUserId, accountCheck.userName);
 
         FacebookUserDetailsDto facebookUserDetailsDto = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), JsonHelper.USER_DETAILS_PATH, FacebookUserDetailsDto.class);
 
         return facebookUserDetailsDto;
     }
 
-    public FacebookUserDetailsDto login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, String timestamp, RequestFormat format, String accessToken, String facebookUserId, String emailAsUserName) {
-        ResponseEntity<String> stringResponseEntity = doLogin(deviceData, deviceUID, accountCheck, timestamp, format, accessToken, facebookUserId, emailAsUserName);
+    public FacebookUserDetailsDto login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId, String emailAsUserName) {
+        ResponseEntity<String> stringResponseEntity = doLogin(deviceData, deviceUID, accountCheck, format, accessToken, facebookUserId, emailAsUserName);
 
         FacebookUserDetailsDto facebookUserDetailsDto = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), JsonHelper.USER_DETAILS_PATH, FacebookUserDetailsDto.class);
 
         return facebookUserDetailsDto;
     }
 
-    public HttpClientErrorException loginWithExpectedError(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, String timestamp, RequestFormat format, String accessToken, String facebookUserId) {
+    public HttpClientErrorException loginWithExpectedError(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
         try {
-            doLogin(deviceData, deviceUID, accountCheck, timestamp, format, accessToken, facebookUserId, accountCheck.userName);
+            doLogin(deviceData, deviceUID, accountCheck, format, accessToken, facebookUserId, accountCheck.userName);
             return null;
         } catch (HttpClientErrorException e) {
             return e;
         }
     }
 
-    private ResponseEntity<String> doLogin(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, String timestamp, RequestFormat format, String accessToken, String facebookUserId, String userName) {
+    private ResponseEntity<String> doLogin(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId, String userName) {
+        UserDataCreator.TimestampTokenData userToken = userDataCreator.createUserToken(accountCheck.userToken);
 
-        String uri = getUri(deviceData.getCommunityUrl(), deviceData.getApiVersion().getApiVersion(), "SIGN_IN_FACEBOOK", format);
-        //
-        // Build parameters
-        //
-        final String userToken = userDataCreator.createUserToken(accountCheck, timestamp);
+        String uri = getUri(deviceData, "SIGN_IN_FACEBOOK", format);
 
         MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
         request.add("ACCESS_TOKEN", accessToken);
-        request.add("USER_TOKEN", userToken);
-        request.add("TIMESTAMP", timestamp);
+        request.add("USER_TOKEN", userToken.getTimestampToken());
+        request.add("TIMESTAMP", userToken.getTimestamp());
         request.add("DEVICE_TYPE", deviceData.getDeviceType());
         request.add("FACEBOOK_USER_ID", facebookUserId);
         request.add("USER_NAME", userName);
