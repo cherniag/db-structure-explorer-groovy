@@ -188,10 +188,10 @@ public class ChartService implements ApplicationContextAware {
 
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
         for (Chart chart : charts) {
-            List<Media> locakedItems = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
-            for(Media locakedItem : locakedItems){
+            List<Media> lockedItems = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
+            for(Media lockedItem : lockedItems){
                 ChartDetail chartDetail = new ChartDetail();
-                chartDetail.setMedia(locakedItem);
+                chartDetail.setMedia(lockedItem);
                 chartDetails.add(chartDetail);
             }
         }

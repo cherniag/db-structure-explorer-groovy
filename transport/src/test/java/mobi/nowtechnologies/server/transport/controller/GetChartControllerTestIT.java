@@ -183,7 +183,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk()).andDo(print())
                 .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists())
-                .andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_4"))
+                .andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_2"))
                 .andExpect(xpath("/response/chart/track[duration=10000]").exists())
                 .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                 .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
