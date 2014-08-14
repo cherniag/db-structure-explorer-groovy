@@ -3,18 +3,20 @@
  */
 package mobi.nowtechnologies.server.assembler;
 
+import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
+import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
+import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import mobi.nowtechnologies.server.persistence.domain.AbstractFilterWithCtiteria;
-import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
-import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
-import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
+import static mobi.nowtechnologies.server.shared.enums.MessageType.*;
 
 /**
  * Class for assembling News entities to NewsDto objects and vise versa
@@ -24,7 +26,7 @@ import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
  */
 public class NewsAsm {
 
-	public static NewsItemDto toDto(Message message) {
+    public static NewsItemDto toDto(Message message) {
 		if (null != message) {
 			NewsItemDto newsItemDto = new NewsItemDto();
 
@@ -62,30 +64,29 @@ public class NewsAsm {
 		newsDetailDto.setBody(message.getBody());
 		
 		newsDetailDto.setId(message.getId());
-		if (MessageType.NEWS.equals(message.getMessageType())) {
+        final MessageType messageType = message.getMessageType();
+        if (NEWS.equals(messageType)) {
 			newsDetailDto.setI(message.getPosition());
 		}else{
 			newsDetailDto.setI(message.getId());
 		}
 		newsDetailDto.setMessageFrequence(message.getFrequence());
-		newsDetailDto.setMessageType(message.getMessageType());
+		newsDetailDto.setMessageType(messageType);
 		newsDetailDto.setTimestampMilis(message.getPublishTimeMillis());
 		newsDetailDto.setImageFileName(message.getImageFileName());
-		
-		if (MessageType.RICH_POPUP.equals(message.getMessageType())) {
+
+        boolean isReachPopup = RICH_POPUP.equals(messageType);
+        if (isReachPopup || getBannerTypes().contains(messageType)) {
 			newsDetailDto.setAction(message.getAction());
 			newsDetailDto.setActionType(message.getActionType());
-			newsDetailDto.setActionButtonText(message.getActionButtonText());
+			if (isReachPopup) {
+                newsDetailDto.setActionButtonText(message.getActionButtonText());
+            }
 		}
 		
 		return newsDetailDto;
 	}
 	
-	/**
-	 * @param user
-	 * @param messages
-	 * @return
-	 */
 	public static List<NewsDetailDto> toNewsDetailDtos(User user, List<Message> messages) {
 		if (user != null) {
 			List<NewsDetailDto> newsDetailDtos = new LinkedList<NewsDetailDto>();

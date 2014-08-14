@@ -3,10 +3,13 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
@@ -22,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
+
+import static mobi.nowtechnologies.server.web.controller.UnsubscribeController.REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
 
 @Controller
 public class PaymentsPayPalController extends CommonController {
@@ -44,6 +49,8 @@ public class PaymentsPayPalController extends CommonController {
 
 	private PaymentDetailsService paymentDetailsService;
     private PaymentPolicyService paymentPolicyService;
+
+    private UserService userService;
 
 	@RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.GET)
 	public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
@@ -68,6 +75,10 @@ public class PaymentsPayPalController extends CommonController {
 
     @RequestMapping(value = PAGE_PAYMENTS_START_PAYPAL, method = RequestMethod.GET)
     public String startPaypal(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+        User user = userService.findById(getSecurityContextDetails().getUserId());
+        if (user.isSubscribedUserByPaymentType(PaymentDetails.PAYPAL_TYPE)){
+            return REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
+        }
         Community community = CommunityDao.getCommunity(communityUrl.getValue());
         PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(-1, UserRegInfo.PaymentType.PAY_PAL, community.getId());
         return "redirect:/payments_inapp/paypal.html?"+REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId() ;
@@ -113,5 +124,9 @@ public class PaymentsPayPalController extends CommonController {
 
     public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
         this.paymentPolicyService = paymentPolicyService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

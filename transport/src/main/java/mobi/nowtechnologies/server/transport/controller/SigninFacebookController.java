@@ -42,7 +42,9 @@ public class SigninFacebookController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.0}/SIGN_IN_FACEBOOK",
-            "**/{community}/{apiVersion:6\\.1}/SIGN_IN_FACEBOOK"})
+            "**/{community}/{apiVersion:6\\.1}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.2}/SIGN_IN_FACEBOOK"
+    })
     public ModelAndView applyPromotionByFacebookWithCheckReactivation(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,

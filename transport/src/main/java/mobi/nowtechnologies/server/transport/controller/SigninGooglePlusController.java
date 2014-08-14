@@ -18,7 +18,6 @@ import javax.annotation.Resource;
 /**
  * Created by oar on 2/13/14.
  */
-
 @Controller
 public class SigninGooglePlusController extends CommonController {
 
@@ -31,7 +30,9 @@ public class SigninGooglePlusController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.0}/SIGN_IN_GOOGLE_PLUS",
-            "**/{community}/{apiVersion:6\\.1}/SIGN_IN_GOOGLE_PLUS"})
+            "**/{community}/{apiVersion:6\\.1}/SIGN_IN_GOOGLE_PLUS",
+            "**/{community}/{apiVersion:6\\.2}/SIGN_IN_GOOGLE_PLUS"
+    })
     public ModelAndView applyPromotionBySignInGooglePlusWithCheckReactivation(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,

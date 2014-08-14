@@ -24,7 +24,10 @@ public class UnsubscribeController extends CommonController {
     public static final String VIEW_UNSUBSCRIBE = "/unsubscribe";
     public static final String PAGE_UNSUBSCRIBE = PaymentsController.SCOPE_PREFIX + "/unsubscribe.html";
     public static final String VIEW_UNSUBSCRIBE_BY_PAYPAL = "/unsubscribeByPayPal";
-    public static final String PAGE_UNSUBSCRIBE_BY_PAYPAL = PaymentsController.SCOPE_PREFIX + "/unsubscribeByPayPal.html";
+    public static final String UNSUBSCRIBE_BY_PAY_PAL_HTML = "/unsubscribeByPayPal.html";
+    public static final String PAGE_UNSUBSCRIBE_BY_PAYPAL = PaymentsController.SCOPE_PREFIX + UNSUBSCRIBE_BY_PAY_PAL_HTML;
+    public static final String REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML = "redirect:/payments_inapp" + UNSUBSCRIBE_BY_PAY_PAL_HTML;
+
 
     private UserService userService;
 

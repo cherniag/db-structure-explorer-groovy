@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -34,10 +36,6 @@ public class NewsDetailDto {
 	private String action;
 	
 	private String actionButtonText;
-
-	public enum MessageType {
-		NEWS, POPUP, NOTIFICATION, RICH_POPUP, AD
-	}
 	
 	public enum MessageFrequence {
 		ONCE, ONCE_AFTER_1ST_TRACK_DOWNLOAD, DAILY, WEEKLY
@@ -154,11 +152,21 @@ public class NewsDetailDto {
 		this.actionButtonText = actionButtonText;
 	}
 
-	@Override
-	public String toString() {
-		return "NewsDetailDto [actionType=" + actionType + ", action=" + action + ", actionButtonText=" + actionButtonText + ", body=" + body + ", detail=" + detail + ", i=" + i + ", id=" + id
-				+ ", imageFileName=" + imageFileName + ", messageFrequence="
-				+ messageFrequence + ", messageType=" + messageType + ", position=" + position + ", timestampMilis=" + timestampMilis + "]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("i", i)
+                .append("detail", detail)
+                .append("position", position)
+                .append("body", body)
+                .append("imageFileName", imageFileName)
+                .append("timestampMilis", timestampMilis)
+                .append("messageType", messageType)
+                .append("messageFrequence", messageFrequence)
+                .append("actionType", actionType)
+                .append("action", action)
+                .append("actionButtonText", actionButtonText)
+                .toString();
+    }
 }

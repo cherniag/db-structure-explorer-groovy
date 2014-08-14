@@ -42,7 +42,8 @@ public class ApplyInitPromoController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO"
+            "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO"
     })
     public ModelAndView applyPromotionWithReactivation(
             @RequestParam("USER_NAME") String userName,
