@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
@@ -469,6 +470,59 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
         Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
         reactivationUserInfo = reactivationUserInfoRepository.findByUser(user);
         assertFalse(reactivationUserInfo.isReactivationRequest());
+    }
+
+    @Test
+    public void testApplyInitPromoWithMergeAccountsForXML() throws Exception {
+        //given
+        String userName = "999a72f8864fd5c23957beef9d99656568";
+        User user = prepareUserForApplyInitPromo(userName);
+        String apiVersion = "3.9";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = user.getToken();
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
+        doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+        ).andExpect(status().isOk()).andExpect(xpath(AccountCheckResponseConstants.USER_XML_PATH + "/firstActivation").booleanValue(true));
+    }
+
+
+    @Test
+    public void testApplyInitPromoWithMergeAccountsForJSON() throws Exception {
+        //given
+        String userName = "999a72f8864fd5c23957beef9d99656568";
+        User user = prepareUserForApplyInitPromo(userName);
+        String apiVersion = "3.9";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = user.getToken();
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
+        doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+        ).andExpect(status().isOk()).andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH + ".firstActivation").value(true));
     }
 
     private User prepareUserForApplyInitPromo(String userName){
