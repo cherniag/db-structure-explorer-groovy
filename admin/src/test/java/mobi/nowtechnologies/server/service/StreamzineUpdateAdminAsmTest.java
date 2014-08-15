@@ -107,7 +107,8 @@ public class StreamzineUpdateAdminAsmTest {
         Update update = new Update(DateUtils.addDays(new Date(), 1));
         update.addUser(getUser(1, "murka"));
         update.addUser(getUser(2, "burka"));
-        update.addBlock(new Block(0, ShapeType.SLIM_BANNER, new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "www.uuu.ua")));
+        NotificationDeeplinkInfo deeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "www.uuu.ua");
+        update.addBlock(new Block(0, ShapeType.SLIM_BANNER, deeplinkInfo));
 
         UpdateDto updateDto = streamzineUpdateAdminAsm.convertOneWithBlocks(update);
 

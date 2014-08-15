@@ -4,10 +4,9 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentTy
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
+
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType.EXTERNAL_AD;
 
 @MappedSuperclass
 public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
@@ -68,5 +67,14 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    @PrePersist
+    public void validate() {
+        if (EXTERNAL_AD.equals(linkType)){
+            if (opener == null){
+                throw new RuntimeException("No opener");
+            }
+        }
     }
 }
