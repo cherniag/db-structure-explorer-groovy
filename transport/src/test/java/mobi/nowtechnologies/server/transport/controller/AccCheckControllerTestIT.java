@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
+import static mobi.nowtechnologies.server.transport.controller.CommonController.OAUTH_REALM_USERS;
+import static mobi.nowtechnologies.server.transport.controller.CommonController.WWW_AUTHENTICATE_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -345,6 +347,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isUnauthorized())
+                .andExpect(header().string(WWW_AUTHENTICATE_HEADER, OAUTH_REALM_USERS))
                 .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("Bad user credentials"));
     }
 
