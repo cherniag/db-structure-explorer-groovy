@@ -19,7 +19,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     };
 
     @JsonIgnore
-    @JsonProperty(value = "title")
+    @JsonProperty(value = "id")
     private String id;
 
     @JsonProperty(value = "title")

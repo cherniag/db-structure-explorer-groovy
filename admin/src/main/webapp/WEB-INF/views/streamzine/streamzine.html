@@ -578,6 +578,9 @@
                                 <button class="btn btn-primary s_btn" type="button">
                                     Check
                                 </button>
+                                Open
+                                <select id="opener" style="margin-top: 9px">
+                                </select>
                             </div>
 
                             <div data-header="modal-dialog-header" class="streamzine-url-picker-checked"></div>
@@ -665,14 +668,23 @@
         </script>
 
         <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
-        Streamzine.Presenter.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
+                Streamzine.Presenter.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
+        var opener = new Object();
+        opener['BROWSER'] = 'In Browser';
+        opener['IN_APP'] = 'In-app';
 
         $(function() {
             var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
             var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
             var updatePublishDates = /*[[${updatePublishDates}]]*/'';
-
             Streamzine.Presenter.init(selectedPublishDate, selectedPublishDateString, updatePublishDates);
+            for (var key in opener) {
+                $('#opener').append($("<option/>", {
+                    value: key,
+                    text: opener[key]
+                }))
+            }
+            ;
         });
         /*]]>*/</script>
         </div>

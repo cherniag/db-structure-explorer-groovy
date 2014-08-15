@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
@@ -90,7 +91,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t")))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?openIn=browser")))
 
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
@@ -342,6 +343,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
     private DeeplinkInfo createNotificationDeeplink(String url) {
         NotificationDeeplinkInfo d = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, url);
+        d.setOpener(Opener.BROWSER);
         return d;
     }
 

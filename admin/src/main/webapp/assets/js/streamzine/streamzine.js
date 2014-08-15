@@ -36,11 +36,12 @@ if(Streamzine == undefined) {
     Streamzine.Presenter.valueTyped = function(data) {
         var currentBlock = Streamzine.Model.getCurrentBlock();
 
-        var value;
+        var value = data.value;
         if(currentBlock.key == 'INTERNAL_AD' && data.field == 'value') {
             value = (data.value.action) ? data.value.url + '#' + data.value.action : data.value.url;
-        } else {
-            value = data.value;
+        }
+        if(currentBlock.key == 'EXTERNAL_AD' && data.field == 'value') {
+            value = data.value.url + '#' + data.value.opener;
         }
         Streamzine.Model.updateCurrentBlock(data.field, value);
     }

@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -212,10 +213,19 @@ public class DeepLinkInfoService {
         ApplicationPageData applicationPageData = new ApplicationPageData(dataValue.toString().trim());
 
         NotificationDeeplinkInfo notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl());
-        if (!applicationPageData.getAction().isEmpty()) {
-            notificationDeeplinkInfo.setAction(applicationPageData.getAction());
+        switch (linkLocationType) {
+            case INTERNAL_AD:
+                if (!applicationPageData.getAction().isEmpty()) {
+                    notificationDeeplinkInfo.setAction(applicationPageData.getAction());
+                }
+                break;
+            case EXTERNAL_AD:
+                if (!applicationPageData.getAction().isEmpty()) {
+                    Opener opener = Opener.valueOf(applicationPageData.getAction());
+                    notificationDeeplinkInfo.setOpener(opener);
+                }
+                break;
         }
-
         return notificationDeeplinkInfo;
     }
 
@@ -231,6 +241,11 @@ public class DeepLinkInfoService {
         public ApplicationPageData(String url, String action) {
             this.rawValues = new String[]{url, action};
 
+            Assert.isTrue(rawValues.length == 2);
+        }
+
+        public ApplicationPageData(String url, Opener opener) {
+            this.rawValues = new String[]{url, opener.name()};
             Assert.isTrue(rawValues.length == 2);
         }
 

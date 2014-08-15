@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -20,6 +21,18 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
     @Column(name = "action", length = 255)
     private String action;
 
+    @Column(name = "opener")
+    @Enumerated(EnumType.STRING)
+    private Opener opener;
+
+    public void setOpener(Opener opener) {
+        this.opener = opener;
+    }
+
+    public Opener getOpener() {
+        return opener;
+    }
+
     protected InformationDeeplinkInfo() {
     }
 
@@ -35,6 +48,7 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
         copy.url = url;
         copy.linkType = linkType;
         copy.action = action;
+        copy.opener = opener;
         return copy;
     }
 
