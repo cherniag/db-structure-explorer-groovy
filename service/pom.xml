@@ -120,11 +120,6 @@
 			<artifactId>spring-security-config</artifactId>
 		</dependency>
 		<!-- END Security -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-        </dependency>
-		
 			<dependency>
 				<groupId>com.sun.xml.wss</groupId>
 				<artifactId>xws-security</artifactId>
