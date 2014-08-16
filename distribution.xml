@@ -9,7 +9,7 @@
 	</formats>
 	<files>
 		<file>
-			<source>persistence/src/main/resources/sql/release${project.version}.sql</source>
+			<source>../persistence/src/main/resources/sql/release${project.version}.sql</source>
 			<outputDirectory>/</outputDirectory>
 			<destName>release.alter</destName>
 		</file>
