@@ -11,6 +11,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Comparator;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVip {
     public static final Comparator<OrdinalBlockDto> COMPARATOR = new Comparator<OrdinalBlockDto>() {
         @Override
@@ -199,15 +201,17 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
     private DeepLinkInfoService.ApplicationPageData getApplicationPageData(){
         if (applicationPageData == null){
-            applicationPageData = new DeepLinkInfoService.ApplicationPageData(value);
+            applicationPageData = new DeepLinkInfoService.ApplicationPageData(isEmpty(value) ? "": value);
         }
         return  applicationPageData;
     }
 
+    @JsonIgnore
     public String getValueOpener(){
         return getApplicationPageData().getAction();
     }
 
+    @JsonIgnore
     public String getValueLink(){
         return getApplicationPageData().getUrl();
     }

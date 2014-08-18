@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Date;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -83,7 +84,7 @@ public class DeepLinkUrlFactoryTest {
     @Test
     public void checkCreateLinkValueForInformationWebPage() throws Exception {
         //prepare data
-        InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "http://bear.ru");
+        InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "http://bear.ru", BROWSER);
 
         //check
         Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "o2");
