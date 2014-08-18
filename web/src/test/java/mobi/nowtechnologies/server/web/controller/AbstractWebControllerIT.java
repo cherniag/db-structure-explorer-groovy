@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class AbstractWebControllerIT {
+public abstract class AbstractWebControllerIT {
     @Resource
     private WebApplicationContext wac;
 
