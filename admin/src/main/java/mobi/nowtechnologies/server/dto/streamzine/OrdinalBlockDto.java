@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
@@ -57,6 +58,9 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
     @JsonProperty(value = "badgeUrl")
     private String badgeUrl;
+
+
+    private DeepLinkInfoService.ApplicationPageData applicationPageData;
 
     public String getTitle() {
         return title;
@@ -190,5 +194,21 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
                 .append("contentTypeTitle", contentTypeTitle)
                 .append("badgeUrl", badgeUrl)
                 .toString();
+    }
+
+
+    private DeepLinkInfoService.ApplicationPageData getApplicationPageData(){
+        if (applicationPageData == null){
+            applicationPageData = new DeepLinkInfoService.ApplicationPageData(value);
+        }
+        return  applicationPageData;
+    }
+
+    public String getValueOpener(){
+        return getApplicationPageData().getAction();
+    }
+
+    public String getValueLink(){
+        return getApplicationPageData().getUrl();
     }
 }

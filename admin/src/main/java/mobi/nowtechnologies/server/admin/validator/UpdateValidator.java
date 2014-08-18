@@ -18,6 +18,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSub
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -255,13 +256,25 @@ public class UpdateValidator extends BaseValidator {
         }
 
         if(linkLocationType == LinkLocationType.EXTERNAL_AD) {
+            String url = blockDto.getValueLink();
             try {
-                URI uri = URI.create(value);
+                URI uri = URI.create(url);
                 Assert.notNull(uri.getScheme());
                 Assert.notNull(uri.getHost());
             } catch (IllegalArgumentException e) {
-                Object[] args = {value};
-                rejectValue("streamzine.error.notvalid.url", args, errors);
+                Object[] args = {url};
+                rejectField("streamzine.error.notvalid.url", args, errors, "valueLink");
+            }
+
+            if (!isEmpty(blockDto.getValueOpener())){
+                String openerAsString = blockDto.getValueOpener();
+                try {
+                    Opener.valueOf(openerAsString);
+                }
+                catch (IllegalArgumentException e){
+                    Object[] args = {openerAsString};
+                    rejectField("streamzine.error.notvalid.opener", args, errors, "valueOpener");
+                }
             }
             return;
         }

@@ -294,7 +294,9 @@ if(Pickers == undefined) {
             var splitData = initialBlock.value.split('#')
             _getInput().val(splitData[0]);
             _getOpener().val(splitData[1]);
-            _check();
+            if(initialBlock.value) {
+              _check();
+            }
             syncUrl(_getInput().val());
             syncOpener();
         });

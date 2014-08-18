@@ -212,18 +212,20 @@ public class DeepLinkInfoService {
         Object dataValue = data.getValue() != null ? data.getValue() : "";
         ApplicationPageData applicationPageData = new ApplicationPageData(dataValue.toString().trim());
 
-        NotificationDeeplinkInfo notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl());
+        NotificationDeeplinkInfo notificationDeeplinkInfo = null;
         switch (linkLocationType) {
             case INTERNAL_AD:
+                notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl());
                 if (!applicationPageData.getAction().isEmpty()) {
                     notificationDeeplinkInfo.setAction(applicationPageData.getAction());
                 }
                 break;
             case EXTERNAL_AD:
+                Opener opener = Opener.BROWSER;
                 if (!applicationPageData.getAction().isEmpty()) {
-                    Opener opener = Opener.valueOf(applicationPageData.getAction());
-                    notificationDeeplinkInfo.setOpener(opener);
+                    opener = Opener.valueOf(applicationPageData.getAction());
                 }
+                notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl(), opener);
                 break;
         }
         return notificationDeeplinkInfo;

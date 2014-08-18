@@ -4,9 +4,10 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentTy
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 
-import javax.persistence.*;
-
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType.EXTERNAL_AD;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
@@ -24,10 +25,6 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
     @Enumerated(EnumType.STRING)
     private Opener opener;
 
-    public void setOpener(Opener opener) {
-        this.opener = opener;
-    }
-
     public Opener getOpener() {
         return opener;
     }
@@ -41,6 +38,12 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
         this.url = url;
     }
 
+    protected InformationDeeplinkInfo(LinkLocationType linkType, ContentType contentType, String url, Opener opener) {
+        this.linkType = linkType;
+        this.contentType = contentType;
+        this.url = url;
+        this.opener = opener;
+    }
     @Override
     protected DeeplinkInfo provideInstance() {
         InformationDeeplinkInfo copy = getInstance();
@@ -69,12 +72,4 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
         this.action = action;
     }
 
-    @PrePersist
-    public void validate() {
-        if (EXTERNAL_AD.equals(linkType)){
-            if (opener == null){
-                throw new RuntimeException("No opener");
-            }
-        }
-    }
 }

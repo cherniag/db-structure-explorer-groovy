@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
@@ -28,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import javax.annotation.Resource;
 import java.util.Date;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -342,9 +342,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     }
 
     private DeeplinkInfo createNotificationDeeplink(String url) {
-        NotificationDeeplinkInfo d = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, url);
-        d.setOpener(Opener.BROWSER);
-        return d;
+        return new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, url, BROWSER);
     }
 
     private DeeplinkInfo createNotificationDeeplink0() {

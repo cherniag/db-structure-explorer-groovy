@@ -109,10 +109,6 @@ if(Streamzine.Presenter.Editor == undefined) {
                     $('#' + _id + '_valueAction').addClass('streamzine-error-field');
                     $('#' + _id + '_valuePage').addClass('streamzine-error-field');
                 }
-                if(name == 'value' && block.contentType.$name == 'PROMOTIONAL' && block.key == 'EXTERNAL_AD') {
-                    $('#' + _id + '_valueLink').addClass('streamzine-error-field');
-                    $('#' + _id + '_valueOpener').addClass('streamzine-error-field');
-                }
             }
         }
 

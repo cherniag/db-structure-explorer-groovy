@@ -2,12 +2,13 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType.EXTERNAL_AD;
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 @Entity
 @Table(name = "sz_deeplink_promotional")
@@ -22,8 +23,14 @@ public class NotificationDeeplinkInfo extends InformationDeeplinkInfo {
 
     public NotificationDeeplinkInfo(LinkLocationType type, String url) {
         super(type, ContentType.PROMOTIONAL, url);
-        if (EXTERNAL_AD.equals(type)) {
-            setOpener(BROWSER);
-        }
+        isTrue(type.equals(LinkLocationType.INTERNAL_AD));
     }
+
+    public NotificationDeeplinkInfo(LinkLocationType type, String url, Opener opener) {
+        super(type, ContentType.PROMOTIONAL, url, opener);
+        isTrue(type.equals(LinkLocationType.EXTERNAL_AD));
+        notNull(opener);
+    }
+
+
 }
