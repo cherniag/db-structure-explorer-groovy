@@ -241,7 +241,7 @@ public class StreamzineUpdateAdminAsm {
             case EXTERNAL_AD:
                 return buildForExternalAd(i);
         }
-        throw new RuntimeException("Link type is not defined");
+        throw new UnsupportedOperationException("Link type is not defined");
     }
 
     private DeepLinkInfoService.ApplicationPageData buildForExternalAd(InformationDeeplinkInfo i) {

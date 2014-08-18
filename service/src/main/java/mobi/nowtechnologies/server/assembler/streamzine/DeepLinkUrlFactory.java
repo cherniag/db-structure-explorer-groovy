@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import org.apache.commons.net.util.Base64;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -82,22 +81,13 @@ public class DeepLinkUrlFactory {
                     break;
                 case EXTERNAL_AD:
                     if (i.getOpener() != null) {
-                        uriComponentsBuilder.queryParam(OPEN_IN, convertOpenerValue(i.getOpener()));
+                        uriComponentsBuilder.queryParam(OPEN_IN, i.getOpener().getQueryParamValue());
                     }
                     break;
             }
         }
     }
 
-    private String convertOpenerValue(Opener opener) {
-        switch (opener) {
-            case BROWSER:
-                return "browser";
-            case IN_APP:
-                return "app";
-        }
-        throw new RuntimeException("Opener is not valid");
-    }
 
     private String decideContentValue(DeeplinkInfo deeplinkInfo) {
         if (deeplinkInfo instanceof NewsListDeeplinkInfo) {
