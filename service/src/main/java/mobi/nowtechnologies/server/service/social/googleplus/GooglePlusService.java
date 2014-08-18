@@ -12,6 +12,7 @@ import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Date;
 import java.util.Map;
@@ -59,10 +60,7 @@ public class GooglePlusService {
 
     private String extractImageUrl(Person personFromGooglePlus) {
         String imageUrl = personFromGooglePlus.getImageUrl();
-        if (!isEmpty(imageUrl)){
-            return imageUrl.replace("sz=50", "sz=200");
-        }
-        return imageUrl;
+        return UriComponentsBuilder.fromHttpUrl(imageUrl).replaceQueryParam("sz", "200").build().toUriString();
     }
 
     private Date extractDateInUTC(Person personFromGooglePlus) {
