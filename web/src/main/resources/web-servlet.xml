@@ -39,7 +39,7 @@
     <bean id="web.tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
         <property name="definitions">
             <list>
-                <value>/WEB-INF/tiles-defs/template-defs.xml</value>
+                <value>classpath:/WEB-INF/tiles-defs/template-defs.xml</value>
             </list>
         </property>
         <!-- Initialise expression language support for use in Tiles definitions. -->

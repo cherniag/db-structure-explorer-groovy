@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
+import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -7,12 +8,16 @@ import mobi.nowtechnologies.server.shared.enums.MediaType;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails.O2_PSMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.GOOGLE_PLUS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -76,6 +81,25 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
         assertNotNull(actualPaymentPolicy);
         assertEquals(paymentPolicy.getId(), actualPaymentPolicy.getId());
     }
+
+    @Test
+    public void testGetPaymentPoliciesForOnlinePolicy(){
+        //given
+        paymentPolicy = paymentPolicyRepository.save(
+                createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true)).withOnline(true);
+        Collection<PaymentPolicy> result = paymentPolicyRepository.getPaymentPolicies(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        assertEquals(Iterables.getFirst(result, null), paymentPolicy);
+    }
+
+    @Test
+    public void testGetPaymentPoliciesForNotOnlinePolicy(){
+        //given
+        paymentPolicy = paymentPolicyRepository.save(
+                createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true)).withOnline(false);
+        Collection<PaymentPolicy> result = paymentPolicyRepository.getPaymentPolicies(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        assertTrue(result.isEmpty());
+    }
+
 
     PaymentPolicy createPaymentPolicyWithCommunity() {
         o2Community = communityRepository.findByRewriteUrlParameter("o2");

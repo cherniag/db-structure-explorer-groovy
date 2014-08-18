@@ -6,8 +6,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -58,5 +58,15 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "order by paymentPolicy.subweeks desc")
     List<PaymentPolicy> getPaymentPolicies(Community community, ProviderType provider, SegmentType segment, Contract contract, Tariff tariff,
                                            List<MediaType> mediaTypes);
+
+
+    @Query(value="select paymentPolicy " +
+            "from PaymentPolicy paymentPolicy "+
+            "where paymentPolicy.community=?1 " +
+            "and paymentPolicy.provider=?2 " +
+            "and paymentPolicy.paymentType=?3 " +
+            "and paymentPolicy.online is true " +
+            "order by paymentPolicy.id desc")
+    Collection<PaymentPolicy> getPaymentPolicies(Community community, ProviderType providerType, String paymentType);
 
 }

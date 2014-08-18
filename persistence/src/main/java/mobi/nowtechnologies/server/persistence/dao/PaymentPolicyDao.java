@@ -17,13 +17,6 @@ import java.util.List;
 public class PaymentPolicyDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicyDao.class);
 	
-	@SuppressWarnings("unchecked")
-	public List<PaymentPolicy> getPaymentPoliciesGroupdeByPaymentType(Community community) {
-        Integer communityId = Integer.valueOf(community.getId());
-        return getJpaTemplate()
-                .findByNamedQuery("PaymentPolicy.getPaymentPoliciesForCommunityGroupedByPaymentType",  communityId);
-	}
-
 
 	@SuppressWarnings("unchecked")
 	public PaymentPolicy getPaymentPolicy(int operatorId, String paymentType, int communityId) {
