@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.enums.MessageType.getBannerTypes;
+
 public class MessageService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
@@ -60,26 +62,25 @@ public class MessageService {
 	}
 
 	@Transactional(readOnly = true)
-	public NewsDto processGetNewsCommand(User user, String communityName, Long lastUpdateNewsTimeMillis, boolean withAds) {
+	public NewsDto processGetNewsCommand(User user, String communityName, Long lastUpdateNewsTimeMillis, boolean withBanners) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
 		if (communityName == null)
 			throw new ServiceException("The parameter communityName is null");
 
-		LOGGER.debug("input parameters user, communityName, lastUpdateNewsTimeMillis, withAds: [{}], [{}], [{}], [{}]", new Object[] { user, communityName, lastUpdateNewsTimeMillis, withAds });
+		LOGGER.debug("input parameters user, communityName, lastUpdateNewsTimeMillis, withBanners: [{}], [{}], [{}], [{}]", new Object[] { user, communityName, lastUpdateNewsTimeMillis, withBanners });
 
 		Community community = user.getUserGroup().getCommunity();
 
-		NewsDto newsDto = getNews(user, community, lastUpdateNewsTimeMillis, withAds);
+		NewsDto newsDto = getNews(user, community, lastUpdateNewsTimeMillis, withBanners);
 		LOGGER.debug("Output parameter newsDto=[{}], [{}]", newsDto);
 		return newsDto;
 	}
 
-	@Transactional(readOnly = true)
-	public NewsDto getNews(User user, Community community, Long lastUpdateNewsTimeMillis, boolean withAds) {
+	private NewsDto getNews(User user, Community community, Long lastUpdateNewsTimeMillis, boolean withBanners) {
 		if (user == null)
 			throw new ServiceException("The parameter user is null");
-		LOGGER.debug("input parameters user, community, lastUpdateNewsTimeMillis, withAds: [{}], [{}], [{}], [{}]", new Object[] { user, community, lastUpdateNewsTimeMillis, withAds });
+		LOGGER.debug("input parameters user, community, lastUpdateNewsTimeMillis, withAds, withBanners: [{}], [{}], [{}], [{}]", new Object[] { user, community, lastUpdateNewsTimeMillis, withBanners });
 
 		long lastClientUpdateNewsTimeMillis = 0L;
 		if (lastUpdateNewsTimeMillis != null)
@@ -92,10 +93,10 @@ public class MessageService {
 			nextNewsPublishTimeMillis = -1L;
 
 		List<Message> messages;
-		if (withAds) {
+		if (withBanners) {
 			messages = messageRepository.findByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis);
 		} else {
-			messages = messageRepository.findWithoutAdsByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis);
+			messages = messageRepository.findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(community, nextNewsPublishTimeMillis, getBannerTypes());
 		}
 
 		List<NewsDetailDto> newsDetailDtos = NewsAsm.toNewsDetailDtos(user, messages);
