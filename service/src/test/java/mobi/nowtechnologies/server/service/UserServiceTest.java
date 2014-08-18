@@ -2517,7 +2517,8 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        MergeResult resultOfOperation = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        User result = resultOfOperation.getResultOfOperation();
 
         //then
         assertNotNull(result);
@@ -2553,7 +2554,8 @@ public class UserServiceTest {
         doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
-        User result = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, false, false, false);
+        User result = opResult.getResultOfOperation();
 
         //then
         assertNotNull(result);
@@ -2587,7 +2589,8 @@ public class UserServiceTest {
 		
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 		
-		User result = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+		MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+        User result = opResult.getResultOfOperation();
 		
 		assertNotNull(result);
 		assertEquals(user, result);
@@ -2622,7 +2625,9 @@ public class UserServiceTest {
 
 		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
-		User result = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+        MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
+
+        User result = opResult.getResultOfOperation();
 		
 		assertNotNull(result);
 		assertEquals(user, result);
@@ -3230,7 +3235,8 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).save(expectedUser);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        MergeResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertNotNull(actualUser);
@@ -3264,7 +3270,8 @@ public class UserServiceTest {
         doReturn(expectedUser).when(userRepositoryMock).findOne(expectedUser.getId());
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        MergeResult opResult = userServiceSpy.autoOptIn(expectedUser.getCommunityRewriteUrl(), expectedUser.getUserName(), timestamp, userToken, expectedUser.getDeviceUID(), otac, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertNotNull(actualUser);
@@ -3382,7 +3389,8 @@ public class UserServiceTest {
         doAnswer(userWithPromoAnswer).when(promotionServiceMock).applyPromotionByPromoCode(mobileUser, promotion);
 
         //when
-        User actualUser = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac, false);
+        MergeResult opResult = userServiceSpy.autoOptIn(deviceUIdUser.getCommunityRewriteUrl(), deviceUIdUser.getUserName(), timestamp, userToken, deviceUIdUser.getDeviceUID(), otac, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertNotNull(actualUser);
@@ -3691,7 +3699,8 @@ public class UserServiceTest {
         });
 
         //when
-        User actualUser = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
+        MergeResult opResult = userServiceSpy.applyInitPromo(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, false);
+        User actualUser = opResult.getResultOfOperation();
 
         //then
         assertThat(actualUser, is (user));

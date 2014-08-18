@@ -8,11 +8,6 @@ public class ProblematicGooglePlusTemplateCustomizer extends AbstractGooglePlusT
     }
 
     @Override
-    protected String provideResourceNameForEmailResponse() {
-        return "googleplus/failure.json";
-    }
-
-    @Override
     protected String provideResourceNameForGooglePlusResponse() {
         return "googleplus/failureGooglePlus.json";
     }

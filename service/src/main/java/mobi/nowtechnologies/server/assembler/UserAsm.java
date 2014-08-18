@@ -13,6 +13,7 @@ import java.util.*;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 /**
  * @author Titov Mykhaylo (titov)
  * 
@@ -160,11 +161,10 @@ public class UserAsm {
 		return user;
 	}
 
-    static String getPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem, UserStatus status) {
-        if (lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
-                && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())) {
+    static String getPaymentType(PaymentDetails paymentDetails, String lastSubscribedPaymentSystem) {
+        if (isNull(paymentDetails) && ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem)) {
             return "ITUNES_SUBSCRIPTION";
-        } else if (null == paymentDetails)
+        } else if (isNull(paymentDetails))
             return "UNKNOWN";
         if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
             return "creditCard";
