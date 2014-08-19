@@ -1,9 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import mobi.nowtechnologies.common.util.TrackIdGenerator;
 import mobi.nowtechnologies.server.shared.enums.ItemType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import mobi.nowtechnologies.server.persistence.domain.Label;
 
 import javax.persistence.*;
 import java.io.Serializable;

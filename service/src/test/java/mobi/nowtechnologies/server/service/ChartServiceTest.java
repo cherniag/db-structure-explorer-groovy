@@ -1,4 +1,3 @@
-
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.UserAsm;
@@ -192,7 +191,7 @@ public class ChartServiceTest {
     @Test
     public void testGetLockedChartItems_NotSubscribedNotPendingNotExpiring_Success()
             throws Exception {
-		List<String> chartDetailIds = singletonList("TRACK_ID");
+		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         String communityName = "chartsnow";
@@ -203,7 +202,7 @@ public class ChartServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(chartDetailIds.get(0), result.get(0).getMedia().getIsrc());
+        assertEquals(chartDetailIds.get(0), result.get(0).getMedia());
 
         verify(mockChartRepository, times(1)).getByCommunityName(anyString());
         verify(mockChartDetailService, times(1)).getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class));
@@ -212,7 +211,7 @@ public class ChartServiceTest {
     @Test
     public void testGetLockedChartItems_UserSubscribedOnFreeTrial_Success()
             throws Exception {
-		List<String> chartDetailIds = singletonList("TRACK_ID");
+		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -236,7 +235,7 @@ public class ChartServiceTest {
     @Test
     public void testGetLockedChartItems_UserPending_Success()
             throws Exception {
-		List<String> chartDetailIds = singletonList("TRACK_ID");
+		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -260,7 +259,7 @@ public class ChartServiceTest {
     @Test
     public void testGetLockedChartItems_UserExpiring_Success()
             throws Exception {
-		List<String> chartDetailIds = singletonList("TRACK_ID");
+		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
@@ -291,7 +290,7 @@ public class ChartServiceTest {
         user.setUserGroup(new UserGroup().withCommunity(new Community().withName(communityName)));
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.<Chart> singletonList(new Chart()));
-        when(mockChartDetailService.getLockedChartItemISRCs(any(Integer.class), any(Date.class))).thenReturn(Collections.<String>emptyList());
+        when(mockChartDetailService.getLockedChartItemISRCs(any(Integer.class), any(Date.class))).thenReturn(Collections.<Media>emptyList());
 
         //when
         List<ChartDetail> result = fixture.getLockedChartItems(user);
