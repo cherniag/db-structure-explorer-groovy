@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -550,7 +551,7 @@ public class PaymentPolicyServiceIT {
 
 
 
-    @Test
+    @Test(expected = IncorrectResultSizeDataAccessException.class)
     public void testGetPaymentPolicyFor2SamePolicies(){
         PaymentPolicy paymentPolicy1 =  paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)0).withSubCost(new BigDecimal("4.99")
         ).withPaymentType(PAY_PAL).withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract

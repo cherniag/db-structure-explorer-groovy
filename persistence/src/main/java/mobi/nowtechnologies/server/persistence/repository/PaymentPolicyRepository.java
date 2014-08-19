@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, Integer>{
 
-    //TODO should be replaced by getPaymentPolicies()
+    //TODO should be replaced by getPaymentPolicy()
 	@Query(value="select paymentPolicy.appStoreProductId " +
             "from PaymentPolicy paymentPolicy " +
 			"where " +
@@ -24,7 +24,7 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "and paymentPolicy.online is true")
 	List<String> findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(Community community);
 
-    //TODO should be replaced by getPaymentPolicies()
+    //TODO should be replaced by getPaymentPolicy()
 	@Query(value="select paymentPolicy " +
             "from PaymentPolicy paymentPolicy " +
 			"where paymentPolicy.community=?1 " +
@@ -67,6 +67,6 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "and paymentPolicy.paymentType=?3 " +
             "and paymentPolicy.online is true " +
             "order by paymentPolicy.id desc")
-    Collection<PaymentPolicy> getPaymentPolicies(Community community, ProviderType providerType, String paymentType);
+    PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType);
 
 }

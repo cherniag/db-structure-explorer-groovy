@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
@@ -21,12 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import static java.util.Collections.unmodifiableList;
-import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
@@ -202,14 +199,7 @@ public class PaymentPolicyService {
 
     @Transactional(readOnly = true)
     public PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType){
-       Collection<PaymentPolicy> result = paymentPolicyRepository.getPaymentPolicies(community, providerType, paymentType);
-       if (!isEmpty(result)){
-           if (result.size() > 1){
-               LOGGER.warn("Count of payment policies: {}. Random has been chosen", result.size());
-           }
-           return Iterables.getFirst(result, null);
-       }
-        return null;
+       return paymentPolicyRepository.getPaymentPolicy(community, providerType, paymentType);
     }
 
 }
