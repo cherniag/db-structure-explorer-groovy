@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-
+import mobi.nowtechnologies.server.persistence.domain.Media;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,8 +30,8 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 order by chartDetail.position asc")
 	List<ChartDetail> getChartItemsByDate(Integer chartId, long publishTimeMillis);
 	
-	@Query("select chartDetail.media.isrc from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.locked = true")
-	List<String> getLockedChartItemISRCByDate(Integer chartId, long publishTimeMillis);
+	@Query("select chartDetail.media from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.locked = true order by chartDetail.media.trackId")
+	List<Media> getLockedChartItemByDate(Integer chartId, long publishTimeMillis);
 	
 	@Query("select chartDetail.i from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.position>?3 order by chartDetail.position asc")
 	List<Integer> getIdsByDateAndPosition(Integer chartId, long publishTimeMillis, byte afterPosition);

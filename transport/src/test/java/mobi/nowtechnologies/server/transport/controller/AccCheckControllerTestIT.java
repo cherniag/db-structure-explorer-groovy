@@ -169,7 +169,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk()).
                 andDo(print()).
-                andExpect(xpath("/response/user/lockedTrack[1]/media").string("US-UM7-11-00061"));
+                andExpect(xpath("/response/user/lockedTrack[1]/media").string("US-UM7-11-00061_2"));
     }
 
     @Test

@@ -331,7 +331,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", user.getDeviceUID())
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061_null"));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061_2"));
     }
 
 
