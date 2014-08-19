@@ -65,8 +65,7 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "where paymentPolicy.community=?1 " +
             "and paymentPolicy.provider=?2 " +
             "and paymentPolicy.paymentType=?3 " +
-            "and paymentPolicy.online is true " +
-            "order by paymentPolicy.id desc")
+            "and paymentPolicy.online is true ")
     PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType);
 
 }
