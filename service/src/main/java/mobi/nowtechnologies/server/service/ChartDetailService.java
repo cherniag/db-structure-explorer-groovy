@@ -96,7 +96,7 @@ public class ChartDetailService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<String> getLockedChartItemISRCs(Integer chartId, Date selectedPublishDate) {
+	public List<Media> getLockedChartItemISRCs(Integer chartId, Date selectedPublishDate) {
 		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 		
 		if (selectedPublishDate == null)
@@ -106,9 +106,9 @@ public class ChartDetailService {
 		
 		Long nearestLatestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(selectedPublishDate.getTime(), chartId);
 		
-		final List<String> chartDetails;
+		final List<Media> chartDetails;
 		if (nearestLatestPublishTimeMillis != null)
-			chartDetails = chartDetailRepository.getLockedChartItemISRCByDate(chartId, nearestLatestPublishTimeMillis);
+			chartDetails = chartDetailRepository.getLockedChartItemByDate(chartId, nearestLatestPublishTimeMillis);
 		else
 			chartDetails = Collections.EMPTY_LIST;
 		
