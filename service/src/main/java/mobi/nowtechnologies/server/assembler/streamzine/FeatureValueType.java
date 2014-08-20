@@ -33,7 +33,6 @@ public enum FeatureValueType {
 
     FeatureValueType(String id) {
         this.id = id;
-
     }
 
     public String getId() {
