@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.dto.transport;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 @XmlRootElement(name = "lockedTrack")
 public class LockedTrackDto {
@@ -40,7 +39,7 @@ public class LockedTrackDto {
 
 	public static LockedTrackDto fromChartDetail(ChartDetail chartDetail) {
 		LockedTrackDto dto = new LockedTrackDto();
-		dto.setMedia(chartDetail.getMedia().getIsrc());
+		dto.setMedia(chartDetail.getMedia().getIsrcTrackId());
 
 		return dto;
 	}
