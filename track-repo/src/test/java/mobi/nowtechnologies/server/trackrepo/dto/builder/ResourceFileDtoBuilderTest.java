@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.ServletContextResource;
@@ -43,7 +42,6 @@ public class ResourceFileDtoBuilderTest {
 	 * @generatedBy CodePro at 11/13/12 2:14 PM
 	 */
 	@Test
-    @Ignore
 	public void testBuild_Audio_Success()
 		throws Exception {
         Track track = new Track();
@@ -153,11 +151,11 @@ public class ResourceFileDtoBuilderTest {
 	}
 
     @Test
-    @Ignore
     public void testBuild_Video_Success()
             throws Exception {
         Track track = new Track();
         track.setIsrc(ISRC_VALUE);
+        track.setId(777L);
 
         final AssetFile videoFile = new AssetFile();
         videoFile.setType(AssetFile.FileType.VIDEO);

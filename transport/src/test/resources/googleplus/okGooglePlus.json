@@ -36,7 +36,7 @@
     "emails": [
         {
             "type": "account",
-            "value": "oartyomov@gmail.com"
+            "value": "%s"
         }
     ],
     "objectType": "person"

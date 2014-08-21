@@ -53,7 +53,7 @@ public class AccountCheckDTOAsm {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
     }
 
-    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails) {
+    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation) {
         LOGGER.debug("user=[{}]", user);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
@@ -72,7 +72,7 @@ public class AccountCheckDTOAsm {
                 .getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
                 && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
-        String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem, status);
+        String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
 
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
@@ -126,6 +126,7 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.fullyRegistred = ACTIVATED.equals(activationStatus);
         accountCheckDTO.subjectToAutoOptIn = calcSubjectToAutoOptIn(user);
         accountCheckDTO.user = user;
+        accountCheckDTO.firstActivation = firstActivation;
 
         if (!isEmpty(appStoreProductIds)) {
             accountCheckDTO.appStoreProductId = Joiner.on(",").skipNulls().join(appStoreProductIds);
