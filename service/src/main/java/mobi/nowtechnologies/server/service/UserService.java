@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Propagation;
@@ -1872,7 +1873,7 @@ public class UserService {
     public ListDataResult<User> getUsersForPendingPayment(int maxCount) {
         int epochSeconds = Utils.getEpochSeconds();
 
-        List<User> users = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
 
         ListDataResult<User> result = new ListDataResult<User>(users);
 
@@ -1915,7 +1916,7 @@ public class UserService {
     public ListDataResult<User> getUsersForRetryPayment(int maxCount) {
         int epochSeconds = Utils.getEpochSeconds();
 
-        List<User> users = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+        List<User> users = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
 
         ListDataResult<User> result = new ListDataResult<User>(users);
 
