@@ -5,13 +5,9 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Sort;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,7 +18,6 @@ import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactor
 import static mobi.nowtechnologies.server.persistence.domain.UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -43,7 +38,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
     @Resource(name = "communityRepository")
     private CommunityRepository communityRepository;
 
-    private Pageable pageable = new PageRequest(0, 35);
+    private Pageable pageable = new PageRequest(0, 35, Sort.Direction.ASC, "nextSubPayment");
 
     @Test
     public void shouldNotFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentPlusAdvancedPaymentSecondsIsInTheFuture(){
@@ -180,7 +175,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11);
+        List<User> users = userRepository.getUsersForRetryPayment(11, pageable);
 
         //then
         assertThat(users.size(), is(1));
@@ -238,15 +233,18 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5).withAfterNextSubPaymentSeconds(5));
         User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
+        User user2 = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withUserName("sdsf").withDeviceUID("vdfgjdfuy").withNextSubPayment(5));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusErrorAndRetriesOnError3().withMadeAttempts(2).withPaymentPolicy(paymentPolicy).withOwner(user));
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
+        user2 = userRepository.save(user2.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(16);
+        List<User> users = userRepository.getUsersForRetryPayment(16, pageable);
 
         //then
-        assertThat(users.size(), is(1));
-        assertThat(users.get(0).getId(), is(user.getId()));
+        assertThat(users.size(), is(2));
+        assertThat(users.get(0).getId(), is(user2.getId()));
+        assertThat(users.get(1).getId(), is(user.getId()));
     }
 
     @Test
@@ -259,7 +257,7 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(16);
+        List<User> users = userRepository.getUsersForRetryPayment(16, pageable);
 
         //then
         assertThat(users.size(), is(1));

@@ -5,11 +5,6 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +22,6 @@ import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.U
 import static mobi.nowtechnologies.server.persistence.domain.enums.UserLogType.VALIDATE_PHONE_NUMBER;
 import static mobi.nowtechnologies.server.shared.Utils.*;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.NONE;
 import static org.hamcrest.core.Is.is;
@@ -386,10 +380,10 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
         UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 
         User testUser = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("1").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc61"));
-        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
+        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis - DAY_MILLISECONDS).withUser(testUser).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
 
         User testUser1 = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("2").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc62"));
-        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis+DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
+        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis + DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(VALIDATE_PHONE_NUMBER).withDescription("dfdf"));
 
         User testUser2 = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("3").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
