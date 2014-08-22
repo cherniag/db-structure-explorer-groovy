@@ -21,7 +21,7 @@ public class AdItemDtoValidator extends BaseValidator {
 
         MultipartFile file = adItemDto.getFile();
 
-        validateFilePresence(errors, file, adItemDto.isRemoveImage());
+        validateFilePresence(errors, file, adItemDto.isRemoveImage(), adItemDto.getImageFileName());
 
         validateFileSize(errors, file);
 
@@ -36,8 +36,8 @@ public class AdItemDtoValidator extends BaseValidator {
         }
     }
 
-    private void validateFilePresence(Errors errors, MultipartFile file, boolean removeImage) {
-        if ((file == null || file.isEmpty()) && !removeImage) {
+    private void validateFilePresence(Errors errors, MultipartFile file, boolean removeImage, String imageFileName) {
+        if (((file == null || file.isEmpty()) && (imageFileName == null || imageFileName.isEmpty())) && !removeImage) {
             errors.rejectValue("file", "ad.noFile.error", "No file is uploaded but \"None image\" is unchecked. Please check \"None image\" if you intentionally want to skip image upload.");
         }
     }
