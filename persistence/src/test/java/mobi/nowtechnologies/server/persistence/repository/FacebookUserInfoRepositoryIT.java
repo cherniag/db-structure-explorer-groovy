@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 

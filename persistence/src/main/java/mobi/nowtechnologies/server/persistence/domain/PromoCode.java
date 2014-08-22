@@ -17,6 +17,8 @@ import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO
 @Entity
 @Table(name="tb_promoCode")
 public class PromoCode {
+
+    public static final String PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE = "TwoWeeksOnSubscription";
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -109,6 +111,10 @@ public class PromoCode {
     public PromoCode withPromotion(Promotion promotion){
         setPromotion(promotion);
         return this;
+    }
+
+    public boolean isTwoWeeksOnSubscription() {
+        return PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE.equals(code);
     }
 
     @Override

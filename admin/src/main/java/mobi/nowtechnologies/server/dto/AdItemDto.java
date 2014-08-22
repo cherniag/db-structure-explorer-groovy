@@ -1,24 +1,19 @@
 package mobi.nowtechnologies.server.dto;
 
-import java.util.*;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 import com.google.common.collect.ImmutableMap;
 import mobi.nowtechnologies.server.assembler.FilterAsm;
 import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.enums.AdActionType;
-
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
-import static mobi.nowtechnologies.server.shared.enums.AdActionType.NEWS;
-import static mobi.nowtechnologies.server.shared.enums.AdActionType.PORTAL;
-import static mobi.nowtechnologies.server.shared.enums.AdActionType.URL;
+import javax.validation.constraints.Pattern;
+import java.util.*;
+
+import static mobi.nowtechnologies.server.shared.enums.AdActionType.*;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
 /**
@@ -172,13 +167,13 @@ public class AdItemDto {
 
     private static AdActionType actionType(Message message) {
 			String title = message.getTitle();
-        if(isIsrcOrUnknownAdActionType(title)){
-            return AdActionType.ISRC;
+        if(isTrackIdOrUnknownAdActionType(title)){
+            return AdActionType.TRACK_ID;
 			}
         return actionTypeMap.get(substringBefore(title, ":"));
 		}
 
-    private static boolean isIsrcOrUnknownAdActionType(String title) {
+    private static boolean isTrackIdOrUnknownAdActionType(String title) {
         return title.indexOf(':') == -1 || !actionTypeMap.containsKey(substringBefore(title, ":"));
 	}
 

@@ -4,6 +4,14 @@ function showPopup(id) {
 function hidePopup(id) {
 	document.getElementById(id).style.display = 'none';
 }
+function closeForm(){
+    window.location = "/closeApp.html";
+}
+
+function returnToApp(){
+    window.location = "/exitFromApp.html";
+}
+
 function showHideBox(id, id2) {
 
 	if(document.getElementById(id).style.display == 'none') {

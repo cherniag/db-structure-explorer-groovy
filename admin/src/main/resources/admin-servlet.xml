@@ -130,7 +130,7 @@
 
         <property name="defaultViews">
             <list>
-                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
                 </bean>
             </list>
         </property>
@@ -139,5 +139,8 @@
 	<import resource="admin-controllers.xml" />
 
     <context:annotation-config/>
+
+    <bean name="cookieUtil" class="mobi.nowtechnologies.server.admin.validator.CookieUtil"/>
+    <bean name="updateValidator" class="mobi.nowtechnologies.server.admin.validator.UpdateValidator"/>
 
 </beans>

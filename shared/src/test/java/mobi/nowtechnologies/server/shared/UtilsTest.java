@@ -28,12 +28,6 @@ public class UtilsTest {
     private static final int WEEK_SECONDS = 7 * ONE_DAY_SECONDS;
 
     @Test
-    public void testUtils_1() throws Exception {
-        Utils result = new Utils();
-        assertNotNull(result);
-    }
-
-    @Test
     public void testCreateStoredToken_1() throws Exception {
         String username = "";
         String password = "";
@@ -570,5 +564,17 @@ public class UtilsTest {
         }
         // if strings are all the same then hashset will contain only 1 string
         assertTrue("There are the same codes", codes.size() > 1);
+    }
+
+    @Test
+    public void shouldReturnMillisInSeconds() {
+        //given
+        Integer seconds = Integer.MAX_VALUE;
+
+        //when
+        long millis = Utils.secondsToMillis(seconds);
+
+        //then
+        assertThat(millis, is(seconds*1000L));
     }
 }

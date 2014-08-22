@@ -36,7 +36,7 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
             user = promotionService.activateVideoAudioFreeTrial(user);
 

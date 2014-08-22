@@ -20,8 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class GetChartControllerTestIT extends AbstractControllerTestIT {
 
-    private static final String OLD_ITUNES_URL = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
-    private static final String NEW_ITUNES_URL = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
+    private static final String OLD_ITUNES_URL_O2 = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
+    private static final String OLD_ITUNES_URL_HL_UK = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fparty-rock-anthem-feat.-lauren%2Fid449838429%3Fi%3D449838654%26uo%3D4%26at%3Dat_for_hl_uk%26ct%3Dct_for_hl_uk";
+    private static final String NEW_ITUNES_URL_O2 = "http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3Dat_for_o2%26ct%3Dct_for_o2";
 
     @Resource
     private ChartRepository chartRepository;
@@ -42,10 +43,91 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     private UserGroupRepository userGroupRepository;
 
     @Test
-    public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
+    public void testGetChart_O2_v5d1AndJsonAndAccCheckInfo_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "5.1";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        generateChartAllTypesForO2();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultJson = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultJson.contains("\"type\":\"VIDEO_CHART\""));
+        assertTrue(resultJson.contains("\"duration\":10000"));
+        assertTrue(!resultJson.contains("\"bonusTrack\""));
+        assertTrue(resultJson.contains("\"tracks\""));
+        assertTrue(resultJson.contains("\"playlists\""));
+        assertTrue(resultJson.contains("\"chart\""));
+        assertTrue(resultJson.contains("\"user\""));
+
+        ResultActions accountCheckCall = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+        checkAccountCheck(resultActions, accountCheckCall);
+    }
+
+    @Test
+    public void testGetChart_O2_v6d0AndJsonAndAccCheckInfo_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.0";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        generateChartAllTypesForO2();
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk());
+
+        MockHttpServletResponse aHttpServletResponse = resultActions.andReturn().getResponse();
+        String resultJson = aHttpServletResponse.getContentAsString();
+
+        assertTrue(resultJson.contains("\"type\":\"VIDEO_CHART\""));
+        assertTrue(resultJson.contains("\"duration\":10000"));
+        assertTrue(!resultJson.contains("\"bonusTrack\""));
+        assertTrue(resultJson.contains("\"tracks\""));
+        assertTrue(resultJson.contains("\"playlists\""));
+        assertTrue(resultJson.contains("\"chart\""));
+        assertTrue(resultJson.contains("\"user\""));
+
+        ResultActions accountCheckCall = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk());
+        checkAccountCheck(resultActions, accountCheckCall);
+    }
+
+
+    @Test
+    public void testGetChart_O2_v6d1AndJsonAndAccCheckInfo_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.1";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -101,9 +183,10 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk()).andDo(print())
                 .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").exists())
+                .andExpect(xpath("/response/user/lockedTrack/media").string("US-UM7-11-00061_2"))
                 .andExpect(xpath("/response/chart/track[duration=10000]").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                 .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
 
@@ -128,8 +211,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("APP_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
         ).andExpect(status().isOk())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                 .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
                 .andExpect(xpath("/response/chart/bonusTrack").doesNotExist());
     }
@@ -155,8 +238,8 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("APP_VERSION", apiVersion)
                         .param("COMMUNITY_NAME", apiVersion)
         ).andExpect(status().isOk())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL.replace("%", "%%") + "']").exists())
-                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + NEW_ITUNES_URL_O2.replace("%", "%%") + "']").exists())
                 .andExpect(xpath("/response/chart/playlist[type='VIDEO_CHART']").doesNotExist())
                 .andExpect(xpath("/response/chart/playlist[type='FOURTH_CHART']").doesNotExist())
                 .andExpect(xpath("/response/chart/playlist[type='FIFTH_CHART']").doesNotExist())
@@ -309,13 +392,14 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
                         .param("COMMUNITY_NAME", apiVersion)
         ).andDo(print())
                 .andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath("//chart/playlist").nodeCount(6))
+                .andExpect(xpath("//chart/playlist").nodeCount(7))
                 .andExpect(xpath("//chart/playlist[type/text()='HOT_TRACKS']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='FIFTH_CHART']").nodeCount(1))
                 .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_1']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(1))
+                .andExpect(xpath("//chart/playlist[type/text()='HL_UK_PLAYLIST_2']").nodeCount(2))
                 .andExpect(xpath("//chart/playlist[type/text()='OTHER_CHART']").nodeCount(1))
-                .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1));
+                .andExpect(xpath("//chart/playlist[type/text()='FOURTH_CHART']").nodeCount(1))
+                .andExpect(xpath("/response/chart/track[iTunesUrl='" + OLD_ITUNES_URL_HL_UK.replace("%", "%%") + "']").exists());
     }
 
     private void generateChartAllTypesForO2() {
@@ -351,7 +435,6 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         videoChart.getCommunities().add(o2Community);
         videoChart.setGenre(chart.getGenre());
         chartRepository.save(videoChart);
-
 
         ChartDetail chartDetail = chartDetailRepository.findOne(22);
 

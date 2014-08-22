@@ -63,23 +63,6 @@
             <param name="acceptOnMatch" value="true" />
         </filter>
     </appender>
-
-	<!-- Notification Job -->
-	<appender name="notificationJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-		<param name="File" value="${catalina.base}/logs/jobs-push-notification.log" />
-		<param name="encoding" value="UTF-8" />
-		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-			<param name="fileNamePattern" value="${catalina.base}/logs/jobs-push-notification_%d{yyyy-ww}.gz" />
-		</rollingPolicy>
-		<layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-			<param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c:%L - %m%n" />
-		</layout>
-		<filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
-			<param name="contextKey" value="class" />
-			<param name="classNames" value="mobi.nowtechnologies.server.job.NotificationJob" />
-			<param name="acceptOnMatch" value="true" />
-		</filter>
-	</appender>
 	
 	<!-- Sms According To Law Job -->
 	<appender name="smsAccordingToLawJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
@@ -307,7 +290,6 @@
 	<logger name="mobi.nowtechnologies.server.job">
 		<level value="INFO" />
 		<appender-ref ref="pendingPaymentJobAppender" />
-		<appender-ref ref="notificationJobAppender" />
 		<appender-ref ref="paymentRetryJobAppender" />
 		<appender-ref ref="cleanExpiredPaymentJobAppender" />
 		<appender-ref ref="smsAccordingToLawJobAppender" />

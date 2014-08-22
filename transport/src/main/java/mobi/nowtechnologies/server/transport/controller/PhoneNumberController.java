@@ -36,7 +36,7 @@ public class PhoneNumberController extends CommonController {
 		Exception ex = null;
 		User user = null;
 		try {
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
 			
 			boolean populateO2SubscriberData = !isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 			user = userService.activatePhoneNumber(user, phone);
@@ -74,7 +74,7 @@ public class PhoneNumberController extends CommonController {
         try {
             UserService userService = getUserService(community);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED, ActivationStatus.ENTERED_NUMBER);
 
             user = userService.activatePhoneNumber(user, phone);
 

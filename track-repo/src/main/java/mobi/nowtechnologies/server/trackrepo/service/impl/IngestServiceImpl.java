@@ -1,15 +1,10 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
-import mobi.nowtechnologies.server.trackrepo.domain.DropContent;
-import mobi.nowtechnologies.server.trackrepo.domain.IngestionLog;
-import mobi.nowtechnologies.server.trackrepo.domain.Territory;
-import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.domain.*;
 import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData.Drop;
-import mobi.nowtechnologies.server.trackrepo.ingest.IParserFactory.Ingestors;
 import mobi.nowtechnologies.server.trackrepo.repository.IngestionLogRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.IngestService;
@@ -20,12 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
@@ -56,12 +46,7 @@ public class IngestServiceImpl implements IngestService{
         this.parserFactory = parserFactory;
     }
 
-    @Override
-	public IngestWizardData getDrops(String parserName) throws Exception {
-        LOGGER.debug("getDrops [parserName:{}]", parserName);
-		return getDrops(parserName);
-	}
-    
+
     @Override
 	public IngestWizardData getDrops(String... ingestors) throws Exception {
         LOGGER.debug("getDrops [ingestors:{}]", Arrays.toString(ingestors));
@@ -200,7 +185,7 @@ public class IngestServiceImpl implements IngestService{
                     sendNotification(track, alerts);
 
 				trackRepository.save(track);
-			} else if (value.type == Type.DELETE) {
+            } else if (value.type == Type.DELETE) {
                 LOGGER.info("DELETE " + value.productId);
 				Track track = trackRepository.findByProductCode((String) value.productId);
 				if (track != null)
@@ -210,29 +195,6 @@ public class IngestServiceImpl implements IngestService{
 		}
 		commit(ingestor, parser, drop.getDrop(), list, true, false, "");
 
-	}
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-	public void processAllDrops() throws Exception {
-
-        DropsData drops = new DropsData();
-		for (Ingestors ingestor : Ingestors.values()) {
-            LOGGER.info("Getting drops for [{}]", ingestor);
-			IParser parser = parserFactory.getParser(ingestor);
-
-			List<DropData> parserDrops = parser.getDrops(true);
-			if (parserDrops != null && parserDrops.size() > 0) {
-				for (DropData drop : parserDrops) {
-                    DropsData.Drop data = drops.new Drop();
-                    data.setName(drop.name);
-                    data.setParser(parser);
-                    data.setIngestor(ingestor);
-                    data.setDrop(drop);
-					processDrop(data, false);
-				}
-			}
-		}
 	}
 
     @Override
@@ -566,6 +528,7 @@ public class IngestServiceImpl implements IngestService{
         String result = "--------------------------------- \n";
         result += "Ingestor: " + track.getIngestor() + "\n";
         result += "Track isrc: " + track.getIsrc() + "\n";
+        result += "Track id: " + track.getUniqueTrackId() + "\n";
         result += "Product code: " + track.getProductCode() + "\n";
         result += "Track title: " + track.getTitle() + "\n";
         result += "Track artist: " + track.getArtist() + "\n";

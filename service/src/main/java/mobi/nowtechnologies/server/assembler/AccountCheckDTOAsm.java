@@ -6,28 +6,34 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
-import mobi.nowtechnologies.server.persistence.repository.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
 import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
 import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 
 public class AccountCheckDTOAsm {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckDTOAsm.class);
@@ -37,7 +43,11 @@ public class AccountCheckDTOAsm {
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+    @Resource
+    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
+
+
+    private AutoOptInRuleService autoOptInRuleService;
 
     public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
         this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
@@ -129,10 +139,39 @@ public class AccountCheckDTOAsm {
 
     private UserDetailsDto buildUserDetails(User user) {
         if (ProviderType.FACEBOOK.equals(user.getProvider())) {
-            FacebookUserInfo facebookUserInfo = facebookUserInfoRepository.findForUser(user);
+            FacebookUserInfo facebookUserInfo = facebookUserInfoRepository.findByUser(user);
             if (facebookUserInfo != null) {
                 return convertFacebookInfoToDetails(facebookUserInfo);
             }
+        }
+
+        if (ProviderType.GOOGLE_PLUS.equals(user.getProvider())) {
+            GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user);
+            if (googlePlusUserInfo != null) {
+                return convertGooglePlusInfoToDetails(googlePlusUserInfo);
+            }
+        }
+        return null;
+    }
+
+    private UserDetailsDto convertGooglePlusInfoToDetails(GooglePlusUserInfo googlePlusUserInfo) {
+        GooglePlusUserDetailsDto result = new GooglePlusUserDetailsDto();
+        result.setEmail(googlePlusUserInfo.getEmail());
+        result.setUserName(googlePlusUserInfo.getDisplayName());
+        result.setProfileUrl(googlePlusUserInfo.getPicture());
+        result.setGooglePlusId(googlePlusUserInfo.getGooglePlusId());
+        result.setFirstName(googlePlusUserInfo.getGivenName());
+        result.setSurname(googlePlusUserInfo.getFamilyName());
+        result.setGender(googlePlusUserInfo.getGender());
+        result.setLocation(googlePlusUserInfo.getLocation());
+        result.setBirthDay(convertBirthday(googlePlusUserInfo.getBirthday()));
+        return result;
+    }
+
+    private String convertBirthday(Date birthday) {
+        if (birthday != null){
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            return dateFormat.format(birthday);
         }
         return null;
     }
@@ -147,9 +186,7 @@ public class AccountCheckDTOAsm {
         result.setFacebookId(details.getFacebookId());
         result.setLocation(details.getCity());
         result.setGender(details.getGender());
-        if (details.getBirthday() != null) {
-            result.setBirthDay(dateFormat.format(details.getBirthday()));
-        }
+        result.setBirthDay(convertBirthday(details.getBirthday()));
         return result;
     }
 
@@ -158,13 +195,14 @@ public class AccountCheckDTOAsm {
 
         AutoOptInExemptPhoneNumber byUserName = autoOptInExemptPhoneNumberRepository.findOne(user.getMobile());
 
+        //TODO: move to rule this check
         if (byUserName != null) {
             LOGGER.info("Found in database auto-opt-in record for mobile: " + user.getMobile());
             return false;
-        } else {
-            LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
-            return user.isSubjectToAutoOptIn();
         }
+        LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
+        return autoOptInRuleService.isSubjectToAutoOptIn(ALL, user);
+
     }
 
     private static String getOldPaymentStatus(PaymentDetails paymentDetails) {
@@ -218,5 +256,9 @@ public class AccountCheckDTOAsm {
             return;
         accountCheckDTO.newsTimestamp = news.getTimestamp();
         accountCheckDTO.newsItems = news.getNumEntries();
+    }
+
+    public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {
+        this.autoOptInRuleService = autoOptInRuleService;
     }
 }

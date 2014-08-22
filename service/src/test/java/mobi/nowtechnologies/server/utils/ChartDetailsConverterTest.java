@@ -19,6 +19,7 @@ import java.util.Locale;
 import static java.util.Collections.singletonList;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.UNCHANGED;
+import static mobi.nowtechnologies.common.util.TrackIdGenerator.ISRC_TRACK_ID_DELIMITER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -32,8 +33,10 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ChartDetailsConverterTest {
-    private static final String AFFILIATE_TOKEN = "1234567890";
-    private static final String CAMPAIGN_TOKEN = "abcdefg";
+    private static final String AFFILIATE_TOKEN_O2 = "1234567890";
+    private static final String CAMPAIGN_TOKEN_O2 = "abcdefg";
+    private static final String AFFILIATE_TOKEN_HL_UK = "at_hl";
+    private static final String CAMPAIGN_TOKEN_HL_UK = "ct_hl";
     @Mock
     private CommunityResourceBundleMessageSource messageSource;
     @InjectMocks
@@ -43,15 +46,21 @@ public class ChartDetailsConverterTest {
 
     @Before
     public void setUp() throws Exception {
-        when(messageSource.getMessage(eq("o2"), eq("itunes.affiliate.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(AFFILIATE_TOKEN);
-        when(messageSource.getMessage(eq("o2"), eq("itunes.campaign.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(CAMPAIGN_TOKEN);
+        when(messageSource.getMessage(eq(Community.O2_COMMUNITY_REWRITE_URL), eq("itunes.affiliate.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(AFFILIATE_TOKEN_O2);
+        when(messageSource.getMessage(eq(Community.O2_COMMUNITY_REWRITE_URL), eq("itunes.campaign.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(CAMPAIGN_TOKEN_O2);
+        when(messageSource.getMessage(eq(Community.HL_COMMUNITY_REWRITE_URL), eq("itunes.affiliate.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(AFFILIATE_TOKEN_HL_UK);
+        when(messageSource.getMessage(eq(Community.HL_COMMUNITY_REWRITE_URL), eq("itunes.campaign.token"), any(Object[].class), any(String.class), any(Locale.class))).thenReturn(CAMPAIGN_TOKEN_HL_UK);
+        when(messageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
+        when(messageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
+        when(messageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn("GB");
     }
+
 
     @Test
      public void testToChartDetailDtoWithOldLinkBeforeCutover() throws Exception {
         ChartDetail chartDetail = prepareChartDetail();
         chartDetail.getMedia().setiTunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/monster/id440880917?i=440880925%26uo=4%26partnerId=2003");
-        Community community = getCommunity();
+        Community community = getCommunity("o2");
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() + 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
         MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
@@ -62,7 +71,7 @@ public class ChartDetailsConverterTest {
     public void testToChartDetailDtoWithNewLinkBeforeCutover() throws Exception {
         ChartDetail chartDetail = prepareChartDetail();
         chartDetail.getMedia().setiTunesUrl("http://itunes.apple.com/gb/album/monster/id440880917?i=440880925%26uo=4");
-        Community community = getCommunity();
+        Community community = getCommunity("o2");
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() + 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
         MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
@@ -73,11 +82,22 @@ public class ChartDetailsConverterTest {
     public void testToChartDetailDtoWithOldLinkAfterCutover() throws Exception {
         ChartDetail chartDetail = prepareChartDetail();
         chartDetail.getMedia().setiTunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/monster/id440880917?i=440880925%26uo=4%26partnerId=2003");
-        Community community = getCommunity();
+        Community community = getCommunity("o2");
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() - 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
         MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
-                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN + "%26ct%3D" + CAMPAIGN_TOKEN));
+                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN_O2 + "%26ct%3D" + CAMPAIGN_TOKEN_O2));
+    }
+
+    @Test
+    public void testToChartDetailDtoWithOldLinkAfterCutoverHL() throws Exception {
+        ChartDetail chartDetail = prepareChartDetail();
+        chartDetail.getMedia().setiTunesUrl("http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/fr/album/monster/id440880917?i=440880925%26uo=4%26partnerId=2003");
+        Community community = getCommunity("hl_uk");
+        chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() - 15000L);
+        ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
+        MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
+                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN_HL_UK + "%26ct%3D" + CAMPAIGN_TOKEN_HL_UK));
     }
 
 
@@ -85,19 +105,29 @@ public class ChartDetailsConverterTest {
     public void testToChartDetailDtoWithNewLinkAfterCutover() throws Exception {
         ChartDetail chartDetail = prepareChartDetail();
         chartDetail.getMedia().setiTunesUrl("http://itunes.apple.com/gb/album/monster/id440880917?i=440880925%26uo=4");
-        Community community = getCommunity();
+        Community community = getCommunity("o2");
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() - 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
         MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
-                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN + "%26ct%3D" + CAMPAIGN_TOKEN));
+                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN_O2 + "%26ct%3D" + CAMPAIGN_TOKEN_O2));
+    }
+
+    @Test
+    public void testToChartDetailDtoWithNewLinkAfterCutoverHL() throws Exception {
+        ChartDetail chartDetail = prepareChartDetail();
+        chartDetail.getMedia().setiTunesUrl("http://itunes.apple.com/au/album/monster/id440880917?i=440880925%26uo=4");
+        Community community = getCommunity("hl_uk");
+        chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() - 15000L);
+        ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
+        MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
+                is("http%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26at%3D" + AFFILIATE_TOKEN_HL_UK + "%26ct%3D" + CAMPAIGN_TOKEN_HL_UK));
     }
 
     @Test
     public void testToChartDetailDtoWithNewLinkAfterCutoverAndAbsentCountry() throws Exception {
         ChartDetail chartDetail = prepareChartDetail();
         chartDetail.getMedia().setiTunesUrl("http://itunes.apple.com/gb/album/monster/id440880917?i=440880925%26uo=4");
-        Community community = getCommunity();
-        community.setRewriteUrlParameter("country");
+        Community community = getCommunity("country");
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() - 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
         MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
@@ -139,14 +169,14 @@ public class ChartDetailsConverterTest {
         assertThat(chartDetailDto.getImageLargeSize(), Is.is(media.getImageLargeSize()));
         assertThat(chartDetailDto.getImageSmallSize(), Is.is(media.getImageSmallSize()));
         assertThat(chartDetailDto.getInfo(), Is.is(chartDetail.getInfo()));
-        assertThat(chartDetailDto.getMedia(), Is.is(media.getIsrc()));
+        assertThat(chartDetailDto.getMedia(), Is.is(media.getIsrc() + ISRC_TRACK_ID_DELIMITER + media.getTrackId()));
         assertThat(chartDetailDto.getTitle(), Is.is(media.getTitle()));
         assertThat(chartDetailDto.getTrackSize(), Is.is(headerSize + audioSize - 2));
-        assertThat(chartDetailDto.getChartDetailVersion(), Is.is(chartDetail.getVersion()));
+        assertThat(chartDetailDto.getChartDetailVersion(), Is.is(chartDetail.getVersionAsPrimitive()));
         assertThat(chartDetailDto.getHeaderVersion(), Is.is(0));
-        assertThat(chartDetailDto.getAudioVersion(), Is.is(media.getAudioFile().getVersion()));
-        assertThat(chartDetailDto.getImageLargeVersion(), Is.is(media.getImageFIleLarge().getVersion()));
-        assertThat(chartDetailDto.getImageSmallVersion(), Is.is(media.getImageFileSmall().getVersion()));
+        assertThat(chartDetailDto.getAudioVersion(), Is.is(media.getAudioFile().getVersionAsPrimitive()));
+        assertThat(chartDetailDto.getImageLargeVersion(), Is.is(media.getImageFIleLarge().getVersionAsPrimitive()));
+        assertThat(chartDetailDto.getImageSmallVersion(), Is.is(media.getImageFileSmall().getVersionAsPrimitive()));
         assertThat(chartDetailDto.getDuration(), Is.is(media.getAudioFile().getDuration()));
         assertThat(chartDetailDto.getAmazonUrl(), Is.is("https%3A%2F%2Fm.7digital.com%2FGB%2Freleases%2F1425249%23t15720039%3Fpartner%3D3734"));
         assertThat(chartDetailDto.getiTunesUrl(), Is.is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttps%3A%2F%2Fitunes.apple.com%2FGB%2Falbum%2Finhaler%2Fid573269843%3Fi%3D573269988%26uo%3D4%26partnerId%3D2003"));
@@ -156,9 +186,9 @@ public class ChartDetailsConverterTest {
         assertThat(chartDetailDto.getChannel(), Is.is(chartDetail.getChannel()));
     }
 
-    private Community getCommunity() {
+    private Community getCommunity(String rewriteUrlParameter) {
         Community community = new Community();
-        community.setRewriteUrlParameter("o2");
+        community.setRewriteUrlParameter(rewriteUrlParameter);
         return community;
     }
 

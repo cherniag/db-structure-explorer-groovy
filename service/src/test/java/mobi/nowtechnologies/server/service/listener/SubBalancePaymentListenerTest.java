@@ -71,7 +71,7 @@ public class SubBalancePaymentListenerTest {
 
 		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 
-		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
+		Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
 		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 
@@ -115,7 +115,7 @@ public class SubBalancePaymentListenerTest {
 
 		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 
-		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
+		Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
 		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 
@@ -157,7 +157,7 @@ public class SubBalancePaymentListenerTest {
 
 		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
 
-		Mockito.when(mockUserService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
+		Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.eq(user), Mockito.eq(nextSubPayment), Mockito.eq(appStoreOriginalTransactionId))).thenReturn(users);
 		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 

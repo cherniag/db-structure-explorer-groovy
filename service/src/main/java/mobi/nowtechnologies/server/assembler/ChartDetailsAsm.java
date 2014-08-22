@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Collections.EMPTY_LIST;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -144,7 +146,7 @@ public class ChartDetailsAsm {
 
 		List<ChartItemDto> chartItemDtos;
 		if (list.isEmpty()) {
-			chartItemDtos = Collections.EMPTY_LIST;
+			chartItemDtos = EMPTY_LIST;
 		} else {
 			chartItemDtos = new LinkedList<ChartItemDto>();
 
@@ -194,16 +196,16 @@ public class ChartDetailsAsm {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<ChartItemDto> toChartItemDtosFromMedia(Date selectedPublishDateTime, Integer chartId, List<Media> list) {
-		LOGGER.debug("input parameters chartDetails: [{}]", list);
+	public static List<ChartItemDto> toChartItemDtosFromMedia(Date selectedPublishDateTime, Integer chartId, List<Media> medias) {
+		LOGGER.debug("input parameters medias: [{}]", medias);
 
 		List<ChartItemDto> chartItemDtos;
-		if (list.isEmpty()) {
-			chartItemDtos = Collections.EMPTY_LIST;
+		if (medias.isEmpty()) {
+			chartItemDtos = EMPTY_LIST;
 		} else {
 			chartItemDtos = new LinkedList<ChartItemDto>();
 
-			for (Media media : list) {
+			for (Media media : medias) {
 				chartItemDtos.add(toChartItemDto(media, selectedPublishDateTime, chartId));
 			}
 		}

@@ -20,4 +20,8 @@ public class EmailValidator {
 		return matcher.matches();
 	}
 
+    public static boolean isNotEmail(final String email) {
+        return !isEmail(email);
+    }
+
 }

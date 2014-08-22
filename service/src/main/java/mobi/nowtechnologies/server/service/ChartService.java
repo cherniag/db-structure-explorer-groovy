@@ -4,8 +4,11 @@ import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
+import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
@@ -16,8 +19,12 @@ import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessage
 import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -28,20 +35,26 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
+ *
  */
-public class ChartService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ChartService.class);
+public class ChartService implements ApplicationContextAware {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChartService.class);
 
-	private UserService userService;
-	private ChartDetailService chartDetailService;
-	private ChartRepository chartRepository;
-	private DrmService drmService;
-	private ChartDetailRepository chartDetailRepository;
-	private MediaService mediaService;
-	private CommunityResourceBundleMessageSource messageSource;
-	private CloudFileService cloudFileService;
+    private UserService userService;
+    private ChartDetailService chartDetailService;
+    private ChartRepository chartRepository;
+    private DrmService drmService;
+    private ChartDetailRepository chartDetailRepository;
+    private MediaService mediaService;
+    private CommunityResourceBundleMessageSource messageSource;
+    private CloudFileService cloudFileService;
+    private StreamzineUpdateService streamzineUpdateService;
     private ChartDetailsConverter chartDetailsConverter;
+    private ApplicationContext applicationContext;
+
+    public void setStreamzineUpdateService(StreamzineUpdateService streamzineUpdateService) {
+        this.streamzineUpdateService = streamzineUpdateService;
+    }
 
     public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
         this.chartDetailsConverter = chartDetailsConverter;
@@ -52,35 +65,35 @@ public class ChartService {
     }
 
     public void setCloudFileService(CloudFileService cloudFileService) {
-		this.cloudFileService = cloudFileService;
-	}
-	
-	public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
-		this.chartDetailRepository = chartDetailRepository;
-	}
+        this.cloudFileService = cloudFileService;
+    }
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
+        this.chartDetailRepository = chartDetailRepository;
+    }
 
-	public void setChartDetailService(ChartDetailService chartDetailService) {
-		this.chartDetailService = chartDetailService;
-	}
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
-	public void setChartRepository(ChartRepository chartRepository) {
-		this.chartRepository = chartRepository;
-	}
+    public void setChartDetailService(ChartDetailService chartDetailService) {
+        this.chartDetailService = chartDetailService;
+    }
 
-	public void setMediaService(MediaService mediaService) {
-		this.mediaService = mediaService;
-	}
+    public void setChartRepository(ChartRepository chartRepository) {
+        this.chartRepository = chartRepository;
+    }
 
-	public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
+    public void setMediaService(MediaService mediaService) {
+        this.mediaService = mediaService;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
-	public ChartDto processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
+    public ChartDto processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
         if (user == null)
             throw new ServiceException("The parameter user is null");
 
@@ -99,31 +112,32 @@ public class ChartService {
         if (drmType == null)
             throw new ServiceException("The parameter drmType is null");
 
-		if (communityName == null)
-			throw new ServiceException("The parameter communityName is null");
+        if (communityName == null)
+            throw new ServiceException("The parameter communityName is null");
 
-		LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
+        LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
 
-		List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
-		
-		Map<ChartType, Integer> chartGroups = new HashMap<ChartType, Integer>();
-		for(ChartDetail chart:charts){
-			Integer count = chartGroups.get(chart.getChart().getType());
-			count = count != null ? count : 0;
-			chartGroups.put(chart.getChart().getType(), count+1);
-		}
+        List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
 
-		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
-		List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
-		for (ChartDetail chart : charts) {	
-			Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1 ? true : false;
-			if(!switchable || user.isSelectedChart(chart)){
-				chartDetails.addAll(chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked));
-				playlistDtos.add(ChartAsm.toPlaylistDto(chart, switchable));
-			}
-		}
+        Map<ChartType, Integer> chartGroups = new HashMap<ChartType, Integer>();
+        for(ChartDetail chart:charts){
+            Integer count = chartGroups.get(chart.getChart().getType());
+            count = count != null ? count : 0;
+            chartGroups.put(chart.getChart().getType(), count+1);
+        }
 
-		String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
+        List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
+        List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
+        GetChartContentManager supporter = resolveChartSupporter(communityName);
+        for (ChartDetail chart : charts) {
+            ChartSupportResult result = supporter.support(user, chartGroups, chart);
+            if (result.isSupport()){
+                chartDetails.addAll(chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked));
+                playlistDtos.add(ChartAsm.toPlaylistDto(chart, result.isSwitchable()));
+            }
+        }
+
+        String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
         for (ChartDetail chartDetail : chartDetails) {
             Media media = chartDetail.getMedia();
@@ -135,167 +149,182 @@ public class ChartService {
 
         List<ChartDetailDto> chartDetailDtos = chartDetailsConverter.toChartDetailDtoList(chartDetails, user.getUserGroup().getCommunity(), defaultAmazonUrl);
 
-		ChartDto chartDto = new ChartDto();
-		chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
-		chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));
+        ChartDto chartDto = new ChartDto();
+        chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
+        chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));
 
-		LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
-		return chartDto;
-	}
+        LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
+        return chartDto;
+    }
 
-	@Transactional(readOnly = true)
-	public List<Long> getAllPublishTimeMillis(Integer chartId) {
-		LOGGER.debug("input parameters chartId: [{}]", chartId);
+    private GetChartContentManager resolveChartSupporter(String communityName) {
+        String beanName = messageSource.getMessage(communityName, "getChartContentManager.beanName", null, null);
 
-		List<Long> allPublishTimeMillis = chartDetailService.getAllPublishTimeMillis(chartId);
+        Assert.hasText(beanName);
 
-		LOGGER.info("Output parameter allPublishTimeMillis=[{}]", allPublishTimeMillis);
-		return allPublishTimeMillis;
-	}
+        return applicationContext.getBean(beanName, GetChartContentManager.class);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<ChartDetail> getLockedChartItems(User user) {
+    @Transactional(readOnly = true)
+    public List<Long> getAllPublishTimeMillis(Integer chartId) {
+        LOGGER.debug("input parameters chartId: [{}]", chartId);
+
+        List<Long> allPublishTimeMillis = chartDetailService.getAllPublishTimeMillis(chartId);
+
+        LOGGER.info("Output parameter allPublishTimeMillis=[{}]", allPublishTimeMillis);
+        return allPublishTimeMillis;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<ChartDetail> getLockedChartItems(User user) {
         String communityName = user.getUserGroup().getCommunity().getName();
-		LOGGER.debug("input parameters communityName: [{}]", communityName);
-		
-		if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial())
-			return Collections.EMPTY_LIST;
-		
-		List<Chart> charts = chartRepository.getByCommunityName(communityName);
-		
-		List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
-		for (Chart chart : charts) {
-			List<String> chartDetailISRCs = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
-			for(String isrc : chartDetailISRCs){
-				Media media = new Media();
-				media.setIsrc(isrc);
-				ChartDetail chartDetail = new ChartDetail();
-				chartDetail.setMedia(media);
-				chartDetails.add(chartDetail);
-			}
-		}
-		
-		LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-		return chartDetails;
-	}
-	
-	@Transactional(readOnly = true)
-	public List<ChartDetail> getActualChartItems(Integer chartId, Date selectedPublishDate) {
-		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
+        LOGGER.debug("input parameters communityName: [{}]", communityName);
 
-		List<ChartDetail> chartDetails = chartDetailService.getActualChartItems(chartId, selectedPublishDate);
+        if((user.isOnFreeTrial() && user.hasActivePaymentDetails()) || user.isOnBoughtPeriod() || user.isOnWhiteListedVideoAudioFreeTrial())
+            return Collections.EMPTY_LIST;
 
-		LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-		return chartDetails;
-	}
+        List<Chart> charts = chartRepository.getByCommunityName(communityName);
 
-	@Transactional(readOnly = true)
-	public List<ChartDetail> getChartItemsByDate(Integer chartId, Date selectedPublishDate) {
-		LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
+        List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
+        for (Chart chart : charts) {
+            List<Media> lockedItems = chartDetailService.getLockedChartItemISRCs(chart.getI(), new Date());
+            for(Media lockedItem : lockedItems){
+                ChartDetail chartDetail = new ChartDetail();
+                chartDetail.setMedia(lockedItem);
+                chartDetails.add(chartDetail);
+            }
+        }
 
-		List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
+        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
+        return chartDetails;
+    }
 
-		LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-		return chartDetails;
-	}
+    @Transactional(readOnly = true)
+    public List<ChartDetail> getActualChartItems(Integer chartId, Date selectedPublishDate) {
+        LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Integer chartId) {
-		LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", choosedPublishDate, chartId);
+        List<ChartDetail> chartDetails = chartDetailService.getActualChartItems(chartId, selectedPublishDate);
 
-		List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, false);
+        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
+        return chartDetails;
+    }
 
-		LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
-		return clonedChartDetails;
-	}
+    @Transactional(readOnly = true)
+    public List<ChartDetail> getChartItemsByDate(Integer chartId, Date selectedPublishDate) {
+        LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
 
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
-	public ChartDetail saveChartItem(ChartItemDto chartItemDto) throws ServiceCheckedException {
-		LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
+        List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
 
-		Chart chart = chartRepository.findOne(chartItemDto.getChartId());
+        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
+        return chartDetails;
+    }
 
-		ChartDetail chartDetail = chartDetailService.saveChartItem(chartItemDto, chart);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Integer chartId) {
+        LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", choosedPublishDate, chartId);
 
-		LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-		return chartDetail;
-	}
+        List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, false);
 
-	@Transactional(readOnly = true)
-	public ChartDetail getChartItemById(Integer chartItemId) {
-		LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
+        LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
+        return clonedChartDetails;
+    }
 
-		ChartDetail chartDetail = chartDetailService.getChartItemById(chartItemId);
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
+    public ChartDetail saveChartItem(ChartItemDto chartItemDto) throws ServiceCheckedException {
+        LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
 
-		LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-		return chartDetail;
-	}
+        Chart chart = chartRepository.findOne(chartItemDto.getChartId());
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public ChartDetail updateChartItem(ChartItemDto chartItemDto) {
-		LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
+        ChartDetail chartDetail = chartDetailService.saveChartItem(chartItemDto, chart);
 
-		Chart chart = chartRepository.findOne(chartItemDto.getChartId());
+        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
+        return chartDetail;
+    }
 
-		ChartDetail chartDetail = chartDetailService.updateChartItem(chartItemDto, chart);
+    @Transactional(readOnly = true)
+    public ChartDetail getChartItemById(Integer chartItemId) {
+        LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
 
-		LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-		return chartDetail;
-	}
+        ChartDetail chartDetail = chartDetailService.getChartItemById(chartItemId);
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public boolean delete(Integer chartItemId) {
-		LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
+        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
+        return chartDetail;
+    }
 
-		ChartDetail chartDetail = getChartItemById(chartItemId);
-		boolean success = chartDetailService.delete(chartItemId);
-		updateChartItemsPositions(new Date(chartDetail.getPublishTimeMillis()), chartDetail.getChart().getI(), chartDetail.getPosition(), -1);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ChartDetail updateChartItem(ChartItemDto chartItemDto) {
+        LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
 
-		LOGGER.info("Output parameter success=[{}]", success);
-		return success;
-	}
+        Chart chart = chartRepository.findOne(chartItemDto.getChartId());
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> updateChartItemsPositions(ChartItemPositionDto chartItemPositionDto) {
-		LOGGER.debug("input parameters chartItemPositionDto: [{}]", chartItemPositionDto);
+        ChartDetail chartDetail = chartDetailService.updateChartItem(chartItemDto, chart);
 
-		List<ChartDetail> chartDetails = chartDetailService.updateChartItemsPositions(chartItemPositionDto);
+        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
+        return chartDetail;
+    }
 
-		LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-		return chartDetails;
-	}
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean delete(Integer chartItemId) {
+        LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
-		LOGGER.debug("input parameters updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): [{}]", new Object[] { selectedPublishDateTime, chartId, afterPosition,
-				chPosition });
+        ChartDetail chartDetail = getChartItemById(chartItemId);
+        boolean success = chartDetailService.delete(chartItemId);
+        updateChartItemsPositions(new Date(chartDetail.getPublishTimeMillis()), chartDetail.getChart().getI(), chartDetail.getPosition(), -1);
 
-		List<ChartDetail> chartDetails = chartDetailService.updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition);
+        LOGGER.info("Output parameter success=[{}]", success);
+        return success;
+    }
 
-		LOGGER.info("Output parameter updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): chartDetails=[{}]", chartDetails);
-		return chartDetails;
-	}
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<ChartDetail> updateChartItemsPositions(ChartItemPositionDto chartItemPositionDto) {
+        LOGGER.debug("input parameters chartItemPositionDto: [{}]", chartItemPositionDto);
 
-	@Transactional(readOnly = true)
-	public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName, ChartType chartType) {
-		LOGGER.debug("input parameters communityURL, communityName, chartType: [{}] [{}]", new Object[] { communityURL, communityName, chartType });
+        List<ChartDetail> chartDetails = chartDetailService.updateChartItemsPositions(chartItemPositionDto);
 
-		List<Chart> charts = Collections.emptyList();
-		if (communityURL != null)
-			charts = chartType != null ? chartRepository.getByCommunityURLAndChartType(communityURL, chartType)
-										: chartRepository.getByCommunityURL(communityURL);
-		else if(communityName != null)
-			charts = chartType != null ? chartRepository.getByCommunityNameAndChartType(communityName, chartType)
-										:chartRepository.getByCommunityName(communityName);
+        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
+        return chartDetails;
+    }
 
-		List<ChartDetail> chartDetails = getChartDetails(charts, new Date(), false);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
+        LOGGER.debug("input parameters updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): [{}]", new Object[] { selectedPublishDateTime, chartId, afterPosition,
+                chPosition });
 
-		LOGGER.info("Output parameter charts=[{}]", charts);
-		return chartDetails;
-	}
-	
-	@Transactional(readOnly = true)
+        List<ChartDetail> chartDetails = chartDetailService.updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition);
+
+        LOGGER.info("Output parameter updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): chartDetails=[{}]", chartDetails);
+        return chartDetails;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName, ChartType chartType) {
+        LOGGER.debug("input parameters communityURL, communityName, chartType: [{}] [{}]", new Object[] { communityURL, communityName, chartType });
+
+        List<Chart> charts = Collections.emptyList();
+        if (communityURL != null)
+            charts = chartType != null ? chartRepository.getByCommunityURLAndChartType(communityURL, chartType)
+                    : chartRepository.getByCommunityURL(communityURL);
+        else if(communityName != null)
+            charts = chartType != null ? chartRepository.getByCommunityNameAndChartType(communityName, chartType)
+                    :chartRepository.getByCommunityName(communityName);
+
+        List<ChartDetail> chartDetails = getChartDetails(charts, new Date(), false);
+
+        LOGGER.info("Output parameter charts=[{}]", charts);
+        return chartDetails;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChartDetail> getChartsByCommunityAndPublishTime(String communityRewriteUrl, Date publishDate){
+        LOGGER.debug("input parameters communityURL [{}], publishDate [{}]", communityRewriteUrl, publishDate);
+        List<Chart> charts = chartRepository.getByCommunityURL(communityRewriteUrl);
+        List<ChartDetail> chartDetails = getChartDetails(charts, publishDate, false);
+        LOGGER.info("Output parameter charts=[{}]", charts);
+        return chartDetails;
+    }
+
+    @Transactional(readOnly = true)
     public List<ChartDetail> getChartDetails(List<Chart> charts, Date selectedPublishDateTime, boolean clone) {
         LOGGER.debug("input parameters charts: [{}]", new Object[]{charts});
 
@@ -344,106 +373,124 @@ public class ChartService {
     }
 
     @Transactional(readOnly = true)
-	public Chart getChartById(Integer chartId) {
-		LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] { chartId });
+    public Chart getChartById(Integer chartId) {
+        LOGGER.debug("input parameters chartId: [{}] [{}]", new Object[] { chartId });
 
-		Chart chart = chartRepository.findOne(chartId);
-		
-		LOGGER.info("Output parameter chart=[{}]", chart);
-		return chart;
-	}
+        Chart chart = chartRepository.findOne(chartId);
 
-	@Transactional(readOnly = true)
-	public List<String> getAllChannels() {
+        LOGGER.info("Output parameter chart=[{}]", chart);
+        return chart;
+    }
 
-		List<String> allChannels = chartDetailService.getAllChannels();
+    @Transactional(readOnly = true)
+    public List<String> getAllChannels() {
 
-		LOGGER.info("Output parameter allChannels=[{}]", allChannels);
-		return allChannels;
-	}
+        List<String> allChannels = chartDetailService.getAllChannels();
 
-	@Transactional(readOnly = true)
-	public List<Media> getMedias(String searchWords) {
-		LOGGER.debug("input parameters searchWords: [{}]", searchWords);
+        LOGGER.info("Output parameter allChannels=[{}]", allChannels);
+        return allChannels;
+    }
 
-		List<Media> medias = mediaService.getMedias(searchWords);
+    @Transactional(readOnly = true)
+    public List<Media> getMedias(String searchWords) {
+        LOGGER.debug("input parameters searchWords: [{}]", searchWords);
 
-		LOGGER.info("Output parameter medias=[{}]", medias);
-		return medias;
-	}
+        List<Media> medias = mediaService.getMedias(searchWords);
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public boolean deleteChartItems(Integer chartId, Date selectedPublishDateTime) {
-		LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
+        LOGGER.info("Output parameter medias=[{}]", medias);
+        return medias;
+    }
 
-		if (chartId == null)
-			throw new NullPointerException("The parameter chartId is null");
-		if (selectedPublishDateTime == null)
-			throw new NullPointerException("The parameter selectedPublishDateTime is null");
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean deleteChartItems(Integer chartId, Date selectedPublishDateTime) {
+        LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
 
-		boolean success = chartDetailService.deleteChartItems(chartId, selectedPublishDateTime.getTime());
+        if (chartId == null)
+            throw new NullPointerException("The parameter chartId is null");
+        if (selectedPublishDateTime == null)
+            throw new NullPointerException("The parameter selectedPublishDateTime is null");
 
-		LOGGER.debug("Output parameter success=[{}]", success);
-		return success;
-	}
+        boolean success = chartDetailService.deleteChartItems(chartId, selectedPublishDateTime.getTime());
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public List<ChartDetail> minorUpdateIfOnesDoesNotExistForSelectedPublishDate(Date selectedPublishDateTime, Integer chartId) {
-		LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", selectedPublishDateTime, chartId);
+        LOGGER.debug("Output parameter success=[{}]", success);
+        return success;
+    }
 
-		List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(selectedPublishDateTime, chartId, true);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<ChartDetail> minorUpdateIfOnesDoesNotExistForSelectedPublishDate(Date selectedPublishDateTime, Integer chartId) {
+        LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", selectedPublishDateTime, chartId);
 
-		LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
-		return clonedChartDetails;
+        List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(selectedPublishDateTime, chartId, true);
 
-	}
+        LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
+        return clonedChartDetails;
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
-		LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
+    }
 
-		if(chartDetail != null){
-			if(chartDetail.getI() != null){
-				ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
-				chartDetail.setVersion(createdOne.getVersion());
-			}
-			
-			chartDetail = chartDetailRepository.save(chartDetail);
-			
-			if (null != imageFile && !imageFile.isEmpty())
-				cloudFileService.uploadFile(imageFile, chartDetail.getImageFileName());
-		}
-		
-		LOGGER.debug("Output updateChart(Chart chart)", chartDetail);
-		
-		return chartDetail;
-	}
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
+        LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public User selectChartByType(Integer userId, Integer playlistId) {
-		LOGGER.info("select chart by type input  [{}] [{}]", userId, playlistId);
-		
-		Chart chart = chartRepository.findOne(playlistId);
-		User user = userService.getUserWithSelectedCharts(userId);
-		
-		if(user != null && chart != null){
-			List<Chart> playlists = new ArrayList<Chart>();
-			if(user.getSelectedCharts() != null){
-				for (Chart playlist : user.getSelectedCharts()) {
-					if(playlist.getType() != chart.getType()){
-						playlists.add(playlist);
-					}
-				}
-			}
-			
-			playlists.add(chart);
-			user.setSelectedCharts(playlists);
-			
-			userService.updateUser(user);
-			
-			LOGGER.info("select chart by type done [{}] [{}]", chart, user);
-		}
-		
-		return user;
-	}
+        if(chartDetail != null){
+            if(isChartDetailAlreadyPresent(chartDetail)){
+                ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
+                chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
+            } else{
+                createCorrespondingStreamzineUpdate(chartDetail);
+            }
+
+            chartDetail = chartDetailRepository.save(chartDetail);
+
+            if (null != imageFile && !imageFile.isEmpty()){
+                cloudFileService.uploadFile(imageFile, chartDetail.getImageFileName());
+            }
+
+        }
+
+        LOGGER.debug("Output updateChart(Chart chart)", chartDetail);
+
+        return chartDetail;
+    }
+
+    private boolean isChartDetailAlreadyPresent(ChartDetail chartDetail) {
+        return chartDetail.getI() != null;
+    }
+
+    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail) {
+        Date publishDate = new Date(chartDetail.getPublishTimeMillis());
+        streamzineUpdateService.createOrReplace(publishDate);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public User selectChartByType(Integer userId, Integer playlistId) {
+        LOGGER.info("select chart by type input  [{}] [{}]", userId, playlistId);
+
+        Chart chart = chartRepository.findOne(playlistId);
+        User user = userService.getUserWithSelectedCharts(userId);
+
+        if(user != null && chart != null){
+            List<Chart> playlists = new ArrayList<Chart>();
+            if(user.getSelectedCharts() != null){
+                for (Chart playlist : user.getSelectedCharts()) {
+                    if(playlist.getType() != chart.getType()){
+                        playlists.add(playlist);
+                    }
+                }
+            }
+
+            playlists.add(chart);
+            user.setSelectedCharts(playlists);
+
+            userService.updateUser(user);
+
+            LOGGER.info("select chart by type done [{}] [{}]", chart, user);
+        }
+
+        return user;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

@@ -1,13 +1,7 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.Artist;
-import mobi.nowtechnologies.server.persistence.domain.Genre;
-import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.MediaFile;
-import mobi.nowtechnologies.server.persistence.repository.ArtistRepository;
-import mobi.nowtechnologies.server.persistence.repository.GenreRepository;
-import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
-import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
+import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
@@ -21,7 +15,7 @@ import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +43,12 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	private ArtistRepository artistRepository;
 	private GenreRepository genreRepository;
     private long iTunesLinkFormatCutoverTimeMillis;
+
+    private LabelRepository labelRepository;
+
+    public void setLabelRepository(LabelRepository labelRepository) {
+        this.labelRepository = labelRepository;
+    }
 
     public void setiTunesLinkFormatCutoverTimeMillis(long iTunesLinkFormatCutoverTimeMillis) {
         this.iTunesLinkFormatCutoverTimeMillis = iTunesLinkFormatCutoverTimeMillis;
@@ -179,14 +179,15 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	}
 
     protected Media createOrUpdateMedia(TrackDto track, TrackDto config){
-        Media media = mediaRepository.getByIsrc(track.getIsrc());
+        Media media = mediaRepository.findByTrackId(config.getId());
 
         if (media == null) {
             media = new Media();
-            media.setIsrc(track.getIsrc());
+            media.setIsrc(config.getIsrc());
+            media.setTrackId(config.getId());
         }
 
-        media.setTrackId(config.getId());
+        media.setLabel(getLabel(track));
         media.setTitle(config.getTitle());
 
         // Building genre
@@ -235,6 +236,14 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         mediaRepository.save(media);
 
         return media;
+    }
+
+    private Label getLabel(TrackDto trackDto) {
+        String label = trackDto.getLabel();
+        if (!StringUtils.isEmpty(label)){
+          return labelRepository.findByName(label);
+        }
+        return null;
     }
 
     private String getiTunesURL(TrackDto sourceTrackDto) {
@@ -286,7 +295,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 				throw new IllegalArgumentException("Given track is illegal");
 			}
 
-			Media media = mediaRepository.getByIsrc(config.getIsrc());
+			Media media = mediaRepository.findByTrackId(config.getId());
 			if (media != null) {
 				media.setPublishDate(0);
 				mediaRepository.save(media);
@@ -387,6 +396,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 					if (amazonUrl != null && !amazonUrl.isEmpty()) {
 						track.setAmazonUrl(amazonUrl);
 					}
+                    track.setItunesUrl(media.getiTunesUrl());
 					if (media.getiTunesUrl() != null && !"".equals(media.getiTunesUrl())) {
 						try {
 							Matcher m = Pattern.compile("url=.*\\%26").matcher(media.getiTunesUrl());
@@ -398,7 +408,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 								}
 							}
 						} catch (Exception e) {
-							LOGGER.warn("Can't get iTunes URL from media.");
+							LOGGER.warn("Can't get iTunes URL from media for original value: " + media.getiTunesUrl(), e);
 						}
 					}
 				}
@@ -421,7 +431,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
                     throw new IllegalArgumentException("Given track is illegal");
                 }
 
-                Media media = mediaRepository.getByIsrc(track.getIsrc());
+                Media media = mediaRepository.findByTrackId(track.getId());
                 if (media != null) {
                     media.setPublishDate(0);
                     mediaRepository.save(media);

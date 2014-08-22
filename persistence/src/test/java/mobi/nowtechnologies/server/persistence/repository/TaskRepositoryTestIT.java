@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificatio
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import static org.junit.Assert.assertEquals;
  * User: gch
  * Date: 12/17/13
  */
+@Ignore
 public class TaskRepositoryTestIT extends AbstractRepositoryIT {
     public static final String SEND_CHARGE_NOTIFICATION_TASK_NAME = SendChargeNotificationTask.class.getSimpleName();
     public static final String WRONG_TASK_NAME = "WRONG";

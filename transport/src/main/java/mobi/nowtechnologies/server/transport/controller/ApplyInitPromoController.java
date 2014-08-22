@@ -4,7 +4,6 @@ import mobi.nowtechnologies.server.job.UpdateO2UserTask;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ENTERED_NUMBER;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -25,7 +26,7 @@ public class ApplyInitPromoController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-5]{1}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"
     })
     public ModelAndView applyPromotion(
             @RequestParam("USER_NAME") String userName,
@@ -34,6 +35,26 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam("OTAC_TOKEN") String token,
             @RequestParam(value = "DEVICE_UID", required = false) String deviceUID) {
 
+        return applyInitPromoImpl(userName, userToken, timestamp, token, deviceUID, false);
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO"
+    })
+    public ModelAndView applyPromotionWithReactivation(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("OTAC_TOKEN") String token,
+            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID) {
+
+        return applyInitPromoImpl(userName, userToken, timestamp, token, deviceUID, true);
+    }
+
+    private ModelAndView applyInitPromoImpl(String userName, String userToken, String timestamp, String token, String deviceUID, boolean checkReactivation) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
@@ -43,9 +64,9 @@ public class ApplyInitPromoController extends CommonController {
 
             boolean isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan(VERSION_4, apiVersion);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ENTERED_NUMBER);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ENTERED_NUMBER);
 
-            user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4, false);
+            user = userService.applyInitPromo(user, token, isMajorApiVersionNumberLessThan4, false, checkReactivation);
 
             AccountCheckDTO accountCheckDTO = getAccountCheckDTOAfterApplyPromo(user);
 

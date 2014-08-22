@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserHandset;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.UserState;
 import org.apache.commons.lang3.builder.ToStringBuilder;

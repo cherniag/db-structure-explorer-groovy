@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.transport.service.PostsSaverPostService.Monitor;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -81,7 +82,7 @@ public class UserNotificationServiceImplIT extends AbstractTransactionalJUnit4Sp
     @Test
     public void checkSendChargeNotificationReminderShouldBeSentWithDefaultSMSText() throws Exception {
         final long time = new Date().getTime();
-        PostsSaverPostService.Monitor monitor = postsSaverPostService.getMonitor();
+        Monitor monitor = postsSaverPostService.getMonitor();
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.getUserGroup().getCommunity().setRewriteUrlParameter("o2");
         user.setProvider(ProviderType.O2);

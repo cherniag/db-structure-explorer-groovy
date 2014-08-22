@@ -6,7 +6,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.persistence.*;
 
 @Entity
-@Table(name="device_user_data")
+@Table(name="device_user_data", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "device_uid"}),
+        @UniqueConstraint(columnNames = {"xtify_token"})
+})
 public class DeviceUserData {
 
 	@Id
@@ -33,6 +36,10 @@ public class DeviceUserData {
         this.userId = userId;
         this.xtifyToken = xtifyToken;
         this.deviceUid = deviceUID;
+    }
+
+    public DeviceUserData(User user, String xtifyToken) {
+        this(user.getCommunityRewriteUrl(), user.getId(), xtifyToken, user.getDeviceUID());
     }
 
     public Integer getId() {

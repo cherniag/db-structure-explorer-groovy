@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
+import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import mobi.nowtechnologies.server.service.aop.ProfileLoggingAspect;
@@ -9,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import uk.co.o2.soa.manageorderdata_2.GetOrderList2Response;
 import uk.co.o2.soa.managepostpayboltonsdata_2.GetCurrentBoltonsResponse;
 import uk.co.o2.soa.managepostpaytariffdata_2.GetContractResponse;
@@ -17,6 +21,8 @@ import uk.co.o2.soa.subscriberdata_2.GetSubscriberProfileResponse;
 
 import com.google.common.base.CharMatcher;
 
+import javax.xml.transform.dom.DOMSource;
+
 @Component
 public class O2ServiceImpl implements O2Service {
 
@@ -24,7 +30,7 @@ public class O2ServiceImpl implements O2Service {
 
 	@Autowired
 	private O2TariffService o2TariffService;
-
+    private RestTemplate restTemplate;
 	private O2WebServiceResultsProcessor resultsProcessor = new O2WebServiceResultsProcessor();
 
 	@Override
@@ -33,7 +39,8 @@ public class O2ServiceImpl implements O2Service {
 		Throwable error = null;
 		O2SubscriberData data = null;
 		try {
-			return getSubscriberDataInternal(originalPhoneNumber);
+            data = getSubscriberDataInternal(originalPhoneNumber);
+			return data;
 		} catch (Exception ex) {
 			LOGGER.error("Can't get subscriber data " + originalPhoneNumber, ex);
 			throw new RuntimeException(ex);
@@ -43,7 +50,26 @@ public class O2ServiceImpl implements O2Service {
 		}
 	}
 
-	private O2SubscriberData getSubscriberDataInternal(String originalPhoneNumber) {
+    @Override
+    public String validatePhoneNumber(String url, String validatedPhoneNumber) {
+        MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+        request.add("phone_number", validatedPhoneNumber);
+        DOMSource response = restTemplate.postForObject(url, request, DOMSource.class);
+        return response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
+    }
+
+    @Override
+    public ProviderUserDetails getProviderUserDetails(String serverO2Url, String token) {
+        MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>();
+        request.add("otac_auth_code", token);
+        DOMSource response = restTemplate.postForObject(serverO2Url, request, DOMSource.class);
+        return new ProviderUserDetails()
+                .withOperator(response.getNode().getFirstChild().getFirstChild().getFirstChild().getNodeValue())
+                .withContract(response.getNode().getFirstChild().getFirstChild().getNextSibling()
+                        .getFirstChild().getNodeValue());
+    }
+
+    private O2SubscriberData getSubscriberDataInternal(String originalPhoneNumber) {
 		LOGGER.info("getSubscriberData " + originalPhoneNumber);
 		String digitOnlyPhoneNumber = getDigits(originalPhoneNumber);
 
@@ -104,4 +130,8 @@ public class O2ServiceImpl implements O2Service {
 	public void setO2TariffService(O2TariffService o2TariffService) {
 		this.o2TariffService = o2TariffService;
 	}
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 }

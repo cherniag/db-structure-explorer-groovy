@@ -4,13 +4,14 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
+import mobi.nowtechnologies.server.persistence.domain.Response;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MailTemplateProcessor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.transport.service.TimestampExtFileNameFilter;
 import org.apache.commons.io.FileUtils;
@@ -28,10 +29,13 @@ import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.*;
+import static mobi.nowtechnologies.server.persistence.domain.Community.HL_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.ANDROID;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.PENDING_ACTIVATION;
+import static mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED;
+import static mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class EmailRegistrationIT extends AbstractControllerTestIT {
 
@@ -53,8 +57,6 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     private static final String EMAIL_1 = "a@gmail.com";
     private static final String EMAIL_2 = "b@gmail.com";
     private static final String DISABLED = "_disabled_at_";
-
-
 
     @Test
     public void testNewUser() throws Exception {
@@ -92,7 +94,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         applyInitPromoError(activationEmail, timestamp, userToken);
 
-        user = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
+        user = userRepository.findOne(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
         assertNull(user);
     }
 
@@ -123,7 +125,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         user = userRepository.findOne(DEVICE_UID_1, user.getCommunityRewriteUrl());
 
-        assertEquals(ActivationStatus.PENDING_ACTIVATION, user.getActivationStatus());
+        assertEquals(PENDING_ACTIVATION, user.getActivationStatus());
 
         signUpDevice(DEVICE_UID_1);
 
@@ -145,18 +147,18 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
                 .getObject()[0]), time, EMAIL_1, user.getDeviceType().getName());
 
         userOnAnotherDevice = userService.findByName(userOnAnotherDevice.getUserName());
-        assertEquals(ActivationStatus.PENDING_ACTIVATION, userOnAnotherDevice.getActivationStatus());
+        assertEquals(PENDING_ACTIVATION, userOnAnotherDevice.getActivationStatus());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         applyInitPromo(activationEmail, timestamp, userToken);
-        User secondUser = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
+        User secondUser = userRepository.findOne(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
         checkActivatedUser(secondUser, EMAIL_1);
         user = userRepository.findOne(user.getId());
         assertEquals(DEVICE_UID_2, user.getDeviceUID());
 
-        assertNull(userRepository.findOne(DEVICE_UID_1, Community.O2_COMMUNITY_REWRITE_URL));
+        assertNull(userRepository.findOne(DEVICE_UID_1, HL_COMMUNITY_REWRITE_URL));
 
         userToken = Utils.createTimestampToken(user.getToken(), timestamp);
 
@@ -169,7 +171,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         User registeredUser = checkUserAfterSignupDevice(DEVICE_UID_1);
 
-        User activatedUser = userRepository.findOne(user.getUserName(), Community.O2_COMMUNITY_REWRITE_URL);
+        User activatedUser = userRepository.findOne(user.getUserName(), HL_COMMUNITY_REWRITE_URL);
         assertTrue(activatedUser.getDeviceUID().contains(DISABLED));
 
         long time = System.currentTimeMillis();
@@ -177,7 +179,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
         MvcResult mvcResult = emailGenerate(registeredUser, EMAIL_2);
 
         registeredUser = userService.findByName(registeredUser.getUserName());
-        assertEquals(ActivationStatus.PENDING_ACTIVATION, registeredUser.getActivationStatus());
+        assertEquals(PENDING_ACTIVATION, registeredUser.getActivationStatus());
 
         ActivationEmail activationEmail = checkEmail(((Long) ((Response) mvcResult.getModelAndView().getModel().get("response"))
                 .getObject()[0]), time, EMAIL_2, activatedUser.getDeviceType().getName());
@@ -187,11 +189,11 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
         applyInitPromo(activationEmail, timestamp, userToken);
 
-        registeredUser = userRepository.findOne(EMAIL_2, Community.O2_COMMUNITY_REWRITE_URL);
+        registeredUser = userRepository.findOne(EMAIL_2, HL_COMMUNITY_REWRITE_URL);
         checkActivatedUser(registeredUser, EMAIL_2);
-        assertNull(userRepository.findOne(DEVICE_UID_1, Community.O2_COMMUNITY_REWRITE_URL));
-        User oldUser = userRepository.findOne(user.getUserName(), Community.O2_COMMUNITY_REWRITE_URL);
-        assertEquals(UserStatus.SUBSCRIBED.name(), oldUser.getStatus().getName());
+        assertNull(userRepository.findOne(DEVICE_UID_1, HL_COMMUNITY_REWRITE_URL));
+        User oldUser = userRepository.findOne(user.getUserName(), HL_COMMUNITY_REWRITE_URL);
+        assertEquals(SUBSCRIBED.name(), oldUser.getStatus().getName());
         assertTrue(oldUser.getDeviceUID().contains(DISABLED));
 
         userToken = Utils.createTimestampToken(registeredUser.getToken(), timestamp);
@@ -212,14 +214,14 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
                 .getObject()[0], time, EMAIL_1, user.getDeviceType().getName());
 
         user = userService.findByName(user.getUserName());
-        assertEquals(ActivationStatus.PENDING_ACTIVATION, user.getActivationStatus());
+        assertEquals(PENDING_ACTIVATION, user.getActivationStatus());
 
         String timestamp = "2011_12_26_07_04_23";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         applyInitPromo(activationEmail, timestamp, userToken);
 
-        user = userRepository.findOne(EMAIL_1, Community.O2_COMMUNITY_REWRITE_URL);
+        user = userRepository.findOne(EMAIL_1, HL_COMMUNITY_REWRITE_URL);
         checkActivatedUser(user, EMAIL_1);
 
         userToken = Utils.createTimestampToken(user.getToken(), timestamp);
@@ -230,7 +232,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private ActivationEmail checkEmail(Long activationEmailId, long time, String email, String deviceType) throws IOException {
-        String community = "o2";
+        String community = "hl_uk";
 
         String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
         String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
@@ -252,12 +254,12 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private String signUpDevice(String deviceUID) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post("/o2/5.3/SIGN_UP_DEVICE")
-                .param("DEVICE_TYPE", DeviceType.ANDROID)
+        MvcResult mvcResult = mockMvc.perform(post("/hl_uk/5.3/SIGN_UP_DEVICE")
+                .param("DEVICE_TYPE", ANDROID)
                 .param("DEVICE_UID", deviceUID))
                 .andExpect(status().isOk())
-                .andExpect(xpath("/response/user/status").string(UserStatus.LIMITED.name()))
-                .andExpect(xpath("/response/user/deviceType").string(DeviceType.ANDROID)).andReturn();
+                .andExpect(xpath("/response/user/status").string(LIMITED.name()))
+                .andExpect(xpath("/response/user/deviceType").string(ANDROID)).andReturn();
         return getUserToken(mvcResult);
     }
 
@@ -268,7 +270,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private void applyInitPromo(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/o2/4.0/SIGN_IN_EMAIL")
+        mockMvc.perform(post("/hl_uk/4.0/SIGN_IN_EMAIL")
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
                 .param("EMAIL_ID", activationEmail.getId().toString())
@@ -279,7 +281,7 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
     private MvcResult emailGenerate(User user, String email) throws Exception {
         MvcResult mvcResult;
-        mvcResult = mockMvc.perform(post("/o2/4.0/EMAIL_GENERATE.json")
+        mvcResult = mockMvc.perform(post("/hl_uk/4.0/EMAIL_GENERATE.json")
                 .param("EMAIL", email)
                 .param("USER_NAME", user.getUserName())
                 .param("DEVICE_UID", user.getDeviceUID())).andExpect(status().isOk()).andReturn();
@@ -287,15 +289,15 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private User checkUserAfterSignupDevice(String deviceUID) {
-        User user = userRepository.findOne(deviceUID, Community.O2_COMMUNITY_REWRITE_URL);
-        assertEquals(UserStatus.LIMITED.name(), user.getStatus().getName());
+        User user = userRepository.findOne(deviceUID, HL_COMMUNITY_REWRITE_URL);
+        assertEquals(LIMITED.name(), user.getStatus().getName());
         assertEquals(deviceUID, user.getUserName());
-        assertEquals(Community.O2_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
+        assertEquals(HL_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
         return user;
     }
 
     private void applyInitPromoError(ActivationEmail activationEmail, String timestamp, String userToken) throws Exception {
-        mockMvc.perform(post("/o2/4.0/SIGN_IN_EMAIL")
+        mockMvc.perform(post("/hl_uk/4.0/SIGN_IN_EMAIL")
                 .param("USER_TOKEN", userToken)
                 .param("TIMESTAMP", timestamp)
                 .param("EMAIL_ID", activationEmail.getId().toString())
@@ -305,14 +307,14 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
     }
 
     private void checkActivatedUser(User user, String firstUserEmail) {
-        assertEquals(UserStatus.SUBSCRIBED.name(), user.getStatus().getName());
+        assertEquals(SUBSCRIBED.name(), user.getStatus().getName());
         assertEquals(firstUserEmail, user.getUserName());
-        assertEquals(Community.O2_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
+        assertEquals(HL_COMMUNITY_REWRITE_URL, user.getUserGroup().getCommunity().getRewriteUrlParameter());
     }
 
     private void checkGetNews(User user, String timestamp, String userToken) throws Exception {
         mockMvc.perform(
-                post("/o2/5.5/GET_NEWS.json")
+                post("/hl_uk/5.5/GET_NEWS.json")
                         .param("USER_NAME", user.getUserName())
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
@@ -324,12 +326,12 @@ public class EmailRegistrationIT extends AbstractControllerTestIT {
 
     private void checkGetChart(User user, String timestamp, String userToken) throws Exception {
         mockMvc.perform(
-                post("/o2/5.5/GET_CHART.json")
+                post("/hl_uk/5.5/GET_CHART.json")
                         .param("USER_NAME", user.getUserName())
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", user.getDeviceUID())
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061"));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[1].chart.tracks[0].media").value("US-UM7-11-00061_2"));
     }
 
 

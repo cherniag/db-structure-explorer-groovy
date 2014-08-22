@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface PromotionRepository extends JpaRepository<Promotion, String> {
+public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
 
     @Query(value = "select promotion from Promotion promotion " +
             "join promotion.promoCode promoCode " +
@@ -22,14 +22,15 @@ public interface PromotionRepository extends JpaRepository<Promotion, String> {
             "and promotion.type=?4")
     Promotion getActivePromoCodePromotion(String promotionCode, UserGroup userGroup, int epochSeconds, String promotionType);
 
+
     @Query(value = "select promotion from Promotion promotion " +
-            "where promotion.userGroup=?1 " +
-            "and promotion.startDate<?2 " +
-            "and promotion.endDate>?2 " +
-            "and (promotion.maxUsers=0 or promotion.numUsers<promotion.maxUsers) " +
-            "and promotion.isActive=true " +
+            "join promotion.promoCode promoCode " +
+            "where " +
+            "promoCode.code=?1 " +
+            "and promotion.userGroup=?2 " +
             "and promotion.type=?3")
-    List<Promotion> getActivePromoCodePromotion1(UserGroup userGroup, int epochSeconds, String promotionType);
+    Promotion getPromotionByPromoCode(String promotionCode, UserGroup userGroup, String promotionType);
+
 
     @Modifying
     @Query(value = "update Promotion p " +

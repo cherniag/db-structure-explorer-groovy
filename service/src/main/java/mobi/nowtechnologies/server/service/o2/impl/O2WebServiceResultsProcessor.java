@@ -117,8 +117,8 @@ public class O2WebServiceResultsProcessor {
 
 	}
 
-	private static boolean is4GTariffId(int tariffId) {
-		return tariffId == 43 || tariffId == 44 || tariffId == 45;
+	public static boolean is4GTariffId(int tariffId) {
+		return tariffId == 43 || tariffId == 44 || tariffId == 45 || tariffId == 47 || tariffId == 48;
 	}
 
 	/** @return true if last order's partner is direct partner */

@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,6 +217,51 @@ public class Message {
 		LOGGER.debug("Output parameter clonedMessage=[{}]", clonedMessage);
 		return clonedMessage;
 	}
+
+    public Message withActivated(boolean activated) {
+        this.activated = activated;
+        return this;
+    }
+
+    public Message withCommunity(Community community) {
+        this.community = community;
+        return this;
+    }
+
+    public Message withBody(String body) {
+        this.body = body;
+        return this;
+    }
+
+    public Message withPosition(int position) {
+        this.position = position;
+        return this;
+    }
+
+    public Message withPublishTimeMillis(long publishTimeMillis) {
+        this.publishTimeMillis = publishTimeMillis;
+        return this;
+    }
+
+    public Message withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public Message withMessageType(MessageType messageType) {
+        this.messageType = messageType;
+        return this;
+    }
+
+    public Message withActionType(MessageActionType actionType) {
+        this.actionType = actionType;
+        return this;
+    }
+
+    public Message withAction(String action) {
+        this.action = action;
+        return this;
+    }
 
     @Override
     public String toString() {

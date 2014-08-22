@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>server</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Now Technologies Java Server</name>
 
@@ -20,6 +20,7 @@
         <module>track-repo</module>
         <module>uits</module>
         <module>dtos</module>
+        <module>application-tests</module>
     </modules>
 
     <scm>
@@ -30,8 +31,8 @@
     <properties>
         <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
         <org.springframework.security-version>3.1.0.RELEASE</org.springframework.security-version>
-        <spring-social.version>1.0.1.RELEASE</spring-social.version>
-        <chartsnow-version>5.4-SNAPSHOT</chartsnow-version>
+        <spring-social.version>1.1.0.RELEASE</spring-social.version>
+        <chartsnow-version>5.6.0-SNAPSHOT</chartsnow-version>
     </properties>
 
     <profiles>
@@ -49,6 +50,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                                     <includes>
                                         <include>**/*IT.java</include>
                                     </includes>
@@ -69,6 +71,7 @@
                 <version>2.16</version>
                 <configuration>
                     <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
             <plugin>
@@ -258,6 +261,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-all</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -317,6 +326,21 @@
 
         <dependencies>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.2.2</version>
+            </dependency>
+            <dependency>
                 <groupId>com.sentaca.spring.smpp</groupId>
                 <artifactId>spring-smpp</artifactId>
                 <version>1.0.1</version>
@@ -350,7 +374,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
-                <version>4.2.5</version>
+                <version>4.3.2</version>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
@@ -487,6 +511,12 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.8.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-all</artifactId>
+                    </exclusion>
+                </exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -498,7 +528,7 @@
             <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.3</version>
                 <scope>test</scope>
             </dependency>
 
@@ -704,7 +734,7 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
-                <version>1.3.5.RELEASE</version>
+                <version>1.4.5.RELEASE</version>
             </dependency>
 
             <dependency>
@@ -779,8 +809,15 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-facebook</artifactId>
-                <version>1.0.3.RELEASE</version>
+                <version>1.1.0.RELEASE</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.springframework.social</groupId>
+                <artifactId>spring-social-google</artifactId>
+                <version>1.0.0.M3</version>
+            </dependency>
+
             <!-- END Spring Secuity -->
 
             <!-- Logging section -->
@@ -876,7 +913,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.2.3</version>
+                <version>4.3.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -887,7 +924,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>4.2.3</version>
+                <version>4.3.2</version>
             </dependency>
 
             <dependency>
@@ -931,12 +968,6 @@
                 <artifactId>mockito-core</artifactId>
                 <version>1.9.0</version>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>javapns</groupId>
-                <artifactId>javapns</artifactId>
-                <version>2.1.1</version>
             </dependency>
 
             <dependency>
@@ -1026,12 +1057,6 @@
                 <groupId>javax.xml.crypto</groupId>
                 <artifactId>jsr105-api</artifactId>
                 <version>1.0.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.9</version>
             </dependency>
 
             <dependency>

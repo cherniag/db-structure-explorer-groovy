@@ -1,0 +1,9 @@
+- registered user - user did SIGN_UP_DEVICE and has activation_status = REGISTERED
+- entered phone number user - user did PHONE_NUMBER and has all details to proceed activation
+- activated user - user finished activation, has activation status ACTIVATED with all required details
+- authentication parameters - deviceUID, username, timestamp, token
+- active account - deviceUID and username don't have 'deactivated' suffix
+- deactivated account - deviceUID and username have 'deactivated' suffix
+- preview mode - activated user with limited access: status=11, nextSubPayment and FreeTrialEndDate in the past
+- subscribed user - activated user on subscription: status=10, nextSubPayment > now, FreeTrialEndDate < now, currentPaymentDetailsId != null, paymentDetails.active = true 
+

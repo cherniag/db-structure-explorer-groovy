@@ -6,6 +6,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.persistence.*;
 import java.io.Serializable;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Table(name="tb_userStatus")
 public class UserStatus implements Serializable {
@@ -15,7 +17,7 @@ public class UserStatus implements Serializable {
     public static final String LIMITED = "LIMITED";
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy= IDENTITY)
 	private byte i;
 
 	@Column(name="name",columnDefinition="char(25)")

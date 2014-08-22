@@ -16,6 +16,7 @@ import java.util.List;
  * Date: 12/20/13
  * Time: 3:36 PM
  */
+//@TODO Remove it ASAP
 public class SQLTestInitializer {
     public SQLUtils sqlUtils;
     protected UserRepository userRepository;
@@ -26,6 +27,12 @@ public class SQLTestInitializer {
 
     @Resource
     private ActivationEmailRepository activationEmailRepository;
+
+    @Resource
+    private ReactivationUserInfoRepository reactivationUserInfoRepository;
+
+    @Resource
+    private StreamzineUpdateRepository streamzineUpdateRepository;
 
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
@@ -74,14 +81,18 @@ public class SQLTestInitializer {
         List<Chart> charts = new ArrayList<Chart>();
         List<ChartDetail> chartDetails = chartDetailRepository.findAll();
         for (ChartDetail chartDetail : chartDetails) {
-            if(chartDetail.getChart().getI() > 10){
+            Chart chart = chartDetail.getChart();
+            Integer chartId = chart.getI();
+            if(chartId > 10){
                 chartDetailRepository.delete(chartDetail);
-                charts.add(chartDetail.getChart());
+                if (chartId!=16) charts.add(chart);
             }
         }
         chartRepository.delete(charts);
 
         drmRepository.deleteAll();
+        reactivationUserInfoRepository.deleteAll();
+        streamzineUpdateRepository.deleteAll();
         userRepository.deleteAll();
         activationEmailRepository.deleteAll();
         userRepository.flush();

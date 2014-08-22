@@ -50,7 +50,7 @@ public class FileController extends CommonController {
         try {
             LOGGER.info("command processing started");
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, ActivationStatus.ACTIVATED);
+            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
             FileType fileType = FileType.valueOf(fileTypeName);
             if(fileType == FileType.VIDEO){
@@ -70,7 +70,7 @@ public class FileController extends CommonController {
     }
 
     private View processGetFile(User user, String mediaId, FileType fileType, String resolution,final HttpServletRequest request){
-        final File file = fileService.getFile(mediaId, fileType, resolution, user);
+        final File file = fileService.getFileByTrackId(mediaId, fileType, resolution, user);
         final String contentType = fileService.getContentType(file.getName());
         return new FileInResponseView(contentType, file);
     }

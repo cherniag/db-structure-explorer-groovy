@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CommunityDao
- * 
  * @author Titov Mykhaylo (titov)
  * @author Maksym Chernolevskyi (maksym)
  *
  */
+@Deprecated
 public class CommunityDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunityDao.class);
 	private static Map<String,Community> COMMUNITY_MAP_NAME_AS_KEY; 
@@ -41,17 +40,6 @@ public class CommunityDao {
 	
 	public static Map<String, Community> getMapAsUrls() {
 		return COMMUNITY_MAP_REWRITE_URL_PARAMETER_AS_KEY;
-	}
-	
-	public static int getCommunityId(String communityName){
-		if (communityName == null)
-			throw new PersistenceException("The parameter communityName is null");
-		LOGGER.debug("input parameters communityName: [{}]", communityName);
-		Community community = getCommunity(communityName);
-
-        Integer communityId = community.getId();
-		LOGGER.debug("Output parameter community=[{}]", community);
-		return communityId;
 	}
 
 	public static Community getCommunity(String communityName) {

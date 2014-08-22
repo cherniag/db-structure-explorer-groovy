@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -48,9 +48,9 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 			"and ((message.messageType='NEWS' " +
 			"and message.publishTimeMillis=?2) " +
 			"or (message.messageType<>'NEWS' " +
-			"and message.messageType<>'AD')) " +
+			"and message.messageType not in (?3) )) " +
 			"order by  message.position asc")
-	List<Message> findWithoutAdsByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(Community community, long nextNewsPublishTimeMillis);
+	List<Message> findWithoutBannersByCommunityAndPublishTimeMillisAfterOrderByPositionAsc(Community community, long nextNewsPublishTimeMillis, List<MessageType> banners);
 	
 	@Query("select count(message) from Message message where message.community=?1 and message.publishTimeMillis=?2 and message.messageType=?3")
 	long getCount(Community community, long publishTimeMillis, MessageType messageType);

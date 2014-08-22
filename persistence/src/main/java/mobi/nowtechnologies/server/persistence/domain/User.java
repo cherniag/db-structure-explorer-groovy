@@ -60,6 +60,10 @@ public class User implements Serializable {
 
     public static final String NONE = "NONE";
 
+    public boolean isSubscribedUserByPaymentType(String paymentType){
+        return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated() && getCurrentPaymentDetails().getPaymentType().equals(paymentType);
+    }
+
     public static enum Fields {
         userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
     }
@@ -309,6 +313,9 @@ public class User implements Serializable {
     @Transient
     private boolean hasPromo = false;
 
+    @Transient
+    private boolean isPromotionApplied;
+
     public User() {
         setDisplayName("");
         setTitle("");
@@ -443,6 +450,10 @@ public class User implements Serializable {
         return VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter());
     }
 
+    public boolean isNotVFNZCommunityUser() {
+        return !isVFNZCommunityUser();
+    }
+
     public boolean isO2Consumer() {
         return isO2User() && CONSUMER.equals(segment);
     }
@@ -459,6 +470,8 @@ public class User implements Serializable {
         if (provider != null){
             switch (provider) {
                 case FACEBOOK:
+                    return !isEmpty(getUserName());
+                case GOOGLE_PLUS:
                     return !isEmpty(getUserName());
                 case EMAIL:
                     return !isEmpty(getUserName());
@@ -1427,6 +1440,11 @@ public class User implements Serializable {
         return oldUser.getId();
     }
 
+    public User withId(Integer id){
+        this.id = id;
+        return this;
+    }
+
     public User withAutoOptInEnabled(boolean isAutoOptInEnabled) {
         this.isAutoOptInEnabled = isAutoOptInEnabled;
         return this;
@@ -1471,6 +1489,16 @@ public class User implements Serializable {
         this.device=device;
         return this;
     }
+
+    public boolean isPromotionApplied() {
+        return isPromotionApplied;
+    }
+
+    public User withIsPromotionApplied(boolean isPromotionApplied) {
+        this.isPromotionApplied = isPromotionApplied;
+        return this;
+    }
+
 
     public Collection<SocialInfo> getSocialInfo() {
         return socialInfo;

@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -64,6 +65,9 @@ public class PayPalPaymentServiceIT {
 
     @Resource(name = "request.payPalRequest")
     private PayPalRequest payPalRequest;
+
+    @Resource(name = "communityRepository")
+    private CommunityRepository communityRepository;
 
     @Before
 	public void before() {
@@ -238,7 +242,7 @@ public class PayPalPaymentServiceIT {
 
 
     private PaymentPolicy createAndSavePaymentPolicy(String communityName) {
-        Community community = CommunityDao.getCommunity(communityName);
+        Community community = communityRepository.findByName(communityName);
         PaymentPolicy paymentPolicy = PaymentTestUtils.createPaymentPolicy();
         paymentPolicy.setCommunity(community);
         entityDao.saveEntity(paymentPolicy);

@@ -3,18 +3,14 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
-import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import mobi.nowtechnologies.server.web.subscription.PaymentPageData;
-import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
-import mobi.nowtechnologies.server.web.subscription.SubscriptionStateFactory;
-import mobi.nowtechnologies.server.web.subscription.SubscriptionTexts;
-import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
-
+import mobi.nowtechnologies.server.web.subscription.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,11 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Controller
@@ -77,7 +71,6 @@ public class PaymentsController extends CommonController {
         User user = userService.findById(getUserId());
         Community community = communityService.getCommunityByUrl(communityUrl);
         PaymentsPage paymentsPage = new PaymentsPage();
-
         // the following check was added to show a static page instead of the
         // vf payment options. Once the options are enabled, the following
         // lines can be removed
@@ -87,7 +80,8 @@ public class PaymentsController extends CommonController {
         	LOGGER.info("Showing holding page for user [{}] with provider [{}]", user.getId(), user.getProvider());
         	return new ModelAndView(scopePrefix+"/notimplemented");
         }
-        
+
+        paymentsPage.setAwaitingPaymentStatus(calcIsAwaitingPaymentStatus(user));
         paymentsPage.setMobilePhoneNumber( user.getMobile() );
         paymentsPage.setPaymentPolicies(paymentPolicyService.getPaymentPolicyDtos(user));
         paymentsPage.setConsumerUser( isConsumerUser(user) );
@@ -113,7 +107,17 @@ public class PaymentsController extends CommonController {
 
         return mav;
     }
-    
+
+    private boolean calcIsAwaitingPaymentStatus(User user) {
+        PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+
+        if(currentPaymentDetails != null) {
+            return currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.AWAITING;
+        }
+
+        return false;
+    }
+
     private boolean displayHoldingPageForProvider(ProviderType provider, String message) {
     	if ( provider == null || message == null || message.trim().isEmpty() ) {
     		return false;
@@ -228,7 +232,7 @@ public class PaymentsController extends CommonController {
     private boolean userIsLimitedAndPromotionIsActive(User user, Community community) {
     	if ( user.isLimited() ) {
     		
-			Promotion twoWeeksTrial = promotionService.getActivePromotion(PromotionService.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
+			Promotion twoWeeksTrial = promotionService.getActivePromotion(PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE, community.getName());
 			long now = System.currentTimeMillis();
 			int dbSecs = (int)(now / 1000); // in db we keep time in seconds not milliseconds
 			if ( twoWeeksTrial != null && twoWeeksTrial.getStartDate() < dbSecs && dbSecs < twoWeeksTrial.getEndDate() ) {

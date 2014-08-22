@@ -9,15 +9,14 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
     @Autowired
@@ -27,11 +26,13 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
     @Autowired
     @Qualifier("promoCodeRepository")
     protected PromoCodeRepository promoCodeRepository;
+    private Promotion promotion;
+    private PromoCode promoCode;
 
     @Test
-    public void testActivateVideoAudioFreeTrial_WithAccCheckDetailsAndVersionMore50_Success() throws Exception {
+    public void testActivateVideoAudioFreeTrial_WithAccCheckDetailsAndMaxVersion_Success() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "6.0";
+        String apiVersion = "6.1";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -44,23 +45,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         user.setVideoFreeTrialHasBeenActivated(false);
         userService.updateUser(user);
 
-        int now = (int)(System.currentTimeMillis()/1000);
-        Promotion promotion = new Promotion();
-        promotion.setEndDate(now + 10000000);
-        promotion.setStartDate(now - 10000000);
-        promotion.setUserGroup(user.getUserGroup());
-        promotion.setMaxUsers(30);
-        promotion.setNumUsers(1);
-        promotion.setIsActive(true);
-        promotion.setType(Promotion.ADD_FREE_WEEKS_PROMOTION);
-        promotion = promotionRepository.save(promotion);
-
-        PromoCode promoCode = new PromoCode();
-        promoCode.setCode("o2.consumer.4g.paym.direct");
-        promoCode.setMediaType(MediaType.VIDEO_AND_AUDIO);
-        promoCode.setPromotion(promotion);
-        promoCode = promoCodeRepository.save(promoCode);
-        promotion.setPromoCode(promoCode);
+        prepare(user);
 
         mockMvc.perform(
                 post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
@@ -77,6 +62,37 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("TIMESTAMP", timestamp)
         ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
 
+    }
+
+    private void prepare(User user) {
+        int now = (int)(System.currentTimeMillis()/1000);
+        promotion = new Promotion();
+        promotion.setEndDate(now + 10000000);
+        promotion.setStartDate(now - 10000000);
+        promotion.setUserGroup(user.getUserGroup());
+        promotion.setMaxUsers(30);
+        promotion.setNumUsers(1);
+        promotion.setIsActive(true);
+        promotion.setType(Promotion.ADD_FREE_WEEKS_PROMOTION);
+        promotion = promotionRepository.save(promotion);
+
+        promoCode = new PromoCode();
+        promoCode.setCode("o2.consumer.4g.paym.direct");
+        promoCode.setMediaType(MediaType.VIDEO_AND_AUDIO);
+        promoCode.setPromotion(promotion);
+        promoCode = promoCodeRepository.save(promoCode);
+        promotion.setPromoCode(promoCode);
+    }
+
+    @After
+    public void tireDown() {
+        super.tireDown();
+        if (promoCode != null) {
+            promoCodeRepository.delete(promoCode);
+        }
+        if (promotion != null) {
+            promotionRepository.delete(promotion);
+        }
     }
 
     @Test

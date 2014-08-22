@@ -14,16 +14,20 @@ public class CommunityServiceImpl implements CommunityService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
 	
 	private CommunityRepository communityRepository;
-	
+
 	@Override
 	public Community getCommunityByUrl(String communityUrl) {
 		return communityRepository.findByRewriteUrlParameter(communityUrl);
 	}
 
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
+    }
+
 	@Override
 	public Community getCommunityByName(String communityName) {
 		LOGGER.debug("input parameters communityName: [{}]", communityName);
-		Community community = CommunityDao.getCommunity(communityName);
+		Community community = communityRepository.findByName(communityName);
 		LOGGER.debug("Output parameter community=[{}]", community);
 		return community;
 	}
@@ -31,9 +35,5 @@ public class CommunityServiceImpl implements CommunityService {
 	@Override
 	public List<Community> list() {
 		return communityRepository.findAll();
-	}
-
-	public void setCommunityRepository(CommunityRepository communityRepository) {
-		this.communityRepository = communityRepository;
 	}
 }

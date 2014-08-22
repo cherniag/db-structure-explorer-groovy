@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.codehaus.jackson.map.annotate.JsonRootName;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Maksym Chernolevskyi (maksym)
  */
 @XmlRootElement(name = "user")
-@JsonRootName("user")
+@JsonTypeName("user")
 public class AccountCheckDTO {
 	public String displayName;
 	public byte subBalance;

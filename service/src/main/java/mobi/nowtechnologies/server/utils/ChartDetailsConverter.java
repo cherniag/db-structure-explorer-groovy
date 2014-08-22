@@ -25,17 +25,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class ChartDetailsConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailsConverter.class);
-    private static final Map<String, String> countryCodeForCommunityMap;
     private static final String URL_PARAMETER = "&url=";
     private CommunityResourceBundleMessageSource messageSource;
     private long iTunesLinkFormatCutoverTimeMillis;
-
-    static {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(Community.O2_COMMUNITY_REWRITE_URL, "GB");
-        map.put(Community.VF_NZ_COMMUNITY_REWRITE_URL, "NZ");
-        countryCodeForCommunityMap = Collections.unmodifiableMap(map);
-    }
 
     public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
 		if (chartDetails == null)
@@ -79,14 +71,14 @@ public class ChartDetailsConverter {
         chartDetailDto.setImageLargeSize(media.getImageLargeSize());
         chartDetailDto.setImageSmallSize(media.getImageSmallSize());
         chartDetailDto.setInfo(chartDetail.getInfo());
-        chartDetailDto.setMedia(media.getIsrc());
+        chartDetailDto.setMedia(media.getIsrcTrackId());
         chartDetailDto.setTitle(media.getTitle());
         chartDetailDto.setTrackSize(headerSize + audioSize - 2);
-        chartDetailDto.setChartDetailVersion(chartDetail.getVersion());
-        chartDetailDto.setHeaderVersion(headerFile != null ? headerFile.getVersion() : 0);
-        chartDetailDto.setAudioVersion(media.getAudioFile().getVersion());
-        chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersion());
-        chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersion());
+        chartDetailDto.setChartDetailVersion(chartDetail.getVersionAsPrimitive());
+        chartDetailDto.setHeaderVersion(headerFile != null ? headerFile.getVersionAsPrimitive() : 0);
+        chartDetailDto.setAudioVersion(media.getAudioFile().getVersionAsPrimitive());
+        chartDetailDto.setImageLargeVersion(media.getImageFIleLarge().getVersionAsPrimitive());
+        chartDetailDto.setImageSmallVersion(media.getImageFileSmall().getVersionAsPrimitive());
         chartDetailDto.setDuration(media.getAudioFile().getDuration());
 
         chartDetailDto.setAmazonUrl(getAmazonUrl(media.getAmazonUrl(), defaultAmazonUrl, community.getRewriteUrlParameter()));
@@ -122,7 +114,7 @@ public class ChartDetailsConverter {
             mediaAmazonUrl = defaultAmazonUrl;
         }
 
-        String newCountryCode = countryCodeForCommunityMap.get(communityRewriteUrlParameter);
+        String newCountryCode = getCountryCode(communityRewriteUrlParameter);
 
         if(isBlank(mediaAmazonUrl) || isBlank(newCountryCode)) {
             return mediaAmazonUrl;
@@ -136,8 +128,12 @@ public class ChartDetailsConverter {
         }
     }
 
+    private String getCountryCode(String communityRewriteUrlParameter) {
+        return messageSource.getMessage(communityRewriteUrlParameter, "itunes.urlCountryCode", null, null);
+    }
+
     private String getITunesUrl(String existingITunesUrl, String communityRewriteUrl) {
-        String countryCode = countryCodeForCommunityMap.get(communityRewriteUrl);
+        String countryCode = getCountryCode(communityRewriteUrl);
         if(isBlank(existingITunesUrl) || isBlank(countryCode)) {
             LOGGER.warn("Media iTunes url [{}] or new country code [{}] is empty", existingITunesUrl, countryCode);
             return existingITunesUrl;
@@ -215,4 +211,5 @@ public class ChartDetailsConverter {
     public void setiTunesLinkFormatCutoverTimeMillis(long iTunesLinkFormatCutoverTimeMillis) {
         this.iTunesLinkFormatCutoverTimeMillis = iTunesLinkFormatCutoverTimeMillis;
     }
+
 }

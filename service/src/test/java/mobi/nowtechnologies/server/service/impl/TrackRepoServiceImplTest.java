@@ -268,7 +268,7 @@ public class TrackRepoServiceImplTest {
                 j++;
                 track = fixture.pull(track);
 
-                verify(mediaRepository, times(j)).getByIsrc(any(String.class));
+                verify(mediaRepository, times(j)).findByTrackId(any(Long.class));
                 verify(mediaRepository, times(j)).save(any(Media.class));
                 verify(genreRepository, times(j)).getByName(anyString());
                 verify(mediaFileRepository, times(j * 6)).getByName(any(String.class));
@@ -311,7 +311,7 @@ public class TrackRepoServiceImplTest {
 
         track = fixture.pull(track);
 
-        verify(mediaRepository, times(1)).getByIsrc(any(String.class));
+        verify(mediaRepository, times(1)).findByTrackId(any(Long.class));
         verify(mediaRepository, times(1)).save(any(Media.class));
         verify(genreRepository, times(1)).getByName(anyString());
         verify(mediaFileRepository, times(1)).getByName(eq(expectedTrack.getIsrc()));

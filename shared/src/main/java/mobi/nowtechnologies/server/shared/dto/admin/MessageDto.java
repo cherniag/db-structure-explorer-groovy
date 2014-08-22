@@ -1,14 +1,12 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
-import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageType;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,9 +24,7 @@ public class MessageDto {
 	
 	private Integer id;
 	
-	@NotEmpty
-	@Pattern(regexp = ".{1,255}")
-	private String headline;
+	private String headline = "";
 
 	private String body;
 	

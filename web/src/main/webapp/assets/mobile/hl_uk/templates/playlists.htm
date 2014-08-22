@@ -1,0 +1,42 @@
+<div class="wide color-bg">
+<div class="height-header color-header text-center" xmlns="http://www.w3.org/1999/html">
+    <a href="#backOrExit" style="top:8px;left:4px;" class="button-small absolute"><%=Messages['page.playlists.tracks.menu.back']%></a>
+    <div class="header-position font-main S17">
+        <div class="icon-playlist in-middle"/>
+        <div class="in-middle"><%=Messages['page.playlists.header.text']%></div>
+    </div>
+</div>
+<div class="pad5">
+    <div class="pane height-swap color-infobar">
+        <span class="font-main S13 color-current-theme"><%=Messages['page.playlists.alert.swap']%></span>
+        <div class="in-middle icon-swap  right10"/>
+    </div>
+    <% data.forEach(function (dto) {
+        var color = 'color-main';
+        var currentTheme = '';
+        var preselected = Backbone.playlists.preSelected == dto.id;
+        var swapButtonId = 'swap' + dto.id;
+        if(preselected){
+            color = 'color-selected';
+            currentTheme = '<span class="font-light S12 color-current-theme">'
+                + Messages['page.playlists.item.current.label'] + '<span class="icon-check"/></span><br/>';
+        }
+    %>
+    <div id="<%= dto.id %>" onclick="if(event.target.id != '<%= swapButtonId %>' )location.href='#tracks/<%=dto.id%>'"
+         class="playlist height-pane <%= color %> ">
+        <div class="in-middle icon-playlist-filled"/>
+        <img class="in-middle marg-L7 cover" src="<%= dto.cover %>"/>
+
+        <span style="margin-left: 4px;" class="in-middle font-main">
+            <%= currentTheme %>
+            <span class="S15 line16"><%= Strings.cut(dto.title, 18) %></span><br/>
+            <span class="S13 line16"><%= dto.length %> <%=Messages['page.playlists.item.tracks']%></span>
+        </span>
+        <% if(!preselected) { %>
+            <div id="<%= swapButtonId %>"  onclick="location.href='#swap/<%=dto.id%>'" style="margin-top: -54px; right: 18px;" class="btn absolute font-main S12 color-apply">
+                <%=Messages['page.playlists.button.swap.text']%></div>
+        <% } %>
+    </div>
+   <% }); %>
+</div>
+</div>
