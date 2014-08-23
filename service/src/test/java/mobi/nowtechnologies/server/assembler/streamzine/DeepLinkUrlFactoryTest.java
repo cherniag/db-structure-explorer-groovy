@@ -90,7 +90,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "o2");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("o2://web/aHR0cDovL2JlYXIucnU=?openIn=browser"));
+        assertThat((String)o, is("o2://web/aHR0cDovL2JlYXIucnU=?open=externally"));
     }
 
     @Test

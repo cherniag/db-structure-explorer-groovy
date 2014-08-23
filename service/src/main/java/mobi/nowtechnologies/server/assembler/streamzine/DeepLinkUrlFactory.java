@@ -23,7 +23,7 @@ public class DeepLinkUrlFactory {
 
     private final static String ACTION = "action";
     private final static String ID = "id";
-    private static final String OPEN_IN = "openIn";
+    private static final String OPEN_IN = "open";
 
     private DeepLinkInfoService deepLinkInfoService;
 
