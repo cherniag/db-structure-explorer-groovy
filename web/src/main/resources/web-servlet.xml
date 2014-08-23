@@ -3,8 +3,9 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:utils="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--
         DispatcherServlet Context: defines this servlet's request-processing
@@ -36,12 +37,16 @@
 
     <mvc:resources mapping="/assets/**" location="/assets/**" />
 
+    <utils:list id="tilesLocation">
+        <value>/WEB-INF/tiles-defs/template-defs.xml</value>
+    </utils:list>
+
+
+
+
     <bean id="web.tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
-        <property name="definitions">
-            <list>
-                <value>classpath:/WEB-INF/tiles-defs/template-defs.xml</value>
-            </list>
-        </property>
+        <property name="definitions" ref="tilesLocation"/>
+
         <!-- Initialise expression language support for use in Tiles definitions. -->
         <property name="tilesProperties">
             <props>
@@ -129,4 +134,9 @@
         </property>
     </bean>
 
+    <beans profile="test">
+        <utils:list id="tilesLocation">
+            <value>classpath:/WEB-INF/tiles-defs/template-defs.xml</value>
+        </utils:list>
+    </beans>
 </beans>
