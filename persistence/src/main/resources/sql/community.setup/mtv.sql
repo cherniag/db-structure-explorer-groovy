@@ -1,5 +1,5 @@
 SET autocommit = 0;
-start TRANSACTION;
+START TRANSACTION;
 /* please, set community name here, other parameters should be checked manually */
 SET @new_community_name = 'mtv';
 SET @new_community_full_name = 'mtv';
@@ -7,7 +7,7 @@ SET @new_community_full_name = 'mtv';
 /* Creating new jAdmin user for new community in cn_service_admin */
 USE cn_service_admin;
 INSERT INTO users (username, communityURL, password, enabled) VALUES
-  ('admin', @new_community_name, md5(concat('admin', '{', 'admin', '}')), TRUE);
+  ('admin', @new_community_name, md5(concat('admin', '{', 'mtv_admin', '}')), TRUE);
 
 /* Creating new community */
 USE cn_service;
@@ -15,7 +15,7 @@ SET @new_community_type_id = (SELECT
                                 MAX(communityTypeID)
                               FROM tb_communities);
 INSERT INTO tb_communities (name, appVersion, communityTypeID, displayName, assetName, rewriteURLParameter) VALUES
-  (@new_community_name, 1, (@new_community_type_id + 1), @new_community_full_name, @new_community_name,
+  (@new_community_name, 1, (@new_community_type_id), @new_community_full_name, @new_community_name,
    @new_community_name);
 SET @new_community_id = (SELECT
                            id
@@ -55,7 +55,7 @@ INSERT INTO community_charts (chart_id, community_id) VALUES
       i
     FROM tb_charts
     WHERE name = 'HL_UK_PLAYLIST_2 - MTV'), @new_community_id),
-((SELECT
+  ((SELECT
       i
     FROM tb_charts
     WHERE name = 'HL_UK_PLAYLIST_3 - MTV'), @new_community_id),
@@ -70,10 +70,10 @@ INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES
                                                    i
                                                  FROM tb_charts
                                                  WHERE name = 'HOT_TRACKS - MTV'), (SELECT
-                                                                                     i
-                                                                                   FROM tb_news
-                                                                                   WHERE
-                                                                                     community = @new_community_id),
+                                                                                      i
+                                                                                    FROM tb_news
+                                                                                    WHERE
+                                                                                      community = @new_community_id),
    (SELECT
       i
     FROM tb_drmPolicy
@@ -83,13 +83,13 @@ INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES
 INSERT INTO tb_paymentPolicy
 (communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online)
 VALUES
-  (@new_community_id, 1, 1, 'PAY_PAL', NULL, '', 'GBP', FALSE,
+  (@new_community_id, 1, 1.49, 'PAY_PAL', NULL, '', 'GBP', FALSE,
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'FACEBOOK', '_3G', 'AUDIO',
    0, 0, FALSE, TRUE);
 INSERT INTO tb_paymentPolicy
 (communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online)
 VALUES
-  (@new_community_id, 1, 1, 'PAY_PAL', NULL, '', 'GBP', FALSE,
+  (@new_community_id, 1, 1.49, 'PAY_PAL', NULL, '', 'GBP', FALSE,
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'GOOGLE_PLUS', '_3G', 'AUDIO',
    0, 0, FALSE, TRUE);
 INSERT INTO tb_paymentPolicy
@@ -100,17 +100,16 @@ VALUES
    0, 0, FALSE, TRUE);
 
 
-
 INSERT INTO tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label, is_white_listed)
 VALUES
-  ('MTVPromo2weeksAudio', 0, 0, UNIX_TIMESTAMP(now()), UNIX_TIMESTAMP('2020-12-01 02:00:00'), TRUE, 26, 0, (SELECT
-                                                                                                              ug.id
-                                                                                                            FROM
-                                                                                                              tb_userGroups ug
-                                                                                                            WHERE
-                                                                                                              ug.community
-                                                                                                              =
-                                                                                                              @new_community_id),
+  ('MTVPromo2weeksAudio', 0, 0, UNIX_TIMESTAMP(now()), UNIX_TIMESTAMP('2020-12-01 02:00:00'), TRUE, 2, 0, (SELECT
+                                                                                                             ug.id
+                                                                                                           FROM
+                                                                                                             tb_userGroups ug
+                                                                                                           WHERE
+                                                                                                             ug.community
+                                                                                                             =
+                                                                                                             @new_community_id),
    'PromoCode', FALSE, 'mtv.promo.2weeks.audio', FALSE);
 INSERT INTO tb_promoCode (code, promotionId) VALUES
   ('mtv.promo.2weeks.audio', (SELECT
