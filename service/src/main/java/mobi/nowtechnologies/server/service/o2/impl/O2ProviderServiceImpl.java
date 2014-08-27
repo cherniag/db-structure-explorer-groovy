@@ -277,7 +277,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		try {
 			response = webServiceGateway.sendAndReceive(chargeCustomerEndpoint, billSubscriber);
 		} catch (SoapFaultException e) {
-            logException(e);
+            logAdditionalInformation(e);
 			response = new BillSubscriberFault(e.getMessage(), (SOAFaultType) e.getSoapFaultObject());
 		}
 
@@ -287,12 +287,14 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 		return o2Response;
 	}
 
-    private void logException(SoapFaultException e) {
+    private void logAdditionalInformation(SoapFaultException e) {
         try {
-            StringBuilder message = new StringBuilder()
-                   .append("SoapFault.FaultDetail={").append(e.getSoapFault().getFaultDetail()).append("},")
-                   .append("SoapFault.AllAttributes={").append(e.getSoapFault().getAllAttributes()).append("},")
-                   .append("SoapFaultObject={").append(e.getSoapFaultObject()).append("},")
+            StringBuilder message = new StringBuilder();
+            if(e.getSoapFault() != null){
+                message.append("SoapFault.FaultDetail={").append(e.getSoapFault().getFaultDetail()).append("},")
+                       .append("SoapFault.AllAttributes={").append(e.getSoapFault().getAllAttributes()).append("},");
+            }
+            message.append("SoapFaultObject={").append(e.getSoapFaultObject()).append("},")
                    .append("FaultStringOrReason={").append(e.getFaultStringOrReason()).append("}");
             LOGGER.error(message.toString());
         } catch (Exception ex) {
