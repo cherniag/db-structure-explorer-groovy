@@ -83,19 +83,19 @@ INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES
 INSERT INTO tb_paymentPolicy
 (communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online)
 VALUES
-  (@new_community_id, 1, 1.49, 'PAY_PAL', NULL, '', 'GBP', FALSE,
+  (@new_community_id, 4, 8.29, 'PAY_PAL', NULL, '', 'GBP', FALSE,
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'FACEBOOK', '_3G', 'AUDIO',
    0, 0, FALSE, TRUE);
 INSERT INTO tb_paymentPolicy
 (communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online)
 VALUES
-  (@new_community_id, 1, 1.49, 'PAY_PAL', NULL, '', 'GBP', FALSE,
+  (@new_community_id, 4, 8.29, 'PAY_PAL', NULL, '', 'GBP', FALSE,
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'GOOGLE_PLUS', '_3G', 'AUDIO',
    0, 0, FALSE, TRUE);
 INSERT INTO tb_paymentPolicy
 (communityID, subWeeks, subCost, paymentType, operator, shortCode, currencyIso, availableInStore, app_store_product_id, contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online)
 VALUES
-  (@new_community_id, 1, 1, 'iTunesSubscription', NULL, '', 'GBP', FALSE,
+  (@new_community_id, 4, 8.29, 'iTunesSubscription', NULL, '', 'GBP', FALSE,
    'com.musicqubed.ios.mtv.subscription.weekly.1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '_3G', 'AUDIO',
    0, 0, FALSE, TRUE);
 
