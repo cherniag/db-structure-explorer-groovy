@@ -289,9 +289,9 @@ public class O2ProviderServiceImpl implements O2ProviderService {
 
     private void logException(SoapFaultException e) {
         try {
-            StringBuilder message = new StringBuilder();
-            message.append("FaultCode={").append(e.getFaultCode()).append("},")
-                   .append("SoapFault={").append(e.getSoapFault()).append("},")
+            StringBuilder message = new StringBuilder()
+                   .append("SoapFault.FaultDetail={").append(e.getSoapFault().getFaultDetail()).append("},")
+                   .append("SoapFault.AllAttributes={").append(e.getSoapFault().getAllAttributes()).append("},")
                    .append("SoapFaultObject={").append(e.getSoapFaultObject()).append("},")
                    .append("FaultStringOrReason={").append(e.getFaultStringOrReason()).append("}");
             LOGGER.error(message.toString());
