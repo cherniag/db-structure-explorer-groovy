@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.api.plus.Person;
-import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Date;
 import java.util.Map;
@@ -32,29 +32,33 @@ public class GooglePlusService {
             if (templateCustomizer != null) {
                 templateCustomizer.customize(googleTemplate);
             }
-            GoogleUserInfo googleUserInfo = googleTemplate.userOperations().getUserInfo();
-            validateProfile(googlePlusUserId, googleUserInfo);
             Person personFromGooglePlus = googleTemplate.plusOperations().getGoogleProfile();
-            return convertForUser(googleUserInfo, personFromGooglePlus);
+            validateProfile(googlePlusUserId, personFromGooglePlus);
+            return convertForUser(personFromGooglePlus);
         } catch (RestClientException se) {
             logger.error("ERROR", se);
             throw OAuth2ForbiddenException.invalidGooglePlusToken();
         }
     }
 
-    private GooglePlusUserInfo convertForUser(GoogleUserInfo profile, Person personFromGooglePlus) {
+    private GooglePlusUserInfo convertForUser(Person personFromGooglePlus) {
         GooglePlusUserInfo result = new GooglePlusUserInfo();
-        result.setEmail(profile.getEmail());
+        result.setEmail(personFromGooglePlus.getAccountEmail());
         result.setGooglePlusId(personFromGooglePlus.getId());
         result.setBirthday(extractDateInUTC(personFromGooglePlus));
         result.setDisplayName(personFromGooglePlus.getDisplayName());
-        result.setPicture(personFromGooglePlus.getImageUrl());
+        result.setPicture(extractImageUrl(personFromGooglePlus));
         result.setGender(extractGender(personFromGooglePlus));
         result.setLocation(extractLocation(personFromGooglePlus));
         result.setGivenName(personFromGooglePlus.getGivenName());
         result.setFamilyName(personFromGooglePlus.getFamilyName());
         result.setHomePage(buildHomepageUrl(personFromGooglePlus));
         return result;
+    }
+
+    private String extractImageUrl(Person personFromGooglePlus) {
+        String imageUrl = personFromGooglePlus.getImageUrl();
+        return UriComponentsBuilder.fromHttpUrl(imageUrl).replaceQueryParam("sz", "200").build().toUriString();
     }
 
     private Date extractDateInUTC(Person personFromGooglePlus) {
@@ -90,11 +94,11 @@ public class GooglePlusService {
         return null;
     }
 
-    private void validateProfile(String inputGooglePlusId, GoogleUserInfo googleUserInfo) {
-        if (!googleUserInfo.getId().equals(inputGooglePlusId)) {
+    private void validateProfile(String inputGooglePlusId, Person person) {
+        if (!person.getId().equals(inputGooglePlusId)) {
             throw OAuth2ForbiddenException.invalidGooglePlusUserId();
         }
-        if (isEmpty(googleUserInfo.getEmail())) {
+        if (isEmpty(person.getAccountEmail())) {
             throw OAuth2ForbiddenException.emptyGooglePlusEmail();
         }
     }

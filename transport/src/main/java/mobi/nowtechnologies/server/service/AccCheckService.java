@@ -44,14 +44,24 @@ public class AccCheckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
 
 
-    public AccountCheckDto processAccCheck(User user, boolean withUserDetails) {
+    public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails) {
+        return processAccCheck(mergeResult.getResultOfOperation(), withUserDetails, !mergeResult.isMergeDone());
+    }
 
+    public AccountCheckDto processAccCheck(User user, boolean withUserDetails) {
+        return processAccCheck(user, withUserDetails, null);
+    }
+
+    private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation) {
+        if (firstActivation != null){
+            LOGGER.info("First activation: {}", firstActivation);
+        }
         user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
 
         Community community = user.getUserGroup().getCommunity();
 
         List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user), withUserDetails);
+        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user), withUserDetails, firstActivation);
 
         accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
         accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;

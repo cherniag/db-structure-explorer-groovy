@@ -7,11 +7,11 @@ import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 
 public interface UserPromoService {
 
-    User applyInitPromoByEmail(User user, Long activationEmailId, String email, String token);
+    MergeResult applyInitPromoByEmail(User user, Long activationEmailId, String email, String token);
 
 
-    User applyInitPromoByFacebook(User user, FacebookUserInfo facebookProfile, boolean disableReactivationForUser);
-    
-    User applyInitPromoByGooglePlus(User user, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser);
+    MergeResult applyInitPromoByFacebook(User user, FacebookUserInfo facebookProfile, boolean disableReactivationForUser);
+
+    MergeResult applyInitPromoByGooglePlus(User user, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser);
     
 }

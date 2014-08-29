@@ -30,10 +30,6 @@ public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplate
         this.homePage = homePage;
     }
 
-    @Override
-    protected String provideResourceNameForEmailResponse() {
-        return "googleplus/ok.json";
-    }
 
     protected String provideResourceNameForGooglePlusResponse() {
         return "googleplus/okGooglePlus.json";
@@ -42,10 +38,7 @@ public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplate
     @Override
     protected String renderGooglePlusResponse(String body) {
         return String.format(body,
-                displayName, firstName, lastName,  homePage, gender, profileUrl, primaryLocation, birthday, googlePlusUserId);
+                displayName, firstName, lastName,  homePage, gender, profileUrl, primaryLocation, birthday, googlePlusUserId, googlePlusEmail);
     }
 
-    protected String renderEmailResponse(String body) {
-        return String.format(body, googlePlusEmail, googlePlusUserId);
-    }
 }

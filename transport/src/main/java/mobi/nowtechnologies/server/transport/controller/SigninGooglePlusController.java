@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
+import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
@@ -50,8 +51,8 @@ public class SigninGooglePlusController extends CommonController {
             LOGGER.info("APPLY_INIT_PROMO_GOOGLE_PLUS Started for accessToken[{}] in community[{}] ", accessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             GooglePlusUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
-            user = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, disableReactivation);
-            return buildModelAndView(accCheckService.processAccCheck(user, true));
+            MergeResult mergeResult = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, disableReactivation);
+            return buildModelAndView(accCheckService.processAccCheck(mergeResult, true));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_GOOGLE_PLUS can not find deviceUID[{}] in community[{}]", deviceUID, community);

@@ -1,1 +1,0 @@
-<%@include file="links.jsp" %>
