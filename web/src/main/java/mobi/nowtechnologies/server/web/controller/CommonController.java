@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,5 +58,11 @@ public abstract class CommonController implements MessageSourceAware {
     @ExceptionHandler(value = { CanNotDeactivatePaymentDetailsException.class })
     public ModelAndView handleCanNotDeactivatePaymentDetailsException(HttpServletRequest request, ServiceException exception, Locale locale) {
         return new ModelAndView("errors/can_not_change_payment_options");
+    }
+
+    @ExceptionHandler(value ={Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handleAllExceptions(Exception e) {
+        return new ModelAndView("errors/500");
     }
 }

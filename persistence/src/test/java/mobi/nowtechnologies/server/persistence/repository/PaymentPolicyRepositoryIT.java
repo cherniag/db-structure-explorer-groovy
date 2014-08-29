@@ -8,11 +8,12 @@ import org.junit.Test;
 
 import javax.annotation.Resource;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
 import static mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails.O2_PSMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.GOOGLE_PLUS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -76,6 +77,25 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
         assertNotNull(actualPaymentPolicy);
         assertEquals(paymentPolicy.getId(), actualPaymentPolicy.getId());
     }
+
+    @Test
+    public void testGetPaymentPoliciesForOnlinePolicy(){
+        //given
+        paymentPolicy = paymentPolicyRepository.save(
+                createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true)).withOnline(true);
+        PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        assertEquals(result, paymentPolicy);
+    }
+
+    @Test
+    public void testGetPaymentPoliciesForNotOnlinePolicy(){
+        //given
+        paymentPolicy = paymentPolicyRepository.save(
+                createPaymentPolicyWithCommunity().withPaymentType(PAYPAL_TYPE).withProvider(GOOGLE_PLUS).withMediaType(AUDIO).withContract(null).withSegment(null).withTariff(_3G).withDefault(true)).withOnline(false);
+        PaymentPolicy result = paymentPolicyRepository.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAYPAL_TYPE);
+        assertNull(result);
+    }
+
 
     PaymentPolicy createPaymentPolicyWithCommunity() {
         o2Community = communityRepository.findByRewriteUrlParameter("o2");

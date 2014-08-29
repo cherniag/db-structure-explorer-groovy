@@ -7,28 +7,13 @@ import mobi.nowtechnologies.server.persistence.repository.PromoCodeRepository;
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -41,7 +26,6 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,20 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextHierarchy({
-        @ContextConfiguration("classpath:web-root-test.xml"),
-        @ContextConfiguration("classpath:web-test.xml")
-})
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class VideoFreeTrialControllerIT {
 
-    @Resource
-    private WebApplicationContext wac;
+public class VideoFreeTrialControllerIT extends AbstractWebControllerIT{
 
-    private MockMvc mockMvc;
 
     @Resource
     private UserRepository userRepository;
@@ -124,12 +97,6 @@ public class VideoFreeTrialControllerIT {
         assertFalse(user.getPaymentDetailsList().isEmpty());
     }
 
-
-    @Before
-    public void setUp()
-            throws Exception {
-        mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-    }
 
     private SecurityContext createSecurityContext() {
         Authentication authentication = new RememberMeAuthenticationToken("test", new UserDetailsImpl(user, true), null);

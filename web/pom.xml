@@ -16,6 +16,14 @@
 
 	<build>
 		<finalName>web-${project.version}-${buildNumber}</finalName>
+        <testResources>
+            <testResource>
+                <directory>src/main/webapp</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
 	</build>
 
 	<dependencies>
