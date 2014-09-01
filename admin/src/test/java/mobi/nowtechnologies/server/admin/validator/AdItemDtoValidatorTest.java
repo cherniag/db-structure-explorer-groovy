@@ -1,36 +1,31 @@
 package mobi.nowtechnologies.server.admin.validator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import mobi.nowtechnologies.server.dto.AdItemDto;
+import mobi.nowtechnologies.server.shared.enums.AdActionType;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.validation.Errors;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import mobi.nowtechnologies.server.dto.AdItemDto;
-import mobi.nowtechnologies.server.shared.enums.AdActionType;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.validation.Errors;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Titov Mykhaylo (titov)
  *
  */
-@RunWith(PowerMockRunner.class)
 public class AdItemDtoValidatorTest{
 	
 	private static AdItemDtoValidator adItemDtoValidator;
-	
-	@BeforeClass
+
+    @BeforeClass
 	public static void setUp() {
 		adItemDtoValidator = new AdItemDtoValidator();
 	}
@@ -43,24 +38,25 @@ public class AdItemDtoValidatorTest{
 		adItemDto.setAction("http://google.com.ua");
 		adItemDto.setFile(new MockMultipartFile("test", "content".getBytes()));
 		adItemDto.setMessage("message");
+        final List<Object[]> errorList = new ArrayList<Object[]>();
 		
-		Errors errors = Mockito.mock(Errors.class);
+		Errors errors = mock(Errors.class);
 		
-		Mockito.doAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				
-				return null;
-			}
-		}).when(errors).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		
-		Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+		doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                errorList.add(invocation.getArguments());
+                return null;
+            }
+        }).when(errors).rejectValue(anyString(), anyString(), anyString());
+
+        mockErrors(errorList, errors);
 		
 		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
 		
 		assertFalse(hasErrors);
 		
-		Mockito.verify(errors, Mockito.times(0)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		verify(errors, times(0)).rejectValue(anyString(), anyString(), anyString());
 	}
 	
 	@Test
@@ -76,28 +72,28 @@ public class AdItemDtoValidatorTest{
 		
 		final List<Object[]> errorList = new ArrayList<Object[]>();
 		
-		Errors errors = Mockito.mock(Errors.class);
+		Errors errors = mock(Errors.class);
 		
-		Mockito.doAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				
-				Object[] arguments = invocation.getArguments();
-				errorList.add(arguments);
-				
-				String field = (String)arguments[0];
-				String errorCode = (String)arguments[1];
-				String defaultMessage = (String)arguments[2];
-				
-				assertEquals("imageFileName", field);
-				assertEquals("ad.imageFileNameFieldIsNull.error", errorCode);
-				assertEquals("The field imageFileName is mandatory", defaultMessage);
-				
-				return null;
-			}
-		}).when(errors).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		
-		Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+		doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+
+                Object[] arguments = invocation.getArguments();
+                errorList.add(arguments);
+
+                String field = (String) arguments[0];
+                String errorCode = (String) arguments[1];
+                String defaultMessage = (String) arguments[2];
+
+                assertEquals("imageFileName", field);
+                assertEquals("ad.imageFileNameFieldIsNull.error", errorCode);
+                assertEquals("The field imageFileName is mandatory", defaultMessage);
+
+                return null;
+            }
+        }).when(errors).rejectValue(anyString(), anyString(), anyString());
+
+        mockErrors(errorList, errors);
 		
 		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
 		
@@ -105,50 +101,134 @@ public class AdItemDtoValidatorTest{
 		
 		assertEquals(0, errorList.size());
 		
-		Mockito.verify(errors, Mockito.times(0)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		verify(errors, times(0)).rejectValue(anyString(), anyString(), anyString());
 	}
-	
-	@Test
-	public void testCustomValidate_FileIsNullAndIdIsNull_Success(){
+
+    @Test
+    public void testCustomValidate_FileIsNullAndRemoveFileIsTrue_Success(){
+        AdItemDto adItemDto = new AdItemDto();
+
+        adItemDto.setActionType(AdActionType.URL);
+        adItemDto.setAction("http://google.com.ua");
+        adItemDto.setMessage("message");
+        adItemDto.setRemoveImage(true);
+
+        final List<Object[]> errorList = new ArrayList<Object[]>();
+
+        Errors errors = mock(Errors.class);
+
+        doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                errorList.add(invocation.getArguments());
+                return null;
+            }
+        }).when(errors).rejectValue(anyString(), anyString(), anyString());
+
+        mockErrors(errorList, errors);
+
+        boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
+
+        assertFalse(hasErrors);
+        assertEquals(0, errorList.size());
+
+        verify(errors, times(0)).rejectValue(anyString(), anyString(), anyString());
+    }
+
+    @Test
+	public void testCustomValidate_FileIsNullAndRemoveFileIsFalse_Failure(){
 		AdItemDto adItemDto = new AdItemDto();
-		
+
 		adItemDto.setActionType(AdActionType.URL);
 		adItemDto.setAction("http://google.com.ua");
 		adItemDto.setMessage("message");
-		
+
 		final List<Object[]> errorList = new ArrayList<Object[]>();
-		
-		Errors errors = Mockito.mock(Errors.class);
-		
-		Mockito.doAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-	
-				Object[] arguments = invocation.getArguments();
-				errorList.add(arguments);
-				
-				String field = (String)arguments[0];
-				String errorCode = (String)arguments[1];
-				String defaultMessage = (String)arguments[2];
-				
-				assertEquals("file", field);
-				assertEquals("ad.fileFieldIsNull.error", errorCode);
-				assertEquals("The field file is mandatory", defaultMessage);
-				
-				return null;
-			}
-		}).when(errors).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		
-		Mockito.when(errors.hasErrors()).thenReturn(errorList.isEmpty());
-		
-		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
-		
+
+		Errors errors = mock(Errors.class);
+
+		doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+
+                Object[] arguments = invocation.getArguments();
+                errorList.add(arguments);
+
+                String field = (String) arguments[0];
+                String errorCode = (String) arguments[1];
+                String defaultMessage = (String) arguments[2];
+
+                assertEquals("file", field);
+                assertEquals("ad.noFile.error", errorCode);
+                assertEquals("No file is uploaded but \"None image\" is unchecked. Please check \"None image\" if you intentionally want to skip image upload.", defaultMessage);
+
+                return null;
+            }
+        }).when(errors).rejectValue(anyString(), anyString(), anyString());
+
+        mockErrors(errorList, errors);
+
+        boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
+
 		assertTrue(hasErrors);
-		assertEquals(0, errorList.size());
-		
-		Mockito.verify(errors, Mockito.times(0)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		assertEquals(1, errorList.size());
+
+		verify(errors).rejectValue(anyString(), anyString(), anyString());
 	}
-	
+
+    @Test
+    public void testCustomValidate_FileIsEmptyAndRemoveFileIsFalse_Failure(){
+        AdItemDto adItemDto = new AdItemDto();
+
+        adItemDto.setActionType(AdActionType.URL);
+        adItemDto.setAction("http://google.com.ua");
+        adItemDto.setMessage("message");
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.isEmpty()).thenReturn(true);
+        adItemDto.setFile(multipartFile);
+
+        final List<Object[]> errorList = new ArrayList<Object[]>();
+
+        Errors errors = mock(Errors.class);
+
+        doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+
+                Object[] arguments = invocation.getArguments();
+                errorList.add(arguments);
+
+                String field = (String) arguments[0];
+                String errorCode = (String) arguments[1];
+                String defaultMessage = (String) arguments[2];
+
+                assertEquals("file", field);
+                assertEquals("ad.noFile.error", errorCode);
+                assertEquals("No file is uploaded but \"None image\" is unchecked. Please check \"None image\" if you intentionally want to skip image upload.", defaultMessage);
+
+                return null;
+            }
+        }).when(errors).rejectValue(anyString(), anyString(), anyString());
+
+        mockErrors(errorList, errors);
+
+        boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
+
+        assertTrue(hasErrors);
+        assertEquals(1, errorList.size());
+
+        verify(errors).rejectValue(anyString(), anyString(), anyString());
+    }
+
+    private void mockErrors(final List<Object[]> errorList, Errors errors) {
+        when(errors.hasErrors()).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return !errorList.isEmpty();
+            }
+        });
+    }
+
 	@Test
 	public void testCustomValidate_WrongFileSize_Failure(){
 		AdItemDto adItemDto = new AdItemDto();
@@ -164,35 +244,35 @@ public class AdItemDtoValidatorTest{
 		
 		final List<Object[]> errorList = new ArrayList<Object[]>();
 		
-		Errors errors = Mockito.mock(Errors.class);
+		Errors errors = mock(Errors.class);
 		
-		Mockito.doAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-	
-				Object[] arguments = invocation.getArguments();
-				errorList.add(arguments);
-				
-				String field = (String)arguments[0];
-				String errorCode = (String)arguments[1];
-				String defaultMessage = (String)arguments[2];
-				
-				assertEquals("file", field);
-				assertEquals("ad.wrongFileSize.error", errorCode);
-				assertEquals("Wrong file size. Should be more than 1 and less than 30720 bytes (30.72 kBytes)", defaultMessage);
-				
-				return null;
-			}
-		}).when(errors).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-		
-		Mockito.when(errors.hasErrors()).thenReturn(errorList.isEmpty());
+		doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+
+                Object[] arguments = invocation.getArguments();
+                errorList.add(arguments);
+
+                String field = (String) arguments[0];
+                String errorCode = (String) arguments[1];
+                String defaultMessage = (String) arguments[2];
+
+                assertEquals("file", field);
+                assertEquals("ad.wrongFileSize.error", errorCode);
+                assertEquals("Wrong file size. Should be more than 1 and less than 30720 bytes (30.72 kBytes)", defaultMessage);
+
+                return null;
+            }
+        }).when(errors).rejectValue(anyString(), anyString(), anyString());
+
+        mockErrors(errorList, errors);
 		
 		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
 		
 		assertTrue(hasErrors);
 		assertEquals(1, errorList.size());
 		
-		Mockito.verify(errors, Mockito.times(1)).rejectValue(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+		verify(errors, times(1)).rejectValue(anyString(), anyString(), anyString());
 	}
 	
 	@Test

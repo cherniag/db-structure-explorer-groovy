@@ -13,9 +13,8 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -25,6 +24,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
@@ -547,6 +548,37 @@ public class PaymentPolicyServiceIT {
         assertThat(paymentPolicyDtos.get(1).getId(), is(o2PAYMConsumer2PoundsPaymentPolicy.getId()));
         assertThat(paymentPolicyDtos.get(2).getId(), is(o2PAYMConsumer1PoundPaymentPolicy.getId()));
     }
+
+
+
+    @Test(expected = IncorrectResultSizeDataAccessException.class)
+    public void testGetPaymentPolicyFor2SamePolicies(){
+        PaymentPolicy paymentPolicy1 =  paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)0).withSubCost(new BigDecimal("4.99")
+        ).withPaymentType(PAY_PAL).withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
+                (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS)
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
+        paymentPolicyRepository.save(paymentPolicy1);
+        PaymentPolicy paymentPolicy2 =  paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)0).withSubCost(new BigDecimal("4.99")
+        ).withPaymentType(PAY_PAL).withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
+                (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS)
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
+        paymentPolicyRepository.save(paymentPolicy2);
+        PaymentPolicy resultPolicy = paymentPolicyService.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAY_PAL);
+        assertEquals(resultPolicy, paymentPolicy2);
+    }
+
+    @Test
+    public void testGetPaymentPolicyFor1Policy(){
+        PaymentPolicy paymentPolicy1 =  paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte)0).withSubCost(new BigDecimal("4.99")
+        ).withPaymentType(PAY_PAL).withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
+                (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS)
+                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
+        paymentPolicyRepository.save(paymentPolicy1);
+        PaymentPolicy resultPolicy = paymentPolicyService.getPaymentPolicy(o2Community, GOOGLE_PLUS, PAY_PAL);
+        assertEquals(resultPolicy, paymentPolicy1);
+    }
+
+
 
     private void turnOffOldO2ConsumerO2PsmsPaymentPolicies() {
         paymentPolicy96 = paymentPolicyRepository.save(paymentPolicy96.withOnline(false));
