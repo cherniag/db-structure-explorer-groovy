@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Date;
 import java.util.Map;
@@ -46,13 +47,18 @@ public class GooglePlusService {
         result.setGooglePlusId(personFromGooglePlus.getId());
         result.setBirthday(extractDateInUTC(personFromGooglePlus));
         result.setDisplayName(personFromGooglePlus.getDisplayName());
-        result.setPicture(personFromGooglePlus.getImageUrl());
+        result.setPicture(extractImageUrl(personFromGooglePlus));
         result.setGender(extractGender(personFromGooglePlus));
         result.setLocation(extractLocation(personFromGooglePlus));
         result.setGivenName(personFromGooglePlus.getGivenName());
         result.setFamilyName(personFromGooglePlus.getFamilyName());
         result.setHomePage(buildHomepageUrl(personFromGooglePlus));
         return result;
+    }
+
+    private String extractImageUrl(Person personFromGooglePlus) {
+        String imageUrl = personFromGooglePlus.getImageUrl();
+        return UriComponentsBuilder.fromHttpUrl(imageUrl).replaceQueryParam("sz", "200").build().toUriString();
     }
 
     private Date extractDateInUTC(Person personFromGooglePlus) {

@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
@@ -14,7 +12,6 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.PayPalDto;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -26,7 +23,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
+import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 import static mobi.nowtechnologies.server.web.controller.UnsubscribeController.REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
+import static org.springframework.util.Assert.notNull;
 
 @Controller
 public class PaymentsPayPalController extends CommonController {
@@ -36,13 +37,12 @@ public class PaymentsPayPalController extends CommonController {
 	public static final String PAGE_PAYMENTS_PAYPAL = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_PAYPAL + PAGE_EXT;
 
     public static final String PAGE_PAYMENTS_START_PAYPAL = PaymentsController.SCOPE_PREFIX + "/startPayPal" + PAGE_EXT;
-	public static final String PAGE_PAYMENTS_PAYPAL_INAPP = PaymentsController.SCOPE_PREFIX + VIEW_PAYMENTS_PAYPAL + PAGE_EXT;
 
 	public static final String PAYPAL_BILLING_AGREEMENT_DESCRIPTION = "pay.paypal.billing.agreement.description";
 
 	public static final String REQUEST_PARAM_PAYPAL = "result";
 	private static final String REQUEST_PARAM_PAYPAL_TOKEN = "token";
-	private static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPolicyId";
+	public static final String REQUEST_PARAM_PAYPAL_PAYMENT_POLICY = "paymentPolicyId";
 	
 	public static final String SUCCESSFUL_RESULT = "successful";
 	public static final String FAIL_RESULT = "fail";
@@ -56,7 +56,7 @@ public class PaymentsPayPalController extends CommonController {
 	public ModelAndView getPayPalPage(@PathVariable("scopePrefix") String scopePrefix, @RequestParam(value = REQUEST_PARAM_PAYPAL, required = false) String result,
 			@RequestParam(value = REQUEST_PARAM_PAYPAL_TOKEN, required = false) String token,
 			@RequestParam(value = REQUEST_PARAM_PAYPAL_PAYMENT_POLICY, required = true) Integer paymentPolicyId,
-			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
+			@CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
 		ModelAndView modelAndModel = new ModelAndView(scopePrefix + VIEW_PAYMENTS_PAYPAL);
 
 		if (StringUtils.hasText(result)) {
@@ -74,20 +74,21 @@ public class PaymentsPayPalController extends CommonController {
 
 
     @RequestMapping(value = PAGE_PAYMENTS_START_PAYPAL, method = RequestMethod.GET)
-    public String startPaypal(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
+    public String startPaypal(@CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl) {
         User user = userService.findById(getSecurityContextDetails().getUserId());
-        if (user.isSubscribedUserByPaymentType(PaymentDetails.PAYPAL_TYPE)){
+        if (user.isSubscribedUserByPaymentType(PAYPAL_TYPE)){
             return REDIRECT_UNSUBSCRIBE_BY_PAY_PAL_HTML;
         }
         Community community = CommunityDao.getCommunity(communityUrl.getValue());
-        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(-1, UserRegInfo.PaymentType.PAY_PAL, community.getId());
+        PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(community, user.getProvider(), PAY_PAL);
+        notNull(paymentPolicy);
         return "redirect:/payments_inapp/paypal.html?"+REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId() ;
     }
 
     @RequestMapping(value = PAGE_PAYMENTS_PAYPAL, method = RequestMethod.POST)
 	public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, 
 			@ModelAttribute(PayPalDto.NAME) PayPalDto dto,
-			@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
+			@CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
 		PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());
 		dto.setBillingAgreementDescription(messageSource.getMessage(PAYPAL_BILLING_AGREEMENT_DESCRIPTION, new Object[]{paymentPolicy.getSubweeks(), paymentPolicy.getSubcost()}, locale));
 		StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT)

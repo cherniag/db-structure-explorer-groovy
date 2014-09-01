@@ -29,13 +29,13 @@ import java.util.TimeZone;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static mobi.nowtechnologies.server.shared.enums.Gender.MALE;
-import static mobi.nowtechnologies.server.transport.controller.AccountCheckResponseConstants.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService.*;
 
 
 /**
@@ -75,7 +75,8 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     private final String timestamp = "2011_12_26_07_04_23";
     private final String googlePlusUserId = "1";
     private final String googlePlusEmail = "ol@ukr.net";
-    private final String pictureUrl = "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg";
+    private final String resultUrlToGooglePlusPicture = "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=200";
+    private final String pictureUrlFromGooglePlus = "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg?sz=50";
     private final String accessToken = "AA";
     private final String firstName = "firstName";
     private final String lastName = "lastName";
@@ -93,7 +94,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessWithJSON() throws Exception {
         ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl
-                (googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId) ));
+                (googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId) ));
 
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
@@ -112,7 +113,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessWithJSON_v6_1() throws Exception {
         String apiVersion = "6.1";
         ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl
-                (googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId) ));
+                (googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId) ));
 
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
@@ -128,29 +129,30 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     }
 
     private String buildHomepageUrl(String googlePlusUserId) {
-        return GooglePlusService.GOOGLE_PLUS_URL + googlePlusUserId;
+        return GOOGLE_PLUS_URL + googlePlusUserId;
     }
 
 
     @Test
     public void testSignUpAndApplyPromoForGooglePluskForFirstSignUpWithSuccessWithXML() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        String googlePlusElementXPath = "//userDetails";
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)
         ).andExpect(status().isOk()).andDo(print())
-                .andExpect(xpath(USER_DETAILS_XML_PATH + "/socialInfoType").string("GooglePlus"))
-                .andExpect(xpath(USER_DETAILS_XML_PATH + "/googlePlusId").string(googlePlusUserId))
-                .andExpect(xpath(USER_DETAILS_XML_PATH + "/email").string(googlePlusEmail))
-                .andExpect(xpath(USER_DETAILS_XML_PATH + "/firstName").string(firstName))
-                .andExpect(xpath(USER_DETAILS_XML_PATH + "/surname").string(lastName))
-                .andExpect(xpath(USER_DETAILS_XML_PATH + "/profileUrl").string(pictureUrl));
+                .andExpect(xpath(googlePlusElementXPath + "/socialInfoType").string("GooglePlus"))
+                .andExpect(xpath(googlePlusElementXPath + "/googlePlusId").string(googlePlusUserId))
+                .andExpect(xpath(googlePlusElementXPath + "/email").string(googlePlusEmail))
+                .andExpect(xpath(googlePlusElementXPath + "/firstName").string(firstName))
+                .andExpect(xpath(googlePlusElementXPath + "/surname").string(lastName))
+                .andExpect(xpath(googlePlusElementXPath + "/profileUrl").string(resultUrlToGooglePlusPicture));
     }
 
 
     @Test
     public void testParsingResponseFromGoogleServices() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)
@@ -158,7 +160,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         User user = userRepository.findOne(googlePlusEmail, communityUrl);
         GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user);
         assertEquals(googlePlusUserInfo.getEmail(), googlePlusEmail);
-        assertEquals(googlePlusUserInfo.getPicture(), pictureUrl);
+        assertEquals(googlePlusUserInfo.getPicture(), resultUrlToGooglePlusPicture);
         assertEquals(googlePlusUserInfo.getGooglePlusId(), googlePlusUserId);
         assertEquals(googlePlusUserInfo.getGivenName(), firstName);
         assertEquals(googlePlusUserInfo.getFamilyName(), lastName);
@@ -173,7 +175,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForWithEmptyEmail() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl("", googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl("", googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
@@ -185,7 +187,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithInvalidGooglePlusIdSuccess() throws Exception {
         final String invalidGooglePlusUserId = "2";
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, invalidGooglePlusUserId, accessToken, true)
@@ -210,21 +212,21 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForGooglePlusWithDifferentAccountsWithSuccess() throws Exception {
         String googlePlusElementJsonPath = "$.response.data[0].user.userDetails";
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk()).andDo(print())
-                .andExpect(jsonPath(USER_DETAILS_JSON_PATH + ".socialInfoType").value("GooglePlus"))
-                .andExpect(jsonPath(USER_DETAILS_JSON_PATH + ".email").value(googlePlusEmail))
-                .andExpect(jsonPath(USER_DETAILS_JSON_PATH + ".firstName").value(firstName))
-                .andExpect(jsonPath(USER_DETAILS_JSON_PATH + ".surname").value(lastName))
-                .andExpect(jsonPath(USER_DETAILS_JSON_PATH + ".profileUrl").value(pictureUrl))
+                .andExpect(jsonPath(googlePlusElementJsonPath + ".socialInfoType").value("GooglePlus"))
+                .andExpect(jsonPath(googlePlusElementJsonPath + ".email").value(googlePlusEmail))
+                .andExpect(jsonPath(googlePlusElementJsonPath + ".firstName").value(firstName))
+                .andExpect(jsonPath(googlePlusElementJsonPath + ".surname").value(lastName))
+                .andExpect(jsonPath(googlePlusElementJsonPath + ".profileUrl").value(resultUrlToGooglePlusPicture))
                 .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true));
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         final String otherGooglePlusUserId = "user2";
         final String otherGooglePlusEmail = "o2@ukr.net";
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(otherGooglePlusEmail, otherGooglePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(otherGooglePlusEmail, otherGooglePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, otherGooglePlusUserId, accessToken, true)
         ).andExpect(status().isOk()).andDo(print());
@@ -238,7 +240,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     @Test
     public void testSignUpAndApplyPromoForGooglePlusFromDifferentDevicesForOneAccountWithSuccess() throws Exception {
         String otherDeviceUID = "b88106713409e92622461a876abcd74b1";
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
@@ -266,7 +268,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForGooglePluskForOneAccountTwiceFromSameDeviceWithSuccess() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
@@ -285,7 +287,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testEmailRegistrationAfterGooglePlusApply() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
@@ -302,7 +304,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testGooglePlusApplyAfterEmailRegistration() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         User user = userRepository.save(UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withDeviceUID(deviceUID).withUserGroup(userGroupRepository.findOne(9)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
@@ -330,7 +332,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
         resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
 
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         mockMvc.perform(
                 buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
         ).andExpect(status().isOk());
@@ -346,7 +348,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessAndCheckReactivation() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
@@ -367,7 +369,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSucessForDifferentCommunities() throws Exception {
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
+        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
         ProviderUserDetails providerUserDetails = new ProviderUserDetails();
         providerUserDetails.withContract("PAYG").withOperator("o2");
         doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(anyString(), anyString(), any(Community.class));
@@ -386,48 +388,6 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
         ).andExpect(status().isOk());
         checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUIDForO2, true, "o2");
         checkGetChart(userToken, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
-    }
-
-    @Test
-    public void testMergeAccountAndChckFlagForXML() throws Exception {
-        String otherDeviceUID = "b88106713409e92622461a876abcd74b1";
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
-        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
-        mockMvc.perform(
-                buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)
-        ).andExpect(status().isOk()).andExpect(xpath(USER_XML_PATH + "/firstActivation").booleanValue(true));
-        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findByUser(user);
-        assertEquals(fbDetails.getEmail(), googlePlusEmail);
-        user = userRepository.findOne(googlePlusEmail, communityUrl);
-        String userToken1 = Utils.createTimestampToken(user.getToken(), timestamp);
-        checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
-
-        resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
-        mockMvc.perform(
-                buildApplyGooglePlusPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, false)
-        ).andExpect(status().isOk()).andExpect(xpath(USER_XML_PATH + "/firstActivation").booleanValue(false));;
-    }
-
-    @Test
-    public void testMergeAccountAndChckFlagForJSON() throws Exception {
-        String otherDeviceUID = "b88106713409e92622461a876abcd74b1";
-        ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl(googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrl, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId)));
-        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
-        mockMvc.perform(
-                buildApplyGooglePlusPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
-        ).andExpect(status().isOk()).andExpect(jsonPath(USER_JSON_PATH + ".firstActivation").value(true));
-        User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
-        GooglePlusUserInfo fbDetails = googlePlusUserInfoRepository.findByUser(user);
-        assertEquals(fbDetails.getEmail(), googlePlusEmail);
-        user = userRepository.findOne(googlePlusEmail, communityUrl);
-        String userToken1 = Utils.createTimestampToken(user.getToken(), timestamp);
-        checkGetChart(userToken1, googlePlusEmail, timestamp, deviceUID, true, communityUrl);
-
-        resultActions = signUpDevice(otherDeviceUID, deviceType, apiVersion, communityUrl);
-        mockMvc.perform(
-                buildApplyGooglePlusPromoRequest(resultActions, otherDeviceUID, deviceType, apiVersion, communityUrl, timestamp, googlePlusUserId, accessToken, true)
-        ).andExpect(status().isOk()).andExpect(jsonPath(USER_JSON_PATH + ".firstActivation").value(false));
     }
 
     private void checkGetChart(String userToken, String userName, String timestampValue, String deviceUIDValue, boolean isChartAvailable, String communityUrlValue) throws Exception {
