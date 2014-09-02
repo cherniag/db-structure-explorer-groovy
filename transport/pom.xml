@@ -1,28 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.6.0-SNAPSHOT</version>
+        <version>5.6.1-SNAPSHOT</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>mobi.nowtechnologies.java.server</groupId>
-	<artifactId>transport</artifactId>
-	<packaging>war</packaging>
-	<name>Now Technologies Java Server Transport Webapp</name>
 
-	<build>
-		<finalName>transport-${project.version}-${buildNumber}</finalName>
-		<testResources>
-			<testResource>
-				<directory>src/main/webapp</directory>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>mobi.nowtechnologies.java.server</groupId>
+    <artifactId>transport</artifactId>
+    <packaging>war</packaging>
+    <name>Now Technologies Java Server Transport Webapp</name>
+
+    <build>
+        <finalName>transport-${project.version}-${buildNumber}</finalName>
+        <testResources>
+            <testResource>
+                <directory>src/main/webapp</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -41,7 +43,7 @@
                 </configuration>
             </plugin>
         </plugins>
-	</build>
+    </build>
 
     <profiles>
         <profile>
@@ -61,53 +63,53 @@
         </profile>
     </profiles>
 
-	<dependencies>
-		<dependency>
+    <dependencies>
+        <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-all</artifactId>
         </dependency>
         <dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared-web</artifactId>
-		</dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared-web</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared-web</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared-web</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>persistence</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>persistence</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>service</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>service</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
 
-		<dependency>
-			<groupId>opensymphony</groupId>
-			<artifactId>quartz</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>com.google.code.simple-spring-memcached</groupId>
-			<artifactId>spymemcached</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>com.google.code.simple-spring-memcached</groupId>
+            <artifactId>spymemcached</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -139,6 +141,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-	</dependencies>
+    </dependencies>
 
 </project>

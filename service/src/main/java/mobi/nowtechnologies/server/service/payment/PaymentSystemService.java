@@ -8,7 +8,7 @@ public interface PaymentSystemService {
 	
 	public void startPayment(PendingPayment pendingPayment) throws Exception;
 	
-	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) throws Exception;
+	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response);
 	
 	public int getRetriesOnError();
 	

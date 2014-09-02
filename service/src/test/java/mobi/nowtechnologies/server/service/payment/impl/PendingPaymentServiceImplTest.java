@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
+import com.google.common.collect.Lists;
+import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
@@ -37,8 +39,9 @@ public class PendingPaymentServiceImplTest {
 	private UserService userService;
 	@Mock
 	private PaymentPolicyService mockPaymentPolicyService;
+    private int maxCount = 35;
 
-	@Before
+    @Before
 	public void startup() {
 		Map<String, PaymentSystemService> paymentSystems = new HashMap<String, PaymentSystemService>();
 		paymentSystems.put("sagePayCreditCard", new SagePayPaymentServiceImpl());
@@ -46,6 +49,7 @@ public class PendingPaymentServiceImplTest {
 
 		PendingPaymentServiceImpl serviceImpl = spy(new PendingPaymentServiceImpl());
 		serviceImpl.setPaymentSystems(paymentSystems);
+        serviceImpl.setMaxCount(maxCount);
 		serviceImpl.setPaymentPolicyService(mockPaymentPolicyService);
 
 		paymentDao = Mockito.mock(PaymentDao.class);
@@ -99,13 +103,16 @@ public class PendingPaymentServiceImplTest {
 				, generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus.SUCCESSFUL, true)
 				);
 
-		Mockito.when(userService.getUsersForPendingPayment()).thenReturn(users);
+        ListDataResult<User> dataResult = new ListDataResult<User>(users);
+
+		Mockito.when(userService.getUsersForPendingPayment(maxCount)).thenReturn(dataResult);
 
 		List<PendingPayment> createPendingPayments = service.createPendingPayments();
 
 		Assert.assertNotNull(createPendingPayments);
-		Assert.assertEquals(users.size() - 1, createPendingPayments.size());
-		
+		Assert.assertEquals(dataResult.getData().size(), dataResult.getTotal());
+		Assert.assertEquals(dataResult.getData().size() - 1, createPendingPayments.size());
+
 		verify(userService, times(1)).unsubscribeUser(eq(users.get(7).getId()), any(UnsubscribeDto.class));
 	}
 
@@ -120,18 +127,53 @@ public class PendingPaymentServiceImplTest {
 				, generateUserWithSagePayPaymentDetails((byte) 0, PaymentDetailsStatus.SUCCESSFUL)
 				);
 
-		Mockito.when(userService.getUsersForPendingPayment()).thenReturn(users);
+        ListDataResult<User> dataResult = new ListDataResult<User>(users);
+
+		Mockito.when(userService.getUsersForPendingPayment(maxCount)).thenReturn(dataResult);
 
 		List<PendingPayment> createPendingPayments = service.createPendingPayments();
 
 		Assert.assertNotNull(createPendingPayments);
-		Assert.assertEquals(users.size(), createPendingPayments.size());
+		Assert.assertEquals(dataResult.getTotal(), createPendingPayments.size());
 		for (User user : users) {
 			Assert.assertEquals(PaymentDetailsStatus.AWAITING, user.getCurrentPaymentDetails().getLastPaymentStatus());
 		}
 	}
 
-	private User generateUserWithSagePayPaymentDetails(byte subBalance, PaymentDetailsStatus status) {
+    @Test
+    public void createPendingPaymentsForUserCountGreaterThanAllowed() {
+        List<User> users = Lists.newArrayList();
+        int maxCount = 5;
+        for (int i = 0; i < 10; i++) {
+            users.add(generateUserWithSagePayPaymentDetails((byte) 0, PaymentDetailsStatus.NONE));
+        }
+        Mockito.when(userService.getUsersForPendingPayment(maxCount)).thenReturn(new ListDataResult<User>(users.subList(0, maxCount)));
+        ((PendingPaymentServiceImpl)service).setMaxCount(maxCount);
+
+        List<PendingPayment> createPendingPayments = service.createPendingPayments();
+
+        Assert.assertNotNull(createPendingPayments);
+        Assert.assertEquals(maxCount, createPendingPayments.size());
+    }
+
+    @Test
+    public void createRetryPaymentsForUserCountGreaterThanAllowed() {
+        int maxCount = 5;
+        List<User> users = Lists.newArrayList();
+        for (int i = 0; i < 10; i++) {
+            users.add(generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus.SUCCESSFUL, true));
+        }
+        Mockito.when(userService.getUsersForRetryPayment(maxCount)).thenReturn(new ListDataResult<User>(users.subList(0, maxCount)));
+        ((PendingPaymentServiceImpl)service).setMaxCount(maxCount);
+
+        List<PendingPayment> createRetryPayments = service.createRetryPayments();
+
+        Assert.assertNotNull(createRetryPayments);
+        Assert.assertEquals(maxCount, createRetryPayments.size());
+    }
+
+
+    private User generateUserWithSagePayPaymentDetails(byte subBalance, PaymentDetailsStatus status) {
 		User user = new User();
 		String randomString = UUID.randomUUID().toString();
 		user.setUserName(randomString);
