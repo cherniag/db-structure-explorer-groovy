@@ -27,8 +27,7 @@
     </build>
 
     <dependencies>
-
-        a<dependency>
+     <dependency>
         <groupId>mobi.nowtechnologies.java.server</groupId>
         <artifactId>shared</artifactId>
         <scope>test</scope>
