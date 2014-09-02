@@ -7,7 +7,7 @@ SET @new_community_full_name = 'mtv1';
 /* Creating new jAdmin user for new community in cn_service_admin */
 USE cn_service_admin;
 INSERT INTO users (username, communityURL, password, enabled) VALUES
-  ('admin', @new_community_name, md5(concat('admin', '{', 'mtv1_admin', '}')), TRUE);
+  ('admin', @new_community_name, md5(concat('admin', '{', 'admin', '}')), TRUE);
 
 /* Creating new community */
 USE cn_service;
