@@ -1,13 +1,13 @@
 SET autocommit = 0;
 START TRANSACTION;
 /* please, set community name here, other parameters should be checked manually */
-SET @new_community_name = 'mtv';
-SET @new_community_full_name = 'mtv';
+SET @new_community_name = 'mtv1';
+SET @new_community_full_name = 'mtv1';
 
 /* Creating new jAdmin user for new community in cn_service_admin */
 USE cn_service_admin;
 INSERT INTO users (username, communityURL, password, enabled) VALUES
-  ('admin', @new_community_name, md5(concat('admin', '{', 'mtv_admin', '}')), TRUE);
+  ('admin', @new_community_name, md5(concat('admin', '{', 'mtv1_admin', '}')), TRUE);
 
 /* Creating new community */
 USE cn_service;
@@ -26,24 +26,24 @@ INSERT INTO tb_news (name, numEntries, community, timestamp) VALUES
 
 /* Creating playlist */
 INSERT INTO tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) VALUES
-  ('HOT_TRACKS - MTV', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HOT_TRACKS'),
-  ('FIFTH_CHART - MTV', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FIFTH_CHART'),
-  ('HL_UK_PLAYLIST_1 - MTV', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_1'),
-  ('HL_UK_PLAYLIST_2 - MTV', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
-  ('HL_UK_PLAYLIST_3 - MTV', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
-  ('OTHER_CHART - MTV', 0, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART');
+  ('HOT_TRACKS - MTV1', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HOT_TRACKS'),
+  ('FIFTH_CHART - MTV1', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FIFTH_CHART'),
+  ('HL_UK_PLAYLIST_1 - MTV1', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_1'),
+  ('HL_UK_PLAYLIST_2 - MTV1', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
+  ('HL_UK_PLAYLIST_3 - MTV1', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
+  ('OTHER_CHART - MTV1', 0, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART');
 INSERT INTO community_charts (chart_id, community_id) VALUES
-  ((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV'), @new_community_id),
-  ((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTV'), @new_community_id),
-  ((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_1 - MTV'), @new_community_id),
-  ((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_2 - MTV'), @new_community_id),
-  ((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_3 - MTV'), @new_community_id),
-  ((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTV'), @new_community_id);
+  ((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV1'), @new_community_id),
+  ((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTV1'), @new_community_id),
+  ((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_1 - MTV1'), @new_community_id),
+  ((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_2 - MTV1'), @new_community_id),
+  ((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_3 - MTV1'), @new_community_id),
+  ((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTV1'), @new_community_id);
 
 /* Creating usergroup */
 INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES
   (@new_community_full_name, @new_community_id,
-  (SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV'),
+  (SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV1'),
   (SELECT i FROM tb_news WHERE community = @new_community_id),
   (SELECT i FROM tb_drmPolicy WHERE community = @new_community_id));
 
@@ -60,26 +60,26 @@ INSERT INTO tb_paymentPolicy
 
 
 INSERT INTO tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label, is_white_listed) VALUES
-('MTVPromo2weeksAudio', 0, 0, UNIX_TIMESTAMP(now()), UNIX_TIMESTAMP('2020-12-01 02:00:00'), TRUE, 2, 0, (SELECT ug.id FROM tb_userGroups ug WHERE ug.community =@new_community_id), 'PromoCode', FALSE, 'mtv.promo.2weeks.audio', FALSE);
+('MTV1Promo2weeksAudio', 0, 0, UNIX_TIMESTAMP(now()), UNIX_TIMESTAMP('2020-12-01 02:00:00'), TRUE, 2, 0, (SELECT ug.id FROM tb_userGroups ug WHERE ug.community =@new_community_id), 'PromoCode', FALSE, 'mtv1.promo.2weeks.audio', FALSE);
 INSERT INTO tb_promoCode (code, promotionId)  VALUES
-('mtv.promo.2weeks.audio', (SELECT p.i FROM tb_promotions p WHERE p.label = 'mtv.promo.2weeks.audio'));
+('mtv1.promo.2weeks.audio', (SELECT p.i FROM tb_promotions p WHERE p.label = 'mtv1.promo.2weeks.audio'));
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV'), 0, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HOT_TRACKS - MTV', 'HOT_TRACKS - MTV', 'HOT_TRACKS - MTV', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV1'), 0, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HOT_TRACKS - MTV1', 'HOT_TRACKS - MTV1', 'HOT_TRACKS - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTV'), 1, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'FIFTH_CHART - MTV', 'FIFTH_CHART - MTV', 'FIFTH_CHART - MTV', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTV1'), 1, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'FIFTH_CHART - MTV1', 'FIFTH_CHART - MTV1', 'FIFTH_CHART - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_1 - MTV'), 2, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_1 - MTV', 'HL_UK_PLAYLIST_1 - MTV', 'HL_UK_PLAYLIST_1 - MTV', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_1 - MTV1'), 2, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_1 - MTV1', 'HL_UK_PLAYLIST_1 - MTV1', 'HL_UK_PLAYLIST_1 - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_2 - MTV'), 3, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_2 - MTV', 'HL_UK_PLAYLIST_2 - MTV', 'HL_UK_PLAYLIST_2 - MTV', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_2 - MTV1'), 3, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_2 - MTV1', 'HL_UK_PLAYLIST_2 - MTV1', 'HL_UK_PLAYLIST_2 - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_3 - MTV'), 3, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_3 - MTV', 'HL_UK_PLAYLIST_3 - MTV', 'HL_UK_PLAYLIST_3 - MTV', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_3 - MTV1'), 3, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_3 - MTV1', 'HL_UK_PLAYLIST_3 - MTV1', 'HL_UK_PLAYLIST_3 - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTV'), 4, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'OTHER_CHART - MTV', 'OTHER_CHART - MTV', 'OTHER_CHART - MTV', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTV1'), 4, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'OTHER_CHART - MTV1', 'OTHER_CHART - MTV1', 'OTHER_CHART - MTV1', NULL, NULL);
 
 COMMIT;
