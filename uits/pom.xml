@@ -2,21 +2,22 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.6.0-SNAPSHOT</version>
+        <version>5.6.1-SNAPSHOT</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>mobi.nowtechnologies.java.server</groupId>
-	<artifactId>uits</artifactId>
-	<packaging>jar</packaging>
-	<name>Now Technologies Java Server UITS</name>
-	
-	<dependencies>
-		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
-		</dependency>
-	</dependencies>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>mobi.nowtechnologies.java.server</groupId>
+    <artifactId>uits</artifactId>
+    <packaging>jar</packaging>
+    <name>Now Technologies Java Server UITS</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+        </dependency>
+    </dependencies>
 </project>

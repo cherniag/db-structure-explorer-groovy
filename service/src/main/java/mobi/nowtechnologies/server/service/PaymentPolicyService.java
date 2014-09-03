@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.dao.PaymentPolicyDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
@@ -21,7 +23,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.util.Collections.*;
+import static java.util.Collections.unmodifiableList;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
@@ -194,4 +196,10 @@ public class PaymentPolicyService {
         PaymentPolicy paymentPolicy = getPaymentPolicy(paymentPolicyId);
         return getPaymentPolicy(paymentPolicy, null);
     }
+
+    @Transactional(readOnly = true)
+    public PaymentPolicy getPaymentPolicy(Community community, ProviderType providerType, String paymentType){
+       return paymentPolicyRepository.getPaymentPolicy(community, providerType, paymentType);
+    }
+
 }
