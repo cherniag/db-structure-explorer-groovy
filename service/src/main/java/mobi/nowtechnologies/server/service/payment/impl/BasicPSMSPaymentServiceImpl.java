@@ -2,7 +2,10 @@ package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
@@ -11,7 +14,6 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
@@ -39,10 +41,9 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
     @Override
     @Transactional(propagation = REQUIRED)
     public void startPayment(final PendingPayment pendingPayment) throws Exception {
-        final User user = pendingPayment.getUser();
         final PSMSPaymentDetails paymentDetails = (PSMSPaymentDetails)pendingPayment.getPaymentDetails();
         final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
-        Community community = user.getUserGroup().getCommunity();
+        Community community = pendingPayment.getUser().getUserGroup().getCommunity();
 
         LOGGER.debug("Start psms payment pendingPayment: [{}]", pendingPayment);
 

@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
@@ -51,6 +52,9 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Value("35")
+    private int maxCount;
 
     @Test
     public void testFindByMobile(){
@@ -282,7 +286,9 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser.withCurrentPaymentDetails(currentO2PaymentDetails).withLastSuccessfulPaymentDetails(currentO2PaymentDetails));
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+        testUser = userRepository.save(testUser);
+
+        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(actualUsers);
 
@@ -319,7 +325,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser);
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(actualUsers);
         assertEquals(0, actualUsers.size());
@@ -357,7 +363,9 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser.withCurrentPaymentDetails(currentO2PaymentDetails).withLastSuccessfulPaymentDetails(currentO2PaymentDetails));
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds);
+        testUser = userRepository.save(testUser);
+
+        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
         assertNotNull(actualUsers);
         assertEquals(1, actualUsers.size());
@@ -372,10 +380,10 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
         UserGroup o2UserGroup = UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(o2CommunityId);
 
         User testUser = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("1").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc61"));
-        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
+        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis - DAY_MILLISECONDS).withUser(testUser).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
 
         User testUser1 = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("2").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc62"));
-        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis+DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
+        userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis + DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(UPDATE_O2_USER).withDescription("dfdf"));
         userLogRepository.save(new UserLog().withLogTimeMillis(epochMillis-DAY_MILLISECONDS).withUser(testUser1).withUserLogStatus(SUCCESS).withUserLogType(VALIDATE_PHONE_NUMBER).withDescription("dfdf"));
 
         User testUser2 = userRepository.save(UserFactory.createUser(ACTIVATED).withUserName("3").withActivationStatus(ACTIVATED).withUserGroup(o2UserGroup).withDeviceUID("attg0vs3e98dsddc2a4k9vdkc63"));
@@ -420,7 +428,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
         testUser = userRepository.save(testUser);
 
         //when
-        List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds);
+        List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
 
         //then
         assertNotNull(actualUsers);

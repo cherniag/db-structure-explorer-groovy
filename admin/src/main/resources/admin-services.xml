@@ -22,7 +22,6 @@
     </bean>
 
     <bean name="streamzineAdminMediaAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm">
-        <property name="streamzineCommunity" value="${admin.streamzine.enabled.community.url}" />
         <property name="chartService" ref="service.ChartService"/>
     </bean>
 
@@ -31,6 +30,7 @@
         <property name="deepLinkInfoService" ref="deepLinkInfoService" />
         <property name="userRepository" ref="userRepository"/>
         <property name="streamzineAdminMediaAsm" ref="streamzineAdminMediaAsm"/>
+        <property name="communityRepository" ref="communityRepository"/>
     </bean>
 
     <bean name="typesMappingAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm">

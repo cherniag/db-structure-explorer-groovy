@@ -6,10 +6,13 @@ import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,7 @@ public class ChartController extends AbstractCommonController {
 	private String filesURL;
 	private String chartFilesURL;
 	private Map<ChartType, String> viewByChartType;
+    private CommunityRepository communityRepository;
 
 	public void setViewByChartType(Map<ChartType, String> viewByChartType) {
 		this.viewByChartType = viewByChartType;
@@ -62,7 +66,11 @@ public class ChartController extends AbstractCommonController {
 		this.chartFilesURL = chartFilesURL;
 	}
 
-	@InitBinder
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
+    }
+
+    @InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(URL_DATE_TIME_FORMAT), true));
 	}
@@ -97,18 +105,21 @@ public class ChartController extends AbstractCommonController {
 			@PathVariable("chartId") Integer chartId,
 			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
 			@Valid @ModelAttribute(ChartDto.CHART_DTO) ChartDto chartDto,
+            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl,
 			BindingResult bindingResult,
 			Locale locale
 			) {
 
-		LOGGER.debug("input parameters chartDto, chartId: [{}], [{}], [{}]", new Object[] { chartDto, chartId});
+        Community community = communityRepository.findByName(communityRewriteUrl);
+
+        LOGGER.debug("input parameters chartDto, chartId: [{}], [{}], [{}]", new Object[] { chartDto, chartId});
 
 		ModelAndView modelAndView;
 		
 		if(!bindingResult.hasErrors()){			
 			ChartDetail chartDetail = ChartAsm.toChart(chartDto);
 			chartDetail.setPublishTimeMillis(selectedPublishDateTime.getTime());
-			chartService.updateChart(chartDetail, chartDto.getFile());
+			chartService.updateChart(chartDetail, chartDto.getFile(), community);
 			modelAndView = new ModelAndView("redirect:/charts/" + chartId);
 		}else{
 			modelAndView = chartItemController.getChartItemsPage(selectedPublishDateTime, chartId, false, locale);

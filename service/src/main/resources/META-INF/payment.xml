@@ -15,6 +15,7 @@
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentSystems" ref="service.map.paymentSystems" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
+        <property name="maxCount" value="${payment.service.max.users.count}"/>
 	</bean>
 	
 	<bean id="service.SubmitedPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SubmitedPaymentServiceImpl">

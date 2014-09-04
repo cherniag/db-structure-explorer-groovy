@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.dto.streamzine.DeeplinkType;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -14,6 +15,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPo
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
@@ -43,6 +45,25 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     private MessageRepository messageRepository;
     @Resource
     private MediaRepository mediaRepository;
+    @Resource
+    private CommunityRepository communityRepository;
+
+    @Test
+    public void testGetStreamzineForAnyMQUser_404_forNotAvailableCommunity() throws Exception {
+        Date updateDate = new Date(System.currentTimeMillis() + 1000L);
+
+        // parameters
+        String userName = "test@ukr.net";
+        String deviceUID = "b88106713409e92622461a876abcd74b1111";
+        String apiVersion = "6.1";
+        String communityUrl = "some_unknown_community";
+        String timestamp = "" + updateDate.getTime();
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = createTimestampToken(storedToken, timestamp);
+
+        // check xml format
+        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true).andExpect(status().isNotFound());
+    }
 
     @Test
     public void testGetStreamzineForAnyMQUser_Success() throws Exception {
@@ -70,15 +91,16 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
+        Community community = communityRepository.findByName(communityUrl);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user);
 
         Thread.sleep(2000L);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false).andDo(print());
+        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false).andExpect(status().isOk()).andDo(print());
 
         // check json format and the correct order of the blocks
-        ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true);
+        ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true).andExpect(status().isOk()).andDo(print());
 
         resultActions.andDo(print())
                 // check the orders
@@ -133,8 +155,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("WIDTHXHEIGHT", "320x800")
-        ).andExpect(status().isOk())
-                ;
+        );
     }
 
 
@@ -162,7 +183,8 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
+        Community community = communityRepository.findByName(communityUrl);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user);
 
         Thread.sleep(2500L);
 
@@ -181,7 +203,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         user = userRepository.findOne(userName, communityUrl);
         final Date updateDateForSpecificUser = new Date(System.currentTimeMillis() + 1000L);
-        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user);
+        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user);
 
         Thread.sleep(2000L);
 
@@ -225,9 +247,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final ChartType chartType = ChartType.BASIC_CHART;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
+        Community community = communityRepository.findByName(communityUrl);
 
-        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user1, user2);
-        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, user1, user2);
+        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user1, user2);
+        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user1, user2);
 
         Thread.sleep(2500L);
 
@@ -292,20 +315,21 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
+                        .param("WIDTHXHEIGHT", "")
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isNotFound());
     }
 
-    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, User... users) {
-        Update update = streamzineUpdateService.create(updateDate);
+    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, Community community, User... users) {
+        Update update = streamzineUpdateService.create(updateDate, community);
 
         // simulate adding blocks
-        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, badgeUrl, users);
+        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, badgeUrl, community, users);
         streamzineUpdateService.update(update.getId(), incomingWithBlocks);
     }
 
-    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, User... users) {
-        Update u = new Update(DateUtils.addDays(new Date(), 1));
+    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, Community community, User... users) {
+        Update u = new Update(DateUtils.addDays(new Date(), 1), community);
         //
         // Not included block
         //
