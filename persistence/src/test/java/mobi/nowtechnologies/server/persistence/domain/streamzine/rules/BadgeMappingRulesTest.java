@@ -13,10 +13,12 @@ public class BadgeMappingRulesTest {
     public void testAllowed() throws Exception {
         Assert.isTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.MUSIC, MusicType.TRACK));
         Assert.isTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.MUSIC, MusicType.PLAYLIST));
+        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.PROMOTIONAL, LinkLocationType.EXTERNAL_AD));
 
         Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.MUSIC, MusicType.TRACK));
         Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.MUSIC, MusicType.PLAYLIST));
 
         Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.PROMOTIONAL, LinkLocationType.INTERNAL_AD));
+        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.PROMOTIONAL, LinkLocationType.EXTERNAL_AD));
     }
 }

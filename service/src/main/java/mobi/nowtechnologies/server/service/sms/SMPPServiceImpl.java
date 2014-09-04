@@ -65,11 +65,11 @@ public class SMPPServiceImpl extends SMPPService {
         final OutboundMessage outboundMessage = outboundMessageCreator.toOutboundMessage(message);
         outboundMessage.setGatewayId("*");
         smppMonitoringAgent.onMessageSend(message, outboundMessage);
-
-        boolean result = useQueueManager ? Service.getInstance().queueMessage(outboundMessage) : Service.getInstance().sendMessage(outboundMessage);
+        Service instance = Service.getInstance();
+        boolean result = useQueueManager ? instance.queueMessage(outboundMessage) : instance.sendMessage(outboundMessage);
 
         if(!result){
-            if(Service.getInstance().getServiceStatus() != Service.ServiceStatus.STARTED){
+            if(instance.getServiceStatus() != Service.ServiceStatus.STARTED){
                 LOGGER.error("Can't send message cause SMPP Service is not STARTED");
             }
 
