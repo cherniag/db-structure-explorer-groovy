@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
@@ -37,8 +38,9 @@ public class StreamzineUpdateAsmTest {
 
     @Test
     public void testConvertOne() throws Exception {
+        Community community = mock(Community.class);
         long publishTime = System.currentTimeMillis() + 10000L;
-        Update update = new Update(new Date(publishTime));
+        Update update = new Update(new Date(publishTime), community);
         Block block0 = getBlock(0, ShapeType.WIDE, true, "title", "subTitle");
         Block block2 = getBlock(2, ShapeType.NARROW, true, "title", "");
         Block block1 = getBlock(1, ShapeType.SLIM_BANNER, true, "title", "subTitle");
@@ -62,8 +64,9 @@ public class StreamzineUpdateAsmTest {
 
     @Test
     public void testConvertOneWithTitles() throws Exception {
+        Community community = mock(Community.class);
         long publishTime = System.currentTimeMillis() + 10000L;
-        Update update = new Update(new Date(publishTime));
+        Update update = new Update(new Date(publishTime), community);
         update.addBlock(getBlock(0, ShapeType.WIDE, true, "title", "subTitle"));
         update.addBlock(getBlock(1, ShapeType.WIDE, true, null, ""));
         update.addBlock(getBlock(2, ShapeType.NARROW, true, "  ", "subTitle"));// ensure that empty string is correct

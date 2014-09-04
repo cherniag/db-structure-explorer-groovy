@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
@@ -19,13 +20,15 @@ public class UpdateTest {
     @Test(expected = IllegalArgumentException.class)
     public void testCanCreate() throws Exception {
         Date yesterday = DateUtils.addDays(new Date(), -1);
-        new Update(yesterday);
+        Community community = mock(Community.class);
+        new Update(yesterday, community);
     }
 
     @Test
     public void testCanEditInFuture() throws Exception {
         Date dateAfterToday = DateUtils.addDays(new Date(), 1);
-        Update update = new Update(dateAfterToday);
+        Community community = mock(Community.class);
+        Update update = new Update(dateAfterToday, community);
         Assert.assertTrue(update.canEdit());
     }
 
@@ -58,12 +61,13 @@ public class UpdateTest {
     @Test
     public void shouldCloneBlocksAsIncluded(){
         //given
-        Update updateWithBlocks = new Update(addDays(new Date(), 1));
+        Community community = mock(Community.class);
+        Update updateWithBlocks = new Update(addDays(new Date(), 1), community);
         Block block = createBlock(5);
         block.exclude();
         updateWithBlocks.addBlock(block);
 
-        Update updateBlocksAcceptor = new Update(addDays(new Date(), 1));
+        Update updateBlocksAcceptor = new Update(addDays(new Date(), 1), community);
 
         //when
         updateBlocksAcceptor.cloneBlocks(updateWithBlocks);
@@ -84,7 +88,8 @@ public class UpdateTest {
 
     private Update createUpdateInFuture() {
         Date dateAfterToday = DateUtils.addDays(new Date(), 1);
-        return new Update(dateAfterToday);
+        Community community = mock(Community.class);
+        return new Update(dateAfterToday, community);
     }
 
 

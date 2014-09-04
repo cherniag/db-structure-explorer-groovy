@@ -2,12 +2,14 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
 import com.google.common.collect.Lists;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
@@ -38,6 +40,8 @@ public class StreamzineUpdateServiceIT {
     private StreamzineUpdateRepository streamzineUpdateRepository;
     @Resource
     public StreamzineUpdateService streamzineUpdateService;
+    @Resource
+    private CommunityRepository communityRepository;
 
     @Test
     public void testCreateFirstTime() {
@@ -53,15 +57,17 @@ public class StreamzineUpdateServiceIT {
         long count = streamzineUpdateRepository.count();
         Assert.assertEquals(0, count);
 
-        streamzineUpdateService.create(avgDate);
+        streamzineUpdateService.create(avgDate, findCommunity("hl_uk"));
 
-        List<Update> allByDate = streamzineUpdateRepository.findAllByDate(firstDate, secondDate);
+        List<Update> allByDate = streamzineUpdateRepository.findAllByDate(firstDate, secondDate, findCommunity("hl_uk"));
         Assert.assertEquals(1, allByDate.size());
         Assert.assertEquals(avgDate.getTime(), allByDate.get(0).getDate().getTime());
     }
 
     @Test
     public void testCreateSecondTime() {
+        Community community = findCommunity("hl_uk");
+
         final int firstDays = 10;
         final int avgDays = 14;
         final int secondDays = 28;
@@ -75,15 +81,15 @@ public class StreamzineUpdateServiceIT {
         final Block block = createBlock(title);
 
         // create
-        Update firstUpdate = streamzineUpdateService.create(avgDate);
+        Update firstUpdate = streamzineUpdateService.create(avgDate, findCommunity("hl_uk"));
         // fill with blocks from UI
-        streamzineUpdateService.update(firstUpdate.getId(), createWithBlock(firstUpdate, block));
+        streamzineUpdateService.update(firstUpdate.getId(), createWithBlock(firstUpdate, block, community));
 
         // and now create second time
         Date newDate = DateUtils.addDays(now, 25);
-        Update secondUpdate = streamzineUpdateService.create(newDate);
+        Update secondUpdate = streamzineUpdateService.create(newDate, findCommunity("hl_uk"));
 
-        List<Update> allByDate = streamzineUpdateRepository.findAllByDate(firstDate, secondDate);
+        List<Update> allByDate = streamzineUpdateRepository.findAllByDate(firstDate, secondDate, community);
         Assert.assertEquals(2, allByDate.size());
         // compare IDs
         Assert.assertEquals(firstUpdate.getId(), allByDate.get(0).getId());
@@ -99,13 +105,13 @@ public class StreamzineUpdateServiceIT {
         long publishTimeMillis = System.currentTimeMillis() + 10000L;
         Date oldUpdateDate = new Date(publishTimeMillis);
         Date newUpdateDate = new Date(publishTimeMillis);
-        Update oldUpdate = streamzineUpdateService.create(oldUpdateDate);
+        Update oldUpdate = streamzineUpdateService.create(oldUpdateDate, findCommunity("hl_uk"));
         oldUpdate.addBlock(createBlock("title1"));
         oldUpdate.addBlock(createBlock("title2"));
         oldUpdate.addBlock(createBlock("title3"));
         streamzineUpdateService.update(oldUpdate.getId(), oldUpdate);
-        Update newUpdate = streamzineUpdateService.createOrReplace(newUpdateDate);
-        List<Update> updates = Lists.newArrayList(streamzineUpdateService.list(newUpdateDate));
+        Update newUpdate = streamzineUpdateService.createOrReplace(newUpdateDate, findCommunity("hl_uk"));
+        List<Update> updates = Lists.newArrayList(streamzineUpdateService.list(newUpdateDate, findCommunity("hl_uk")));
         assertThat(oldUpdate.getId(), is(not(newUpdate.getId())));
         assertThat(updates.size(), is(1));
         assertThat(updates.get(0).getId(), is(newUpdate.getId()));
@@ -113,19 +119,20 @@ public class StreamzineUpdateServiceIT {
 
     @Test
     public void testGetUpdatePublishDates() throws Exception {
+        Community community = findCommunity("hl_uk");
         Date selectedUpdateDate = DateUtils.addDays(new Date(), 100);
         Date pastDateWithinInterval = DateUtils.addDays(selectedUpdateDate, -10);
         Date pastDateOutOfInterval  = DateUtils.addDays(selectedUpdateDate, -50);
         Date futureDateWithinInterval = DateUtils.addDays(selectedUpdateDate, 10);
         Date futureDateOutOfInterval  = DateUtils.addDays(selectedUpdateDate, 50);
 
-        streamzineUpdateService.create(futureDateWithinInterval);
-        streamzineUpdateService.create(futureDateOutOfInterval);
-        streamzineUpdateService.create(pastDateOutOfInterval);
-        streamzineUpdateService.create(pastDateWithinInterval);
-        streamzineUpdateService.create(selectedUpdateDate);
+        streamzineUpdateService.create(futureDateWithinInterval, community);
+        streamzineUpdateService.create(futureDateOutOfInterval, community);
+        streamzineUpdateService.create(pastDateOutOfInterval, community);
+        streamzineUpdateService.create(pastDateWithinInterval, community);
+        streamzineUpdateService.create(selectedUpdateDate, community);
 
-        List<Date> updatesPublishTime = streamzineUpdateService.getUpdatePublishDates(selectedUpdateDate);
+        List<Date> updatesPublishTime = streamzineUpdateService.getUpdatePublishDates(selectedUpdateDate, community);
         assertThat(updatesPublishTime, notNullValue());
 
         assertThat(updatesPublishTime, hasSize(3));
@@ -136,19 +143,21 @@ public class StreamzineUpdateServiceIT {
 
     @Test
     public void testGetUpdatePublishDatesForMultipleUpdateWithinSameDay() throws Exception {
+        Community community = findCommunity("hl_uk");
+
         Date calendarTime = normalizeToday();
         Date selectedUpdateDate = DateUtils.addDays(calendarTime, 100);
         Date day1 = DateUtils.addDays(selectedUpdateDate, 1);
         Date day2 = DateUtils.addDays(selectedUpdateDate, 2);
 
-        streamzineUpdateService.create(new Date(day2.getTime() + 1000L));
-        streamzineUpdateService.create(new Date(day2.getTime() + 2000L));
-        streamzineUpdateService.create(new Date(day2.getTime() + 3000L));
+        streamzineUpdateService.create(new Date(day2.getTime() + 1000L), community);
+        streamzineUpdateService.create(new Date(day2.getTime() + 2000L), community);
+        streamzineUpdateService.create(new Date(day2.getTime() + 3000L), community);
 
-        streamzineUpdateService.create(new Date(day1.getTime() + 1000L));
-        streamzineUpdateService.create(new Date(day1.getTime() + 2000L));
+        streamzineUpdateService.create(new Date(day1.getTime() + 1000L), community);
+        streamzineUpdateService.create(new Date(day1.getTime() + 2000L), community);
 
-        List<Date> updatesPublishTime = streamzineUpdateService.getUpdatePublishDates(selectedUpdateDate);
+        List<Date> updatesPublishTime = streamzineUpdateService.getUpdatePublishDates(selectedUpdateDate, community);
         assertThat(updatesPublishTime, notNullValue());
 
         assertThat(updatesPublishTime, hasSize(2));
@@ -163,8 +172,8 @@ public class StreamzineUpdateServiceIT {
         return calendar.getTime();
     }
 
-    private Update createWithBlock(Update from, Block block) {
-        Update incoming = new Update(from.getDate());
+    private Update createWithBlock(Update from, Block block, Community community) {
+        Update incoming = new Update(from.getDate(), community);
         for (User user: from.getUsers()){
             incoming.addUser(user);
         }
@@ -180,5 +189,7 @@ public class StreamzineUpdateServiceIT {
         return block;
     }
 
-
+    private Community findCommunity(String name) {
+        return communityRepository.findByName(name);
+    }
 }

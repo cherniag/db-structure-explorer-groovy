@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by oar on 2/25/14.
  */
+@Ignore
 public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
     @Value("classpath:testData\\testImageUpload.jpg")
@@ -87,7 +88,6 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
 
     @Test
-    @Ignore
     public void testFindByPrefix() throws Exception {
         String communityUrl = "nowtop40";
         String fileNameBB = prefix + "BB";
@@ -102,7 +102,6 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
 
     @Test
-    @Ignore
     public void testDeleteByName() throws Exception {
         String communityUrl = "nowtop40";
         String fileNameBB = prefix + "BB";

@@ -79,6 +79,7 @@
 		class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
 		<property name="chartItemController" ref="admin.ChartItemController" />
 		<property name="viewByChartType" ref="chartViewByChartType"/>
+		<property name="communityRepository" ref="communityRepository"/>
 	</bean>
 	
 	<bean name="admin.ChartItemController"
