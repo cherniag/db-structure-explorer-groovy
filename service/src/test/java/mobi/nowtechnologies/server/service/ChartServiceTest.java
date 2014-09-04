@@ -554,6 +554,8 @@ public class ChartServiceTest {
     @Test
     public void testUpdateChart_Success()
             throws Exception {
+        Community community = mock(Community.class);
+
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
         ChartDetail chartDetail1 = ChartDetailFactory.createChartDetail();
         chartDetail1.setI(chartDetail.getI());
@@ -564,7 +566,7 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
 
         assertNotNull(result);
         assertEquals(chartDetail1.getVersionAsPrimitive(), result.getVersionAsPrimitive());
@@ -574,23 +576,27 @@ public class ChartServiceTest {
 
         verify(mockChartDetailRepository, times(1)).findOne(eq(chartDetail.getI()));
         verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
-        verify(streamzineUpdateService, never()).createOrReplace(any(Date.class));
+        verify(streamzineUpdateService, never()).createOrReplace(any(Date.class), eq(community));
         verify(mockCloudFileService, times(1)).uploadFile(any(MultipartFile.class), anyString());
     }
 
     @Test
     public void testUpdateChart_FileNull_Success()
             throws Exception {
+        Community community = mock(Community.class);
+        when(community.getRewriteUrlParameter()).thenReturn("hl_uk");
+
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
         Date publishDate = new Date();
         chartDetail.setPublishTimeMillis(publishDate.getTime());
         chartDetail.setI(null);
         MultipartFile imageFile = new MockMultipartFile("file", "".getBytes());
 
+        when(streamzineUpdateService.isAvailable("hl_uk")).thenReturn(true);
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getTitle());
@@ -599,13 +605,14 @@ public class ChartServiceTest {
 
         verify(mockChartDetailRepository, times(0)).findOne(eq(chartDetail.getI()));
         verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
-        verify(streamzineUpdateService, times(1)).createOrReplace(eq(publishDate));
+        verify(streamzineUpdateService, times(1)).createOrReplace(eq(publishDate), eq(community));
         verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString());
     }
 
     @Test
     public void testUpdateChart_FileEmpty_Success()
             throws Exception {
+        Community community = mock(Community.class);
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
         chartDetail.setI(null);
         MultipartFile imageFile = null;
@@ -613,7 +620,7 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getTitle());
@@ -628,13 +635,14 @@ public class ChartServiceTest {
     @Test
     public void testUpdateChart_ChartNull_Failure()
             throws Exception {
+        Community community = mock(Community.class);
         ChartDetail chartDetail = null;
         MultipartFile imageFile = new MockMultipartFile("file", "1".getBytes());
 
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
 
         assertNull(result);
 

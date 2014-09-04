@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.shared.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @XmlRootElement(name = "playlist")
 public class PlaylistDto {
@@ -88,9 +89,18 @@ public class PlaylistDto {
 		this.switchable = switchable;
 	}
 
-	@Override
-	public String toString() {
-		return "PlaylistDto [id=" + id + ", playlistTitle=" + playlistTitle + ", subtitle=" + subtitle + ", image=" + image + ", imageTitle=" + imageTitle + ", description=" + description
-				+ ", position=" + position + ", switchable=" + switchable + ", type=" + type + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("playlistTitle", playlistTitle)
+                .append("subtitle", subtitle)
+                .append("image", image)
+                .append("imageTitle", imageTitle)
+                .append("description", description)
+                .append("position", position)
+                .append("switchable", switchable)
+                .append("type", type)
+                .toString();
+    }
 }

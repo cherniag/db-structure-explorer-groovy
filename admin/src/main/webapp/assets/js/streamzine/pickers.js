@@ -876,6 +876,7 @@ if(Pickers == undefined) {
                 for(var i=0; i < data.length; i++) {
                     var e = data[i];
                     d.push({
+                        chartDetailId: e.chartDetailId,
                         chartType: e.chartType,
                         imageFileUrl: (e.imageFileName) ? Streamzine.Presenter.Editor.imagesBaseUrl + '/' + e.imageFileName : '',
                         imageFileName: e.imageFileName,

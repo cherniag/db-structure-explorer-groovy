@@ -110,13 +110,13 @@ public class DeepLinkUrlFactoryTest {
     @Test
     public void checkCreateLinkValueForMusicPlayList() throws Exception {
         //prepare data
-        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(ChartType.HOT_TRACKS);
+        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(666);
 
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
         String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk");
-        assertThat(o, is("hl-uk://content/playlist?id=HOT_TRACKS"));
+        assertThat(o, is("hl-uk://content/playlist?id=666"));
     }
 
     @Test

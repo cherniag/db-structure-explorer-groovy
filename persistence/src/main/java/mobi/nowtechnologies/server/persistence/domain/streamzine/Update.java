@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
@@ -35,14 +36,18 @@ public class Update {
     @JoinColumn(name = "update_id")
     private List<Block> blocks = new ArrayList<Block>();
 
+    @OneToOne
+    private Community community;
+
     protected Update() {
     }
 
-
-    public Update(Date date) {
+    public Update(Date date, Community community) {
         Assert.notNull(date);
+        Assert.notNull(community);
         Assert.isTrue(date.after(new Date()));
         this.date = date;
+        this.community = community;
     }
 
     public long getId() {
@@ -132,6 +137,14 @@ public class Update {
 
     public void addUser(User user){
         users.add(user);
+    }
+
+    public void setCommunity(Community community) {
+        this.community = community;
+    }
+
+    public Community getCommunity() {
+        return community;
     }
 
     @Override

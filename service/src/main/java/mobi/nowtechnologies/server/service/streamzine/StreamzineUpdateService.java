@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
 import com.google.common.collect.Lists;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +19,35 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class StreamzineUpdateService {
     private static final int REQUESTED_PERIOD_INTERVAL = 30;
     private StreamzineUpdateRepository streamzineUpdateRepository;
+    private CommunityRepository communityRepository;
+    private List<String> availableCommunites = new ArrayList<String>();
+    //
+    // API
+    //
 
+    //
+    // Availability
+    //
+    public boolean isAvailable(String community) {
+        return availableCommunites.contains(community);
+    }
+
+    public void checkAvailability(String community) {
+        if(!isAvailable(community)) {
+            throw new StreamzineNotAvailable(community, availableCommunites);
+        }
+    }
+
+    //
+    // CRUD
+    //
     @Transactional
-    public Update create(Date date) {
-        Update lastOne = streamzineUpdateRepository.findLatestUpdateBeforeDate(date);
+    public Update create(Date date, Community community) {
+        Assert.isTrue(isAvailable(community.getRewriteUrlParameter()), "Not available for " + community.getRewriteUrlParameter() + ", allowed for: " + availableCommunites);
 
-        Update clonedOrCreated = new Update(date);
+        Update lastOne = streamzineUpdateRepository.findLatestUpdateBeforeDate(date, community);
+
+        Update clonedOrCreated = new Update(date, community);
 
         boolean firstUpdate = isNull(lastOne);
         if (!firstUpdate) {
@@ -34,24 +59,24 @@ public class StreamzineUpdateService {
     }
 
     @Transactional
-    public Update createOrReplace(Date date) {
-        Update update = streamzineUpdateRepository.findByPublishDate(date);
+    public Update createOrReplace(Date date, Community community) {
+        Update update = streamzineUpdateRepository.findByPublishDate(date, community);
         if (update != null) {
             streamzineUpdateRepository.delete(update);
         }
-        return create(date);
+        return create(date, community);
     }
 
-    public Collection<Update> list(Date rawDate) {
+    public Collection<Update> list(Date rawDate, Community community) {
         Date from = nullifyTime(rawDate);
         Date till = DateUtils.addDays(from, 1);
-        return streamzineUpdateRepository.findAllByDate(from, till);
+        return streamzineUpdateRepository.findAllByDate(from, till, community);
     }
 
-    public List<Date> getUpdatePublishDates(Date selectedDate){
+    public List<Date> getUpdatePublishDates(Date selectedDate, Community community){
         Date from = DateUtils.addDays(selectedDate, -REQUESTED_PERIOD_INTERVAL);
         Date till = DateUtils.addDays(selectedDate, REQUESTED_PERIOD_INTERVAL);
-        List<Date> updatePublishDates = streamzineUpdateRepository.findUpdatePublishDates(from, till);
+        List<Date> updatePublishDates = streamzineUpdateRepository.findUpdatePublishDates(from, till, community);
         return groupByDate(updatePublishDates);
     }
 
@@ -93,18 +118,20 @@ public class StreamzineUpdateService {
         return update;
     }
 
-    public Update get(Date publishDate) {
-        return streamzineUpdateRepository.findByPublishDate(publishDate);
+    public Update get(Date publishDate, Community community) {
+        return streamzineUpdateRepository.findByPublishDate(publishDate, community);
     }
 
     @Transactional(readOnly = true)
-    public Update getUpdate(Date date, User user) {
+    public Update getUpdate(Date date, User user, String community) {
+        Community c = communityRepository.findByName(community);
+
         Assert.notNull(date);
         Assert.notNull(user);
 
-        List<Update> result = streamzineUpdateRepository.findFirstAfterForUser(date, user, ONE_RECORD_PAGEABLE);
+        List<Update> result = streamzineUpdateRepository.findFirstAfterForUser(date, user, c, ONE_RECORD_PAGEABLE);
         if (isEmpty(result)){
-            result = streamzineUpdateRepository.findLastSince(date, ONE_RECORD_PAGEABLE);
+            result = streamzineUpdateRepository.findLastSince(date, c, ONE_RECORD_PAGEABLE);
         }
         Assert.notEmpty(result, "No streamzine updates found for date: " + date);
         Update update = result.get(0);
@@ -125,5 +152,13 @@ public class StreamzineUpdateService {
 
     public void setStreamzineUpdateRepository(StreamzineUpdateRepository streamzineUpdateRepository) {
         this.streamzineUpdateRepository = streamzineUpdateRepository;
+    }
+
+    public void setAvailableCommunites(String ... availableCommunites) {
+        this.availableCommunites = Arrays.asList(availableCommunites);
+    }
+
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
     }
 }

@@ -70,6 +70,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">
         <property name="streamzineUpdateRepository" ref="streamzineUpdateRepository" />
+        <property name="availableCommunites" value="${streamzine.available.communities}" />
+        <property name="communityRepository" ref="communityRepository" />
     </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">

@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
@@ -15,9 +16,11 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkI
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
 import org.apache.commons.lang.time.DateUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,11 +30,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -49,35 +54,53 @@ public class StreamzineUpdateAdminAsmTest {
     private DeepLinkInfoService deepLinkInfoService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private CommunityRepository communityRepository;
     @InjectMocks
     private StreamzineUpdateAdminAsm streamzineUpdateAdminAsm;
+
+    @Before
+    public void setUp() throws Exception {
+        Community community = mock(Community.class);
+        when(communityRepository.findByName(COMMUNITY)).thenReturn(community);
+        when(community.getRewriteUrlParameter()).thenReturn(COMMUNITY);
+    }
 
     @Test
     public void checkFromIncomingDtoWithoutUser() throws Exception {
         UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
-        updateIncomingDto.setUserNames(new ArrayList<String>());
+        when(updateIncomingDto.getUserNames()).thenReturn(new ArrayList<String>());
+
         Update update = streamzineUpdateAdminAsm.fromIncomingDto(updateIncomingDto, COMMUNITY);
         assertEquals(0, update.getUsers().size());
+        assertEquals(COMMUNITY, update.getCommunity().getRewriteUrlParameter());
     }
 
     @Test
     public void checkFromIncomingDtoWithUser() throws Exception {
-        int id = 15;
-        String userName = "pedro";
-        User user = getUser(id, userName);
-        when(userRepository.findOne(eq(userName), eq(COMMUNITY))).thenReturn(user);
-        UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
-        updateIncomingDto.addUserName(userName);
+        // given
+        final String userName = "pedro";
 
+        User user = mock(User.class);
+        when(user.getUserName()).thenReturn(userName);
+        when(userRepository.findOne(eq(userName), eq(COMMUNITY))).thenReturn(user);
+
+        UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
+        when(updateIncomingDto.getUserNames()).thenReturn(Arrays.asList(userName));
+
+        // when
         Update update = streamzineUpdateAdminAsm.fromIncomingDto(updateIncomingDto, COMMUNITY);
+
+        // then
         List<User> users = update.getUsers();
         assertEquals(1, users.size());
-        assertEquals(id, users.get(0).getId());
+        assertSame(user, users.get(0));
         assertEquals(userName, users.get(0).getUserName());
     }
 
     @Test
     public void checkFromIncomingDtoWithBlocks() throws Exception {
+        // given
         Media media = new Media();
         ManualCompilationDeeplinkInfo deeplinkInfo = new ManualCompilationDeeplinkInfo(Lists.newArrayList(media));
 
@@ -89,10 +112,14 @@ public class StreamzineUpdateAdminAsmTest {
         ordinalBlockDto.setShapeType(ShapeType.WIDE);
         ordinalBlockDto.setKey("MANUAL_COMPILATION");
         ordinalBlockDto.setValue("ISRC-10#ISRC-11#ISRC-12");
-        UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
-        updateIncomingDto.getBlocks().add(ordinalBlockDto);
 
+        UpdateIncomingDto updateIncomingDto = getUpdateIncomingDto();
+        when(updateIncomingDto.getBlocks()).thenReturn(Arrays.asList(ordinalBlockDto));
+
+        // when
         Update update = streamzineUpdateAdminAsm.fromIncomingDto(updateIncomingDto, COMMUNITY);
+
+        // then
         assertNotNull(update);
         assertEquals(1, update.getBlocks().size());
 
@@ -104,12 +131,13 @@ public class StreamzineUpdateAdminAsmTest {
 
     @Test
     public void testConvertOneToDtoWithBlocks() throws Exception {
-        Update update = new Update(DateUtils.addDays(new Date(), 1));
+        Community community = mock(Community.class);
+        Update update = new Update(DateUtils.addDays(new Date(), 1), community);
         update.addUser(getUser(1, "murka"));
         update.addUser(getUser(2, "burka"));
         update.addBlock(new Block(0, ShapeType.SLIM_BANNER, new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "www.uuu.ua")));
 
-        UpdateDto updateDto = streamzineUpdateAdminAsm.convertOneWithBlocks(update);
+        UpdateDto updateDto = streamzineUpdateAdminAsm.convertOneWithBlocks(update, mock(Community.class));
 
         List<String> userNames = updateDto.getUserNames();
         assertEquals("murka", userNames.get(0));
@@ -124,8 +152,8 @@ public class StreamzineUpdateAdminAsmTest {
     }
 
     private UpdateIncomingDto getUpdateIncomingDto() {
-        UpdateIncomingDto updateIncomingDto = new UpdateIncomingDto();
-        updateIncomingDto.setTimestamp(System.currentTimeMillis() + 10000L);
+        UpdateIncomingDto updateIncomingDto = mock(UpdateIncomingDto.class);
+        when(updateIncomingDto.getTimestamp()).thenReturn(System.currentTimeMillis() + 10000L);
         return updateIncomingDto;
     }
 }

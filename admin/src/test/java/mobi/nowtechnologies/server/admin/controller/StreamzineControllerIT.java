@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -13,6 +14,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Music
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +51,16 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @Autowired
+    private CommunityRepository communityRepository;
+
     @Test
     public void testGetChartList() throws Exception {
         long publishTime = System.currentTimeMillis() + 100 * 1000;
 
         String communityUrl = "hl_uk";
-        Update update = streamzineUpdateService.create(new Date(publishTime));
+        Community community = findHlUkCommunity();
+        Update update = streamzineUpdateService.create(new Date(publishTime), community);
 
         //chart update before SZUpdate with 2 tracks
         createAndSaveChartDetail(publishTime - 100 * 1000, null, (byte) 1, "cover1.jpg", "title1", 10);
@@ -82,7 +88,9 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
     public void checkSavingManualCompilationDto() throws Exception {
         long publishTime = System.currentTimeMillis() + 100 * 1000;
         String communityUrl = "hl_uk";
-        Update update = streamzineUpdateService.create(new Date(publishTime));
+
+        Community community = findHlUkCommunity();
+        Update update = streamzineUpdateService.create(new Date(publishTime), community);
         UpdateIncomingDto dto = getUpdateIncomingDto(update, MUSIC, WIDE, MANUAL_COMPILATION.name(), "70");
 
         //chart update before nearest - not valid
@@ -110,7 +118,8 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
     public void testUpdateStreamzineWithIncludedBlockWithInvalidUrlForExternalAdd() throws Exception {
         long publishTime = System.currentTimeMillis() + 100 * 1000;
         String communityUrl = "hl_uk";
-        Update update = streamzineUpdateService.create(new Date(publishTime));
+        Community community = findHlUkCommunity();
+        Update update = streamzineUpdateService.create(new Date(publishTime), community);
         UpdateIncomingDto dto = new UpdateIncomingDto();
         ReflectionTestUtils.setField(dto, "id", update.getId());
 
@@ -138,7 +147,8 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
     public void testUpdateStreamzineWithExcludedBlock() throws Exception {
         long publishTime = System.currentTimeMillis() + 100 * 1000;
         String communityUrl = "hl_uk";
-        Update update = streamzineUpdateService.create(new Date(publishTime));
+        Community community = findHlUkCommunity();
+        Update update = streamzineUpdateService.create(new Date(publishTime), community);
         UpdateIncomingDto dto = new UpdateIncomingDto();
         dto.setTimestamp(publishTime);
         ReflectionTestUtils.setField(dto, "id", update.getId());
@@ -220,5 +230,9 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
             chartDetail.setMedia(media);
         }
         chartDetailRepository.save(chartDetail);
+    }
+
+    private Community findHlUkCommunity() {
+        return communityRepository.findByName("hl_uk");
     }
 }

@@ -89,10 +89,18 @@
 	<mvc:interceptors>
 	
 		<!-- Locale Change Intercepter and Resolver definition -->
-		<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
-			<property name="paramName" value="lang" />
+		<bean class="mobi.nowtechnologies.server.admin.controller.streamzine.StreamzineInterceptor">
+            <property name="cookieUtil" ref="cookieUtil" />
+            <property name="availableCommunites" value="${streamzine.available.communities}" />
 		</bean>
-		
+
+        <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+            <property name="cacheSeconds" value="0"/>
+            <property name="useExpiresHeader" value="true"/>
+            <property name="useCacheControlHeader" value="true"/>
+            <property name="useCacheControlNoStore" value="true"/>
+        </bean>
+
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
 			<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">

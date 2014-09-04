@@ -35,7 +35,6 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- *
  */
 public class ChartService implements ApplicationContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartService.class);
@@ -208,38 +207,6 @@ public class ChartService implements ApplicationContextAware {
 
         LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
         return chartDetails;
-    }
-
-    @Transactional(readOnly = true)
-    public List<ChartDetail> getChartItemsByDate(Integer chartId, Date selectedPublishDate) {
-        LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
-
-        List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
-
-        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-        return chartDetails;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Integer chartId) {
-        LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", choosedPublishDate, chartId);
-
-        List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, false);
-
-        LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
-        return clonedChartDetails;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
-    public ChartDetail saveChartItem(ChartItemDto chartItemDto) throws ServiceCheckedException {
-        LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
-
-        Chart chart = chartRepository.findOne(chartItemDto.getChartId());
-
-        ChartDetail chartDetail = chartDetailService.saveChartItem(chartItemDto, chart);
-
-        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-        return chartDetail;
     }
 
     @Transactional(readOnly = true)
@@ -428,7 +395,7 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
+    public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile, Community community) {
         LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
         if(chartDetail != null){
@@ -436,7 +403,7 @@ public class ChartService implements ApplicationContextAware {
                 ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
                 chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
             } else{
-                createCorrespondingStreamzineUpdate(chartDetail);
+                createCorrespondingStreamzineUpdate(chartDetail, community);
             }
 
             chartDetail = chartDetailRepository.save(chartDetail);
@@ -456,9 +423,11 @@ public class ChartService implements ApplicationContextAware {
         return chartDetail.getI() != null;
     }
 
-    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail) {
-        Date publishDate = new Date(chartDetail.getPublishTimeMillis());
-        streamzineUpdateService.createOrReplace(publishDate);
+    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail, Community community) {
+        if(streamzineUpdateService.isAvailable(community.getRewriteUrlParameter())) {
+            Date publishDate = new Date(chartDetail.getPublishTimeMillis());
+            streamzineUpdateService.createOrReplace(publishDate, community);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

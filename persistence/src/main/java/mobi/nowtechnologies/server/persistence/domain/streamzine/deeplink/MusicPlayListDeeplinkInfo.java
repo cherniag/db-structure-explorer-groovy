@@ -10,25 +10,27 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "sz_deeplink_music_list")
 public class MusicPlayListDeeplinkInfo extends DeeplinkInfo {
-    @Column(name = "chart_type")
-    private ChartType chartType;
+
+    @Column(name = "chart_detail_id")
+    private Integer chartDetailId;
 
     protected MusicPlayListDeeplinkInfo() {
     }
 
-    public MusicPlayListDeeplinkInfo(ChartType chartType) {
-        this.chartType = chartType;
+    public MusicPlayListDeeplinkInfo(Integer chartDetailId) {
+        this.chartDetailId = chartDetailId;
         this.contentType = ContentType.MUSIC;
     }
 
-    public ChartType getChartType() {
-        return chartType;
+    public Integer getChartDetailId() {
+        return chartDetailId;
     }
 
     @Override
     protected DeeplinkInfo provideInstance() {
         MusicPlayListDeeplinkInfo copy = new MusicPlayListDeeplinkInfo();
-        copy.chartType = chartType;
+        copy.chartDetailId = chartDetailId;
         return copy;
     }
+
 }

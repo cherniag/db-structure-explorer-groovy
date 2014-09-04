@@ -92,7 +92,7 @@ public class DeepLinkUrlFactory {
 
         if(deeplinkInfo instanceof MusicPlayListDeeplinkInfo) {
             MusicPlayListDeeplinkInfo info = (MusicPlayListDeeplinkInfo) deeplinkInfo;
-            return info.getChartType().name();
+            return info.getChartDetailId().toString();
         }
 
         if(deeplinkInfo instanceof MusicTrackDeeplinkInfo) {

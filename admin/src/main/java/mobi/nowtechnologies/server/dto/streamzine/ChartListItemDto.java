@@ -8,6 +8,7 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
     private String imageFileName;
     private ChartType chartType;
     private int tracksCount;
+    private Integer chartDetailId;
 
     public String getName() {
         return name;
@@ -52,5 +53,13 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
     @Override
     public int compareTo(ChartListItemDto o) {
         return name.compareTo(o.name);
+    }
+
+    public Integer getChartDetailId() {
+        return chartDetailId;
+    }
+
+    public void setChartDetailId(Integer chartDetailId) {
+        this.chartDetailId = chartDetailId;
     }
 }
