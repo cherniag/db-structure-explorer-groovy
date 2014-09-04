@@ -1,16 +1,18 @@
 package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 
-import mobi.nowtechnologies.server.dto.ImageDTO;
 import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
+import mobi.nowtechnologies.server.dto.streamzine.badge.BadgesDtoAsm;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
-import mobi.nowtechnologies.server.service.streamzine.asm.FileNameAliasDtoAsm;
+import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -20,50 +22,26 @@ import java.util.List;
 @RequestMapping("/streamzine/badges")
 public class StreamzineBadgeController {
     @Resource
-    private FileNameAliasDtoAsm fileNameAliasDtoAsm;
-    @Resource
     private BadgesService badgesService;
+    @Resource
+    private BadgesDtoAsm badgesDtoAsm;
+    @Resource
+    private CommunityRepository communityRepository;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ModelAndView getBadges() {
-        List<FilenameAlias> badges = badgesService.findAllBadges();
-        List<FileNameAliasDto> dtos = fileNameAliasDtoAsm.convertMany(badges);
-        return new ModelAndView().addObject("badges", dtos);
+    public ModelAndView getBadges(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) {
+        Community community = communityRepository.findByName(communityRewriteUrl);
+        List<FilenameAlias> fileNames = badgesService.findAllBadges(community);
+        List<FileNameAliasDto> dtos = badgesDtoAsm.toFilenameDtos(fileNames);
+        return new ModelAndView().addObject("fileNames", dtos);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public ModelAndView updateBadgeName(@RequestParam(value = "oldName") String oldName, @RequestParam(value = "newName") String newName) {
-        boolean noNameDuplication = badgesService.update(oldName, newName);
+    public ModelAndView updateBadgeName(
+            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl,
+            @RequestParam(value = "id") long id, @RequestParam(value = "newName") String newName) {
+        badgesService.update(id, newName);
 
-        ModelAndView badges = getBadges();
-
-        if(!noNameDuplication) {
-            badges.addObject("notUniqueName", true);
-        }
-
-        return badges;
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public ModelAndView deleteBadge(@RequestParam(value = "name") String name) {
-        badgesService.delete(name);
-        return getBadges();
-    }
-
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ModelAndView uploadBadge(MultipartFile file) {
-        ImageDTO dto = badgesService.upload(file);
-        ModelAndView modelAndView = new ModelAndView("streamzine/image_response");
-        modelAndView.addObject("dto", dto);
-        modelAndView.addObject("calcWidth", calcWidth(dto, 200));
-        return modelAndView;
-    }
-
-    private int calcWidth(ImageDTO dto, int width) {
-        if(dto.getWidth() != null) {
-            return Math.min(dto.getWidth().intValue(), width);
-        }
-
-        return width;
+        return getBadges(communityRewriteUrl);
     }
 }

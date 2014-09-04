@@ -1,20 +1,22 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import com.google.common.io.Closeables;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
 import com.rackspacecloud.client.cloudfiles.FilesObject;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -117,8 +119,7 @@ public class CloudFileServiceImpl implements CloudFileService {
 		return isLogged;
 	}
 
-    @Override
-    public Collection<FilesObject> findFilesStartWith(String prefix, int limit) {
+    private Collection<FilesObject> findFilesStartWith(String prefix, int limit) {
         if (!StringUtils.isEmpty(prefix)) {
             login();
             try {
@@ -130,18 +131,6 @@ public class CloudFileServiceImpl implements CloudFileService {
             }
         }
         return Collections.emptyList();
-    }
-
-    @Override
-    public void deleteByPrefix(String prefix) {
-        LOGGER.info("delete files in container [] by prefix", containerName, prefix);
-        Collection<FilesObject> files = findFilesStartWith(prefix, DELETE_BATCH_SIZE);
-        if (!isEmpty(files)) {
-            login();
-            for (FilesObject filesObject : files) {
-                deleteFile(filesObject.getName());
-            }
-        }
     }
 
     @Override
@@ -163,25 +152,57 @@ public class CloudFileServiceImpl implements CloudFileService {
     public synchronized boolean uploadFile(MultipartFile file, String fileName, Map metadata) {
 		LOGGER.info("Updating file {} on cloud with name {}", file, fileName);
 
-		boolean uploaded = false;
 		if (file != null && !file.isEmpty()) {
+            try {
+                uploadFromStream(file.getInputStream(), fileName, metadata);
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+                throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
+            }
+        }
 
-			login();
-			try {
-                Map map = MapUtils.isEmpty(metadata) ? Collections.EMPTY_MAP : metadata;
-                filesClient.storeStreamedObject(containerName, file.getInputStream(), "application/octet-stream", fileName, map);
-				uploaded = true;
-				LOGGER.info("Done updating file on cloud. File was successfully uploaded {}", uploaded);
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-				throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
-			}
-		}
-
-		return uploaded;
+		return false;
 	}
-	
-	@Override
+
+    @Override
+    public void uploadFromStream(InputStream stream, String fileName, Map metadata) {
+        Assert.notNull(stream);
+
+        Map map = MapUtils.isEmpty(metadata) ? Collections.EMPTY_MAP : metadata;
+        LOGGER.info("Updating file on cloud with name {} and data {}", fileName, map);
+
+        login();
+        try {
+            filesClient.storeStreamedObject(containerName, stream, "application/octet-stream", fileName, map);
+            LOGGER.info("Done updating file on cloud. File was successfully uploaded");
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
+        } finally {
+            Closeables.closeQuietly(stream);
+        }
+    }
+
+    @Override
+    public void downloadToStream(OutputStream stream, String fileName) {
+        Assert.notNull(stream);
+
+        LOGGER.info("Downloading file on cloud with name {}", fileName);
+
+        login();
+        try {
+            InputStream inputStream = filesClient.getObjectAsStream(containerName, fileName);
+
+            Streams.copy(inputStream, stream, false);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+    }
+
+    @Override
     public synchronized boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName) {
         LOGGER.info("Copy file {} from one cloud container to other container {}", new Object[]{destFileName, destContainerName, srcFileName, srcContainerName});
         boolean copied = false;

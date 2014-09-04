@@ -66,6 +66,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
         <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory" />
         <property name="deepLinkInfoService" ref="deepLinkInfoService" />
+        <property name="badgeMappingRepository" ref="badgeMappingRepository" />
+        <property name="communityRepository" ref="communityRepository" />
     </bean>
 
     <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">

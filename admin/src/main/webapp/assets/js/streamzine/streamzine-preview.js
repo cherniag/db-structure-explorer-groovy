@@ -78,11 +78,13 @@ if(StreamzinePreview == undefined) {
                                 .css({position: 'absolute'})
                                 .appendTo(view);
 
-                            // badge
-                            $('<img />')
-                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
-                                .css({position: 'absolute', top: 210, left: 4})
-                                .appendTo(view);
+                            if(block.badgeFileNameAlias) {
+                                // badge
+                                $('<img />')
+                                    .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeFileNameAlias.fileName)
+                                    .css({position: 'absolute', top: 210, left: 4})
+                                    .appendTo(view);
+                            }
 
                             var number = $('<div class="sz-preview-title-number">17</div>')
                                 .css({ position: "absolute", left: 20, top: 14}).appendTo(view);
@@ -152,11 +154,13 @@ if(StreamzinePreview == undefined) {
                                 .css({position: 'absolute'})
                                 .appendTo(view);
 
-                            // badge
-                            $('<img />')
-                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
-                                .css({position: 'absolute', top: 264, left: 0})
-                                .appendTo(view);
+                            if(block.badgeFileNameAlias) {
+                                // badge
+                                $('<img />')
+                                    .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeFileNameAlias.fileName)
+                                    .css({position: 'absolute', top: 264, left: 0})
+                                    .appendTo(view);
+                            }
 
                             var number = $('<div class="sz-preview-title-number">17</div>')
                                 .css({ position: "absolute", left: 20, top: 14}).appendTo(view);
@@ -230,11 +234,13 @@ if(StreamzinePreview == undefined) {
                                 .css({position: 'absolute'})
                                 .appendTo(view);
 
-                            // badge
-                            $('<img />')
-                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
-                                .css({position: 'absolute', top: 320, left: 4})
-                                .appendTo(view);
+                            if(block.badgeFileNameAlias) {
+                                // badge
+                                $('<img />')
+                                    .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeFileNameAlias.fileName)
+                                    .css({position: 'absolute', top: 320, left: 4})
+                                    .appendTo(view);
+                            }
 
                             var heylist = $('<div class="sz-preview-title-heylist">heylist</div>')
                                 .css({ position: "relative", top: 22, lineHeight:'44px', fontSize: '44px', textAlign: 'center' }).appendTo(view);
@@ -328,11 +334,13 @@ if(StreamzinePreview == undefined) {
                                 .css({position: 'absolute'})
                                 .appendTo(view);
 
-                            // badge
-                            $('<img />')
-                                .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeUrl)
-                                .css({position: 'absolute', top: 380, left: 0})
-                                .appendTo(view);
+                            if(block.badgeFileNameAlias) {
+                                // badge
+                                $('<img />')
+                                    .attr('src', Streamzine.Presenter.Editor.imagesBaseUrl + '/' + block.badgeFileNameAlias.fileName)
+                                    .css({position: 'absolute', top: 380, left: 0})
+                                    .appendTo(view);
+                            }
 
                             var heylist = $('<div class="sz-preview-title-heylist">heylist</div>')
                                 .css({ position: "relative", top: 22, lineHeight:'44px', fontSize: '44px', textAlign: 'center' }).appendTo(view);
