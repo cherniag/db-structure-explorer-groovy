@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ChartListItemDto implements Comparable<ChartListItemDto> {
     private String name;
@@ -61,5 +62,17 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
 
     public void setChartDetailId(Integer chartDetailId) {
         this.chartDetailId = chartDetailId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("name", name)
+                .append("subtitle", subtitle)
+                .append("imageFileName", imageFileName)
+                .append("chartType", chartType)
+                .append("tracksCount", tracksCount)
+                .append("chartDetailId", chartDetailId)
+                .toString();
     }
 }

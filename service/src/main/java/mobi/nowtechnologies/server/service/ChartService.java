@@ -220,18 +220,6 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDetail updateChartItem(ChartItemDto chartItemDto) {
-        LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
-
-        Chart chart = chartRepository.findOne(chartItemDto.getChartId());
-
-        ChartDetail chartDetail = chartDetailService.updateChartItem(chartItemDto, chart);
-
-        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-        return chartDetail;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
     public boolean delete(Integer chartItemId) {
         LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
 
@@ -349,25 +337,6 @@ public class ChartService implements ApplicationContextAware {
         return chart;
     }
 
-    @Transactional(readOnly = true)
-    public List<String> getAllChannels() {
-
-        List<String> allChannels = chartDetailService.getAllChannels();
-
-        LOGGER.info("Output parameter allChannels=[{}]", allChannels);
-        return allChannels;
-    }
-
-    @Transactional(readOnly = true)
-    public List<Media> getMedias(String searchWords) {
-        LOGGER.debug("input parameters searchWords: [{}]", searchWords);
-
-        List<Media> medias = mediaService.getMedias(searchWords);
-
-        LOGGER.info("Output parameter medias=[{}]", medias);
-        return medias;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean deleteChartItems(Integer chartId, Date selectedPublishDateTime) {
         LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
@@ -381,17 +350,6 @@ public class ChartService implements ApplicationContextAware {
 
         LOGGER.debug("Output parameter success=[{}]", success);
         return success;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChartDetail> minorUpdateIfOnesDoesNotExistForSelectedPublishDate(Date selectedPublishDateTime, Integer chartId) {
-        LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", selectedPublishDateTime, chartId);
-
-        List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(selectedPublishDateTime, chartId, true);
-
-        LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
-        return clonedChartDetails;
-
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
