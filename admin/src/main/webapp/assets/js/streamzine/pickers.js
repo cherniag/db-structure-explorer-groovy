@@ -283,6 +283,11 @@ if(Pickers == undefined) {
     }
 
     var ExternalAdPicker = function(dialogId, saveHandler) {
+        var opener = {
+            IN_APP: 'In-app',
+            BROWSER: 'In Browser'
+        };
+
         var initialBlock;
         //
         // Construction
@@ -290,7 +295,15 @@ if(Pickers == undefined) {
         var _genericDialog = new GenericDialog(dialogId, saveHandler, function() {
             _clear();
 
-             // init the dialog with the value
+            var select = $('# ' + dialogId + ' select').empty();
+            for (var key in opener) {
+                select.append($("<option/>", {
+                    value: key,
+                    text: opener[key]
+                }))
+            };
+
+            // init the dialog with the value
             var splitData = initialBlock.value.split('#')
             _getInput().val(splitData[0]);
             _getOpener().val(splitData[1]);
