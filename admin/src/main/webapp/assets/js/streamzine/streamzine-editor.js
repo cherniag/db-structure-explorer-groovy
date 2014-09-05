@@ -269,7 +269,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                             return {
 
                                 valueLink: (delimIndex < 0) ? incoming.value : incoming.value.substring(0, delimIndex),
-                                valueOpener: (delimIndex > 0) ? opener[incoming.value.substr(delimIndex + 1)] : '',
+                                valueOpener: (delimIndex > 0) ? editorRef.externalAdPicker.opener[incoming.value.substr(delimIndex + 1)] : '',
                                 title: incoming.title,
                                 subTitle: incoming.subTitle,
                                 coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),

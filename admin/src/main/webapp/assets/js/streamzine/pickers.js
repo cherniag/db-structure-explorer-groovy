@@ -288,6 +288,8 @@ if(Pickers == undefined) {
             BROWSER: 'In Browser'
         };
 
+        this.opener = opener;
+
         var initialBlock;
         //
         // Construction
