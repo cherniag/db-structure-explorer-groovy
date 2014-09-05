@@ -670,8 +670,8 @@
         <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
                 Streamzine.Presenter.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
         var opener = new Object();
-        opener['BROWSER'] = 'In Browser';
         opener['IN_APP'] = 'In-app';
+        opener['BROWSER'] = 'In Browser';
 
         $(function() {
             var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
