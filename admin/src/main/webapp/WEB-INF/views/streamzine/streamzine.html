@@ -316,22 +316,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             <h4 class="modal-title">Manage badges</h4>
                         </div>
-                        <div class="badges-image-picker">
-                            <form
-                                  th:action="@{/streamzine/badges/upload}"
-                                  method="post"
-                                  enctype="multipart/form-data"
-                                  accept-charset="UTF-8"
-                                  id="badgePickerFormId">
-                                <input name="file" type="file" accept="image" />
-                                <br />
-                            </form>
-                            <div id="badgeUploadResponseHolderId">
-
-                            </div>
-                        </div>
                         <div>
-                            <h5>Saved badges</h5>
                             <div class="loading-container" style="margin-top:20px;"><img th:src="@{/assets/img/loading-thumb-small.gif}" /></div>
                             <ul class="table headerFrame sz-badges-grid">
                             </ul>
@@ -652,11 +637,10 @@
                 var playListUrl = /*[[@{__${'/streamzine/chart/list.json'}__}]]*/ '#';
                 var badgesGetAll = /*[[@{__${'/streamzine/badges/list.json'}__}]]*/ '#';
                 var badgesUpdateName = /*[[@{__${'/streamzine/badges/update.json'}__}]]*/ '#';
-                var badgesDelete = /*[[@{__${'/streamzine/badges/delete.json'}__}]]*/ '#';
                 var updateTmstp = /*[[${(update!=null)?update.date.time:-1}]]*/'';
                 var id = /*[[${update.id}]]*/'';
 
-                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgesDelete, badgeMappingRules, titlesMappingRules);
+                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgeMappingRules, titlesMappingRules);
 
                 Streamzine.Presenter.Tile.init();
 

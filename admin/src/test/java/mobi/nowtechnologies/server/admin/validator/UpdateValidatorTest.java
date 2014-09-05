@@ -6,10 +6,12 @@ import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MediaService;
@@ -51,7 +53,9 @@ public class UpdateValidatorTest {
     UserRepository userRepository;
     @Mock
     CookieUtil cookieUtil;
-    
+    @Mock
+    FilenameAliasRepository filenameAliasRepository;
+
     @InjectMocks
     UpdateValidator updateValidator ;
 
@@ -74,9 +78,14 @@ public class UpdateValidatorTest {
     @Test
     public void testValidateBadgeWhenAllowed() throws Exception {
         // allowed
+        Long badgeId = 1L;
+
         when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
         when(blockDto.getKey()).thenReturn(MusicType.TRACK.name());
         when(blockDto.getContentType()).thenReturn(ContentType.MUSIC);
+        when(blockDto.getBadgeId()).thenReturn(badgeId);
+
+        when(filenameAliasRepository.findOne(badgeId)).thenReturn(mock(FilenameAlias.class));
 
         updateValidator.validateBadgeMapping(blockDto, errors);
 
@@ -90,7 +99,7 @@ public class UpdateValidatorTest {
         when(blockDto.getKey()).thenReturn(MusicType.TRACK.name());
         when(blockDto.getContentType()).thenReturn(ContentType.MUSIC);
         // not assigned
-        when(blockDto.getBadgeUrl()).thenReturn(null);
+        when(blockDto.getBadgeId()).thenReturn(null);
 
         updateValidator.validateBadgeMapping(blockDto, errors);
 
@@ -104,11 +113,11 @@ public class UpdateValidatorTest {
         when(blockDto.getKey()).thenReturn(MusicType.TRACK.name());
         when(blockDto.getContentType()).thenReturn(ContentType.MUSIC);
         // not assigned
-        when(blockDto.getBadgeUrl()).thenReturn("not-empty-badge-url");
+        when(blockDto.getBadgeId()).thenReturn(1L);
 
         updateValidator.validateBadgeMapping(blockDto, errors);
 
-        verify(errors).rejectValue("badgeUrl", "streamzine.error.badge.notallowed", null);
+        verify(errors).rejectValue("badgeId", "streamzine.error.badge.notallowed", null);
     }
 
     @Test

@@ -42,6 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -140,8 +141,8 @@ public class StreamzineController {
     }
 
     @RequestMapping(value = "/streamzine/upload/image", method = RequestMethod.POST)
-    public ModelAndView uploadImage(MultipartFile file) {
-        ImageDTO dto = cloudFileImagesService.uploadImage(file);
+    public ModelAndView uploadImage(MultipartFile file) throws IOException {
+        ImageDTO dto = cloudFileImagesService.uploadImageWithGivenName(file.getBytes(), file.getOriginalFilename());
         ModelAndView modelAndView = new ModelAndView("streamzine/image_response");
         modelAndView.addObject("dto", dto);
         modelAndView.addObject("calcWidth", calcWidth(dto, 200));

@@ -40,12 +40,11 @@ public class GetStreamzineController extends CommonController {
                               @RequestParam("USER_NAME") String userName,
                               @RequestParam("USER_TOKEN") String userToken,
                               @RequestParam("TIMESTAMP") String timestamp,
-                              @RequestParam("WIDTHXHEIGHT") String resolution,
-                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {
+                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
         try {
-            LOGGER.info("GET_STREAMZINE started: userName [{}], community [{}], resolution [{}], deviceUID [{}]", userName, community, resolution, deviceUID);
+            LOGGER.info("GET_STREAMZINE started: userName [{}], community [{}], resolution [{}], deviceUID [{}]", userName, community, deviceUID);
 
             streamzineUpdateService.checkAvailability(community);
 
@@ -57,7 +56,7 @@ public class GetStreamzineController extends CommonController {
 
             LOGGER.debug("found update {} for {}", update, date);
 
-            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community);
+            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community, user.getDeviceType().getName());
 
             LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 

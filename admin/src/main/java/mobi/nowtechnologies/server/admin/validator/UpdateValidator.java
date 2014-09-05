@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -19,6 +20,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkL
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MediaService;
@@ -41,31 +43,26 @@ import java.util.*;
 import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class UpdateValidator extends BaseValidator {
     @Resource
     private MessageSource messageSource;
-
     @Resource
     private MessageRepository messageRepository;
-
     @Resource
     private MediaService mediaService;
-
     @Resource
     private MobileApplicationPagesService mobileApplicationPagesService;
-
     @Resource
     private StreamzineTypesMappingService streamzineTypesMappingService;
-
     @Resource
     private UserRepository userRepository;
-
     @Resource
     private CookieUtil cookieUtil;
+    @Resource
+    private FilenameAliasRepository filenameAliasRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -204,14 +201,23 @@ public class UpdateValidator extends BaseValidator {
     @VisibleForTesting
     void validateBadgeMapping(OrdinalBlockDto blockDto, Errors errors) {
         Enum<?> subType = TypeToSubTypePair.restoreSubType(blockDto.getContentType(), blockDto.getKey());
-        boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
 
-        if(!allowed && isNotEmpty(blockDto.getBadgeUrl())) {
-            String shapeType = getShapeTypeTitle(blockDto);
-            String contentType = getContentTypeTitle(blockDto);
-            String subTypeValue = getSubTypeTitle(blockDto);
+        if(blockDto.getBadgeId() != null) {
+            // check allowance
+            boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
+            if(!allowed) {
+                String shapeType = getShapeTypeTitle(blockDto);
+                String contentType = getContentTypeTitle(blockDto);
+                String subTypeValue = getSubTypeTitle(blockDto);
 
-            rejectField("streamzine.error.badge.notallowed", new Object[]{shapeType, contentType, subTypeValue}, errors, "badgeUrl");
+                rejectField("streamzine.error.badge.notallowed", new Object[]{shapeType, contentType, subTypeValue}, errors, "badgeId");
+            }
+
+            // check existence
+            FilenameAlias found = filenameAliasRepository.findOne(blockDto.getBadgeId());
+            if(found == null) {
+                rejectField("streamzine.error.badge.absent", new Object[]{blockDto.getBadgeId()}, errors, "badgeId");
+            }
         }
     }
 
