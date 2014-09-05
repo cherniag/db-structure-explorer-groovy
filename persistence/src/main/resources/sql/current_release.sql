@@ -67,6 +67,8 @@ delete from sz_filename_alias;
 delete from sz_man_compilation_items;
 delete from sz_update;
 delete from sz_update_users;
+delete from sz_badge_mapping;
+delete from sz_resolution;
 
 commit;
 
