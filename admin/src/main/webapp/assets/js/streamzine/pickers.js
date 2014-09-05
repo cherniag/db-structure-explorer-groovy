@@ -295,7 +295,7 @@ if(Pickers == undefined) {
         var _genericDialog = new GenericDialog(dialogId, saveHandler, function() {
             _clear();
 
-            var select = $('# ' + dialogId + ' select').empty();
+            var select = $('#' + dialogId + ' select').empty();
             for (var key in opener) {
                 select.append($("<option/>", {
                     value: key,
