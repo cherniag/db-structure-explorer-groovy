@@ -301,7 +301,7 @@ if(Streamzine == undefined) {
             contentType: 'application/json',
             type: "POST",
             // fill the filter value for some versions of Chrome browser to exclude '__proto__' property
-            data : JSON.stringify(modelToSend, ["id", "timestamp", "userNames", "blocks", "contentType", "coverUrl", "badgeUrl", "included", "key", "value", "position", "shapeType", "subTitle", "title", "vip", "expanded"]),
+            data : JSON.stringify(modelToSend, ["id", "timestamp", "userNames", "blocks", "contentType", "coverUrl", "badgeId", "included", "key", "value", "position", "shapeType", "subTitle", "title", "vip", "expanded"]),
             success : function(data, textStatus, status) {
                        alert('Your changes has been successfully saved. This page will be refreshed');
                        window.location.reload();

@@ -6,7 +6,7 @@ if(Streamzine.Presenter.Tile == undefined) {
             _DEFAULT: function(input) {
                 var cloned = Streamzine.Model.cloneBlock(input);
                 cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
-                cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
+                cloned.badgeUrl = (input.badgeFileNameAlias) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeFileNameAlias.fileName) : '';
                 return cloned;
             },
 
@@ -40,14 +40,14 @@ if(Streamzine.Presenter.Tile == undefined) {
                         cloned.value = '';
                     }
                     cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
-                    cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
+                    cloned.badgeUrl = (input.badgeFileNameAlias) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeFileNameAlias.fileName) : '';
                     return cloned;
                 },
                 PLAYLIST: function(input) {
                     var cloned = Streamzine.Model.cloneBlock(input);
                     cloned.value = (input.data) ? input.data.name : '';
                     cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
-                    cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
+                    cloned.badgeUrl = (input.badgeFileNameAlias) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeFileNameAlias.fileName) : '';
                     return cloned;
                 }
             },

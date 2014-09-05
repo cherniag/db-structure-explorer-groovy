@@ -89,6 +89,7 @@ section {
 						<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
 						<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
 						<li th:class="*{pathInfo}=='streamzine' or *{pathInfo}=='/streamzine' or *{pathInfo}=='/streamzine/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/streamzine}">Magazine Channel</a></li>
+						<li th:class="*{pathInfo}=='badges' or *{pathInfo}=='/badges' or *{pathInfo}=='/badges/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/badges}">Badges</a></li>
 						<li th:class="*{pathInfo}=='users' or *{pathInfo}=='/users' or *{pathInfo}=='/users/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/users}" ref="#" th:text="#{navbar.users}">Users</a></li>
 						<li th:class="*{pathInfo}=='news' or *{pathInfo}=='/news/' or *{pathInfo}=='/news/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/news}">News</a></li>
 						<li th:class="*{pathInfo}=='/messages' or *{pathInfo}=='/messages/' or *{pathInfo}=='/messages/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/messages}">Messages</a></li>

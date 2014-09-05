@@ -8,6 +8,8 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,6 +34,10 @@ public class StreamzineUpdateAsmTest {
     private DeepLinkUrlFactory deepLinkUrlFactory;
     @Mock
     private DeepLinkInfoService deepLinkInfoService;
+    @Mock
+    private BadgeMappingRepository badgeMappingRepository;
+    @Mock
+    private CommunityRepository communityRepository;
 
     @InjectMocks
     private StreamzineUpdateAsm streamzineUpdateAsm;
@@ -52,7 +58,7 @@ public class StreamzineUpdateAsmTest {
         update.addBlock(block3);
         update.addBlock(block4);
 
-        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk");
+        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk", "ANDROID");
         assertThat(streamzineUpdateDto.getUpdated(), is(publishTime));
         assertThat(streamzineUpdateDto.getBlocks(), hasSize(4));
         assertThat(streamzineUpdateDto.getItems(), hasSize(4));
@@ -74,7 +80,7 @@ public class StreamzineUpdateAsmTest {
         update.addBlock(getBlock(4, ShapeType.SLIM_BANNER, true, "title", "subTitle"));
         update.addBlock(getBlock(5, ShapeType.SLIM_BANNER, true, null, ""));
 
-        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk");
+        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk", "ANDROID");
         assertThat(streamzineUpdateDto.getItems(), hasSize(6));
         // WIDE
         assertThat(streamzineUpdateDto.getBlocks().get(0).getShapeType(), is(ShapeType.WIDE));

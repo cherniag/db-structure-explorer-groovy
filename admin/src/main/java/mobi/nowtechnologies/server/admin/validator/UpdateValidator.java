@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -20,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Music
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.MediaService;
@@ -41,31 +43,26 @@ import java.util.*;
 
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class UpdateValidator extends BaseValidator {
     @Resource
     private MessageSource messageSource;
-
     @Resource
     private MessageRepository messageRepository;
-
     @Resource
     private MediaService mediaService;
-
     @Resource
     private MobileApplicationPagesService mobileApplicationPagesService;
-
     @Resource
     private StreamzineTypesMappingService streamzineTypesMappingService;
-
     @Resource
     private UserRepository userRepository;
-
     @Resource
     private CookieUtil cookieUtil;
+    @Resource
+    private FilenameAliasRepository filenameAliasRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -112,11 +109,11 @@ public class UpdateValidator extends BaseValidator {
     @VisibleForTesting
     void validateTitlesMapping(OrdinalBlockDto blockDto, Errors errors) {
         ShapeType shapeType = blockDto.getShapeType();
-        if (!hasTitle(shapeType) && hasLength(blockDto.getTitle())) {
+        if(!hasTitle(shapeType) && hasLength(blockDto.getTitle())){
             rejectField("streamzine.error.title.not.allowed", new Object[]{shapeType}, errors, "title");
         }
 
-        if (!hasSubTitle(shapeType) && hasLength(blockDto.getSubTitle())) {
+        if(!hasSubTitle(shapeType) && hasLength(blockDto.getSubTitle())){
             rejectField("streamzine.error.subtitle.not.allowed", new Object[]{shapeType}, errors, "subTitle");
         }
     }
@@ -127,7 +124,7 @@ public class UpdateValidator extends BaseValidator {
         if (hasTitle(shapeType)) {
             if (isEmpty(blockDto.getTitle())) {
                 rejectField("streamzine.error.title.not.provided", new Object[]{}, errors, "title");
-            } else if (blockDto.getTitle().length() > Block.TITLE_MAX_LENGTH) {
+            } else if(blockDto.getTitle().length()> Block.TITLE_MAX_LENGTH){
                 rejectField("streamzine.error.title.too.long", new Object[]{Block.TITLE_MAX_LENGTH}, errors, "title");
             }
         }
@@ -135,7 +132,7 @@ public class UpdateValidator extends BaseValidator {
         if (hasSubTitle(shapeType)) {
             if (isEmpty(blockDto.getSubTitle())) {
                 rejectField("streamzine.error.subtitle.not.provided", new Object[]{}, errors, "subTitle");
-            } else if (blockDto.getSubTitle().length() > Block.SUBTITLE_MAX_LENGTH) {
+            } else if(blockDto.getSubTitle().length()> Block.SUBTITLE_MAX_LENGTH){
                 rejectField("streamzine.error.subtitle.too.long", new Object[]{Block.SUBTITLE_MAX_LENGTH}, errors, "subTitle");
             }
         }
@@ -144,7 +141,7 @@ public class UpdateValidator extends BaseValidator {
     @VisibleForTesting
     void validateUsers(UpdateIncomingDto dto, Errors errors) {
         List<String> userNames = dto.getUserNames();
-        if (userNames.isEmpty()) {
+        if(userNames.isEmpty()){
             return;
         }
         String communityRewriteUrl = cookieUtil.get(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
@@ -152,24 +149,24 @@ public class UpdateValidator extends BaseValidator {
 
         removeFoundInDatabaseFromIncoming(userNames, found);
 
-        if (!userNames.isEmpty()) {
+        if(!userNames.isEmpty()) {
             rejectField("streamzine.error.not.found.filtered.username", new Object[]{userNames.toString(), communityRewriteUrl}, errors, "userNames");
         }
     }
 
     private void removeFoundInDatabaseFromIncoming(List<String> userNames, List<User> found) {
-        for (User user : found) {
+        for(User user: found){
             userNames.remove(user.getUserName());
         }
     }
 
     private void validateDuplicatedContent(OrdinalBlockDto blockDto, Errors errors, Map<DuplicatedContentKey, OrdinalBlockDto> isrcs, Map<DuplicatedContentKey, OrdinalBlockDto> playlists) {
-        if (blockDto.getContentType() == ContentType.MUSIC) {
+        if(blockDto.getContentType() == ContentType.MUSIC) {
             final MusicType musicType = MusicType.valueOf(blockDto.getKey());
             final DuplicatedContentKey contentKey = new DuplicatedContentKey(blockDto);
 
-            if (musicType == MusicType.PLAYLIST) {
-                if (playlists.containsKey(contentKey)) {
+            if(musicType == MusicType.PLAYLIST) {
+                if(playlists.containsKey(contentKey)) {
                     OrdinalBlockDto first = playlists.get(contentKey);
                     rejectField("streamzine.error.duplicate.content", new Object[]{blockDto.getTitle(), first.getTitle()}, errors, "value");
                 } else {
@@ -177,8 +174,8 @@ public class UpdateValidator extends BaseValidator {
                 }
             }
 
-            if (musicType == MusicType.TRACK) {
-                if (isrcs.containsKey(contentKey)) {
+            if(musicType == MusicType.TRACK) {
+                if(isrcs.containsKey(contentKey)) {
                     OrdinalBlockDto first = isrcs.get(contentKey);
                     rejectField("streamzine.error.duplicate.content", new Object[]{blockDto.getTitle(), first.getTitle()}, errors, "value");
                 } else {
@@ -204,21 +201,30 @@ public class UpdateValidator extends BaseValidator {
     @VisibleForTesting
     void validateBadgeMapping(OrdinalBlockDto blockDto, Errors errors) {
         Enum<?> subType = TypeToSubTypePair.restoreSubType(blockDto.getContentType(), blockDto.getKey());
-        boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
 
-        if (!allowed && isNotEmpty(blockDto.getBadgeUrl())) {
+        if(blockDto.getBadgeId() != null) {
+            // check allowance
+        boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
+            if(!allowed) {
             String shapeType = getShapeTypeTitle(blockDto);
             String contentType = getContentTypeTitle(blockDto);
             String subTypeValue = getSubTypeTitle(blockDto);
 
-            rejectField("streamzine.error.badge.notallowed", new Object[]{shapeType, contentType, subTypeValue}, errors, "badgeUrl");
+                rejectField("streamzine.error.badge.notallowed", new Object[]{shapeType, contentType, subTypeValue}, errors, "badgeId");
+            }
+
+            // check existence
+            FilenameAlias found = filenameAliasRepository.findOne(blockDto.getBadgeId());
+            if(found == null) {
+                rejectField("streamzine.error.badge.absent", new Object[]{blockDto.getBadgeId()}, errors, "badgeId");
+            }
         }
     }
 
     private void validateMapping(DeeplinkInfoData blockDto, Errors errors) {
         TypesMappingInfo info = streamzineTypesMappingService.getTypesMappingInfos();
 
-        if (!info.matches(blockDto)) {
+        if(!info.matches(blockDto)) {
             String shapeType = getShapeTypeTitle(blockDto);
             String contentType = getContentTypeTitle(blockDto);
             String subTypeValue = getSubTypeTitle(blockDto);
@@ -233,19 +239,19 @@ public class UpdateValidator extends BaseValidator {
 
         LinkLocationType linkLocationType = LinkLocationType.valueOf(key);
 
-        if (linkLocationType == LinkLocationType.INTERNAL_AD) {
+        if(linkLocationType == LinkLocationType.INTERNAL_AD) {
             DeepLinkInfoService.ApplicationPageData applicationPageData = new DeepLinkInfoService.ApplicationPageData(value);
 
             final Set<String> pages = mobileApplicationPagesService.getPages();
-            if (!pages.contains(applicationPageData.getUrl())) {
+            if(!pages.contains(applicationPageData.getUrl())) {
                 Object[] args = {value, pages.toString()};
                 rejectValue("streamzine.error.unknown.appurl", args, errors);
                 return;
             }
 
-            if (!applicationPageData.getAction().isEmpty()) {
+            if(!applicationPageData.getAction().isEmpty()) {
                 final Set<String> actions = mobileApplicationPagesService.getActions();
-                if (!actions.contains(applicationPageData.getAction())) {
+                if(!actions.contains(applicationPageData.getAction())) {
                     Object[] args = {value, pages.toString()};
                     rejectValue("streamzine.error.unknown.appaction", args, errors);
                     return;
@@ -255,7 +261,7 @@ public class UpdateValidator extends BaseValidator {
             return;
         }
 
-        if (linkLocationType == LinkLocationType.EXTERNAL_AD) {
+        if(linkLocationType == LinkLocationType.EXTERNAL_AD) {
             String url = "";
             try {
                 url = blockDto.getValueLink();
@@ -294,7 +300,7 @@ public class UpdateValidator extends BaseValidator {
 
         MusicType musicType = MusicType.valueOf(key);
 
-        if (musicType == MusicType.PLAYLIST) {
+        if(musicType == MusicType.PLAYLIST) {
             try {
                 ChartType.valueOf(value);
             } catch (IllegalArgumentException e) {
@@ -304,21 +310,21 @@ public class UpdateValidator extends BaseValidator {
             return;
         }
 
-        if (musicType == MusicType.TRACK) {
+        if(musicType == MusicType.TRACK) {
             Set<Media> media = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, Lists.newArrayList(Integer.valueOf(value)));
             boolean notFoundMedia = (media == null || media.size() == 0);
-            if (notFoundMedia) {
+            if(notFoundMedia) {
                 Object[] args = {value};
                 rejectValue("streamzine.error.notfound.track.id", args, errors);
             }
             return;
         }
 
-        if (musicType == MusicType.MANUAL_COMPILATION) {
+        if(musicType == MusicType.MANUAL_COMPILATION) {
             DeepLinkInfoService.ManualCompilationData manualCompilationData = new DeepLinkInfoService.ManualCompilationData(value);
             List<Integer> ids = manualCompilationData.getMediaIds();
             Set<Media> medias = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, ids);
-            if (medias.size() != ids.size()) {
+            if(medias.size() != ids.size()){
                 for (Media media : medias) {
                     ids.remove(media.getIsrc());
                 }
@@ -330,24 +336,24 @@ public class UpdateValidator extends BaseValidator {
         throw new IllegalArgumentException("No validation for music type: " + musicType);
     }
 
-    private void validateNews(OrdinalBlockDto blockDto, Errors errors) {
+   private void validateNews(OrdinalBlockDto blockDto, Errors errors) {
         final String key = blockDto.provideKeyString();
         final String value = blockDto.provideValueString();
 
         NewsType newsType = NewsType.valueOf(key);
 
-        if (newsType == NewsType.LIST) {
+        if(newsType == NewsType.LIST) {
             boolean notTimestamp = !NumberUtils.isNumber(value);
-            if (notTimestamp) {
+            if(notTimestamp) {
                 Object[] args = {value};
                 rejectValue("streamzine.error.notvalid.timestamp", args, errors);
             }
             return;
         }
 
-        if (newsType == NewsType.STORY) {
+        if(newsType == NewsType.STORY) {
             boolean notId = !NumberUtils.isNumber(value);
-            if (notId) {
+            if(notId) {
                 Object[] args = {value};
                 rejectValue("streamzine.error.notfound.news.id", args, errors);
                 return;
@@ -355,7 +361,7 @@ public class UpdateValidator extends BaseValidator {
 
             Message message = messageRepository.findOne(Integer.parseInt(value));
             boolean notFoundMessage = (message == null);
-            if (notFoundMessage) {
+            if(notFoundMessage) {
                 Object[] args = {value};
                 rejectValue("streamzine.error.notfound.news.id", args, errors);
             }

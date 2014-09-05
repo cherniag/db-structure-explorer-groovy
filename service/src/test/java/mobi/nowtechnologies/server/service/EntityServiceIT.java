@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
         "classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml", "/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class EntityServiceTest {
+public class EntityServiceIT {
 
     @Autowired
     @Qualifier("service.EntityService")

@@ -4,6 +4,13 @@ public class ErrorDto implements Comparable<ErrorDto> {
     private String key;
     private String message;
 
+    public ErrorDto() {
+    }
+
+    public ErrorDto(String key) {
+        this.key = key;
+    }
+
     public String getKey() {
         return key;
     }

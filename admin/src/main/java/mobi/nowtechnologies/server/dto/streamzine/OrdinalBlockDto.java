@@ -58,8 +58,11 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
     private String contentTypeTitle;
 
-    @JsonProperty(value = "badgeUrl")
-    private String badgeUrl;
+    @JsonProperty(value = "badgeId")
+    private Long badgeId;
+
+    @JsonIgnore
+    private FileNameAliasDto badgeFileNameAlias;
 
 
     private DeepLinkInfoService.ApplicationPageData applicationPageData;
@@ -135,7 +138,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     public void setContentTypeTitle(String contentTypeTitle) {
         this.contentTypeTitle = contentTypeTitle;
     }
-
+    // for the ui json (themyleaf)
     public String getContentTypeTitle() {
         return contentTypeTitle;
     }
@@ -171,12 +174,16 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
         this.expanded = expanded;
     }
 
-    public String getBadgeUrl() {
-        return badgeUrl;
+    public Long getBadgeId() {
+        return badgeId;
     }
 
-    public void setBadgeUrl(String badgeUrl) {
-        this.badgeUrl = badgeUrl;
+    public void setBadgeFileNameAlias(FileNameAliasDto badgeFileNameAlias) {
+        this.badgeFileNameAlias = badgeFileNameAlias;
+    }
+    // for the ui json (themyleaf)
+    public FileNameAliasDto getBadgeFileNameAlias() {
+        return badgeFileNameAlias;
     }
 
     @Override
@@ -194,7 +201,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
                 .append("vip", vip)
                 .append("expanded", expanded)
                 .append("contentTypeTitle", contentTypeTitle)
-                .append("badgeUrl", badgeUrl)
+                .append("badgeId", badgeId)
                 .toString();
     }
 

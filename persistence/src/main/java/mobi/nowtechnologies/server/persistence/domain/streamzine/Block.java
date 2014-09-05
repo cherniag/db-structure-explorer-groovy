@@ -31,8 +31,8 @@ public class Block {
     @Column(name = "cover_url", length = 1024)
     private String coverUrl;
 
-    @Column(name = "badge_url", length = 1024)
-    private String badgeUrl;
+    @Column(name = "badge_filename_id")
+    private Long badgeId;
 
     @Column(name = "included")
     private boolean included;
@@ -70,7 +70,7 @@ public class Block {
         title = block.title;
         subTitle = block.subTitle;
         coverUrl = block.coverUrl;
-        badgeUrl = block.badgeUrl;
+        badgeId = block.badgeId;
         included = block.included;
         expanded = block.expanded;
         shapeType = block.shapeType;
@@ -89,12 +89,12 @@ public class Block {
         return coverUrl;
     }
 
-    public String getBadgeUrl() {
-        return badgeUrl;
+    public Long getBadgeId() {
+        return badgeId;
     }
 
-    public void setBadgeUrl(String badgeUrl) {
-        this.badgeUrl = badgeUrl;
+    public void setBadgeId(Long badgeId) {
+        this.badgeId = badgeId;
     }
 
     public void setSubTitle(String subTitle) {
