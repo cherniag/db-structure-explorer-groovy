@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
 import mobi.nowtechnologies.server.service.ChartService;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +51,7 @@ public class StreamzineAdminMediaAsm {
         List<ChartDetail> chartDetails = chartService.getChartsByCommunity(community.getRewriteUrlParameter(), null, null);
 
         for (ChartDetail chartDetail : chartDetails) {
-            if(isNotNull(chartDetail.getI()) && chartDetail.getI().equals(i.getChartDetailId())){
+            if(isNotNull(chartDetail.getI()) && chartDetail.getChart().getI().equals(i.getChartId())){
                 return toChartListItemDto(chartDetail);
             }
         }
@@ -78,8 +77,7 @@ public class StreamzineAdminMediaAsm {
         chartListItemDto.setSubtitle(chartDetail.getSubtitle());
         chartListItemDto.setImageFileName(chartDetail.getImageFileName());
         chartListItemDto.setTracksCount(chart.getNumTracks());
-        chartListItemDto.setChartType(chartDetail.getChartType());
-        chartListItemDto.setChartDetailId(chartDetail.getI());
+        chartListItemDto.setChartId(chart.getI());
         return chartListItemDto;
     }
 }

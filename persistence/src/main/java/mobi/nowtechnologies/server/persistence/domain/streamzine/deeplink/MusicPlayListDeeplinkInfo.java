@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,26 +10,25 @@ import javax.persistence.Table;
 @Table(name = "sz_deeplink_music_list")
 public class MusicPlayListDeeplinkInfo extends DeeplinkInfo {
 
-    @Column(name = "chart_detail_id")
-    private Integer chartDetailId;
+    @Column(name="chart_id", columnDefinition="tinyint(4)")
+    private Integer chartId;
 
     protected MusicPlayListDeeplinkInfo() {
     }
 
-    public MusicPlayListDeeplinkInfo(Integer chartDetailId) {
-        this.chartDetailId = chartDetailId;
+    public MusicPlayListDeeplinkInfo(Integer chartId) {
+        this.chartId = chartId;
         this.contentType = ContentType.MUSIC;
     }
 
-    public Integer getChartDetailId() {
-        return chartDetailId;
+    public Integer getChartId() {
+        return chartId;
     }
 
     @Override
     protected DeeplinkInfo provideInstance() {
         MusicPlayListDeeplinkInfo copy = new MusicPlayListDeeplinkInfo();
-        copy.chartDetailId = chartDetailId;
+        copy.chartId = chartId;
         return copy;
     }
-
 }

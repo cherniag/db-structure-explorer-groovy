@@ -52,25 +52,28 @@ alter table sz_block add CONSTRAINT `badge_file_id_fk` FOREIGN KEY (`badge_filen
 -- http://jira.musicqubed.com/browse/SRV-171
 -- Update deeplinks creation logic for playlist deeplinks in magazine channel
 
+create table chart_types (id bigint(20) NOT NULL, name char(25) NOT NULL);
+
+alter table sz_deeplink_music_list add column chart_id tinyint(4) DEFAULT NULL;
+alter table sz_deeplink_music_list add index sz_deeplink_music_list_PK_chart_id (chart_id), add constraint sz_deeplink_music_list_U_chart_id foreign key (chart_id) references tb_charts (i);
+
 start transaction;
 
-delete from sz_deeplink_promotional;
-delete from sz_granted_to_types;
-delete from sz_block_access_policy;
-delete from sz_deeplink_music_list;
-delete from sz_block;
-delete from sz_deeplink_man_compilation;
-delete from sz_deeplink_music_track;
-delete from sz_deeplink_news_list;
-delete from sz_deeplink_news_story;
-delete from sz_filename_alias;
-delete from sz_man_compilation_items;
-delete from sz_update;
-delete from sz_update_users;
-delete from sz_badge_mapping;
-delete from sz_resolution;
+insert into chart_types (id, name) values (0, 'BASIC_CHART'), (1, 'HOT_TRACKS'), (2, 'FOURTH_CHART'), (3, 'OTHER_CHART'), (4, 'FIFTH_CHART'), (5, 'VIDEO_CHART'), (6, 'HL_UK_PLAYLIST_1'), (7, 'HL_UK_PLAYLIST_2');
+
+UPDATE
+    sz_deeplink_music_list dml JOIN sz_block b
+      ON b.id = dml.block_id JOIN sz_update u
+      ON u.id = b.update_id JOIN chart_types ct
+      ON ct.id = dml.chart_type JOIN tb_charts c
+      ON c.type = ct.name JOIN community_charts cc
+      ON cc.chart_id = c.i
+         AND cc.community_id = u.community_id
+SET
+  dml.chart_id = c.i
+;
 
 commit;
 
+drop table chart_types;
 alter table sz_deeplink_music_list drop column chart_type;
-alter table sz_deeplink_music_list add column chart_detail_id int(10) unsigned DEFAULT NULL;

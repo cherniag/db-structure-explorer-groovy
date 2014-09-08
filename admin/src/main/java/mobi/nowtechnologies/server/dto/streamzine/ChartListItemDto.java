@@ -1,15 +1,13 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ChartListItemDto implements Comparable<ChartListItemDto> {
     private String name;
     private String subtitle;
     private String imageFileName;
-    private ChartType chartType;
     private int tracksCount;
-    private Integer chartDetailId;
+    private Integer chartId;
 
     public String getName() {
         return name;
@@ -25,14 +23,6 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
 
     public void setImageFileName(String imageFileName) {
         this.imageFileName = imageFileName;
-    }
-
-    public ChartType getChartType() {
-        return chartType;
-    }
-
-    public void setChartType(ChartType chartType) {
-        this.chartType = chartType;
     }
 
     public int getTracksCount() {
@@ -56,12 +46,12 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
         return name.compareTo(o.name);
     }
 
-    public Integer getChartDetailId() {
-        return chartDetailId;
+    public Integer getChartId() {
+        return chartId;
     }
 
-    public void setChartDetailId(Integer chartDetailId) {
-        this.chartDetailId = chartDetailId;
+    public void setChartId(Integer chartId) {
+        this.chartId = chartId;
     }
 
     @Override
@@ -70,9 +60,8 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
                 .append("name", name)
                 .append("subtitle", subtitle)
                 .append("imageFileName", imageFileName)
-                .append("chartType", chartType)
                 .append("tracksCount", tracksCount)
-                .append("chartDetailId", chartDetailId)
+                .append("chartId", chartId)
                 .toString();
     }
 }

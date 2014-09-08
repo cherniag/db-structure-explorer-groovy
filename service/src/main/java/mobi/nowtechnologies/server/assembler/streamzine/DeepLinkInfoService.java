@@ -124,11 +124,11 @@ public class DeepLinkInfoService {
         String value = data.getValue() != null ? data.getValue().trim() : "";
 
         if (musicType == MusicType.PLAYLIST) {
-            Integer chartDetailId = null;
+            Integer chartId = null;
             if (!value.isEmpty()) {
-                chartDetailId = parseInt(value);
+                chartId = parseInt(value);
             }
-            return new MusicPlayListDeeplinkInfo(chartDetailId);
+            return new MusicPlayListDeeplinkInfo(chartId);
         }
 
         if (musicType == MusicType.TRACK) {

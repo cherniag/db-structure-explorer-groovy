@@ -200,8 +200,8 @@ public class StreamzineUpdateAdminAsm {
 
             MusicPlayListDeeplinkInfo i = (MusicPlayListDeeplinkInfo) info;
             blockDto.setKey(playlist.name());
-            if (isNotNull(i.getChartDetailId())) {
-                blockDto.setValue(i.getChartDetailId().toString());
+            if (isNotNull(i.getChartId())) {
+                blockDto.setValue(i.getChartId().toString());
             }
             blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i, community));
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));
