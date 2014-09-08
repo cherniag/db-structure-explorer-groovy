@@ -1,6 +1,6 @@
-package mobi.nowtechnologies.server.service;
+package mobi.nowtechnologies.server.service.streamzine;
 
-import mobi.nowtechnologies.server.dto.ImageDTO;
+import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.file.image.ImageCloudFileMetadata;
 import mobi.nowtechnologies.server.service.file.image.ImageInfo;
 import mobi.nowtechnologies.server.service.file.image.ImageService;
