@@ -6,20 +6,19 @@ import mobi.nowtechnologies.server.dto.streamzine.ChartListItemDto;
 import mobi.nowtechnologies.server.dto.streamzine.MediaDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class StreamzineAdminMediaAsm {
-    private String streamzineCommunity;
     private ChartService chartService;
-
-    public void setStreamzineCommunity(String streamzineCommunity) {
-        this.streamzineCommunity = streamzineCommunity;
-    }
 
     public void setChartService(ChartService chartService) {
         this.chartService = chartService;
@@ -47,10 +46,10 @@ public class StreamzineAdminMediaAsm {
         return mediaDto;
     }
 
-    public ChartListItemDto toPlaylistDto(MusicPlayListDeeplinkInfo i) {
+    public ChartListItemDto toPlaylistDto(MusicPlayListDeeplinkInfo i, Community community) {
         final ChartType requiredChartType = i.getChartType();
 
-        List<ChartDetail> chartDetails = chartService.getChartsByCommunity(streamzineCommunity, null, null);
+        List<ChartDetail> chartDetails = chartService.getChartsByCommunity(community.getRewriteUrlParameter(), null, null);
 
         for (ChartListItemDto dto : toChartListItemDtos(chartDetails)) {
             if(dto.getChartType() == requiredChartType) {

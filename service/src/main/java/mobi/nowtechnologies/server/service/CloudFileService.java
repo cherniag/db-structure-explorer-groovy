@@ -1,29 +1,28 @@
 package mobi.nowtechnologies.server.service;
 
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
-import com.rackspacecloud.client.cloudfiles.FilesObject;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Collection;
+import java.io.OutputStream;
 import java.util.Map;
 
 public interface CloudFileService {
-	
-	String getFilesURL();
-	
-	boolean uploadFile(MultipartFile file, String fileName, Map metadata);
 
-	boolean uploadFile(MultipartFile file, String fileName);
-	
-	boolean uploadFile(File file, String fileName, String contentType, String destinationContainer);
+    String getFilesURL();
 
-	boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName);
+    boolean uploadFile(MultipartFile file, String fileName, Map metadata);
 
-    Collection<FilesObject> findFilesStartWith(String prefix, int limit);
+    void uploadFromStream(InputStream stream, String fileName, Map metadata);
 
-    void deleteByPrefix(String prefix);
+    void downloadToStream(OutputStream stream, String fileName);
+
+    boolean uploadFile(MultipartFile file, String fileName);
+
+    boolean uploadFile(File file, String fileName, String contentType, String destinationContainer);
+
+    boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName);
 
     void deleteFile(String fileName);
 

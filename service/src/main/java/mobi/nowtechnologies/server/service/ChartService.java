@@ -428,7 +428,7 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
+    public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile, Community community) {
         LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
         if(chartDetail != null){
@@ -436,7 +436,7 @@ public class ChartService implements ApplicationContextAware {
                 ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
                 chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
             } else{
-                createCorrespondingStreamzineUpdate(chartDetail);
+                createCorrespondingStreamzineUpdate(chartDetail, community);
             }
 
             chartDetail = chartDetailRepository.save(chartDetail);
@@ -456,9 +456,11 @@ public class ChartService implements ApplicationContextAware {
         return chartDetail.getI() != null;
     }
 
-    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail) {
-        Date publishDate = new Date(chartDetail.getPublishTimeMillis());
-        streamzineUpdateService.createOrReplace(publishDate);
+    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail, Community community) {
+        if(streamzineUpdateService.isAvailable(community.getRewriteUrlParameter())) {
+            Date publishDate = new Date(chartDetail.getPublishTimeMillis());
+            streamzineUpdateService.createOrReplace(publishDate, community);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

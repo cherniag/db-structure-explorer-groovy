@@ -2,9 +2,11 @@ package mobi.nowtechnologies.server.service.streamzine.asm;
 
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.dto.streamzine.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -13,6 +15,8 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Music
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import org.springframework.context.MessageSource;
@@ -25,7 +29,9 @@ public class StreamzineUpdateAdminAsm {
     private MessageSource messageSource;
     private DeepLinkInfoService deepLinkInfoService;
     private UserRepository userRepository;
+    private CommunityRepository communityRepository;
     private StreamzineAdminMediaAsm streamzineAdminMediaAsm;
+    private FilenameAliasRepository filenameAliasRepository;
 
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
@@ -43,6 +49,14 @@ public class StreamzineUpdateAdminAsm {
         this.streamzineAdminMediaAsm = streamzineAdminMediaAsm;
     }
 
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
+    }
+
+    public void setFilenameAliasRepository(FilenameAliasRepository filenameAliasRepository) {
+        this.filenameAliasRepository = filenameAliasRepository;
+    }
+
     //
     // API
     //
@@ -56,15 +70,15 @@ public class StreamzineUpdateAdminAsm {
         return dtos;
     }
 
-    public UpdateDto convertOneWithBlocksToIncoming(Update update) {
+    public UpdateDto convertOneWithBlocksToIncoming(Update update, Community community) {
         UpdateDto updateDto = convertOne(update);
-        updateDto.addAllBlocks(convertToOrdinalBlockDtos(update));
+        updateDto.addAllBlocks(convertToOrdinalBlockDtos(update, community));
         return updateDto;
     }
 
-    public UpdateDto convertOneWithBlocks(Update update) {
+    public UpdateDto convertOneWithBlocks(Update update, Community community) {
         UpdateDto updateDto = convertOne(update);
-        List<BlockDto> blockDtos = filterNarrow(convertToOrdinalBlockDtos(update));
+        List<BlockDto> blockDtos = filterNarrow(convertToOrdinalBlockDtos(update, community));
         updateDto.addAllBlocks(blockDtos);
 
         return updateDto;
@@ -72,7 +86,9 @@ public class StreamzineUpdateAdminAsm {
 
     @Transactional
     public Update fromIncomingDto(UpdateIncomingDto dto, String community) {
-        Update u = new Update(new Date(dto.getTimestamp()));
+        Community c = communityRepository.findByName(community);
+
+        Update u = new Update(new Date(dto.getTimestamp()), c);
 
         for (OrdinalBlockDto blockDto : dto.getBlocks()) {
             Block block = restoreBlock(blockDto);
@@ -88,6 +104,17 @@ public class StreamzineUpdateAdminAsm {
         return u;
     }
 
+    public List<UserDto> toUserDtos(List<User> users) {
+        List<UserDto> userDtos =  new ArrayList<UserDto>();
+        for (User user : users) {
+            UserDto userDto = new UserDto();
+            userDto.setId(user.getId());
+            userDto.setUserName(user.getUserName());
+            userDtos.add(userDto);
+        }
+        return userDtos;
+    }
+
     //
     // Internals
     //
@@ -95,7 +122,7 @@ public class StreamzineUpdateAdminAsm {
         DeeplinkInfo deeplinkInfo = deepLinkInfoService.create(blockDto);
 
         Block block = new Block(blockDto.getPosition(), blockDto.getShapeType(), deeplinkInfo);
-        block.setBadgeUrl(blockDto.getBadgeUrl());
+        block.setBadgeId(blockDto.getBadgeId());
         block.setCoverUrl(blockDto.getCoverUrl());
         block.setSubTitle(blockDto.getSubTitle());
         block.setTitle(blockDto.getTitle());
@@ -133,7 +160,7 @@ public class StreamzineUpdateAdminAsm {
         return dtos;
     }
 
-    private List<OrdinalBlockDto> convertToOrdinalBlockDtos(Update update) {
+    private List<OrdinalBlockDto> convertToOrdinalBlockDtos(Update update, Community community) {
         final int amount = update.getBlocks().size();
 
         List<OrdinalBlockDto> dtos = new ArrayList<OrdinalBlockDto>(amount);
@@ -143,7 +170,7 @@ public class StreamzineUpdateAdminAsm {
 
             OrdinalBlockDto blockDto = new OrdinalBlockDto();
             addCommonProperties(block, blockDto);
-            addCustomPropertiesForOrdinal(block, blockDto);
+            addCustomPropertiesForOrdinal(block, blockDto, community);
 
             dtos.add(blockDto);
         }
@@ -153,14 +180,14 @@ public class StreamzineUpdateAdminAsm {
         return dtos;
     }
 
-    private void addCustomPropertiesForOrdinal(Block block, OrdinalBlockDto blockDto) {
+    private void addCustomPropertiesForOrdinal(Block block, OrdinalBlockDto blockDto, Community community) {
         blockDto.setTitle(block.getTitle());
         blockDto.setSubTitle(block.getSubTitle());
         blockDto.setContentType(block.getDeeplinkInfo().getContentType());
         blockDto.setCoverUrl(block.getCoverUrl());
         blockDto.setPosition(block.getPosition());
         blockDto.setIncluded(block.isIncluded());
-        blockDto.setBadgeUrl(block.getBadgeUrl());
+        blockDto.setBadgeFileNameAlias(getBadgeFilenameDto(block.getBadgeId()));
         blockDto.setExpanded(block.isExpanded());
         blockDto.setShapeType(block.getShapeType());
         blockDto.setVip(block.getAccessPolicy() != null && block.getAccessPolicy().isVipMediaContent());
@@ -174,7 +201,7 @@ public class StreamzineUpdateAdminAsm {
             if (i.getChartType() != null) {
                 blockDto.setValue(i.getChartType().name());
             }
-            blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i));
+            blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i, community));
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));
         }
 
@@ -234,6 +261,24 @@ public class StreamzineUpdateAdminAsm {
         }
     }
 
+    private FileNameAliasDto getBadgeFilenameDto(Long badgeId) {
+        if(badgeId == null) {
+            return null;
+        }
+
+        FilenameAlias filenameAlias = filenameAliasRepository.findOne(badgeId);
+
+        if(filenameAlias == null) {
+            return null;
+        } else {
+            FileNameAliasDto dto = new FileNameAliasDto();
+            dto.setAlias(filenameAlias.getAlias());
+            dto.setId(filenameAlias.getId());
+            dto.setFileName(filenameAlias.getFileName());
+            return dto;
+        }
+    }
+
     private DeepLinkInfoService.ApplicationPageData createApplicationPageData(InformationDeeplinkInfo i) {
         final String action = i.getAction();
 
@@ -263,16 +308,5 @@ public class StreamzineUpdateAdminAsm {
 
     private <E0 extends Enum<E0>, E extends Enum<E>> String getMessage(E0 prefix, E suffix) {
         return messageSource.getMessage("streamzine.contenttype." + prefix.name() + "." + suffix.name(), null, LocaleContextHolder.getLocale());
-    }
-
-    public List<UserDto> toUserDtos(List<User> users) {
-        List<UserDto> userDtos =  new ArrayList<UserDto>();
-        for (User user : users) {
-            UserDto userDto = new UserDto();
-            userDto.setId(user.getId());
-            userDto.setUserName(user.getUserName());
-            userDtos.add(userDto);
-        }
-        return userDtos;
     }
 }

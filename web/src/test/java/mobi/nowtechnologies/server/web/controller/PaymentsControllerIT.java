@@ -3,27 +3,15 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -42,20 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextHierarchy({
-        @ContextConfiguration("classpath:web-root-test.xml"),
-        @ContextConfiguration("classpath:web-test.xml")
-})
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class PaymentsControllerIT{
 
-    @Resource
-    private WebApplicationContext wac;
+public class PaymentsControllerIT extends AbstractWebControllerIT{
 
-    private MockMvc mockMvc;
 
     @Resource
     private UserRepository userRepository;
@@ -131,11 +108,6 @@ public class PaymentsControllerIT{
         assertEquals(5, paymentPolicies.size());
     }
 
-    @Before
-    public void setUp()
-            throws Exception {
-        mockMvc = MockMvcBuilders.webAppContextSetup( this.wac).build();
-    }
 
     private SecurityContext createSecurityContext(int userId) {
         User user = userRepository.findOne(userId);

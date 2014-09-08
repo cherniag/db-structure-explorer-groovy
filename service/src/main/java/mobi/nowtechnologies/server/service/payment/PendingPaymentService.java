@@ -1,10 +1,8 @@
 package mobi.nowtechnologies.server.service.payment;
 
-import java.util.List;
-
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
+
+import java.util.List;
 
 public interface PendingPaymentService {
 
@@ -35,8 +33,6 @@ public interface PendingPaymentService {
 	 * @return
 	 */
 	List<PendingPayment> getExpiredPendingPayments();
-
-	PendingPayment createPendingPayment(User user, PaymentDetailsType type);
 
 	List<PendingPayment> getPendingPayments(int userId);
 

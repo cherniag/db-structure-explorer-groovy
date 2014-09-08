@@ -153,25 +153,7 @@ public class ServerMessage {
 		return new ServerMessage(4, parameters);
 	}
 
-	public static ServerMessage getMessageOnSmallValueLenthValue(Class aClass,
-			String aPropertyName, Object aPropertyValue, long aMinValue) {
-		if (aPropertyName == null)
-			throw new NullPointerException(
-					"The parameter aPropertyName is null");
-		if (aClass == null)
-			throw new NullPointerException("The parameter aClass is null");
-//		return "The property '" + aPropertyName + "' in " + aClass
-//				+ " object contains invalid value: " + aPropertyValue
-//				+ ". It less than allowing value:" + aMinValue;
-		Map<String,String> parameters = new HashMap<String, String>();
-		parameters.put("propertyName", aPropertyName);
-		parameters.put("class", aClass.getSimpleName());
-		parameters.put("propertyValue", aPropertyValue.toString());
-		parameters.put("minValue", String.valueOf(aMinValue));
-		return new ServerMessage(5, parameters);
-	}
-
-	public static ServerMessage getMessageOnInvalidMonthNumberValue(Class aClass,
+    public static ServerMessage getMessageOnInvalidMonthNumberValue(Class aClass,
 			String aPropertyName, int aMotnth) {
 		if (aPropertyName == null)
 			throw new NullPointerException(
@@ -302,11 +284,5 @@ public class ServerMessage {
 		parameters.put("communityRedirectUrl", communityRedirectUrl);
 		return new ServerMessage(14, parameters);
 	}
-	
-	public static ServerMessage getMessageOnUserExsist(String userName, String communityName) {
-		Map<String,String> parameters = new HashMap<String, String>();
-		//parameters.put("userName", userName);
-		//parameters.put("communityName", communityName);
-		return new ServerMessage(15, parameters);
-	}
+
 }

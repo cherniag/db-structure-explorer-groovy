@@ -89,8 +89,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 			"and pd.activated=true "+
 			"and u.lastDeviceLogin!=0")
 	@QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
-	List<User> getUsersForPendingPayment(int epochSeconds);
-	
+	List<User> getUsersForPendingPayment(int epochSeconds, Pageable pageable);
+
+    @Query(value = "select count(u) from User u "+
+            "join u.currentPaymentDetails pd "+
+            "join u.userGroup ug "+
+            "join ug.community c "+
+            "join pd.paymentPolicy pp " +
+            "where "+
+            "u.subBalance=0 " +
+            "and ((u.nextSubPayment<=?1 and pd.lastPaymentStatus='NONE')" +
+            "or (u.nextSubPayment<=(?1+pp.advancedPaymentSeconds) and pd.lastPaymentStatus='SUCCESSFUL')) "+
+            "and pd.activated=true "+
+            "and u.lastDeviceLogin!=0")
+    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE") })
+    long getUsersForPendingPaymentCount(int epochSeconds);
+
     @Query(value="select u from User u "
     		+ "join u.currentPaymentDetails pd "
     		+ "join u.userGroup ug "
@@ -110,8 +124,29 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     		+ "and pd.activated=true "
     		+ "and u.lastDeviceLogin!=0")
     @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")})
-	List<User> getUsersForRetryPayment(int epochSeconds);
-	
+	List<User> getUsersForRetryPayment(int epochSeconds, Pageable pageable);
+
+    @Query(value="select count(u) from User u "
+            + "join u.currentPaymentDetails pd "
+            + "join u.userGroup ug "
+            + "join ug.community c "
+            + "join pd.paymentPolicy pp "
+            + "where "
+            + "pd.retriesOnError>0 "
+            + "and (pd.lastPaymentStatus='ERROR' or pd.lastPaymentStatus='EXTERNAL_ERROR') "
+            + "and (" +
+            " (u.nextSubPayment<=?1 and pd.madeAttempts=0 and pp.advancedPaymentSeconds=0)" +
+            "   or (" +
+            "         (pp.advancedPaymentSeconds>0 and pd.madeAttempts=0) " +
+            "         or (u.nextSubPayment<=?1 and pd.madeAttempts=1 and pp.advancedPaymentSeconds>0) " +
+            "         or ((u.nextSubPayment+pp.afterNextSubPaymentSeconds)<=?1 and pp.afterNextSubPaymentSeconds>0)" +
+            "       )" +
+            ") "
+            + "and pd.activated=true "
+            + "and u.lastDeviceLogin!=0")
+    @QueryHints(value={ @QueryHint(name = "org.hibernate.cacheMode", value = "IGNORE")})
+    long getUsersForRetryPaymentCount(int epochSeconds);
+
 	@Query(value="select u from User u " +
 			"join u.userGroup ug " +
 			"join ug.community c " +

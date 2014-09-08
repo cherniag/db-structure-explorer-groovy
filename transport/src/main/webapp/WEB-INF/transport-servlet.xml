@@ -76,6 +76,7 @@
                 <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.VisualBlock</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.BadgeInfo</value>
 			</list>
 		</property>
 	</bean>
@@ -219,8 +220,8 @@
 		<property name="startDelay" value="${smsNotification.startDelayMillis}" />
 		<property name="repeatInterval" value="${smsNotification.repeatIntervalMillis}" />
 	</bean>
-	
-	
+
+
 	<bean id="paymentExecutor" class="mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor">
 		<property name="executor">
 			<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -231,7 +232,7 @@
 		</property>
 		<property name="paymentSystems" ref="service.map.paymentSystems" />
 	</bean>
-	
+
 	<!-- Payment task -->
 	<bean id="paymentTask" class="mobi.nowtechnologies.server.job.CreatePendingPaymentJob">
 		<property name="executor" ref="paymentExecutor" />

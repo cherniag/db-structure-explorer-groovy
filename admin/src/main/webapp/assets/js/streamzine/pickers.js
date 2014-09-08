@@ -974,43 +974,35 @@ if(Pickers == undefined) {
     // Badge Picker
     //
     //
-    Pickers.createBadgePicker = function(dialogId, formId, holderId, okHandler, badgesGetAll, badgesUpdateName, badgesDelete) {
+    Pickers.createBadgePicker = function(dialogId, okHandler, badgesGetAll, badgesUpdateName) {
         return new function() {
             var _genericDialog = new GenericDialog(dialogId, okHandler, beforeShow).markAsOptional();
 
-            var _rowTemplate = '<li class="streamzine-playlist-picker-item" data-id="{alias}" data-name="{fileName}"><div><img src="{src}" height="50px"/></div></li>';
-            var _renTemplate = '<a href="javascript:;" data-id="{alias}">{alias}</a>';
+            var _rowTemplate = '<li class="streamzine-playlist-picker-item" data-id="{id}" data-name="{fileName}"><div><img src="{src}" height="50px"/></div></li>';
+            var _renTemplate = '<a href="javascript:;" data-id="{a.id}">{a.alias}</a>';
+            var _renTemplateEmpty = '<a href="javascript:;" data-id="{a.id}">No name</a>';
             var _inPlaceEditorTextTemplate = '<input type="text" maxlength="128" value="{alias}"/>';
             var _inPlaceEditorDoneTemplate = '<a href="javascript:;">Done</a>';
-            var _delTemplate = '<div style="float:right;"><a href="javascript:;" data-id="{alias}">Delete</a></div>';
             //
             // Construction
             //
             init();
 
+            var array = [];
+
             //
             // Internal functions
             //
             function init() {
-                $('#' + formId).submit(function(event) {
-                    createFrame();
-
-                    var form = event.target;
-                    form.target = _getFrame().attr('name');
-
-                    // display 'Loading ...'
-                    var body = $(document.getElementById(_getFrame().attr('name')).contentWindow.document.body);
-                    body.html('Loading...');
-                });
-
-                $('#' + formId + ' input[type="file"]').change(function() {
-                    $('#' + formId).submit();
-                });
-
                 $('#' + dialogId + ' ul.table').selectable({
                     selected: function( event, ui ) {
-                        var alias = $(ui.selected).attr('data-name');
-                        _genericDialog.setValue(alias);
+                        var id = $(ui.selected).attr('data-id');
+
+                        for(var i=0; i<array.length; i++) {
+                            if(array[i].id == id) {
+                                _genericDialog.setValue(array[i]);
+                            }
+                        }
                     }
                 });
 
@@ -1024,34 +1016,8 @@ if(Pickers == undefined) {
                 }
             }
 
-            function _getFrame() {
-                return $($('#' + holderId + ' > iframe')[0]);
-            }
-
-            function onFrameLoad() {
-                var doc = document.getElementById(_getFrame().attr('name')).contentWindow.document;
-                var count = doc.getElementsByTagName('img').length;
-                // found one image in the internal frame
-                if(count == 1) {
-                    loadNames();
-                    $('#' + formId).trigger('reset');
-                    _getFrame().remove();
-                }
-            }
-
             function beforeShow() {
-                $('#' + formId).trigger('reset');
-
                 loadNames();
-            }
-
-            function createFrame() {
-                var name = formId + "_" + new Date().getTime();
-                $('#' + holderId)
-                    .empty()
-                    .append(
-                    $(Template.render('<iframe id="{name}" name="{name}" class="streamzine-badge-picker-response-frame" />', {name: name})).load(onFrameLoad)
-                );
             }
 
             function getGrid() {
@@ -1059,30 +1025,31 @@ if(Pickers == undefined) {
             }
 
             function fillGrid(data) {
-                var array = data['badges'];
+                array = data['fileNames'];
                 for(var i=0; i < array.length; i++) {
                     var a = array[i];
 
                     var row = $(Template.render(_rowTemplate, {
                         src: Streamzine.Presenter.Editor.imagesBaseUrl + a.fileName,
                         fileName: a.fileName,
-                        alias: a.alias
+                        alias: a.fileName,
+                        id: a.id
                     }));
 
                     getGrid().append(
-                        fillRow(row, a.alias)
+                        fillRow(row, a)
                     );
                 }
             }
 
-            function fillRow(row, alias) {
-                var deleteLink = $(Template.render(_delTemplate, {alias: alias}));
-                deleteLink.click(deleteItem);
+            function fillRow(row, a) {
+                var nameLink = (a.alias) ? $(Template.render(_renTemplate, {a: a})) : $(Template.render(_renTemplateEmpty, {a: a}));
 
-                var nameLink = $(Template.render(_renTemplate, {alias: alias}));
-                nameLink.click(renameItem);
+                nameLink.click(function(ui) {
+                    renameItem(ui, a)
+                });
 
-                return row.append($('<div></div>').append(nameLink)).append(deleteLink);
+                return row.append($('<div></div>').append(nameLink));
             }
 
             function request(url, data, success) {
@@ -1115,7 +1082,7 @@ if(Pickers == undefined) {
             function highlightBadge() {
                 var theValue = _genericDialog.getValue();
                 if(theValue) {
-                    $('#' + dialogId + ' li[data-name="' + theValue + '"]').addClass('ui-selected');
+                    $('#' + dialogId + ' li[data-id="' + theValue.id + '"]').addClass('ui-selected');
                 }
             }
 
@@ -1127,48 +1094,30 @@ if(Pickers == undefined) {
                 $('#' + dialogId + ' .loading-container').show();
             }
 
-            function deleteItem(ui) {
-                var name = $(ui.target).attr('data-id');
-                if(confirm('The badge with name ' + name + ' will be deleted. Proceed?')) {
-                    _showLoadingBar();
-                    getGrid().empty();
-
-                    request(badgesDelete, {name: name}, function(data) {
-                        _hideLoadingBar();
-                        fillGrid(data);
-                    });
-                }
-            }
-
-            function renameItem(ui) {
+            function renameItem(ui, a) {
                 var link = $(ui.target);
-                var id = link.attr('data-id');
                 var placeToPut = link.parent();
                 link.remove();
 
                 var wrapper = $('<div></div>');
-                var text = $(Template.render(_inPlaceEditorTextTemplate, {alias: id}));
-                var done = $(Template.render(_inPlaceEditorDoneTemplate, {alias: id}));
+                var text = $(Template.render(_inPlaceEditorTextTemplate, {alias: a.alias}));
+                var done = $(Template.render(_inPlaceEditorDoneTemplate, {}));
                 wrapper.append(text).append(done);
                 placeToPut.append(wrapper);
 
                 done.click(function() {
                     var newName = text.val();
 
-                    if(newName != id) {
+                    if(newName != a.alias) {
                         _showLoadingBar();
-                        request(badgesUpdateName, {oldName: id, newName: newName}, function(data) {
+                        request(badgesUpdateName, {id: a.id, newName: newName}, function(data) {
                             _hideLoadingBar();
-                            if(data['notUniqueName']) {
-                                alert('The name you provided ' + newName + ' is not unique. Please choose another one');
-                            } else {
-                                getGrid().empty();
-                                fillGrid(data);
-                            }
+                            getGrid().empty();
+                            fillGrid(data);
                         });
                     } else {
-                        var nameLink = $(Template.render(_renTemplate, {alias: id}));
-                        nameLink.click(renameItem);
+                        var nameLink = (a.alias) ? $(Template.render(_renTemplate, {a: a})) : $(Template.render(_renTemplateEmpty, {a: a}));
+                        nameLink.click(function(ui) {renameItem(ui, a)});
                         wrapper.empty().append(nameLink);
                     }
                 });
@@ -1178,8 +1127,8 @@ if(Pickers == undefined) {
             // API
             //
             this.show = function(block) {
-                _genericDialog.originalValue(block.badgeUrl);
-                _genericDialog.setValue(block.badgeUrl);
+                _genericDialog.originalValue(block.badgeFileNameAlias);
+                _genericDialog.setValue(block.badgeFileNameAlias);
 
                 _genericDialog.show();
             }

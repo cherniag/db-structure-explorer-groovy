@@ -1,0 +1,230 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+    <style>
+        .default_badge_img {
+            width: 100px;
+        }
+        .default_badge_div {
+            max-height: 100px;
+            overflow: hidden;
+        }
+    </style>
+    <script th:src="@{/assets/js/streamzine/badges/badges.js}">
+    </script>
+	<body>
+		<div th:substituteby="tpl::navbar"></div>
+        <div class="container">
+            <div style="margin-top: 20px;">
+                <div><a href="javascript:;" id="addResolutionId">[Add Resolution]</a></div>
+                <div><a href="javascript:;" id="addBadgeId">[Add Original Badge]</a></div>
+            </div>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            <div>Screen Resolution</div>
+                        </th>
+                        <th th:each="defaultBadge : ${allDefaultBadges}">
+                            <div th:text="${defaultBadge.title}"></div>
+                            <div th:text="${defaultBadge.width + 'x' + defaultBadge.height}"></div>
+                            <div class="default_badge_div">
+                                <img class="default_badge_img" th:src="${imageURL + '/' + defaultBadge.fileName}" />
+                            </div>
+                            <a href="javascript:;" th:id="${'removeBadgesId' + defaultBadge.originalId}" th:attr="data-id=@{__${defaultBadge.originalId}__}">
+                                [Remove Badges]
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="resolution : ${allResolutions}">
+                        <td>
+                            <div th:text="${resolution.deviceType + ',' + resolution.width + 'x' + resolution.height}"></div>
+                            <div>
+                                <a href="javascript:;" th:id="${'removeResolutionId' + resolution.id}" th:attr="data-id=@{__${resolution.id}__}">
+                                    [Remove]
+                                </a>
+                            </div>
+                        </td>
+                        <td th:each="defaultBadge : ${allDefaultBadges}">
+                            <div th:if="${badges[resolution.id][defaultBadge.originalId].fileName == null}">
+                                <div>
+                                    <a href="javascript:;" th:id="${'assignWidthAndHeightId_' + defaultBadge.originalId + '_' + resolution.id}"
+                                       th:attr="data-alias=@{__${defaultBadge.originalId}__},data-resolution=@{__${resolution.id}__}">
+                                        [Assign size]
+                                    </a>
+                                </div>
+                            </div>
+                            <div th:unless="${badges[resolution.id][defaultBadge.originalId].fileName == null}">
+                                <div>
+                                    <div>
+                                        <span th:text="${badges[resolution.id][defaultBadge.originalId].width + 'x' + badges[resolution.id][defaultBadge.originalId].height}" />
+                                    </div>
+                                    <div>
+                                        <a th:href="${imageURL + '/' + badges[resolution.id][defaultBadge.originalId].fileName}" target="_blank">[View]</a>
+                                    </div>
+                                    <div>
+                                        <a href="javascript:;" th:id="${'assignWidthAndHeightId_' + defaultBadge.originalId + '_' + resolution.id}"
+                                           th:attr="data-alias=@{__${defaultBadge.originalId}__},data-resolution=@{__${resolution.id}__}">
+                                            [Reassign size]
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="addResolutionDialogId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header draggable-cursor">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+
+                    <div style="padding: 20px;">
+                        <div class="hasError"></div>
+                        <div class="badges-feedback"></div>
+                        <div>
+                            <div>Device Type:</div>
+                            <select style="width:100px;" name="deviceType"></select>
+                        </div>
+
+                        <div>
+                            <div>Resolution:</div>
+                            <input type="text" name="width" style="width:50px;" />
+                            <span>x</span>
+                            <input type="text" name="height" style="width:50px;" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Save</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="addDimensionDialogId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header draggable-cursor">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Assign badge resolution</h4>
+                    </div>
+
+                    <div style="padding: 20px;">
+                        <div class="badges-feedback"></div>
+                        <div class="hasError"></div>
+
+                        <div>
+                            <div>Resolution:</div>
+                            <input type="text" name="width" style="width:50px;" />
+                            <span>x</span>
+                            <input type="text" name="height" style="width:50px;" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Save</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade sz-dialog-init" id="addBadgeDialogId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header draggable-cursor">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Select Image</h4>
+                    </div>
+                    <div style="padding:5px;">
+                        <div class="badges-feedback"></div>
+                        <div class="hasError"></div>
+                        <form name="uploadBadge"
+                              th:action="@{/badges/image/preview}"
+                              method="post"
+                              enctype="multipart/form-data"
+                              accept-charset="UTF-8"
+                              id="uploadBadge">
+                            <input name="file" type="file" accept="image" />
+                            <input name="title" type="text" />
+                            <br />
+                        </form>
+                        <div id="imageUploadResponseHolderId">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Save</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+        $(function() {
+            //
+            // init
+            //
+            Badges.deviceTypes = /*[[${deviceTypes}]]*/'';
+            Badges.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
+            var addResolutionDialog = new AddResolutionDialog('addResolutionDialogId', Badges.ContextPath + '/badges/resolution/add');
+            var addBadgeDialog = new AddBadgeDialog('addBadgeDialogId', Badges.ContextPath + '/badges/image/add');
+            var addDimensionDialog = new AddDimensionDialog('addDimensionDialogId', Badges.ContextPath + '/badges/badges/assign');
+
+            $('#addResolutionId').click(
+                function() {
+                    addResolutionDialog.show();
+                }
+            );
+
+            $('#addBadgeId').click(
+                    function() {
+                        addBadgeDialog.show();
+                    }
+            );
+
+            $('a[id^=assignWidthAndHeightId]').click(
+                    function(e) {
+                        var a = $(e.target);
+                        addDimensionDialog.show(a.attr('data-alias'), a.attr('data-resolution'));
+                    }
+            );
+
+            $('a[id^=removeResolutionId]').click(
+                    function(e) {
+                        var a = $(e.target);
+                        var id = a.attr('data-id');
+                        var title = a.attr('data-name');
+                        if(confirm('You are about to delete this resolution.  Confirm?')) {
+                            window.location = Badges.ContextPath + '/badges/remove/resolution/' + id + '.htm';
+                        }
+                    }
+            );
+
+            $('a[id^=removeBadgesId]').click(
+                    function(e) {
+                        var a = $(e.target);
+                        var id = a.attr('data-id');
+                        var title = a.attr('data-name');
+                        if(confirm('You are about to delete this badge. Confirm?')) {
+                            window.location = Badges.ContextPath + '/badges/remove/badge/' + id + '.htm';
+                        }
+                    }
+            );
+        });
+        /*]]>*/</script>
+
+	</body>
+</html>

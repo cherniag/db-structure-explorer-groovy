@@ -6,7 +6,7 @@ if(Streamzine.Presenter.Tile == undefined) {
             _DEFAULT: function(input) {
                 var cloned = Streamzine.Model.cloneBlock(input);
                 cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
-                cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
+                cloned.badgeUrl = (input.badgeFileNameAlias) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeFileNameAlias.fileName) : '';
                 return cloned;
             },
 
@@ -40,14 +40,14 @@ if(Streamzine.Presenter.Tile == undefined) {
                         cloned.value = '';
                     }
                     cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
-                    cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
+                    cloned.badgeUrl = (input.badgeFileNameAlias) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeFileNameAlias.fileName) : '';
                     return cloned;
                 },
                 PLAYLIST: function(input) {
                     var cloned = Streamzine.Model.cloneBlock(input);
                     cloned.value = (input.data) ? input.data.name : '';
                     cloned.coverUrl = (input.coverUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.coverUrl) : '';
-                    cloned.badgeUrl = (input.badgeUrl) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeUrl) : '';
+                    cloned.badgeUrl = (input.badgeFileNameAlias) ? (Streamzine.Presenter.Editor.imagesBaseUrl + '/' + input.badgeFileNameAlias.fileName) : '';
                     return cloned;
                 }
             },
@@ -298,18 +298,20 @@ if(Streamzine.Presenter.Tile == undefined) {
 
         this.init = function() {
             var blocks = Streamzine.Model.getBlocks();
-
-            for(var i=0;i<blocks.length;i++) {
+            var f;
+            var s;
+            var i=0;
+            while(i<blocks.length) {
                 if(blocks[i].shapeType.$name == 'NARROW') {
-                    var f = blocks[i];
-                    var s = blocks[++i];
-
-                    var tile = this.createNarrowTile(f, s);
-                    $('div#' + f.id).empty().html(tile);
+                    f = blocks[i];
+                    s = blocks[i+1];
+                    i++; 
+                    $('div#' + f.id).empty().html(this.createNarrowTile(f, s));
+                    $('div#' + s.id).remove();
                 } else {
-                    var tile = this.createTile(blocks[i]);
-                    $('div#' + blocks[i].id).empty().html(tile);
+                    $('div#' + blocks[i].id).empty().html(this.createTile(blocks[i]));
                 }
+                i++;
             }
         }
     };

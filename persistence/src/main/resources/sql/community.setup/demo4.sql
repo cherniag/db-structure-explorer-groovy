@@ -1,4 +1,8 @@
-﻿/* please, set community name here, other parameters should be checked manually */
+﻿﻿
+set autocommit=0;
+start transaction;
+
+/* please, set community name here, other parameters should be checked manually */
 SET @new_community_name = 'demo4';
 SET @new_community_full_name = 'DEMO4';
 
@@ -24,12 +28,12 @@ INSERT INTO tb_news (name, numEntries, community, timestamp) VALUES
 
 /* Creating playlist */
 INSERT INTO tb_charts (name, numTracks, genre, timestamp, numBonusTracks, type) VALUES
-  ('FOURTH_CHART FOR D4', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FOURTH_CHART'),
-  ('HOT_TRACKS FOR D4', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HOT_TRACKS'),
-  ('FIFTH_CHART FOR D4', 0, 1, UNIX_TIMESTAMP(now()), 0, 'FIFTH_CHART'),
-  ('HL_UK_PLAYLIST_1 FOR D4', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_1'),
-  ('HL_UK_PLAYLIST_2 FOR D4', 0, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
-  ('OTHER_CHART FOR D4', 0, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART');
+  ('FOURTH_CHART FOR D4', 10, 1, UNIX_TIMESTAMP(now()), 0, 'FOURTH_CHART'),
+  ('HOT_TRACKS FOR D4', 10, 1, UNIX_TIMESTAMP(now()), 0, 'HOT_TRACKS'),
+  ('FIFTH_CHART FOR D4', 10, 1, UNIX_TIMESTAMP(now()), 0, 'FIFTH_CHART'),
+  ('HL_UK_PLAYLIST_1 FOR D4', 10, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_1'),
+  ('HL_UK_PLAYLIST_2 FOR D4', 10, 1, UNIX_TIMESTAMP(now()), 0, 'HL_UK_PLAYLIST_2'),
+  ('OTHER_CHART FOR D4', 10, 1, UNIX_TIMESTAMP(now()), 0, 'OTHER_CHART');
 INSERT INTO community_charts (chart_id, community_id) VALUES
   ((select i from tb_charts where name = 'HOT_TRACKS FOR D4'), @new_community_id),
   ((select i from tb_charts where name = 'FIFTH_CHART FOR D4'), @new_community_id),
@@ -43,11 +47,6 @@ INSERT INTO tb_userGroups (name, community, chart, news, drmPolicy) VALUES
   (@new_community_full_name, @new_community_id,
   (select i from tb_charts where name='HOT_TRACKS FOR D4'), (select i from tb_news where community = @new_community_id),
    (select i from tb_drmPolicy where community = @new_community_id));
-
-/* Creating payment policy */
-INSERT INTO tb_paymentPolicy
-(communityID      , subWeeks, subCost, paymentType         , operator, shortCode, currencyIso, availableInStore, app_store_product_id                              , contract, segment, content_category, content_type, content_description, sub_merchant_id, provider  , tariff, media_type,advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online) VALUES
-(@new_community_id, 1       , 1      , 'iTunesSubscription', null    , ''       , 'GBP'      , false           , 'com.musicqubed.ios.heylist.subscription.weekly.1', null    , null   , null            , null        , null               , null           , 'FACEBOOK', '_3G' , 'AUDIO'   , 0                      ,0                              ,false      , true);
 
 /* Creating promotions, maxUsers=0 means unlimited number of users */
 INSERT INTO tb_promotions (description, numUsers, maxUsers, startDate, endDate, isActive, freeWeeks, subWeeks, userGroup, type, showPromotion, label, is_white_listed) VALUES
@@ -74,3 +73,4 @@ insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, c
 insert into tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) values
   ((select i from tb_charts where name = 'OTHER_CHART FOR D4'),5,null,null,null,null,null,UNIX_TIMESTAMP(now()),1,null,'OTHER_CHART FOR D4','OTHER_CHART FOR D4','OTHER_CHART FOR D4',null,null);
 
+commit;

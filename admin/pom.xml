@@ -1,24 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>mobi.nowtechnologies.java</groupId>
-		<artifactId>parent-pom</artifactId>
-		<version>5.6.0-SNAPSHOT</version>
-		<relativePath>../mq-parent-pom/pom.xml</relativePath>
-	</parent>
+    <parent>
+        <groupId>mobi.nowtechnologies.java</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>5.6.1-SNAPSHOT</version>
+        <relativePath>../mq-parent-pom/pom.xml</relativePath>
+    </parent>
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>mobi.nowtechnologies.java.server</groupId>
-	<artifactId>admin</artifactId>
-	<packaging>war</packaging>
-	<name>Now Technologies Java Server Admin UI Webapp</name>
-	
-	<build>
-		<finalName>jadmin-${project.version}</finalName>
-	</build>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>mobi.nowtechnologies.java.server</groupId>
+    <artifactId>admin</artifactId>
+    <packaging>war</packaging>
+    <name>Now Technologies Java Server Admin UI Webapp</name>
 
-	<dependencies>
+    <build>
+        <finalName>jadmin-${project.version}</finalName>
+    </build>
+
+    <dependencies>
 
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
@@ -34,8 +34,8 @@
             <type>jar</type>
             <classifier>jar</classifier>
         </dependency>
-        <dependency>    
-             <groupId>mobi.nowtechnologies.java.server</groupId>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>persistence</artifactId>
             <scope>test</scope>
             <classifier>tests</classifier>
@@ -47,64 +47,70 @@
             <classifier>tests</classifier>
         </dependency>
 
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared-web</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
-		
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared-web</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>shared</artifactId>
         </dependency>
 
-		<!-- Security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
+        <!-- Security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
 
-		<!-- Thymeleaf -->
-		<dependency>
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf-spring3</artifactId>
-		</dependency>
-		<!-- END Thymeleaf -->
-		
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-		</dependency>
+        <!-- Thymeleaf -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring3</artifactId>
+        </dependency>
+        <!-- END Thymeleaf -->
 
-			<dependency>
-				<groupId>commons-validator</groupId>
-				<artifactId>commons-validator</artifactId>
-			</dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>

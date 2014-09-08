@@ -1,31 +1,20 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import mobi.nowtechnologies.server.persistence.repository.AbstractRepositoryIT;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.annotation.Resource;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * The class <code>CountryAppVersionDaoTest</code> contains tests for the class <code>{@link CountryAppVersionDao}</code>.
- *
-
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
-public class CountryAppVersionDaoTest {
-	private static CountryAppVersionDao countryAppVersionDao;
+public class CountryAppVersionDaoTest extends AbstractRepositoryIT {
+    @Resource
+	private CountryAppVersionDao countryAppVersionDao;
 
-	/**
-	 * Run the boolean isAppVersionLinkedWithCountry(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test
 	public void testIsAppVersionLinkedWithCountry_EmptyParammeters()
 		throws Exception {
@@ -36,13 +25,6 @@ public class CountryAppVersionDaoTest {
 		assertFalse(result);
 	}
 
-	/**
-	 * Run the boolean isAppVersionLinkedWithCountry(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test
 	public void testIsAppVersionLinkedWithCountry_Success()
 		throws Exception {
@@ -54,13 +36,6 @@ public class CountryAppVersionDaoTest {
 		assertTrue(result);
 	}
 
-	/**
-	 * Run the boolean isAppVersionLinkedWithCountry(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test
 	public void testIsAppVersionLinkedWithCountry_appVersionIsEmpty()
 		throws Exception {
@@ -72,13 +47,6 @@ public class CountryAppVersionDaoTest {
 		assertFalse(result);
 	}
 
-	/**
-	 * Run the boolean isAppVersionLinkedWithCountry(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test
 	public void testIsAppVersionLinkedWithCountry_countryCodeIsEmpty()
 		throws Exception {
@@ -90,13 +58,6 @@ public class CountryAppVersionDaoTest {
 		assertFalse(result);
 	}
 
-	/**
-	 * Run the boolean isAppVersionLinkedWithCountry(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test(expected = mobi.nowtechnologies.server.persistence.dao.PersistenceException.class)
 	public void testIsAppVersionLinkedWithCountry_5()
 		throws Exception {
@@ -109,13 +70,6 @@ public class CountryAppVersionDaoTest {
 		assertFalse(result);
 	}
 
-	/**
-	 * Run the boolean isAppVersionLinkedWithCountry(String,String) method test.
-	 *
-	 * @throws Exception
-	 *
-	
-	 */
 	@Test(expected = mobi.nowtechnologies.server.persistence.dao.PersistenceException.class)
 	public void testIsAppVersionLinkedWithCountry_6()
 		throws Exception {
@@ -126,34 +80,5 @@ public class CountryAppVersionDaoTest {
 		boolean result = countryAppVersionDao.isAppVersionLinkedWithCountry(appVersion, countryCode);
 
 		assertTrue(result);
-	}
-
-	/**
-	 * Perform pre-test initialization.
-	 *
-	 * @throws Exception
-	 *         if the initialization fails for some reason
-	 *
-	
-	 */
-	@BeforeClass
-	public static void setUp()
-		throws Exception {
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
-				new String[] { "/META-INF/dao-test.xml" });
-		countryAppVersionDao = (CountryAppVersionDao) appContext.getBean("persistence.CountryAppVersionDao");
-	}
-
-	/**
-	 * Perform post-test clean-up.
-	 *
-	 * @throws Exception
-	 *         if the clean-up fails for some reason
-	 *
-	
-	 */
-	@AfterClass
-	public static void tearDown()
-		throws Exception {
 	}
 }

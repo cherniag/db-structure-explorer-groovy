@@ -3,20 +3,20 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.6.0-SNAPSHOT</version>
+        <version>5.6.1-SNAPSHOT</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>mobi.nowtechnologies.java.server</groupId>
-	<artifactId>track-repo</artifactId>
-	<packaging>war</packaging>
-	<name>Now Technologies Java Track Repo Webapp</name>
-	<url>http://maven.apache.org</url>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>mobi.nowtechnologies.java.server</groupId>
+    <artifactId>track-repo</artifactId>
+    <packaging>war</packaging>
+    <name>Now Technologies Java Track Repo Webapp</name>
+    <url>http://maven.apache.org</url>
 
-	<build>
-		<finalName>trackrepo-${project.version}</finalName>
+    <build>
+        <finalName>trackrepo-${project.version}</finalName>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
@@ -38,23 +38,23 @@
                 <directory>src/main/webapp</directory>
             </testResource>
         </testResources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<packagingExcludes>/WEB-INF/bin/</packagingExcludes>
-					<webResources>
-						<resource>
-							<directory>${project.basedir}/target</directory>
-							<targetPath>/WEB-INF/</targetPath>
-							<includes>
-								<include>bin.zip</include>
-							</includes>
-						</resource>
-					</webResources>
-				</configuration>
-			</plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <packagingExcludes>/WEB-INF/bin/</packagingExcludes>
+                    <webResources>
+                        <resource>
+                            <directory>${project.basedir}/target</directory>
+                            <targetPath>/WEB-INF/</targetPath>
+                            <includes>
+                                <include>bin.zip</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -72,36 +72,36 @@
                 </executions>
             </plugin>
             <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>track-repo-dist</id>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<phase>clean</phase>
-						<configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>track-repo-dist</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>clean</phase>
+                        <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
-							<finalName>bin</finalName>
-							<descriptors>
-								<descriptor>assembly.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                            <finalName>bin</finalName>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
 
         <!-- Project Dependecies -->
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -116,10 +116,10 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>mobi.nowtechnologies.java.server</groupId>
-			<artifactId>shared-web</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>shared-web</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
@@ -136,50 +136,50 @@
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
 
-		<!--DB -->
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-		</dependency>
+        <!--DB -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.transaction</groupId>
-			<artifactId>jta</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -193,6 +193,6 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
         </dependency>
-	</dependencies>
+    </dependencies>
 
 </project>

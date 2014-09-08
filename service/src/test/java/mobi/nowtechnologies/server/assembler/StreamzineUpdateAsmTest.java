@@ -3,10 +3,13 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -31,14 +34,19 @@ public class StreamzineUpdateAsmTest {
     private DeepLinkUrlFactory deepLinkUrlFactory;
     @Mock
     private DeepLinkInfoService deepLinkInfoService;
+    @Mock
+    private BadgeMappingRepository badgeMappingRepository;
+    @Mock
+    private CommunityRepository communityRepository;
 
     @InjectMocks
     private StreamzineUpdateAsm streamzineUpdateAsm;
 
     @Test
     public void testConvertOne() throws Exception {
+        Community community = mock(Community.class);
         long publishTime = System.currentTimeMillis() + 10000L;
-        Update update = new Update(new Date(publishTime));
+        Update update = new Update(new Date(publishTime), community);
         Block block0 = getBlock(0, ShapeType.WIDE, true, "title", "subTitle");
         Block block2 = getBlock(2, ShapeType.NARROW, true, "title", "");
         Block block1 = getBlock(1, ShapeType.SLIM_BANNER, true, "title", "subTitle");
@@ -50,7 +58,7 @@ public class StreamzineUpdateAsmTest {
         update.addBlock(block3);
         update.addBlock(block4);
 
-        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk");
+        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk", "ANDROID");
         assertThat(streamzineUpdateDto.getUpdated(), is(publishTime));
         assertThat(streamzineUpdateDto.getBlocks(), hasSize(4));
         assertThat(streamzineUpdateDto.getItems(), hasSize(4));
@@ -62,8 +70,9 @@ public class StreamzineUpdateAsmTest {
 
     @Test
     public void testConvertOneWithTitles() throws Exception {
+        Community community = mock(Community.class);
         long publishTime = System.currentTimeMillis() + 10000L;
-        Update update = new Update(new Date(publishTime));
+        Update update = new Update(new Date(publishTime), community);
         update.addBlock(getBlock(0, ShapeType.WIDE, true, "title", "subTitle"));
         update.addBlock(getBlock(1, ShapeType.WIDE, true, null, ""));
         update.addBlock(getBlock(2, ShapeType.NARROW, true, "  ", "subTitle"));// ensure that empty string is correct
@@ -71,7 +80,7 @@ public class StreamzineUpdateAsmTest {
         update.addBlock(getBlock(4, ShapeType.SLIM_BANNER, true, "title", "subTitle"));
         update.addBlock(getBlock(5, ShapeType.SLIM_BANNER, true, null, ""));
 
-        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk");
+        StreamzineUpdateDto streamzineUpdateDto = streamzineUpdateAsm.convertOne(update, "hl_uk", "ANDROID");
         assertThat(streamzineUpdateDto.getItems(), hasSize(6));
         // WIDE
         assertThat(streamzineUpdateDto.getBlocks().get(0).getShapeType(), is(ShapeType.WIDE));
