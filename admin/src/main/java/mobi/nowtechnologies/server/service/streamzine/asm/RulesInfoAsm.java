@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.dto.streamzine.mapping.TilesMappingInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,5 +50,12 @@ public class RulesInfoAsm {
         }
 
         return mapView;
+    }
+
+    public Map<String, String> buildTypesForOpener() {
+        Map<String, String> result = new HashMap<String, String>();
+        result.put(Opener.BROWSER.name(), "In Browser");
+        result.put(Opener.IN_APP.name(), "In-app");
+        return result;
     }
 }

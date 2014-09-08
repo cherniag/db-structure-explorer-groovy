@@ -283,13 +283,7 @@ if(Pickers == undefined) {
     }
 
     var ExternalAdPicker = function(dialogId, saveHandler) {
-        var opener = {
-            IN_APP: 'In-app',
-            BROWSER: 'In Browser'
-        };
-
         this.opener = opener;
-
         var initialBlock;
         //
         // Construction
@@ -307,9 +301,11 @@ if(Pickers == undefined) {
 
             // init the dialog with the value
             var splitData = initialBlock.value.split('#')
-            _getInput().val(splitData[0]);
-            _getOpener().val(splitData[1]);
-            if(initialBlock.value) {
+            var url = splitData[0];
+            var openerType = splitData[1];
+            _getInput().val(url);
+            _getOpener().val(openerType);
+            if(url) {
               _check();
             }
             syncUrl(_getInput().val());
