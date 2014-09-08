@@ -92,8 +92,6 @@
 	<servlet-mapping>
 		<servlet-name>track-repo</servlet-name>
 		<url-pattern>/*</url-pattern>
-		<url-pattern>/VERSION</url-pattern>
-		<url-pattern>/version</url-pattern>
 	</servlet-mapping>
 
 	<listener>
