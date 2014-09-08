@@ -8,16 +8,17 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
-import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
@@ -46,6 +47,12 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     private MediaRepository mediaRepository;
     @Resource
     private CommunityRepository communityRepository;
+    @Resource
+    private ResolutionRepository resolutionRepository;
+    @Resource
+    private BadgeMappingRepository badgeMappingRepository;
+    @Resource
+    private FilenameAliasRepository filenameAliasRepository;
 
     @Test
     public void testGetStreamzineForAnyMQUser_404_forNotAvailableCommunity() throws Exception {
@@ -66,7 +73,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testGetStreamzineForAnyMQUser_Success() throws Exception {
-        Date updateDate = new Date(System.currentTimeMillis() + 1000L);
+        Date updateDate = new Date(System.currentTimeMillis() + 2000L);
 
         // parameters
         String userName = "test@ukr.net";
@@ -82,7 +89,6 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         // Expected JSON data
         //
         final String externalLink = "http://example.com";
-        final String badgeUrl = "badgeUrl";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
         final ChartType chartType = ChartType.BASIC_CHART;
@@ -90,10 +96,16 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        Community community = communityRepository.findByName(communityUrl);
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user);
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        filenameAliasRepository.saveAndFlush(originalUploadedFile);
 
-        Thread.sleep(2000L);
+        Community community = communityRepository.findByName(communityUrl);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, originalUploadedFile, community, user);
+
+        prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
+        prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
+
+        Thread.sleep(2500L);
 
         // check xml format
         doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false).andExpect(status().isOk()).andDo(print());
@@ -120,7 +132,11 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         // .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo[1]", is(GrantedToType.FREETRIAL.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].badge_icon", is(badgeUrl)))
+                        // check badges
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[0].width", is(50)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[0].height", is(50)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[1].height", is(60)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[1].height", is(60)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
@@ -139,6 +155,16 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
+    }
+
+    private void prepareBadge(String communityUrl, String deviceType, String fileName, int width, int height, FilenameAlias originalUploadedFile) {
+        Community commmunity = communityRepository.findByName(communityUrl);
+        Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
+
+        BadgeMapping mapping = BadgeMapping.specific(resolution, commmunity, originalUploadedFile);
+        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, 5, 5).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+
+        badgeMappingRepository.saveAndFlush(mapping);
     }
 
     private ResultActions doRequest(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson) throws Exception {
@@ -175,7 +201,6 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         // Expected JSON data
         //
         final String externalLink = "http://example.com";
-        final String badgeUrl = "badgeUrl";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
         final ChartType chartType = ChartType.BASIC_CHART;
@@ -183,7 +208,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
         Community community = communityRepository.findByName(communityUrl);
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user);
 
         Thread.sleep(2500L);
 
@@ -202,7 +227,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         user = userRepository.findOne(userName, communityUrl);
         final Date updateDateForSpecificUser = new Date(System.currentTimeMillis() + 1000L);
-        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user);
+        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user);
 
         Thread.sleep(2000L);
 
@@ -240,7 +265,6 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         // Expected JSON data
         //
         final String externalLink = "http://example.com";
-        final String badgeUrl = "badgeUrl";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
         final ChartType chartType = ChartType.BASIC_CHART;
@@ -248,8 +272,8 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         Community community = communityRepository.findByName(communityUrl);
 
-        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user1, user2);
-        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartType, existingMedia, badgeUrl, community, user1, user2);
+        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user1, user2);
+        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user1, user2);
 
         Thread.sleep(2500L);
 
@@ -314,41 +338,40 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
-                        .param("WIDTHXHEIGHT", "")
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isNotFound());
     }
 
-    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, Community community, User... users) {
+    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, FilenameAlias filenameAlias, Community community, User... users) {
         Update update = streamzineUpdateService.create(updateDate, community);
 
         // simulate adding blocks
-        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, badgeUrl, community, users);
+        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, filenameAlias, community, users);
         streamzineUpdateService.update(update.getId(), incomingWithBlocks);
     }
 
-    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, String badgeUrl, Community community, User... users) {
+    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, FilenameAlias filenameAlias, Community community, User... users) {
         Update u = new Update(DateUtils.addDays(new Date(), 1), community);
         //
         // Not included block
         //
-        Block excludedAdd = newBlock(0, ShapeType.NARROW, createMusicTrackDeeplink(track), badgeUrl);
+        Block excludedAdd = newBlock(0, ShapeType.NARROW, createMusicTrackDeeplink(track), null);
         excludedAdd.exclude();
         u.addBlock(excludedAdd);
         //
         // Ordinal blocks
         //
-        u.addBlock(newBlock(1, ShapeType.WIDE, createNotificationDeeplink(externalLink), badgeUrl));
-        u.addBlock(newBlock(2, ShapeType.SLIM_BANNER, createNotificationDeeplink0(), badgeUrl));
-        u.addBlock(newBlock(3, ShapeType.NARROW, createNotificationDeeplink1(), badgeUrl));
-        u.addBlock(newBlock(4, ShapeType.SLIM_BANNER, createNewsListDeeplink(publishDate), badgeUrl));
-        u.addBlock(newBlock(5, ShapeType.WIDE, createNewsStoryDeeplink(newsMessage), badgeUrl));
+        u.addBlock(newBlock(1, ShapeType.WIDE, createNotificationDeeplink(externalLink), filenameAlias));
+        u.addBlock(newBlock(2, ShapeType.SLIM_BANNER, createNotificationDeeplink0(), null));
+        u.addBlock(newBlock(3, ShapeType.NARROW, createNotificationDeeplink1(), null));
+        u.addBlock(newBlock(4, ShapeType.SLIM_BANNER, createNewsListDeeplink(publishDate), null));
+        u.addBlock(newBlock(5, ShapeType.WIDE, createNewsStoryDeeplink(newsMessage), null));
         //
         // Added mixed positions to test that values are added according to positions: 5 and 6
         //
-        u.addBlock(newBlock(7, ShapeType.SLIM_BANNER, createMusicPlaylistDeeplink(chartType), badgeUrl));
-        u.addBlock(newBlock(8, ShapeType.SLIM_BANNER, createManualCompilationDeeplink(track), badgeUrl));
-        u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track), badgeUrl));
+        u.addBlock(newBlock(7, ShapeType.SLIM_BANNER, createMusicPlaylistDeeplink(chartType), null));
+        u.addBlock(newBlock(8, ShapeType.SLIM_BANNER, createManualCompilationDeeplink(track), null));
+        u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track), null));
 
         if(users != null){
             for (User user : users) {
@@ -412,16 +435,17 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         return d;
     }
 
-    private Block newBlock(int position, ShapeType shapeType, DeeplinkInfo deepLinkInfo, String badgeUrl) {
+    private Block newBlock(int position, ShapeType shapeType, DeeplinkInfo deepLinkInfo, FilenameAlias originalUploadedFile) {
         Block b = new Block(position, shapeType, deepLinkInfo);
-        if(badgeUrl != null) {
-            b.setBadgeUrl(badgeUrl);
-        }
         b.setTitle("title");
         b.setSubTitle("sub title");
         b.setCoverUrl("image_" + System.nanoTime() + ".jpg");
         b.include();
         b.setAccessPolicy(AccessPolicy.enabledForVipOnly());
+        if(originalUploadedFile != null) {
+            b.setBadgeId(originalUploadedFile.getId());
+        }
         return b;
     }
+
 }

@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -15,6 +16,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsT
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import org.springframework.context.MessageSource;
@@ -29,6 +31,7 @@ public class StreamzineUpdateAdminAsm {
     private UserRepository userRepository;
     private CommunityRepository communityRepository;
     private StreamzineAdminMediaAsm streamzineAdminMediaAsm;
+    private FilenameAliasRepository filenameAliasRepository;
 
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
@@ -48,6 +51,10 @@ public class StreamzineUpdateAdminAsm {
 
     public void setCommunityRepository(CommunityRepository communityRepository) {
         this.communityRepository = communityRepository;
+    }
+
+    public void setFilenameAliasRepository(FilenameAliasRepository filenameAliasRepository) {
+        this.filenameAliasRepository = filenameAliasRepository;
     }
 
     //
@@ -115,7 +122,7 @@ public class StreamzineUpdateAdminAsm {
         DeeplinkInfo deeplinkInfo = deepLinkInfoService.create(blockDto);
 
         Block block = new Block(blockDto.getPosition(), blockDto.getShapeType(), deeplinkInfo);
-        block.setBadgeUrl(blockDto.getBadgeUrl());
+        block.setBadgeId(blockDto.getBadgeId());
         block.setCoverUrl(blockDto.getCoverUrl());
         block.setSubTitle(blockDto.getSubTitle());
         block.setTitle(blockDto.getTitle());
@@ -180,7 +187,7 @@ public class StreamzineUpdateAdminAsm {
         blockDto.setCoverUrl(block.getCoverUrl());
         blockDto.setPosition(block.getPosition());
         blockDto.setIncluded(block.isIncluded());
-        blockDto.setBadgeUrl(block.getBadgeUrl());
+        blockDto.setBadgeFileNameAlias(getBadgeFilenameDto(block.getBadgeId()));
         blockDto.setExpanded(block.isExpanded());
         blockDto.setShapeType(block.getShapeType());
         blockDto.setVip(block.getAccessPolicy() != null && block.getAccessPolicy().isVipMediaContent());
@@ -251,6 +258,24 @@ public class StreamzineUpdateAdminAsm {
                 blockDto.setValue("" + i.getPublishDate().getTime());
             }
             blockDto.setContentTypeTitle(getMessage(ContentType.NEWS, story));
+        }
+    }
+
+    private FileNameAliasDto getBadgeFilenameDto(Long badgeId) {
+        if(badgeId == null) {
+            return null;
+        }
+
+        FilenameAlias filenameAlias = filenameAliasRepository.findOne(badgeId);
+
+        if(filenameAlias == null) {
+            return null;
+        } else {
+            FileNameAliasDto dto = new FileNameAliasDto();
+            dto.setAlias(filenameAlias.getAlias());
+            dto.setId(filenameAlias.getId());
+            dto.setFileName(filenameAlias.getFileName());
+            return dto;
         }
     }
 

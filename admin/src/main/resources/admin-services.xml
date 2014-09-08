@@ -13,12 +13,20 @@
         </constructor-arg>
     </bean>
 
-    <bean name="fileNameAliasService" class="mobi.nowtechnologies.server.service.streamzine.BadgesService">
+    <bean name="badgesService" class="mobi.nowtechnologies.server.service.streamzine.BadgesService">
         <property name="filenameAliasRepository" ref="filenameAliasRepository" />
         <property name="cloudFileImagesService" ref="cloudFileImagesService" />
+        <property name="resolutionRepository" ref="resolutionRepository" />
+        <property name="badgeMappingRepository" ref="badgeMappingRepository" />
+        <property name="cloudFileService" ref="service.CloudFileService" />
+        <property name="imageService" ref="imageService" />
+    </bean>
+    <bean id="badgesDtoConverter" class="mobi.nowtechnologies.server.dto.streamzine.badge.BadgesDtoAsm">
+
     </bean>
 
-    <bean name="aliasDtoAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.FileNameAliasDtoAsm">
+    <bean name="errorDtoAsm" class="mobi.nowtechnologies.server.dto.streamzine.error.ErrorDtoAsm">
+        <property name="messageSource" ref="messageSource" />
     </bean>
 
     <bean name="streamzineAdminMediaAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm">
@@ -31,6 +39,7 @@
         <property name="userRepository" ref="userRepository"/>
         <property name="streamzineAdminMediaAsm" ref="streamzineAdminMediaAsm"/>
         <property name="communityRepository" ref="communityRepository"/>
+        <property name="filenameAliasRepository" ref="filenameAliasRepository"/>
     </bean>
 
     <bean name="typesMappingAsm" class="mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm">
@@ -42,13 +51,9 @@
     <bean name="streamzineTypesMappingService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService">
     </bean>
 
-    <bean name="cloudFileMetadaService" class="mobi.nowtechnologies.server.service.file.image.CloudFileMetadataService">
-        <property name="imageService" ref="imageService" />
-    </bean>
-
     <bean name="cloudFileImagesService" class="mobi.nowtechnologies.server.service.CloudFileImagesService">
         <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="cloudFileMetadataService" ref="cloudFileMetadaService" />
+        <property name="imageService" ref="imageService" />
     </bean>
 
     <bean id="adminUserService" class="mobi.nowtechnologies.server.service.impl.AdminUserServiceImpl">

@@ -205,5 +205,9 @@
 		</property>
 		<property name="defaultContentType" value="application/octet-stream"/>
 	</bean>
-	
+
+    <bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
+        <property name="manifest" value="META-INF/MANIFEST.MF" />
+    </bean>
+
 </beans>

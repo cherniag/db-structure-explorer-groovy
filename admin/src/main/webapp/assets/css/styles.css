@@ -4,6 +4,10 @@
   color:red;
 }
 
+.hasErrorInput {
+    border: 1px solid red;
+}
+
 .iframe {
   display: none;
   wight: 1px;
@@ -1584,3 +1588,10 @@ block icons and info
 .sz-not-visible {
     display: none;
 }
+
+.badges-feedback {
+    padding: 10px;
+    color:green;
+}
+
+

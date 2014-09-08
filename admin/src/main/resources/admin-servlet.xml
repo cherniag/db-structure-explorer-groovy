@@ -150,5 +150,14 @@
 
     <bean name="cookieUtil" class="mobi.nowtechnologies.server.admin.validator.CookieUtil"/>
     <bean name="updateValidator" class="mobi.nowtechnologies.server.admin.validator.UpdateValidator"/>
-
+    <bean id="badgeValidator" class="mobi.nowtechnologies.server.admin.validator.BadgeValidator">
+        <constructor-arg>
+            <list>
+                <value>mobi.nowtechnologies.server.dto.streamzine.badge.ResolutionDto</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto</value>
+                <value>mobi.nowtechnologies.server.dto.streamzine.badge.BadgeResolutionDto</value>
+                <value>mobi.nowtechnologies.server.dto.ImageDTO</value>
+            </list>
+        </constructor-arg>
+    </bean>
 </beans>

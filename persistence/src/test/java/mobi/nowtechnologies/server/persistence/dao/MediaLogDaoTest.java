@@ -2,29 +2,18 @@ package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaLog;
+import mobi.nowtechnologies.server.persistence.repository.AbstractRepositoryIT;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
- * The class <code>MediaLogDaoTest</code> contains tests for the class <code>{@link MediaLogDao}</code>.
- *
- * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml" })
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
-@Transactional
-public class MediaLogDaoTest {
+public class MediaLogDaoTest extends AbstractRepositoryIT {
     @Autowired
 	private MediaLogDao mediaLogDao;
 

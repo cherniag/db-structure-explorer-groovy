@@ -118,9 +118,9 @@ var UpdateModel = function(model) {
         var emptyBlock = {
             id: generatedId,
             coverUrl: '',
-            badgeUrl: '',
             included: true,
             expanded: true,
+            badgeFileNameAlias: null,
             position: _model.blocks.length,
             shapeType: {
                 '$type': 'ShapeType',
@@ -284,7 +284,7 @@ var UpdateModel = function(model) {
                     title: b.title,
                     subTitle: calcSubTitle(b),
                     coverUrl: b.coverUrl,
-                    badgeUrl: b.badgeUrl,
+                    badgeId: (b.badgeFileNameAlias) ? b.badgeFileNameAlias.id : null,
                     position: b.position,
                     contentType: (b.contentType) ? b.contentType.$name : null,
                     //
@@ -335,7 +335,7 @@ var UpdateModel = function(model) {
                     currentBlock.title != copyBlock.title ||
                     currentBlock.subTitle != copyBlock.subTitle ||
                     currentBlock.vip != copyBlock.vip ||
-                    currentBlock.badgeUrl != copyBlock.badgeUrl ||
+                    currentBlock.badgeId != copyBlock.badgeId ||
                     currentBlock.coverUrl != copyBlock.coverUrl) {
                     return false;
                 }

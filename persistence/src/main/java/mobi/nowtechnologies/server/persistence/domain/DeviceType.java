@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name="tb_deviceTypes")
@@ -28,6 +30,10 @@ public class DeviceType implements Serializable {
 	private String name;
 
     public DeviceType() {
+    }
+
+    public static Set<String> all() {
+        return Sets.newHashSet(ANDROID, J2ME, IOS, BLACKBERRY, SYMBIAN, WINDOWS_PHONE);
     }
 
     @Id
