@@ -22,5 +22,9 @@ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema
 
     <bean id="mp4Manager" class="mobi.nowtechnologies.server.trackrepo.service.impl.MP4ManagerMock"/>
 
+    <bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
+        <property name="manifest" value="classpath:TEST-MANIFEST.MF" />
+    </bean>
+
 
 </beans>

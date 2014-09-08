@@ -128,7 +128,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 subTitle: incoming.subTitle,
                                 value: '',
                                 badgeId: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeFileNameAlias) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
-                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
+                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
                                 vip: incoming.vip
                             };
                             if(incoming.data && incoming.data.artistDto) {
@@ -161,7 +161,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 subTitle: incoming.subTitle,
                                 value: '' + amount + (  (amount == 1)?' Track':' Tracks'  ),
                                 badgeId: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeFileNameAlias) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
-                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
+                                coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
                                 vip: incoming.vip
                             }
                         }

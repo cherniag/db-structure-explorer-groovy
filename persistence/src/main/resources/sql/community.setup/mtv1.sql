@@ -68,21 +68,21 @@ INSERT INTO tb_promoCode (code, promotionId)  VALUES
 ('mtv1.promo.2weeks.audio', (SELECT p.i FROM tb_promotions p WHERE p.label = 'mtv1.promo.2weeks.audio'));
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV1'), 0, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HOT_TRACKS - MTV1', 'HOT_TRACKS - MTV1', 'HOT_TRACKS - MTV1', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HOT_TRACKS - MTV1'), 0, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now())*1000, 1, NULL, 'HOT_TRACKS - MTV1', 'HOT_TRACKS - MTV1', 'HOT_TRACKS - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTV1'), 1, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'FIFTH_CHART - MTV1', 'FIFTH_CHART - MTV1', 'FIFTH_CHART - MTV1', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'FIFTH_CHART - MTV1'), 1, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now())*1000, 1, NULL, 'FIFTH_CHART - MTV1', 'FIFTH_CHART - MTV1', 'FIFTH_CHART - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_1 - MTV1'), 2, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_1 - MTV1', 'HL_UK_PLAYLIST_1 - MTV1', 'HL_UK_PLAYLIST_1 - MTV1', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_1 - MTV1'), 2, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now())*1000, 1, NULL, 'HL_UK_PLAYLIST_1 - MTV1', 'HL_UK_PLAYLIST_1 - MTV1', 'HL_UK_PLAYLIST_1 - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_2 - MTV1'), 3, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_2 - MTV1', 'HL_UK_PLAYLIST_2 - MTV1', 'HL_UK_PLAYLIST_2 - MTV1', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_2 - MTV1'), 3, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now())*1000, 1, NULL, 'HL_UK_PLAYLIST_2 - MTV1', 'HL_UK_PLAYLIST_2 - MTV1', 'HL_UK_PLAYLIST_2 - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_3 - MTV1'), 3, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'HL_UK_PLAYLIST_3 - MTV1', 'HL_UK_PLAYLIST_3 - MTV1', 'HL_UK_PLAYLIST_3 - MTV1', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'HL_UK_PLAYLIST_3 - MTV1'), 4, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now())*1000, 1, NULL, 'HL_UK_PLAYLIST_3 - MTV1', 'HL_UK_PLAYLIST_3 - MTV1', 'HL_UK_PLAYLIST_3 - MTV1', NULL, NULL);
 
 INSERT INTO tb_chartDetail (chart, position, media, prevPosition, chgPosition, channel, info, publishTimeMillis, version, image_filename, image_title, subtitle, title, locked, defaultChart) VALUES
-((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTV1'), 4, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now()), 1, NULL, 'OTHER_CHART - MTV1', 'OTHER_CHART - MTV1', 'OTHER_CHART - MTV1', NULL, NULL);
+((SELECT i FROM tb_charts WHERE name = 'OTHER_CHART - MTV1'), 5, NULL, NULL, NULL, NULL, NULL, UNIX_TIMESTAMP(now())*1000, 1, NULL, 'OTHER_CHART - MTV1', 'OTHER_CHART - MTV1', 'OTHER_CHART - MTV1', NULL, NULL);
 
 COMMIT;
