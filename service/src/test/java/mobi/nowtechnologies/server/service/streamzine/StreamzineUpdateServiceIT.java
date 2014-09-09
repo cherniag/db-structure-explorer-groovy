@@ -1,4 +1,3 @@
-
 package mobi.nowtechnologies.server.service.streamzine;
 
 import com.google.common.collect.Lists;
@@ -187,6 +186,12 @@ public class StreamzineUpdateServiceIT {
         Block block = new Block(0, SLIM_BANNER, deeplink);
         block.setTitle(title);
         return block;
+    }
+
+    @Test
+    public void testIsAvailableOnlyForThisCommunities(){
+        streamzineUpdateService.checkAvailability("mtv1");
+        streamzineUpdateService.checkAvailability("hl_uk");
     }
 
     private Community findCommunity(String name) {
