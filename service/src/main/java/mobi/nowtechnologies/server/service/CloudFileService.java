@@ -26,6 +26,6 @@ public interface CloudFileService {
 
     void deleteFile(String fileName);
 
-    InputStream getInputStream(String fileName) throws FilesNotFoundException;
+    InputStream getInputStream(String destinationContainer, String fileName) throws FilesNotFoundException;
 
 }

@@ -60,6 +60,16 @@ public class FileService {
 
     private CloudFileService cloudFileService;
 
+    private String destinationContainerNameForAudioContent;
+
+    public String getDestinationContainerNameForAudioContent() {
+        return destinationContainerNameForAudioContent;
+    }
+
+    public void setDestinationContainerNameForAudioContent(String destinationContainerNameForAudioContent) {
+        this.destinationContainerNameForAudioContent = destinationContainerNameForAudioContent;
+    }
+
     public void setCloudFileService(CloudFileService cloudFileService) {
         this.cloudFileService = cloudFileService;
     }
@@ -173,7 +183,7 @@ public class FileService {
     public InputStream getFileStreamForMedia(Media media, String mediaId, String resolution, String mediaFileName, FileType fileType, User user) {
         logEvents(media, fileType, user);
         try {
-            return cloudFileService.getInputStream(mediaFileName);
+            return cloudFileService.getInputStream(destinationContainerNameForAudioContent, mediaFileName);
         } catch (FilesNotFoundException e) {
             LOGGER.error("ERROR download from cloud [{}]. Try to find on local storage", mediaFileName);
             File file = getFileFromLocalStorage(mediaId, fileType, resolution, mediaFileName);

@@ -153,12 +153,12 @@ public class CloudFileServiceImpl implements CloudFileService {
     }
 
     @Override
-    public InputStream getInputStream(String fileName) throws  FilesNotFoundException{
-        LOGGER.info("get InputStream for file file in container [] by fileName", containerName, fileName);
+    public InputStream getInputStream(String destinationContainer, String fileName) throws  FilesNotFoundException{
+        LOGGER.info("get InputStream for file file in container [] by fileName", destinationContainer, fileName);
         Assert.hasText(fileName);
         login();
         try {
-            return filesClient.getObjectAsStream(containerName, fileName);
+            return filesClient.getObjectAsStream(destinationContainer, fileName);
         }
         catch (FilesNotFoundException e) {
             LOGGER.error(e.getMessage(), e);

@@ -27,8 +27,8 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
     @Resource
     private CloudFileService cloudFileService;
 
-    @Value("${cloudFile.containerName}")
-    private String containerName;
+    @Value("${cloudFile.audioContentContainerName}")
+    private String audioContentContainerName;
 
 
     @Test
@@ -211,7 +211,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         String mediaId = "US-UM7-11-00061";
 
         byte[] fileContent = Files.toByteArray(file);
-        cloudFileService.uploadFile(file, file.getName(), MediaType.IMAGE_JPEG_VALUE, containerName);
+        cloudFileService.uploadFile(file, file.getName(), MediaType.IMAGE_JPEG_VALUE, audioContentContainerName);
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
                         .param("USER_NAME", userName)
