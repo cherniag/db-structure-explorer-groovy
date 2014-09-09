@@ -33,4 +33,16 @@ public class ResolutionRepositoryTest extends AbstractRepositoryIT {
 
         assertEquals(UserRegInfo.DeviceType.IOS, sorted.get(3).getDeviceType());
     }
+
+    @Test
+    public void testFind() throws Exception {
+        resolutionRepository.saveAndFlush(new Resolution(UserRegInfo.DeviceType.ANDROID, 40, 40));
+        Resolution r = resolutionRepository.saveAndFlush(new Resolution(UserRegInfo.DeviceType.ANDROID, 50, 50));
+        resolutionRepository.saveAndFlush(new Resolution(UserRegInfo.DeviceType.ANDROID, 70, 70));
+        resolutionRepository.saveAndFlush(new Resolution(UserRegInfo.DeviceType.IOS, 10, 10));
+
+        Resolution found = resolutionRepository.find(UserRegInfo.DeviceType.ANDROID, 50, 50);
+
+        assertEquals(r, found);
+    }
 }

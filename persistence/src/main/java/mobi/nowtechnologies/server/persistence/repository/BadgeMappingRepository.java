@@ -32,6 +32,9 @@ public interface BadgeMappingRepository extends JpaRepository<BadgeMapping, Long
     @Query(value="delete from BadgeMapping b where b.resolution=:resolution")
     void deleteByResolution(@Param("resolution") Resolution resolution);
 
-    @Query(value="select b from BadgeMapping b where b.community=:community and b.resolution.deviceType=:deviceType and b.originalFilenameAlias.id=:badgeId order by b.resolution.deviceType, b.resolution.width, b.resolution.height desc")
-    List<BadgeMapping> findByCommunityAndDeviceType(@Param("community") Community community, @Param("deviceType") String deviceType, @Param("badgeId") long badgeId);
+    @Query(value="select b from BadgeMapping b where b.community=:community and b.originalFilenameAlias.id=:badgeId and (b.resolution=:resolution or b.resolution is null) order by b.resolution desc")
+    List<BadgeMapping> findByCommunityResolutionAndFilenameId(@Param("community") Community community, @Param("resolution") Resolution resolution, @Param("badgeId") long badgeId);
+
+    @Query(value="select b from BadgeMapping b where b.community=:community and b.originalFilenameAlias.id=:badgeId and b.resolution is null order by b.resolution desc")
+    List<BadgeMapping> findByCommunityAndFilenameId(@Param("community") Community community, @Param("badgeId") long badgeId);
 }

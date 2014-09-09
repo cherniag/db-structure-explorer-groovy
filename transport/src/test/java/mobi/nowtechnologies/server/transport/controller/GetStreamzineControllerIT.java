@@ -26,6 +26,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+@Transactional
 public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     @Resource
     private StreamzineUpdateService streamzineUpdateService;
@@ -55,6 +56,22 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     private FilenameAliasRepository filenameAliasRepository;
 
     @Test
+    public void testGetStreamzineForAnyMQUser_400_forBadResolution() throws Exception {
+        Date updateDate = new Date(System.currentTimeMillis() + 1000L);
+
+        // parameters
+        String userName = "test@ukr.net";
+        String deviceUID = "b88106713409e92622461a876abcd74b1111";
+        String apiVersion = "6.1";
+        String communityUrl = "some_unknown_community";
+        String timestamp = "" + updateDate.getTime();
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = createTimestampToken(storedToken, timestamp);
+
+        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "300a400").andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void testGetStreamzineForAnyMQUser_404_forNotAvailableCommunity() throws Exception {
         Date updateDate = new Date(System.currentTimeMillis() + 1000L);
 
@@ -68,7 +85,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String userToken = createTimestampToken(storedToken, timestamp);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true).andExpect(status().isNotFound());
+        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "320x800").andExpect(status().isNotFound());
     }
 
     @Test
@@ -97,21 +114,23 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
         FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
-        filenameAliasRepository.saveAndFlush(originalUploadedFile);
+        originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
+
+        prepareDefaultBadge(communityUrl, originalUploadedFile);
+        FilenameAlias filenameAlias1 = prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
+        FilenameAlias filenameAlias2 = prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
 
         Community community = communityRepository.findByName(communityUrl);
         prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, originalUploadedFile, community, user);
 
-        prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
-        prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
 
         Thread.sleep(2500L);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false).andExpect(status().isOk()).andDo(print());
+        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false, "60x60").andExpect(status().isOk()).andDo(print());
 
         // check json format and the correct order of the blocks
-        ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true).andExpect(status().isOk()).andDo(print());
+        ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60").andExpect(status().isOk()).andDo(print());
 
         resultActions.andDo(print())
                 // check the orders
@@ -129,14 +148,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
                 .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
-                        // .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo[1]", is(GrantedToType.FREETRIAL.name())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
                         // check badges
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[0].width", is(50)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[0].height", is(50)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[1].height", is(60)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon[1].height", is(60)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
@@ -157,7 +172,13 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
     }
 
-    private void prepareBadge(String communityUrl, String deviceType, String fileName, int width, int height, FilenameAlias originalUploadedFile) {
+    private void prepareDefaultBadge(String communityUrl, FilenameAlias originalUploadedFile) {
+        Community commmunity = communityRepository.findByName(communityUrl);
+        BadgeMapping mapping = BadgeMapping.general(commmunity, originalUploadedFile);
+        badgeMappingRepository.saveAndFlush(mapping);
+    }
+
+    private FilenameAlias prepareBadge(String communityUrl, String deviceType, String fileName, int width, int height, FilenameAlias originalUploadedFile) {
         Community commmunity = communityRepository.findByName(communityUrl);
         Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
 
@@ -165,9 +186,11 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, 5, 5).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
 
         badgeMappingRepository.saveAndFlush(mapping);
+
+        return mapping.getFilenameAlias();
     }
 
-    private ResultActions doRequest(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson) throws Exception {
+    private ResultActions doRequest(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
         final String formatSpecific = (isJson) ? ".json" : "";
 
         return mockMvc.perform(
@@ -179,7 +202,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-                        .param("WIDTHXHEIGHT", "320x800")
+                        .param("WIDTHXHEIGHT", resolution)
         );
     }
 
@@ -338,6 +361,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         .param("DEVICE_UID", deviceUID)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
+                        .param("WIDTHXHEIGHT", "1x1")
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isNotFound());
     }
