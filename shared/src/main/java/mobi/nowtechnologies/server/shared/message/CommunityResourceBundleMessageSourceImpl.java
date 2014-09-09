@@ -34,8 +34,7 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
     public boolean readBoolean(String community, String code, boolean defaults) {
         try {
             String booleanString = trim(getMessage(community, code, null, String.valueOf(defaults), null));
-            boolean booleanValue = Boolean.parseBoolean(booleanString);
-            return booleanValue;
+            return  Boolean.parseBoolean(booleanString);
         } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             return defaults;
