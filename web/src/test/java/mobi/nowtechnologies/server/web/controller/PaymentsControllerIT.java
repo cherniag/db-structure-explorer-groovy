@@ -111,8 +111,8 @@ public class PaymentsControllerIT extends AbstractWebControllerIT{
 
 
     @Test
-    public void testPaymentPageUnavailableForVFNZ() throws Exception {
-        String communityUrl = "vf_nz";
+    public void testPaymentPageUnavailableForMTV1() throws Exception {
+        String communityUrl = "mtv1";
         SecurityContextHolder.setContext(createSecurityContext(110));
         mockMvc.perform(get("/payments.html") .cookie(new Cookie[]{new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).
                 andExpect(view().name("payments_coming_soon"));
