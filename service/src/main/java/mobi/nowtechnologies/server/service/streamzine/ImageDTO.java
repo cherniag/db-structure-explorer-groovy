@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.dto;
+package mobi.nowtechnologies.server.service.streamzine;
 
 /**
  * Created by oar on 2/25/14.

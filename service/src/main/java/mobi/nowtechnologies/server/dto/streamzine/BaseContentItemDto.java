@@ -7,8 +7,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.ArrayList;
-import java.util.List;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class BaseContentItemDto {
@@ -30,7 +28,7 @@ public abstract class BaseContentItemDto {
 
     @XmlElement(name = "badge_icon")
     @JsonProperty(value = "badge_icon")
-    private List<BadgeInfo> badgeIcon = new ArrayList<BadgeInfo>();
+    private String badgeIcon;
 
     @XmlElement(name = "link_type")
     @JsonProperty(value = "link_type")
@@ -72,11 +70,11 @@ public abstract class BaseContentItemDto {
         return image;
     }
 
-    public List<BadgeInfo> getBadgeIcon() {
+    public String getBadgeIcon() {
         return badgeIcon;
     }
 
-    public void setBadgeIcon(List<BadgeInfo> badgeIcon) {
+    public void setBadgeIcon(String badgeIcon) {
         this.badgeIcon = badgeIcon;
     }
 
