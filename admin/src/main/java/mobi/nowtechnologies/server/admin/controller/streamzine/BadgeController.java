@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import mobi.nowtechnologies.server.admin.validator.BadgeValidator;
-import mobi.nowtechnologies.server.dto.ImageDTO;
+import mobi.nowtechnologies.server.service.streamzine.ImageDTO;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeResolutionDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgesDtoAsm;
@@ -17,7 +17,7 @@ import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
-import mobi.nowtechnologies.server.service.CloudFileImagesService;
+import mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;

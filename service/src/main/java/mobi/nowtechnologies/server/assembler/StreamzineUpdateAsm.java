@@ -5,9 +5,8 @@ import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.dto.streamzine.*;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
@@ -15,9 +14,10 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPo
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
+import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +31,8 @@ public class StreamzineUpdateAsm {
     private DeepLinkInfoService deepLinkInfoService;
     private BadgeMappingRepository badgeMappingRepository;
     private CommunityRepository communityRepository;
+    private ResolutionRepository resolutionRepository;
+    private BadgesService badgesService;
 
     public void setDeepLinkUrlFactory(DeepLinkUrlFactory deepLinkUrlFactory) {
         this.deepLinkUrlFactory = deepLinkUrlFactory;
@@ -44,15 +46,22 @@ public class StreamzineUpdateAsm {
     public void setCommunityRepository(CommunityRepository communityRepository) {
         this.communityRepository = communityRepository;
     }
+    public void setResolutionRepository(ResolutionRepository resolutionRepository) {
+        this.resolutionRepository = resolutionRepository;
+    }
+
+    public void setBadgesService(BadgesService badgesService) {
+        this.badgesService = badgesService;
+    }
 
     @Transactional(readOnly = true)
-    public StreamzineUpdateDto convertOne(Update update, String community, String deviceType) {
+    public StreamzineUpdateDto convertOne(Update update, String community, Resolution resolution) {
         StreamzineUpdateDto dto = new StreamzineUpdateDto(update.getDate().getTime());
 
         List<Block> blocks = update.getIncludedBlocks();
         Collections.sort(blocks, getComparator());
         for (Block block : blocks) {
-            BaseContentItemDto contentItemDto = convertToContentItemDto(block, community, deviceType);
+            BaseContentItemDto contentItemDto = convertToContentItemDto(block, community, resolution);
 
             dto.addContentItem(contentItemDto);
             dto.addVisualBlock(convertToVisualBlock(block, contentItemDto));
@@ -61,7 +70,7 @@ public class StreamzineUpdateAsm {
         return dto;
     }
 
-    private BaseContentItemDto convertToContentItemDto(Block block, String community, String deviceType) {
+    private BaseContentItemDto convertToContentItemDto(Block block, String community, Resolution resolution) {
         Community c = communityRepository.findByName(community);
 
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
@@ -71,20 +80,20 @@ public class StreamzineUpdateAsm {
             IdListItemDto dto = new IdListItemDto(generateId(block), deeplinkType);
             dto.setLinkValue(deepLinkUrlFactory.create((ManualCompilationDeeplinkInfo) deeplinkInfo));
 
-            assignValuesToItemDto(dto, block, c, deviceType);
+            assignValuesToItemDto(dto, block, c, resolution);
 
             return dto;
         } else {
             DeeplinkValueItemDto dto = new DeeplinkValueItemDto(generateId(block), deeplinkType);
             dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo, community));
 
-            assignValuesToItemDto(dto, block, c, deviceType);
+            assignValuesToItemDto(dto, block, c, resolution);
 
             return dto;
         }
     }
 
-    private void assignValuesToItemDto(BaseContentItemDto dto, Block block, Community community, String deviceType) {
+    private void assignValuesToItemDto(BaseContentItemDto dto, Block block, Community community, Resolution resolution) {
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
         ShapeType shapeType = block.getShapeType();
         boolean allowedToAssignBadge =
@@ -92,8 +101,7 @@ public class StreamzineUpdateAsm {
 
         dto.setImage(block.getCoverUrl());
         if(allowedToAssignBadge && block.getBadgeId() != null) {
-            List<BadgeMapping> badgesInfo = badgeMappingRepository.findByCommunityAndDeviceType(community, deviceType, block.getBadgeId());
-            dto.setBadgeIcon(createBadgeInfo(badgesInfo));
+            dto.setBadgeIcon(badgesService.getBadgeFileName(block.getBadgeId(), community, resolution));
         }
         if(hasTitle(shapeType) && !isEmpty(block.getTitle())){
             dto.setTitle(block.getTitle());
@@ -101,19 +109,6 @@ public class StreamzineUpdateAsm {
         if(hasSubTitle(shapeType) && !isEmpty(block.getSubTitle())) {
             dto.setSubTitle(block.getSubTitle());
         }
-    }
-
-    private List<BadgeInfo> createBadgeInfo(List<BadgeMapping> mappings) {
-        List<BadgeInfo> badgeInfo = new ArrayList<BadgeInfo>();
-        for (BadgeMapping mapping : mappings) {
-            // omit if uesr did not assigned the picture for this resolution
-            // but only assigned the size (resolution) of the picture
-            FilenameAlias filenameAlias = mapping.getFilenameAlias();
-            if(filenameAlias != null) {
-                badgeInfo.add(new BadgeInfo(mapping.getFilenameAlias().getFileName(), mapping.getResolution().getWidth(), mapping.getResolution().getHeight()));
-            }
-        }
-        return badgeInfo;
     }
 
     private DeeplinkType getDeeplinkType(Block block) {

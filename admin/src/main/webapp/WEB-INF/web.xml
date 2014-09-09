@@ -65,8 +65,6 @@
   <servlet-mapping>
     <servlet-name>admin</servlet-name>
     <url-pattern>/*</url-pattern>
-    <url-pattern>/VERSION</url-pattern>
-    <url-pattern>/version</url-pattern>
   </servlet-mapping>
   <error-page>
     <error-code>500</error-code>
