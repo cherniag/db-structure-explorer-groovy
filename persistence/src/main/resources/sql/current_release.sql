@@ -66,7 +66,7 @@ UPDATE
       ON b.id = dml.block_id JOIN sz_update u
       ON u.id = b.update_id JOIN chart_types ct
       ON ct.id = dml.chart_type JOIN tb_charts c
-      ON c.type = ct.name JOIN community_charts cc
+      ON c.type = ct.name COLLATE utf8_unicode_ci JOIN community_charts cc
       ON cc.chart_id = c.i
          AND cc.community_id = u.community_id
 SET
