@@ -94,6 +94,11 @@ if(Streamzine.Presenter.Editor == undefined) {
                 // in case of internal ad
                 $('#' + _id + '_valueAction').removeClass('streamzine-error-field');
                 $('#' + _id + '_valuePage').removeClass('streamzine-error-field');
+
+                // in case of external ad
+                $('#' + _id + '_valueLink').removeClass('streamzine-error-field');
+                $('#' + _id + '_valueOpener').removeClass('streamzine-error-field');
+
             }
 
             this.showError = function(name, block) {
@@ -247,8 +252,11 @@ if(Streamzine.Presenter.Editor == undefined) {
             PROMOTIONAL: {
                 EXTERNAL_AD: new Widget(
                     '<div><a href="javascript:;" id="{id}_valuePicker" onclick="Events.fire(\'VALUE_PICKING\', \'value\')">Select External Link</a></div>' +
-                    '<div id="{id}_value" class="sz-editor-value"></div>' +
-                    '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
+                        '<div>Link</div>' +
+                        '<div id="{id}_valueLink" class="sz-editor-value"></div>' +
+                        '<div>Open</div>' +
+                        '<div id="{id}_valueOpener" class="sz-editor-value"></div>' +
+                        '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
@@ -257,11 +265,13 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<img  id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')" />' +
                     '</div>', {
                         preProcess: function(incoming) {
+                            var delimIndex = incoming.value.indexOf('#');
                             return {
-                                value: incoming.value,
+
+                                valueLink: (delimIndex < 0) ? incoming.value : incoming.value.substring(0, delimIndex),
+                                valueOpener: (delimIndex > 0) ? editorRef.externalAdPicker.opener[incoming.value.substr(delimIndex + 1)] : '',
                                 title: incoming.title,
                                 subTitle: incoming.subTitle,
-                                value: incoming.value,
                                 coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
                                 badgeId: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeFileNameAlias) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' )
                             }

@@ -241,7 +241,7 @@ public class StreamzineController {
         model.addObject("updatePublishDates", streamzineUpdateService.getUpdatePublishDates(selectedDate, community));
         model.addObject("badgeMappingRules", rulesInfoAsm.getBadgeMappingInfo());
         model.addObject("titlesMappingRules", rulesInfoAsm.getTitlesMappingInfo());
-
+        model.addObject("opener", rulesInfoAsm.buildTypesForOpener());
         return model;
     }
 

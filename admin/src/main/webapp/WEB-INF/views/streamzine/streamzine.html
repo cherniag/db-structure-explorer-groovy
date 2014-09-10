@@ -563,6 +563,9 @@
                                 <button class="btn btn-primary s_btn" type="button">
                                     Check
                                 </button>
+                                Open
+                                <select id="opener" style="margin-top: 9px">
+                                </select>
                             </div>
 
                             <div data-header="modal-dialog-header" class="streamzine-url-picker-checked"></div>
@@ -620,6 +623,7 @@
 
             var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
             var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
+            var opener = /*[[${opener}]]*/'';
 
 
             Streamzine.Presenter.Mapping.init(contentTypeMapping);
@@ -649,13 +653,11 @@
         </script>
 
         <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
-        Streamzine.Presenter.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
-
+                Streamzine.Presenter.ContextPath = /*[[${#httpServletRequest.getContextPath()}]]*/'';
         $(function() {
             var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
             var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
             var updatePublishDates = /*[[${updatePublishDates}]]*/'';
-
             Streamzine.Presenter.init(selectedPublishDate, selectedPublishDateString, updatePublishDates);
         });
         /*]]>*/</script>
