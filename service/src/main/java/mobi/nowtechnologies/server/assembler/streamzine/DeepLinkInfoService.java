@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -212,11 +213,22 @@ public class DeepLinkInfoService {
         Object dataValue = data.getValue() != null ? data.getValue() : "";
         ApplicationPageData applicationPageData = new ApplicationPageData(dataValue.toString().trim());
 
-        NotificationDeeplinkInfo notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl());
-        if (!applicationPageData.getAction().isEmpty()) {
-            notificationDeeplinkInfo.setAction(applicationPageData.getAction());
+        NotificationDeeplinkInfo notificationDeeplinkInfo = null;
+        switch (linkLocationType) {
+            case INTERNAL_AD:
+                notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl());
+                if (!applicationPageData.getAction().isEmpty()) {
+                    notificationDeeplinkInfo.setAction(applicationPageData.getAction());
+                }
+                break;
+            case EXTERNAL_AD:
+                Opener opener = Opener.BROWSER;
+                if (!applicationPageData.getAction().isEmpty()) {
+                    opener = Opener.valueOf(applicationPageData.getAction());
+                }
+                notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl(), opener);
+                break;
         }
-
         return notificationDeeplinkInfo;
     }
 
@@ -232,6 +244,11 @@ public class DeepLinkInfoService {
         public ApplicationPageData(String url, String action) {
             this.rawValues = new String[]{url, action};
 
+            Assert.isTrue(rawValues.length == 2);
+        }
+
+        public ApplicationPageData(String url, Opener opener) {
+            this.rawValues = new String[]{url, opener.name()};
             Assert.isTrue(rawValues.length == 2);
         }
 

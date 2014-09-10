@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSub
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -204,11 +205,11 @@ public class UpdateValidator extends BaseValidator {
 
         if(blockDto.getBadgeId() != null) {
             // check allowance
-            boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
+        boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
             if(!allowed) {
-                String shapeType = getShapeTypeTitle(blockDto);
-                String contentType = getContentTypeTitle(blockDto);
-                String subTypeValue = getSubTypeTitle(blockDto);
+            String shapeType = getShapeTypeTitle(blockDto);
+            String contentType = getContentTypeTitle(blockDto);
+            String subTypeValue = getSubTypeTitle(blockDto);
 
                 rejectField("streamzine.error.badge.notallowed", new Object[]{shapeType, contentType, subTypeValue}, errors, "badgeId");
             }
@@ -262,14 +263,27 @@ public class UpdateValidator extends BaseValidator {
         }
 
         if(linkLocationType == LinkLocationType.EXTERNAL_AD) {
+            String url = "";
             try {
-                URI uri = URI.create(value);
+                url = blockDto.getValueLink();
+                URI uri = URI.create(url);
                 Assert.notNull(uri.getScheme());
                 Assert.notNull(uri.getHost());
             } catch (IllegalArgumentException e) {
-                Object[] args = {value};
-                rejectValue("streamzine.error.notvalid.url", args, errors);
+                Object[] args = {url};
+                rejectField("streamzine.error.notvalid.url", args, errors, "valueLink");
             }
+
+
+            String openerAsString = "";
+            try {
+                openerAsString = blockDto.getValueOpener();
+                Opener.valueOf(openerAsString);
+            } catch (IllegalArgumentException e) {
+                Object[] args = {openerAsString};
+                rejectField("streamzine.error.notvalid.opener", args, errors, "valueOpener");
+            }
+
             return;
         }
 
