@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
@@ -252,6 +253,48 @@ public class UpdateValidatorTest {
 
         verify(errors).rejectValue("title", "streamzine.error.title.too.long", null);
         verify(errors).rejectValue("subTitle", "streamzine.error.subtitle.too.long", null);
+    }
+
+
+    @Test
+    public void testValidatePromotionalExternalAdWhenOpenerIsInvalid() throws Exception {
+        UpdateIncomingDto dto = new UpdateIncomingDto();
+        dto.getBlocks().add(blockDto);
+
+        // allowed
+        when(blockDto.provideKeyString()).thenReturn(LinkLocationType.EXTERNAL_AD.name());
+        when(blockDto.getValueLink()).thenReturn("http://www.google.com.ua");
+        when(blockDto.getValueOpener()).thenReturn("BOWER");
+
+        when(blockDto.isIncluded()).thenReturn(Boolean.TRUE);
+        when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
+        when(blockDto.getKey()).thenReturn(LinkLocationType.EXTERNAL_AD.name());
+        when(blockDto.getContentType()).thenReturn(ContentType.PROMOTIONAL);
+
+        updateValidator.validate(dto, errors);
+
+        verify(errors).rejectValue("valueOpener", "streamzine.error.notvalid.opener", null);
+    }
+
+
+    @Test
+    public void testValidatePromotionalExternalAdWhenUrlIsInvalid() throws Exception {
+        UpdateIncomingDto dto = new UpdateIncomingDto();
+        dto.getBlocks().add(blockDto);
+
+        // allowed
+        when(blockDto.provideKeyString()).thenReturn(LinkLocationType.EXTERNAL_AD.name());
+        when(blockDto.getValueLink()).thenReturn("http://");
+        when(blockDto.getValueOpener()).thenReturn("BROWSER");
+
+        when(blockDto.isIncluded()).thenReturn(Boolean.TRUE);
+        when(blockDto.getShapeType()).thenReturn(ShapeType.WIDE);
+        when(blockDto.getKey()).thenReturn(LinkLocationType.EXTERNAL_AD.name());
+        when(blockDto.getContentType()).thenReturn(ContentType.PROMOTIONAL);
+
+        updateValidator.validate(dto, errors);
+
+        verify(errors).rejectValue("valueLink", "streamzine.error.notvalid.url", null);
     }
 
     private UpdateIncomingDto createUpdateIncomingDto(String... userNames) {

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
@@ -9,6 +10,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Comparator;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVip {
     public static final Comparator<OrdinalBlockDto> COMPARATOR = new Comparator<OrdinalBlockDto>() {
@@ -19,7 +22,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     };
 
     @JsonIgnore
-    @JsonProperty(value = "title")
+    @JsonProperty(value = "id")
     private String id;
 
     @JsonProperty(value = "title")
@@ -60,6 +63,9 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
     @JsonIgnore
     private FileNameAliasDto badgeFileNameAlias;
+
+
+    private DeepLinkInfoService.ApplicationPageData applicationPageData;
 
     public String getTitle() {
         return title;
@@ -197,5 +203,23 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
                 .append("contentTypeTitle", contentTypeTitle)
                 .append("badgeId", badgeId)
                 .toString();
+    }
+
+
+    private DeepLinkInfoService.ApplicationPageData getApplicationPageData(){
+        if (applicationPageData == null){
+            applicationPageData = new DeepLinkInfoService.ApplicationPageData(isEmpty(value) ? "": value);
+        }
+        return  applicationPageData;
+    }
+
+    @JsonIgnore
+    public String getValueOpener(){
+        return getApplicationPageData().getAction();
+    }
+
+    @JsonIgnore
+    public String getValueLink(){
+        return getApplicationPageData().getUrl();
     }
 }

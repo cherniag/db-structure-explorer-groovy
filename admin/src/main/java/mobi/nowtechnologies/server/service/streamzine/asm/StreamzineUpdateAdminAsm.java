@@ -280,8 +280,21 @@ public class StreamzineUpdateAdminAsm {
     }
 
     private DeepLinkInfoService.ApplicationPageData createApplicationPageData(InformationDeeplinkInfo i) {
-        final String action = i.getAction();
+        switch (i.getLinkType()) {
+            case INTERNAL_AD:
+                return buildForInternalAd(i);
+            case EXTERNAL_AD:
+                return buildForExternalAd(i);
+        }
+        throw new UnsupportedOperationException("Link type is not defined");
+    }
 
+    private DeepLinkInfoService.ApplicationPageData buildForExternalAd(InformationDeeplinkInfo i) {
+            return new DeepLinkInfoService.ApplicationPageData(i.getUrl(), i.getOpener());
+    }
+
+    private DeepLinkInfoService.ApplicationPageData buildForInternalAd(InformationDeeplinkInfo i) {
+        final String action = i.getAction();
         if(action == null) {
             return new DeepLinkInfoService.ApplicationPageData(i.getUrl());
         } else {
