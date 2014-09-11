@@ -48,3 +48,8 @@ CREATE TABLE `sz_badge_mapping` (
 update sz_block set badge_url=null;
 alter table sz_block change badge_url badge_filename_id bigint(20);
 alter table sz_block add CONSTRAINT `badge_file_id_fk` FOREIGN KEY (`badge_filename_id`) REFERENCES `sz_filename_alias` (`id`);
+
+ALTER TABLE sz_deeplink_promotional ADD COLUMN opener varchar(15);
+
+update sz_deeplink_promotional
+set opener = 'IN_APP' where link_type = 'EXTERNAL_AD';
