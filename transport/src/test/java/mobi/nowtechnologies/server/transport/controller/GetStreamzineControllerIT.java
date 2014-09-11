@@ -20,7 +20,6 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permissi
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.IsCollectionContaining;
@@ -109,7 +108,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final String externalLink = "http://example.com";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
-        final ChartType chartType = ChartType.BASIC_CHART;
+        final int chartId = 6;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
@@ -122,7 +121,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         FilenameAlias filenameAlias2 = prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
 
         Community community = communityRepository.findByName(communityUrl);
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, originalUploadedFile, community, user);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
 
 
         Thread.sleep(2500L);
@@ -164,7 +163,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?id=" + ChartType.BASIC_CHART.name())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?id=" + chartId)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?id=" + existingMedia.getIsrcTrackId())))
@@ -227,12 +226,12 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final String externalLink = "http://example.com";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
-        final ChartType chartType = ChartType.BASIC_CHART;
+        final int chartId = 6;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
         Community community = communityRepository.findByName(communityUrl);
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user);
 
         Thread.sleep(2500L);
 
@@ -251,7 +250,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         user = userRepository.findOne(userName, communityUrl);
         final Date updateDateForSpecificUser = new Date(System.currentTimeMillis() + 1000L);
-        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user);
+        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user);
 
         Thread.sleep(2000L);
 
@@ -291,13 +290,13 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final String externalLink = "http://example.com";
         final Message newsMessage = createNewsMessage();
         final Date publishDate = new Date();
-        final ChartType chartType = ChartType.BASIC_CHART;
+        final int chartId = 6;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         Community community = communityRepository.findByName(communityUrl);
 
-        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user1, user2);
-        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartType, existingMedia, null, community, user1, user2);
+        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
+        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
 
         Thread.sleep(2500L);
 
@@ -340,6 +339,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
     }
+
     @Test
     public void testGetStreamzineForO2User_Fail() throws Exception {
         Date now = new Date();
@@ -367,15 +367,15 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 andExpect(status().isNotFound());
     }
 
-    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, FilenameAlias filenameAlias, Community community, User... users) {
+    private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, int chartId, Media track, FilenameAlias filenameAlias, Community community, User... users) {
         Update update = streamzineUpdateService.create(updateDate, community);
 
         // simulate adding blocks
-        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartType, track, filenameAlias, community, users);
+        Update incomingWithBlocks = createWithBlocks(externalLink, publishDate, newsMessage, chartId, track, filenameAlias, community, users);
         streamzineUpdateService.update(update.getId(), incomingWithBlocks);
     }
 
-    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, ChartType chartType, Media track, FilenameAlias filenameAlias, Community community, User... users) {
+    private Update createWithBlocks(String externalLink, Date publishDate, Message newsMessage, int chartId, Media track, FilenameAlias filenameAlias, Community community, User... users) {
         Update u = new Update(DateUtils.addDays(new Date(), 1), community);
         //
         // Not included block
@@ -394,7 +394,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         //
         // Added mixed positions to test that values are added according to positions: 5 and 6
         //
-        u.addBlock(newBlock(7, ShapeType.SLIM_BANNER, createMusicPlaylistDeeplink(chartType), null));
+        u.addBlock(newBlock(7, ShapeType.SLIM_BANNER, createMusicPlaylistDeeplink(chartId), null));
         u.addBlock(newBlock(8, ShapeType.SLIM_BANNER, createManualCompilationDeeplink(track), null));
         u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track), null));
 
@@ -449,8 +449,8 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         return messageRepository.saveAndFlush(newsStory);
     }
 
-    private DeeplinkInfo createMusicPlaylistDeeplink(ChartType chartType) {
-        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartType);
+    private DeeplinkInfo createMusicPlaylistDeeplink(int chartDetailsId) {
+        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartDetailsId);
         return d;
     }
 

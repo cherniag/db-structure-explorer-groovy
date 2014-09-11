@@ -36,8 +36,6 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 /**
- * FileService
- *
  * @author Alexander Kolpakov (akolpakov)
  * @author Maksym Chernolevskyi (maksym)
  */

@@ -878,7 +878,7 @@ if(Pickers == undefined) {
             //
             // Construction
             //
-            var _rowTemplate = '<li class="streamzine-playlist-picker-item" id="media_playlist_{chartType}"><img src="{imageFileUrl}" height="50px"/> {name} <span style="float: right;">{tracksCount}</span> </li>';
+            var _rowTemplate = '<li class="streamzine-playlist-picker-item" id="media_playlist_{chartId}"><img src="{imageFileUrl}" height="50px"/> {name} <span style="float: right;">{tracksCount}</span> </li>';
             // select
             $('#' + dialogId + ' .table').selectable({
                 selected: function( event, ui ) {
@@ -889,11 +889,7 @@ if(Pickers == undefined) {
                     // restore dto from id: _data
                     for(var j=0; j<_data.length;j++) {
                         var selected = _data[j];
-                        if(selected.chartType == restoredId) {
-                            selected.chartType = {
-                                '$type': 'ChartType',
-                                '$name': selected.chartType
-                            };
+                        if(selected.chartId == restoredId) {
                             _genericDialog.setValue(selected);
                             break;
                         }
@@ -906,7 +902,7 @@ if(Pickers == undefined) {
             //
             function _restoreData(input, restoredId) {
                 for(var j=0; j<input.length;j++) {
-                    if(input[j].chartType == restoredId) {
+                    if(input[j].chartId == restoredId) {
                         return input[j];
                     }
                 }
@@ -918,7 +914,7 @@ if(Pickers == undefined) {
                 for(var i=0; i < data.length; i++) {
                     var e = data[i];
                     d.push({
-                        chartType: e.chartType,
+                        chartId: e.chartId,
                         imageFileUrl: (e.imageFileName) ? Streamzine.Presenter.Editor.imagesBaseUrl + '/' + e.imageFileName : '',
                         imageFileName: e.imageFileName,
                         name: e.name,
@@ -993,7 +989,7 @@ if(Pickers == undefined) {
                 $('#mediaPlaylistsContainerId .table').html(html);
 
                 if(_genericDialog.getValue()) {
-                    $('#' + dialogId + ' li#media_playlist_' + _genericDialog.getValue().chartType.$name).addClass('ui-selected');
+                    $('#' + dialogId + ' li#media_playlist_' + _genericDialog.getValue().chartId).addClass('ui-selected');
                 }
             }
 

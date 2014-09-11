@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class DeepLinkInfoService {
@@ -124,17 +125,17 @@ public class DeepLinkInfoService {
         String value = data.getValue() != null ? data.getValue().trim() : "";
 
         if (musicType == MusicType.PLAYLIST) {
-            ChartType chartType = null;
+            Integer chartId = null;
             if (!value.isEmpty()) {
-                chartType = ChartType.valueOf(value);
+                chartId = parseInt(value);
             }
-            return new MusicPlayListDeeplinkInfo(chartType);
+            return new MusicPlayListDeeplinkInfo(chartId);
         }
 
         if (musicType == MusicType.TRACK) {
             Media restored = null;
             if (!value.isEmpty()) {
-                final int id = Integer.parseInt(value);
+                final int id = parseInt(value);
                 restored = mediaRepository.findOne(id);
                 Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
             }
@@ -189,7 +190,7 @@ public class DeepLinkInfoService {
 
     private Message calculateMessage(DeeplinkInfoData data) {
         if (data.getValue() != null && !isEmpty(data.getValue().toString())) {
-            int id = Integer.parseInt(data.getValue().toString().trim());
+            int id = parseInt(data.getValue().toString().trim());
             return messageRepository.findOne(id);
         }
         return  null;
