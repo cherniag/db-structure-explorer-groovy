@@ -570,6 +570,9 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="promotionProvider" ref="provider.Promotion"/>
     </bean>
 
+
+    <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
+
 	<import resource="payment.xml" />
 
 	<import resource="smpp-stub.xml" />

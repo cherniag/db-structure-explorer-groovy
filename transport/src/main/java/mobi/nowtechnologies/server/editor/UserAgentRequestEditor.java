@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.editor;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.service.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -35,8 +37,8 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
     private static class UserAgentRequestImpl implements UserAgentRequest {
         String applicationName;
         ClientVersionImpl version;
-        String platform;
-        String community;
+        DeviceType platform;
+        Community community;
 
         @Override
         public String getApplicationName() {
@@ -49,12 +51,12 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
         }
 
         @Override
-        public String getPlatform() {
+        public DeviceType getPlatform() {
             return platform;
         }
 
         @Override
-        public String getCommunity() {
+        public Community getCommunity() {
             return community;
         }
     }
