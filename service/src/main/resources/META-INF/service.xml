@@ -572,6 +572,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 
     <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
+    <bean id="configuration.UserAgentRequestEditor" class="mobi.nowtechnologies.server.editor.UserAgentRequestEditor"/>
 
 	<import resource="payment.xml" />
 

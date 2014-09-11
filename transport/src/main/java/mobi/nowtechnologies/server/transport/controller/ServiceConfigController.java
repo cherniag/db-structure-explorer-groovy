@@ -26,13 +26,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class ServiceConfigController extends CommonController {
     @Resource
     private VersionCheckService versionCheckService;
-
     @Resource
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    @Resource
+    private UserAgentRequestEditor userAgentRequestEditor;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(UserAgentRequest.class, new UserAgentRequestEditor());
+        binder.registerCustomEditor(UserAgentRequest.class, userAgentRequestEditor);
     }
 
     @RequestMapping(method = GET,
