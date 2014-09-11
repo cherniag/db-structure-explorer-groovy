@@ -55,7 +55,7 @@ body {
 }
 
 .holding_page_close_button_small button {
-    background: url(../imgs/icon_close.png) no-repeat;
+    background: url(../imgs/icon_close.png) no-repeat center;
     background-size: 100% auto;
     width: 100%;
     height: 100%;
@@ -64,28 +64,25 @@ body {
 }
 
 .holding_page_logo {
+    background: url(../imgs/logo_holding.png) no-repeat center;
+    background-size: 100% auto;
     clear: left;
     margin-top: 10%;
     margin-left: auto;
     margin-right: auto;
-    width: 28%;
+    width: 31%;
+    height: 4%;
     display: block;
 }
 
-.holding_page_logo img{
-    max-width: 100%;
-}
-
 .holding_page_img {
+    background: url(../imgs/img_holding.png) no-repeat center;
+    background-size: 100% auto;
     margin-top: 13%;
     margin-left: auto;
     margin-right: auto;
     width: 66%;
-    max-width: 412px;
-}
-
-.holding_page_img img{
-    max-width: 100%;
+    height: 27%;
 }
 
 .holding_page_relax {
@@ -134,8 +131,8 @@ body {
     .holding_page_close_button_small {
         margin-top: 45px;
         margin-left: 45px;
-        width: 30px;
-        height: 30px;
+        width: 34px;
+        height: 34px;
     }
 
     .holding_page_relax {
@@ -152,6 +149,30 @@ body {
 
     .holding_page_close_button_big button{
         border-radius: 65px;
+    }
+}
+
+@media all and (min-width: 720px) {
+
+    .holding_page_close_button_small {
+        background: url(../imgs/icon_close_big.png) no-repeat center;
+        background-size: 100% auto;
+    }
+
+    .holding_page_logo {
+        background: url(../imgs/logo_holding_big.png) no-repeat center;
+        background-size: 100% auto;
+        width: 29%;
+    }
+
+    .holding_page_img {
+        background: url(../imgs/img_holding_big.png) no-repeat center;
+        background-size: 100% auto;
+        width: 60%;
+    }
+
+    .holding_page_close_button_big {
+        margin: 30% 9% 1%;
     }
 }
 
@@ -180,6 +201,7 @@ body {
 
     .holding_page_img {
         width: 63%;
+        height: 28%;
     }
 
     .holding_page_relax {
@@ -224,6 +246,10 @@ body {
         margin-left: 15px;
         height: 15px;
         width: 15px;
+    }
+
+    .holding_page_img {
+        height: 30%;
     }
 
     .holding_page_relax {
@@ -296,6 +322,7 @@ body {
     .holding_page_img {
         margin-top: 10%;
         width: 57%;
+        height: 28%;
     }
 
     .holding_page_relax {

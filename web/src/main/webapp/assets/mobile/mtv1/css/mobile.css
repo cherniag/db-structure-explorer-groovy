@@ -129,22 +129,10 @@ body {
     }
 
     .holding_page_close_button_small {
-        background: url(../imgs/icon_close_big.png) no-repeat center;
-        background-size: 100% auto
         margin-top: 45px;
         margin-left: 45px;
         width: 34px;
         height: 34px;
-    }
-
-    .holding_page_logo {
-        background: url(../imgs/logo_holding_big.png) no-repeat center;
-        background-size: 100% auto
-    }
-
-    .holding_page_img {
-        background: url(../imgs/img_holding_big.png) no-repeat center;
-        background-size: 100% auto
     }
 
     .holding_page_relax {
@@ -161,6 +149,30 @@ body {
 
     .holding_page_close_button_big button{
         border-radius: 65px;
+    }
+}
+
+@media all and (min-width: 720px) {
+
+    .holding_page_close_button_small {
+        background: url(../imgs/icon_close_big.png) no-repeat center;
+        background-size: 100% auto;
+    }
+
+    .holding_page_logo {
+        background: url(../imgs/logo_holding_big.png) no-repeat center;
+        background-size: 100% auto;
+        width: 29%;
+    }
+
+    .holding_page_img {
+        background: url(../imgs/img_holding_big.png) no-repeat center;
+        background-size: 100% auto;
+        width: 60%;
+    }
+
+    .holding_page_close_button_big {
+        margin: 30% 9% 1%;
     }
 }
 

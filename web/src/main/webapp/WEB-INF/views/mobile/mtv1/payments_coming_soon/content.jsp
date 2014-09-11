@@ -7,12 +7,8 @@
         <div class="holding_page_close_button_small">
             <button title="${pageContext.request.contextPath}/account.html" onClick="location.href=this.title"></button>
         </div>
-        <div class="holding_page_logo" >
-            <%--<img style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo_holding.png" />--%>
-        </div>
-        <div class="holding_page_img">
-            <%--<img style="vertical-align: middle;" src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/img_holding.png" />--%>
-        </div>
+        <div class="holding_page_logo"></div>
+        <div class="holding_page_img"></div>
         <div class="holding_page_relax">
             <s:message code="holding.page.relax.message" />
         </div>
