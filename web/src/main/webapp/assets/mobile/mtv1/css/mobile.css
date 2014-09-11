@@ -1,0 +1,284 @@
+@font-face {
+    font-family: 'FuturaSB-BoldItalic';
+    src: url('../fonts/FuturaSB-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'NimbusSanTOTLig';
+    src: url('../fonts/NimbusSanTOT-Lig.otf');
+}
+
+body {
+    font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    -webkit-text-size-adjust: none;
+}
+
+
+/*Cookie Container*/
+.cookie_conteiner {
+    position: absolute;
+    margin: 0;
+    width: 100%;
+    z-index: 1000;
+    display: none;
+}
+
+.coming_soon_container{
+    background: url(../imgs/bgs/coming_soon.png) no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+}
+
+.content_container{
+    background-color: #FFFFFF;
+    text-align: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    left: 20px;
+    bottom: 20px;
+}
+
+.close_button_small{
+    background: url(../imgs/icon_close.png) no-repeat;
+    margin-top: 30px;
+    margin-left: 30px;
+    width: 20px;
+    height: 20px;
+    float: left;
+}
+
+.logo_holding{
+    clear: left;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 28%;
+    display: block;
+}
+
+.logo_holding img{
+    max-width: 100%;
+}
+
+.img_holding{
+    margin-top: 13%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+    max-width: 412px;
+}
+
+.img_holding img{
+   max-width: 100%;
+}
+
+.relax{
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    font-size: 46px;
+    color: #000000;
+    margin-left: auto;
+    margin-right: auto;
+    width: 82%;
+    margin-top: 13%;
+}
+
+.enjoy{
+    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+    font-size: 26px;
+    color: #000000;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 7%;
+    line-height: 150%;
+}
+
+.close_button_big{
+    margin: 33% 9% 1%;
+}
+
+.close_button_big button{
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    font-size: 36px;
+    /*font-weight: bold;
+    font-style: italic;*/
+    border-radius: 45px;
+    background-color: #18F3CD;
+    color: #000000;
+    border: none;
+    padding: 4%;
+    width: 100%;
+}
+
+@media screen and (orientation:landscape){
+
+    .close_button_small{
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+
+    .logo_holding{
+        margin-top: 4%;
+        width: 10%;
+    }
+
+    .img_holding{
+        margin-top: 4%;
+        width: 20%;
+    }
+
+    .relax{
+        font-size: 24px;
+        margin-top: 4%;
+    }
+
+    .enjoy{
+        font-size: 14px;
+        margin-top: 2%;
+    }
+
+    .close_button_big{
+        margin: 8% 35% 1%;
+    }
+
+    .close_button_big button{
+        font-size: 20px;
+        padding: 3%;
+    }
+}
+
+@media screen and (orientation:landscape) and (min-width: 1600px) {
+
+    .close_button_small{
+        margin-top: 30px;
+        margin-left: 30px;
+    }
+
+    .relax{
+        font-size: 46px;
+    }
+
+    .enjoy{
+        font-size: 26px;
+    }
+
+    .close_button_big{
+        margin: 8% 37% 1%;
+    }
+
+    .close_button_big button{
+        font-size: 36px;
+        padding: 4%;
+    }
+}
+
+
+@media all and (max-width: 580px) and (orientation:portrait) {
+    .relax{
+        font-size: 37px;
+    }
+
+    .enjoy{
+        font-size: 21px;
+    }
+
+    .close_button_big button{
+        font-size: 33px;
+    }
+}
+
+@media all and (max-width: 480px) and (orientation:portrait) {
+    .content_container{
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        bottom: 15px;
+    }
+
+    .relax{
+        font-size: 33px;
+    }
+
+    .enjoy{
+        font-size: 18px;
+    }
+
+    .close_button_big button{
+        font-size: 27px;
+    }
+}
+
+@media all and (max-width: 430px) and (orientation:portrait){
+    .relax{
+        font-size: 26px;
+    }
+
+    .enjoy{
+        font-size: 15px;
+    }
+
+    .close_button_big button{
+        font-size: 24px;
+    }
+
+    .close_button_big{
+        margin-top: 20%;
+    }
+}
+
+@media all and (max-width: 330px) and (orientation:portrait){
+
+    .close_button_small{
+        margin-top: 15px;
+        margin-left: 15px;
+    }
+
+    .relax{
+        font-size: 18px;
+    }
+
+    .enjoy{
+        font-size: 12px;
+    }
+
+    .close_button_big button{
+        font-size: 18px;
+    }
+
+    .close_button_big{
+        margin: 20% 9% 1%;
+    }
+}
+
+@media all and (max-height: 480px) and (orientation:portrait) {
+
+    .content_container{
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+    }
+
+    .close_button_big{
+        margin: 13% 9% 1%;
+    }
+
+    .relax{
+        font-size: 17px;
+    }
+
+    .enjoy{
+        font-size: 11px;
+    }
+
+    .close_button_big button{
+        font-size: 17px;
+    }
+}
