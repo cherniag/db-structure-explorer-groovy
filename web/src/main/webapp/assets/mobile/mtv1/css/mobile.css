@@ -47,12 +47,20 @@ body {
 }
 
 .holding_page_close_button_small {
-    background: url(../imgs/icon_close.png) no-repeat;
     margin-top: 30px;
     margin-left: 30px;
     width: 20px;
     height: 20px;
     float: left;
+}
+
+.holding_page_close_button_small button {
+    background: url(../imgs/icon_close.png) no-repeat;
+    background-size: 100% auto;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
 }
 
 .holding_page_logo {
@@ -72,12 +80,12 @@ body {
     margin-top: 13%;
     margin-left: auto;
     margin-right: auto;
-    width: 60%;
+    width: 66%;
     max-width: 412px;
 }
 
 .holding_page_img img{
-   max-width: 100%;
+    max-width: 100%;
 }
 
 .holding_page_relax {
@@ -115,70 +123,40 @@ body {
     width: 100%;
 }
 
-@media screen and (orientation:landscape){
+@media all and (min-width: 1000px) {
+    .holding_page_content_container {
+        top: 32px;
+        right: 32px;
+        left: 32px;
+        bottom: 32px;
+    }
 
     .holding_page_close_button_small {
-        margin-top: 20px;
-        margin-left: 20px;
-    }
-
-    .holding_page_logo {
-        margin-top: 4%;
-        width: 10%;
-    }
-
-    .holding_page_img {
-        margin-top: 4%;
-        width: 20%;
+        margin-top: 45px;
+        margin-left: 45px;
+        width: 30px;
+        height: 30px;
     }
 
     .holding_page_relax {
-        font-size: 24px;
-        margin-top: 4%;
+        font-size: 72px;
     }
 
     .holding_page_enjoy {
-        font-size: 14px;
-        margin-top: 2%;
-    }
-
-    .holding_page_close_button_big {
-        margin: 8% 35% 1%;
+        font-size: 41px;
     }
 
     .holding_page_close_button_big button{
-        font-size: 20px;
-        padding: 3%;
-    }
-}
-
-@media screen and (orientation:landscape) and (min-width: 1600px) {
-
-    .holding_page_close_button_small {
-        margin-top: 30px;
-        margin-left: 30px;
-    }
-
-    .holding_page_relax {
-        font-size: 46px;
-    }
-
-    .holding_page_enjoy {
-        font-size: 26px;
-    }
-
-    .holding_page_close_button_big {
-        margin: 8% 37% 1%;
+        font-size: 56px;
     }
 
     .holding_page_close_button_big button{
-        font-size: 36px;
-        padding: 4%;
+        border-radius: 65px;
     }
 }
 
 
-@media all and (max-width: 580px) and (orientation:portrait) {
+@media all and (max-width: 580px) {
     .holding_page_relax {
         font-size: 37px;
     }
@@ -192,12 +170,16 @@ body {
     }
 }
 
-@media all and (max-width: 480px) and (orientation:portrait) {
+@media all and (max-width: 480px) {
     .holding_page_content_container {
         top: 15px;
         right: 15px;
         left: 15px;
         bottom: 15px;
+    }
+
+    .holding_page_img {
+        width: 63%;
     }
 
     .holding_page_relax {
@@ -211,9 +193,13 @@ body {
     .holding_page_close_button_big button{
         font-size: 27px;
     }
+
+    .holding_page_close_button_big {
+        margin: 27% 11% 1%;
+    }
 }
 
-@media all and (max-width: 430px) and (orientation:portrait){
+@media all and (max-width: 430px){
     .holding_page_relax {
         font-size: 26px;
     }
@@ -231,11 +217,13 @@ body {
     }
 }
 
-@media all and (max-width: 330px) and (orientation:portrait){
+@media all and (max-width: 330px){
 
     .holding_page_close_button_small {
         margin-top: 15px;
         margin-left: 15px;
+        height: 15px;
+        width: 15px;
     }
 
     .holding_page_relax {
@@ -247,36 +235,84 @@ body {
     }
 
     .holding_page_close_button_big button{
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .holding_page_close_button_big {
-        margin: 20% 9% 1%;
+        margin: 18% 9% 1%;
     }
 }
 
-@media all and (max-height: 480px) and (orientation:portrait) {
+@media all and (max-width: 250px){
 
-    .holding_page_content_container {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        bottom: 10px;
+    .holding_page_close_button_small {
+        margin-top: 10px;
+        margin-left: 10px;
+        height: 13px;
+        width: 13px;
     }
 
-    .holding_page_close_button_big {
-        margin: 13% 9% 1%;
+    .holding_page_logo {
+        margin-top: 10%;
+        width: 24%;
+    }
+
+    .holding_page_img {
+        margin-top: 10%;
+        width: 50%;
     }
 
     .holding_page_relax {
-        font-size: 17px;
+        margin-top: 10%;
+        font-size: 15px;
     }
 
     .holding_page_enjoy {
-        font-size: 11px;
+        margin-top: 5%;
+        font-size: 10px;
     }
 
     .holding_page_close_button_big button{
-        font-size: 17px;
+        font-size: 13px;
+    }
+
+    .holding_page_close_button_big {
+        margin: 7% 9% 1%;
+    }
+
+    .holding_page_close_button_big button{
+        padding: 2%;
+    }
+}
+
+/* iPhone fix */
+@media all and (width: 640px) and (height: 960px){
+
+    .holding_page_logo {
+        margin-top: 8%;
+        width: 25%;
+    }
+
+    .holding_page_img {
+        margin-top: 10%;
+        width: 57%;
+    }
+
+    .holding_page_relax {
+        margin-top: 10%;
+        font-size: 43px;
+    }
+
+    .holding_page_enjoy {
+        margin-top: 5%;
+        font-size: 23px;
+    }
+
+    .holding_page_close_button_big button{
+        font-size: 33px;
+    }
+
+    .holding_page_close_button_big {
+        margin: 25% 13% 1%;
     }
 }
