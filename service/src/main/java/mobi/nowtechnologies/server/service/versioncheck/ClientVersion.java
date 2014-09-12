@@ -4,4 +4,5 @@ public interface ClientVersion {
     int major();
     int minor();
     int revision();
+    String qualifier();
 }
