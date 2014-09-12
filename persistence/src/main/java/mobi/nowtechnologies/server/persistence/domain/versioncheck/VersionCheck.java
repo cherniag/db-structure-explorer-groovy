@@ -81,6 +81,12 @@ public class VersionCheck {
         return applicationName;
     }
 
+    public static final String MAJOR_NUMBER_PROPERTY_NAME = "majorNumber";
+
+    public static final String MINOR_NUMBER_PROPERTY_NAME = "minorNumber";
+
+    public static final String REVISION_NUMBER_PROPERTY_NAME = "revisionNumber";
+
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
