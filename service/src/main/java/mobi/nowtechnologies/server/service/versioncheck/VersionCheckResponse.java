@@ -2,16 +2,14 @@ package mobi.nowtechnologies.server.service.versioncheck;
 
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 
-import java.net.URI;
-
 public class VersionCheckResponse {
     private String messageKey;
 
     private VersionCheckStatus status;
 
-    private URI uri;
+    private String uri;
 
-    public VersionCheckResponse(String messageKey, VersionCheckStatus status, URI uri) {
+    public VersionCheckResponse(String messageKey, VersionCheckStatus status, String uri) {
         this.messageKey = messageKey;
         this.status = status;
         this.uri = uri;
@@ -25,7 +23,7 @@ public class VersionCheckResponse {
         return status;
     }
 
-    public URI getUri() {
+    public String getUri() {
         return uri;
     }
 }

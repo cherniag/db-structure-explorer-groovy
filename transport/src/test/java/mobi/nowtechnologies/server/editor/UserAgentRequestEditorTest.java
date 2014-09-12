@@ -10,17 +10,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class UserAgentRequestEditorTest {
-    @InjectMocks
-    UserAgentRequestEditor editor = new UserAgentRequestEditor() {
+    CommunityRepository communityRepository = mock(CommunityRepository.class);
+
+    UserAgentRequestEditor editor = new UserAgentRequestEditor(communityRepository) {
         @Override
         DeviceType restoreDeviceType(String deviceTypeString) {
             if("android".equalsIgnoreCase(deviceTypeString) || "ios".equalsIgnoreCase(deviceTypeString)) {
@@ -33,8 +31,6 @@ public class UserAgentRequestEditorTest {
         }
     };
 
-    @Mock
-    CommunityRepository communityRepository;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

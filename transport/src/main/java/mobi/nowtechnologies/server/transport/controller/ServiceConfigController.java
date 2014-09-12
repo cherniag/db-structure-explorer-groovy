@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.editor.UserAgentRequestEditor;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
 import mobi.nowtechnologies.server.service.versioncheck.VersionCheckResponse;
 import mobi.nowtechnologies.server.service.versioncheck.VersionCheckService;
@@ -29,11 +30,11 @@ public class ServiceConfigController extends CommonController {
     @Resource
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
     @Resource
-    private UserAgentRequestEditor userAgentRequestEditor;
+    private CommunityRepository communityRepository;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(UserAgentRequest.class, userAgentRequestEditor);
+        binder.registerCustomEditor(UserAgentRequest.class, new UserAgentRequestEditor(communityRepository));
     }
 
     @RequestMapping(method = GET,
@@ -75,7 +76,7 @@ public class ServiceConfigController extends CommonController {
     private ServiceConfigDto convert(VersionCheckResponse response, User user) {
         VersionCheckStatus status = response.getStatus();
         String message = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), response.getMessageKey(), null, null);
-        String link = response.getUri().toString();
+        String link = response.getUri();
 
         return new ServiceConfigDto(status, message, link);
     }

@@ -72,7 +72,7 @@ public class VersionCheckServiceIT {
             assertEquals(response.getMessageKey(), messageKey);
         }
         if (StringUtils.isNotEmpty(url)){
-            assertEquals(response.getUri().toString(), url);
+            assertEquals(response.getUri(), url);
         }
     }
 
