@@ -13,9 +13,7 @@ import java.util.List;
  * Created by Oleg Artomov on 9/11/2014.
  */
 public interface VersionCheckRepository extends JpaRepository<VersionCheck, Long> {
-    List<VersionCheck> findByCommunityAndDeviceType(Community community, DeviceType platform);
-
-    @Query(value="select entity from #{#entityName} entity where " +
+     @Query(value="select entity from #{#entityName} entity where " +
             "(entity.community=?1 and entity.deviceType=?2 and entity.applicationName=?3) and " +
             "(entity.majorNumber>?4 or " +
             "(entity.majorNumber = ?4 and entity.minorNumber>?5) or " +
