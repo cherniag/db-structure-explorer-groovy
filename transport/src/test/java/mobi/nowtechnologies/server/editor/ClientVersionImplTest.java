@@ -46,7 +46,6 @@ public class ClientVersionImplTest {
         assertEquals(1, from.major());
         assertEquals(5, from.minor());
         assertEquals(0, from.revision());
-        assertEquals("RELEASE", from.qualifier());
     }
 
     @Test
@@ -61,6 +60,5 @@ public class ClientVersionImplTest {
         assertEquals(1, from.major());
         assertEquals(5, from.minor());
         assertEquals(0, from.revision());
-        assertEquals("SNAPSHOT", from.qualifier());
     }
 }

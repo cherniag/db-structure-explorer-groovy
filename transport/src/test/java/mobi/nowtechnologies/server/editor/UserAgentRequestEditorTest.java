@@ -156,7 +156,6 @@ public class UserAgentRequestEditorTest {
         assertEquals(3, value.getVersion().major());
         assertEquals(1, value.getVersion().minor());
         assertEquals(0, value.getVersion().revision());
-        assertEquals("SNAPSHOT", value.getVersion().qualifier());
         assertEquals(UserRegInfo.DeviceType.IOS, value.getPlatform().getName());
         assertEquals(communityId, value.getCommunity().getId().intValue());
 
