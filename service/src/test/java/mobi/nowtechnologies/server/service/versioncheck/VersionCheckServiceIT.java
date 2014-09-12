@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import static junit.framework.Assert.assertEquals;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 
 /**
@@ -35,6 +37,10 @@ public class VersionCheckServiceIT {
 
     private DeviceType deviceType;
 
+    private static final String O2_TRACKS_APPLICATION_NAME = "O2_TRACKS";
+
+    private static final String HL_UK_APPLICATION_NAME = "HL_UK_TRACKS";
+
 
     @Before
     public void prepareTest() {
@@ -44,10 +50,10 @@ public class VersionCheckServiceIT {
     public void testVersionForO2CommunityWhereRangesArePresent() {
         community = CommunityDao.getCommunity("o2");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
-        checkVersion(1, 4, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app");
-        checkVersion(1, 5, 1, VersionCheckStatus.FORCED_UPDATE, "VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app");
-        checkVersion(1, 7, 0, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null);
-        checkVersion(1, 7, 1, VersionCheckStatus.CURRENT, null, null);
+        checkVersion(1, 4, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME);
+        checkVersion(1, 5, 1, VersionCheckStatus.FORCED_UPDATE, "VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app", O2_TRACKS_APPLICATION_NAME);
+        checkVersion(1, 7, 0, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null, O2_TRACKS_APPLICATION_NAME);
+        checkVersion(1, 7, 1, VersionCheckStatus.CURRENT, null, null, O2_TRACKS_APPLICATION_NAME);
     }
 
 
@@ -55,12 +61,12 @@ public class VersionCheckServiceIT {
     public void testVersionForHLUKCommunityWhereNoConfigurationAtAll() {
         community = CommunityDao.getCommunity("hl_uk");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
-        checkVersion(1, 4, 0, VersionCheckStatus.CURRENT, null, null);
-        checkVersion(1, 7, 1, VersionCheckStatus.CURRENT, null, null);
+        checkVersion(1, 4, 0, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME);
+        checkVersion(1, 7, 1, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME);
     }
 
-    private void checkVersion(int major, int minor, int revision, VersionCheckStatus status, String messageKey, String url){
-        VersionCheckResponse response = versionCheckService.check(buildRequest(major, minor, revision));
+    private void checkVersion(int major, int minor, int revision, VersionCheckStatus status, String messageKey, String url, String applicationName){
+        VersionCheckResponse response = versionCheckService.check(buildRequest(major, minor, revision, applicationName));
         assertEquals(response.getStatus(), status);
         if (StringUtils.isNotEmpty(messageKey)){
             assertEquals(response.getMessageKey(), messageKey);
@@ -70,12 +76,17 @@ public class VersionCheckServiceIT {
         }
     }
 
-    private UserAgentRequest buildRequest(int major, int minor, int revision) {
-        UserAgentRequestImpl request = new UserAgentRequestImpl();
-        request.setCommunity(community);
-        request.setPlatform(deviceType);
-        request.setVersion(new ClientVersionImpl(major, minor, revision));
-        return request;
+    private UserAgentRequest buildRequest(int major, int minor, int revision, String applicationName) {
+        ClientVersion clientVersion = mock(ClientVersion.class);
+        when(clientVersion.major()).thenReturn(major);
+        when(clientVersion.minor()).thenReturn(minor);
+        when(clientVersion.revision()).thenReturn(revision);
+        UserAgentRequest userAgentRequest = mock(UserAgentRequest.class);
+        when(userAgentRequest.getCommunity()).thenReturn(community);
+        when(userAgentRequest.getPlatform()).thenReturn(deviceType);
+        when(userAgentRequest.getVersion()).thenReturn(clientVersion);
+        when(userAgentRequest.getApplicationName()).thenReturn(applicationName);
+        return userAgentRequest;
     }
 }
 

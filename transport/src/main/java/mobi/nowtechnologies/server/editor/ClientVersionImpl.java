@@ -24,11 +24,6 @@ class ClientVersionImpl implements ClientVersion {
         return revision;
     }
 
-    @Override
-    public String qualifier() {
-        return qualifier;
-    }
-
     private ClientVersionImpl() {
     }
 

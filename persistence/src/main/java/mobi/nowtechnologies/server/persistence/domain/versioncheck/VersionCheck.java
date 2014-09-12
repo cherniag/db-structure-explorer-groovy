@@ -43,6 +43,9 @@ public class VersionCheck {
     private VersionCheckStatus status;
 
 
+    @Column(name="application_name",columnDefinition="char(100)", nullable = false)
+    private String applicationName;
+
     protected VersionCheck() {
     }
 
@@ -73,6 +76,11 @@ public class VersionCheck {
     public int getRevisionNumber() {
         return revisionNumber;
     }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

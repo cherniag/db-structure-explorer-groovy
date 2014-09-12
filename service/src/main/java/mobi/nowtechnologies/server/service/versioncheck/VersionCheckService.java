@@ -8,6 +8,9 @@ import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionMessag
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.VersionCheckRepository;
 import org.apache.commons.lang3.Range;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -36,10 +39,14 @@ public class VersionCheckService {
 
     private VersionCheckResponse currentVersionResponse;
 
+    private Pageable pagingAndSortingData;
+
 
     public VersionCheckResponse check(UserAgentRequest userAgent) {
-        List<VersionCheck> possibleVersions = versionCheckRepository.findByCommunityAndDeviceType(userAgent.getCommunity(), userAgent.getPlatform());
-        VersionCheck needVersion = calculateVersion(possibleVersions, userAgent);
+        List<VersionCheck> possibleVersions =
+                versionCheckRepository.findSuitableVersion(userAgent.getCommunity(), userAgent.getPlatform(), userAgent.getApplicationName(),
+                        userAgent.getVersion().major(), userAgent.getVersion().minor(), userAgent.getVersion().revision(), pagingAndSortingData);
+        VersionCheck needVersion = calculateVersion(possibleVersions);
         if (needVersion == null) {
             return currentVersionResponse;
         }
@@ -56,14 +63,9 @@ public class VersionCheckService {
                 needVersion.getStatus(), uri);
     }
 
-    private VersionCheck calculateVersion(List<VersionCheck> possibleVersions, UserAgentRequest userAgent) {
+    private VersionCheck calculateVersion(List<VersionCheck> possibleVersions) {
         if (!possibleVersions.isEmpty()) {
-            List<Range<Integer>> ranges = buildRanges(possibleVersions);
-            for (int i = 0, n = ranges.size(); i < n; i++) {
-                if (ranges.get(i).contains(buildValue(userAgent))) {
-                    return possibleVersions.get(i);
-                }
-            }
+            return possibleVersions.get(0);
         }
         return null;
     }
@@ -96,11 +98,6 @@ public class VersionCheckService {
         return buildVersionNumber(versionCheck.getMajorNumber(), versionCheck.getMinorNumber(), versionCheck.getRevisionNumber());
     }
 
-    private Integer buildValue(UserAgentRequest userAgent) {
-        return buildVersionNumber(userAgent.getVersion().major(), userAgent.getVersion().minor(), userAgent.getVersion().revision());
-
-    }
-
     @PostConstruct
     private void init() {
         currentVersionResponse = new VersionCheckResponse(null, CURRENT, null);
@@ -110,7 +107,9 @@ public class VersionCheckService {
                 return o1.getStatus().getOrderPosition() - o2.getStatus().getOrderPosition();
             }
         };
-
+        Sort sorting = new Sort(new Sort.Order(Sort.Direction.ASC, "majorNumber"),
+                new Sort.Order(Sort.Direction.ASC, "minorNumber"), new Sort.Order(Sort.Direction.ASC, "revisionNumber"));
+        pagingAndSortingData = new PageRequest(0, 1, sorting);
         validateDataBeforeStartup();
     }
 

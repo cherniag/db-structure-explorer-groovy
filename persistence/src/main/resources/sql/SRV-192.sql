@@ -14,6 +14,7 @@ CREATE TABLE `client_version_info` (
   `revision_number` int(11) NOT NULL,
   `message_id` bigint(20) NOT NULL,
   `status` char(100) NOT NULL,
+  `application_name` char(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
