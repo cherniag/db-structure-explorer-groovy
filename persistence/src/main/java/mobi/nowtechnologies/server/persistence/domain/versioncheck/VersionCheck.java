@@ -10,7 +10,7 @@ import javax.persistence.*;
  * Created by Oleg Artomov on 9/11/2014.
  */
 @Entity
-@Table(name = "client_version_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"device_type_id", "community_id", "status"})})
+@Table(name = "client_version_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"device_type_id", "community_id", "application_name", "status"})})
 public class VersionCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,29 +57,6 @@ public class VersionCheck {
         return message;
     }
 
-    public DeviceType getDeviceType() {
-        return deviceType;
-    }
-
-    public Community getCommunity() {
-        return community;
-    }
-
-    public int getMajorNumber() {
-        return majorNumber;
-    }
-
-    public int getMinorNumber() {
-        return minorNumber;
-    }
-
-    public int getRevisionNumber() {
-        return revisionNumber;
-    }
-
-    public String getApplicationName() {
-        return applicationName;
-    }
 
     public static final String MAJOR_NUMBER_PROPERTY_NAME = "majorNumber";
 
