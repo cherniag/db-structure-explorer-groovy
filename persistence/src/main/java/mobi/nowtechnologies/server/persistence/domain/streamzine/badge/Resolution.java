@@ -26,14 +26,26 @@ public class Resolution {
     protected Resolution() {
     }
 
+    public Resolution(int width, int height) {
+        Assert.isTrue(width > 0);
+        Assert.isTrue(height > 0);
+        this.width = width;
+        this.height = height;
+    }
+
     public Resolution(String deviceType, int width, int height) {
-        Assert.isTrue(DeviceType.all().contains(deviceType), "Passed: " + deviceType + ", allowed: " + DeviceType.all());
         Assert.isTrue(width > 0);
         Assert.isTrue(height > 0);
 
-        this.deviceType = deviceType;
+        withDeviceType(deviceType);
         this.width = width;
         this.height = height;
+    }
+
+    public Resolution withDeviceType(String deviceType) {
+        Assert.isTrue(DeviceType.all().contains(deviceType), "Passed: " + deviceType + ", allowed: " + DeviceType.all());
+        this.deviceType = deviceType;
+        return this;
     }
 
     public Resolution newResolution(int width, int height) {

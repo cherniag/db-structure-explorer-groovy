@@ -51,39 +51,78 @@ public class BadgeMappingRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void testFindByCommunityAndDeviceTypes() throws Exception {
-        FilenameAlias alias = new FilenameAlias("file name in cloud", "title", 12, 12).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
-        filenameAliasRepository.saveAndFlush(alias);
-
+    public void testFindByCommunityResolutionAndDeviceTypes() throws Exception {
         Community commmunity = communityRepository.findAll().get(0);
 
-        Resolution a1 = resolutionRepository.saveAndFlush(new Resolution("ANDROID", 1, 1));
-        Resolution a2 = resolutionRepository.saveAndFlush(new Resolution("ANDROID", 2, 2));
-        Resolution a3 = resolutionRepository.saveAndFlush(new Resolution("ANDROID", 3, 3));
-        Resolution ios = resolutionRepository.saveAndFlush(new Resolution("IOS", 4, 4));
+        // general
+        FilenameAlias originalAlias = new FilenameAlias("file name in cloud", "title", 12, 12).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        filenameAliasRepository.saveAndFlush(originalAlias);
+        //
+        // resolutions
+        //
+        Resolution r1 = resolutionRepository.saveAndFlush(new Resolution("ANDROID", 1, 1));
+        Resolution r2 = resolutionRepository.saveAndFlush(new Resolution("ANDROID", 2, 2));
+        Resolution r3 = resolutionRepository.saveAndFlush(new Resolution("ANDROID", 3, 3));
+        Resolution rIos = resolutionRepository.saveAndFlush(new Resolution("IOS", 4, 4));
+        //
+        // general mappings
+        //
+        BadgeMapping originalMapping = BadgeMapping.general(commmunity, originalAlias);
+        badgeMappingRepository.saveAndFlush(originalMapping);
 
-        BadgeMapping m1 = BadgeMapping.specific(a1, commmunity, alias);
-        BadgeMapping m2 = BadgeMapping.specific(a2, commmunity, alias);
-        BadgeMapping m3 = BadgeMapping.specific(a3, commmunity, alias);
-        BadgeMapping m4 = BadgeMapping.specific(ios, commmunity, alias);
+        //
+        // specific mappings
+        //
+        BadgeMapping mSpec1 = BadgeMapping.specific(r1, commmunity, originalAlias);
+        BadgeMapping mSpec2 = BadgeMapping.specific(r2, commmunity, originalAlias);
+        BadgeMapping mSpec3 = BadgeMapping.specific(r3, commmunity, originalAlias);
+        BadgeMapping mSpec4 = BadgeMapping.specific(rIos, commmunity, originalAlias);
+        mSpec1.setFilenameAlias(new FilenameAlias("resized for r1", "title 1", 1, 1).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        mSpec2.setFilenameAlias(new FilenameAlias("resized for a2", "title 2", 2, 2).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        mSpec3.setFilenameAlias(new FilenameAlias("resized for a3", "title 3", 3, 3).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        mSpec4.setFilenameAlias(new FilenameAlias("resized for rIos", "title 4", 4, 4).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        badgeMappingRepository.saveAndFlush(mSpec1);
+        badgeMappingRepository.saveAndFlush(mSpec2);
+        badgeMappingRepository.saveAndFlush(mSpec3);
+        badgeMappingRepository.saveAndFlush(mSpec4);
 
-        m1.setFilenameAlias(new FilenameAlias("resized for a1", "title 1", 1, 1).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
-        m2.setFilenameAlias(new FilenameAlias("resized for a2", "title 2", 2, 2).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
-        m3.setFilenameAlias(new FilenameAlias("resized for a3", "title 3", 3, 3).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
-        m4.setFilenameAlias(new FilenameAlias("resized for ios","title 4", 4, 4).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        List<BadgeMapping> androidBadges = badgeMappingRepository.findByCommunityResolutionAndFilenameId(commmunity, r1, mSpec1.getOriginalFilenameAlias().getId());
+        assertEquals(2, androidBadges.size());
 
-        badgeMappingRepository.saveAndFlush(m1);
-        badgeMappingRepository.saveAndFlush(m2);
-        badgeMappingRepository.saveAndFlush(m3);
-        badgeMappingRepository.saveAndFlush(m4);
+        // general has equal orig and spec badge ids
+        assertEquals(androidBadges.get(1).getFilenameAlias().getId(), androidBadges.get(1).getOriginalFilenameAlias().getId());
 
-        List<BadgeMapping> androidBadges = badgeMappingRepository.findByCommunityAndDeviceType(commmunity, "ANDROID", alias.getId());
+        assertEquals(originalMapping.getOriginalFilenameAlias().getId(), androidBadges.get(0).getOriginalFilenameAlias().getId());
+        assertEquals(mSpec1.getFilenameAlias().getId(), androidBadges.get(0).getFilenameAlias().getId());
+    }
 
-        assertEquals(3, androidBadges.size());
+    @Test
+    public void testFindByCommunityAndDeviceTypes() throws Exception {
+        Community commmunity = communityRepository.findAll().get(0);
 
-        assertEquals(m1.getFilenameAlias().getId(), androidBadges.get(0).getFilenameAlias().getId());
-        assertEquals(m2.getFilenameAlias().getId(), androidBadges.get(1).getFilenameAlias().getId());
-        assertEquals(m3.getFilenameAlias().getId(), androidBadges.get(2).getFilenameAlias().getId());
+        // general
+        FilenameAlias originalAlias = new FilenameAlias("file name in cloud", "title", 12, 12).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        filenameAliasRepository.saveAndFlush(originalAlias);
+        //
+        // resolutions
+        //
+        Resolution r1 = resolutionRepository.saveAndFlush(new Resolution("ANDROID", 1, 1));
+        //
+        // general mappings
+        //
+        BadgeMapping originalMapping = BadgeMapping.general(commmunity, originalAlias);
+        badgeMappingRepository.saveAndFlush(originalMapping);
+
+        //
+        // specific mappings
+        //
+        BadgeMapping mSpec1 = BadgeMapping.specific(r1, commmunity, originalAlias);
+        mSpec1.setFilenameAlias(new FilenameAlias("resized for r1", "title 1", 1, 1).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        badgeMappingRepository.saveAndFlush(mSpec1);
+
+        List<BadgeMapping> androidBadges = badgeMappingRepository.findByCommunityAndFilenameId(commmunity, mSpec1.getOriginalFilenameAlias().getId());
+        assertEquals(1, androidBadges.size());
+        assertEquals(originalMapping.getFilenameAlias().getId(), androidBadges.get(0).getFilenameAlias().getId());
     }
 
     @Test

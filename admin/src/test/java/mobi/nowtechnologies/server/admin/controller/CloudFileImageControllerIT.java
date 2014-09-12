@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.admin.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import mobi.nowtechnologies.server.dto.ImageDTO;
+import mobi.nowtechnologies.server.service.streamzine.ImageDTO;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;

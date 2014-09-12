@@ -7,8 +7,8 @@ import org.springframework.web.servlet.view.AbstractView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public class FileInResponseView extends AbstractView {
 
-    private File file;
+    private InputStream stream;
 
-    public FileInResponseView(String contentType, File file) {
-        this.file = file;
+    public FileInResponseView(String contentType, InputStream stream) {
+        this.stream = (stream instanceof BufferedInputStream) ? stream : new BufferedInputStream(stream);
         setContentType(contentType);
     }
 
@@ -31,17 +31,16 @@ public class FileInResponseView extends AbstractView {
 
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        FileInputStream fileInputStream = new FileInputStream(file);
         String rangeAttribute = (String) request.getAttribute(HttpHeaders.RANGE);
         if (StringUtils.hasText(rangeAttribute)) {
             Long range = Long.valueOf(rangeAttribute);
-            IOUtils.skipFully(fileInputStream, range);
+            IOUtils.skipFully(stream, range);
             response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
         }
         try {
-            IOUtils.copy(fileInputStream, response.getOutputStream());
+            IOUtils.copy(stream, response.getOutputStream());
         } finally {
-            fileInputStream.close();
+            IOUtils.closeQuietly(stream);
         }
     }
 }

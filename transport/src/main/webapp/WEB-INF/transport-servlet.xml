@@ -76,7 +76,6 @@
                 <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.VisualBlock</value>
-                <value>mobi.nowtechnologies.server.dto.streamzine.BadgeInfo</value>
 			</list>
 		</property>
 	</bean>
