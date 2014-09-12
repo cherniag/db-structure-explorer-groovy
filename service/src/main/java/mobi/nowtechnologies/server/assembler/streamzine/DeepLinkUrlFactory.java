@@ -10,20 +10,20 @@ import java.util.List;
 
 /**
  * Composes URLs following this format:
- *
+ * <p/>
  * 1)
  * <protocol>://<content>/<subtype>?id=<[ISRC | News Timestamp | News story Id | Playlist type Id]>
- *
+ * <p/>
  * 2)
  * <protocol>://[web | page]/<[page enum | base64 encoded URL]>?action=<ACTION>
- *
+ * <p/>
  * where <protocol> is "mq-app"
- *
  */
 public class DeepLinkUrlFactory {
 
     private final static String ACTION = "action";
     private final static String ID = "id";
+    private static final String OPEN_IN = "open";
 
     private DeepLinkInfoService deepLinkInfoService;
 
@@ -40,7 +40,7 @@ public class DeepLinkUrlFactory {
         uriComponentsBuilder.pathSegment(ContentSubType.of(deepLinkInfoService.getSubType(deeplinkInfo)).getName());
         uriComponentsBuilder.pathSegment(decideSubValueForPromotional(deeplinkInfo));
         // query params if needed
-        putActionQueryParamIfPromotional(deeplinkInfo, uriComponentsBuilder);
+        putActionOrOpenerQueryParamIfPromotional(deeplinkInfo, uriComponentsBuilder);
         putIdQueryParamIfNotPromotional(deeplinkInfo, uriComponentsBuilder);
 
         return uriComponentsBuilder.build().toUriString();
@@ -51,10 +51,10 @@ public class DeepLinkUrlFactory {
     }
 
     private String decideSubValueForPromotional(DeeplinkInfo deeplinkInfo) {
-        if(deeplinkInfo instanceof InformationDeeplinkInfo) {
+        if (deeplinkInfo instanceof InformationDeeplinkInfo) {
             InformationDeeplinkInfo info = (InformationDeeplinkInfo) deeplinkInfo;
 
-            if (LinkLocationType.EXTERNAL_AD == info.getLinkType()){
+            if (LinkLocationType.EXTERNAL_AD == info.getLinkType()) {
                 return Base64.encodeBase64String(info.getUrl().getBytes(), false);
             } else {
                 return info.getUrl();
@@ -65,37 +65,47 @@ public class DeepLinkUrlFactory {
     }
 
     private void putIdQueryParamIfNotPromotional(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
-        if(!(deeplinkInfo instanceof InformationDeeplinkInfo)) {
+        if (!(deeplinkInfo instanceof InformationDeeplinkInfo)) {
             uriComponentsBuilder.queryParam(ID, decideContentValue(deeplinkInfo));
         }
     }
 
-    private void putActionQueryParamIfPromotional(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
-        if(deeplinkInfo instanceof InformationDeeplinkInfo) {
+    private void putActionOrOpenerQueryParamIfPromotional(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
+        if (deeplinkInfo instanceof InformationDeeplinkInfo) {
             InformationDeeplinkInfo i = (InformationDeeplinkInfo) deeplinkInfo;
-            if(i.getAction() != null) {
-                uriComponentsBuilder.queryParam(ACTION, i.getAction());
+            switch (i.getLinkType()) {
+                case INTERNAL_AD:
+                    if (i.getAction() != null) {
+                        uriComponentsBuilder.queryParam(ACTION, i.getAction());
+                    }
+                    break;
+                case EXTERNAL_AD:
+                    if (i.getOpener() != null) {
+                        uriComponentsBuilder.queryParam(OPEN_IN, i.getOpener().getQueryParamValue());
+                    }
+                    break;
             }
         }
     }
 
+
     private String decideContentValue(DeeplinkInfo deeplinkInfo) {
-        if(deeplinkInfo instanceof NewsListDeeplinkInfo) {
+        if (deeplinkInfo instanceof NewsListDeeplinkInfo) {
             NewsListDeeplinkInfo info = (NewsListDeeplinkInfo) deeplinkInfo;
             return String.valueOf(info.getPublishDate().getTime());
         }
 
-        if(deeplinkInfo instanceof NewsStoryDeeplinkInfo) {
+        if (deeplinkInfo instanceof NewsStoryDeeplinkInfo) {
             NewsStoryDeeplinkInfo info = (NewsStoryDeeplinkInfo) deeplinkInfo;
             return String.valueOf(info.getMessage().getId());
         }
 
-        if(deeplinkInfo instanceof MusicPlayListDeeplinkInfo) {
+        if (deeplinkInfo instanceof MusicPlayListDeeplinkInfo) {
             MusicPlayListDeeplinkInfo info = (MusicPlayListDeeplinkInfo) deeplinkInfo;
-            return info.getChartType().name();
+            return info.getChartId().toString();
         }
 
-        if(deeplinkInfo instanceof MusicTrackDeeplinkInfo) {
+        if (deeplinkInfo instanceof MusicTrackDeeplinkInfo) {
             MusicTrackDeeplinkInfo info = (MusicTrackDeeplinkInfo) deeplinkInfo;
             return info.getMedia().getIsrcTrackId();
         }

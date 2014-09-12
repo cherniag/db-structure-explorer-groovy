@@ -1,5 +1,4 @@
-﻿
-set autocommit=0;
+﻿set autocommit=0;
 start transaction;
 
 /* please, set community name here, other parameters should be checked manually */

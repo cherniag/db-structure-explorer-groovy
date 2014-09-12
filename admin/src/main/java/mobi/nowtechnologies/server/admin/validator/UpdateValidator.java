@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSub
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -40,6 +41,7 @@ import javax.annotation.Resource;
 import java.net.URI;
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
 import static org.springframework.util.StringUtils.hasLength;
@@ -203,11 +205,11 @@ public class UpdateValidator extends BaseValidator {
 
         if(blockDto.getBadgeId() != null) {
             // check allowance
-            boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
+        boolean allowed = BadgeMappingRules.allowed(blockDto.getShapeType(), blockDto.getContentType(), subType);
             if(!allowed) {
-                String shapeType = getShapeTypeTitle(blockDto);
-                String contentType = getContentTypeTitle(blockDto);
-                String subTypeValue = getSubTypeTitle(blockDto);
+            String shapeType = getShapeTypeTitle(blockDto);
+            String contentType = getContentTypeTitle(blockDto);
+            String subTypeValue = getSubTypeTitle(blockDto);
 
                 rejectField("streamzine.error.badge.notallowed", new Object[]{shapeType, contentType, subTypeValue}, errors, "badgeId");
             }
@@ -261,14 +263,27 @@ public class UpdateValidator extends BaseValidator {
         }
 
         if(linkLocationType == LinkLocationType.EXTERNAL_AD) {
+            String url = "";
             try {
-                URI uri = URI.create(value);
+                url = blockDto.getValueLink();
+                URI uri = URI.create(url);
                 Assert.notNull(uri.getScheme());
                 Assert.notNull(uri.getHost());
             } catch (IllegalArgumentException e) {
-                Object[] args = {value};
-                rejectValue("streamzine.error.notvalid.url", args, errors);
+                Object[] args = {url};
+                rejectField("streamzine.error.notvalid.url", args, errors, "valueLink");
             }
+
+
+            String openerAsString = "";
+            try {
+                openerAsString = blockDto.getValueOpener();
+                Opener.valueOf(openerAsString);
+            } catch (IllegalArgumentException e) {
+                Object[] args = {openerAsString};
+                rejectField("streamzine.error.notvalid.opener", args, errors, "valueOpener");
+            }
+
             return;
         }
 
@@ -288,7 +303,7 @@ public class UpdateValidator extends BaseValidator {
 
         if(musicType == MusicType.PLAYLIST) {
             try {
-                ChartType.valueOf(value);
+                parseInt(value);
             } catch (IllegalArgumentException e) {
                 Object[] args = {value, Arrays.toString(ChartType.values())};
                 rejectValue("streamzine.error.notfound.playlist.id", args, errors);
@@ -345,7 +360,7 @@ public class UpdateValidator extends BaseValidator {
                 return;
             }
 
-            Message message = messageRepository.findOne(Integer.parseInt(value));
+            Message message = messageRepository.findOne(parseInt(value));
             boolean notFoundMessage = (message == null);
             if(notFoundMessage) {
                 Object[] args = {value};

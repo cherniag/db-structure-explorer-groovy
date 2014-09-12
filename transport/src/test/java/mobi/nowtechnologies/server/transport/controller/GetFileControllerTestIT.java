@@ -3,11 +3,13 @@ package mobi.nowtechnologies.server.transport.controller;
 import com.google.common.io.Files;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 
+import javax.annotation.Resource;
 import java.io.File;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,6 +22,13 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
     @Value("${store.path}\\image\\US-UM7-11-00061S.jpg")
     private File file;
+
+
+    @Resource
+    private CloudFileService cloudFileService;
+
+    @Value("${cloudFile.audioContentContainerName}")
+    private String audioContentContainerName;
 
 
     @Test
@@ -202,6 +211,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         String mediaId = "US-UM7-11-00061";
 
         byte[] fileContent = Files.toByteArray(file);
+        cloudFileService.uploadFile(file, file.getName(), MediaType.IMAGE_JPEG_VALUE, audioContentContainerName);
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/GET_FILE")
                         .param("USER_NAME", userName)

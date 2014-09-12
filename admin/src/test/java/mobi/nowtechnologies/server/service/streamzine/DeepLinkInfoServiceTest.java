@@ -65,7 +65,7 @@ public class DeepLinkInfoServiceTest {
         when(deepLinkInfo.isVip()).thenReturn(true);
         when(deepLinkInfo.getKey()).thenReturn(MusicType.PLAYLIST.name());
         when(deepLinkInfo.getContentType()).thenReturn(ContentType.MUSIC);
-        when(deepLinkInfo.getValue()).thenReturn(ChartType.BASIC_CHART.name());
+        when(deepLinkInfo.getValue()).thenReturn("666");
 
         AccessPolicy accessPolicy = deepLinkInfoService.tryToHandleSecuredTile(deepLinkInfo);
 

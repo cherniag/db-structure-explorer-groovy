@@ -59,12 +59,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-            <version>0.4.7</version>
-        </dependency>
-
-        <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>shared</artifactId>
             <scope>test</scope>

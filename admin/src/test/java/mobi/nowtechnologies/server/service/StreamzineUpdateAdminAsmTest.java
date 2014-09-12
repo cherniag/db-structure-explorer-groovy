@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -135,7 +136,8 @@ public class StreamzineUpdateAdminAsmTest {
         Update update = new Update(DateUtils.addDays(new Date(), 1), community);
         update.addUser(getUser(1, "murka"));
         update.addUser(getUser(2, "burka"));
-        update.addBlock(new Block(0, ShapeType.SLIM_BANNER, new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "www.uuu.ua")));
+        NotificationDeeplinkInfo deeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "www.uuu.ua", BROWSER);
+        update.addBlock(new Block(0, ShapeType.SLIM_BANNER, deeplinkInfo));
 
         UpdateDto updateDto = streamzineUpdateAdminAsm.convertOneWithBlocks(update, mock(Community.class));
 

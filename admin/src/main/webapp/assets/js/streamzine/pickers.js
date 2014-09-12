@@ -283,6 +283,7 @@ if(Pickers == undefined) {
     }
 
     var ExternalAdPicker = function(dialogId, saveHandler) {
+        this.opener = opener;
         var initialBlock;
         //
         // Construction
@@ -290,13 +291,31 @@ if(Pickers == undefined) {
         var _genericDialog = new GenericDialog(dialogId, saveHandler, function() {
             _clear();
 
+            var select = $('#' + dialogId + ' select').empty();
+            for (var key in opener) {
+                select.append($("<option/>", {
+                    value: key,
+                    text: opener[key]
+                }))
+            };
+
             // init the dialog with the value
-            if(initialBlock.value) {
-                _getInput().val(initialBlock.value);
-                _check();
+            var splitData = initialBlock.value.split('#')
+            var url = splitData[0];
+            var openerType = splitData[1];
+            _getInput().val(url);
+            _getOpener().val(openerType);
+            if(url) {
+              _check();
             }
+            syncUrl(_getInput().val());
+            syncOpener();
         });
         _genericDialog.setTitle('External ad picker');
+        _getOpener().change(function(){
+            syncOpener();
+        });
+
         //
         // Binding
         // 1) search
@@ -310,6 +329,27 @@ if(Pickers == undefined) {
             return $('#' + dialogId + ' input[name="q"]');
         }
 
+        function syncOpener(){
+            _updateModel('opener', _getOpener().val());
+
+        }
+
+        function syncUrl(src){
+            _updateModel('url', src);
+
+        }
+
+        function _getOpener() {
+            return $('#opener');
+        }
+
+        function _updateModel(prop, value) {
+            var existing = _genericDialog.getValue();
+            if(!existing) {
+                _genericDialog.setValue({});
+            }
+            _genericDialog.getValue()[prop] = value;
+        }
         function _getModalDialogHeader() {
             return $('#' + dialogId + ' div[data-header="modal-dialog-header"]');
         }
@@ -331,7 +371,8 @@ if(Pickers == undefined) {
 
             // ... but not checked yet...
             header.removeClass('streamzine-url-picker-checked').html("Checking: " + src + "...");
-            _genericDialog.setValue(src);
+            syncUrl(src);
+            syncOpener();
 
             if(!(src.indexOf('http://') >= 0 || src.indexOf('https://') >= 0)) {
                 src = 'http://' + src;
@@ -340,7 +381,8 @@ if(Pickers == undefined) {
             $(Template.render('<iframe src="{src}" class="streamzine-url-picker-response-frame" />', {src:src}))
                 .load(function() {
                     $('#' + dialogId + ' input[name="q"]').val(src)
-                    _genericDialog.setValue(src);
+                    syncUrl(src);
+                    syncOpener();
                     header.empty().addClass('streamzine-url-picker-checked').html("Checked: " + src);
                 })
                 .appendTo(content);
@@ -836,7 +878,7 @@ if(Pickers == undefined) {
             //
             // Construction
             //
-            var _rowTemplate = '<li class="streamzine-playlist-picker-item" id="media_playlist_{chartType}"><img src="{imageFileUrl}" height="50px"/> {name} <span style="float: right;">{tracksCount}</span> </li>';
+            var _rowTemplate = '<li class="streamzine-playlist-picker-item" id="media_playlist_{chartId}"><img src="{imageFileUrl}" height="50px"/> {name} <span style="float: right;">{tracksCount}</span> </li>';
             // select
             $('#' + dialogId + ' .table').selectable({
                 selected: function( event, ui ) {
@@ -847,11 +889,7 @@ if(Pickers == undefined) {
                     // restore dto from id: _data
                     for(var j=0; j<_data.length;j++) {
                         var selected = _data[j];
-                        if(selected.chartType == restoredId) {
-                            selected.chartType = {
-                                '$type': 'ChartType',
-                                '$name': selected.chartType
-                            };
+                        if(selected.chartId == restoredId) {
                             _genericDialog.setValue(selected);
                             break;
                         }
@@ -864,7 +902,7 @@ if(Pickers == undefined) {
             //
             function _restoreData(input, restoredId) {
                 for(var j=0; j<input.length;j++) {
-                    if(input[j].chartType == restoredId) {
+                    if(input[j].chartId == restoredId) {
                         return input[j];
                     }
                 }
@@ -876,7 +914,7 @@ if(Pickers == undefined) {
                 for(var i=0; i < data.length; i++) {
                     var e = data[i];
                     d.push({
-                        chartType: e.chartType,
+                        chartId: e.chartId,
                         imageFileUrl: (e.imageFileName) ? Streamzine.Presenter.Editor.imagesBaseUrl + '/' + e.imageFileName : '',
                         imageFileName: e.imageFileName,
                         name: e.name,
@@ -951,7 +989,7 @@ if(Pickers == undefined) {
                 $('#mediaPlaylistsContainerId .table').html(html);
 
                 if(_genericDialog.getValue()) {
-                    $('#' + dialogId + ' li#media_playlist_' + _genericDialog.getValue().chartType.$name).addClass('ui-selected');
+                    $('#' + dialogId + ' li#media_playlist_' + _genericDialog.getValue().chartId).addClass('ui-selected');
                 }
             }
 

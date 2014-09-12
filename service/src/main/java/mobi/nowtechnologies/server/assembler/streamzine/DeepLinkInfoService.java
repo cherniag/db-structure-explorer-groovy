@@ -11,6 +11,7 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -19,6 +20,7 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class DeepLinkInfoService {
@@ -123,17 +125,17 @@ public class DeepLinkInfoService {
         String value = data.getValue() != null ? data.getValue().trim() : "";
 
         if (musicType == MusicType.PLAYLIST) {
-            ChartType chartType = null;
+            Integer chartId = null;
             if (!value.isEmpty()) {
-                chartType = ChartType.valueOf(value);
+                chartId = parseInt(value);
             }
-            return new MusicPlayListDeeplinkInfo(chartType);
+            return new MusicPlayListDeeplinkInfo(chartId);
         }
 
         if (musicType == MusicType.TRACK) {
             Media restored = null;
             if (!value.isEmpty()) {
-                final int id = Integer.parseInt(value);
+                final int id = parseInt(value);
                 restored = mediaRepository.findOne(id);
                 Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
             }
@@ -188,7 +190,7 @@ public class DeepLinkInfoService {
 
     private Message calculateMessage(DeeplinkInfoData data) {
         if (data.getValue() != null && !isEmpty(data.getValue().toString())) {
-            int id = Integer.parseInt(data.getValue().toString().trim());
+            int id = parseInt(data.getValue().toString().trim());
             return messageRepository.findOne(id);
         }
         return  null;
@@ -211,11 +213,22 @@ public class DeepLinkInfoService {
         Object dataValue = data.getValue() != null ? data.getValue() : "";
         ApplicationPageData applicationPageData = new ApplicationPageData(dataValue.toString().trim());
 
-        NotificationDeeplinkInfo notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl());
-        if (!applicationPageData.getAction().isEmpty()) {
-            notificationDeeplinkInfo.setAction(applicationPageData.getAction());
+        NotificationDeeplinkInfo notificationDeeplinkInfo = null;
+        switch (linkLocationType) {
+            case INTERNAL_AD:
+                notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl());
+                if (!applicationPageData.getAction().isEmpty()) {
+                    notificationDeeplinkInfo.setAction(applicationPageData.getAction());
+                }
+                break;
+            case EXTERNAL_AD:
+                Opener opener = Opener.BROWSER;
+                if (!applicationPageData.getAction().isEmpty()) {
+                    opener = Opener.valueOf(applicationPageData.getAction());
+                }
+                notificationDeeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, applicationPageData.getUrl(), opener);
+                break;
         }
-
         return notificationDeeplinkInfo;
     }
 
@@ -231,6 +244,11 @@ public class DeepLinkInfoService {
         public ApplicationPageData(String url, String action) {
             this.rawValues = new String[]{url, action};
 
+            Assert.isTrue(rawValues.length == 2);
+        }
+
+        public ApplicationPageData(String url, Opener opener) {
+            this.rawValues = new String[]{url, opener.name()};
             Assert.isTrue(rawValues.length == 2);
         }
 
