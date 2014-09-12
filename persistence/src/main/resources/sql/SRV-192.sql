@@ -1,7 +1,7 @@
 CREATE TABLE `client_version_messages` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `message_key` char(100) NOT NULL,
-  `url` varchar(2000) NOT NULL,
+  `url` varchar(2000),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
