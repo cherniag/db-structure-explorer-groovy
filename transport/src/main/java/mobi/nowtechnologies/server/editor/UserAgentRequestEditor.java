@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.service.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
 import java.beans.PropertyEditorSupport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,8 +15,11 @@ import java.util.regex.Pattern;
 public class UserAgentRequestEditor extends PropertyEditorSupport {
     private static Pattern pattern = Pattern.compile("(.+)/(\\d\\.\\d.*) \\((\\S+); (\\S+)\\)");
 
-    @Resource
     private CommunityRepository communityRepository;
+
+    public UserAgentRequestEditor(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
+    }
 
     @Override
     public String getAsText() {
