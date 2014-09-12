@@ -5,7 +5,7 @@
 <div class="holding_page_main_container">
     <div class="holding_page_content_container">
         <div class="holding_page_close_button_small">
-            <button title="${pageContext.request.contextPath}/account.html" onClick="location.href=this.title"></button>
+            <button onClick="returnToApp()"></button>
         </div>
         <div class="holding_page_logo"></div>
         <div class="holding_page_img"></div>
@@ -16,7 +16,7 @@
             <s:message code="holding.page.enjoy.message" />
         </div>
         <div class="holding_page_close_button_big">
-            <button title="${pageContext.request.contextPath}/account.html" onClick="location.href=this.title"><s:message code="holding.page.close.message" /></button>
+            <button onClick="returnToApp()"><s:message code="holding.page.close.message" /></button>
         </div>
     </div>
 </div>
