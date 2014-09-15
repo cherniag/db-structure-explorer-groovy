@@ -26,6 +26,7 @@ import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFil
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
@@ -108,6 +109,14 @@ public class PaymentsControllerIT extends AbstractWebControllerIT{
         assertEquals(5, paymentPolicies.size());
     }
 
+
+    @Test
+    public void testPaymentPageUnavailableForMTV1() throws Exception {
+        String communityUrl = "mtv1";
+        SecurityContextHolder.setContext(createSecurityContext(110));
+        mockMvc.perform(get("/payments.html") .cookie(new Cookie[]{new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).
+                andExpect(view().name("payments_coming_soon"));
+    }
 
     private SecurityContext createSecurityContext(int userId) {
         User user = userRepository.findOne(userId);
