@@ -1,14 +1,20 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.server.log4j.InMemoryEventAppender;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
+import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import static junit.framework.Assert.assertEquals;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.IMAGE;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
@@ -22,14 +28,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class GetChartControllerIT extends AbstractControllerTestIT {
 
-    @Resource ArtistRepository artistRepository;
-    @Resource MediaFileRepository mediaFileRepository;
-    @Resource MediaRepository mediaRepository;
-    @Resource ChartRepository chartRepository;
-    @Resource ChartDetailRepository chartDetailRepository;
-    @Resource GenreRepository genreRepository;
-    @Resource CommunityRepository communityRepository;
-    @Resource LabelRepository labelRepository;
+    @Resource
+    private ArtistRepository artistRepository;
+    @Resource
+    private MediaFileRepository mediaFileRepository;
+    @Resource
+    private MediaRepository mediaRepository;
+    @Resource
+    private ChartRepository chartRepository;
+    @Resource
+    private ChartDetailRepository chartDetailRepository;
+    @Resource
+    private GenreRepository genreRepository;
+    @Resource
+    private CommunityRepository communityRepository;
+    @Resource
+    private LabelRepository labelRepository;
+
+    private InMemoryEventAppender inMemoryEventAppender = new InMemoryEventAppender();
+
+    @After
+    public void onComplete() {
+        Logger.getRootLogger().removeAppender(inMemoryEventAppender);
+    }
+
+    @Before
+    public void onStart() throws Exception {
+        Logger.getRootLogger().addAppender(inMemoryEventAppender);
+    }
 
     @Test
     @Transactional
@@ -77,7 +103,7 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.response.data[1].chart.tracks[(@.length-1)].media").value(isrc + "_" + trackId));
-
+        assertEquals(0, inMemoryEventAppender.countOfWarnForLogger(ChartDetailsConverter.class));
     }
 
 }

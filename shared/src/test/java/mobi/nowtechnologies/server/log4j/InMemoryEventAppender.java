@@ -50,6 +50,9 @@ public class InMemoryEventAppender extends AppenderSkeleton {
         return countOfInfoWithLevelWithStackTraceForLogger(Level.WARN, loggerClass);
     }
 
+    public int countOfWarnForLogger(Class loggerClass) {
+        return countOfInfoWithLevelForLogger(Level.WARN, loggerClass);
+    }
 
     public int totalCountOfMessagesWithStackTraceForException(Class throwableClass) {
         int result = 0;
@@ -78,4 +81,20 @@ public class InMemoryEventAppender extends AppenderSkeleton {
         return result;
     }
 
+
+    private int countOfInfoWithLevelForLogger(Level level, Class loggerClass) {
+        Collection<LoggingEvent> events = map.get(loggerClass.getName());
+
+        int result = 0;
+        if (!isEmpty(events)) {
+            for (LoggingEvent currentEvent : events) {
+                if (currentEvent.getLevel().equals(level)) {
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
 }
+
