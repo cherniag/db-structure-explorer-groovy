@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.log4j;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
@@ -67,33 +69,21 @@ public class InMemoryEventAppender extends AppenderSkeleton {
         return result;
     }
 
-    private int countOfInfoWithLevelWithStackTraceForLogger(Level level, Class loggerClass) {
+    private int countByPredicateAndClass(Class loggerClass, Predicate<LoggingEvent> predicate){
         Collection<LoggingEvent> events = map.get(loggerClass.getName());
-
-        int result = 0;
         if (!isEmpty(events)) {
-            for (LoggingEvent currentEvent : events) {
-                if (currentEvent.getLevel().equals(level) && currentEvent.getThrowableInformation() != null) {
-                    result++;
-                }
-            }
+            return Collections2.filter(events, predicate).size();
         }
-        return result;
+        return 0;
+    }
+
+    private int countOfInfoWithLevelWithStackTraceForLogger(Level level, Class loggerClass) {
+        return countByPredicateAndClass(loggerClass, new PredicateByLevelAndThrowable(level));
     }
 
 
     private int countOfInfoWithLevelForLogger(Level level, Class loggerClass) {
-        Collection<LoggingEvent> events = map.get(loggerClass.getName());
-
-        int result = 0;
-        if (!isEmpty(events)) {
-            for (LoggingEvent currentEvent : events) {
-                if (currentEvent.getLevel().equals(level)) {
-                    result++;
-                }
-            }
-        }
-        return result;
+        return countByPredicateAndClass(loggerClass, new PredicateByLevel(level));
     }
 
 }
