@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-init-method="init"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" profile="application-tests">
+        <!-- Facebook -->
+        <bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService" />
+        <bean id="service.facebookTemplateProvider" class="mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTemplateProvider" />
+
+        <!-- Google Plus -->
+        <bean id="service.appTestGooglePlusTokenService" class="mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService" />
+        <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTemplateProvider"/>
+
+        <!-- O2 -->
+        <bean id="service.O2Service" class="mobi.nowtechnologies.server.apptests.provider.o2.O2ServiceStub">
+            <property name="phoneExtensionsService" ref="phoneExtensionsService"/>
+        </bean>
+
+        <bean id="phoneExtensionsService" class="mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService"/>
+
+        <!-- Email -->
+        <bean id="mailModelSerializer" class="mobi.nowtechnologies.server.apptests.email.MailModelSerializer" />
+        <bean id="service.MailService" class="mobi.nowtechnologies.server.apptests.email.DbMailService" />
+</beans>

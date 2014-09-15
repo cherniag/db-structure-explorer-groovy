@@ -20,16 +20,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <import resource="classpath:META-INF\service-chart-supporter.xml"/>
 
 	<!-- Application properties -->
-	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:application.properties</value>
-				<value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
-			</list>
-		</property>
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="ignoreResourceNotFound" value="true" />
-	</bean>
+    <import resource="placeholders.xml"/>
 
 	<bean id="service.DeviceUserDataService" class="mobi.nowtechnologies.server.service.DeviceUserDataService">
 		<property name="deviceUserDataRepository" ref="deviceUserDataRepository" />
@@ -320,8 +311,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     </bean>
 
 	<import resource="social.xml" />
-
-    <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userService" ref="service.UserService" />

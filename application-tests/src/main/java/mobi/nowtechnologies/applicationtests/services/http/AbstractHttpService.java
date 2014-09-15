@@ -18,7 +18,7 @@ public abstract class AbstractHttpService {
     @Resource
     protected UserDataCreator userDataCreator;
 
-    @Resource
+    @Resource(name = "mno.RestTemplate")
     protected RestTemplate restTemplate;
 
     @Value("${environment.url}")
@@ -32,7 +32,7 @@ public abstract class AbstractHttpService {
         b.pathSegment("transport");
         b.pathSegment("service");
         b.pathSegment(deviceData.getCommunityUrl());
-        b.pathSegment(deviceData.getApiVersion().getApiVersion());
+        b.pathSegment(deviceData.getApiVersion());
         b.pathSegment(commandName + format.getExt());
         return b.build().toUriString();
     }

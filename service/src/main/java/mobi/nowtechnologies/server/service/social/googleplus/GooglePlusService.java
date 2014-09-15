@@ -13,6 +13,7 @@ import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Map;
 
@@ -22,13 +23,16 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class GooglePlusService {
     public static final String GOOGLE_PLUS_URL = "https://plus.google.com/";
 
+    @Resource
+    private GooglePlusTemplateProvider googlePlusTemplateProvider;
+
     private AbstractOAuth2ApiBindingCustomizer<GoogleTemplate> templateCustomizer;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     public GooglePlusUserInfo getAndValidateProfile(String accessToken, String googlePlusUserId) {
         try {
-            GoogleTemplate googleTemplate = new GoogleTemplate(accessToken);
+            GoogleTemplate googleTemplate = googlePlusTemplateProvider.provide(accessToken);
             if (templateCustomizer != null) {
                 templateCustomizer.customize(googleTemplate);
             }

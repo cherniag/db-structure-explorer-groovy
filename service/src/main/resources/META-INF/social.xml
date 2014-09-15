@@ -4,11 +4,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    <!-- Google Plus -->
+    <bean id="service.googlePlusTemplateProvider" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusTemplateProviderImpl"/>
+    <bean id="service.GooglePlusService" class="mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService"/>
 
+    <!-- Facebook -->
     <bean id="service.facebookTemplateProvider" class="mobi.nowtechnologies.server.service.social.facebook.FacebookTemplateProviderImpl"/>
     <bean id="service.FacebookDataConverter" class="mobi.nowtechnologies.server.service.social.facebook.FacebookDataConverter"/>
     <bean id="service.FacebookService" class="mobi.nowtechnologies.server.service.social.facebook.FacebookService"/>
 
+    <!-- Email -->
     <bean id="service.MailService" class="mobi.nowtechnologies.server.service.MailService">
         <property name="mailSender" ref="service.MailSender" />
     </bean>
@@ -27,19 +32,5 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
         <property name="useCodeAsDefaultMessage" value="true" />
     </bean>
 
-    <!-- Override for the case of APPLICATION TESTS profile -->
-    <beans profile="application-tests">
-        <!-- Facebook -->
-        <bean id="service.dummyFacebookTokenComposer" class="mobi.nowtechnologies.server.apptests.facebook.AppTestDummyFacebookTokenComposer" />
-        <bean id="service.facebookTemplateProvider" class="mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTemplateProvider" />
-        <bean id="service.O2Service" class="mobi.nowtechnologies.server.apptests.provider.o2.O2ServiceStub">
-            <property name="phoneExtensionsService" ref="phoneExtensionsService"/>
-        </bean>
-
-        <bean id="phoneExtensionsService" class="mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService"/>
-
-        <!-- Email -->
-        <bean id="mailModelSerializer" class="mobi.nowtechnologies.server.apptests.email.MailModelSerializer" />
-        <bean id="service.MailService" class="mobi.nowtechnologies.server.apptests.email.DbMailService" />
-    </beans>
+    <import resource="social-application-tests.xml" />
 </beans>
