@@ -1,18 +1,17 @@
-package mobi.nowtechnologies.server.editor;
+package mobi.nowtechnologies.server.persistence.domain.versioncheck;
 
-import mobi.nowtechnologies.server.service.versioncheck.ClientVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ClientVersionImplTest {
+public class ClientVersionTest {
     @Test
     public void testFromWhenThreeDigits() throws Exception {
         // given
         final String versionString = "1.5.2";
 
         // when
-        ClientVersion from = ClientVersionImpl.from(versionString);
+        ClientVersion from = ClientVersion.from(versionString);
 
         // then
         assertEquals(1, from.major());
@@ -26,7 +25,7 @@ public class ClientVersionImplTest {
         final String versionString = "1.5";
 
         // when
-        ClientVersion from = ClientVersionImpl.from(versionString);
+        ClientVersion from = ClientVersion.from(versionString);
 
         // then
         assertEquals(1, from.major());
@@ -40,7 +39,7 @@ public class ClientVersionImplTest {
         final String versionString = "1.5.2.RELEASE";
 
         // when
-        ClientVersion from = ClientVersionImpl.from(versionString);
+        ClientVersion from = ClientVersion.from(versionString);
 
         // then
         assertEquals(1, from.major());
@@ -54,7 +53,7 @@ public class ClientVersionImplTest {
         final String versionString = "1.5.SNAPSHOT";
 
         // when
-        ClientVersion from = ClientVersionImpl.from(versionString);
+        ClientVersion from = ClientVersion.from(versionString);
 
         // then
         assertEquals(1, from.major());

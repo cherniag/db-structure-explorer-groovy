@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;

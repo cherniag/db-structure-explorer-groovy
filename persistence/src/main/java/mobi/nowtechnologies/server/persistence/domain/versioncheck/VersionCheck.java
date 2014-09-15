@@ -42,11 +42,22 @@ public class VersionCheck {
     @Column(name="status",columnDefinition="char(100)")
     private VersionCheckStatus status;
 
-
     @Column(name="application_name",columnDefinition="char(100)", nullable = false)
     private String applicationName;
 
     protected VersionCheck() {
+    }
+
+    public VersionCheck(DeviceType deviceType, Community community, VersionMessage message, VersionCheckStatus status, String applicationName, ClientVersion clientVersion) {
+        this.deviceType = deviceType;
+        this.community = community;
+        this.message = message;
+        this.status = status;
+        this.applicationName = applicationName;
+
+        this.majorNumber = clientVersion.major();
+        this.minorNumber = clientVersion.minor();
+        this.revisionNumber = clientVersion.revision();
     }
 
     public VersionCheckStatus getStatus() {

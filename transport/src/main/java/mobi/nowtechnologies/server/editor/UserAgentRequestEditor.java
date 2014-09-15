@@ -4,8 +4,9 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.service.versioncheck.ClientVersion;
+import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
+import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.util.Assert;
 
 import java.beans.PropertyEditorSupport;
@@ -32,7 +33,7 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
         boolean found = hrefMatcher.find();
 
         if(!found) {
-            throw new IllegalArgumentException("Did not match expected pattern value: " + text);
+            throw new ConversionNotSupportedException(text, UserAgentRequest.class, null);
         }
 
         UserAgentRequestImpl request = new UserAgentRequestImpl();
@@ -59,7 +60,7 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
     }
 
     private ClientVersion restoreVersion(String versionString) {
-        return ClientVersionImpl.from(versionString);
+        return ClientVersion.from(versionString);
     }
 
     private static class UserAgentRequestImpl implements UserAgentRequest {
@@ -86,6 +87,16 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
         @Override
         public Community getCommunity() {
             return community;
+        }
+
+        @Override
+        public String toString() {
+            return "UserAgentRequestImpl{" +
+                    "community=" + community.getRewriteUrlParameter() +
+                    ", version=" + version +
+                    ", platform=" + platform +
+                    ", applicationName='" + applicationName + '\'' +
+                    '}';
         }
     }
 

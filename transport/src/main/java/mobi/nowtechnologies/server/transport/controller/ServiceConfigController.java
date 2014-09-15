@@ -3,13 +3,11 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.dto.transport.ServiceConfigDto;
 import mobi.nowtechnologies.server.editor.UserAgentRequestEditor;
 import mobi.nowtechnologies.server.persistence.domain.Response;
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
 import mobi.nowtechnologies.server.service.versioncheck.VersionCheckResponse;
 import mobi.nowtechnologies.server.service.versioncheck.VersionCheckService;
-import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.stereotype.Controller;
@@ -39,32 +37,24 @@ public class ServiceConfigController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
-                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.1|6\\.2}/SERVICE_CONFIG"
+                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.0|6\\.1|6\\.2}/SERVICE_CONFIG"
             })
     public Response getServiceConfig(
             @RequestHeader("User-Agent") UserAgentRequest userAgent,
-            @RequestParam("APP_VERSION") String appVersion,
-            @PathVariable("community") String community,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        User user = null;
+            @PathVariable("community") String community) throws Exception {
         Exception ex = null;
         try {
-            LOGGER.info("SERVICE_CONFIG started: userName [{}], community [{}], resolution [{}], deviceUID [{}]", userName, community, deviceUID);
+            LOGGER.info("SERVICE_CONFIG started: community [{}], userAgent [{}]", community, userAgent);
 
-            user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
-
-            ServiceConfigDto dto = convert(versionCheckService.check(userAgent), user);
+            ServiceConfigDto dto = convert(versionCheckService.check(userAgent), userAgent);
 
             return new Response(new Object[]{dto});
         } catch (Exception e) {
             ex = e;
             throw e;
         } finally {
-            logProfileData(deviceUID, community, null, null, user, ex);
-            LOGGER.info("SERVICE_CONFIG  finished");
+            logProfileData(null, community, null, null, null, ex);
+            LOGGER.info("SERVICE_CONFIG finished");
         }
     }
 
@@ -73,13 +63,11 @@ public class ServiceConfigController extends CommonController {
         return sendResponse(exception, response, BAD_REQUEST, false);
     }
 
-    private ServiceConfigDto convert(VersionCheckResponse response, User user) {
+    private ServiceConfigDto convert(VersionCheckResponse response, UserAgentRequest userAgent) {
         VersionCheckStatus status = response.getStatus();
-        String message = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), response.getMessageKey(), null, null);
+        String message = communityResourceBundleMessageSource.getMessage(userAgent.getCommunity().getRewriteUrlParameter(), response.getMessageKey(), null, null);
         String link = response.getUri();
 
         return new ServiceConfigDto(status, message, link);
     }
-
-
 }

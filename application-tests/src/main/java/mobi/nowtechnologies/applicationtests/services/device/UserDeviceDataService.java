@@ -30,7 +30,7 @@ public class UserDeviceDataService {
         for (String version : versions) {
             for (String community : communities) {
                 for (String deviceType : deviceTypes) {
-                    for (RequestFormat format : formats) {
+                    for (RequestFormat format : Arrays.asList(RequestFormat.JSON)) {
                         userDeviceData.add(new UserDeviceData(version, community, deviceType, format));
                     }
                 }

@@ -16,4 +16,5 @@ JSON and XML=JSON, XML
 all devices=ANDROID, IOS, BLACKBERRY, WINDOWS_PHONE
 
 partner communities=o2, vf_nz
-all versions=5.2, 6.0, 6.1
+all versions=5.2, 6.0, 6.1, 6.2
+all communities=o2, hl_uk, vf_nz

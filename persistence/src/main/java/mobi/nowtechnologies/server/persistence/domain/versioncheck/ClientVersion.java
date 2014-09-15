@@ -1,36 +1,32 @@
-package mobi.nowtechnologies.server.editor;
+package mobi.nowtechnologies.server.persistence.domain.versioncheck;
 
-import mobi.nowtechnologies.server.service.versioncheck.ClientVersion;
 import org.apache.commons.lang3.math.NumberUtils;
 
-class ClientVersionImpl implements ClientVersion {
+public class ClientVersion {
     private int major;
     private int minor;
     private int revision;
     private String qualifier;
 
-    @Override
     public int major() {
         return major;
     }
 
-    @Override
     public int minor() {
         return minor;
     }
 
-    @Override
     public int revision() {
         return revision;
     }
 
-    private ClientVersionImpl() {
+    private ClientVersion() {
     }
 
     public static ClientVersion from(String versionString) {
         String[] parts = versionString.split("\\.");
 
-        ClientVersionImpl ver = new ClientVersionImpl();
+        ClientVersion ver = new ClientVersion();
         ver.major = Integer.parseInt(parts[0]);
         ver.minor = Integer.parseInt(parts[1]);
 
@@ -50,5 +46,10 @@ class ClientVersionImpl implements ClientVersion {
         }
 
         return ver;
+    }
+
+    @Override
+    public String toString() {
+        return major + "." + minor + "." + revision + "-" + qualifier;
     }
 }
