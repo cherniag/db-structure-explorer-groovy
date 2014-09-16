@@ -322,11 +322,3 @@ insert into offer_items ( offer_id, item_id) values (2, 49);
 insert into offer_items ( offer_id, item_id) values (2, 50);
 
 insert into auto_opt_in_exempt_ph_number values('+447111111111');
-
-insert into client_version_messages (id, message_key, url) values (1, 'VERSION_REJECTED', 'http://play.google.com/new_community_app');
-insert into client_version_messages (id, message_key, url) values (2, 'VERSION_FORCED_UPGRADE', 'http://play.google.com/new_version_app');
-insert into client_version_messages (id, message_key) values (3, 'VERSION_SUGGESTED');
-
-insert into client_version_info (id, device_type_id, community_id, major_number, minor_number, revision_number, message_id, status, application_name) values(1, 2, 7, 1, 5, 0, 1, 'REVOKED', 'O2_TRACKS');
-insert into client_version_info (id, device_type_id, community_id, major_number, minor_number, revision_number, message_id, status, application_name) values(2, 2, 7, 1, 6, 0, 2, 'FORCED_UPDATE', 'O2_TRACKS');
-insert into client_version_info (id, device_type_id, community_id, major_number, minor_number, revision_number, message_id, status, application_name) values(3, 2, 7, 1, 7, 0, 3, 'SUGGESTED_UPDATE', 'O2_TRACKS');

@@ -5,7 +5,11 @@ import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
+import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheck;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
+import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionMessage;
+import mobi.nowtechnologies.server.persistence.repository.VersionCheckRepository;
+import mobi.nowtechnologies.server.persistence.repository.VersionMessageRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +37,10 @@ public class VersionCheckServiceIT {
 
     @Resource
     private VersionCheckService versionCheckService;
+    @Resource
+    private VersionMessageRepository versionMessageRepository;
+    @Resource
+    private VersionCheckRepository versionCheckRepository;
 
     private Community community;
 
@@ -45,6 +53,34 @@ public class VersionCheckServiceIT {
 
     @Before
     public void prepareTest() {
+        VersionMessage versionMessage1 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_REJECTED", "http://play.google.com/new_community_app"));
+        VersionMessage versionMessage2 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app"));
+        VersionMessage versionMessage3 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_SUGGESTED"));
+
+        versionCheckRepository.saveAndFlush(new VersionCheck(
+                DeviceTypeDao.getAndroidDeviceType(),
+                CommunityDao.getCommunity("o2"),
+                versionMessage1,
+                VersionCheckStatus.REVOKED,
+                "O2_TRACKS",
+                ClientVersion.from("1.5.0")
+        ));
+        versionCheckRepository.saveAndFlush(new VersionCheck(
+                DeviceTypeDao.getAndroidDeviceType(),
+                CommunityDao.getCommunity("o2"),
+                versionMessage2,
+                VersionCheckStatus.FORCED_UPDATE,
+                "O2_TRACKS",
+                ClientVersion.from("1.6.0")
+        ));
+        versionCheckRepository.saveAndFlush(new VersionCheck(
+                DeviceTypeDao.getAndroidDeviceType(),
+                CommunityDao.getCommunity("o2"),
+                versionMessage3,
+                VersionCheckStatus.SUGGESTED_UPDATE,
+                "O2_TRACKS",
+                ClientVersion.from("1.7.0")
+        ));
     }
 
     @Test

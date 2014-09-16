@@ -26,8 +26,12 @@ public class VersionMessage {
     }
 
     public VersionMessage(String messageKey, String url) {
-        this.messageKey = messageKey;
+        this(messageKey);
         this.url = url;
+    }
+
+    public VersionMessage(String messageKey) {
+        this.messageKey = messageKey;
     }
 
     public String getMessageKey() {

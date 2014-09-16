@@ -65,9 +65,18 @@ public class ServiceConfigController extends CommonController {
 
     private ServiceConfigDto convert(VersionCheckResponse response, UserAgentRequest userAgent) {
         VersionCheckStatus status = response.getStatus();
-        String message = communityResourceBundleMessageSource.getMessage(userAgent.getCommunity().getRewriteUrlParameter(), response.getMessageKey(), null, null);
+        String message = getMessage(response, userAgent);
         String link = response.getUri();
 
         return new ServiceConfigDto(status, message, link);
+    }
+
+    private String getMessage(VersionCheckResponse response, UserAgentRequest userAgent) {
+        String messageKey = response.getMessageKey();
+        if(messageKey != null) {
+            return communityResourceBundleMessageSource.getMessage(userAgent.getCommunity().getRewriteUrlParameter(), messageKey, null, null);
+        } else {
+            return null;
+        }
     }
 }
