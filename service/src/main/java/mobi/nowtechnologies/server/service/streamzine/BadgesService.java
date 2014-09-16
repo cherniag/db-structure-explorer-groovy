@@ -250,9 +250,12 @@ public class BadgesService {
         // badge is backed by resolution (has specific, assigned for this resolution and community)
         if(mappings.size() == 2) {
             FilenameAlias filenameAlias = mappings.get(0).getFilenameAlias();
-            // specified the the size and server resized
-            if(filenameAlias != null) {
+            // there is the placeholder
+            // specified the the size and server resized the image
+            if(filenameAlias != null && filenameAlias.getFileName() != null) {
                 return filenameAlias.getFileName();
+            } else {
+                return mappings.get(1).getFilenameAlias().getFileName();
             }
         }
         // default only (only original)
