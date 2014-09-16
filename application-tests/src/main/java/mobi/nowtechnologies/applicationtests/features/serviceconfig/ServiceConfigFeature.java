@@ -7,8 +7,12 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.NullableString;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.NullableStringTransformer;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
+import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
@@ -25,12 +29,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @Component
 public class ServiceConfigFeature {
@@ -44,9 +45,15 @@ public class ServiceConfigFeature {
     CommunityRepository communityRepository;
     @Resource
     ServiceConfigHttpService serviceConfigHttpService;
+    @Resource
+    SimpleInterpolator interpolator;
+    @Resource
+    JsonHelper jsonHelper;
 
     private List<UserDeviceData> userDeviceDatas;
     private Map<UserDeviceData, String> randoms = new HashMap<UserDeviceData, String>();
+    private Map<UserDeviceData, ResponseEntity<String>> sucessfullResponses = new HashMap<UserDeviceData, ResponseEntity<String>>();
+
 
     @Given("^Mobile client makes Service Config call using JSON and XML formats for (.+) and (.+) and (.+)$")
     public void givenOldFormat(@Transform(DictionaryTransformer.class) Word devices,
@@ -61,10 +68,17 @@ public class ServiceConfigFeature {
     }
 
     @Then("^response has (\\d+) http response code$")
-    public void thenResponse400(final int responseExpected) {
+    public void thenResponse(final int responseExpected) {
+        sucessfullResponses.clear();
+
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             ResponseEntity<String> stringResponseEntity = serviceConfigHttpService.serviceConfig(userDeviceData);
             int responseFromServer = stringResponseEntity.getStatusCode().value();
+
+            if(responseFromServer == 200) {
+                // check later
+                sucessfullResponses.put(userDeviceData, stringResponseEntity);
+            }
 
             assertEquals(
                     "Code from server: " + responseFromServer + " differs from expected: " + responseExpected + " for " + userDeviceData,
@@ -73,21 +87,24 @@ public class ServiceConfigFeature {
             );
         }
     }
-    // When service config data is set to 'SUGGESTED_UPDATE' for version '1.3.3', 'musicqubed-{random}' application, 'service.config.some.message' message, 'http://example.com' link
+
+
     @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' link$")
     public void whenServiceConfig(VersionCheckStatus status,
                                   @Transform(ClientVersionTransformer.class) ClientVersion clientVersion,
                                   String application,
                                   String code,
                                   String link) {
+        randoms.clear();
+
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             randoms.put(userDeviceData, UUID.randomUUID().toString());
 
-            String newApplicationName = application.replace("{random}", randoms.get(userDeviceData));
+            // prepare data in database
+            String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", randoms.get(userDeviceData)));
             VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
             Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
             DeviceType deviceType = getDeviceType(userDeviceData);
-
             versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion));
         }
     }
@@ -95,21 +112,41 @@ public class ServiceConfigFeature {
     @And("^(.+) header is in new format \"(.+)\"$")
     public void whenUserAgentIsNotDefault(String headerName, String headerValue) {
         for (Map.Entry<UserDeviceData, String> entry : randoms.entrySet()) {
-            final String random = entry.getValue();
-
             UserDeviceData userDeviceData = entry.getKey();
 
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("random", entry.getValue());
+            model.put("platform", getDeviceType(userDeviceData).getName());
+            model.put("community", communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl()).getName());
 
-            Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
-            String interpolatedHeaderValue = headerValue
-                    .replace("{random}", random)
-                    .replace("{platform}", getDeviceType(userDeviceData).getName())
-                    .replace("{community}", c.getName());
+            String interpolatedHeaderValue = interpolator.interpolate(headerValue, model);
 
             getLogger().info("Sending " + headerName + ":" + interpolatedHeaderValue);
 
             serviceConfigHttpService.setHeader(headerName, interpolatedHeaderValue);
-            ResponseEntity<String> stringResponseEntity = serviceConfigHttpService.serviceConfig(userDeviceData);
+        }
+    }
+
+    @And("^json data is '(.+)'$")
+    public void jsonData(String field) {
+        for (UserDeviceData userDeviceData : userDeviceDatas) {
+            ResponseEntity<String> response = sucessfullResponses.get(userDeviceData);
+            Map<String, Object> stringObjectMap = jsonHelper.extractObjectMapByPath(response.getBody(), "$.response.data[0]." + field);
+            assertTrue("Empty map for: [" + userDeviceData + "]: " + stringObjectMap, stringObjectMap != null && !stringObjectMap.isEmpty());
+        }
+    }
+
+    @And("^json field has '(.+)' set to '(.+)'$")
+    public void jsonFieldHasValue(String field, @Transform(NullableStringTransformer.class) NullableString nullable) {
+        for (UserDeviceData userDeviceData : userDeviceDatas) {
+            ResponseEntity<String> response = sucessfullResponses.get(userDeviceData);
+            Map<String, Object> stringObjectMap = jsonHelper.extractObjectMapByPath(response.getBody(), "$.response.data[0].versionCheck");
+
+            if(nullable.isNull()) {
+                assertNull("Value by field: " + field + " is not null", stringObjectMap.get(field));
+            } else {
+                assertEquals("Value by field: " + field + " differs from expected", nullable.value(), stringObjectMap.get(field));
+            }
         }
     }
 
@@ -120,6 +157,4 @@ public class ServiceConfigFeature {
     private DeviceType getDeviceType(UserDeviceData userDeviceData) {
         return DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceData.getDeviceType());
     }
-
-
 }

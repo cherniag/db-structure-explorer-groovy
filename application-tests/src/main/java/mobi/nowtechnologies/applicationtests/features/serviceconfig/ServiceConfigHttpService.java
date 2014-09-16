@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -32,8 +33,13 @@ public class ServiceConfigHttpService {
         interceptor.setHeader(headerName, headerValue);
     }
 
-    public ResponseEntity<String> serviceConfig(UserDeviceData userDeviceData) {
-        String url = environmentUrl + "/transport/service/" + userDeviceData.getCommunityUrl() + "/" + userDeviceData.getApiVersion() + "/SERVICE_CONFIG";
-        return restTemplate.getForEntity(url, String.class, Collections.emptyMap());
+    public ResponseEntity<String> serviceConfig(UserDeviceData deviceData) {
+        UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(environmentUrl);
+        b.pathSegment("transport");
+        b.pathSegment("service");
+        b.pathSegment(deviceData.getCommunityUrl());
+        b.pathSegment(deviceData.getApiVersion());
+        b.pathSegment("/SERVICE_CONFIG.json");
+        return restTemplate.getForEntity(b.build().toUriString(), String.class, Collections.emptyMap());
     }
 }

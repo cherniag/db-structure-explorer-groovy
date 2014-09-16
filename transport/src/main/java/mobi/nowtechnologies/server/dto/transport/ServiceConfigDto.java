@@ -1,12 +1,18 @@
 package mobi.nowtechnologies.server.dto.transport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "serviceConfig")
+
+@JsonTypeName("versionCheck")
+@XmlRootElement(name = "versionCheck")
+@XmlAccessorType(XmlAccessType.NONE)
 public class ServiceConfigDto {
     @XmlElement(name = "status")
     @JsonProperty(value = "status")
