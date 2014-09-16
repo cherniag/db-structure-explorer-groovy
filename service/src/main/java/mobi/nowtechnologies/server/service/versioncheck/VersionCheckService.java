@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.versioncheck;
 
 import com.google.common.collect.Iterables;
+import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheck;
 import mobi.nowtechnologies.server.persistence.repository.VersionCheckRepository;
 import org.springframework.data.domain.PageRequest;
@@ -26,9 +27,7 @@ public class VersionCheckService {
     private Pageable pagingAndSortingData;
 
     public VersionCheckResponse check(UserAgentRequest userAgent) {
-        List<VersionCheck> possibleVersions =
-                versionCheckRepository.findSuitableVersions(userAgent.getCommunity(), userAgent.getPlatform(), userAgent.getApplicationName(),
-                        userAgent.getVersion().major(), userAgent.getVersion().minor(), userAgent.getVersion().revision(), pagingAndSortingData);
+        List<VersionCheck> possibleVersions = getVersionChecks(userAgent);
 
         VersionCheck needVersion = Iterables.get(possibleVersions, 0, null);
         if (needVersion == null) {
@@ -36,6 +35,16 @@ public class VersionCheckService {
         }
 
         return new VersionCheckResponse(needVersion.getMessage().getMessageKey(), needVersion.getStatus(), needVersion.getMessage().getUrl());
+    }
+
+    private List<VersionCheck> getVersionChecks(UserAgentRequest userAgent) {
+        ClientVersion v = userAgent.getVersion();
+
+        if(v.qualifier() == null) {
+            return versionCheckRepository.findSuitableVersions(userAgent.getCommunity(), userAgent.getPlatform(), userAgent.getApplicationName(), v.major(), v.minor(), v.revision(), pagingAndSortingData);
+        } else {
+            return versionCheckRepository.findSuitableVersionsWithQualifier(userAgent.getCommunity(), userAgent.getPlatform(), userAgent.getApplicationName(), v.major(), v.minor(), v.revision(), v.qualifier(), pagingAndSortingData);
+        }
     }
 
     @PostConstruct

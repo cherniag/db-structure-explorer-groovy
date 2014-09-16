@@ -34,6 +34,9 @@ public class VersionCheck {
     @Column(name="revision_number", nullable = false)
     private int revisionNumber;
 
+    @Column(name="qualifier")
+    private String qualifier;
+
     @JoinColumn(name = "message_id", nullable = false)
     @ManyToOne
     private VersionMessage message;
@@ -58,6 +61,7 @@ public class VersionCheck {
         this.majorNumber = clientVersion.major();
         this.minorNumber = clientVersion.minor();
         this.revisionNumber = clientVersion.revision();
+        this.qualifier = clientVersion.qualifier();
     }
 
     public VersionCheckStatus getStatus() {

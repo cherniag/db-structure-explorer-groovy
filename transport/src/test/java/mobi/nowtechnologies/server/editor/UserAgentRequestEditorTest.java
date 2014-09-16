@@ -140,7 +140,7 @@ public class UserAgentRequestEditorTest {
         // given
         final int communityId = 2;
         final Community community = CommunityFactory.createCommunityMock(communityId, "url");
-        final String userAgentHeaderValue = "musicqubed/3.1.SNAPSHOT (IOS; MTV)";
+        final String userAgentHeaderValue = "musicqubed/3.1-SNAPSHOT (IOS; MTV)";
 
         // when
         when(communityRepository.findByName("MTV")).thenReturn(community);

@@ -36,7 +36,7 @@ public class ClientVersionTest {
     @Test
     public void testFromWhenThreeDigitsAndQualifier() throws Exception {
         // given
-        final String versionString = "1.5.2.RELEASE";
+        final String versionString = "1.5.2-RELEASE";
 
         // when
         ClientVersion from = ClientVersion.from(versionString);
@@ -44,13 +44,14 @@ public class ClientVersionTest {
         // then
         assertEquals(1, from.major());
         assertEquals(5, from.minor());
-        assertEquals(0, from.revision());
+        assertEquals(2, from.revision());
+        assertEquals("RELEASE", from.qualifier());
     }
 
     @Test
     public void testFromWhenTwoDigitsAndQualifier() throws Exception {
         // given
-        final String versionString = "1.5.SNAPSHOT";
+        final String versionString = "1.5-SNAPSHOT";
 
         // when
         ClientVersion from = ClientVersion.from(versionString);
@@ -59,5 +60,6 @@ public class ClientVersionTest {
         assertEquals(1, from.major());
         assertEquals(5, from.minor());
         assertEquals(0, from.revision());
+        assertEquals("SNAPSHOT", from.qualifier());
     }
 }

@@ -97,6 +97,7 @@ CREATE TABLE `client_version_info` (
   `major_number` int(11) NOT NULL,
   `minor_number` int(11) NOT NULL,
   `revision_number` int(11) NOT NULL,
+  `qualifier` char(32),
   `message_id` bigint(20) NOT NULL,
   `status` char(100) NOT NULL,
   `application_name` char(100) NOT NULL,

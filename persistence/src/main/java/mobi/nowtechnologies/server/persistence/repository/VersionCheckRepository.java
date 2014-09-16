@@ -20,4 +20,9 @@ public interface VersionCheckRepository extends JpaRepository<VersionCheck, Long
             "(entity.majorNumber = ?4 and entity.minorNumber = ?5 and entity.revisionNumber>?6) or " +
             "(entity.majorNumber = ?4 and entity.minorNumber = ?5 and entity.revisionNumber=?6))")
     List<VersionCheck> findSuitableVersions(Community community, DeviceType platform, String applicationName, int majorNumber, int minorNumber, int revisionNumber, Pageable pageable);
+
+    @Query(value="select entity from #{#entityName} entity where " +
+            "entity.community=?1 and entity.deviceType=?2 and entity.applicationName=?3 and " +
+            "entity.majorNumber = ?4 and entity.minorNumber = ?5 and entity.revisionNumber=?6 and entity.qualifier=?7")
+    List<VersionCheck> findSuitableVersionsWithQualifier(Community community, DeviceType platform, String applicationName, int majorNumber, int minorNumber, int revisionNumber, String qualifier, Pageable pageable);
 }
