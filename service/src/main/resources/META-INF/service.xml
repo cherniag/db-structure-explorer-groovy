@@ -285,6 +285,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="mediaRepository" ref="mediaRepository" />
 		<property name="storePath" value="${store.path}" />
 		<property name="brightcoveReadToken" value="${brightcove.token.read}" />
+        <property name="cloudFileService" ref="service.CloudFileService"/>
+        <property name="destinationContainerNameForAudioContent" value="${cloudFile.audioContentContainerName}"/>
 	</bean>
 
 	<bean id="service.CountryAppVersionService" class="mobi.nowtechnologies.server.service.CountryAppVersionService">

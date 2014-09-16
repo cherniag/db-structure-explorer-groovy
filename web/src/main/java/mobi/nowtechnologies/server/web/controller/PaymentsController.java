@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.subscription.*;
 import org.slf4j.Logger;
@@ -47,6 +48,16 @@ public class PaymentsController extends CommonController {
     private CommunityService communityService;
     private PromotionService promotionService;
 
+    private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+
+    public CommunityResourceBundleMessageSource getCommunityResourceBundleMessageSource() {
+        return communityResourceBundleMessageSource;
+    }
+
+    public void setCommunityResourceBundleMessageSource(CommunityResourceBundleMessageSource communityResourceBundleMessageSource) {
+        this.communityResourceBundleMessageSource = communityResourceBundleMessageSource;
+    }
+
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
         this.paymentDetailsService = paymentDetailsService;
     }
@@ -80,6 +91,9 @@ public class PaymentsController extends CommonController {
         	LOGGER.info("Showing holding page for user [{}] with provider [{}]", user.getId(), user.getProvider());
         	return new ModelAndView(scopePrefix+"/notimplemented");
         }
+        if (!hasCommunityPaymentsPage(community)){
+            return new ModelAndView("payments_coming_soon");
+        }
 
         paymentsPage.setAwaitingPaymentStatus(calcIsAwaitingPaymentStatus(user));
         paymentsPage.setMobilePhoneNumber( user.getMobile() );
@@ -106,6 +120,10 @@ public class PaymentsController extends CommonController {
         mav.addObject("paymentsPage", paymentsPage);
 
         return mav;
+    }
+
+    private boolean hasCommunityPaymentsPage(Community community) {
+        return communityResourceBundleMessageSource.readBoolean(community.getRewriteUrlParameter(), "paymentsPageEnable", true);
     }
 
     private boolean calcIsAwaitingPaymentStatus(User user) {

@@ -606,17 +606,14 @@ if(Streamzine.Presenter.Editor == undefined) {
 
             editorRef.mediaTypePicker = Pickers.createMediaPlaylistTypePicker(id, 'mediaPlaylistPickerId', playListUrl, function(playlistDto) {
                 Streamzine.Model.getCurrentBlock().data = {
-                    'chartType': {
-                        '$type': 'ChartType',
-                        '$name': playlistDto.chartType.$name
-                    },
+                    'chartId':playlistDto.chartId,
                     'imageFileUrl': playlistDto.imageFileUrl,
                     'name': playlistDto.name,
                     'subtitle': playlistDto.subtitle,
                     'tracksCount': playlistDto.tracksCount
-                }
+                };
                 fireValuePickedEvent('coverUrl')(playlistDto.imageFileName);
-                fireValuePickedEvent('value')(playlistDto.chartType.$name);
+                fireValuePickedEvent('value')(playlistDto.chartId);
                 fireValuePickedEvent('title')(playlistDto.name);
                 fireValuePickedEvent('subTitle')(playlistDto.subtitle);
             });
@@ -626,6 +623,5 @@ if(Streamzine.Presenter.Editor == undefined) {
             editorRef.internalAdPicker = Pickers.createInternalAdPicker('internalAdPicker', fireValuePickedEvent());
         }
     };
-
 }
 

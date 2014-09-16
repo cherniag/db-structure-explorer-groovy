@@ -7,12 +7,14 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.MediaDeliveryEn
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncodeToEnum;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import mobi.nowtechnologies.common.util.TrackIdGenerator;
 import mobi.nowtechnologies.server.persistence.dao.MediaLogTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
+import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,8 +36,6 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 /**
- * FileService
- *
  * @author Alexander Kolpakov (akolpakov)
  * @author Maksym Chernolevskyi (maksym)
  */
@@ -55,6 +55,22 @@ public class FileService {
     private String brightcoveReadToken;
 
     private MediaRepository mediaRepository;
+
+    private CloudFileService cloudFileService;
+
+    private String destinationContainerNameForAudioContent;
+
+    public String getDestinationContainerNameForAudioContent() {
+        return destinationContainerNameForAudioContent;
+    }
+
+    public void setDestinationContainerNameForAudioContent(String destinationContainerNameForAudioContent) {
+        this.destinationContainerNameForAudioContent = destinationContainerNameForAudioContent;
+    }
+
+    public void setCloudFileService(CloudFileService cloudFileService) {
+        this.cloudFileService = cloudFileService;
+    }
 
     public void setMediaRepository(MediaRepository mediaRepository) {
         this.mediaRepository = mediaRepository;
@@ -120,8 +136,14 @@ public class FileService {
 
         notNull(media, "error finding filename in db, mediaId=" + mediaIsrc + ", fileType=" + fileType +
                 ", resolution=" + resolution + ", userId=" + userId);
-        String mediaFileName = getFilename(media, fileType, user.getDeviceTypeId());
+        String mediaFileName = getFileName(media, fileType, user.getDeviceTypeId());
 
+        File file = getFileFromLocalStorage(mediaIsrc, fileType, resolution, mediaFileName);
+        logEvents(media, fileType, user);
+        return file;
+    }
+
+    private File getFileFromLocalStorage(String mediaIsrc, FileType fileType, String resolution, String mediaFileName) {
         String folderPath = getFolder(fileType.getFolderName());
 
         File fileName;
@@ -140,14 +162,6 @@ public class FileService {
         File file = fileName;
         isTrue(file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + mediaIsrc +
                 "], path="+file.getAbsolutePath());
-
-        if (fileType.equals(FileType.PURCHASED))
-            mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
-
-        if (fileType.equals(FileType.HEADER)) {
-            LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", userId, media.getI());
-            mediaService.conditionalUpdateByUserAndMedia(userId, media.getI());
-        }
         return file;
     }
 
@@ -163,8 +177,34 @@ public class FileService {
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public File getFileByTrackId(String trackId, FileType fileType, String resolution, User user) {
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public InputStream getFileStreamForMedia(Media media, String mediaId, String resolution, String mediaFileName, FileType fileType, User user) {
+        logEvents(media, fileType, user);
+        try {
+            return cloudFileService.getInputStream(destinationContainerNameForAudioContent, mediaFileName);
+        } catch (FilesNotFoundException e) {
+            LOGGER.error("ERROR download from cloud [{}]. Try to find on local storage", mediaFileName);
+            File file = getFileFromLocalStorage(mediaId, fileType, resolution, mediaFileName);
+            try {
+                return new FileInputStream(file);
+            } catch (FileNotFoundException e1) {
+                LOGGER.error("ERROR find on local storage[{}]", mediaFileName);
+                throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Coudn't find  file");
+            }
+        }
+    }
+
+    private void logEvents(Media media, FileType fileType, User user) {
+        if (fileType.equals(FileType.PURCHASED))
+            mediaService.logMediaEvent(user.getId(), media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
+
+        if (fileType.equals(FileType.HEADER)) {
+            LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", user.getId(), media.getI());
+            mediaService.conditionalUpdateByUserAndMedia(user.getId(), media.getI());
+        }
+    }
+
+    public Media getMedia(String trackId, FileType fileType, String resolution, User user) {
         notNull(trackId, "The parameter mediaIsrc is null");
         notNull(fileType, "The parameter fileType is null");
         notNull(user, "The parameter user is null");
@@ -176,35 +216,8 @@ public class FileService {
 
         notNull(media, "error finding filename in db, mediaId=" + trackId + ", fileType=" + fileType +
                 ", resolution=" + resolution + ", userId=" + userId);
-        String mediaFileName = getFilename(media, fileType, user.getDeviceTypeId());
 
-        String folderPath = getFolder(fileType.getFolderName());
-
-        File fileName;
-        if (fileType.equals(FileType.IMAGE_RESOLUTION)) {
-            notNull(resolution, "The parameter fileResolution is null");
-            isTrue(!containsAny(resolution, "/\\"), "The parameter resolution couldn't contain \\ and / symbols");
-
-            StringBuilder builder = new StringBuilder(mediaFileName);
-            builder.insert(mediaFileName.lastIndexOf(POINT), UNDERSCORE
-                    + resolution);
-            builder.insert(0, folderPath + SEPARATOR);
-            fileName = new File(builder.toString());
-        } else{
-            fileName = new File(folderPath, mediaFileName);
-        }
-        File file = fileName;
-        isTrue(file.exists(), "Could not find file type [" + fileType + "] for media isrc [" + trackId +
-                "], path="+file.getAbsolutePath());
-
-        if (fileType.equals(FileType.PURCHASED))
-            mediaService.logMediaEvent(userId, media, MediaLogTypeDao.DOWNLOAD_ORIGINAL);
-
-        if (fileType.equals(FileType.HEADER)) {
-            LOGGER.info("conditionalUpdateByUserAndMedia user [{}], media [{}]", userId, media.getI());
-            mediaService.conditionalUpdateByUserAndMedia(userId, media.getI());
-        }
-        return file;
+        return media;
     }
 
     public String getFolder(String folderName) {
@@ -229,7 +242,7 @@ public class FileService {
         return file;
     }
 
-    private String getFilename(Media media, FileType fileType, byte deviceTypeId) {
+    public String getFileName(Media media, FileType fileType, byte deviceTypeId) {
         switch (fileType) {
             case AUDIO:
                   /* Christophe: no longer return preview for iPhone

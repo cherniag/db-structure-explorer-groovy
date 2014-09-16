@@ -35,7 +35,6 @@ import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- *
  */
 public class ChartService implements ApplicationContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartService.class);
@@ -211,54 +210,10 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(readOnly = true)
-    public List<ChartDetail> getChartItemsByDate(Integer chartId, Date selectedPublishDate) {
-        LOGGER.debug("input parameters chartId, selectedPublishDate: [{}], [{}]", chartId, selectedPublishDate);
-
-        List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(chartId, selectedPublishDate, true);
-
-        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-        return chartDetails;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChartDetail> cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(Date choosedPublishDate, Integer chartId) {
-        LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", choosedPublishDate, chartId);
-
-        List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(choosedPublishDate, chartId, false);
-
-        LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
-        return clonedChartDetails;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { ServiceCheckedException.class, RuntimeException.class })
-    public ChartDetail saveChartItem(ChartItemDto chartItemDto) throws ServiceCheckedException {
-        LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
-
-        Chart chart = chartRepository.findOne(chartItemDto.getChartId());
-
-        ChartDetail chartDetail = chartDetailService.saveChartItem(chartItemDto, chart);
-
-        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-        return chartDetail;
-    }
-
-    @Transactional(readOnly = true)
     public ChartDetail getChartItemById(Integer chartItemId) {
         LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
 
         ChartDetail chartDetail = chartDetailService.getChartItemById(chartItemId);
-
-        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-        return chartDetail;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDetail updateChartItem(ChartItemDto chartItemDto) {
-        LOGGER.debug("input parameters chartItemDto: [{}]", chartItemDto);
-
-        Chart chart = chartRepository.findOne(chartItemDto.getChartId());
-
-        ChartDetail chartDetail = chartDetailService.updateChartItem(chartItemDto, chart);
 
         LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
         return chartDetail;
@@ -382,25 +337,6 @@ public class ChartService implements ApplicationContextAware {
         return chart;
     }
 
-    @Transactional(readOnly = true)
-    public List<String> getAllChannels() {
-
-        List<String> allChannels = chartDetailService.getAllChannels();
-
-        LOGGER.info("Output parameter allChannels=[{}]", allChannels);
-        return allChannels;
-    }
-
-    @Transactional(readOnly = true)
-    public List<Media> getMedias(String searchWords) {
-        LOGGER.debug("input parameters searchWords: [{}]", searchWords);
-
-        List<Media> medias = mediaService.getMedias(searchWords);
-
-        LOGGER.info("Output parameter medias=[{}]", medias);
-        return medias;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean deleteChartItems(Integer chartId, Date selectedPublishDateTime) {
         LOGGER.debug("input parameters chartId, selectedPublishDateTime: [{}], [{}]", chartId, selectedPublishDateTime);
@@ -414,17 +350,6 @@ public class ChartService implements ApplicationContextAware {
 
         LOGGER.debug("Output parameter success=[{}]", success);
         return success;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChartDetail> minorUpdateIfOnesDoesNotExistForSelectedPublishDate(Date selectedPublishDateTime, Integer chartId) {
-        LOGGER.debug("input parameters choosedPublishDate, chartId: [{}], [{}]", selectedPublishDateTime, chartId);
-
-        List<ChartDetail> clonedChartDetails = chartDetailService.cloneChartItemsForSelectedPublishDateIfOnesDoesNotExist(selectedPublishDateTime, chartId, true);
-
-        LOGGER.info("Output parameter clonedChartDetails=[{}]", clonedChartDetails);
-        return clonedChartDetails;
-
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

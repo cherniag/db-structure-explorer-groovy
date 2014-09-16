@@ -272,4 +272,10 @@
 		<put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/playlist/preview_playlists.jsp"/>
 	</definition>
 
+  <definition name="payments_coming_soon" extends="mainTemplate" preparer="web.CommunityViewPreparer">
+      <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/payments_coming_soon/headSection.jsp"/>
+      <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/a_header.jsp"/>
+      <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/payments_coming_soon/content.jsp"/>
+  </definition>
+
 </tiles-definitions>

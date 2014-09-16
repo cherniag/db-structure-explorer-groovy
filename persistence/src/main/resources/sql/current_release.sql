@@ -54,6 +54,34 @@ ALTER TABLE sz_deeplink_promotional ADD COLUMN opener varchar(15);
 update sz_deeplink_promotional
 set opener = 'IN_APP' where link_type = 'EXTERNAL_AD';
 
+-- http://jira.musicqubed.com/browse/SRV-171
+-- Update deeplinks creation logic for playlist deeplinks in magazine channel
+
+create table chart_types (id bigint(20) NOT NULL, name char(25) NOT NULL);
+
+alter table sz_deeplink_music_list add column chart_id tinyint(4) DEFAULT NULL;
+alter table sz_deeplink_music_list add index sz_deeplink_music_list_PK_chart_id (chart_id), add constraint sz_deeplink_music_list_U_chart_id foreign key (chart_id) references tb_charts (i);
+
+start transaction;
+
+insert into chart_types (id, name) values (0, 'BASIC_CHART'), (1, 'HOT_TRACKS'), (2, 'FOURTH_CHART'), (3, 'OTHER_CHART'), (4, 'FIFTH_CHART'), (5, 'VIDEO_CHART'), (6, 'HL_UK_PLAYLIST_1'), (7, 'HL_UK_PLAYLIST_2');
+
+UPDATE
+    sz_deeplink_music_list dml JOIN sz_block b
+      ON b.id = dml.block_id JOIN sz_update u
+      ON u.id = b.update_id JOIN chart_types ct
+      ON ct.id = dml.chart_type JOIN tb_charts c
+      ON c.type = ct.name COLLATE utf8_unicode_ci JOIN community_charts cc
+      ON cc.chart_id = c.i
+         AND cc.community_id = u.community_id
+SET
+  dml.chart_id = c.i
+;
+
+commit;
+
+drop table chart_types;
+alter table sz_deeplink_music_list drop column chart_type;
 -- SRV-192
 CREATE TABLE `client_version_messages` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,

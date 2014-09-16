@@ -25,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+
 public class StreamzineUpdateAdminAsm {
     private MessageSource messageSource;
     private DeepLinkInfoService deepLinkInfoService;
@@ -198,8 +200,8 @@ public class StreamzineUpdateAdminAsm {
 
             MusicPlayListDeeplinkInfo i = (MusicPlayListDeeplinkInfo) info;
             blockDto.setKey(playlist.name());
-            if (i.getChartType() != null) {
-                blockDto.setValue(i.getChartType().name());
+            if (isNotNull(i.getChartId())) {
+                blockDto.setValue(i.getChartId().toString());
             }
             blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i, community));
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));

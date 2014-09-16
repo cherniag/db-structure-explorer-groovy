@@ -1,13 +1,13 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import mobi.nowtechnologies.server.shared.enums.ChartType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ChartListItemDto implements Comparable<ChartListItemDto> {
     private String name;
     private String subtitle;
     private String imageFileName;
-    private ChartType chartType;
     private int tracksCount;
+    private Integer chartId;
 
     public String getName() {
         return name;
@@ -23,14 +23,6 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
 
     public void setImageFileName(String imageFileName) {
         this.imageFileName = imageFileName;
-    }
-
-    public ChartType getChartType() {
-        return chartType;
-    }
-
-    public void setChartType(ChartType chartType) {
-        this.chartType = chartType;
     }
 
     public int getTracksCount() {
@@ -52,5 +44,24 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
     @Override
     public int compareTo(ChartListItemDto o) {
         return name.compareTo(o.name);
+    }
+
+    public Integer getChartId() {
+        return chartId;
+    }
+
+    public void setChartId(Integer chartId) {
+        this.chartId = chartId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("name", name)
+                .append("subtitle", subtitle)
+                .append("imageFileName", imageFileName)
+                .append("tracksCount", tracksCount)
+                .append("chartId", chartId)
+                .toString();
     }
 }

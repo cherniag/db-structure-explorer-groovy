@@ -41,6 +41,7 @@ import javax.annotation.Resource;
 import java.net.URI;
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
 import static org.springframework.util.StringUtils.hasLength;
@@ -302,7 +303,7 @@ public class UpdateValidator extends BaseValidator {
 
         if(musicType == MusicType.PLAYLIST) {
             try {
-                ChartType.valueOf(value);
+                parseInt(value);
             } catch (IllegalArgumentException e) {
                 Object[] args = {value, Arrays.toString(ChartType.values())};
                 rejectValue("streamzine.error.notfound.playlist.id", args, errors);
@@ -359,7 +360,7 @@ public class UpdateValidator extends BaseValidator {
                 return;
             }
 
-            Message message = messageRepository.findOne(Integer.parseInt(value));
+            Message message = messageRepository.findOne(parseInt(value));
             boolean notFoundMessage = (message == null);
             if(notFoundMessage) {
                 Object[] args = {value};
