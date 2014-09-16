@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.ConversionNotSupportedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -70,7 +71,7 @@ public class UserAgentRequestEditorTest {
         final String userAgentHeaderValue = "Some not valid user agent value";
 
         // when
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ConversionNotSupportedException.class);
         editor.setAsText(userAgentHeaderValue);
 
         // then
