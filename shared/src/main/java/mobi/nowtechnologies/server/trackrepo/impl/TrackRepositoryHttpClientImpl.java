@@ -450,7 +450,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	static class HttpClientFactory {
 		public static HttpClient getHttpClient() {
 			SchemeRegistry schreg = new SchemeRegistry();
-			schreg.register(new Scheme("http", 8080, PlainSocketFactory.getSocketFactory()));
+			schreg.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
 			schreg.register(new Scheme("https", 443, PlainSocketFactory.getSocketFactory()));
 			ClientConnectionManager conman = new ThreadSafeClientConnManager(schreg);
 			HttpClient client = new DefaultHttpClient(conman);

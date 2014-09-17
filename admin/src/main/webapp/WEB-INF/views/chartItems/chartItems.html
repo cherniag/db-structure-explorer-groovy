@@ -162,17 +162,24 @@
 	    width: 15%;
 	}
 	
+    #chartItemsTable li div.iTunesUrl_chartItem {
+        font-size: 9px;
+        font-weight: bold;
+        height: 60px !important;
+        width: 10%;
+    }
+
 	#chartItemsTable li div.ArtistTitle_chartItem {
 	    font-size: 9px;
 	    font-weight: bold;
-	    width: 18%;
+	    width: 12%;
 	}
 	
 	#chartItemsTable li div.info_chartItem {
         font-size: 10px;
         height: 60px !important;
         overflow: hidden;
-        width: 15%;
+        width: 10%;
     }
 
 	#chartItemsTable li div.publishDate_chartItem {
@@ -181,8 +188,76 @@
 	}
 	
 </style>
+
+<script type="text/javascript">
+    var currId = -1;
+    var messageInvalidLinks = "Invalid ITunes links in positions: ";
+    var messageLinksCorrect = "All ITunes links are filled";
+
+    function OpenDialog(mediaId){
+        currId = mediaId;
+        var currentValue = $("#itunes" + currId).val();
+        $("#iTunesUrl").val(currentValue);
+        $("#change_dialog").dialog({ height: 100, resizable: false, draggable: false, modal: true });
+    }
+
+    function closeDialog(){
+        $("#change_dialog").dialog("close");
+    }
+    function ChangeBtn(){
+        var newValue = $("#iTunesUrl").val();
+        $("#itunes" + currId).val(newValue);
+        closeDialog();
+    }
+    function CancelBtn(){
+        currId = -1;
+        closeDialog();
+    }
+
+    function validateITunesUrls(){
+        var invalidIndexes = [];
+        $( "#chartItemsSortable > li" ).each(function(index) {
+            var channel = $(this).children('.channel_chartItem').text().trim();
+            var mediaId = $(this).children('.mediaId_chartItem').text().trim();
+            var position = $(this).children('.position_chartItem').text().trim();
+            var artistName =  $(this).children('.ArtistTitle_chartItem').text().trim();
+            var iTunesUrl = $("#itunes" + mediaId).val().trim();
+            var fileType = $("#fileType" + mediaId).val().trim();
+            var label = $("#label" + mediaId).val().trim();
+            var isVideo = (fileType == 'VIDEO');
+            var isMQLabel = (label == 'MQ');
+            var appCastName = 'Appcast'.toLowerCase();
+            var isLabelArtist = artistName.toLowerCase().indexOf(appCastName) > -1;
+            var isAppcastChannel = channel.toLowerCase() == appCastName;
+            var isPodCast = isMQLabel || isLabelArtist || isAppcastChannel;
+            var skipValidation = (isVideo || isPodCast);
+
+            if (!skipValidation) {
+                if (!iTunesUrl) {
+                    invalidIndexes.push(position);
+                }
+            }
+
+        });
+        if (invalidIndexes.length > 0){
+            alert(messageInvalidLinks + invalidIndexes);
+        }
+        else
+        {
+            alert(messageLinksCorrect);
+        }
+    }
+</script>
 <body th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}">
 	<div th:substituteby="tpl::navbar"></div>
+
+<div id="change_dialog" style="display: none">
+    <input type="text" width="50" id="iTunesUrl"/>
+    <button id="change" onclick="ChangeBtn();return false;">Submit</button>
+    &nbsp;&nbsp;
+    <button id="cancel" onclick="CancelBtn();return false;">Cancel</button>
+</div>
+
 	<!-- Modal -->
 	<div id="windowTitleDialog" class="modal fade">
 		<div class="modal-body"></div>
@@ -222,7 +297,8 @@
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 					<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
-                    <div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.trackId}">Track id</div>
+                    <div class="publishDate_chartItem" th:text="#{chartItems.page.mediasTable.head.trackId}">ISRC</div>
+                    <div class="iTunesUrl_chartItem" th:text="#{chartItems.page.mediasTable.head.iTunesUrl}">ITunes Url</div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -250,6 +326,12 @@
 						<span th:text="${chartItemDto.mediaDto.trackId}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
 					</div>
+                <input type="hidden" th:id="'itunes' + ${chartItemDto.mediaDto.id}" th:value="${chartItemDto.mediaDto.ITunesUrl}"/>
+                <input type="hidden" th:id="'fileType' + ${chartItemDto.mediaDto.id}" th:value="${chartItemDto.mediaDto.audioFileDto.fileType}"/>
+                <input type="hidden" th:id="'label' + ${chartItemDto.mediaDto.id}" th:value="${chartItemDto.mediaDto.label}"/>
+                <div class="iTunesUrl_chartItem" style="display:inline-block;">
+                    <button type="button" class="btn btn-danger"  th:onclick="'javascript:OpenDialog(\'' + ${chartItemDto.mediaDto.id} + '\');'"   th:text="#{chartItems.page.button.changeITunesUrl}">Basket</button>
+                </div>
 				</li>
 			</ul>
 		</div>
@@ -270,6 +352,14 @@
 							</li>
 						</ul>
 					</form>
+            <form class="del_btn">
+                <ul class="nav nav-pills table_margin">
+                    <li class="active">
+                        <a th:text="#{chartItems.page.button.validateITunes}" onclick="validateITunesUrls()">Validate ITunes Links</a>
+                    </li>
+                </ul>
+            </form>
+
 			</div>
 			<div>
 				<div id="basket" data-spy="affix" data-offset-top="200">
@@ -536,7 +626,8 @@
 		var artistTitleDiv = item.find("div.ArtistTitle_chartItem");
 		var imageDiv = item.find("div.image_chartItem, div.cover_media");
 		var infoDiv = item.find("div.info_chartItem");
-		
+       var changeITunesLink = item.find("div.iTunesUrl_chartItem");
+
 		positionDiv.text("0");
 		
 		imageDiv.detach().insertBefore(artistTitleDiv);
@@ -544,7 +635,8 @@
 		artistTitleDiv.css("display","inline-block");
 		imageDiv.css("display","inline-block");
 		infoDiv.css("display","inline-block");
-		
+        changeITunesLink.css("display","none");
+
 		artistTitleDiv.attr("class","ArtistTitle_chartItemBasket");
 		imageDiv.attr("class","image_chartItemBasket");
 		infoDiv.attr("class","info_chartItemBasket");
@@ -605,6 +697,7 @@
 		var imageDiv = item.find("div.image_chartItem, div.image_chartItemBasket, div.cover_media");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
 		var publishDateDiv = item.find("div.publishDate_chartItem");
+    var changeITunesLinkDiv = item.find("div.iTunesUrl_chartItem");
 
 		imageDiv.detach().insertBefore(artistTitleDiv);
 		
@@ -616,6 +709,7 @@
 		positionPrevDiv.css("display","inline-block");
 		chgPositionDiv.css("display","inline-block");
 		publishDateDiv.css("display","inline-block");
+    changeITunesLinkDiv.css("display","inline-block");
 
 		artistTitleDiv.attr("class","ArtistTitle_chartItem");
 		imageDiv.attr("class","image_chartItem");
@@ -848,9 +942,11 @@
 		var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
 		var channel = null;
 		var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
+        var mediaId = li.find("div.mediaId_chartItem").text();
+        var iTunesUrl = $("#itunes" + mediaId).val();
 		json.push(
 		  "{'id':",id != null && id != '' ? id : 'null',",",
-		  "'mediaDto':{'id':",li.find("div.mediaId_chartItem").text(),"},",
+          "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" + iTunesUrl + "'},",
 		  "'position':",li.find("div.position_chartItem").text(),",",
 		  "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
 		  "'chgPosition':",li.find("div.change_position_chartItem").text(),",",
@@ -915,6 +1011,7 @@
 			lockedInput.attr("checked", "checked");
 		
 		var basketButtonLable = /*[[#{chartItems.page.button.basket}]]*/ "Basket";
+        var changeITunesButtonLabel = /*[[#{chartItems.page.button.changeITunesUrl}]]*/ "Change url";
 		var publishDateDiv = $('<div>').attr({
 			"class":"publishDate_chartItem",
 			"style":"display:none;"
@@ -968,7 +1065,21 @@
 			"onclick":"onToBasketClick(this, true)",
 			"class":"btn btn-danger"
 		}).text(basketButtonLable).appendTo(artistMediaDiv);
-		
+         var itunesValueNode = $("<input type='hidden' id='itunes" + chartItem.mediaDto.id + "'" + "value='" + chartItem.mediaDto.itunesUrl + "' />");
+         itunesValueNode.appendTo(li);
+         var iTunesDiv = $('<div >').attr({
+             "class": "iTunesUrl_chartItem",
+             "style": "display:none;"
+         }).appendTo(li);
+         $('<button>').attr({
+             "type": "button",
+             "onclick": "OpenDialog(" + chartItem.mediaDto.id + ")",
+             "class": "btn btn-danger"
+         }).text(changeITunesButtonLabel).appendTo(iTunesDiv);
+    var contentTypeNode = $("<input type='hidden' id='fileType" + chartItem.mediaDto.id + "'" + "value='" + chartItem.mediaDto.audioFileDto.fileType + "' />");
+    contentTypeNode.appendTo(li);
+    var labelNode = $("<input type='hidden' id='label" + chartItem.mediaDto.id + "'" + "value='" + chartItem.mediaDto.label + "' />");
+    labelNode.appendTo(li);
 		return li;
 	}
 	

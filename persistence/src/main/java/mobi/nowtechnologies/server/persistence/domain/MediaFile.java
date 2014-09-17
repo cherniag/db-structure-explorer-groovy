@@ -21,7 +21,7 @@ public class MediaFile implements Serializable {
 	@Column(name = "fileType", insertable = false, updatable = false)
 	private byte fileTypeId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "fileType")
 	private FileType fileType;
 
