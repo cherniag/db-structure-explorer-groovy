@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
@@ -43,8 +44,9 @@ public class ChartDetailServiceTest {
 	private static EntityService mockEntityService;
 	private static ChartDetailDao mockChartDetailDao;
 	private static MediaService mockMediaService;
+    private MediaRepository mediaRepository;
 
-	private final class ChartDetailComparator implements Comparator<ChartDetail> {
+    private final class ChartDetailComparator implements Comparator<ChartDetail> {
 		@Override
 		public int compare(ChartDetail o1, ChartDetail o2) {
 			return o1.getPosition() - o2.getPosition();
@@ -207,6 +209,8 @@ public class ChartDetailServiceTest {
 			for (int i = 0; i < 10; i++) {
 				Media media = getMediaInstance(i);
 				medias.add(media);
+                when(mediaRepository.findOne(media.getI())).thenReturn(media);
+                when(mediaRepository.save(media)).thenReturn(media);
 			}
 			medias = Collections.unmodifiableList(medias);
 		}
@@ -733,6 +737,8 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testSaveChartItems_Successful() throws Exception {
 		Date selectedPublishDate = new Date();
+        Media media = new Media();
+        media.setI(1);
 
 		final long selectedPublishTimeMillis = selectedPublishDate.getTime();
 		List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishTimeMillis);
@@ -1537,10 +1543,13 @@ public class ChartDetailServiceTest {
 		mockDrmService = PowerMockito.mock(DrmService.class);
 		mockChartDetailRepository = PowerMockito.mock(ChartDetailRepository.class);
 		fixtureChartDetailService.setChartDetailRepository(mockChartDetailRepository);
+        mediaRepository = PowerMockito.mock(MediaRepository.class);
 		mockEntityService = PowerMockito.mock(EntityService.class);
 		mockChartDetailDao = PowerMockito.mock(ChartDetailDao.class);
 		fixtureChartDetailService.setChartDetailDao(mockChartDetailDao);
 		mockMediaService = PowerMockito.mock(MediaService.class);
+
 		fixtureChartDetailService.setMediaService(mockMediaService);
+        fixtureChartDetailService.setMediaRepository(mediaRepository);
 	}
 }

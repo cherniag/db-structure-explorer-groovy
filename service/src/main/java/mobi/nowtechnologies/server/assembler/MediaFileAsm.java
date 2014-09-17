@@ -22,7 +22,7 @@ public class MediaFileAsm {
 		mediaFileDto.setId(mediaFile.getI());
 		mediaFileDto.setSize(mediaFile.getSize());
 		mediaFileDto.setDuration(mediaFile.getDuration());
-        mediaFileDto.setFileType(FileType.findById(mediaFile.getFileType().getI()));
+        mediaFileDto.setFileType(FileType.findById(mediaFile.getFileTypeId()));
 		
 		LOGGER.info("Output parameter mediaFileDto=[{}]", mediaFileDto);
 		return mediaFileDto;
