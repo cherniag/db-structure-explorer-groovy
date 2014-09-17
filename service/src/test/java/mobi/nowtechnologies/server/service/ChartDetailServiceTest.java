@@ -737,9 +737,6 @@ public class ChartDetailServiceTest {
 	@Test
 	public void testSaveChartItems_Successful() throws Exception {
 		Date selectedPublishDate = new Date();
-        Media media = new Media();
-        media.setI(1);
-
 		final long selectedPublishTimeMillis = selectedPublishDate.getTime();
 		List<ChartDetail> originalChartDetails = getChartDetails(selectedPublishTimeMillis);
 		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(originalChartDetails);
