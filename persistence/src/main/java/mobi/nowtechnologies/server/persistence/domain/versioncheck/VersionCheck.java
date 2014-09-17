@@ -34,7 +34,7 @@ public class VersionCheck {
     @Column(name="revision_number", nullable = false)
     private int revisionNumber;
 
-    @Column(name="qualifier")
+    @Column(name="qualifier",columnDefinition="char(100)")
     private String qualifier;
 
     @JoinColumn(name = "message_id", nullable = false)

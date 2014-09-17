@@ -39,7 +39,7 @@ public class ServiceConfigHttpService {
         b.pathSegment("service");
         b.pathSegment(deviceData.getCommunityUrl());
         b.pathSegment(deviceData.getApiVersion());
-        b.pathSegment("/SERVICE_CONFIG.json");
+        b.pathSegment("SERVICE_CONFIG.json");
         return restTemplate.getForEntity(b.build().toUriString(), String.class, Collections.emptyMap());
     }
 }
