@@ -83,6 +83,7 @@ public class BadgesServiceTest {
                 BadgeMappingFactory.general("fileName")
         );
 
+        // No resolution:
         when(resolutionRepository.find(anyString(), anyInt(), anyInt())).thenReturn(null);
         when(badgeMappingRepository.findByCommunityAndFilenameId(community, badgeId)).thenReturn(mappings);
 
@@ -92,7 +93,7 @@ public class BadgesServiceTest {
     }
 
     @Test
-    public void testGetBadgeFileNameForResolutionAndBadgeIsAvailable() throws Exception {
+    public void testGetBadgeFileNameForResolutionAndBadgeIsAvailableAndImageIsResized() throws Exception {
         // given
         Resolution resolution = ResolutionFactory.create("deviceType", 1, 1);
         Community community = CommunityFactory.createCommunityMock(1, "hl_uk");
@@ -109,6 +110,27 @@ public class BadgesServiceTest {
 
         // then
         assertEquals("specific", badgesService.getBadgeFileName(badgeId, community, resolution));
+        verify(badgeMappingRepository).findByCommunityResolutionAndFilenameId(community, resolution, badgeId);
+    }
+
+    @Test
+    public void testGetBadgeFileNameForResolutionAndBadgeIsAvailableButImageIsNotResized() throws Exception {
+        // given
+        Resolution resolution = ResolutionFactory.create("deviceType", 1, 1);
+        Community community = CommunityFactory.createCommunityMock(1, "hl_uk");
+
+        // when
+        final long badgeId = 1L;
+        List<BadgeMapping> mappings = Arrays.asList(
+                BadgeMappingFactory.specific("general", null),
+                BadgeMappingFactory.general("general")
+        );
+
+        when(resolutionRepository.find(anyString(), anyInt(), anyInt())).thenReturn(resolution);
+        when(badgeMappingRepository.findByCommunityResolutionAndFilenameId(community, resolution, badgeId)).thenReturn(mappings);
+
+        // then
+        assertEquals("general", badgesService.getBadgeFileName(badgeId, community, resolution));
         verify(badgeMappingRepository).findByCommunityResolutionAndFilenameId(community, resolution, badgeId);
     }
 
