@@ -121,7 +121,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
-                    '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeFileNameAlias\')"/>' +
+                    '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
                     '</div>' +
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
