@@ -82,6 +82,11 @@ commit;
 
 drop table chart_types;
 alter table sz_deeplink_music_list drop column chart_type;
+
+-- GO-1887 tb_SubmittedPayments isn't updated if the error message is longer than 255 chars
+alter table tb_submittedPayments change column `descriptionError` `descriptionError` varchar(4000) DEFAULT NULL;
+alter table tb_paymentDetails change column `descriptionError` `descriptionError` varchar(4000) DEFAULT NULL;
+
 -- SRV-192
 CREATE TABLE `client_version_messages` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
