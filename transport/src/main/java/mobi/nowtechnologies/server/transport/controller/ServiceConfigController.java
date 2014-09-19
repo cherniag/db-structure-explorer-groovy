@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.transport.ServiceConfigDto;
 import mobi.nowtechnologies.server.editor.UserAgentRequestEditor;
+import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.Response;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
@@ -59,8 +60,11 @@ public class ServiceConfigController extends CommonController {
     }
 
     @ExceptionHandler(ConversionNotSupportedException.class)
-    public ModelAndView badParameters(ConversionNotSupportedException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, BAD_REQUEST, false);
+    public ModelAndView badParameters(HttpServletResponse response) {
+        response.setStatus(BAD_REQUEST.value());
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setMessage("A required HTTP header was not specified.");
+        return buildModelAndView(errorMessage);
     }
 
     private ServiceConfigDto convert(VersionCheckResponse response, UserAgentRequest userAgent) {

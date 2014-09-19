@@ -16,6 +16,7 @@ import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.ErrorMessage;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheck;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
@@ -32,6 +33,7 @@ import javax.annotation.Resource;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @Component
 public class ServiceConfigFeature {
@@ -88,6 +90,19 @@ public class ServiceConfigFeature {
         }
     }
 
+    @And("^error message is '(.+)'$")
+    public void errorMessageIs(String message) {
+        for (UserDeviceData userDeviceData : userDeviceDatas) {
+            ResponseEntity<String> stringResponseEntity = serviceConfigHttpService.serviceConfig(userDeviceData);
+            ErrorMessage errorMessage = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), "$.response.data[0].errorMessage", ErrorMessage.class);
+
+            assertEquals(
+                    "Error message from server: " + message + " differs from expected: " + errorMessage.getMessage() + " for " + userDeviceData,
+                    message,
+                    errorMessage.getMessage()
+            );
+        }
+    }
 
     @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' link$")
     public void whenServiceConfig(VersionCheckStatus status,

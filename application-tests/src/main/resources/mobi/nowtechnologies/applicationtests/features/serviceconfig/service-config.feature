@@ -5,6 +5,7 @@ Feature: Server returns json data about application upgrade 'call-to-action'
     Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
     When User-Agent header is in old format "Android Http Client"
     Then response has 400 http response code
+    And error message is 'A required HTTP header was not specified.'
 
   Scenario: device sends User-Agent header according to application upgrade format for SUGGESTED_UPDATE case
     Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
