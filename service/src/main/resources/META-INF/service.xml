@@ -312,6 +312,20 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="restTemplate" ref="service.RestTemplate" />
     </bean>
 
+    <!-- Application properties -->
+    <bean id="serviceMessageSource" class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
+        <property name="basenames">
+            <list>
+                <value>file:#{systemProperties['catalina.base']}/conf/services</value>
+                <value>classpath:services</value>
+            </list>
+        </property>
+        <property name="defaultEncoding" value="utf-8" />
+        <property name="fileEncodings" value="utf-8" />
+        <property name="cacheSeconds" value="180" />
+        <property name="useCodeAsDefaultMessage" value="true" />
+    </bean>
+
 	<import resource="social.xml" />
 
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
@@ -568,4 +582,5 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<import resource="smpp-stub.xml" />
 
+	<import resource="service-application-tests.xml" />
 </beans>

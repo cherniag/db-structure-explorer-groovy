@@ -78,7 +78,16 @@ public class ServiceConfigController extends CommonController {
     private String getMessage(VersionCheckResponse response, UserAgentRequest userAgent) {
         String messageKey = response.getMessageKey();
         if(messageKey != null) {
-            return communityResourceBundleMessageSource.getMessage(userAgent.getCommunity().getRewriteUrlParameter(), messageKey, null, null);
+            String rewriteUrlParameter = userAgent.getCommunity().getRewriteUrlParameter();
+
+            String message = communityResourceBundleMessageSource.getMessage(rewriteUrlParameter, messageKey, null, null);
+
+            if(messageKey.equals(message)) {
+                LOGGER.error("Not found message or is the same as key for [{}] and community [{]]", messageKey, rewriteUrlParameter);
+                return null;
+            }
+
+            return message;
         } else {
             return null;
         }
