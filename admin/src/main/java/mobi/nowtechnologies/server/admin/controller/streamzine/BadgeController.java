@@ -87,7 +87,7 @@ public class BadgeController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public Set<ErrorDto> handleDuplicates(DataIntegrityViolationException error) {
         Set<ErrorDto> dtos = new HashSet<ErrorDto>();
-        dtos.add(errorDtoAsm.createGlobalError("error.duplicate.value"));
+        dtos.add(errorDtoAsm.createGlobalError("error.duplicate.value", null));
         return dtos;
     }
 

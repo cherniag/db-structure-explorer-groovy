@@ -1,9 +1,6 @@
 package mobi.nowtechnologies.server.admin.controller;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
@@ -30,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -133,15 +129,10 @@ public class ChartItemController extends AbstractCommonController {
     }
 
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
-    public ModelAndView updateChartItems(@RequestBody String chartItemListJSON,
+    public ModelAndView updateChartItems(@RequestBody  List<ChartItemDto> chartItems,
                                          @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
 
-        LOGGER.debug("input parameters request updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId): [{}], [{}], [{}]", new Object[]{chartItemListJSON, selectedPublishDateTime, chartId});
-
-        Gson gson = new GsonBuilder().setDateFormat(URL_DATE_TIME_FORMAT).create();
-        Type type = new TypeToken<ArrayList<ChartItemDto>>() {}.getType();
-
-        List<ChartItemDto> chartItems = gson.fromJson(chartItemListJSON, type);
+        LOGGER.debug("input parameters request updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId): [{}], [{}], [{}]", new Object[]{chartItems, selectedPublishDateTime, chartId});
 
         chartDetailService.saveChartItems(chartItems);
 

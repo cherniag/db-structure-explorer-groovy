@@ -52,11 +52,11 @@ public class ChartItemControllerTest{
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
 		Integer chartId = new Integer((byte) 1);
-		String chartItemListJSON = ChartItemFactory.anyChartItemListJSON(2, chartId, selectedPublishDateTime);
+        List<ChartItemDto> items = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		when(chartDetailService.saveChartItems(any(List.class))).thenReturn(Collections.<ChartDetail>emptyList());
 
-		ModelAndView result = fixture.updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId);
+		ModelAndView result = fixture.updateChartItems(items, selectedPublishDateTime, chartId);
 
 		assertNotNull("ModelAndView should not be null", result);
 		ModelAndViewAssert.assertViewName(result, "redirect:/charts/" + chartId);
@@ -70,11 +70,11 @@ public class ChartItemControllerTest{
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
 		Integer chartId = new Integer((byte) 1);
-		String chartItemListJSON = ChartItemFactory.anyChartItemListJSON(2, chartId, selectedPublishDateTime);
-		
+        List<ChartItemDto> items = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
+
 		doThrow(ServiceException.getInstance("")).when(chartDetailService).saveChartItems(any(List.class));
 
-		fixture.updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId);
+		fixture.updateChartItems(items, selectedPublishDateTime, chartId);
 	}
 	
 	@SuppressWarnings("unchecked")

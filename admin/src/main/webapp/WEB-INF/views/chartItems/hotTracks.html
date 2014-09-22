@@ -188,69 +188,30 @@
 
 </style>
 
-<script type="text/javascript">
-    var currId = -1;
-    var iTunesSpan = null;
-    var messageInvalidLinks = "Invalid ITunes links in positions: ";
-    var messageLinksCorrect = "All ITunes links are filled";
-
-    function OpenDialog(buttonItem, mediaId){
-        currId = mediaId;
-        iTunesSpan = $(buttonItem).parent().parent().children('.iTunesSpan');
-        var currentValue = iTunesSpan.text().trim();
-        $("#iTunesUrl").val(currentValue);
-        $("#change_dialog").dialog({ height: 100, resizable: false, draggable: false, modal: true });
-    }
-
-    function closeDialog(){
-        $("#change_dialog").dialog("close");
-    }
-    function ChangeBtn(){
-        var newValue = $("#iTunesUrl").val();
-        iTunesSpan.text(newValue);
-        validateITunesUrls();
-        closeDialog();
-    }
-    function CancelBtn(){
-        currId = -1;
-        closeDialog();
-    }
-
-    function validateITunesUrls(){
-        $( "#chartItemsSortable > li" ).each(function(index) {
-            var channel = $(this).children('.channel_chartItem').text().trim();
-            var mediaId = $(this).children('.mediaId_chartItem').text().trim();
-            var position = $(this).children('.position_chartItem').text().trim();
-            var artistName =  $(this).children('.ArtistTitle_chartItem').text().trim();
-            var iTunesUrl = $(this).children('.iTunesSpan').text().trim();
-            var fileType = $(this).children('.fileTypeSpan').text().trim();
-            var label = $(this).children('.labelSpan').text().trim();
-            var isVideo = (fileType == 'VIDEO');
-            var isMQLabel = (label == 'MQ');
-            var appCastName = 'Appcast'.toLowerCase();
-            var isLabelArtist = artistName.toLowerCase().indexOf(appCastName) > -1;
-            var isAppcastChannel = channel.toLowerCase() == appCastName;
-            var isPodCast = isMQLabel || isLabelArtist || isAppcastChannel;
-            var skipValidation = (isVideo || isPodCast);
-            $(this).removeClass("invalidITunesLink");
-            if (!skipValidation) {
-                if (!iTunesUrl) {
-                    $(this).addClass("invalidITunesLink");
-                }
-            }
-
-        });
-    }
-</script>
 <body th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}">
 <div th:substituteby="tpl::navbar"></div>
 
-<div id="change_dialog" style="display: none">
-    <input type="text" width="50" id="iTunesUrl"/>
-    <button id="change" onclick="ChangeBtn();return false;">Submit</button>
-    &nbsp;&nbsp;
-    <button id="cancel" onclick="CancelBtn();return false;">Cancel</button>
+
+<div class="modal fade sz-dialog-init" id="change_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header draggable-cursor">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Select link</h4>
+            </div>
+
+            <div id="mediaPlaylistsContainerId">
+                <input type="text" style="width: 530px" id="iTunesUrl"/>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="changeBtn();return false;">Save</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true" onclick="cancelBtn();return false;">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <!-- Modal -->
 <div id="windowTitleDialog" class="modal fade">
@@ -322,7 +283,7 @@
                 <span class="fileTypeSpan" style="display: none" th:text="${chartItemDto.mediaDto.audioFileDto.fileType}">HEATSEEKER</span>
                 <span class="labelSpan" style="display: none" th:text="${chartItemDto.mediaDto.label}">HEATSEEKER</span>
                 <div class="iTunesUrl_chartItem" style="display:inline-block;">
-                    <button type="button" class="btn btn-danger"  th:onclick="'javascript:OpenDialog(this, \'' + ${chartItemDto.mediaDto.id} + '\');'"   th:text="#{chartItems.page.button.changeITunesUrl}">Basket</button>
+                    <button type="button" class="btn btn-danger"  th:onclick="'javascript:openDialog(this, \'' + ${chartItemDto.mediaDto.id} + '\');'"   th:text="#{chartItems.page.button.changeITunesUrl}">Basket</button>
                 </div>
             </li>
         </ul>
@@ -346,7 +307,7 @@
             <form class="del_btn">
                 <ul class="nav nav-pills table_margin">
                     <li class="active">
-                        <a th:text="#{chartItems.page.button.validateITunes}" onclick="validateITunesUrls()">Validate ITunes Links</a>
+                        <a th:text="#{chartItems.page.button.validateITunes}" href="#" onclick="validateITunesUrls()">Validate ITunes Links</a>
                     </li>
                 </ul>
             </form>
@@ -946,16 +907,21 @@ function chartItemFromLi(li){
     var json = [];
     var id = li.find("div.id_chartItem").text();
     var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
-    var channel = null;
+    var channel = li.find("div.channel_chartItem span").text().replace(/\'/g, "&apos;");
     var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
     var mediaId = li.find("div.mediaId_chartItem").text();
     var iTunesUrl = li.children('.iTunesSpan').text().trim();
+    var label = escape(li.children('.labelSpan').text().trim());
+    var artistName = escape(li.children('.ArtistTitle_chartItem').text().trim());
+    var fileType = escape(li.children('.fileTypeSpan').text().trim());
     json.push(
             "{'id':",id != null && id != '' ? id : 'null',",",
-            "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" + iTunesUrl + "'},",
+            "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" +
+                    iTunesUrl + "', 'label':'" +label +  "', 'artistDto': { 'name': '" + artistName + "'}, " +
+                    "'audioFileDto': {'fileType': '" + fileType + "'} },",
             "'position':",li.find("div.position_chartItem").text(),",",
             "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
-            "'chgPosition':",li.find("div.change_position_chartItem").text(),",",
+            "'chgPosition':'",li.find("div.change_position_chartItem").text(),"',",
             "'locked':",locked,",",
             "'channel':'",channel,"',",
             "'info':'",info,"',",
@@ -974,12 +940,17 @@ function chartItemFromLi(li){
     var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
     var mediaId = li.find("div.mediaId_chartItem").text();
     var iTunesUrl = li.children('.iTunesSpan').text().trim();
+    var label = li.children('.labelSpan').text().trim();
+    var artistName = li.children('.ArtistTitle_chartItem').text().trim();
+    var fileType = li.children('.fileTypeSpan').text().trim();
     json.push(
             "{'id':",id != null && id != '' ? id : 'null',",",
-            "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" + iTunesUrl + "'},",
+            "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" +
+                    iTunesUrl + "', 'label':'" +label +  "', 'artistDto': { 'name': '" + artistName + "'}, " +
+                    "'audioFileDto': {'fileType': '" + fileType + "'} },",
             "'position':",li.find("div.position_chartItem").text(),",",
             "'prevPosition':","0",",",
-            "'chgPosition':","NONE",",",
+            "'chgPosition':","'NONE'",",",
             "'locked':",locked,",",
             "'channel':'",channel,"',",
             "'info':'",info,"',",
@@ -1100,7 +1071,7 @@ function chartItemToLi(chartItem){
          }).appendTo(li);
          $('<button>').attr({
              "type": "button",
-             "onclick": "OpenDialog(this, " + chartItem.mediaDto.id + ")",
+             "onclick": "openDialog(this, " + chartItem.mediaDto.id + ")",
              "class": "btn btn-danger"
          }).text(changeITunesButtonLabel).appendTo(iTunesDiv);
     var contentTypeNode = $("<span class='fileTypeSpan' style='display: none'>"+ chartItem.mediaDto.audioFileDto.fileType + "</span>");
