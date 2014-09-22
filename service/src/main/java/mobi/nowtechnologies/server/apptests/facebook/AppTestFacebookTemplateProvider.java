@@ -9,11 +9,11 @@ import javax.annotation.Resource;
 
 public class AppTestFacebookTemplateProvider implements FacebookTemplateProvider {
     @Resource
-    private AppTestDummyFacebookTokenComposer appTestDummyFacebookTokenComposer;
+    private AppTestFacebookTokenService appTestFacebookTokenService;
 
     @Override
     public FacebookTemplate provide(String facebookAccessToken) {
-        final FacebookProfile facebookProfile = appTestDummyFacebookTokenComposer.parseToken(facebookAccessToken);
+        final FacebookProfile facebookProfile = appTestFacebookTokenService.parseToken(facebookAccessToken);
 
         return new FacebookTemplate() {
             @Override

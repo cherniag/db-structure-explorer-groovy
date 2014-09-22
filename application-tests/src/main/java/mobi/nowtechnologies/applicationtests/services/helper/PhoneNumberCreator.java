@@ -29,4 +29,11 @@ public class PhoneNumberCreator {
         Integer phoneTypePrefix = phoneExtensionsService.getPhoneNumberSuffix(providerType, segmentType, contract, tariff, contractChannel);
         return currentPhone.getO2Phone(phoneTypePrefix);
     }
+
+    @Transactional("applicationTestsTransactionManager")
+    public String createAnyValidPhoneNumber() {
+        CurrentPhone currentPhone = new CurrentPhone();
+        applicationTestsEntityManager.persist(currentPhone);
+        return currentPhone.getAnyPhone();
+    }
 }

@@ -1,0 +1,196 @@
+package mobi.nowtechnologies.applicationtests.features.common.client;
+
+import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
+import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
+import mobi.nowtechnologies.applicationtests.services.http.email.EmailHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator;
+import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusUserInfoGenerator;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class MQAppClientDeviceSet extends ClientDevicesSet {
+
+    @Resource
+    private FacebookUserInfoGenerator facebookUserInfoGenerator;
+    @Resource
+    private GooglePlusUserInfoGenerator googlePlusUserInfoGenerator;
+    @Resource
+    private FacebookHttpService facebookHttpService;
+    @Resource
+    private GooglePlusHttpService googlePlusHttpService;
+    @Resource
+    private EmailHttpService emailHttpService;
+    //
+    // Flow operations
+    //
+
+    //
+    // Facebook login types
+    //
+    public void loginUsingFacebook(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String facebookUserId = System.nanoTime() + "";
+        String accessToken = facebookUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, facebookUserId);
+        state.accessToken = accessToken;
+        state.facebookUserId = facebookUserId;
+        state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+    }
+
+    public void loginUsingGooglePlus(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        state.lastGooglePlusUserInfo = googlePlusHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, googlePlusUserId);
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+    }
+
+    public void loginUsingFacebookWithCityOnly(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String facebookUserId = System.nanoTime() + "";
+        String accessToken = facebookUserInfoGenerator.createAccessTokenWithCityOnly(state.getEmail(), state.getLastAccountCheckResponse().userName, facebookUserId);
+        state.accessToken = accessToken;
+        state.facebookUserId = facebookUserId;
+        state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+    }
+
+    public void loginUsingFacebookWithDefinedAccountIdAndEmail(UserDeviceData deviceData, String email, String facebookUserId) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String accessToken = facebookUserInfoGenerator.createAccessTokenWithCityOnly(email, state.getLastAccountCheckResponse().userName, facebookUserId);
+        state.facebookUserId = facebookUserId;
+        state.email = email;
+        state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+    }
+
+    //
+    // Error flows
+    //
+    public void loginUsingFacebookWithEmptyEmail(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        final String facebookUserId = System.nanoTime() + "";
+        final String emptyEmail = "";
+
+        String accessToken = facebookUserInfoGenerator.createAccessToken(emptyEmail, state.getLastAccountCheckResponse().userName, facebookUserId);
+        ResponseEntity<FacebookResponse> responseEntity =
+                facebookHttpService.loginWithExpectedError(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, facebookUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken);
+
+        state.lastFacebookError = responseEntity.getBody().getErrorMessage();
+        state.lastFacebookErrorStatus = responseEntity.getStatusCode();
+    }
+
+    public void loginUsingFacebookWithDifferentId(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        final String facebookUserId = System.nanoTime() + "";
+        final String emptyEmail = "";
+
+        String accessToken = facebookUserInfoGenerator.createAccessTokenWithIdError(emptyEmail, state.getLastAccountCheckResponse().userName, facebookUserId);
+        ResponseEntity<FacebookResponse> responseEntity = facebookHttpService.loginWithExpectedError(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, facebookUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken);
+
+        state.lastFacebookError = responseEntity.getBody().getErrorMessage();
+        state.lastFacebookErrorStatus = responseEntity.getStatusCode();
+    }
+
+    public void loginUsingFacebookWithInvalidAccessToken(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        final String facebookUserId = System.nanoTime() + "";
+        final String emptyEmail = "";
+
+        String accessToken = facebookUserInfoGenerator.createAccessTokenWithAccesstokenError(emptyEmail, state.getLastAccountCheckResponse().userName, facebookUserId);
+        ResponseEntity<FacebookResponse> responseEntity =
+                facebookHttpService.loginWithExpectedError(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, facebookUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken);
+
+        state.lastFacebookError = responseEntity.getBody().getErrorMessage();
+        state.lastFacebookErrorStatus = responseEntity.getStatusCode();
+    }
+
+
+    public void loginUsingFacebookWithInvalidFacebookId(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        final String facebookUserId = System.nanoTime() + "";
+        final String email = "test@gmail.com";
+
+        String accessToken = facebookUserInfoGenerator.createAccessToken(email, state.getLastAccountCheckResponse().userName, facebookUserId);
+        ResponseEntity<FacebookResponse> responseEntity =
+                facebookHttpService.loginWithExpectedError(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, facebookUserId + 1, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken);
+
+        state.lastFacebookError = responseEntity.getBody().getErrorMessage();
+        state.lastFacebookErrorStatus = responseEntity.getStatusCode();
+    }
+
+    public void loginUsingFacebookWithoutAccessToken(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String facebookUserId = System.nanoTime() + "";
+        String accessToken = facebookUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, facebookUserId);
+        state.accessToken = accessToken;
+        state.facebookUserId = facebookUserId;
+        state.lastFacebookErrorStatus = facebookHttpService.loginWithoutAccessToken(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId).getStatusCode();
+    }
+
+    public void loginUsingFacebookBadUserName(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String facebookUserId = System.nanoTime() + "";
+        AccountCheckDTO lastAccountCheckResponse = state.getLastAccountCheckResponse();
+        String accessToken =
+                facebookUserInfoGenerator.createAccessToken(state.getEmail(),
+                        lastAccountCheckResponse.userName,
+                        facebookUserId);
+        state.accessToken = accessToken;
+        state.facebookUserId = facebookUserId;
+        ResponseEntity<FacebookResponse> responseEntity =
+                facebookHttpService.loginWithExpectedError(deviceData,
+                        state.getDeviceUID(),
+                        deviceData.getFormat(),
+                        accessToken,
+                        facebookUserId,
+                        "badName",
+                        lastAccountCheckResponse.userToken);
+        state.lastFacebookErrorStatus = responseEntity.getStatusCode();
+        state.lastFacebookError = responseEntity.getBody().getErrorMessage();
+    }
+
+    //
+    // Email flow operations
+    // register (generate email)
+    //
+    public void registerEmail(UserDeviceData deviceData) {
+        PhoneStateImpl state = states.get(deviceData);
+        String email = state.getEmail();
+        state.lastActivationEmailToken = emailHttpService.generateEmail(deviceData.getFormat(), deviceData, email, state.getDeviceUID(), state.getDeviceUID());
+    }
+
+    //
+    // Sign in (hit the link in email)
+    //
+    public void signInEmail(UserDeviceData deviceData, String signInEmailId, String signInEmailToken) {
+        PhoneState state = states.get(deviceData);
+
+        String email = state.getEmail();
+        String userToken = state.getLastAccountCheckResponse().userToken;
+
+        emailHttpService.signIn(email, userToken, deviceData, state.getDeviceUID(), deviceData.getFormat(), signInEmailId, signInEmailToken);
+    }
+}
