@@ -113,19 +113,23 @@ function validateITunesUrls(){
         contentType: "application/json; charset=utf-8",
         data: objects,
         dataType: "json",
-        statusCode: {
-            400: function(xhr) {
+        error: function(xhr) {
+            if (xhr.status == 400) {
                 var errors = jQuery.parseJSON(xhr.responseText);
                 var positions = jQuery.parseJSON(errors[0].message);
-                $( "#chartItemsSortable > li" ).each(function(index) {
+                $("#chartItemsSortable > li").each(function (index) {
                     var position = $(this).children('.position_chartItem').text().trim();
                     var li = $(this);
-                    jQuery.each( positions, function( i, value ) {
-                        if (value == position){
+                    jQuery.each(positions, function (i, value) {
+                        if (value == position) {
                             li.addClass("invalidITunesLink");
                         }
                     });
                 });
+            }
+
+            else {
+                alert("Error during valdiation");
             }
         }
     });
