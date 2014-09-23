@@ -129,7 +129,7 @@ function validateITunesUrls(){
             }
 
             else {
-                alert("Error during valdiation");
+                alert("Error during validation");
             }
         }
     });
