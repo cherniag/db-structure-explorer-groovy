@@ -1,0 +1,121 @@
+package mobi.nowtechnologies.applicationtests.configuration;
+
+import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
+import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService;
+import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
+import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
+import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.util.Properties;
+
+@Configuration
+@ComponentScan(
+        basePackages = {
+                "mobi.nowtechnologies.applicationtests.services",
+                "mobi.nowtechnologies.applicationtests.features"
+        })
+@Import(PropertyPlaceholderConfiguration.class)
+@ImportResource({"classpath:META-INF/dao.xml"})
+@EnableTransactionManagement(proxyTargetClass = true)
+public class ApplicationConfiguration {
+
+    @Bean(name = "mno.RestTemplate")
+    public RestTemplate getRestTemplate() {
+        //needed to parse 401 response body
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setOutputStreaming(false);
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+
+        //needed fo xml handling
+        restTemplate.getMessageConverters().add(new Jaxb2RootElementHttpMessageConverter());
+
+        //needed to parse non 2xx request body
+        restTemplate.setErrorHandler(new LoggingResponseErrorHandler());
+        return restTemplate;
+    }
+
+    @Bean
+    public AppTestFacebookTokenService appTestFacebookTokenService() {
+        return new AppTestFacebookTokenService();
+    }
+
+    @Bean
+    public AppTestGooglePlusTokenService appTestGooglePlusTokenService() {
+        return new AppTestGooglePlusTokenService();
+    }
+
+    @Bean
+    public MailModelSerializer getMailModelSerializer() {
+        return new MailModelSerializer();
+    }
+
+    @Bean
+    public PhoneExtensionsService getPhoneExtensionsService() {
+        return new PhoneExtensionsService();
+    }
+
+    @Bean(name = "applicationTestsEntityManager")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Value("${jdbc.url}") String url,
+                                                                       @Value("${jdbc.username}") String username,
+                                                                       @Value("${jdbc.password}") String password) {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource(url, username, password));
+        em.setPackagesToScan(
+                // phone generator
+                "mobi.nowtechnologies.applicationtests",
+                // fat_email
+                "mobi.nowtechnologies.server.persistence.apptests",
+                // two mno tables
+                "mobi.nowtechnologies.server.mno.api.impl.domain",
+                // all the tables form persistence artifact
+                "mobi.nowtechnologies.server.persistence.domain"
+        );
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        em.setJpaProperties(additionalProperties());
+        return em;
+    }
+
+    @Bean(name = "applicationTestsTransactionManager")
+    public PlatformTransactionManager transactionManager(@Qualifier("applicationTestsEntityManager") EntityManagerFactory emf) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(emf);
+        return transactionManager;
+    }
+
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+        return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    private DataSource dataSource(String url, String username, String password) {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
+    }
+
+    Properties additionalProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        return properties;
+    }
+}

@@ -135,7 +135,6 @@ public class ChartDetailsConverter {
     private String getITunesUrl(String existingITunesUrl, String communityRewriteUrl) {
         String countryCode = getCountryCode(communityRewriteUrl);
         if(isBlank(existingITunesUrl) || isBlank(countryCode)) {
-            LOGGER.warn("Media iTunes url [{}] or new country code [{}] is empty", existingITunesUrl, countryCode);
             return existingITunesUrl;
         }
 
