@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoITTest;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -14,8 +13,6 @@ import mobi.nowtechnologies.server.trackrepo.factory.TrackFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -25,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,14 +63,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
 
     private boolean isFileInCloudExists(String containerName, String fileName) {
         logger.info("Check file in cloud: {}", fileName);
-        try {
-            byte[] result = IOUtils.toByteArray(cloudFileService.getInputStream(containerName, fileName));
-            return ArrayUtils.isNotEmpty(result);
-        } catch (FilesNotFoundException e) {
-                return false;
-        } catch (IOException e) {
-            return false;
-        }
+        return cloudFileService.fileExists(containerName, fileName);
     }
 
     private void waitWhileCloudProcessCopying() throws InterruptedException {
