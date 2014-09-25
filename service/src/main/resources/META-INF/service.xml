@@ -390,6 +390,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <bean id="service.cloudHttpConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager">
         <property name="maxTotal" value="${cloudFile.getFileThreadPoolCount}" />
+        <property name="defaultMaxPerRoute" value="${cloudFile.getFileThreadPoolCount}" />
     </bean>
 
     <bean id="service.cloudHttpClient" class="org.apache.http.impl.client.DefaultHttpClient">
