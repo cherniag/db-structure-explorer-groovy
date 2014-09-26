@@ -1,3 +1,5 @@
+insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.8.0", "5.8.0");
+
 -- SRV-192
 CREATE TABLE `client_version_messages` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
