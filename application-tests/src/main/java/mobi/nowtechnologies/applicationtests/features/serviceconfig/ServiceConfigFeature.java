@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.applicationtests.features.serviceconfig;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import cucumber.api.Transform;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -33,7 +35,6 @@ import javax.annotation.Resource;
 import java.util.*;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 @Component
 public class ServiceConfigFeature {
@@ -53,15 +54,17 @@ public class ServiceConfigFeature {
     JsonHelper jsonHelper;
 
     private List<UserDeviceData> userDeviceDatas;
-    private Map<UserDeviceData, String> randoms = new HashMap<UserDeviceData, String>();
-    private Map<UserDeviceData, ResponseEntity<String>> sucessfullResponses = new HashMap<UserDeviceData, ResponseEntity<String>>();
+    private String applicationName;
+    private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new HashMap<UserDeviceData, ResponseEntity<String>>();
+    private Map<UserDeviceData, String> headers = new HashMap<UserDeviceData, String>();
 
 
     @Given("^Mobile client makes Service Config call using JSON and XML formats for (.+) and (.+) and (.+)$")
-    public void givenOldFormat(@Transform(DictionaryTransformer.class) Word devices,
+    public void given(@Transform(DictionaryTransformer.class) Word devices,
                                @Transform(DictionaryTransformer.class) Word communities,
                                @Transform(DictionaryTransformer.class) Word versions) {
         userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set());
+        applicationName = UUID.randomUUID().toString();
     }
 
     @When("^(.+) header is in old format \"(.+)\"$")
@@ -71,15 +74,17 @@ public class ServiceConfigFeature {
 
     @Then("^response has (\\d+) http response code$")
     public void thenResponse(final int responseExpected) {
-        sucessfullResponses.clear();
+        successfulResponses.clear();
 
         for (UserDeviceData userDeviceData : userDeviceDatas) {
+            String header = headers.get(userDeviceData);
+            serviceConfigHttpService.setHeader("User-Agent", header);
             ResponseEntity<String> stringResponseEntity = serviceConfigHttpService.serviceConfig(userDeviceData);
             int responseFromServer = stringResponseEntity.getStatusCode().value();
 
             if(responseFromServer == 200) {
                 // check later
-                sucessfullResponses.put(userDeviceData, stringResponseEntity);
+                successfulResponses.put(userDeviceData, stringResponseEntity);
             }
 
             assertEquals(
@@ -88,6 +93,8 @@ public class ServiceConfigFeature {
                     responseFromServer
             );
         }
+
+        headers.clear();
     }
 
     @And("^error message is '(.+)'$")
@@ -110,13 +117,10 @@ public class ServiceConfigFeature {
                                   String application,
                                   String code,
                                   String link) {
-        randoms.clear();
-
         for (UserDeviceData userDeviceData : userDeviceDatas) {
-            randoms.put(userDeviceData, UUID.randomUUID().toString());
 
             // prepare data in database
-            String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", randoms.get(userDeviceData)));
+            String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", applicationName));
             VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
             Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
             DeviceType deviceType = getDeviceType(userDeviceData);
@@ -126,26 +130,24 @@ public class ServiceConfigFeature {
 
     @And("^(.+) header is in new format \"(.+)\"$")
     public void whenUserAgentIsNotDefault(String headerName, String headerValue) {
-        for (Map.Entry<UserDeviceData, String> entry : randoms.entrySet()) {
-            UserDeviceData userDeviceData = entry.getKey();
-
+        for (UserDeviceData data : userDeviceDatas) {
             Map<String, Object> model = new HashMap<String, Object>();
-            model.put("random", entry.getValue());
-            model.put("platform", getDeviceType(userDeviceData).getName());
-            model.put("community", communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl()).getName());
+            model.put("random", applicationName);
+            model.put("platform", getDeviceType(data).getName());
+            model.put("community", communityRepository.findByRewriteUrlParameter(data.getCommunityUrl()).getName());
 
             String interpolatedHeaderValue = interpolator.interpolate(headerValue, model);
 
             getLogger().info("Sending " + headerName + ":" + interpolatedHeaderValue);
 
-            serviceConfigHttpService.setHeader(headerName, interpolatedHeaderValue);
+            headers.put(data, interpolatedHeaderValue);
         }
     }
 
     @And("^json data is '(.+)'$")
     public void jsonData(String field) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
-            ResponseEntity<String> response = sucessfullResponses.get(userDeviceData);
+            ResponseEntity<String> response = successfulResponses.get(userDeviceData);
             Map<String, Object> stringObjectMap = jsonHelper.extractObjectMapByPath(response.getBody(), "$.response.data[0]." + field);
             assertTrue("Empty map for: [" + userDeviceData + "]: " + stringObjectMap, stringObjectMap != null && !stringObjectMap.isEmpty());
         }
@@ -154,7 +156,7 @@ public class ServiceConfigFeature {
     @And("^json field has '(.+)' set to '(.+)'$")
     public void jsonFieldHasValue(String field, @Transform(NullableStringTransformer.class) NullableString nullable) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
-            ResponseEntity<String> response = sucessfullResponses.get(userDeviceData);
+            ResponseEntity<String> response = successfulResponses.get(userDeviceData);
             Map<String, Object> stringObjectMap = jsonHelper.extractObjectMapByPath(response.getBody(), "$.response.data[0].versionCheck");
 
             if(nullable.isNull()) {
