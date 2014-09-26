@@ -25,5 +25,5 @@ alter table client_version_info add CONSTRAINT `client_version_info_community_id
 alter table client_version_info add CONSTRAINT `client_version_info_device_type_id_fk` FOREIGN KEY (`device_type_id`) REFERENCES `tb_deviceTypes` (`i`);
 alter table client_version_info add CONSTRAINT `client_version_info_message_id_fk` FOREIGN KEY (`message_id`) REFERENCES `client_version_messages` (`id`);
 
-alter table client_version_info add UNIQUE KEY `client_version_info_uk` (`community_id`,`device_type_id`,`application_name`,`status`);
+alter table client_version_info add UNIQUE KEY `client_version_info_uk` (`community_id`,`device_type_id`,`application_name`,`status`, `message_id`);
 
