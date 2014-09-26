@@ -57,6 +57,7 @@ public class VersionCheckServiceIT {
         VersionMessage versionMessage1 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_REJECTED", "http://play.google.com/new_community_app"));
         VersionMessage versionMessage2 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app"));
         VersionMessage versionMessage3 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_SUGGESTED"));
+        VersionMessage versionMessage4 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_REJECTED"));
 
         versionCheckRepository.saveAndFlush(new VersionCheck(
                 DeviceTypeDao.getAndroidDeviceType(),
@@ -65,6 +66,14 @@ public class VersionCheckServiceIT {
                 VersionCheckStatus.REVOKED,
                 O2_TRACKS_APPLICATION_NAME,
                 ClientVersion.from("1.5.0")
+        ));
+        versionCheckRepository.saveAndFlush(new VersionCheck(
+                DeviceTypeDao.getAndroidDeviceType(),
+                CommunityDao.getCommunity("o2"),
+                versionMessage4,
+                VersionCheckStatus.REVOKED,
+                O2_TRACKS_APPLICATION_NAME,
+                ClientVersion.from("1.5.5")
         ));
         versionCheckRepository.saveAndFlush(new VersionCheck(
                 DeviceTypeDao.getAndroidDeviceType(),
@@ -101,7 +110,8 @@ public class VersionCheckServiceIT {
         checkVersion(null, 1, 4, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME);
         checkVersion(null, 1, 4, 9, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME);
         checkVersion(null, 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME);
-        checkVersion(null, 1, 5, 1, VersionCheckStatus.FORCED_UPDATE, "VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app", O2_TRACKS_APPLICATION_NAME);
+        checkVersion(null, 1, 5, 3, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "", O2_TRACKS_APPLICATION_NAME);
+        checkVersion(null, 1, 5, 5, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "", O2_TRACKS_APPLICATION_NAME);
         checkVersion(null, 1, 6, 0, VersionCheckStatus.FORCED_UPDATE, "VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app", O2_TRACKS_APPLICATION_NAME);
         checkVersion(null, 1, 6, 1, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null, O2_TRACKS_APPLICATION_NAME);
         checkVersion(null, 1, 7, 0, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null, O2_TRACKS_APPLICATION_NAME);
