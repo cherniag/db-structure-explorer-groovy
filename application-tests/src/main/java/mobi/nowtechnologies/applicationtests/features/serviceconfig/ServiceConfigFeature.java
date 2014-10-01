@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.serviceconfig;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import cucumber.api.Transform;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
