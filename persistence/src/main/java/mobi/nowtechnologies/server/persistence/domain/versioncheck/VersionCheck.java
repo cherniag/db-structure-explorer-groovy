@@ -10,7 +10,7 @@ import javax.persistence.*;
  * Created by Oleg Artomov on 9/11/2014.
  */
 @Entity
-@Table(name = "client_version_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"device_type_id", "community_id", "application_name", "status"})})
+@Table(name = "client_version_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"device_type_id", "community_id", "application_name", "status", "message_id"})})
 public class VersionCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
