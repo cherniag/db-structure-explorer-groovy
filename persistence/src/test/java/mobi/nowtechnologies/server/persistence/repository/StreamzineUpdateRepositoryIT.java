@@ -137,7 +137,8 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate, null, community));
         List<Update> all = streamzineUpdateRepository.findFirstAfterForUser(dateToSearch, user, community, ONE_RECORD_PAGEABLE);
         assertTrue(all.isEmpty());
-        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate, user, community));
+        Date updateDate1 = addDays(dateZero, 6);
+        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate1, user, community));
         all = streamzineUpdateRepository.findFirstAfterForUser(dateZero, user, community, ONE_RECORD_PAGEABLE);
         assertEquals(1, all.size());
     }

@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Entity
-@Table(name = "sz_update")
+@Table(name = "sz_update", uniqueConstraints = {@UniqueConstraint(columnNames = {"community_id", "updated"})})
 public class Update {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
