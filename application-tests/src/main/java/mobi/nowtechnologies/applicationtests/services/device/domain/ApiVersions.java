@@ -1,32 +1,25 @@
 package mobi.nowtechnologies.applicationtests.services.device.domain;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Sets;
-
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 
 public class ApiVersions {
-    private List<ApiVersion> versions = new ArrayList<ApiVersion>();
+    private List<String> versions = new ArrayList<String>();
 
     private ApiVersions() {
     }
 
-    public static ApiVersions from(String manyVersions) {
-        TreeSet<String> versions = Sets.newTreeSet(Splitter.on(",").omitEmptyStrings().split(manyVersions));
-
+    public static ApiVersions from(Collection<String> versions) {
         ApiVersions apiVersions = new ApiVersions();
-
-        for (String version : versions) {
-            apiVersions.versions.add(ApiVersion.from(version));
-        }
-
+        apiVersions.versions.addAll(versions);
+        Collections.sort(apiVersions.versions);
         return apiVersions;
     }
 
-    public List<ApiVersion> above(ApiVersion of) {
+    public List<String> above(String of) {
         int indexOf = versions.indexOf(of);
-        return new ArrayList<ApiVersion>(versions.subList(indexOf, versions.size() - 1));
+        return new ArrayList<String>(versions.subList(indexOf, versions.size()));
     }
 }
