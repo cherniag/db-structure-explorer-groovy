@@ -72,7 +72,7 @@ public class ApplyInitPromoController extends CommonController {
             AccountCheckDTO accountCheckDTO = getAccountCheckDTOAfterApplyPromo(mergeResult);
 
             if (isMajorApiVersionNumberLessThan4) {
-                updateO2UserTask.handleUserUpdate(user);
+                updateO2UserTask.handleUserUpdate(mergeResult.getResultOfOperation());
             }
 
             return buildModelAndView(accountCheckDTO);
