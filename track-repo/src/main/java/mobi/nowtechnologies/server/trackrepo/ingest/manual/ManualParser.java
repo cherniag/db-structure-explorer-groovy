@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.*;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 public class ManualParser extends IParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManualParser.class);
 
@@ -88,22 +90,15 @@ public class ManualParser extends IParser {
 				LOGGER.info("Token length [{}] line", tokens.length);
 				DropTrack track = new DropTrack();
 				track.type = Type.INSERT;
-				track.xml="";
+				track.xml = line;
 				track.title = tokens[1];
 				track.artist = tokens[2];
 				track.isrc = tokens[3];
-				track.productCode = track.isrc;
+				track.productCode = !isEmpty(tokens[6]) ? tokens[6] : track.isrc;
 				track.productId = track.isrc;
-				track.info = tokens[7];
-				track.label = tokens[8];
-				track.territories = new ArrayList<DropTerritory>();
-				DropTerritory territory = new DropTerritory();
-				territory.country="Worldwide";
-				territory.label = track.label;
-				territory.distributor = "MANUAL";
-				territory.reportingId = track.isrc;
-				territory.startdate = new Date();
-				track.territories.add(territory);
+				track.info = ""; // is not used
+                track.label = tokens[8];
+                track.territories = getDropTerritories(tokens[7], track);
 
                 track.files = new ArrayList<DropAssetFile>();
                 DropAssetFile image = new DropAssetFile();
@@ -158,4 +153,28 @@ public class ManualParser extends IParser {
 		}
 		return result;
 	}
+
+    private List<DropTerritory> getDropTerritories(String territories, DropTrack track) {
+        ArrayList<DropTerritory> dropTerritories = new ArrayList<DropTerritory>();
+        if(!isEmpty(territories)){
+            for (String countryName : territories.split(",")) {
+                DropTerritory territory = getDropTerritory(track, countryName.trim());
+                dropTerritories.add(territory);
+            }
+        } else {
+            DropTerritory territory = getDropTerritory(track, "Worldwide");
+            dropTerritories.add(territory);
+        }
+        return dropTerritories;
+    }
+
+    private DropTerritory getDropTerritory(DropTrack track, String country) {
+        DropTerritory territory = new DropTerritory();
+        territory.country= country;
+        territory.label = track.label;
+        territory.distributor = "MANUAL";
+        territory.reportingId = track.isrc;
+        territory.startdate = new Date();
+        return territory;
+    }
 }
