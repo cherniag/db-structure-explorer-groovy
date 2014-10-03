@@ -23,7 +23,7 @@ public class MailServiceMocked extends MailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceMocked.class);
 
     @Override
-    public void sendMail(String from, String[] to, String subject, String body, Map<String, String> model) {
+    public void sendMessage(String from, String[] to, String subject, String body, Map<String, String> model) {
         String processedSubject = MailTemplateProcessor.processTemplateString(subject, model);
         String processedBody = MailTemplateProcessor.processTemplateString(body, model);
 

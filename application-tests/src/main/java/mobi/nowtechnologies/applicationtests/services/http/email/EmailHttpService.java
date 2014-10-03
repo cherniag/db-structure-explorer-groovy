@@ -17,14 +17,14 @@ public class EmailHttpService extends AbstractHttpService {
     public long generateEmail(RequestFormat format, UserDeviceData deviceData, String email, String deviceUID, String userName) {
         String uri = getUri(deviceData, "EMAIL_GENERATE", format);
 
-        MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
-        request.add("EMAIL", email);
-        request.add("USER_NAME", userName);
-        request.add("DEVICE_UID", deviceUID);
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        parameters.add("EMAIL", email);
+        parameters.add("USER_NAME", userName);
+        parameters.add("DEVICE_UID", deviceUID);
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "]");
-
-        ResponseEntity<String> response = restTemplate.postForEntity(uri, request, String.class);
+        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        ResponseEntity<String> response = restTemplate.postForEntity(uri, parameters, String.class);
+        logger.info("Response body [{}]", response.getBody());
 
         // avoiding bad format: {Long:123} ... in response
         Map<String, Object> values = jsonHelper.extractObjectMapByPath(response.getBody(), JsonHelper.EMAIL_ACTIVATION_PATH);
@@ -37,14 +37,16 @@ public class EmailHttpService extends AbstractHttpService {
 
         UserDataCreator.TimestampTokenData token = createUserToken(userToken);
 
-        MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
-        request.add("EMAIL", email);
-        request.add("EMAIL_ID", signInEmailId);
-        request.add("TOKEN", signInEmailToken);
-        request.add("USER_TOKEN", token.getTimestampToken());
-        request.add("TIMESTAMP", token.getTimestamp());
-        request.add("DEVICE_UID", deviceUID);
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        parameters.add("EMAIL", email);
+        parameters.add("EMAIL_ID", signInEmailId);
+        parameters.add("TOKEN", signInEmailToken);
+        parameters.add("USER_TOKEN", token.getTimestampToken());
+        parameters.add("TIMESTAMP", token.getTimestamp());
+        parameters.add("DEVICE_UID", deviceUID);
 
-        restTemplate.postForEntity(uri, request, String.class);
+        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(uri, parameters, String.class);
+        logger.info("Response body [{}]", stringResponseEntity.getBody());
     }
 }

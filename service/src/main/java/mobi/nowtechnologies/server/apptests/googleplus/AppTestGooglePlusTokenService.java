@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.apptests.googleplus;
 
+import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 import org.springframework.social.google.api.plus.Person;
 
@@ -8,7 +9,19 @@ import java.util.Date;
 import java.util.Map;
 
 public class AppTestGooglePlusTokenService {
-    public String build(String id, String email, long time, String displayName, String givenName, String familyName, String imageUrl, boolean male, String location, String homepageUrl) {
+
+    private static final String AUTH_ERROR = "AUTH_ERROR";
+
+    public String build(String id,
+                        String email,
+                        long time,
+                        String displayName,
+                        String givenName,
+                        String familyName,
+                        String imageUrl,
+                        boolean male,
+                        String location,
+                        String homepageUrl) {
         return                        // index
                 id + "#" +            // 0
                 email + "#" +         // 1
@@ -22,8 +35,25 @@ public class AppTestGooglePlusTokenService {
                 homepageUrl;    // 9
     }
 
+    public String buildTokenWithTokenError(String id,
+                                           String email,
+                                           long time,
+                                           String displayName,
+                                           String givenName,
+                                           String familyName,
+                                           String imageUrl,
+                                           boolean male,
+                                           String location,
+                                           String homepageUrl) {
+        return build(id, email, time, displayName, givenName, familyName, imageUrl, male, location, homepageUrl) + "#" + AUTH_ERROR;   // 10
+    }
+
     public Person parse(String token) {
         final String[] values = token.split("#");
+
+        if (values.length == 11 && values[10].equals(AUTH_ERROR)) {
+            return new FailureGooglePlusPerson();
+        }
 
         return new Person() {
             @Override

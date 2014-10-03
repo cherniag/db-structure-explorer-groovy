@@ -16,19 +16,20 @@ import java.util.Map;
 @Service
 public class PayPalHttpService extends AbstractHttpService {
 
-    public void pay(String paymentPolicyId, String payPalToken, String rememberMeToken, String communityRewriteUrl, String payPalSubscriptionResult) {
+    public void pay(String communityRewriteUrl, String rememberMeToken, int paymentPolicyId, String payPalToken, String payPalSubscriptionResult) {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
         parameters.add("community", communityRewriteUrl);
         parameters.add("_REMEMBER_ME", rememberMeToken);
         parameters.add("token", payPalToken);
-        parameters.add("paymentPolicyId", paymentPolicyId);
+        parameters.add("paymentPolicyId", "" +paymentPolicyId);
         parameters.add("result", payPalSubscriptionResult);
 
         URI uri = getUri(parameters);
         HttpHeaders headers = createAndroidDeviceHeaders();
 
-        logger.info("Get parameters to uri={} with params {} and headers {}", uri, parameters, headers);
-        restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<String>(headers), String.class).getBody();
+        logger.info("Sending to {}, parameters {}, headers", uri, parameters, headers);
+        String body = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<String>(headers), String.class).getBody();
+        logger.info("Response body {}", body);
     }
 
     private URI getUri(MultiValueMap<String, String> parameters) {
