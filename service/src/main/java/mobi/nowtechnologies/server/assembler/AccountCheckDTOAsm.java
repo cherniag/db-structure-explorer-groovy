@@ -64,7 +64,6 @@ public class AccountCheckDTOAsm {
 
         UserGroup userGroup = user.getUserGroup();
         Chart chart = userGroup.getChart();
-        News news = userGroup.getNews();
         DrmPolicy drmPolicy = userGroup.getDrmPolicy();
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
@@ -78,7 +77,6 @@ public class AccountCheckDTOAsm {
         AccountCheckDTO accountCheckDTO = new AccountCheckDTO();
         accountCheckDTO.chartTimestamp = chart.getTimestamp();
         accountCheckDTO.chartItems = chart.getNumTracks();
-        setNewsItemsAndTimestamp(news, accountCheckDTO);
 
         accountCheckDTO.timeOfMovingToLimitedStatusSeconds = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
         if (null != currentPaymentDetails)
@@ -158,7 +156,7 @@ public class AccountCheckDTOAsm {
     private UserDetailsDto convertGooglePlusInfoToDetails(GooglePlusUserInfo googlePlusUserInfo) {
         GooglePlusUserDetailsDto result = new GooglePlusUserDetailsDto();
         result.setEmail(googlePlusUserInfo.getEmail());
-        result.setUserName(googlePlusUserInfo.getDisplayName());
+        result.setUserName(googlePlusUserInfo.getEmail());
         result.setProfileUrl(googlePlusUserInfo.getPicture());
         result.setGooglePlusId(googlePlusUserInfo.getGooglePlusId());
         result.setFirstName(googlePlusUserInfo.getGivenName());
@@ -250,13 +248,6 @@ public class AccountCheckDTOAsm {
             }
         }
         return null;
-    }
-
-    private static void setNewsItemsAndTimestamp(News news, AccountCheckDTO accountCheckDTO) {
-        if (news == null)
-            return;
-        accountCheckDTO.newsTimestamp = news.getTimestamp();
-        accountCheckDTO.newsItems = news.getNumEntries();
     }
 
     public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {

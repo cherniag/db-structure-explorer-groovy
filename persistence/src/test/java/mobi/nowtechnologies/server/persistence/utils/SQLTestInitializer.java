@@ -34,6 +34,9 @@ public class SQLTestInitializer {
     @Resource
     private StreamzineUpdateRepository streamzineUpdateRepository;
 
+    @Resource
+    private AccountLogRepository accountLogRepository;
+
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
     }
@@ -91,6 +94,7 @@ public class SQLTestInitializer {
         chartRepository.delete(charts);
 
         drmRepository.deleteAll();
+        accountLogRepository.deleteAll();
         reactivationUserInfoRepository.deleteAll();
         streamzineUpdateRepository.deleteAll();
         userRepository.deleteAll();
