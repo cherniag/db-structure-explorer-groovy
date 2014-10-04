@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,7 +38,7 @@ public class ChartItemDto {
     private String isrc;
 
     @DateTimeFormat(iso=ISO.DATE_TIME)
-    @JsonFormat(pattern = URL_DATE_TIME_FORMAT)
+    @JsonDeserialize(using = ChartItemDateDeserializer.class)
 	private Date publishTime;
     
     private Boolean locked;
