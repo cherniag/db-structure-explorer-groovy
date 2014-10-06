@@ -1,24 +1,25 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import com.google.common.net.HttpHeaders;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Collections;
 
+import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
 import static mobi.nowtechnologies.server.shared.enums.MessageActionType.A_SPECIFIC_TRACK;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class GetNewsControllerTestIT extends AbstractControllerTestIT{
 
@@ -252,4 +253,38 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isNotFound());
     }
+
+
+    @Test
+    public void testGetNewsFor63WithCheckIfModified_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.3";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        long lastValue = 1315686788000L;
+        mockMvc.perform(
+                get("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .header(IF_MODIFIED_SINCE, 0L))
+                .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
+                .andExpect(jsonPath("$.response..news").exists())
+                .andExpect(header().longValue(HttpHeaders.LAST_MODIFIED, lastValue));
+        mockMvc.perform(
+                get("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .header(IF_MODIFIED_SINCE, lastValue))
+                .andExpect(status().isNotModified()).andDo(print())
+                .andExpect(content().string(""));
+
+    }
+
 }

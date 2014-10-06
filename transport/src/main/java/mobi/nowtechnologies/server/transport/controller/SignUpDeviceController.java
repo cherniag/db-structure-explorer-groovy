@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.validator.UserDeviceRegDetailsDtoValidator;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,8 @@ public class SignUpDeviceController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.1}/SIGN_UP_DEVICE",
-            "**/{community}/{apiVersion:6\\.2}/SIGN_UP_DEVICE"
+            "**/{community}/{apiVersion:6\\.2}/SIGN_UP_DEVICE",
+            "**/{community}/{apiVersion:6\\.3}/SIGN_UP_DEVICE"
     })
     public ModelAndView signUpDeviceV6_1(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
         return processSignUpDevice(userDeviceDetailsDto, true, true);

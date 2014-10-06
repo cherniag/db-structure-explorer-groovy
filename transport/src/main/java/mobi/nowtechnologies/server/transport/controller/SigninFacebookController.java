@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.service.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +44,8 @@ public class SigninFacebookController extends CommonController {
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.0}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.1}/SIGN_IN_FACEBOOK",
-            "**/{community}/{apiVersion:6\\.2}/SIGN_IN_FACEBOOK"
+            "**/{community}/{apiVersion:6\\.2}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.3}/SIGN_IN_FACEBOOK"
     })
     public ModelAndView applyPromotionByFacebookWithCheckReactivation(
             @RequestParam("USER_TOKEN") String userToken,

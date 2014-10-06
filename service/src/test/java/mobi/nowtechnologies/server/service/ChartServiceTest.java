@@ -423,7 +423,7 @@ public class ChartServiceTest {
         User user = null;
         String communityName = "o2";
 
-        fixture.processGetChartCommand(user, communityName, true, true);
+        fixture.processGetChartCommand(user, communityName, true, true, null);
     }
 
     @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
@@ -434,7 +434,7 @@ public class ChartServiceTest {
 
         when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(user);
 
-        fixture.processGetChartCommand(user, communityName, true, true);
+        fixture.processGetChartCommand(user, communityName, true, true, null);
     }
 
     @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
@@ -448,7 +448,7 @@ public class ChartServiceTest {
 
         when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(user);
 
-        fixture.processGetChartCommand(user, communityName, true, true);
+        fixture.processGetChartCommand(user, communityName, true, true, null);
     }
 
     @Test
@@ -510,7 +510,7 @@ public class ChartServiceTest {
         when(mockMessageSource.getMessage(anyString(), eq("get.chart.command.default.amazon.url"), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
         when(mockApplicationContext.getBean("communityChartManager", GetChartContentManager.class)).thenReturn(getChartContentManager);
 
-        ChartDto result = fixture.processGetChartCommand(testUser, communityName, true, true);
+        ChartDto result = fixture.processGetChartCommand(testUser, communityName, true, true, null).getContent();
 
         assertNotNull(result);
 

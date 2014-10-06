@@ -6,13 +6,13 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
-import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
+import mobi.nowtechnologies.server.service.exception.NoNewContentException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -92,7 +92,7 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDto processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked) {
+    public ContentDtoResult<ChartDto> processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked, Long lastChartUpdateFromClient) {
         if (user == null)
             throw new ServiceException("The parameter user is null");
 
@@ -135,6 +135,13 @@ public class ChartService implements ApplicationContextAware {
                 playlistDtos.add(ChartAsm.toPlaylistDto(chart, result.isSwitchable()));
             }
         }
+        Long lastUpdateTimeForChartDetails = -1L;
+        if (lastChartUpdateFromClient != null) {
+            lastUpdateTimeForChartDetails = findMaxPublishDate(chartDetails);
+            if (lastChartUpdateFromClient >= lastUpdateTimeForChartDetails) {
+                throw new NoNewContentException(lastUpdateTimeForChartDetails, lastChartUpdateFromClient);
+            }
+        }
 
         String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
@@ -153,7 +160,17 @@ public class ChartService implements ApplicationContextAware {
         chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));
 
         LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
-        return chartDto;
+        return new ContentDtoResult<ChartDto>(lastUpdateTimeForChartDetails, chartDto);
+    }
+
+    private Long findMaxPublishDate(List<ChartDetail> chartDetails) {
+        Long result = -1l;
+        for (ChartDetail currentDetail : chartDetails) {
+            if (currentDetail.getPublishTimeMillis() > result) {
+                result = currentDetail.getPublishTimeMillis();
+            }
+        }
+        return result;
     }
 
     private GetChartContentManager resolveChartSupporter(String communityName) {

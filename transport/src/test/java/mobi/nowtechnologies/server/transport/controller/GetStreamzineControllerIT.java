@@ -30,13 +30,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 
+import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
+import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
 public class GetStreamzineControllerIT extends AbstractControllerTestIT {
@@ -68,7 +70,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
 
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "300a400").andExpect(status().isBadRequest());
+        doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "300a400").andExpect(status().isBadRequest());
     }
 
     @Test
@@ -85,7 +87,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String userToken = createTimestampToken(storedToken, timestamp);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "320x800").andExpect(status().isNotFound());
+        doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "320x800").andExpect(status().isNotFound());
     }
 
     @Test
@@ -127,10 +129,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         Thread.sleep(2500L);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false, "60x60").andExpect(status().isOk()).andDo(print());
+        doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false, "60x60").andExpect(status().isOk()).andDo(print());
 
         // check json format and the correct order of the blocks
-        ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60").andExpect(status().isOk()).andDo(print());
+        ResultActions resultActions = doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60").andExpect(status().isOk()).andDo(print());
 
         resultActions.andDo(print())
                 // check the orders
@@ -190,7 +192,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         return mapping.getFilenameAlias();
     }
 
-    private ResultActions doRequest(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
+    private ResultActions doRequestBefore63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
         final String formatSpecific = (isJson) ? ".json" : "";
 
         return mockMvc.perform(
@@ -206,15 +208,33 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         );
     }
 
+    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, long modifiedSinceTime) throws Exception {
+        final String formatSpecific = (isJson) ? ".json" : "";
+
+        return mockMvc.perform(
+                get("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
+                        .param("APP_VERSION", userName)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("WIDTHXHEIGHT", resolution)
+                        .header(IF_MODIFIED_SINCE, modifiedSinceTime)
+
+        );
+    }
+
 
     @Test
-    public void testGetStreamzineForSpecificMQUser_Success() throws Exception {
-        final Date updateDate = new Date(System.currentTimeMillis() + 1000L);
+    public void testGetStreamzineFor63WithIfModifiedSuccess() throws Exception {
+        Date updateDate = new Date(System.currentTimeMillis() + 2000L);
 
         // parameters
         String userName = "test@ukr.net";
         String deviceUID = "b88106713409e92622461a876abcd74b1111";
-        String apiVersion = "6.1";
+        String apiVersion = "6.3";
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -230,42 +250,23 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
+
+        prepareDefaultBadge(communityUrl, originalUploadedFile);
+
         Community community = communityRepository.findByName(communityUrl);
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
 
         Thread.sleep(2500L);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", userName)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).
-                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDate.getTime()));
+        // check json format and the correct order of the blocks
+         doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", 0)
+                 .andExpect(status().isOk()).andDo(print())
+                 .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
 
-        user = userRepository.findOne(userName, communityUrl);
-        final Date updateDateForSpecificUser = new Date(System.currentTimeMillis() + 1000L);
-        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user);
-
-        Thread.sleep(2000L);
-
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", userName)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateForSpecificUser.getTime()));
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", updateDate.getTime())
+        .andExpect(status().isNotModified()).andExpect(content().string(""));
     }
 
     @Test

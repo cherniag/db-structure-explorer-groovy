@@ -304,6 +304,11 @@ public class ChartDetail {
         return this;
     }
 
+    public ChartDetail withPublishTime(long time) {
+        this.setPublishTimeMillis(time);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -325,4 +330,5 @@ public class ChartDetail {
                 .append("version", version)
                 .toString();
     }
+
 }

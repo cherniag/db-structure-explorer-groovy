@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.service.FileService.FileType;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.web.servlet.FileInResponseView;
 import mobi.nowtechnologies.server.shared.web.servlet.PlainTextView;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

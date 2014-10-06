@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -61,7 +62,8 @@ public class UnsubscribeController extends CommonController {
             "/{community:.+}/{apiVersion:5\\.0}/stop_subscription",
             "/{community:.+}/{apiVersion:6\\.0}/stop_subscription",
             "/{community:.+}/{apiVersion:6\\.1}/stop_subscription",
-            "/{community:.+}/{apiVersion:6\\.2}/stop_subscription"
+            "/{community:.+}/{apiVersion:6\\.2}/stop_subscription",
+            "/{community:.+}/{apiVersion:6\\.3}/stop_subscription"
     })
 	public @ResponseBody
 	String unsubscribe(@RequestBody String body, @PathVariable("community") String community) throws Exception {

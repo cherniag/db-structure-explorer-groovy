@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +44,8 @@ public class ApplyInitPromoController extends CommonController {
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO",
             "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO"
+            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.3}/APPLY_INIT_PROMO"
     })
     public ModelAndView applyPromotionWithReactivation(
             @RequestParam("USER_NAME") String userName,

@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.transport.controller;
+package mobi.nowtechnologies.server.transport.controller.core;
 
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.common.util.ServerMessage;
@@ -23,6 +23,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -323,6 +324,12 @@ public abstract class CommonController extends ProfileController {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
         }
+    }
+
+    @ExceptionHandler(NoNewContentException.class)
+    @ResponseStatus(HttpStatus.NOT_MODIFIED)
+    public void handleNowNewContent(NoNewContentException exception) {
+        LOGGER.info("No new content. Check time from client: [{}]. Last updated time: [{}]", exception.getCheckForTimeInMillis(), exception.getDateOfLastUpdateInMillis());
     }
 
 }
