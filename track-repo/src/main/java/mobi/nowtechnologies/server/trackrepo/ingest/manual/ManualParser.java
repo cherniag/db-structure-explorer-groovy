@@ -90,7 +90,7 @@ public class ManualParser extends IParser {
 				LOGGER.info("Token length [{}] line", tokens.length);
 				DropTrack track = new DropTrack();
 				track.type = Type.INSERT;
-				track.xml = line;
+				track.xml = "";
 				track.title = tokens[1];
 				track.artist = tokens[2];
 				track.isrc = tokens[3];
