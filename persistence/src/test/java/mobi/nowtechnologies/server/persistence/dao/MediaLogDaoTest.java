@@ -47,6 +47,7 @@ public class MediaLogDaoTest extends AbstractRepositoryIT {
 		throws Exception {
 		int userId = 1;
 		Media media = new Media();
+        media.setTrackId(1L);
 		byte mediaLogType = (byte) 1;
 
         entityDao.saveEntity(media);
