@@ -4,5 +4,6 @@ public enum VersionCheckStatus {
     CURRENT,
     SUGGESTED_UPDATE,
     FORCED_UPDATE,
-    REVOKED
+    REVOKED,
+    MIGRATED
 }

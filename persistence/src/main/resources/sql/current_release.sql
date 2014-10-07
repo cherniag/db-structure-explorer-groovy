@@ -1,0 +1,1 @@
+alter table client_version_info add column image_file_name varchar(255) default null;

@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UserAgentRequestEditor extends PropertyEditorSupport {
-    private static Pattern pattern = Pattern.compile("(.+)/(\\d\\.\\d.*) \\((\\S+); (\\S+)\\)");
+    private static Pattern pattern = Pattern.compile("(.+)/(\\d{1,2}\\.\\d.*) \\((\\S+); (\\S+)\\)");
 
     private CommunityRepository communityRepository;
 

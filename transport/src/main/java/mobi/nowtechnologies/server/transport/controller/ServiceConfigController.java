@@ -49,6 +49,7 @@ public class ServiceConfigController extends CommonController {
 
             ServiceConfigDto dto = convert(versionCheckService.check(userAgent), userAgent);
 
+            LOGGER.info("SERVICE_CONFIG response [{}]", dto);
             return new Response(new Object[]{dto});
         } catch (Exception e) {
             ex = e;
@@ -71,8 +72,9 @@ public class ServiceConfigController extends CommonController {
         VersionCheckStatus status = response.getStatus();
         String message = getMessage(response, userAgent);
         String link = response.getUri();
+        String imageFileName = response.getImageFileName();
 
-        return new ServiceConfigDto(status, message, link);
+        return new ServiceConfigDto(status, message, link, imageFileName);
     }
 
     private String getMessage(VersionCheckResponse response, UserAgentRequest userAgent) {

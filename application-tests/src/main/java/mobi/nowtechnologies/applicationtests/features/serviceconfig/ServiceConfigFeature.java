@@ -69,7 +69,9 @@ public class ServiceConfigFeature {
 
     @When("^(.+) header is in old format \"(.+)\"$")
     public void whenUserAgent(String headerName, String headerValue) {
-        serviceConfigHttpService.setHeader(headerName, headerValue);
+        for (UserDeviceData data : userDeviceDatas) {
+            headers.put(data, headerValue);
+        }
     }
 
     @Then("^response has (\\d+) http response code$")
@@ -111,11 +113,12 @@ public class ServiceConfigFeature {
         }
     }
 
-    @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' link$")
+    @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' image and '(.+)' link$")
     public void whenServiceConfig(VersionCheckStatus status,
                                   @Transform(ClientVersionTransformer.class) ClientVersion clientVersion,
                                   String application,
                                   String code,
+                                  String imageFileName,
                                   String link) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
 
@@ -124,7 +127,7 @@ public class ServiceConfigFeature {
             VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
             Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
             DeviceType deviceType = getDeviceType(userDeviceData);
-            versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion));
+            versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName));
         }
     }
 
@@ -160,9 +163,9 @@ public class ServiceConfigFeature {
             Map<String, Object> stringObjectMap = jsonHelper.extractObjectMapByPath(response.getBody(), "$.response.data[0].versionCheck");
 
             if(nullable.isNull()) {
-                assertNull("Value by field: " + field + " is not null", stringObjectMap.get(field));
+                assertNull("Value by field: " + field + " is not null for " + userDeviceData, stringObjectMap.get(field));
             } else {
-                assertEquals("Value by field: " + field + " differs from expected", nullable.value(), stringObjectMap.get(field));
+                assertEquals("Value by field: " + field + " differs from expected for " + userDeviceData, nullable.value(), stringObjectMap.get(field));
             }
         }
     }

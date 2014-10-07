@@ -34,7 +34,7 @@ public class VersionCheckService {
             return currentVersionResponse;
         }
 
-        return new VersionCheckResponse(needVersion.getMessage().getMessageKey(), needVersion.getStatus(), needVersion.getMessage().getUrl());
+        return new VersionCheckResponse(needVersion.getMessage().getMessageKey(), needVersion.getStatus(), needVersion.getMessage().getUrl(), needVersion.getImageFileName());
     }
 
     private List<VersionCheck> getVersionChecks(UserAgentRequest userAgent) {
@@ -49,7 +49,7 @@ public class VersionCheckService {
 
     @PostConstruct
     private void init() {
-        currentVersionResponse = new VersionCheckResponse(null, CURRENT, null);
+        currentVersionResponse = new VersionCheckResponse(null, CURRENT, null, null);
         Sort sorting = new Sort(
                 new Sort.Order(Sort.Direction.ASC, MAJOR_NUMBER_PROPERTY_NAME),
                 new Sort.Order(Sort.Direction.ASC, MINOR_NUMBER_PROPERTY_NAME),
