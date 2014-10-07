@@ -910,7 +910,7 @@ function chartItemFromLi(li){
     var channel = li.find("div.channel_chartItem span").text().replace(/\'/g, "&apos;");
     var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
     var mediaId = li.find("div.mediaId_chartItem").text();
-    var iTunesUrl = li.children('.iTunesSpan').text().trim();
+    var iTunesUrl = escape(li.children('.iTunesSpan').text().trim());
     var label = escape(li.children('.labelSpan').text().trim());
     var artistName = escape(li.children('.ArtistTitle_chartItem').text().trim());
     var fileType = escape(li.children('.fileTypeSpan').text().trim());
@@ -942,7 +942,7 @@ function chartItemFromLi(li){
     var iTunesUrl = escape(li.children('.iTunesSpan').text().trim());
     var label = escape(li.children('.labelSpan').text().trim());
     var artistName = escape(li.children('.ArtistTitle_chartItem').text().trim());
-    var fileType = li.children('.fileTypeSpan').text().trim();
+    var fileType = escape(li.children('.fileTypeSpan').text().trim());
     json.push(
             "{'id':",id != null && id != '' ? id : 'null',",",
             "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" +

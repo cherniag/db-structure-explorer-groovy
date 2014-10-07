@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
@@ -376,7 +377,7 @@ public class ChartDetailService {
 
     private Media saveMediaInfo(MediaDto mediaDto) {
         Media media = mediaRepository.findOne(mediaDto.getId());
-        media.setiTunesUrl(mediaDto.getITunesUrl());
+        media.setiTunesUrl(Utils.decodeUrl(mediaDto.getITunesUrl()));
         return mediaRepository.save(media);
     }
 

@@ -89,6 +89,20 @@ public class ITunesValidatorTest {
         hasGlobalError(errors);
     }
 
+    @Test
+    public void testWhenITunesUrlIsValid() {
+        check("http://www.google.com.ua", "", "", "", FileType.MOBILE_AUDIO, "");
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    public void testWhenITunesUrlIsEncoded() {
+        check("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttp%3A%2F%2Fitunes.apple.com%2Fgb%2Falbum%2Fmarry-you%2Fid408106948%3Fi%3D408106965%26uo%3D4%26partnerId%3D2003", "", "", "", FileType.MOBILE_AUDIO, "");
+        assertFalse(errors.hasErrors());
+    }
+
+
+
     private void check(String itunesUrl, String channel, String artistName, String label, FileType fileType, String title){
         errors = new MapBindingResult(Collections.emptyMap(), "");
         ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();

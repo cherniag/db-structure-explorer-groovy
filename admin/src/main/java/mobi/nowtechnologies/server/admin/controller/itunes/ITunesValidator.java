@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.admin.controller.itunes;
 import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.CollectionUtils;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.util.URLValidation;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
@@ -55,7 +56,8 @@ public class ITunesValidator extends BaseValidator {
         }
 
         String iTunesUrl = item.getMediaDto().getITunesUrl();
-        return StringUtils.isNotEmpty(iTunesUrl) && URLValidation.validate(iTunesUrl);
+        String decodedUrl = Utils.decodeUrl(iTunesUrl);
+        return StringUtils.isNotEmpty(decodedUrl) && URLValidation.validate(decodedUrl);
 
     }
 
