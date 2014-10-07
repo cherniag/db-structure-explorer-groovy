@@ -44,15 +44,12 @@ public class ITunesValidator extends BaseValidator {
         if (APPCAST.equalsIgnoreCase(item.getChannel())) {
             return true;
         }
-        String artistName = item.getMediaDto().getArtistDto().getName();
-        if (StringUtils.isNotEmpty(artistName) && artistName.contains(APPCAST)) {
+        if (contains(item.getMediaDto().getArtistDto().getName(), APPCAST)){
             return true;
         }
-        String title = item.getMediaDto().getTitle();
-        if (StringUtils.isNotEmpty(title) && title.contains(APPCAST)) {
+        if (contains(item.getMediaDto().getTitle(), APPCAST)){
             return true;
         }
-
         if (MQ_LABEL_NAME.equalsIgnoreCase(item.getMediaDto().getLabel())) {
             return true;
         }
@@ -60,6 +57,10 @@ public class ITunesValidator extends BaseValidator {
         String iTunesUrl = item.getMediaDto().getITunesUrl();
         return StringUtils.isNotEmpty(iTunesUrl) && URLValidation.validate(iTunesUrl);
 
+    }
+
+    private boolean contains(String sourceString, String substring) {
+        return StringUtils.isNotEmpty(sourceString) && (sourceString.toLowerCase().contains(substring.toLowerCase()));
     }
 
     @Override

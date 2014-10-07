@@ -25,7 +25,7 @@ public class ITunesValidatorTest {
     private ITunesValidator itunesValidator;
 
 
-    private Errors errors = new MapBindingResult(Collections.emptyMap(), "");
+    private Errors errors;
 
     @Before
     public void setUp() {
@@ -35,61 +35,65 @@ public class ITunesValidatorTest {
 
     @Test
     public void testWhenChannelIsAppcast() {
-        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
-        dtos.add(buildDto("", "Appcast", "", "", FileType.MOBILE_AUDIO, ""));
-        itunesValidator.validate(dtos, errors);
+        check("", "Appcast", "", "", FileType.MOBILE_AUDIO, "");
         assertFalse(errors.hasErrors());
     }
 
 
     @Test
     public void testWhenArtistNamelIsAppcast() {
-        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
-        dtos.add(buildDto("", "", "Appcast", "", FileType.MOBILE_AUDIO, ""));
-        itunesValidator.validate(dtos, errors);
+        check("", "", "Appcast", "", FileType.MOBILE_AUDIO, "");
+        assertFalse(errors.hasErrors());
+        check("", "", "APPCAST", "", FileType.MOBILE_AUDIO, "");
+        assertFalse(errors.hasErrors());
+        check("", "", "1APPCAST1", "", FileType.MOBILE_AUDIO, "");
+        assertFalse(errors.hasErrors());
+        check("", "", " APPcaST1", "", FileType.MOBILE_AUDIO, "");
         assertFalse(errors.hasErrors());
     }
 
+
     @Test
     public void testWhenTitlelIsAppcast() {
-        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
-        dtos.add(buildDto("", "", "", "", FileType.MOBILE_AUDIO, "Appcast"));
-        itunesValidator.validate(dtos, errors);
+        check("", "", "", "", FileType.MOBILE_AUDIO, "Appcast");
+        assertFalse(errors.hasErrors());
+        check("", "", "", "", FileType.MOBILE_AUDIO, "APPCAST");
+        assertFalse(errors.hasErrors());
+        check("", "", "", "", FileType.MOBILE_AUDIO, " AppCaST ");
         assertFalse(errors.hasErrors());
     }
 
 
     @Test
     public void testWhenLabellIsMQ() {
-        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
-        dtos.add(buildDto("", "", "", "MQ", FileType.MOBILE_AUDIO, ""));
-        itunesValidator.validate(dtos, errors);
+        check("", "", "", "MQ", FileType.MOBILE_AUDIO, "");
         assertFalse(errors.hasErrors());
     }
 
     @Test
     public void testWhenFileTypeIsVideo() {
-        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
-        dtos.add(buildDto("", "", "", "", FileType.VIDEO, ""));
-        itunesValidator.validate(dtos, errors);
+        check("", "", "", "", FileType.VIDEO, "");
         assertFalse(errors.hasErrors());
     }
 
 
     @Test
     public void testWhenITunesUrlIsEmpty() {
-        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
-        dtos.add(buildDto("", "", "", "", FileType.MOBILE_AUDIO, ""));
-        itunesValidator.validate(dtos, errors);
+        check("", "", "", "", FileType.MOBILE_AUDIO, "");
         hasGlobalError(errors);
     }
 
     @Test
     public void testWhenITunesUrlIsNotValid() {
-        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
-        dtos.add(buildDto("fdfd", "", "", "", FileType.MOBILE_AUDIO, ""));
-        itunesValidator.validate(dtos, errors);
+        check("fdfd", "", "", "", FileType.MOBILE_AUDIO, "");
         hasGlobalError(errors);
+    }
+
+    private void check(String itunesUrl, String channel, String artistName, String label, FileType fileType, String title){
+        errors = new MapBindingResult(Collections.emptyMap(), "");
+        ArrayList<ChartItemDto> dtos = new ArrayList<ChartItemDto>();
+        dtos.add(buildDto(itunesUrl, channel, artistName, label, fileType, title));
+        itunesValidator.validate(dtos, errors);
     }
 
     private ChartItemDto buildDto(String itunesUrl, String channel, String artistName, String label, FileType fileType, String title) {
