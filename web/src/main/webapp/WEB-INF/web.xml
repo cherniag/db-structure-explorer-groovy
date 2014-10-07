@@ -23,6 +23,10 @@
 		<param-name>webAppRootKey</param-name>
 		<param-value>web</param-value>
 	</context-param>
+    <context-param>
+        <param-name>spring.profiles.active</param-name>
+        <param-value>${profile}</param-value>
+    </context-param>
 	
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
 	<listener>

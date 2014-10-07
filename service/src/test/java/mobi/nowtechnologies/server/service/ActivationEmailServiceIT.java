@@ -134,7 +134,7 @@ public class ActivationEmailServiceIT {
 
         activationEmailService.sendEmail(EMAIL, "htc", "htc", Community.O2_COMMUNITY_REWRITE_URL);
 
-        verify(mailService).sendMail(anyString(), any(String[].class), anyString(), anyString(), anyMap());
+        verify(mailService).sendMessage(anyString(), any(String[].class), anyString(), anyString(), anyMap());
     }
 
     @Test(expected = ValidationException.class)
@@ -156,7 +156,7 @@ public class ActivationEmailServiceIT {
 
         activationEmailService.sendEmail("ttt", "htc", "htc", Community.O2_COMMUNITY_REWRITE_URL);
 
-        verify(mailService).sendMail(anyString(), any(String[].class), anyString(), anyString(), anyMap());
+        verify(mailService).sendMessage(anyString(), any(String[].class), anyString(), anyString(), anyMap());
     }
 
     @Before

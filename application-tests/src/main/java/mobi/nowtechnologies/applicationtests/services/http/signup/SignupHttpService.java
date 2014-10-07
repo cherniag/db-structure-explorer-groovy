@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class SignupHttpService extends AbstractHttpService {
@@ -26,12 +25,7 @@ public class SignupHttpService extends AbstractHttpService {
 
         logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
 
-        String body = null;
-        try {
-            body = restTemplate.postForEntity(uri, request, String.class).getBody();
-        } catch (HttpClientErrorException e) {
-            logger.error("Failed with: url={}, request={}, deviceData={}", uri, request, deviceData, e);
-        }
+        String body = restTemplate.postForEntity(uri, request, String.class).getBody();
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
     }

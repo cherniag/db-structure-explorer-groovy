@@ -19,15 +19,12 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class CustomCucumberRunner extends Cucumber {
-    private static final String PHANTOM_JS_LOCATION = "PHANTOM_JS_LOCATION";
+    public static final String PHANTOM_JS_LOCATION = "PHANTOM_JS_LOCATION";
 
     private AnnotationConfigApplicationContext context;
 
     public CustomCucumberRunner(Class clazz) throws InitializationError, IOException {
         super(clazz);
-
-        System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "application-tests");
-        System.setProperty(CustomCucumberRunner.PHANTOM_JS_LOCATION, getPhantomLocation());
     }
 
     @Override
@@ -38,6 +35,9 @@ public class CustomCucumberRunner extends Cucumber {
 
     @Override
     protected cucumber.runtime.Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) throws InitializationError, IOException {
+        System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "application-tests");
+        System.setProperty(CustomCucumberRunner.PHANTOM_JS_LOCATION, getPhantomLocation());
+
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         context = new AnnotationConfigApplicationContext();
