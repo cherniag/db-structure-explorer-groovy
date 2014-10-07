@@ -5,9 +5,9 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountCheckHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.chart.ChartHttpService;
-import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.*;
-import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.Error;
-import mobi.nowtechnologies.applicationtests.services.http.facebook.GooglePlusUserDetailsDto;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.UserDetails;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActivationDto;
 import mobi.nowtechnologies.applicationtests.services.http.signup.SignupHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
@@ -49,18 +49,33 @@ public abstract class ClientDevicesSet {
     // Sign up
     //
     public void singup(UserDeviceData deviceData) {
-        singup(deviceData, null);
+        singup(deviceData, null, false, userDataCreator.generateDeviceUID());
+    }
+
+    public void singupWithOtherDevice(UserDeviceData userData, UserDeviceData otherDeviceData) {
+        singup(userData, null, true, states.get(otherDeviceData).deviceUID);
+    }
+
+    public void singupWithNewDevice(UserDeviceData deviceData) {
+        singup(deviceData, null, true, userDataCreator.generateDeviceUID());
     }
 
     public void singup(UserDeviceData deviceData, String xtifyToken) {
+        singup(deviceData, xtifyToken, true, userDataCreator.generateDeviceUID());
+    }
+
+    public void singup(UserDeviceData deviceData, String xtifyToken, boolean overrideDeviceUID, String deviceUID) {
         PhoneStateImpl state = states.get(deviceData);
 
         // signup device could be called twice for the same device when user changes the phone (different device uid or changes the api version)
         if(state == null) {
             state = new PhoneStateImpl();
-            state.deviceUID = userDataCreator.generateDeviceUID();
             state.email = userDataCreator.generateEmail();
             states.put(deviceData, state);
+            state.deviceUID = deviceUID;
+        }
+        else if (overrideDeviceUID) {
+            state.deviceUID = deviceUID;
         }
 
         state.lastSentXTofyToken = xtifyToken;
@@ -114,9 +129,9 @@ public abstract class ClientDevicesSet {
         String deviceUID;
         String email;
         AccountCheckDTO accountCheck;
-        mobi.nowtechnologies.applicationtests.services.http.domain.facebook.Error lastFacebookError;
-        UserDetails lastFacebookInfo;
-        GooglePlusUserDetailsDto lastGooglePlusUserInfo;
+        Error lastFacebookError;
+        User lastFacebookInfo;
+        User lastGooglePlusUserInfo;
         public PhoneActivationDto phoneActivationDto;
         public AccountCheckDTO activationResponse;
         public String lastSentXTofyToken;
@@ -124,9 +139,11 @@ public abstract class ClientDevicesSet {
         public String googlePlusUserId;
         public long lastActivationEmailToken;
         private String lastEnteredPhoneNumberOnWebPortal;
-        public String accessToken;
+        public String facebookAccessToken;
         public HttpStatus lastFacebookErrorStatus;
         public String googlePlusToken;
+        public Error lastGooglePlusError;
+        public HttpStatus lastGooglePlusErrorStatus;
 
         PhoneStateImpl() {
         }
@@ -167,12 +184,12 @@ public abstract class ClientDevicesSet {
         }
 
         @Override
-        public UserDetails getLastFacebookInfo() {
+        public User getLastFacebookInfo() {
             return lastFacebookInfo;
         }
 
         @Override
-        public GooglePlusUserDetailsDto getLastGooglePlusInfo() {
+        public User getLastGooglePlusInfo() {
             return lastGooglePlusUserInfo;
         }
 
@@ -218,12 +235,22 @@ public abstract class ClientDevicesSet {
 
         @Override
         public String getFacebookAccessToken() {
-            return accessToken;
+            return facebookAccessToken;
         }
 
         @Override
         public HttpStatus getLastFacebookErrorStatus() {
             return lastFacebookErrorStatus;
+        }
+
+        @Override
+        public HttpStatus getLastGooglePlusErrorStatus() {
+            return lastGooglePlusErrorStatus;
+        }
+
+        @Override
+        public Error getLastGooglePlusError() {
+            return lastGooglePlusError;
         }
 
         @Override

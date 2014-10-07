@@ -2,8 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <bean id="service.RefundService" class="mobi.nowtechnologies.server.service.impl.RefundServiceImpl">
         <property name="refundRepository" ref="refundRepository" />
@@ -57,14 +57,14 @@
 		<property name="redirectURL" value="${paypal.redirectURL}" />
 		<property name="retriesOnError" value="${paypal.retriesOnError}" />
 		<property name="expireMillis" value="${paypal.pendingExpireMillis}" />
-		<property name="httpService">
-			<bean class="mobi.nowtechnologies.server.service.payment.http.PayPalHttpService">
-				<property name="apiUrl" value="${paypal.apiUrl}" />
-				<property name="postService" ref="shared.PostService" />
-				<property name="request" ref="request.payPalRequest" />
-			</bean>
-		</property>
+		<property name="httpService" ref="service.PayPalHttpService"/>
 	</bean>
+
+    <bean id="service.PayPalHttpService" class="mobi.nowtechnologies.server.service.payment.http.PayPalHttpService">
+        <property name="apiUrl" value="${paypal.apiUrl}" />
+        <property name="postService" ref="shared.PostService" />
+        <property name="request" ref="request.payPalRequest" />
+    </bean>
 	
 	<!-- Mig Service -->
 	<bean id="service.migHttpService" class="mobi.nowtechnologies.server.service.payment.http.MigHttpService">
@@ -138,5 +138,7 @@
         <constructor-arg ref="service.messageFactory"/>
         <property name="defaultUri" value="http://example.com/WebService"/>
     </bean>
+
+    <import resource="payment-application-tests.xml" />
 	 
 </beans>

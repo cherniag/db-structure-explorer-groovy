@@ -1,8 +1,8 @@
+@Ready
 Feature: Successful user activation via Facebook in facebook supported communities
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #facebook supported versions: 5.2, 6.0, 6.1
 #facebook supported communities: hl_uk, demo, demo2, demo3
-
   Scenario: Activation of new user via Facebook in facebook supported communities
     Given Registered user with all devices using JSON and XML format for all facebook supported versions and facebook supported communities
     When Registered user enters Facebook credentials

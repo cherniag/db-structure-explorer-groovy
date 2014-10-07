@@ -54,7 +54,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static java.util.Collections.singletonMap;
-import static mobi.nowtechnologies.server.dto.ProviderUserDetails.NULL_PROVIDER_USER_DETAILS;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.UserStatusFactory.createUserStatus;
 import static mobi.nowtechnologies.server.shared.Utils.*;
@@ -3718,7 +3717,7 @@ public class UserServiceTest {
         boolean isMajorApiVersionNumberLessThan4 = false;
         boolean isApplyingWithoutEnterPhone = false;
 
-        Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), user.getUserGroup().getCommunity())).thenReturn(NULL_PROVIDER_USER_DETAILS);
+        Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), user.getUserGroup().getCommunity())).thenReturn(new ProviderUserDetails());
         Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(new Answer<User>() {
             @Override
             public User answer(InvocationOnMock invocation) throws Throwable {

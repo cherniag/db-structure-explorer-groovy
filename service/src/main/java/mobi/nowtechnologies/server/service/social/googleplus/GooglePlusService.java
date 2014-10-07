@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingC
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 import mobi.nowtechnologies.server.shared.util.DateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.google.api.impl.GoogleTemplate;
@@ -52,7 +51,7 @@ public class GooglePlusService {
         result.setBirthday(extractDateInUTC(personFromGooglePlus));
         result.setDisplayName(personFromGooglePlus.getDisplayName());
         result.setPicture(extractImageUrl(personFromGooglePlus));
-        result.setGender(extractGender(personFromGooglePlus));
+        result.setGender(Gender.restore(personFromGooglePlus.getGender()));
         result.setLocation(extractLocation(personFromGooglePlus));
         result.setGivenName(personFromGooglePlus.getGivenName());
         result.setFamilyName(personFromGooglePlus.getFamilyName());
@@ -80,19 +79,6 @@ public class GooglePlusService {
                 if (TRUE.equals(currentLocation.getValue())) {
                     return currentLocation.getKey();
                 }
-            }
-        }
-        return null;
-    }
-
-    private Gender extractGender(Person personFromGooglePlus) {
-        String gender = personFromGooglePlus.getGender();
-        if (!StringUtils.isEmpty(gender)) {
-            if ("male".equals(gender)) {
-                return Gender.MALE;
-            }
-            if ("female".equals(gender)) {
-                return Gender.FEMALE;
             }
         }
         return null;

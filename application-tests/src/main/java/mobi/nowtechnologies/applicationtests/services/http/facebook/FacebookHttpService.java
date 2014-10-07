@@ -5,10 +5,10 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
-import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.UserDetails;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -17,16 +17,10 @@ import java.util.Arrays;
 @Service
 public class FacebookHttpService extends AbstractHttpService {
 
-    public UserDetails login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
+    public mobi.nowtechnologies.applicationtests.services.http.domain.common.User login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
         ResponseEntity<FacebookResponse> responseEntity = doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, accountCheck.userName, accountCheck.userToken);
 
-        return responseEntity.getBody().getUser().getUserDetails();
-    }
-
-    public UserDetails login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId, String emailAsUserName) {
-        ResponseEntity<FacebookResponse> responseEntity = doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, emailAsUserName, accountCheck.userToken);
-
-        return responseEntity.getBody().getUser().getUserDetails();
+        return responseEntity.getBody().getUser();
     }
 
     public ResponseEntity<FacebookResponse> loginWithExpectedError(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String facebookUserId, String userName, String userToken) {
@@ -62,10 +56,15 @@ public class FacebookHttpService extends AbstractHttpService {
         headers.setAccept(Arrays.asList(MediaType.ALL));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
-        URI requestUri = builder.build().toUri();
-        logger.info("Posting to [" + requestUri + "]");
+        UriComponents build = builder.build();
+        URI requestUri = build.toUri();
 
-        return restTemplate.exchange(requestUri, HttpMethod.POST, entity, FacebookResponse.class);
+        logger.info("Sending for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
+        ResponseEntity<FacebookResponse> response = restTemplate.exchange(requestUri, HttpMethod.POST, entity, FacebookResponse.class);
+        logger.info("Response [{}]", response);
+
+
+        return response;
     }
 
 }

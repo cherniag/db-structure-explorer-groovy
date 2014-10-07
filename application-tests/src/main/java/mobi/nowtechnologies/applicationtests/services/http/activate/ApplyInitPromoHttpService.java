@@ -34,9 +34,9 @@ public class ApplyInitPromoHttpService extends AbstractHttpService {
             request.add("DEVICE_UID", accountCheck.deviceUID);
         }
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
+        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, request);
         String body = restTemplate.postForEntity(uri, request, String.class).getBody();
-        logger.info("Response is [{}]", body);
+        logger.info("Response body [{}]", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
     }

@@ -8,8 +8,8 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
@@ -76,7 +76,7 @@ public class EmailSuccessRegistrationFeature {
             PhoneState phoneState = deviceSet.getPhoneState(deviceData);
             assertFalse(phoneState.getLastAccountCheckResponse().userToken.isEmpty());
 
-            User user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), deviceData.getCommunityUrl());
+            User user = userDbService.findUser(phoneState, deviceData);
             assertEquals(user.getStatus().getName(), status.name());
             assertEquals(phoneState.getDeviceUID(), user.getDeviceUID());
         }
@@ -94,7 +94,7 @@ public class EmailSuccessRegistrationFeature {
         for (UserDeviceData deviceData : currentUserDevices) {
             PhoneState phoneState = deviceSet.getPhoneState(deviceData);
 
-            User user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), deviceData.getCommunityUrl());
+            User user = userDbService.findUser(phoneState, deviceData);
             assertEquals(activationStatus, user.getActivationStatus());
 
             lastRegisteredUsers.put(deviceData, user);
@@ -140,7 +140,7 @@ public class EmailSuccessRegistrationFeature {
         for (UserDeviceData deviceData : currentUserDevices) {
             PhoneState phoneState = deviceSet.getPhoneState(deviceData);
 
-            User user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), deviceData.getCommunityUrl());
+            User user = userDbService.findUser(phoneState, deviceData);
             assertEquals(userStatus.name(), user.getStatus().getName());
         }
     }
@@ -173,7 +173,7 @@ public class EmailSuccessRegistrationFeature {
     public void userChangedUserName() {
         for (UserDeviceData deviceData : currentUserDevices) {
             PhoneState phoneState = deviceSet.getPhoneState(deviceData);
-            User user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), deviceData.getCommunityUrl());
+            User user = userDbService.findUser(phoneState, deviceData);
             assertEquals(phoneState.getEmail(), user.getUserName());
         }
     }
@@ -231,5 +231,4 @@ public class EmailSuccessRegistrationFeature {
         Email byModel = emailChecker.findByModel(params);
         return byModel.getBody();
     }
-
 }
