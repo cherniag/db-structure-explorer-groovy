@@ -120,6 +120,8 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
+                    '<select id="{id}_playerId" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
+                    '</select>' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
                     '</div>' +
@@ -127,6 +129,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
                         preProcess: function(incoming) {
+                            initPlayers(this.getId() + '_playerId', incoming);
                             var o = {
                                 value: incoming.value,
                                 title: incoming.title,
@@ -152,6 +155,8 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
+                    '<select id="{id}_playerId" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
+                    '</select>' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
                     '</div>' +
@@ -159,6 +164,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
                         preProcess: function(incoming) {
+                            initPlayers(this.getId() + '_playerId', incoming);
                             var amount = (incoming.data && incoming.data.tracksCount) ? incoming.data.tracksCount : 0;
                             return {
                                 value: incoming.value,
@@ -494,11 +500,12 @@ if(Streamzine.Presenter.Editor == undefined) {
         // Initialization
         //
         //
-        this.init = function(imagesBaseUrl, tracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgeMappingRules, titlesMappingRules) {
+        this.init = function(imagesBaseUrl, tracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgeMappingRules, titlesMappingRules, players) {
             this.id = id;
             this.imagesBaseUrl = imagesBaseUrl;
             this.badgeMappingRules = badgeMappingRules;
             this.titlesMappingRules = titlesMappingRules;
+            this.players = players;
 
             initPickers(id, imagesBaseUrl, tracksBaseUrl, playListUrl, badgesGetAll, badgesUpdateName);
 
@@ -553,6 +560,16 @@ if(Streamzine.Presenter.Editor == undefined) {
                 var title = Streamzine.Presenter.Mapping.getContentTypeTitle(shapeType, contentTypes[i]);
                 subTypeCombobox.append( $('<option value="' + contentTypes[i] + '">' + title + '</option>'));
             }
+        }
+
+        function initPlayers(playerComboboxId, block) {
+            var playerCombobox = $('select[id='+playerComboboxId+']');
+            playerCombobox.empty();
+            for(var i=0; i < this.players.length; i++) {
+                var name = players[i];
+                playerCombobox.append( $('<option value="' + name + '">' + name + '</option>'));
+            }
+            playerCombobox.val(block.player);
         }
 
         function initSubTypes(contentType) {

@@ -4,22 +4,19 @@ package mobi.nowtechnologies.server.admin.controller.streamzine;
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
-import mobi.nowtechnologies.server.service.streamzine.ImageDTO;
 import mobi.nowtechnologies.server.dto.streamzine.MediaDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateDto;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.ChartService;
-import mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService;
 import mobi.nowtechnologies.server.service.MediaService;
-import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
-import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
-import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
+import mobi.nowtechnologies.server.service.streamzine.*;
 import mobi.nowtechnologies.server.service.streamzine.asm.RulesInfoAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
@@ -242,6 +239,8 @@ public class StreamzineController {
         model.addObject("badgeMappingRules", rulesInfoAsm.getBadgeMappingInfo());
         model.addObject("titlesMappingRules", rulesInfoAsm.getTitlesMappingInfo());
         model.addObject("opener", rulesInfoAsm.buildTypesForOpener());
+        model.addObject("players", Player.getValues());
+        model.addObject("defaultPlayer", Player.getDefaultPlayer().toString());
         return model;
     }
 

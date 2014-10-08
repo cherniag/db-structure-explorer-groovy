@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
@@ -11,6 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Comparator;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVip {
@@ -61,9 +63,11 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     @JsonProperty(value = "badgeId")
     private Long badgeId;
 
+    @JsonProperty(value = "player")
+    private String player;
+
     @JsonIgnore
     private FileNameAliasDto badgeFileNameAlias;
-
 
     private DeepLinkInfoService.ApplicationPageData applicationPageData;
 
@@ -174,6 +178,22 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
         this.expanded = expanded;
     }
 
+    @Override
+    public String getPlayer() {
+        return player;
+    }
+
+    @Override
+    @JsonIgnore
+    public Player getPlayerInstance() {
+        if(isNull(player)) return null;
+        return Player.valueOf(player);
+    }
+
+    public void setPlayer(String player) {
+        this.player = player;
+    }
+
     public Long getBadgeId() {
         return badgeId;
     }
@@ -201,6 +221,7 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
                 .append("vip", vip)
                 .append("expanded", expanded)
                 .append("contentTypeTitle", contentTypeTitle)
+                .append("player", player)
                 .append("badgeId", badgeId)
                 .toString();
     }

@@ -2,20 +2,19 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -129,7 +128,7 @@ public class DeepLinkInfoService {
             if (!value.isEmpty()) {
                 chartId = parseInt(value);
             }
-            return new MusicPlayListDeeplinkInfo(chartId);
+            return new MusicPlayListDeeplinkInfo(chartId, data.getPlayerInstance());
         }
 
         if (musicType == MusicType.TRACK) {
@@ -139,7 +138,7 @@ public class DeepLinkInfoService {
                 restored = mediaRepository.findOne(id);
                 Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
             }
-            return new MusicTrackDeeplinkInfo(restored);
+            return new MusicTrackDeeplinkInfo(restored, data.getPlayerInstance());
         }
 
         if (musicType == MusicType.MANUAL_COMPILATION) {

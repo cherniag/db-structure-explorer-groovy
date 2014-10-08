@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
@@ -170,6 +171,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         block.setContentType(contentType);
         block.setKey(key);
         block.setIncluded(false);
+        block.setPlayer(Player.REGULAR_PLAYER_ONLY.name());
         dto.getBlocks().clear();
         dto.getBlocks().add(block);
         if (currentType.equals(ShapeType.NARROW)) {

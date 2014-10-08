@@ -23,6 +23,7 @@ public class DeepLinkUrlFactory {
 
     private final static String ACTION = "action";
     private final static String ID = "id";
+    private final static String PLAYER = "player";
     private static final String OPEN_IN = "open";
 
     private DeepLinkInfoService deepLinkInfoService;
@@ -41,6 +42,7 @@ public class DeepLinkUrlFactory {
         uriComponentsBuilder.pathSegment(decideSubValueForPromotional(deeplinkInfo));
         // query params if needed
         putActionOrOpenerQueryParamIfPromotional(deeplinkInfo, uriComponentsBuilder);
+        putPlayerQueryParamForPlayableItemDeepLink(deeplinkInfo, uriComponentsBuilder);
         putIdQueryParamIfNotPromotional(deeplinkInfo, uriComponentsBuilder);
 
         return uriComponentsBuilder.build().toUriString();
@@ -67,6 +69,12 @@ public class DeepLinkUrlFactory {
     private void putIdQueryParamIfNotPromotional(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
         if (!(deeplinkInfo instanceof InformationDeeplinkInfo)) {
             uriComponentsBuilder.queryParam(ID, decideContentValue(deeplinkInfo));
+        }
+    }
+
+    private void putPlayerQueryParamForPlayableItemDeepLink(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
+        if (deeplinkInfo instanceof PlayableItemDeepLink) {
+            uriComponentsBuilder.queryParam(PLAYER, ((PlayableItemDeepLink) deeplinkInfo).getPlayer());
         }
     }
 

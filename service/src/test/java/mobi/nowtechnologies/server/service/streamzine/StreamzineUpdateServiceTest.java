@@ -62,7 +62,7 @@ public class StreamzineUpdateServiceTest {
         when(community.getRewriteUrlParameter()).thenReturn("hl_uk");
 
         Update prevUpdate = new Update(addDays(new Date(), 2), community);
-        Block block = new Block(666, SLIM_BANNER, new MusicTrackDeeplinkInfo(null));
+        Block block = new Block(666, SLIM_BANNER, new MusicTrackDeeplinkInfo(null, null));
         block.exclude();
         prevUpdate.addBlock(block);
 

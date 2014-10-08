@@ -135,7 +135,8 @@ var UpdateModel = function(model) {
             title: '',
             value: undefined,
             data: null,
-            vip: false
+            vip: false,
+            player:defaultPlayer
         };
         return emptyBlock;
     }
@@ -293,7 +294,8 @@ var UpdateModel = function(model) {
                     vip: b.vip,
                     expanded: b.expanded,
                     //
-                    id: b.id
+                    id: b.id,
+                    player: b.player
                 };
             }
         }
@@ -336,7 +338,8 @@ var UpdateModel = function(model) {
                     currentBlock.subTitle != copyBlock.subTitle ||
                     currentBlock.vip != copyBlock.vip ||
                     currentBlock.badgeId != copyBlock.badgeId ||
-                    currentBlock.coverUrl != copyBlock.coverUrl) {
+                    currentBlock.coverUrl != copyBlock.coverUrl||
+                    currentBlock.player != copyBlock.player) {
                     return false;
                 }
             }

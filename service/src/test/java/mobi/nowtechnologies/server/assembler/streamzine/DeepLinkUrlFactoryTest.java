@@ -4,11 +4,11 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +97,7 @@ public class DeepLinkUrlFactoryTest {
     public void checkCreateLinkValueForMusicTrack() throws Exception {
         //prepare data
         Media media = getMedia(10, "TRACK-10");
-        MusicTrackDeeplinkInfo musicTrackDeeplinkInfo = new MusicTrackDeeplinkInfo(media);
+        MusicTrackDeeplinkInfo musicTrackDeeplinkInfo = new MusicTrackDeeplinkInfo(media, Player.REGULAR_PLAYER_ONLY);
 
         when(deepLinkInfoService.getSubType(musicTrackDeeplinkInfo)).thenReturn((Enum) MusicType.TRACK);
 
@@ -105,19 +105,19 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl-uk://content/track?id=TRACK-10_null"));
+        assertThat((String)o, is("hl-uk://content/track?player=REGULAR_PLAYER_ONLY&id=TRACK-10_null"));
     }
 
     @Test
     public void checkCreateLinkValueForMusicPlayList() throws Exception {
         //prepare data
-        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(666);
+        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(666, Player.REGULAR_PLAYER_ONLY);
 
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
         String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk");
-        assertThat(o, is("hl-uk://content/playlist?id=666"));
+        assertThat(o, is("hl-uk://content/playlist?player=REGULAR_PLAYER_ONLY&id=666"));
     }
 
     @Test

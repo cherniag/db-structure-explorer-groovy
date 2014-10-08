@@ -205,6 +205,7 @@ public class StreamzineUpdateAdminAsm {
             }
             blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i, community));
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));
+            blockDto.setPlayer(((MusicPlayListDeeplinkInfo) info).getPlayer().name());
         }
 
         if(info instanceof MusicTrackDeeplinkInfo) {
@@ -218,6 +219,7 @@ public class StreamzineUpdateAdminAsm {
                 blockDto.setData(streamzineAdminMediaAsm.toMediaDto(i.getMedia()));
             }
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, track));
+            blockDto.setPlayer(((MusicTrackDeeplinkInfo) info).getPlayer().name());
         }
 
         if(info instanceof ManualCompilationDeeplinkInfo) {
