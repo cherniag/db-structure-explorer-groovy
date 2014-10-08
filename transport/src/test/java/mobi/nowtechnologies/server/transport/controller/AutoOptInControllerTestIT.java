@@ -327,9 +327,9 @@ public class AutoOptInControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
-    public void shouldAutoOptInAndMaxVerion() throws Exception {
+    public void shouldAutoOptIn_LatestVersion() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "6.1";
+        String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

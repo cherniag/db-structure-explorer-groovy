@@ -38,7 +38,7 @@ public class ServiceConfigController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
-                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.0|6\\.1|6\\.2}/SERVICE_CONFIG"
+                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.0|6\\.1|6\\.2|6\\.3}/SERVICE_CONFIG"
             })
     public Response getServiceConfig(
             @RequestHeader("User-Agent") UserAgentRequest userAgent,

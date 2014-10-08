@@ -27,19 +27,19 @@ public class ServiceConfigDto {
     @JsonProperty(value = "link")
     private String link;
 
-    @XmlElement(name = "imageFileName")
-    @JsonProperty(value = "imageFileName")
-    private String imageFileName;
+    @XmlElement(name = "image")
+    @JsonProperty(value = "image")
+    private String image;
 
 
     protected ServiceConfigDto() {
     }
 
-    public ServiceConfigDto(VersionCheckStatus status, String message, String link, String imageFileName) {
+    public ServiceConfigDto(VersionCheckStatus status, String message, String link, String image) {
         this.status = status;
         this.message = message;
         this.link = link;
-        this.imageFileName = imageFileName;
+        this.image = image;
     }
 
 
@@ -49,7 +49,7 @@ public class ServiceConfigDto {
                 .append("status", status)
                 .append("message", message)
                 .append("link", link)
-                .append("imageFileName", imageFileName)
+                .append("image", image)
                 .toString();
     }
 }
