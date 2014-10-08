@@ -52,15 +52,6 @@
                 <profile>application-tests</profile>
             </properties>
         </profile>
-        <profile>
-            <id>production</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <profile>production</profile>
-            </properties>
-        </profile>
     </profiles>
 
     <dependencies>
