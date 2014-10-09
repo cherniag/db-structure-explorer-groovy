@@ -36,7 +36,7 @@ public class FacebookDataConverter {
         details.setFacebookId(profile.getId());
         details.setUserName(usernameOrId);
         details.setProfileUrl(GraphApi.GRAPH_API_URL + usernameOrId + "/picture?type=large");
-        details.setGender(extractGender(profile));
+        details.setGender(Gender.restore(profile.getGender()));
         details.setBirthday(extractBirthDay(profile));
         assignCityAndCountry(profile, details);
         return details;
@@ -57,14 +57,6 @@ public class FacebookDataConverter {
             } catch (ParseException e) {
                 logger.error("ERROR during parse", e);
             }
-        }
-        return null;
-    }
-
-    private Gender extractGender(FacebookProfile profile) {
-        String gender = profile.getGender();
-        if (!isEmpty(gender)) {
-            return gender.equals("male") ? Gender.MALE : Gender.FEMALE;
         }
         return null;
     }

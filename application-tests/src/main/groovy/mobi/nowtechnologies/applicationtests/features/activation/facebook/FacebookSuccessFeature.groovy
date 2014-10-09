@@ -5,10 +5,11 @@ import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
-import mobi.nowtechnologies.applicationtests.features.activation.common.CommonAssertionsService
+import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
+import mobi.nowtechnologies.applicationtests.features.activation.common.UserState
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
@@ -85,7 +86,7 @@ class FacebookSuccessFeature {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
 
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
             def facebookUserInfo = fbDetailsRepository.findByUser(user)
 
             assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())
@@ -123,7 +124,7 @@ class FacebookSuccessFeature {
     def "userDetails filed contains correct facebook details"() {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
-            def facebookInfo = phoneState.lastFacebookInfo
+            def facebookInfo = phoneState.lastFacebookInfo.userDetails
             def facebookProfile = composer.parseToken(phoneState.facebookAccessToken)
 
             assertEquals(dateFormat.parse(facebookInfo.birthDay), dateFormat.parse(facebookProfile.getBirthday()))
@@ -139,7 +140,7 @@ class FacebookSuccessFeature {
     def "In database user has username as entered Facebook email"() {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getUserName(), phoneState.email)
         }
     }
@@ -179,7 +180,7 @@ class FacebookSuccessFeature {
     def "In database user has facebook details the same as specified in facebook account"() {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
             def facebookUserInfo = fbDetailsRepository.findByUser(user)
             def facebookProfile = composer.parseToken(phoneState.facebookAccessToken)
             assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())

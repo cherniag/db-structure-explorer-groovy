@@ -21,17 +21,15 @@ public class PhoneNumberHttpService extends AbstractHttpService {
 
         String uri = getUri(deviceData, "PHONE_NUMBER", format);
 
-        MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
-        request.add("PHONE", phoneNumber);
-        request.add("USER_NAME", userName);
-        request.add("USER_TOKEN", token.getTimestampToken());
-        request.add("TIMESTAMP", token.getTimestamp());
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        parameters.add("PHONE", phoneNumber);
+        parameters.add("USER_NAME", userName);
+        parameters.add("USER_TOKEN", token.getTimestampToken());
+        parameters.add("TIMESTAMP", token.getTimestamp());
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
-
-        String body = restTemplate.postForEntity(uri, request, String.class).getBody();
-
-        logger.info("Response is [{}]", body);
+        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        String body = restTemplate.postForEntity(uri, parameters, String.class).getBody();
+        logger.info("Response body [{}]", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.PHONE_NUMBER_PATH, PhoneActivationDto.class);
     }

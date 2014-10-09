@@ -1,15 +1,16 @@
 package mobi.nowtechnologies.applicationtests.features.activation.google_plus
+
 import cucumber.api.DataTable
 import cucumber.api.Transform
 import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
-import mobi.nowtechnologies.applicationtests.features.activation.common.CommonAssertionsService
-import mobi.nowtechnologies.applicationtests.features.activation.facebook.UserState
+import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word
+import mobi.nowtechnologies.applicationtests.features.activation.common.UserState
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
@@ -74,7 +75,7 @@ class GooglePlusSuccessFeature {
     def "Default promo set in services properties is applied"() {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getLastPromo().getCode(),
                     communityResourceBundleMessageSource.getMessage(it.communityUrl, CommonAssertionsService.DEFAULT_PROMOTION_CODE_KEY, null, null))
         }
@@ -109,17 +110,15 @@ class GooglePlusSuccessFeature {
     def "userDetails filed contains all specified Google Plus details"() {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
-            def googlePlusInfo = phoneState.lastGooglePlusInfo
+            def googlePlusInfo = phoneState.lastGooglePlusInfo.userDetails
             def person = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
 
             assertEquals(googlePlusInfo.googlePlusId, person.id)
             assertEquals(googlePlusInfo.birthDay, dateFormat.format(person.birthday))
             assertEquals(googlePlusInfo.email, person.accountEmail)
-            assertEquals(googlePlusInfo.gender.key, person.gender)
+            assertEquals(googlePlusInfo.gender.toLowerCase(), person.gender)
             assertEquals(googlePlusInfo.firstName, person.givenName)
             assertEquals(googlePlusInfo.surname, person.familyName)
-            //TODO this is modified
-            //assertEquals(googlePlusInfo.profileUrl, person.imageUrl)
         }
     }
 
@@ -128,7 +127,7 @@ class GooglePlusSuccessFeature {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
 
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
             def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
 
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
@@ -164,21 +163,15 @@ class GooglePlusSuccessFeature {
     def "In database user has Google Plus details the same as specified in Google Plus account"() {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
             def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
             def googlePlusProfile = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
             assertEquals(googlePlusUserInfo.getEmail(), phoneState.getEmail())
-            //TODO this fails
-            //assertEquals(googlePlusUserInfo.getBirthday().time, googlePlusProfile.getBirthday().getTime())
             assertEquals(googlePlusUserInfo.getDisplayName(), googlePlusProfile.getDisplayName())
             assertEquals(googlePlusUserInfo.getFamilyName(), googlePlusProfile.getFamilyName())
             assertEquals(googlePlusUserInfo.getGivenName(), googlePlusProfile.getGivenName())
             assertEquals(googlePlusUserInfo.getGooglePlusId(), googlePlusProfile.getId())
-            //TODO this fails as well
-            //assertEquals(googlePlusUserInfo.getHomePage(), googlePlusProfile.getUrl())
             assertEquals(googlePlusUserInfo.getLocation(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
-            //TODO this is modified
-            //assertEquals(googlePlusUserInfo.getPicture(), googlePlusProfile.getImageUrl())
         }
     }
 
