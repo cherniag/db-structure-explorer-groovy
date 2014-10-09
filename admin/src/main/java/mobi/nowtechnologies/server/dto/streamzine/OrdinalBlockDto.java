@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
@@ -185,9 +185,9 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
     @Override
     @JsonIgnore
-    public Player getPlayerInstance() {
+    public PlayerType getPlayerInstance() {
         if(isNull(player)) return null;
-        return Player.valueOf(player);
+        return PlayerType.valueOf(player);
     }
 
     public void setPlayer(String player) {

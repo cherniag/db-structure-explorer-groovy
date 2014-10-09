@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
@@ -163,10 +163,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+Player.REGULAR_PLAYER_ONLY+"&id=" + chartId)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.REGULAR_PLAYER_ONLY+"&id=" + chartId)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+Player.REGULAR_PLAYER_ONLY+"&id=" + existingMedia.getIsrcTrackId())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+ PlayerType.REGULAR_PLAYER_ONLY+"&id=" + existingMedia.getIsrcTrackId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
@@ -450,12 +450,12 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     }
 
     private DeeplinkInfo createMusicPlaylistDeeplink(int chartDetailsId) {
-        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartDetailsId, Player.REGULAR_PLAYER_ONLY);
+        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartDetailsId, PlayerType.REGULAR_PLAYER_ONLY);
         return d;
     }
 
     private DeeplinkInfo createMusicTrackDeeplink(Media media) {
-        MusicTrackDeeplinkInfo d = new MusicTrackDeeplinkInfo(media, Player.REGULAR_PLAYER_ONLY);
+        MusicTrackDeeplinkInfo d = new MusicTrackDeeplinkInfo(media, PlayerType.REGULAR_PLAYER_ONLY);
         return d;
     }
 

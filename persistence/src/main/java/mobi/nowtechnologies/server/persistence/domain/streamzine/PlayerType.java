@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
 // @author Titov Mykhaylo (titov) on 06.10.2014.
-public enum Player {
+public enum PlayerType {
     REGULAR_PLAYER_ONLY,
     MINI_PLAYER_ONLY;
 
@@ -13,7 +13,7 @@ public enum Player {
         return values;
     }
 
-    public static Player getDefaultPlayer(){
+    public static PlayerType getDefaultPlayerType(){
         return REGULAR_PLAYER_ONLY;
     }
 }

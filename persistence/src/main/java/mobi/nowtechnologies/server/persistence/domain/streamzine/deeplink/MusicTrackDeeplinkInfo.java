@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 
 import javax.persistence.*;
@@ -13,16 +13,16 @@ public class MusicTrackDeeplinkInfo extends DeeplinkInfo implements PlayableItem
     @JoinColumn(name = "media_id")
     private Media media;
 
-    @Column(nullable = false)
+    @Column(name = "player_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Player player = Player.REGULAR_PLAYER_ONLY;
+    private PlayerType playerType = PlayerType.REGULAR_PLAYER_ONLY;
 
     protected MusicTrackDeeplinkInfo() {
     }
 
-    public MusicTrackDeeplinkInfo(Media media, Player player) {
+    public MusicTrackDeeplinkInfo(Media media, PlayerType playerType) {
         this.media = media;
-        this.player = player;
+        this.playerType = playerType;
         this.contentType = ContentType.MUSIC;
     }
 
@@ -31,15 +31,15 @@ public class MusicTrackDeeplinkInfo extends DeeplinkInfo implements PlayableItem
     }
 
     @Override
-    public Player getPlayer() {
-        return player;
+    public PlayerType getPlayerType() {
+        return playerType;
     }
 
     @Override
     protected DeeplinkInfo provideInstance() {
         MusicTrackDeeplinkInfo copy = new MusicTrackDeeplinkInfo();
         copy.media = media;
-        copy.player = player;
+        copy.playerType = playerType;
         copy.contentType = contentType;
         return copy;
     }

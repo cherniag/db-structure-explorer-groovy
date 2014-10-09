@@ -74,7 +74,7 @@ public class DeepLinkUrlFactory {
 
     private void putPlayerQueryParamForPlayableItemDeepLink(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
         if (deeplinkInfo instanceof PlayableItemDeepLink) {
-            uriComponentsBuilder.queryParam(PLAYER, ((PlayableItemDeepLink) deeplinkInfo).getPlayer());
+            uriComponentsBuilder.queryParam(PLAYER, ((PlayableItemDeepLink) deeplinkInfo).getPlayerType());
         }
     }
 

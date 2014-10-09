@@ -10,7 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -239,8 +239,8 @@ public class StreamzineController {
         model.addObject("badgeMappingRules", rulesInfoAsm.getBadgeMappingInfo());
         model.addObject("titlesMappingRules", rulesInfoAsm.getTitlesMappingInfo());
         model.addObject("opener", rulesInfoAsm.buildTypesForOpener());
-        model.addObject("players", Player.getValues());
-        model.addObject("defaultPlayer", Player.getDefaultPlayer().toString());
+        model.addObject("players", PlayerType.getValues());
+        model.addObject("defaultPlayer", PlayerType.getDefaultPlayerType().toString());
         return model;
     }
 

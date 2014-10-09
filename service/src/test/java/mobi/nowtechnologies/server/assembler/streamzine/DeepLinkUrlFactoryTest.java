@@ -4,7 +4,7 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Player;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
@@ -97,7 +97,7 @@ public class DeepLinkUrlFactoryTest {
     public void checkCreateLinkValueForMusicTrack() throws Exception {
         //prepare data
         Media media = getMedia(10, "TRACK-10");
-        MusicTrackDeeplinkInfo musicTrackDeeplinkInfo = new MusicTrackDeeplinkInfo(media, Player.REGULAR_PLAYER_ONLY);
+        MusicTrackDeeplinkInfo musicTrackDeeplinkInfo = new MusicTrackDeeplinkInfo(media, PlayerType.REGULAR_PLAYER_ONLY);
 
         when(deepLinkInfoService.getSubType(musicTrackDeeplinkInfo)).thenReturn((Enum) MusicType.TRACK);
 
@@ -111,7 +111,7 @@ public class DeepLinkUrlFactoryTest {
     @Test
     public void checkCreateLinkValueForMusicPlayList() throws Exception {
         //prepare data
-        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(666, Player.REGULAR_PLAYER_ONLY);
+        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(666, PlayerType.REGULAR_PLAYER_ONLY);
 
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
