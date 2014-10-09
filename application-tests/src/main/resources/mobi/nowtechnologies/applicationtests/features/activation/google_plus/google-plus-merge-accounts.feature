@@ -1,4 +1,4 @@
-@Ready
+@GooglePlus
 Feature: Merge accounts during activation via Google Plus and re-using same emails via Facebook activation
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #google plus supported versions: 6.0, 6.1

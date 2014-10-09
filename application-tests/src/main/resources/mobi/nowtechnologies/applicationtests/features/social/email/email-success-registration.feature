@@ -1,4 +1,4 @@
-@Ready
+@Email
 Feature: Email registration success flows
   Scenario: Sign up and apply promo using email
     Given First time user with device using JSON format for all email supported versions and email supported communities and all devices available

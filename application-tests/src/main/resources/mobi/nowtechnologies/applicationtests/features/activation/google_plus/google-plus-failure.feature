@@ -1,4 +1,4 @@
-@Ready
+@GooglePlus
 Feature: Unsuccessful user activation via Google Plus in google plus supported communities
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #google plus supported versions: 6.0, 6.1
