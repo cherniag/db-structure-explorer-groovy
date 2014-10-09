@@ -9,10 +9,6 @@ if(Streamzine.Presenter.Editor == undefined) {
         var Widget = function(template, data) {
             var _id = 'widget_id_' + _generator++;
 
-            this.getId = function() {
-                return _id;
-            }
-
             this.render = function(o) {
                 var notVisibleBadge = true;
                 var rules = Streamzine.Presenter.Editor.badgeMappingRules;
@@ -40,8 +36,8 @@ if(Streamzine.Presenter.Editor == undefined) {
 
             this.update = function(o) {
                 var r = o;
-                if(data && data.preProcess) {
-                    r = data.preProcess.call(this, o);
+                if(data && data.transformModel) {
+                    r = data.transformModel.call(this, o);
                 }
 
                 for(var m in r) {
@@ -49,6 +45,24 @@ if(Streamzine.Presenter.Editor == undefined) {
                         var e = $('#' + _id + '_' + m);
 
                         if(e.length > 0) {
+                            if(e.get(0).tagName == 'SELECT') {
+                                if(r[m+"_all"]) {
+                                    var select = $(e.get(0)).empty();
+                                    for(var i=0; i < r[m+"_all"].length; i++) {
+                                        select.append($(
+                                            Template.render('<option value="{value}">{title}</option>', {
+                                                value:r[m+"_all"][i],
+                                                title:r[m+"_all"][i]
+                                            })
+                                        ));
+                                    }
+                                }
+
+                                select.val(r[m]);
+
+                                continue;
+                            }
+                            
                             if(e.get(0).tagName == 'INPUT') {
                                 if(e.attr('type').toLowerCase() == "checkbox") {
                                     if(r[m]) {
@@ -120,7 +134,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
-                    '<select id="{id}_playerId" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
+                    '<select id="{id}_player" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
                     '</select>' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
@@ -128,8 +142,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
-                        preProcess: function(incoming) {
-                            initPlayers(this.getId() + '_playerId', incoming);
+                        transformModel: function(incoming) {
                             var o = {
                                 value: incoming.value,
                                 title: incoming.title,
@@ -137,7 +150,9 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 value: '',
                                 badgeId: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeFileNameAlias) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
                                 coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
-                                vip: incoming.vip
+                                vip: incoming.vip,
+                                player: incoming.player,
+                                player_all: Streamzine.Presenter.Editor.players
                             };
                             if(incoming.data && incoming.data.artistDto) {
                                 o.value = incoming.title + ' - ';
@@ -155,7 +170,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
-                    '<select id="{id}_playerId" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
+                    '<select id="{id}_player" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
                     '</select>' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
@@ -163,8 +178,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
-                        preProcess: function(incoming) {
-                            initPlayers(this.getId() + '_playerId', incoming);
+                        transformModel: function(incoming) {
                             var amount = (incoming.data && incoming.data.tracksCount) ? incoming.data.tracksCount : 0;
                             return {
                                 value: incoming.value,
@@ -173,7 +187,9 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 value: '' + amount + (  (amount == 1)?' Track':' Tracks'  ),
                                 badgeId: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeFileNameAlias) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
                                 coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
-                                vip: incoming.vip
+                                vip: incoming.vip,
+                                player: incoming.player,
+                                player_all: Streamzine.Presenter.Editor.players
                             }
                         }
                     })
@@ -188,7 +204,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '</div>' +'<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
-                        preProcess: function(incoming) {
+                        transformModel: function(incoming) {
                             var amount = (incoming.data && incoming.data.length) ? incoming.data.length : 0;
                             return {
                                 value: incoming.value,
@@ -214,7 +230,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor"  onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
-                        preProcess: function(incoming) {
+                        transformModel: function(incoming) {
                             return {
                                 value: incoming.value,
                                 title: incoming.title,
@@ -236,7 +252,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')"/>' +
                     '</div>', {
-                          preProcess: function(incoming) {
+                          transformModel: function(incoming) {
                             // update from block
                               var date = new Date(incoming.value);
 
@@ -258,11 +274,11 @@ if(Streamzine.Presenter.Editor == undefined) {
             PROMOTIONAL: {
                 EXTERNAL_AD: new Widget(
                     '<div><a href="javascript:;" id="{id}_valuePicker" onclick="Events.fire(\'VALUE_PICKING\', \'value\')">Select External Link</a></div>' +
-                        '<div>Link</div>' +
-                        '<div id="{id}_valueLink" class="sz-editor-value"></div>' +
-                        '<div>Open</div>' +
-                        '<div id="{id}_valueOpener" class="sz-editor-value"></div>' +
-                        '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
+                    '<div>Link</div>' +
+                    '<div id="{id}_valueLink" class="sz-editor-value"></div>' +
+                    '<div>Open</div>' +
+                    '<div id="{id}_valueOpener" class="sz-editor-value"></div>' +
+                    '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
@@ -270,7 +286,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img  id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')" />' +
                     '</div>', {
-                        preProcess: function(incoming) {
+                        transformModel: function(incoming) {
                             var delimIndex = incoming.value.indexOf('#');
                             return {
 
@@ -298,7 +314,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div class="sz-cover-url-editor-wrapper">' +
                     '<img id="{id}_coverUrl" class="sz-no-cover-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'coverUrl\')" />' +
                     '</div>', {
-                        preProcess: function(incoming) {
+                        transformModel: function(incoming) {
                             // update from block
                             if(incoming.value) {
                                 var delimIndex = incoming.value.indexOf('#');
@@ -500,12 +516,13 @@ if(Streamzine.Presenter.Editor == undefined) {
         // Initialization
         //
         //
-        this.init = function(imagesBaseUrl, tracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgeMappingRules, titlesMappingRules, players) {
+        this.init = function(imagesBaseUrl, tracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgeMappingRules, titlesMappingRules, players, defaultPlayer) {
             this.id = id;
             this.imagesBaseUrl = imagesBaseUrl;
             this.badgeMappingRules = badgeMappingRules;
             this.titlesMappingRules = titlesMappingRules;
             this.players = players;
+            this.defaultPlayer = defaultPlayer;
 
             initPickers(id, imagesBaseUrl, tracksBaseUrl, playListUrl, badgesGetAll, badgesUpdateName);
 
@@ -562,15 +579,6 @@ if(Streamzine.Presenter.Editor == undefined) {
             }
         }
 
-        function initPlayers(playerComboboxId, block) {
-            var playerCombobox = $('select[id='+playerComboboxId+']');
-            playerCombobox.empty();
-            for(var i=0; i < this.players.length; i++) {
-                var name = players[i];
-                playerCombobox.append( $('<option value="' + name + '">' + name + '</option>'));
-            }
-            playerCombobox.val(block.player);
-        }
 
         function initSubTypes(contentType) {
             // get content type from parameters because it can come from combobox
