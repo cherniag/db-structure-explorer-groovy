@@ -19,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Set;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -38,19 +40,37 @@ public class ServiceConfigController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
-                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.0|6\\.1|6\\.2|6\\.3}/SERVICE_CONFIG"
+                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.0|6\\.1|6\\.2}/SERVICE_CONFIG"
             })
     public Response getServiceConfig(
             @RequestHeader("User-Agent") UserAgentRequest userAgent,
             @PathVariable("community") String community) throws Exception {
+        ServiceConfigDto dto = getServiceConfigInternal(userAgent, community, VersionCheckStatus.getAllStatusesWithoutMigrated());
+        dto.nullifyImage();
+        return new Response(new Object[]{dto});
+    }
+
+    @RequestMapping(method = GET,
+            value = {
+                    "**/{community}/{apiVersion:6\\.3}/SERVICE_CONFIG"
+            })
+    public Response getServiceConfigWithMigratedAndImage(
+            @RequestHeader("User-Agent") UserAgentRequest userAgent,
+            @PathVariable("community") String community) throws Exception {
+        ServiceConfigDto dto = getServiceConfigInternal(userAgent, community, VersionCheckStatus.getAllStatuses());
+        return new Response(new Object[]{dto});
+    }
+
+
+    private ServiceConfigDto getServiceConfigInternal(UserAgentRequest userAgent, String community, Set<VersionCheckStatus> includedStatuses) throws Exception {
         Exception ex = null;
         try {
             LOGGER.info("SERVICE_CONFIG started: community [{}], userAgent [{}]", community, userAgent);
 
-            ServiceConfigDto dto = convert(versionCheckService.check(userAgent), userAgent);
+            ServiceConfigDto dto = convert(versionCheckService.check(userAgent, includedStatuses), userAgent);
 
             LOGGER.info("SERVICE_CONFIG response [{}]", dto);
-            return new Response(new Object[]{dto});
+            return dto;
         } catch (Exception e) {
             ex = e;
             throw e;

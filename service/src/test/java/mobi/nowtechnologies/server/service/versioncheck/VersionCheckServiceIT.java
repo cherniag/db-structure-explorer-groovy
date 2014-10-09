@@ -21,6 +21,8 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 
+import java.util.Set;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -81,6 +83,14 @@ public class VersionCheckServiceIT {
         versionCheckRepository.saveAndFlush(new VersionCheck(
                 DeviceTypeDao.getAndroidDeviceType(),
                 CommunityDao.getCommunity("o2"),
+                versionMessage4,
+                VersionCheckStatus.MIGRATED,
+                O2_TRACKS_APPLICATION_NAME,
+                ClientVersion.from("1.5.9"),
+                null));
+        versionCheckRepository.saveAndFlush(new VersionCheck(
+                DeviceTypeDao.getAndroidDeviceType(),
+                CommunityDao.getCommunity("o2"),
                 versionMessage1,
                 VersionCheckStatus.REVOKED,
                 O2_TRACKS_APPLICATION_NAME_WQ,
@@ -116,25 +126,26 @@ public class VersionCheckServiceIT {
     public void testVersionForO2CommunityWhereRangesArePresent() {
         community = CommunityDao.getCommunity("o2");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
-        checkVersion(null, 0, 0, 1, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg");
-        checkVersion(null, 1, 0, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg");
-        checkVersion(null, 1, 4, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg");
-        checkVersion(null, 1, 4, 9, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg");
-        checkVersion(null, 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg");
-        checkVersion(null, 1, 5, 3, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "", O2_TRACKS_APPLICATION_NAME, null);
-        checkVersion(null, 1, 5, 5, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "", O2_TRACKS_APPLICATION_NAME, null);
-        checkVersion(null, 1, 6, 0, VersionCheckStatus.FORCED_UPDATE, "VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app", O2_TRACKS_APPLICATION_NAME, "image_forced_1.6.0.jpg");
-        checkVersion(null, 1, 6, 1, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null, O2_TRACKS_APPLICATION_NAME, "image_suggested_1.7.0.jpg");
-        checkVersion(null, 1, 7, 0, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null, O2_TRACKS_APPLICATION_NAME, "image_suggested_1.7.0.jpg");
-        checkVersion(null, 1, 7, 1, VersionCheckStatus.CURRENT, null, null, O2_TRACKS_APPLICATION_NAME, null);
-        checkVersion(null, 2, 0, 1, VersionCheckStatus.CURRENT, null, null, O2_TRACKS_APPLICATION_NAME, null);
+        checkVersion(null, 0, 0, 1, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg", false);
+        checkVersion(null, 1, 0, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg", false);
+        checkVersion(null, 1, 4, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg", false);
+        checkVersion(null, 1, 4, 9, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg", false);
+        checkVersion(null, 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME, "image_revoked_1.5.0.jpg", false);
+        checkVersion(null, 1, 5, 3, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "", O2_TRACKS_APPLICATION_NAME, null, false);
+        checkVersion(null, 1, 5, 5, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "", O2_TRACKS_APPLICATION_NAME, null, false);
+        checkVersion(null, 1, 5, 8, VersionCheckStatus.FORCED_UPDATE, "VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app", O2_TRACKS_APPLICATION_NAME, "image_forced_1.6.0.jpg", false);
+        checkVersion(null, 1, 6, 0, VersionCheckStatus.FORCED_UPDATE, "VERSION_FORCED_UPGRADE", "http://play.google.com/new_version_app", O2_TRACKS_APPLICATION_NAME, "image_forced_1.6.0.jpg", false);
+        checkVersion(null, 1, 6, 1, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null, O2_TRACKS_APPLICATION_NAME, "image_suggested_1.7.0.jpg", false);
+        checkVersion(null, 1, 7, 0, VersionCheckStatus.SUGGESTED_UPDATE, "VERSION_SUGGESTED", null, O2_TRACKS_APPLICATION_NAME, "image_suggested_1.7.0.jpg", false);
+        checkVersion(null, 1, 7, 1, VersionCheckStatus.CURRENT, null, null, O2_TRACKS_APPLICATION_NAME, null, false);
+        checkVersion(null, 2, 0, 1, VersionCheckStatus.CURRENT, null, null, O2_TRACKS_APPLICATION_NAME, null, false);
     }
 
     @Test
     public void testVersionForO2CommunityWhereRangesArePresentForQualifier() {
         community = CommunityDao.getCommunity("o2");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
-        checkVersion("RELEASE", 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME_WQ, "image_revoked_1.5.0-RELEASE.jpg");
+        checkVersion("RELEASE", 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME_WQ, "image_revoked_1.5.0-RELEASE.jpg", false);
     }
 
 
@@ -142,21 +153,26 @@ public class VersionCheckServiceIT {
     public void testVersionForHLUKCommunityWhereNoConfigurationAtAll() {
         community = CommunityDao.getCommunity("hl_uk");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
-        checkVersion(null, 1, 4, 0, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME, null);
-        checkVersion(null, 1, 7, 1, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME, null);
+        checkVersion(null, 1, 4, 0, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME, null, false);
+        checkVersion(null, 1, 7, 1, VersionCheckStatus.CURRENT, null, null, HL_UK_APPLICATION_NAME, null, false);
     }
 
     @Test
     public void checkMigratedVersionStatus() {
         community = CommunityDao.getCommunity("vf_nz");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
-        checkVersion(null, 1, 5, 0, VersionCheckStatus.MIGRATED, "VERSION_MIGRATED", "http://play.google.com/new_community", VF_NZ_TRACKS_APPLICATION_NAME, "image_migrated_2.0.0.jpg");
-        checkVersion(null, 2, 0, 0, VersionCheckStatus.MIGRATED, "VERSION_MIGRATED", "http://play.google.com/new_community", VF_NZ_TRACKS_APPLICATION_NAME, "image_migrated_2.0.0.jpg");
-        checkVersion(null, 2, 5, 0, VersionCheckStatus.CURRENT, null, null, VF_NZ_TRACKS_APPLICATION_NAME, null);
+        checkVersion(null, 1, 5, 0, VersionCheckStatus.MIGRATED, "VERSION_MIGRATED", "http://play.google.com/new_community", VF_NZ_TRACKS_APPLICATION_NAME, "image_migrated_2.0.0.jpg", true);
+        checkVersion(null, 2, 0, 0, VersionCheckStatus.MIGRATED, "VERSION_MIGRATED", "http://play.google.com/new_community", VF_NZ_TRACKS_APPLICATION_NAME, "image_migrated_2.0.0.jpg", true);
+        checkVersion(null, 2, 5, 0, VersionCheckStatus.CURRENT, null, null, VF_NZ_TRACKS_APPLICATION_NAME, null, true);
+
+        //without migrated status
+        checkVersion(null, 1, 5, 0, VersionCheckStatus.CURRENT, null, null, VF_NZ_TRACKS_APPLICATION_NAME, null, false);
+        checkVersion(null, 2, 0, 0, VersionCheckStatus.CURRENT, null, null, VF_NZ_TRACKS_APPLICATION_NAME, null, false);
     }
 
-    private void checkVersion(String qualifier, int major, int minor, int revision, VersionCheckStatus status, String messageKey, String url, String applicationName, String imageFileName){
-        VersionCheckResponse response = versionCheckService.check(buildRequest(qualifier, major, minor, revision, applicationName));
+    private void checkVersion(String qualifier, int major, int minor, int revision, VersionCheckStatus status, String messageKey, String url, String applicationName, String imageFileName, boolean canHaveMigratedStatus){
+        Set<VersionCheckStatus> includedStatuses = canHaveMigratedStatus ? VersionCheckStatus.getAllStatuses() : VersionCheckStatus.getAllStatusesWithoutMigrated();
+        VersionCheckResponse response = versionCheckService.check(buildRequest(qualifier, major, minor, revision, applicationName), includedStatuses);
         assertEquals(status, response.getStatus());
         assertEquals(messageKey, response.getMessageKey());
         assertEquals(imageFileName, response.getImageFileName());

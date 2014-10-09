@@ -2,208 +2,126 @@
 Feature: Server returns json data about application upgrade 'call-to-action'
 
   Scenario: device sends User-Agent header not according to application upgrade format
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
+    Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions
     When User-Agent header is in old format "Android Http Client"
     Then response has 400 http response code
     And error message is 'A required HTTP header was not specified.'
 
-  Scenario: device sends User-Agent header according to application upgrade format for SUGGESTED_UPDATE case
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'SUGGESTED_UPDATE' for version '1.3.3', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_suggested.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.3.3 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'SUGGESTED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://example.com'
-    And json field has 'image' set to 'image_suggested.jpg'
 
-  Scenario: device sends User-Agent header according to application upgrade format for SUGGESTED_UPDATE qualifier exact match case
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'SUGGESTED_UPDATE' for version '1.9.9-RELEASE', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_suggested.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.9.9-RELEASE ({platform}; {community})"
+  Scenario Outline: device sends User-Agent header according to application upgrade format
+    Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions bellow 6.3
+    When service config data is set to '<db_status>' for version '<db_app_version>', 'musicqubed-{random}' application, '<db_message_key>' message, '<db_image>' image and '<db_url>' link
+    And User-agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
-    And json field has 'status' set to 'SUGGESTED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://example.com'
-    And json field has 'image' set to 'image_suggested.jpg'
-
-  Scenario: device sends User-Agent header according to application upgrade format for SUGGESTED_UPDATE qualifier not match case
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'SUGGESTED_UPDATE' for version '1.9.9-SNAPSHOT', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_suggested.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.9.9-RELEASE ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'CURRENT'
-    And json field has 'message' set to '<null>'
-    And json field has 'link' set to '<null>'
+    And json field has 'status' set to '<response_status>'
+    And json field has 'message' set to '<response_message>'
+    And json field has 'link' set to '<response_link>'
     And json field has 'image' set to '<null>'
 
-    When service config data is set to 'FORCED_UPDATE' for version '1.3.4', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_forced.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.3.4 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'FORCED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://example.com'
-    And json field has 'image' set to 'image_forced.jpg'
+  Examples:
+      | db_status        | db_app_version | db_image     | db_url       | db_message_key              | req_app_version | response_status  | response_message            | response_link |
+      | SUGGESTED_UPDATE | 1.2.5          | suggest.jpg  | http://e.com | service.config.some.message | 1.2.5           | SUGGESTED_UPDATE | Service Config Some Message | http://e.com  |
+      | SUGGESTED_UPDATE | 1.9.9-RELEASE  | suggest.jpg  | http://e.com | service.config.some.message | 1.9.9-RELEASE   | SUGGESTED_UPDATE | Service Config Some Message | http://e.com  |
+      | FORCED_UPDATE    | 1.3            | forced.jpg   | http://e.com | service.config.some.message | 1.3             | FORCED_UPDATE    | Service Config Some Message | http://e.com  |
+      | FORCED_UPDATE    | 1.3.5          | forced.jpg   | http://e.com | service.config.some.message | 1.4.0           | CURRENT          | <null>                      | <null>        |
+      | FORCED_UPDATE    | 1.9.9-SNAPSHOT | forced.jpg   | http://e.com | service.config.some.message | 1.9.9-RELEASE   | CURRENT          | <null>                      | <null>        |
+      | REVOKED          | 1.3.5          | revoked.jpg  | http://e.com | service.config.some.message | 1.3.5           | REVOKED          | Service Config Some Message | http://e.com  |
+      | REVOKED          | 1.3.5          | revoked.jpg  | http://e.com | not.found.message.key       | 1.3.5           | REVOKED          | <null>                      | http://e.com  |
+      | REVOKED          | 1.3.5          | revoked.jpg  | http://e.com | service.config.some.message | 1.4.0           | CURRENT          | <null>                      | <null>        |
+      | MIGRATED         | 1.3.5          | migrated.jpg | http://e.com | service.config.some.message | 1.3.5           | CURRENT          | <null>                      | <null>        |
+      | MIGRATED         | 1.3.5          | migrated.jpg | http://e.com | service.config.some.message | 1.4.0           | CURRENT          | <null>                      | <null>        |
 
-    When service config data is set to 'FORCED_UPDATE' for version '1.3', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_forced.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.3 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'FORCED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://example.com'
-    And json field has 'image' set to 'image_forced.jpg'
 
-  Scenario: device sends User-Agent header according to application upgrade format for REVOKED case
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'REVOKED' for version '1.3.5', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_revoked.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.3.5 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'REVOKED'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://example.com'
-    And json field has 'image' set to 'image_revoked.jpg'
 
-  Scenario: device sends User-Agent header according to application upgrade format for REVOKED case and the case when message is absent for <some.not.found.in.message.bundle> message key
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'REVOKED' for version '1.3.5', 'musicqubed-{random}' application, 'some.not.found.in.message.bundle' message, 'image_revoked.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.3.5 ({platform}; {community})"
+  Scenario Outline: device sends User-Agent header according to application upgrade format
+    Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions above 6.3
+    When service config data is set to '<db_status>' for version '<db_app_version>', 'musicqubed-{random}' application, '<db_message_key>' message, '<db_image>' image and '<db_url>' link
+    And User-agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
-    And json field has 'status' set to 'REVOKED'
-    And json field has 'message' set to '<null>'
-    And json field has 'link' set to 'http://example.com'
-    And json field has 'image' set to 'image_revoked.jpg'
+    And json field has 'status' set to '<response_status>'
+    And json field has 'message' set to '<response_message>'
+    And json field has 'link' set to '<response_link>'
+    And json field has 'image' set to '<response_image>'
 
-  Scenario: device sends User-Agent header according to application upgrade format for REVOKED case but get CURRENT value
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'REVOKED' for version '1.3.5', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_revoked.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.4.0 ({platform}; {community})"
+  Examples:
+      | db_status        | db_app_version | db_image     | db_url       | db_message_key              | req_app_version | response_status  | response_message            | response_link | response_image |
+      | SUGGESTED_UPDATE | 1.2.5          | suggest.jpg  | http://e.com | service.config.some.message | 1.2.5           | SUGGESTED_UPDATE | Service Config Some Message | http://e.com  | suggest.jpg    |
+      | SUGGESTED_UPDATE | 1.9.9-RELEASE  | suggest.jpg  | http://e.com | service.config.some.message | 1.9.9-RELEASE   | SUGGESTED_UPDATE | Service Config Some Message | http://e.com  | suggest.jpg    |
+      | FORCED_UPDATE    | 1.3            | forced.jpg   | http://e.com | service.config.some.message | 1.3             | FORCED_UPDATE    | Service Config Some Message | http://e.com  | forced.jpg     |
+      | FORCED_UPDATE    | 1.3.5          | forced.jpg   | http://e.com | service.config.some.message | 1.4.0           | CURRENT          | <null>                      | <null>        | <null>         |
+      | FORCED_UPDATE    | 1.9.9-SNAPSHOT | forced.jpg   | http://e.com | service.config.some.message | 1.9.9-RELEASE   | CURRENT          | <null>                      | <null>        | <null>         |
+      | REVOKED          | 1.3.5          | revoked.jpg  | http://e.com | service.config.some.message | 1.3.5           | REVOKED          | Service Config Some Message | http://e.com  | revoked.jpg    |
+      | REVOKED          | 1.3.5          | revoked.jpg  | http://e.com | not.found.message.key       | 1.3.5           | REVOKED          | <null>                      | http://e.com  | revoked.jpg    |
+      | REVOKED          | 1.3.5          | revoked.jpg  | http://e.com | service.config.some.message | 1.4.0           | CURRENT          | <null>                      | <null>        | <null>         |
+      | MIGRATED         | 1.3.5          | migrated.jpg | http://e.com | service.config.some.message | 1.3.5           | MIGRATED         | Service Config Some Message | http://e.com  | migrated.jpg   |
+
+
+
+
+  Scenario Outline: device sends User-Agent header according to application upgrade format for different statuses with different messages
+    Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions bellow 6.3
+    When client version info exist:
+
+      | status           | appVersion | applicationName     | image         | url        | messageKey                  |
+      | REVOKED          | 1.0        | musicqubed-{random} | revoke_1.jpg  | http://1.0 | service.config.some.message |
+      | REVOKED          | 1.2        | musicqubed-{random} | revoke_1.jpg  | http://1.0 | service.config.some.message |
+      | MIGRATED         | 2.0        | musicqubed-{random} | migrate_2.jpg | http://2.0 | service.config.some.message |
+      | MIGRATED         | 2.2        | musicqubed-{random} | migrate_2.jpg | http://2.0 | service.config.some.message |
+      | FORCED_UPDATE    | 3.0        | musicqubed-{random} | force_3.jpg   | http://3.0 | service.config.some.message |
+      | FORCED_UPDATE    | 3.2        | musicqubed-{random} | force_3.jpg   | http://3.0 | service.config.some.message |
+      | SUGGESTED_UPDATE | 4.0        | musicqubed-{random} | suggest_4.jpg | http://4.0 | service.config.some.message |
+      | SUGGESTED_UPDATE | 4.2        | musicqubed-{random} | suggest_4.jpg | http://4.0 | service.config.some.message |
+
+    And User-Agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
-    And json field has 'status' set to 'CURRENT'
-    And json field has 'message' set to '<null>'
-    And json field has 'link' set to '<null>'
+    And json field has 'status' set to '<response_status>'
+    And json field has 'message' set to '<response_message>'
+    And json field has 'link' set to '<response_link>'
     And json field has 'image' set to '<null>'
 
-  Scenario: device sends User-Agent header according to application upgrade format for MIGRATED case
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'MIGRATED' for version '1.3.5', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_migrated.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.3.5 ({platform}; {community})"
+  Examples:
+      | req_app_version | response_status  | response_message            | response_link |
+      | 0.5             | REVOKED          | Service Config Some Message | http://1.0    |
+      | 1.0             | REVOKED          | Service Config Some Message | http://1.0    |
+      | 1.5             | FORCED_UPDATE    | Service Config Some Message | http://3.0    |
+      | 2.0             | FORCED_UPDATE    | Service Config Some Message | http://3.0    |
+      | 2.5             | FORCED_UPDATE    | Service Config Some Message | http://3.0    |
+      | 3.0             | FORCED_UPDATE    | Service Config Some Message | http://3.0    |
+      | 3.5             | SUGGESTED_UPDATE | Service Config Some Message | http://4.0    |
+      | 4.0             | SUGGESTED_UPDATE | Service Config Some Message | http://4.0    |
+      | 4.5             | CURRENT          | <null>                      | <null>        |
+
+
+
+  Scenario Outline: device sends User-Agent header according to application upgrade format for different statuses with different messages
+    Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions above 6.3
+    When client version info exist:
+
+      | status           | appVersion | applicationName     | image         | url        | messageKey                  |
+      | REVOKED          | 1.0        | musicqubed-{random} | revoke_1.jpg  | http://1.0 | service.config.some.message |
+      | MIGRATED         | 2.0        | musicqubed-{random} | migrate_2.jpg | http://2.0 | service.config.some.message |
+      | FORCED_UPDATE    | 3.0        | musicqubed-{random} | force_3.jpg   | http://3.0 | service.config.some.message |
+      | SUGGESTED_UPDATE | 4.0        | musicqubed-{random} | suggest_4.jpg | http://4.0 | service.config.some.message |
+
+    And User-Agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
-    And json field has 'status' set to 'MIGRATED'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://example.com'
-    And json field has 'image' set to 'image_migrated.jpg'
+    And json field has 'status' set to '<response_status>'
+    And json field has 'message' set to '<response_message>'
+    And json field has 'link' set to '<response_link>'
+    And json field has 'image' set to '<response_image>'
 
-  Scenario: device sends User-Agent header according to application upgrade format for MIGRATED case but get CURRENT value
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-    When service config data is set to 'MIGRATED' for version '1.3.5', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_migrated.jpg' image and 'http://example.com' link
-    And User-agent header is in new format "musicqubed-{random}/1.4.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'CURRENT'
-    And json field has 'message' set to '<null>'
-    And json field has 'link' set to '<null>'
-    And json field has 'image' set to '<null>'
-  @Ready1
-  Scenario: device sends User-Agent header according to application upgrade format for different statuses with different messages
-    Given Mobile client makes Service Config call using JSON and XML formats for all devices and all communities and all versions
-
-    When service config data is set to 'REVOKED' for version '1.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_revoked1.jpg' image and 'http://1.0/example.com' link
-    When service config data is set to 'REVOKED' for version '2.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_revoked2.jpg' image and 'http://2.0/example.com' link
-    When service config data is set to 'REVOKED' for version '3.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_revoked3.jpg' image and 'http://3.0/example.com' link
-    When service config data is set to 'FORCED_UPDATE' for version '4.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_forced4.jpg' image and 'http://4.0/example.com' link
-    When service config data is set to 'FORCED_UPDATE' for version '5.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_forced5.jpg' image and 'http://5.0/example.com' link
-    When service config data is set to 'FORCED_UPDATE' for version '6.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_forced6.jpg' image and 'http://6.0/example.com' link
-    When service config data is set to 'SUGGESTED_UPDATE' for version '7.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_suggested7.jpg' image and 'http://7.0/example.com' link
-    When service config data is set to 'SUGGESTED_UPDATE' for version '8.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_suggested8.jpg' image and 'http://8.0/example.com' link
-    When service config data is set to 'SUGGESTED_UPDATE' for version '9.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_suggested9.jpg' image and 'http://9.0/example.com' link
-    When service config data is set to 'MIGRATED' for version '10.0', 'musicqubed-{random}' application, 'service.config.some.message' message, 'image_migrated10.jpg' image and 'http://10.0/example.com' link
-
-
-    And User-Agent header is in new format "musicqubed-{random}/1.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'REVOKED'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://1.0/example.com'
-    And json field has 'image' set to 'image_revoked1.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/2.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'REVOKED'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://2.0/example.com'
-    And json field has 'image' set to 'image_revoked2.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/3.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'REVOKED'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://3.0/example.com'
-    And json field has 'image' set to 'image_revoked3.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/4.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'FORCED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://4.0/example.com'
-    And json field has 'image' set to 'image_forced4.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/5.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'FORCED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://5.0/example.com'
-    And json field has 'image' set to 'image_forced5.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/6.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'FORCED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://6.0/example.com'
-    And json field has 'image' set to 'image_forced6.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/7.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'SUGGESTED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://7.0/example.com'
-    And json field has 'image' set to 'image_suggested7.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/8.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'SUGGESTED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://8.0/example.com'
-    And json field has 'image' set to 'image_suggested8.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/9.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'SUGGESTED_UPDATE'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://9.0/example.com'
-    And json field has 'image' set to 'image_suggested9.jpg'
-
-    And User-Agent header is in new format "musicqubed-{random}/10.0 ({platform}; {community})"
-    Then response has 200 http response code
-    And json data is 'versionCheck'
-    And json field has 'status' set to 'MIGRATED'
-    And json field has 'message' set to 'Service Config Some Message'
-    And json field has 'link' set to 'http://10.0/example.com'
-    And json field has 'image' set to 'image_migrated10.jpg'
+  Examples:
+     | req_app_version | response_status  | response_message            | response_link | response_image |
+     | 0.5             | REVOKED          | Service Config Some Message | http://1.0    | revoke_1.jpg   |
+     | 1.0             | REVOKED          | Service Config Some Message | http://1.0    | revoke_1.jpg   |
+     | 1.5             | MIGRATED         | Service Config Some Message | http://2.0    | migrate_2.jpg  |
+     | 2.0             | MIGRATED         | Service Config Some Message | http://2.0    | migrate_2.jpg  |
+     | 2.5             | FORCED_UPDATE    | Service Config Some Message | http://3.0    | force_3.jpg    |
+     | 3.0             | FORCED_UPDATE    | Service Config Some Message | http://3.0    | force_3.jpg    |
+     | 3.5             | SUGGESTED_UPDATE | Service Config Some Message | http://4.0    | suggest_4.jpg  |
+     | 4.0             | SUGGESTED_UPDATE | Service Config Some Message | http://4.0    | suggest_4.jpg  |
+     | 4.5             | CURRENT          | <null>                      | <null>        | <null>         |

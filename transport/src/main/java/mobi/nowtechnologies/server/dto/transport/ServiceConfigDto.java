@@ -42,6 +42,10 @@ public class ServiceConfigDto {
         this.image = image;
     }
 
+    public void nullifyImage(){
+        image = null;
+    }
+
 
     @Override
     public String toString() {
