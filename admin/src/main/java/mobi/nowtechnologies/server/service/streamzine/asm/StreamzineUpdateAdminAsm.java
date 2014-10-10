@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.service.streamzine.asm;
 
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
 import mobi.nowtechnologies.server.dto.streamzine.*;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
@@ -198,25 +200,24 @@ public class StreamzineUpdateAdminAsm {
         if(info instanceof MusicPlayListDeeplinkInfo) {
             final MusicType playlist = MusicType.PLAYLIST;
 
-            MusicPlayListDeeplinkInfo i = (MusicPlayListDeeplinkInfo) info;
+            MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo = (MusicPlayListDeeplinkInfo) info;
             blockDto.setKey(playlist.name());
-            if (isNotNull(i.getChartId())) {
-                blockDto.setValue(i.getChartId().toString()+"#"+i.getPlayerType().name());
-            }
-            blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i, community));
+            PlaylistData playlistData = new PlaylistData(musicPlayListDeeplinkInfo.getChartId(), musicPlayListDeeplinkInfo.getPlayerType());
+            blockDto.setValue(playlistData.toValueString());
+            blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(musicPlayListDeeplinkInfo, community));
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));
         }
 
         if(info instanceof MusicTrackDeeplinkInfo) {
             final MusicType track = MusicType.TRACK;
 
-            MusicTrackDeeplinkInfo i = (MusicTrackDeeplinkInfo) info;
+            MusicTrackDeeplinkInfo musicTrackDeeplinkInfo = (MusicTrackDeeplinkInfo) info;
             blockDto.setKey(track.name());
-            Media media = i.getMedia();
-            if (media != null) {
-                blockDto.setValue(media.getI()+"#"+i.getPlayerType().name());
-                blockDto.setData(streamzineAdminMediaAsm.toMediaDto(i.getMedia()));
+            Media media = musicTrackDeeplinkInfo.getMedia();
+            if (isNotNull(media)) {
+                blockDto.setData(streamzineAdminMediaAsm.toMediaDto(media));
             }
+            blockDto.setValue(new TrackData(media, musicTrackDeeplinkInfo.getPlayerType()).toValueString());
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, track));
         }
 

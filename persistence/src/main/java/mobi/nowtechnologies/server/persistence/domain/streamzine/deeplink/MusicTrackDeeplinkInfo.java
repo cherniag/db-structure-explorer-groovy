@@ -6,10 +6,13 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentTy
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Table(name = "sz_deeplink_music_track")
 public class MusicTrackDeeplinkInfo extends DeeplinkInfo implements PlayableItemDeepLink{
-    @OneToOne
+
+    @OneToOne(fetch = EAGER)
     @JoinColumn(name = "media_id")
     private Media media;
 

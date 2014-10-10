@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.admin.validator;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.ApplicationPageData;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.streamzine.DuplicatedContentKey;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
@@ -44,9 +45,11 @@ import javax.annotation.Resource;
 import java.net.URI;
 import java.util.*;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -304,26 +307,25 @@ public class UpdateValidator extends BaseValidator {
         MusicType musicType = MusicType.valueOf(key);
 
         if(musicType == MusicType.PLAYLIST) {
-            ApplicationPageData applicationPageData = new ApplicationPageData(value);
+            PlaylistData playlistData = new PlaylistData(value);
             try {
-                parseInt(applicationPageData.getUrl());
+                parseInt(playlistData.getChartIdString());
             } catch (IllegalArgumentException e) {
                 Object[] args = {value, Arrays.toString(ChartType.values())};
                 rejectValue("streamzine.error.notfound.playlist.id", args, errors);
             }
-            validatePlayerType(errors, applicationPageData);
+            validatePlayerType(errors, playlistData.getPlayerTypeString());
             return;
         }
 
         if(musicType == MusicType.TRACK) {
-            ApplicationPageData applicationPageData = new ApplicationPageData(value);
-            Set<Media> mediaSet = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, Lists.newArrayList(Integer.valueOf(applicationPageData.getUrl())));
+            TrackData trackData = new TrackData(value);
+            Set<Media> mediaSet = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, newArrayList(trackData.getMediaId()));
             boolean mediaSetIsEmpty = CollectionUtils.isEmpty(mediaSet);
             if(mediaSetIsEmpty) {
-                Object[] args = {value};
-                rejectValue("streamzine.error.notfound.track.id", args, errors);
+                rejectValue("streamzine.error.notfound.track.id", new Object[]{value}, errors);
             }
-            validatePlayerType(errors, applicationPageData);
+            validatePlayerType(errors, trackData.getPlayerTypeString());
             return;
         }
 
@@ -343,8 +345,10 @@ public class UpdateValidator extends BaseValidator {
         throw new IllegalArgumentException("No validation for music type: " + musicType);
     }
 
-    private void validatePlayerType(Errors errors, ApplicationPageData applicationPageData) {
-        String playerType = applicationPageData.getAction();
+    private void validatePlayerType(Errors errors,  String playerType) {
+        if (isNull(playerType)){
+            rejectValue("streamzine.error.no.playerType", new Object[]{playerType}, errors);
+        }
         try {
             PlayerType.valueOf(playerType);
         } catch (IllegalArgumentException e) {
