@@ -1,9 +1,11 @@
 package mobi.nowtechnologies.applicationtests.services.device;
 
-import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserDetailsDto;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.*;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.Error;
+import mobi.nowtechnologies.applicationtests.services.http.facebook.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActivationDto;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.http.HttpStatus;
 
 public interface PhoneState {
     String getDeviceUID();
@@ -12,9 +14,11 @@ public interface PhoneState {
 
     AccountCheckDTO getLastAccountCheckResponse();
 
-    HttpClientErrorException getLastFacebookErrorResponse();
+    mobi.nowtechnologies.applicationtests.services.http.domain.common.Error getLastFacebookErrorResponse();
 
-    FacebookUserDetailsDto getLastFacebookInfo();
+    User getLastFacebookInfo();
+
+    User getLastGooglePlusInfo();
 
     PhoneActivationDto getPhoneActivationResponse();
 
@@ -24,6 +28,21 @@ public interface PhoneState {
 
     String getFacebookUserId();
 
+    String getGooglePlusUserId();
+
+    Error getLastGooglePlusError();
+
+    String getGooglePlusToken();
+
     long getLastActivationEmailToken();
 
+    void setLastEnteredPhoneNumberOnWebPortal(String anyValid);
+
+    String getLastEnteredPhoneNumberOnWebPortal();
+
+    String getFacebookAccessToken();
+
+    HttpStatus getLastFacebookErrorStatus();
+
+    HttpStatus getLastGooglePlusErrorStatus();
 }

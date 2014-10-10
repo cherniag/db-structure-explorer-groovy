@@ -17,22 +17,47 @@ import org.springframework.util.MultiValueMap;
  */
 @Service
 public class AccountCheckHttpService extends AbstractHttpService {
-
+    //
+    // API
+    //
     public AccountCheckDTO accountCheck(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format) {
-        Assert.notNull(userName);
-        Assert.notNull(storedUserToken);
+        Assert.hasText(userName);
+        Assert.hasText(storedUserToken);
 
+        MultiValueMap<String, String> parameters = createCommonParameters(userName, storedUserToken);
+
+        return execute(parameters, deviceData, format);
+    }
+
+    public AccountCheckDTO accountCheckFromIOS(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String iTunesReceipt) {
+        Assert.hasText(userName);
+        Assert.hasText(storedUserToken);
+
+        MultiValueMap<String, String> parameters = createCommonParameters(userName, storedUserToken);
+        parameters.add("TRANSACTION_RECEIPT", iTunesReceipt);
+
+        return execute(parameters, deviceData, format);
+    }
+
+    //
+    // Internals
+    //
+    private MultiValueMap<String, String> createCommonParameters(String userName, String storedUserToken) {
         UserDataCreator.TimestampTokenData token = createUserToken(storedUserToken);
 
-        String uri = getUri(deviceData, "ACC_CHECK", format);
         MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
         request.add("USER_NAME", userName);
         request.add("USER_TOKEN", token.getTimestampToken());
         request.add("TIMESTAMP", token.getTimestamp());
+        return request;
+    }
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
-        String body = restTemplate.postForEntity(uri, request, String.class).getBody();
-        logger.info("Response is [{}]", body);
+    private AccountCheckDTO execute(MultiValueMap<String, String> parameters, UserDeviceData deviceData, RequestFormat format) {
+        String uri = getUri(deviceData, "ACC_CHECK", format);
+
+        logger.info("Sending for [{}] to [{}] parameters [{}]", deviceData, uri, parameters);
+        String body = restTemplate.postForEntity(uri, parameters, String.class).getBody();
+        logger.info("Response body [{}]", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
     }

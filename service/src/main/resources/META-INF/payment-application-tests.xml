@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
+       profile="application-tests">
+
+    <bean id="service.migHttpService" class="mobi.nowtechnologies.server.service.payment.http.MigHttpService">
+        <property name="freeSMSURL" value="${mig.freeSMSURL}" />
+        <property name="premiumSMSURL" value="${mig.premiumSMSURL}" />
+        <property name="otaUrl" value="${mig.otaUrl}" />
+        <property name="postService">
+            <bean class="mobi.nowtechnologies.server.apptests.sms.MigPostService" />
+        </property>
+        <property name="request">
+            <bean class="mobi.nowtechnologies.server.service.payment.request.MigRequest" />
+        </property>
+        <property name="timeToLiveMin" value="${mig.timeToLiveMin}" />
+    </bean>
+
+    <bean id="mailModelSerializer" class="mobi.nowtechnologies.server.apptests.email.MailModelSerializer" />
+    <bean id="service.MailService" class="mobi.nowtechnologies.server.apptests.email.DbMailService" />
+
+    <bean id="service.PayPalHttpService" class="mobi.nowtechnologies.server.service.payment.http.PayPalHttpService">
+        <property name="apiUrl" value="${paypal.apiUrl}" />
+        <property name="postService">
+            <bean class="mobi.nowtechnologies.server.apptests.paypal.PayPalPostService"/>
+        </property>
+        <property name="request" ref="request.payPalRequest" />
+    </bean>
+
+    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.impl.ITunesServiceImpl">
+        <property name="postService">
+            <bean class="mobi.nowtechnologies.server.apptests.ITunesPostService"/>
+        </property>
+        <property name="userService" ref="service.UserService" />
+        <property name="paymentPolicyService" ref="service.PaymentPolicyService" />
+        <property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
+        <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
+    </bean>
+</beans>

@@ -2,60 +2,69 @@ package mobi.nowtechnologies.applicationtests.services.http.facebook;
 
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
-import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.Arrays;
 
 @Service
 public class FacebookHttpService extends AbstractHttpService {
-    public FacebookUserDetailsDto login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
-        ResponseEntity<String> stringResponseEntity = doLogin(deviceData, deviceUID, accountCheck, format, accessToken, facebookUserId, accountCheck.userName);
 
-        FacebookUserDetailsDto facebookUserDetailsDto = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), JsonHelper.USER_DETAILS_PATH, FacebookUserDetailsDto.class);
+    public mobi.nowtechnologies.applicationtests.services.http.domain.common.User login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
+        ResponseEntity<FacebookResponse> responseEntity = doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, accountCheck.userName, accountCheck.userToken);
 
-        return facebookUserDetailsDto;
+        return responseEntity.getBody().getUser();
     }
 
-    public FacebookUserDetailsDto login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId, String emailAsUserName) {
-        ResponseEntity<String> stringResponseEntity = doLogin(deviceData, deviceUID, accountCheck, format, accessToken, facebookUserId, emailAsUserName);
-
-        FacebookUserDetailsDto facebookUserDetailsDto = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), JsonHelper.USER_DETAILS_PATH, FacebookUserDetailsDto.class);
-
-        return facebookUserDetailsDto;
+    public ResponseEntity<FacebookResponse> loginWithExpectedError(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String facebookUserId, String userName, String userToken) {
+        return doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, userName, userToken);
     }
 
-    public HttpClientErrorException loginWithExpectedError(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
-        try {
-            doLogin(deviceData, deviceUID, accountCheck, format, accessToken, facebookUserId, accountCheck.userName);
-            return null;
-        } catch (HttpClientErrorException e) {
-            return e;
-        }
+    public ResponseEntity<FacebookResponse> loginWithoutAccessToken(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
+        return doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, accountCheck.userName, accountCheck.userToken, true);
     }
 
-    private ResponseEntity<String> doLogin(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId, String userName) {
-        UserDataCreator.TimestampTokenData userToken = userDataCreator.createUserToken(accountCheck.userToken);
+    private ResponseEntity<FacebookResponse> doLogin(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String facebookUserId, String userName, String userToken) {
+        return doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, userName, userToken, false);
+    }
+
+    private ResponseEntity<FacebookResponse> doLogin(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String facebookUserId, String userName, String accountUserToken, boolean omitAccessToken) {
+        UserDataCreator.TimestampTokenData userToken = userDataCreator.createUserToken(accountUserToken);
 
         String uri = getUri(deviceData, "SIGN_IN_FACEBOOK", format);
 
-        MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
-        request.add("ACCESS_TOKEN", accessToken);
-        request.add("USER_TOKEN", userToken.getTimestampToken());
-        request.add("TIMESTAMP", userToken.getTimestamp());
-        request.add("DEVICE_TYPE", deviceData.getDeviceType());
-        request.add("FACEBOOK_USER_ID", facebookUserId);
-        request.add("USER_NAME", userName);
-        request.add("DEVICE_UID", deviceUID);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
+        builder.queryParam("USER_TOKEN", userToken.getTimestampToken());
+        builder.queryParam("TIMESTAMP", userToken.getTimestamp());
+        builder.queryParam("DEVICE_TYPE", deviceData.getDeviceType());
+        builder.queryParam("FACEBOOK_USER_ID", facebookUserId);
+        builder.queryParam("USER_NAME", userName);
+        builder.queryParam("DEVICE_UID", deviceUID);
+        if (!omitAccessToken) {
+            builder.queryParam("ACCESS_TOKEN", accessToken);
+        }
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "]");
+        HttpHeaders headers = new HttpHeaders();
+        //need to overwrite default accept headers
+        headers.setAccept(Arrays.asList(MediaType.ALL));
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
 
-        return restTemplate.postForEntity(uri, request, String.class);
+        UriComponents build = builder.build();
+        URI requestUri = build.toUri();
+
+        logger.info("Sending for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
+        ResponseEntity<FacebookResponse> response = restTemplate.exchange(requestUri, HttpMethod.POST, entity, FacebookResponse.class);
+        logger.info("Response [{}]", response);
+
+
+        return response;
     }
 
 }

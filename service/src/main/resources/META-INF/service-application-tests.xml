@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-init-method="init" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" profile="application-tests">
+
+    <!-- Application properties -->
+    <bean id="serviceMessageSource"
+          class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
+        <property name="basenames">
+            <list>
+                <value>file:#{systemProperties['catalina.base']}/conf/services</value>
+                <value>classpath:services</value>
+                <value>classpath:application-tests/services</value>
+            </list>
+        </property>
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="fileEncodings" value="utf-8"/>
+        <property name="cacheSeconds" value="180"/>
+        <property name="useCodeAsDefaultMessage" value="true"/>
+    </bean>
+</beans>

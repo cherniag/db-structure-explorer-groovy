@@ -22,6 +22,15 @@ public class CurrentPhone {
     }
 
     public String getO2Phone(Integer phoneTypePrefix) {
-        return String.format("+447%02d%07d", phoneTypePrefix, phoneSuffix);
+        return doGetPhone(phoneTypePrefix);
+    }
+
+    public String getAnyPhone() {
+        final int any = 77;
+        return doGetPhone(any);
+    }
+
+    private String doGetPhone(int phonePrefix) {
+        return String.format("+447%02d%07d", phonePrefix, phoneSuffix);
     }
 }

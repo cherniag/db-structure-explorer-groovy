@@ -4,7 +4,6 @@ package mobi.nowtechnologies.server.persistence.domain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name="tb_filter")
@@ -19,9 +18,6 @@ public abstract class AbstractFilter {
 	
 	@Column(name="filterType", insertable=false, updatable=false)
 	private String filterType;
-	
-	@ManyToMany(fetch=FetchType.LAZY)
-	private List<NewsDetail> newDetails;
 
 	public byte getId() {
 		return id;

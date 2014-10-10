@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.applicationtests.services.mail;
 
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
-import mobi.nowtechnologies.server.persistence.domain.apptests.Email;
+import mobi.nowtechnologies.server.persistence.apptests.domain.Email;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,5 +30,13 @@ public class EmailChecker {
         } else {
             return (Email) query.getResultList().get(0);
         }
+    }
+
+    @Transactional(value = "applicationTestsTransactionManager", readOnly = true)
+    public Email findByTo(String tos, String from) {
+        return (Email) applicationTestsEntityManager.createQuery("select e from Email e where e.tos=:tos and e.from=:from")
+                .setParameter("tos", tos)
+                .setParameter("from", from)
+                .getSingleResult();
     }
 }

@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingC
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 import mobi.nowtechnologies.server.shared.util.DateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.google.api.impl.GoogleTemplate;
@@ -13,6 +12,7 @@ import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Map;
 
@@ -22,13 +22,16 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class GooglePlusService {
     public static final String GOOGLE_PLUS_URL = "https://plus.google.com/";
 
+    @Resource
+    private GooglePlusTemplateProvider googlePlusTemplateProvider;
+
     private AbstractOAuth2ApiBindingCustomizer<GoogleTemplate> templateCustomizer;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     public GooglePlusUserInfo getAndValidateProfile(String accessToken, String googlePlusUserId) {
         try {
-            GoogleTemplate googleTemplate = new GoogleTemplate(accessToken);
+            GoogleTemplate googleTemplate = googlePlusTemplateProvider.provide(accessToken);
             if (templateCustomizer != null) {
                 templateCustomizer.customize(googleTemplate);
             }
@@ -48,7 +51,7 @@ public class GooglePlusService {
         result.setBirthday(extractDateInUTC(personFromGooglePlus));
         result.setDisplayName(personFromGooglePlus.getDisplayName());
         result.setPicture(extractImageUrl(personFromGooglePlus));
-        result.setGender(extractGender(personFromGooglePlus));
+        result.setGender(Gender.restore(personFromGooglePlus.getGender()));
         result.setLocation(extractLocation(personFromGooglePlus));
         result.setGivenName(personFromGooglePlus.getGivenName());
         result.setFamilyName(personFromGooglePlus.getFamilyName());
@@ -76,19 +79,6 @@ public class GooglePlusService {
                 if (TRUE.equals(currentLocation.getValue())) {
                     return currentLocation.getKey();
                 }
-            }
-        }
-        return null;
-    }
-
-    private Gender extractGender(Person personFromGooglePlus) {
-        String gender = personFromGooglePlus.getGender();
-        if (!StringUtils.isEmpty(gender)) {
-            if ("male".equals(gender)) {
-                return Gender.MALE;
-            }
-            if ("female".equals(gender)) {
-                return Gender.FEMALE;
             }
         }
         return null;

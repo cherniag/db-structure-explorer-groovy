@@ -6,7 +6,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
+
 
 @Entity
 @Table(name="tb_deviceTypes")
@@ -20,6 +24,10 @@ public class DeviceType implements Serializable {
     public static final String BLACKBERRY = "BLACKBERRY";
     public static final String SYMBIAN = "SYMBIAN";
     public static final String WINDOWS_PHONE = "WINDOWS_PHONE";
+
+    public static Set<String> getAll() {
+        return Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(ANDROID, J2ME, IOS, BLACKBERRY, SYMBIAN, WINDOWS_PHONE)));
+    }
 
 	public static enum Fields{
 		name();

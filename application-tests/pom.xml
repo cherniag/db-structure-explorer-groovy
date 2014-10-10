@@ -4,7 +4,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.7.0</version>
+        <version>5.8.1</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -74,6 +74,7 @@
                             <excludes>
                                 <exclude>**/*Test.java</exclude>
                             </excludes>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -98,6 +99,11 @@
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>web</artifactId>
+            <classifier>jar</classifier>
         </dependency>
         <!-- Spring -->
         <dependency>
@@ -124,7 +130,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -133,7 +138,6 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
-
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
@@ -147,6 +151,32 @@
             <artifactId>json-path</artifactId>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.detro.ghostdriver</groupId>
+            <artifactId>phantomjsdriver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.unitils</groupId>
+            <artifactId>unitils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
 @Service
 public class SignupHttpService extends AbstractHttpService {
 
-    public AccountCheckDTO signup(UserDeviceData deviceData, String deviceUID, RequestFormat format, String xtifyToken) {
+    public AccountCheckDTO signUp(UserDeviceData deviceData, String deviceUID, RequestFormat format, String xtifyToken) {
         String uri = getUri(deviceData, "SIGN_UP_DEVICE", format);
 
         MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();

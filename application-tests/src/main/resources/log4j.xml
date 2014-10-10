@@ -6,12 +6,12 @@
         <param name="File" value="target/logs/test-output.log" />
         <param name="encoding" value="UTF-8" />
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/business-logic-web_%d{yyyy-MM-dd}.gz" />
+            <param name="fileNamePattern" value="${catalina.base}/logs/test-output_%d{yyyy-MM-dd}.gz" />
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n" />
+                   value="[%p] %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} %C{1}.%M() %m%n" />
         </layout>
     </appender>
 
@@ -20,7 +20,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n" />
+                   value="[%p] %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} %C{1}.%M() %m%n" />
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="LevelMin" value="TRACE" />
@@ -34,7 +34,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%p  %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} ut userId\=[%X{userId}] userName\=[%X{userName}] community\=[%X{community}] command\=[%X{command}] MESSAGEID\=[%X{MESSAGEID}] %c.%M() %m%n" />
+                   value="[%p] %d{yyyy.MM.dd HH\:mm\:ss,SSS/zzz} %C{1}.%M() %m%n" />
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="LevelMin" value="WARN" />
@@ -46,6 +46,7 @@
      <root>
         <level value="INFO"></level>
         <appender-ref ref="stdout" />
+        <appender-ref ref="stderr" />
         <appender-ref ref="business-logic-web-RollingFileAppender" />
     </root>
 
