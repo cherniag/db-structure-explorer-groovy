@@ -24,6 +24,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.MUSIC;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType.MANUAL_COMPILATION;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.WIDE;
@@ -165,15 +166,18 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
 
 
     private void checkSave(String communityUrl, UpdateIncomingDto dto, ShapeType currentType, ContentType contentType, String key) throws Exception {
-        OrdinalBlockDto block = new OrdinalBlockDto();
-        block.setShapeType(currentType);
-        block.setContentType(contentType);
-        block.setKey(key);
-        block.setIncluded(false);
+        OrdinalBlockDto ordinalBlockDto = new OrdinalBlockDto();
+        ordinalBlockDto.setShapeType(currentType);
+        ordinalBlockDto.setContentType(contentType);
+        ordinalBlockDto.setKey(key);
+        ordinalBlockDto.setIncluded(false);
+        if (key.equals(MusicType.PLAYLIST.name())|| key.equals(MusicType.TRACK.name())) {
+            ordinalBlockDto.setValue("#"+ MINI_PLAYER_ONLY);
+        }
         dto.getBlocks().clear();
-        dto.getBlocks().add(block);
+        dto.getBlocks().add(ordinalBlockDto);
         if (currentType.equals(ShapeType.NARROW)) {
-            dto.getBlocks().add(block);
+            dto.getBlocks().add(ordinalBlockDto);
         }
         mockMvc.perform(
                 post("/streamzine/update")

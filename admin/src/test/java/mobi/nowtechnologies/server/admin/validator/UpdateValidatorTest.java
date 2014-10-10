@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
 
@@ -148,7 +149,7 @@ public class UpdateValidatorTest {
     @Test
     public void shouldNotValidateWhenTracksAreTheSame(){
         // given
-        OrdinalBlockDto musicTrackBlock = createMusicTypeBlock(MusicType.TRACK, "1");
+        OrdinalBlockDto musicTrackBlock = createMusicTypeBlock(MusicType.TRACK, "1#"+MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicTrackBlock, musicTrackBlock);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
@@ -164,8 +165,8 @@ public class UpdateValidatorTest {
     @Test
     public void shouldNotValidateWhenTracksAreNotTheSame(){
         // given
-        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "1");
-        OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "2");
+        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "1#"+MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "2#"+MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicTrackBlock1, musicTrackBlock2);
 
         HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
@@ -181,7 +182,7 @@ public class UpdateValidatorTest {
     @Test
     public void shouldNotValidateWhenPlaylistsAreTheSame(){
         // given
-        OrdinalBlockDto musicPlaylistBlock = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1");
+        OrdinalBlockDto musicPlaylistBlock = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#"+MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicPlaylistBlock, musicPlaylistBlock);
 
         //when
@@ -194,8 +195,8 @@ public class UpdateValidatorTest {
     @Test
     public void shouldNotValidateWhenPlaylistsAreNotTheSame(){
         // given
-        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1");
-        OrdinalBlockDto musicPlaylistBlock2 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_2");
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#"+ MINI_PLAYER_ONLY);
+        OrdinalBlockDto musicPlaylistBlock2 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_2#"+ MINI_PLAYER_ONLY);
         UpdateIncomingDto update = createUpdate(musicPlaylistBlock1, musicPlaylistBlock2);
 
         //when
