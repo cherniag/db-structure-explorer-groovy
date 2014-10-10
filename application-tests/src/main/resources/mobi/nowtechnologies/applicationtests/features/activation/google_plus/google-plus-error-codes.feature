@@ -1,4 +1,4 @@
-@GooglePlus
+@Ready
 Feature: Specific error codes for different Google Plus responses
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #google plus supported versions: 6.0, 6.1

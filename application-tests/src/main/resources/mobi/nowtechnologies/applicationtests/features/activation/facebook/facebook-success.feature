@@ -1,4 +1,4 @@
-@Facebook
+@Ready
 Feature: Successful user activation via Facebook in facebook supported communities
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #facebook supported versions: 5.2, 6.0, 6.1
