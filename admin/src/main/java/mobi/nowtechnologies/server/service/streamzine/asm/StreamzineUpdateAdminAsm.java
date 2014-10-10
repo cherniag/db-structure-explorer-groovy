@@ -201,11 +201,10 @@ public class StreamzineUpdateAdminAsm {
             MusicPlayListDeeplinkInfo i = (MusicPlayListDeeplinkInfo) info;
             blockDto.setKey(playlist.name());
             if (isNotNull(i.getChartId())) {
-                blockDto.setValue(i.getChartId().toString());
+                blockDto.setValue(i.getChartId().toString()+"#"+i.getPlayerType().name());
             }
             blockDto.setData(streamzineAdminMediaAsm.toPlaylistDto(i, community));
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, playlist));
-            blockDto.setPlayer(((MusicPlayListDeeplinkInfo) info).getPlayerType().name());
         }
 
         if(info instanceof MusicTrackDeeplinkInfo) {
@@ -215,11 +214,10 @@ public class StreamzineUpdateAdminAsm {
             blockDto.setKey(track.name());
             Media media = i.getMedia();
             if (media != null) {
-                blockDto.setValue(media.getI() + "");
+                blockDto.setValue(media.getI()+"#"+i.getPlayerType().name());
                 blockDto.setData(streamzineAdminMediaAsm.toMediaDto(i.getMedia()));
             }
             blockDto.setContentTypeTitle(getMessage(ContentType.MUSIC, track));
-            blockDto.setPlayer(((MusicTrackDeeplinkInfo) info).getPlayerType().name());
         }
 
         if(info instanceof ManualCompilationDeeplinkInfo) {

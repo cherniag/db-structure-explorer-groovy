@@ -136,7 +136,8 @@ var UpdateModel = function(model) {
             value: undefined,
             data: null,
             vip: false,
-            player:defaultPlayer
+
+            valuePlayerType:defaultPlayer
         };
         return emptyBlock;
     }
@@ -294,8 +295,7 @@ var UpdateModel = function(model) {
                     vip: b.vip,
                     expanded: b.expanded,
                     //
-                    id: b.id,
-                    player: b.player
+                    id: b.id
                 };
             }
         }
@@ -339,7 +339,7 @@ var UpdateModel = function(model) {
                     currentBlock.vip != copyBlock.vip ||
                     currentBlock.badgeId != copyBlock.badgeId ||
                     currentBlock.coverUrl != copyBlock.coverUrl||
-                    currentBlock.player != copyBlock.player) {
+                    currentBlock.valuePlayerType != copyBlock.valuePlayerType) {
                     return false;
                 }
             }

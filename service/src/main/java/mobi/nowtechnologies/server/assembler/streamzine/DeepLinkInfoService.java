@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
@@ -15,12 +16,14 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opene
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
 
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class DeepLinkInfoService {
     private MediaRepository mediaRepository;
@@ -121,24 +124,30 @@ public class DeepLinkInfoService {
         String key = data.getKey();
 
         final MusicType musicType = MusicType.valueOf(key.trim());
-        String value = data.getValue() != null ? data.getValue().trim() : "";
+        String value = StringUtils.trimToEmpty(data.getValue());
 
         if (musicType == MusicType.PLAYLIST) {
             Integer chartId = null;
-            if (!value.isEmpty()) {
-                chartId = parseInt(value);
+            PlayerType playerType = null;
+            if (isNotEmpty(value)) {
+                String[] values = value.split("#");
+                chartId = parseInt(values[0]);
+                playerType = PlayerType.valueOf(values[1]);
             }
-            return new MusicPlayListDeeplinkInfo(chartId, data.getPlayerInstance());
+            return new MusicPlayListDeeplinkInfo(chartId, playerType);
         }
 
         if (musicType == MusicType.TRACK) {
             Media restored = null;
-            if (!value.isEmpty()) {
-                final int id = parseInt(value);
+            PlayerType playerType = null;
+            if (isNotEmpty(value)) {
+                String[] values = value.split("#");
+                final int id = parseInt(values[0]);
+                playerType = PlayerType.valueOf(values[1]);
                 restored = mediaRepository.findOne(id);
                 Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
             }
-            return new MusicTrackDeeplinkInfo(restored, data.getPlayerInstance());
+            return new MusicTrackDeeplinkInfo(restored, playerType);
         }
 
         if (musicType == MusicType.MANUAL_COMPILATION) {
@@ -294,8 +303,6 @@ public class DeepLinkInfoService {
         public List<Integer> getMediaIds() {
             return Lists.newArrayList(mediaIds);
         }
-
-
     }
 
 }

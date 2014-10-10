@@ -24,6 +24,7 @@ import mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static mobi.nowtechnologies.server.shared.web.utils.RequestUtils.getCommunityURL;
+import static mobi.nowtechnologies.server.shared.web.utils.RequestUtils.getHttpServletRequest;
 
 @Controller
 public class StreamzineController {
@@ -82,6 +86,8 @@ public class StreamzineController {
     private StreamzineTypesMappingService streamzineTypesMappingService;
     @Resource
     private CommunityRepository communityRepository;
+    @Resource
+    private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
     @RequestMapping(value = "/streamzine/media/list", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView getMediaList(@RequestParam(value = "q", required = false, defaultValue = "") String searchWords,
@@ -239,9 +245,18 @@ public class StreamzineController {
         model.addObject("badgeMappingRules", rulesInfoAsm.getBadgeMappingInfo());
         model.addObject("titlesMappingRules", rulesInfoAsm.getTitlesMappingInfo());
         model.addObject("opener", rulesInfoAsm.buildTypesForOpener());
-        model.addObject("players", PlayerType.getValues());
-        model.addObject("defaultPlayer", PlayerType.getDefaultPlayerType().toString());
+        model.addObject("players", getLocalizedPlayerTypes());
+        model.addObject("defaultPlayer", PlayerType.getDefaultPlayerType().name());
         return model;
+    }
+
+    private Map<String, String> getLocalizedPlayerTypes(){
+        Map<String, String> playerTypes = new HashMap<String, String>();
+        for (PlayerType playerType : PlayerType.values()) {
+            String message = communityResourceBundleMessageSource.getMessage(getCommunityURL(), "streamzine." + playerType.name(), null, getHttpServletRequest().getLocale());
+            playerTypes.put(playerType.name(), message);
+        }
+        return playerTypes;
     }
 
     private String escapeSearchWord(String searchWords) {

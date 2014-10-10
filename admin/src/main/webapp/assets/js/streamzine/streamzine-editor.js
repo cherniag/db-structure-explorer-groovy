@@ -47,18 +47,23 @@ if(Streamzine.Presenter.Editor == undefined) {
                         if(e.length > 0) {
                             if(e.get(0).tagName == 'SELECT') {
                                 if(r[m+"_all"]) {
+                                    var players = r[m+"_all"]
                                     var select = $(e.get(0)).empty();
-                                    for(var i=0; i < r[m+"_all"].length; i++) {
-                                        select.append($(
-                                            Template.render('<option value="{value}">{title}</option>', {
-                                                value:r[m+"_all"][i],
-                                                title:r[m+"_all"][i]
-                                            })
-                                        ));
+                                    for (var name in players) {
+                                        if (players.hasOwnProperty(name)) {
+                                            select.append($(
+                                                Template.render('<option value="{value}">{title}</option>', {
+                                                    value:name,
+                                                    title:players[name]
+                                                })
+                                            ));
+                                        }
                                     }
                                 }
 
-                                select.val(r[m]);
+                                var playerType = r[m];
+                                select.val(playerType);
+                                Events.fire('VALUE_TYPED', {field: 'valuePlayerType', value: playerType});
 
                                 continue;
                             }
@@ -134,7 +139,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
-                    '<select id="{id}_player" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
+                    '<select id="{id}_player" onchange="Streamzine.Presenter.Editor.onChange(\'valuePlayerType\', this.value)">"' +
                     '</select>' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
@@ -151,7 +156,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 badgeId: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeFileNameAlias) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
                                 coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
                                 vip: incoming.vip,
-                                player: incoming.player,
+                                player: incoming.valuePlayerType,
                                 player_all: Streamzine.Presenter.Editor.players
                             };
                             if(incoming.data && incoming.data.artistDto) {
@@ -170,7 +175,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                     '<div id="{id}_value" class="sz-editor-value"></div>' +
                     '<input placeholder="Title" maxlength="255" type="text" class="{notVisibleTitle}" id="{id}_title" onkeydown="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'title\', this.value)" />' +
                     '<input placeholder="Subtitle" maxlength="255" type="text" class="{notVisibleSubTitle}" id="{id}_subTitle" onkeydown="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onkeyup="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)" onblur="Streamzine.Presenter.Editor.onChange(\'subTitle\', this.value)"  />' +
-                    '<select id="{id}_player" onchange="Streamzine.Presenter.Editor.onChange(\'player\', this.value)">"' +
+                    '<select id="{id}_player" onchange="Streamzine.Presenter.Editor.onChange(\'valuePlayerType\', this.value)">"' +
                     '</select>' +
                     '<div class="sz-badge-url-editor-wrapper {notVisibleBadge}">' +
                     '<img id="{id}_badgeId" class="sz-no-badge-url-editor" onclick="Events.fire(\'VALUE_PICKING\', \'badgeId\')"/>' +
@@ -188,7 +193,7 @@ if(Streamzine.Presenter.Editor == undefined) {
                                 badgeId: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.badgeFileNameAlias) ? ('/' + incoming.badgeFileNameAlias.fileName) : '' ),
                                 coverUrl: Streamzine.Presenter.Editor.imagesBaseUrl + ( (incoming.coverUrl) ? ('/' + incoming.coverUrl) : '' ),
                                 vip: incoming.vip,
-                                player: incoming.player,
+                                player: incoming.valuePlayerType,
                                 player_all: Streamzine.Presenter.Editor.players
                             }
                         }

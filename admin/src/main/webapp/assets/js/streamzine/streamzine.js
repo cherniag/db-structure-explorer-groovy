@@ -37,6 +37,14 @@ if(Streamzine == undefined) {
         var currentBlock = Streamzine.Model.getCurrentBlock();
 
         var value = data.value;
+        if(currentBlock.key == 'PLAYLIST' || currentBlock.key == 'TRACK' ) {
+            if(data.field == 'valuePlayerType'){
+                Streamzine.Model.updateCurrentBlock('value', String(currentBlock.value).split('#')[0] + '#' + data.value);
+            }else if(data.field == 'value'){
+                Streamzine.Model.updateCurrentBlock('value', data.value + '#' + String(currentBlock.value).split('#')[1]);
+            }
+
+        }
         if(currentBlock.key == 'INTERNAL_AD' && data.field == 'value') {
             value = (data.value.action) ? data.value.url + '#' + data.value.action : data.value.url;
         }
