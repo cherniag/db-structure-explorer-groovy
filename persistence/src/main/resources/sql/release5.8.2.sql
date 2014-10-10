@@ -49,3 +49,32 @@ commit;
 -- SRV-269
 
 
+-- http://jira.musicqubed.com/browse/SRV-278
+-- [SERVER] Update Free Trial Length on MTV1 to 13 weeks
+
+set AUTOCOMMIT=0;
+START TRANSACTION ;
+
+select @userGroupId:= c.id from tb_communities c join tb_userGroups ug on ug.community = c.id where c.name = 'mtv1';
+
+UPDATE
+    tb_promotions p JOIN tb_userGroups ug
+      ON p.userGroup = ug.id JOIN tb_communities c
+      ON c.id = ug.community
+         AND c.name = 'mtv1'
+         AND p.label = 'mtv1.promo.2weeks.audio'
+         AND p.freeWeeks != 0
+SET
+  p.isActive = false
+;
+
+INSERT INTO tb_promotions
+(description            , numUsers, maxUsers, startDate , endDate   , isActive, freeWeeks, subWeeks, userGroup   , type       , showPromotion, label                     , is_white_listed) VALUES
+('MTV1Promo13weeksAudio', 0       , 0       , 1411479149, 1606788000, true    , 13       , 0       , @userGroupId, 'PromoCode', 0            , 'mtv1.promo.13weeks.audio', false);
+
+INSERT INTO tb_promoCode
+(code                      , promotionId     , media_type) VALUES
+('mtv1.promo.13weeks.audio', LAST_INSERT_ID(), 'AUDIO');
+
+commit;
+
