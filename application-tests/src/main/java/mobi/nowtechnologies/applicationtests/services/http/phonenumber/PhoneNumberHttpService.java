@@ -27,9 +27,9 @@ public class PhoneNumberHttpService extends AbstractHttpService {
         parameters.add("USER_TOKEN", token.getTimestampToken());
         parameters.add("TIMESTAMP", token.getTimestamp());
 
-        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
         String body = restTemplate.postForEntity(uri, parameters, String.class).getBody();
-        logger.info("Response body [{}]", body);
+        logger.info("Response body [{}]\n", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.PHONE_NUMBER_PATH, PhoneActivationDto.class);
     }
