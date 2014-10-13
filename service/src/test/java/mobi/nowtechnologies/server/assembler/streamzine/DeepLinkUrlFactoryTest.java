@@ -105,7 +105,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk");
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl-uk://content/track?player=REGULAR_PLAYER_ONLY&id=TRACK-10_null"));
+        assertThat((String)o, is("hl-uk://content/track?player=regular&id=TRACK-10_null"));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class DeepLinkUrlFactoryTest {
 
         //check
         String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk");
-        assertThat(o, is("hl-uk://content/playlist?player=REGULAR_PLAYER_ONLY&id=666"));
+        assertThat(o, is("hl-uk://content/playlist?player=regular&id=666"));
     }
 
     @Test

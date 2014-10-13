@@ -163,10 +163,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.REGULAR_PLAYER_ONLY+"&id=" + chartId)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.MINI_PLAYER_ONLY.getId()+"&id=" + chartId)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+ PlayerType.REGULAR_PLAYER_ONLY+"&id=" + existingMedia.getIsrcTrackId())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+ PlayerType.REGULAR_PLAYER_ONLY.getId()+"&id=" + existingMedia.getIsrcTrackId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
@@ -450,7 +450,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     }
 
     private DeeplinkInfo createMusicPlaylistDeeplink(int chartDetailsId) {
-        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartDetailsId, PlayerType.REGULAR_PLAYER_ONLY);
+        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartDetailsId, PlayerType.MINI_PLAYER_ONLY);
         return d;
     }
 

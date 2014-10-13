@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 
@@ -18,12 +19,14 @@ public class MusicTrackDeeplinkInfo extends DeeplinkInfo implements PlayableItem
 
     @Column(name = "player_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PlayerType playerType = PlayerType.REGULAR_PLAYER_ONLY;
+    private PlayerType playerType = PlayerType.getDefaultPlayerType();
 
     protected MusicTrackDeeplinkInfo() {
     }
 
     public MusicTrackDeeplinkInfo(Media media, PlayerType playerType) {
+        Assert.notNull(playerType);
+
         this.media = media;
         this.playerType = playerType;
         this.contentType = ContentType.MUSIC;
