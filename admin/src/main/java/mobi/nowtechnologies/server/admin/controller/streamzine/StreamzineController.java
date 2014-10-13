@@ -24,11 +24,11 @@ import mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.web.utils.RequestUtils.getCommunityURL;
 import static mobi.nowtechnologies.server.shared.web.utils.RequestUtils.getHttpServletRequest;
 
 @Controller
@@ -87,7 +86,7 @@ public class StreamzineController {
     @Resource
     private CommunityRepository communityRepository;
     @Resource
-    private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/streamzine/media/list", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView getMediaList(@RequestParam(value = "q", required = false, defaultValue = "") String searchWords,
@@ -253,7 +252,7 @@ public class StreamzineController {
     private Map<String, String> getLocalizedPlayerTypes(){
         Map<String, String> playerTypes = new HashMap<String, String>();
         for (PlayerType playerType : PlayerType.values()) {
-            String message = communityResourceBundleMessageSource.getMessage(getCommunityURL(), "streamzine." + playerType.name(), null, getHttpServletRequest().getLocale());
+            String message = messageSource.getMessage("streamzine." + playerType.name(), null, getHttpServletRequest().getLocale());
             playerTypes.put(playerType.name(), message);
         }
         return playerTypes;
