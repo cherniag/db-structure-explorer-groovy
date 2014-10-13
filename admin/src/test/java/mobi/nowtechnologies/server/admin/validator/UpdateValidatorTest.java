@@ -31,6 +31,7 @@ import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
@@ -163,7 +164,7 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateWhenTracksAreNotTheSame(){
+    public void shouldValidateWhenTracksAreNotTheSame(){
         // given
         OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "1#"+MINI_PLAYER_ONLY);
         OrdinalBlockDto musicTrackBlock2 = createMusicTypeBlock(MusicType.TRACK, "2#"+MINI_PLAYER_ONLY);
@@ -180,6 +181,39 @@ public class UpdateValidatorTest {
     }
 
     @Test
+    public void shouldValidateWhenTrackIsNotIncluded(){
+        // given
+        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, "#"+MINI_PLAYER_ONLY);
+        musicTrackBlock1.setIncluded(false);
+        UpdateIncomingDto update = createUpdate(musicTrackBlock1);
+
+        HashSet<Media> oneMedia = new HashSet<Media>(Arrays.asList(mock(Media.class)));
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIds(any(String.class), anyLong(), anyList())).thenReturn(oneMedia);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(0)).rejectValue("value", "streamzine.error.notfound.track.id", null);
+    }
+
+    @Test
+    public void shouldNotValidateWhenTrackIsIncludedButTrackIsNull(){
+        // given
+        String value = "#" + MINI_PLAYER_ONLY;
+        OrdinalBlockDto musicTrackBlock1 = createMusicTypeBlock(MusicType.TRACK, value);
+        UpdateIncomingDto update = createUpdate(musicTrackBlock1);
+
+        when(mediaService.getMediasByChartAndPublishTimeAndMediaIds(any(String.class), anyLong(), anyList())).thenReturn(Collections.<Media>emptySet());
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(1)).rejectValue("value", "streamzine.error.notfound.track.id", null);
+    }
+
+    @Test
     public void shouldNotValidateWhenPlaylistsAreTheSame(){
         // given
         OrdinalBlockDto musicPlaylistBlock = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#"+MINI_PLAYER_ONLY);
@@ -193,7 +227,34 @@ public class UpdateValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateWhenPlaylistsAreNotTheSame(){
+    public void shouldNotValidateWhenPlaylistIsIncludedButItIsNull(){
+        // given
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "#"+ MINI_PLAYER_ONLY);
+        UpdateIncomingDto update = createUpdate(musicPlaylistBlock1);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(1)).rejectValue("value", "streamzine.error.notfound.playlist.id", null);
+    }
+
+    @Test
+    public void shouldValidateWhenPlaylistIsNotIncluded(){
+        // given
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "#"+ MINI_PLAYER_ONLY);
+        when(musicPlaylistBlock1.isIncluded()).thenReturn(false);
+        UpdateIncomingDto update = createUpdate(musicPlaylistBlock1);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(0)).rejectValue("value", "streamzine.error.notfound.playlist.id", null);
+    }
+
+    @Test
+    public void shouldValidateWhenPlaylistsAreNotTheSame(){
         // given
         OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#"+ MINI_PLAYER_ONLY);
         OrdinalBlockDto musicPlaylistBlock2 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_2#"+ MINI_PLAYER_ONLY);
@@ -205,6 +266,20 @@ public class UpdateValidatorTest {
         //then
         verify(errors, times(0)).rejectValue("value", "streamzine.error.duplicate.content", null);
     }
+
+    @Test
+    public void shouldNotValidateWhenPlayerTypeIsWrong(){
+        // given
+        OrdinalBlockDto musicPlaylistBlock1 = createMusicTypeBlock(MusicType.PLAYLIST, "SOME_PLAYLIST_1#wongPlayerType");
+        UpdateIncomingDto update = createUpdate(musicPlaylistBlock1);
+
+        //when
+        updateValidator.customValidate(update, errors);
+
+        //then
+        verify(errors, times(1)).rejectValue("value", "streamzine.error.unknown.playerType", null);
+    }
+
 
     @Test
     public void testValidateTitlesWhenNotAllowed() throws Exception {
