@@ -68,9 +68,9 @@ public class GooglePlusHttpService extends AbstractHttpService {
         UriComponents build = builder.build();
         URI requestUri = build.toUri();
 
-        logger.info("Sending to [{}], parameters [{}], headers [{}]", uri, build.getQueryParams(), headers);
+        logger.info("\nSending for to [{}], parameters [{}], headers [{}]", uri, build.getQueryParams(), headers);
         ResponseEntity<GooglePlusResponse> response = restTemplate.exchange(requestUri, HttpMethod.POST, entity, GooglePlusResponse.class);
-        logger.info("Response is [{}]", response);
+        logger.info("Response entity [{}]\n", response);
 
         return response;
     }
