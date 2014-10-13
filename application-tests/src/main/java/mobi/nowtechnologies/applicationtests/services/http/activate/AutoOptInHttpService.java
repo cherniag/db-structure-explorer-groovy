@@ -6,6 +6,7 @@ import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
@@ -35,9 +36,10 @@ public class AutoOptInHttpService extends AbstractHttpService {
             parameters.add("OTAC_TOKEN", otac);
         }
 
-        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
-        String body = restTemplate.postForEntity(uri, parameters, String.class).getBody();
-        logger.info("Response is [{}]", body);
+        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        ResponseEntity<String> entity = restTemplate.postForEntity(uri, parameters, String.class);
+        String body = entity.getBody();
+        logger.info("Response body [{}]\n", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
     }
