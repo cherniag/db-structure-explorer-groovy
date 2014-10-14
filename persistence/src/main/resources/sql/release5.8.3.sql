@@ -1,4 +1,5 @@
 -- SRV-285 [SERVER] Problem with ITunes subscription for MTV
+
 SET autocommit = 0;
 START TRANSACTION;
 
@@ -12,3 +13,4 @@ set provider = null
 where communityID = @mtv1_community_id and paymentType='iTunesSubscription';
 
 COMMIT;
+-- SRV-285
