@@ -1,4 +1,8 @@
 -- SRV-290 MTV1 playlist order fix
+
+SET autocommit = 0;
+START TRANSACTION;
+
 UPDATE
     tb_chartDetail cd JOIN tb_charts c
       ON c.i = cd.chart JOIN community_charts cc
@@ -102,3 +106,5 @@ WHERE
   AND cd.media IS NULL
   AND c.name = 'HL_UK_PLAYLIST_5 - MTV1'
 ;
+
+commit;
