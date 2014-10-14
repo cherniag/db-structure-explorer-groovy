@@ -1,5 +1,4 @@
 -- begin SRV-291
--- SRV-285 [SERVER] Problem with ITunes subscription for MTV
 SET autocommit = 0;
 START TRANSACTION;
 
