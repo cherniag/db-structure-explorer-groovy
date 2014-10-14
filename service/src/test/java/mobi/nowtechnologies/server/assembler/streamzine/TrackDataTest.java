@@ -148,6 +148,6 @@ public class TrackDataTest {
         String valueString = trackData.toValueString();
 
         //then
-        assertThat(valueString, is(TOKEN + playerType));
+        assertThat(valueString, is("null" +TOKEN + playerType));
     }
 }
