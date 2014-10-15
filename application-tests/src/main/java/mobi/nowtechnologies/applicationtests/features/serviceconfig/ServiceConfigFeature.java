@@ -5,10 +5,13 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word;
-import mobi.nowtechnologies.applicationtests.features.common.transformers.NullableString;
-import mobi.nowtechnologies.applicationtests.features.common.transformers.NullableStringTransformer;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableString;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableStringTransformer;
+import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.ClientVersionTransformer;
+import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.ServiceConfigHttpService;
+import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
@@ -57,11 +60,12 @@ public class ServiceConfigFeature {
     private Map<UserDeviceData, String> headers = new HashMap<UserDeviceData, String>();
 
 
-    @Given("^Mobile client makes Service Config call using JSON and XML formats for (.+) and (.+) and (.+)$")
-    public void given(@Transform(DictionaryTransformer.class) Word devices,
-                               @Transform(DictionaryTransformer.class) Word communities,
-                               @Transform(DictionaryTransformer.class) Word versions) {
-        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set());
+    @Given("^Mobile client makes Service Config call using (.+) format for (.+) and (.+) and (.+)$")
+    public void given(RequestFormat requestFormat,
+                      @Transform(DictionaryTransformer.class) Word devices,
+                       @Transform(DictionaryTransformer.class) Word communities,
+                       @Transform(DictionaryTransformer.class) Word versions) {
+        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Collections.singleton(requestFormat));
         applicationName = UUID.randomUUID().toString();
     }
 

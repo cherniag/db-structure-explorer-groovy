@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.payment.http;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequest;
 import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.shared.service.PostService;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,13 +11,23 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class PayPalHttpService extends PaymentHttpService {
+public class PayPalHttpService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PayPalHttpService.class);
 
 	private String apiUrl;
 
 	private PayPalRequest request;
+    private PostService httpService;
+
+    public void setPostService(PostService httpService) {
+        this.httpService = httpService;
+    }
+
+    public PostService getPostService() {
+        return httpService;
+    }
+
 	/**
 	 * Method requests SetExpressCheckout command to PayPal
 	 * @param request - {@link PayPalRequest}

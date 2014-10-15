@@ -3,6 +3,7 @@ package mobi.nowtechnologies.applicationtests.features.common.client;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
+import mobi.nowtechnologies.applicationtests.services.http.domain.google_plus.GooglePlusResponse;
 import mobi.nowtechnologies.applicationtests.services.http.email.EmailHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator;
@@ -42,21 +43,10 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
 
         String facebookUserId = System.nanoTime() + "";
         String accessToken = facebookUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, facebookUserId);
-        state.accessToken = accessToken;
+        state.facebookAccessToken = accessToken;
         state.facebookUserId = facebookUserId;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
-    }
-
-    public void loginUsingGooglePlus(UserDeviceData deviceData) {
-        final PhoneStateImpl state = states.get(deviceData);
-
-        String googlePlusUserId = System.nanoTime() + "";
-        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
-        state.googlePlusUserId = googlePlusUserId;
-        state.googlePlusToken = accessToken;
-        state.lastGooglePlusUserInfo = googlePlusHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, googlePlusUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat());
     }
 
     public void loginUsingFacebookWithCityOnly(UserDeviceData deviceData) {
@@ -64,8 +54,20 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
 
         String facebookUserId = System.nanoTime() + "";
         String accessToken = facebookUserInfoGenerator.createAccessTokenWithCityOnly(state.getEmail(), state.getLastAccountCheckResponse().userName, facebookUserId);
-        state.accessToken = accessToken;
+        state.facebookAccessToken = accessToken;
         state.facebookUserId = facebookUserId;
+        state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+    }
+
+    public void loginUsingFacebookWithDefinedEmail(UserDeviceData deviceData, String email) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String facebookUserId = System.nanoTime() + "";
+        String accessToken = facebookUserInfoGenerator.createAccessTokenWithCityOnly(email, state.getLastAccountCheckResponse().userName, facebookUserId);
+        state.facebookAccessToken = accessToken;
+        state.facebookUserId = facebookUserId;
+        state.email = email;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
         state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
     }
@@ -78,6 +80,71 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.email = email;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
         state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+    }
+
+    public void loginUsingFacebookWithOtherDevice(UserDeviceData userData, UserDeviceData otherDeviceData) {
+        final PhoneStateImpl state = states.get(userData);
+        final PhoneStateImpl otherState = states.get(otherDeviceData);
+
+        String facebookUserId = System.nanoTime() + "";
+        String accessToken = facebookUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, facebookUserId);
+        state.facebookAccessToken = accessToken;
+        state.facebookUserId = facebookUserId;
+        state.lastFacebookInfo = facebookHttpService.login(userData, otherState.getDeviceUID(), state.getLastAccountCheckResponse(), userData.getFormat(), accessToken, facebookUserId);
+        state.accountCheck = accountCheckHttpService.accountCheck(userData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), userData.getFormat());
+    }
+
+    public void loginUsingGooglePlus(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        state.lastGooglePlusUserInfo = googlePlusHttpService.login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken).getUser();
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+    }
+
+    public void loginUsingGooglePlusWithOtherDevice(UserDeviceData userData, UserDeviceData otherDeviceData) {
+        final PhoneStateImpl state = states.get(userData);
+        final PhoneStateImpl otherState = states.get(otherDeviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        state.lastGooglePlusUserInfo = googlePlusHttpService.login(userData, otherState.getDeviceUID(), userData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken).getUser();
+        state.accountCheck = accountCheckHttpService.accountCheck(userData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), userData.getFormat());
+    }
+
+    public void loginUsingGooglePlusWithUpdatedDetails(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        state.lastGooglePlusUserInfo = googlePlusHttpService.login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken).getUser();
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+    }
+
+    public void loginUsingGooglePlusWithExactEmail(UserDeviceData deviceData, String email) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(email, state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        state.email = email;
+        state.lastGooglePlusUserInfo = googlePlusHttpService.login(
+                deviceData,
+                state.getDeviceUID(),
+                deviceData.getFormat(),
+                accessToken,
+                state.googlePlusUserId,
+                state.getLastAccountCheckResponse().userName,
+                state.getLastAccountCheckResponse().userToken).getUser();
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
     }
 
     //
@@ -144,7 +211,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
 
         String facebookUserId = System.nanoTime() + "";
         String accessToken = facebookUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, facebookUserId);
-        state.accessToken = accessToken;
+        state.facebookAccessToken = accessToken;
         state.facebookUserId = facebookUserId;
         state.lastFacebookErrorStatus = facebookHttpService.loginWithoutAccessToken(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId).getStatusCode();
     }
@@ -158,7 +225,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
                 facebookUserInfoGenerator.createAccessToken(state.getEmail(),
                         lastAccountCheckResponse.userName,
                         facebookUserId);
-        state.accessToken = accessToken;
+        state.facebookAccessToken = accessToken;
         state.facebookUserId = facebookUserId;
         ResponseEntity<FacebookResponse> responseEntity =
                 facebookHttpService.loginWithExpectedError(deviceData,
@@ -170,6 +237,83 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
                         lastAccountCheckResponse.userToken);
         state.lastFacebookErrorStatus = responseEntity.getStatusCode();
         state.lastFacebookError = responseEntity.getBody().getErrorMessage();
+    }
+
+    public void loginUsingGooglePlusWithoutAccessToken(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        ResponseEntity<GooglePlusResponse> responseEntity = googlePlusHttpService.loginWithoutAccessToken(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken);
+        state.lastGooglePlusError = responseEntity.getBody().getErrorMessage();
+        state.lastGooglePlusErrorStatus = responseEntity.getStatusCode();
+    }
+
+    public void loginUsingGooglePlusWithInvalidGooglePlusId(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        ResponseEntity<GooglePlusResponse> responseEntity = googlePlusHttpService.loginWithoutWithExpectedError(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId + 1, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken);
+        state.lastGooglePlusError = responseEntity.getBody().getErrorMessage();
+        state.lastGooglePlusErrorStatus = responseEntity.getStatusCode();
+    }
+
+    public void loginUsingGooglePlusWithEmptyEmail(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken("", state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        ResponseEntity<GooglePlusResponse> responseEntity = googlePlusHttpService.loginWithoutWithExpectedError(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken);
+        state.lastGooglePlusError = responseEntity.getBody().getErrorMessage();
+        state.lastGooglePlusErrorStatus = responseEntity.getStatusCode();
+    }
+
+    public void loginUsingGooglePlusWithInvalidAuthToken(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessTokenWithAuthError(state.getEmail(),
+                state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        ResponseEntity<GooglePlusResponse> responseEntity =
+                googlePlusHttpService.loginWithoutWithExpectedError(deviceData,
+                        state.getDeviceUID(),
+                        deviceData.getFormat(),
+                        accessToken,
+                        googlePlusUserId,
+                        state.getLastAccountCheckResponse().userName,
+                        state.getLastAccountCheckResponse().userToken);
+        state.lastGooglePlusError = responseEntity.getBody().getErrorMessage();
+        state.lastGooglePlusErrorStatus = responseEntity.getStatusCode();
+    }
+
+    public void loginUsingGooglePlusBadAuth(UserDeviceData deviceData) {
+        final PhoneStateImpl state = states.get(deviceData);
+
+        String googlePlusUserId = System.nanoTime() + "";
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
+        state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+
+        ResponseEntity<GooglePlusResponse> responseEntity =
+                googlePlusHttpService.loginWithoutWithExpectedError(deviceData,
+                        state.getDeviceUID(),
+                        deviceData.getFormat(),
+                        accessToken,
+                        googlePlusUserId,
+                        "badUsername",
+                        state.getLastAccountCheckResponse().userToken);
+
+        state.lastGooglePlusError = responseEntity.getBody().getErrorMessage();
+        state.lastGooglePlusErrorStatus = responseEntity.getStatusCode();
     }
 
     //

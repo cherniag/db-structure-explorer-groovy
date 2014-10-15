@@ -6,8 +6,8 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.PartnerDeviceSet;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
@@ -91,7 +91,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     public void thenUserShouldReceiveStateInDatabase(ActivationStatus activationStatus){
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), userDeviceData.getCommunityUrl());
+            User user = userDbService.findUser(phoneState, userDeviceData);
             assertEquals(activationStatus, user.getActivationStatus());
         }
     }
@@ -117,7 +117,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     public void thenUserShouldBeActivatedAndPromoShouldBeApplied(){
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), userDeviceData.getCommunityUrl());
+            User user = userDbService.findUser(phoneState, userDeviceData);
             assertNotNull(user.getLastPromo());
         }
     }
@@ -126,7 +126,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     public void andPromoShouldHaveMediaType(MediaType mediaType){
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), userDeviceData.getCommunityUrl());
+            User user = userDbService.findUser(phoneState, userDeviceData);
             assertEquals(mediaType, user.getLastPromo().getMediaType());
         }
     }

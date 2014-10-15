@@ -23,9 +23,10 @@ public class AccountCheckDTO {
 	public int chartTimestamp;
 	@Deprecated
 	public byte chartItems;
-	public int newsTimestamp;
-	@Deprecated
-	public byte newsItems;
+    @Deprecated
+    public int newsTimestamp = 1357126045;
+    @Deprecated
+    public byte newsItems = 10;
 	public String drmType;
 	public byte drmValue;
 

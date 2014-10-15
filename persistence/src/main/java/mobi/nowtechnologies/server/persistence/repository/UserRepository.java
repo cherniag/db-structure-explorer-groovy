@@ -250,7 +250,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             +"join FETCH user.deviceType deviceType "
             +"join FETCH user.userGroup userGroup "
             +"join FETCH userGroup.chart chart "
-            +"join FETCH userGroup.news news "
             +"join FETCH userGroup.drmPolicy drmPolicy "
             +"join FETCH drmPolicy.drmType drmType "
             +"join FETCH userGroup.community community "

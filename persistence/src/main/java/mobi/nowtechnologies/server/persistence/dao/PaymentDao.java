@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.persistence.dao;
 import mobi.nowtechnologies.server.persistence.domain.payment.AbstractPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaCallback;
@@ -23,12 +22,6 @@ import java.util.List;
 public class PaymentDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PaymentDao.class.getName());
-	
-	private UserRepository userRepository;
-	
-	public void setUserRepository(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
 	public PendingPayment savePendingPayment(PendingPayment pendingPayment) {

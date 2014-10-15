@@ -1,8 +1,8 @@
+@Ready
 Feature: Successful activation via Google Plus in google plus supported communities
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #google plus supported versions: 6.0, 6.1
 #google plus supported communities: hl_uk, demo, demo2, demo3
-
   Scenario: Activation of new user via Google Plus in google plus supported communities
     Given Registered user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities
     When Registered user enters Google Plus credentials

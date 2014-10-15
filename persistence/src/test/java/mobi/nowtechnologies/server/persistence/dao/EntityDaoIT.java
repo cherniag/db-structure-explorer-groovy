@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.UserType;
-import org.junit.AfterClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -75,30 +76,6 @@ public class EntityDaoIT {
 		User user = entityDao.findById(User.class, 1);
 		assertEquals("", user.getFirstName());
 	}
-	
-	@Test
-	public void testFindNewsByAppVersion()
-		throws Exception {
-
-		String aAppVersion = "CN Commercial Beta";
-
-		News news = entityDao.findByCommunity(News.class, aAppVersion);
-		assertNotNull(news);
-		
-		assertEquals((byte)3, news.getI());
-		assertEquals("Default News",news.getName());
-		assertEquals(10,news.getNumEntries());
-		//assertEquals(1306942494,news.getTimestamp());
-	}
-	
-//	@Test
-//	public void testSaveEntity_Success() {
-//		Genre genre = new Genre();
-//		genre.setName("test");
-//		entityDao.saveEntity(genre);
-//		Genre genre2=entityDao.findByProperty(Genre.class, Genre.Fields.name.toString(), "test");
-//		assertNotNull(genre2);
-//	}
 	
 	@Test
 	public void testSaveAccountLog() {

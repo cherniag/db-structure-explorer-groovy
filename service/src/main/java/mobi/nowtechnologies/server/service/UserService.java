@@ -966,7 +966,7 @@ public class UserService {
             modelMap.put("email", email);
             modelMap.put("password", tmpPassword);
 
-            mailService.sendMail(from, to, subject, body, modelMap);
+            mailService.sendMessage(from, to, subject, body, modelMap);
 
             isUserExist = true;
         }

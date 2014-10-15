@@ -1,3 +1,4 @@
+@Ready
 Feature: Specific error codes for different Facebook responses
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #facebook supported versions: 5.2, 6.0, 6.1

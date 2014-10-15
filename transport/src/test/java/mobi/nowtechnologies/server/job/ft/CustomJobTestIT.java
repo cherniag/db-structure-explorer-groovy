@@ -5,6 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.Scheduler;
+import org.quartz.Trigger;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -21,7 +22,8 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextHierarchy({
         @ContextConfiguration(locations = {
-                "classpath:transport-root-test.xml", "classpath:ft-job-test.xml"}),
+                "classpath:transport-root-test.xml",
+                "classpath:ft-job-test.xml"}),
         @ContextConfiguration(locations = {
                 "classpath:transport-servlet-test.xml"})})
 @WebAppConfiguration
@@ -33,6 +35,9 @@ public class CustomJobTestIT {
     @Resource
     private Scheduler scheduler;
 
+    @Resource
+    Trigger newTrigger;
+
     @Before
     public void setUp() throws Exception {
         int i=0;
@@ -40,7 +45,13 @@ public class CustomJobTestIT {
 
     @Test
     public void testName() throws Exception {
-        int i=0;
+        System.out.println("######################");
+        Thread.sleep(2000);
+        System.out.println("######################");
+        scheduler.rescheduleJob("triggerName", "groupName", newTrigger);
+        System.out.println("######################");
+        Thread.sleep(2000);
+        System.out.println("######################");
 
     }
 }

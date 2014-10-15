@@ -3,7 +3,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.8.0</version>
+        <version>5.8.3</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -50,15 +50,6 @@
             <id>application-tests</id>
             <properties>
                 <profile>application-tests</profile>
-            </properties>
-        </profile>
-        <profile>
-            <id>production</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <profile>production</profile>
             </properties>
         </profile>
     </profiles>
