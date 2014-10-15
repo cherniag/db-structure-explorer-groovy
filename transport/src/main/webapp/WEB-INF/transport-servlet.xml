@@ -4,7 +4,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
@@ -13,7 +13,7 @@
         <bean class="mobi.nowtechnologies.server.interceptor.RequestInfoInterceptor" />
         <bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
 	</mvc:interceptors>
-	
+
 	<mvc:annotation-driven />
 
     <context:annotation-config/>
@@ -23,16 +23,7 @@
     </bean>
 
 	<!-- Application properties     -->
-	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:application.properties</value>
-				<value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
-			</list>
-		</property>
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="ignoreResourceNotFound" value="true" />
-	</bean>
+    <import resource="classpath:META-INF/placeholders.xml"/>
 
 	<!--<bean class="mobi.nowtechnologies.server.config.WebConfigPostProcessor"/>-->
 
@@ -411,7 +402,7 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<!-- Transport only service -->
 	<bean id="throttlingService" class="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl">
 		<property name="memcachedClient">
@@ -430,4 +421,45 @@
     <bean id="accCheckService" class="mobi.nowtechnologies.server.service.AccCheckService"/>
 
     <import resource="classpath:controllers.xml" />
+
+    <beans profile="application-tests">
+        <bean id="jobScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+            <property name="autoStartup" value="${jobs.autoStartup}" />
+            <property name="triggers">
+                <list>
+                    <ref bean="paymentTrigger"/>
+                    <ref bean="retryPaymentTrigger" />
+                    <ref bean="expiredPaymentTrigger" />
+                    <ref bean="transport.smsAccordingToLawSamsungQuartzTrigger" />
+                    <ref bean="transport.smsAccordingToLawChartsNowQuartzTrigger" />
+                    <ref bean="transport.smsAccordingToLawRunningTraxQuartzTrigger" />
+                    <ref bean="transport.smsAccordingToLawMoboQuartzTrigger" />
+                    <ref bean="transport.smsAccordingToLawO2QuartzTrigger" />
+                    <ref bean="transport.smsNotificationQuartzTrigger" />
+                    <ref bean="before48hPSMSPaymentTrigger"/>
+                    <ref bean="sendSmsForVFNZUsersTrigger"/>
+                    <ref bean="businessTaskTrigger"/>
+                    <ref bean="jobTrigger"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean id="jobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+            <property name="jobDetail" ref="ftJobDetail"/>
+            <property name="name" value="triggerName" />
+            <property name="jobName" value="jobName"/>
+            <property name="startDelay" value="${jobTrigger.job.startDelayMillis}" />
+            <property name="repeatInterval" value="${jobTrigger.job.repeatIntervalMillis}" />
+        </bean>
+
+        <bean id="ftJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+            <property name="jobClass" value="mobi.nowtechnologies.server.job.AppTestManageJobsBean" />
+            <property name="jobDataAsMap">
+                <map merge="true">
+                    <entry key="jobTriggerRequestRepository" value-ref="jobTriggerRequestRepository" />
+                </map>
+            </property>
+        </bean>
+
+</beans>
 </beans>

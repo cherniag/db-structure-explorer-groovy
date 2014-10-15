@@ -8,15 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * 27.09.13 12:57
  */
 public class ProviderUserDetails {
-
-    public static class NullProviderUserDetails extends ProviderUserDetails{
-        private NullProviderUserDetails(){
-
-        }
-    }
-
-    public static final NullProviderUserDetails NULL_PROVIDER_USER_DETAILS = new NullProviderUserDetails();
-
     public String operator;
     public String contract;
 

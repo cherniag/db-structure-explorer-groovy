@@ -1,3 +1,4 @@
+@Ready
 Feature: Extend SIGN_UP Device API request by additional xtify_token param starting from 6,1 version
 
   Scenario: device sends xtify token for the 6,0 version and device user data will not be created

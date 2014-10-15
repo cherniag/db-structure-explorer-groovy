@@ -1,5 +1,5 @@
+@Ready
 Feature: Email registration success flows
-  @InDevelopment
   Scenario: Sign up and apply promo using email
     Given First time user with device using JSON format for all email supported versions and email supported communities and all devices available
     When User signs up the device
@@ -10,7 +10,7 @@ Feature: Email registration success flows
     When User hits the link in email
     Then User has SUBSCRIBED status
     And registration info is in ACTIVATED status
-  @InDevelopment
+
   Scenario: Sign up and not completed activation via email
     Given First time user with device using JSON format for all email supported versions and email supported communities and all devices available
     When User signs up the device
@@ -21,7 +21,6 @@ Feature: Email registration success flows
     When User signs up the device
     And registration info is in REGISTERED status
 
-  @InDevelopment
   Scenario: Register with different email on the same device
     Given First time user with device using JSON format for all email supported versions and email supported communities and all devices available
     When User signs up the device
@@ -43,7 +42,7 @@ Feature: Email registration success flows
     Then User has SUBSCRIBED status
     And registration info is in ACTIVATED status
     And user has username as new email
-  @InDevelopment
+
   Scenario: Register with different devices but the same email
     Given First time user with device using JSON format for all email supported versions and email supported communities and all devices available
     When User signs up the device

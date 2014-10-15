@@ -4,6 +4,7 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -15,15 +16,16 @@ public class ChartHttpService extends AbstractHttpService {
         UserDataCreator.TimestampTokenData token = createUserToken(userToken);
 
         String uri = getUri(deviceData, "GET_CHART", format);
-        MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
-        request.add("USER_NAME", userName);
-        request.add("USER_TOKEN", token.getTimestampToken());
-        request.add("TIMESTAMP", token.getTimestamp());
-        request.add("DEVICE_UID", deviceUID);
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        parameters.add("USER_NAME", userName);
+        parameters.add("USER_TOKEN", token.getTimestampToken());
+        parameters.add("TIMESTAMP", token.getTimestamp());
+        parameters.add("DEVICE_UID", deviceUID);
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "]");
-
-        String body = restTemplate.postForEntity(uri, request, String.class).getBody();
+        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        ResponseEntity<String> entity = restTemplate.postForEntity(uri, parameters, String.class);
+        String body = entity.getBody();
+        logger.info("Response body [{}]\n", body);
 
         return body;
     }
