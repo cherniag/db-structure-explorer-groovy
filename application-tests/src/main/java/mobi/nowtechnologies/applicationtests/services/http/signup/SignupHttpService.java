@@ -23,9 +23,9 @@ public class SignupHttpService extends AbstractHttpService {
             request.add("XTIFY_TOKEN", xtifyToken);
         }
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
-
+        logger.info("\nSending for to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
         String body = restTemplate.postForEntity(uri, request, String.class).getBody();
+        logger.info("Response body [{}]\n", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
     }

@@ -59,9 +59,9 @@ public class FacebookHttpService extends AbstractHttpService {
         UriComponents build = builder.build();
         URI requestUri = build.toUri();
 
-        logger.info("Sending for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
+        logger.info("\nSending for for [{}] to [{}] headers [{}], parameters [{}]", deviceData, uri, headers, build.getQueryParams());
         ResponseEntity<FacebookResponse> response = restTemplate.exchange(requestUri, HttpMethod.POST, entity, FacebookResponse.class);
-        logger.info("Response [{}]", response);
+        logger.info("Response entity [{}]\n", response);
 
 
         return response;

@@ -50,6 +50,10 @@ public class Update {
         this.community = community;
     }
 
+    public void updateDate() {
+        this.date = new Date();
+    }
+
     public long getId() {
         return id;
     }
@@ -116,9 +120,7 @@ public class Update {
         }
     }
 
-    private void copyBlocks(Update incoming) {
-        //Assert.isTrue(canEdit());
-
+    public void copyBlocks(Update incoming) {
         this.blocks.clear();
 
         for (Block block : incoming.getBlocks()) {

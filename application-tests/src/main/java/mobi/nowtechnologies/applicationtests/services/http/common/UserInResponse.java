@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.applicationtests.services.http.domain.facebook;
+package mobi.nowtechnologies.applicationtests.services.http.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author kots
  * @since 8/20/2014.
  */
-public class User {
-
+public class UserInResponse {
     private String displayName;
     private Integer subBalance;
     private String status;
@@ -47,8 +46,7 @@ public class User {
     private Boolean canActivateVideoTrial;
     private Boolean eligibleForVideo;
     private Boolean subjectToAutoOptIn;
-    private UserDetails userDetails;
-    private  String firstActivation;
+    private String firstActivation;
     private String appStoreProductId;
 
     public String getAppStoreProductId() {
@@ -379,13 +377,5 @@ public class User {
 
     public void setSubjectToAutoOptIn(Boolean subjectToAutoOptIn) {
         this.subjectToAutoOptIn = subjectToAutoOptIn;
-    }
-
-    public UserDetails getUserDetails() {
-        return userDetails;
-    }
-
-    public void setUserDetails(UserDetails userDetails) {
-        this.userDetails = userDetails;
     }
 }
