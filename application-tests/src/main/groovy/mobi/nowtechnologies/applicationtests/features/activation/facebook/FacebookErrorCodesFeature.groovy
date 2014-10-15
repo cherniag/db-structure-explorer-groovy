@@ -5,8 +5,8 @@ import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
@@ -52,7 +52,7 @@ class FacebookErrorCodesFeature {
         currentUserDevices.each {
             deviceSet.singup(it)
             def phoneState = deviceSet.getPhoneState(it)
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
 
             //dirty hack to fetch all lazy deps without customizing hibernate queries of manually checking data
             new ObjectFormatter(Integer.MAX_VALUE).format(user)
@@ -60,7 +60,6 @@ class FacebookErrorCodesFeature {
 
             users.put(it, user)
         }
-
     }
 
     @When('^Registered user enters Facebook credentials$')
@@ -89,10 +88,10 @@ class FacebookErrorCodesFeature {
 
     @Transactional("applicationTestsTransactionManager")
     @And('^In database user account remains unchanged$')
-    def "In database user account remains unchanged"() throws Throwable {
+    def "In database user account remains unchanged"() {
         currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
-            def user = userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), it.getCommunityUrl())
+            def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
             assertReflectionEquals(oldUser, user, ReflectionComparatorMode.LENIENT_ORDER)
         }

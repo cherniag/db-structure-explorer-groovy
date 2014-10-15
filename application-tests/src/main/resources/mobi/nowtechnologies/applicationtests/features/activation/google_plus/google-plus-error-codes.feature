@@ -1,3 +1,4 @@
+@Ready
 Feature: Specific error codes for different Google Plus responses
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #google plus supported versions: 6.0, 6.1
@@ -12,7 +13,7 @@ Feature: Specific error codes for different Google Plus responses
   Scenario: User cannot be activated via Google Plus if Google Plus returns invalid Google Plus user id
     Given Registered user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities
     When Registered user enters Google Plus credentials and Google Plus returns invalid Google Plus user id
-    Then User gets 403 http error code and 761 error code and invalid user Google Plus user id message
+    Then User gets 403 http error code and 761 error code and invalid user google plus id message
     And In database user account remains unchanged
 
   Scenario: User cannot be activated via Google Plus if Google Plus returns invalid access token

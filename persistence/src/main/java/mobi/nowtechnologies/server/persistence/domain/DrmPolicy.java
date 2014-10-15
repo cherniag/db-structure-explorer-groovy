@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
@@ -35,9 +37,6 @@ public class DrmPolicy implements Serializable {
 
 	@Column(name="name",columnDefinition="char(25)")
 	private String name;
-
-    public DrmPolicy() {
-    }
 
 	public byte getI() {
 		return this.i;
@@ -89,9 +88,14 @@ public class DrmPolicy implements Serializable {
 		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		return "DrmPolicy [communityId=" + communityId + ", drmTypeId=" + drmTypeId + ", drmValue=" + drmValue + ", i=" + i + ", name=" + name + "]";
-	}
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("i", i)
+                .append("name", name)
+                .append("communityId", communityId)
+                .append("drmTypeId", drmTypeId)
+                .append("drmValue", drmValue)
+                .toString();
+    }
 }

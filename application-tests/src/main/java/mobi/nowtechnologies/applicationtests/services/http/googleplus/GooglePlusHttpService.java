@@ -2,42 +2,76 @@ package mobi.nowtechnologies.applicationtests.services.http.googleplus;
 
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
-import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import mobi.nowtechnologies.applicationtests.services.http.facebook.GooglePlusUserDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
-import org.springframework.http.ResponseEntity;
+import mobi.nowtechnologies.applicationtests.services.http.domain.google_plus.GooglePlusResponse;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.Arrays;
 
 @Service
 public class GooglePlusHttpService extends AbstractHttpService {
-    public GooglePlusUserDetailsDto login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String googlePlusUserId) {
-        ResponseEntity<String> stringResponseEntity = doLogin(deviceData, deviceUID, accountCheck, format, accessToken, googlePlusUserId, accountCheck.userName);
-
-        GooglePlusUserDetailsDto googlePlusUserDetailsDto = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), JsonHelper.USER_DETAILS_PATH, GooglePlusUserDetailsDto.class);
-
-        return googlePlusUserDetailsDto;
+    public GooglePlusResponse login(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName, String userToken) {
+        return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken).getBody();
     }
 
-    private ResponseEntity<String> doLogin(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String googlePlusUserId, String userName) {
-        UserDataCreator.TimestampTokenData userToken = userDataCreator.createUserToken(accountCheck.userToken);
+    public ResponseEntity<GooglePlusResponse> loginWithoutWithExpectedError(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName, String userToken) {
+        return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken);
+    }
+
+    public ResponseEntity<GooglePlusResponse> loginWithoutAccessToken(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName, String userToken) {
+        return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken, true);
+    }
+
+    private ResponseEntity<GooglePlusResponse> doLogin(UserDeviceData deviceData,
+                                                       String deviceUID,
+                                                       RequestFormat format,
+                                                       String accessToken,
+                                                       String googlePlusUserId,
+                                                       String userName, String userToken) {
+        return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken, false);
+    }
+
+    private ResponseEntity<GooglePlusResponse> doLogin(UserDeviceData deviceData,
+                                                       String deviceUID,
+                                                       RequestFormat format,
+                                                       String accessToken,
+                                                       String googlePlusUserId,
+                                                       String userName,
+                                                       String userToken,
+                                                       boolean omitAccessToken) {
+        UserDataCreator.TimestampTokenData googlePlusUserToken = userDataCreator.createUserToken(userToken);
 
         String uri = getUri(deviceData, "SIGN_IN_GOOGLE_PLUS", format);
 
-        MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
-        request.add("USER_TOKEN", userToken.getTimestampToken());
-        request.add("TIMESTAMP", userToken.getTimestamp());
-        request.add("ACCESS_TOKEN", accessToken);
-        request.add("DEVICE_TYPE", deviceData.getDeviceType());
-        request.add("GOOGLE_PLUS_USER_ID", googlePlusUserId);
-        request.add("USER_NAME", userName);
-        request.add("DEVICE_UID", deviceUID);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri);
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "]");
+        builder.queryParam("USER_TOKEN", googlePlusUserToken.getTimestampToken());
+        if (!omitAccessToken) {
+            builder.queryParam("ACCESS_TOKEN", accessToken);
+        }
+        builder.queryParam("GOOGLE_PLUS_USER_ID", googlePlusUserId);
+        builder.queryParam("USER_NAME", userName);
+        builder.queryParam("TIMESTAMP", googlePlusUserToken.getTimestamp());
+        builder.queryParam("DEVICE_TYPE", deviceData.getDeviceType());
+        builder.queryParam("DEVICE_UID", deviceUID);
 
-        return restTemplate.postForEntity(uri, request, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        //need to overwrite default accept headers
+        headers.setAccept(Arrays.asList(MediaType.ALL));
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+        UriComponents build = builder.build();
+        URI requestUri = build.toUri();
+
+        logger.info("\nSending for to [{}], parameters [{}], headers [{}]", uri, build.getQueryParams(), headers);
+        ResponseEntity<GooglePlusResponse> response = restTemplate.exchange(requestUri, HttpMethod.POST, entity, GooglePlusResponse.class);
+        logger.info("Response entity [{}]\n", response);
+
+        return response;
     }
 }
