@@ -4,6 +4,8 @@
 set AUTOCOMMIT=0;
 START TRANSACTION;
 
+insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.8.5", "5.8.5");
+
 select @userGroupId:= c.id from tb_communities c join tb_userGroups ug on ug.community = c.id where c.name = 'mtv1';
 
 UPDATE
@@ -17,9 +19,7 @@ SET
   p.isActive = true
 ;
 
-commit;-- begin SRV-291
-SET autocommit = 0;
-START TRANSACTION;
+-- begin SRV-291
 
 select @mtv1_community_id:= c.id from tb_communities c where c.name = 'mtv1';
 
@@ -31,5 +31,5 @@ update tb_paymentPolicy
 set app_store_product_id = 'com.musicqubed.ios.mtv1.subscription.weekly.0'
 where communityID = @mtv1_community_id and paymentType='iTunesSubscription';
 
-COMMIT;
 -- end SRV-291
+COMMIT;
