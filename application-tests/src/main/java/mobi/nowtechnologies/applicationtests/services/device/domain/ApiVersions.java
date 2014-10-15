@@ -22,4 +22,9 @@ public class ApiVersions {
         int indexOf = versions.indexOf(of);
         return new ArrayList<String>(versions.subList(indexOf, versions.size()));
     }
+
+    public List<String> bellow(String of) {
+        int indexOf = versions.indexOf(of);
+        return new ArrayList<String>(versions.subList(0, indexOf));
+    }
 }
