@@ -1,5 +1,9 @@
 package mobi.nowtechnologies.applicationtests.services.http.domain.facebook;
 
+import mobi.nowtechnologies.applicationtests.services.http.common.Error;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.Response;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -36,5 +40,14 @@ public class FacebookResponse {
 
     public void setResponse(Response response) {
         this.response = response;
+    }
+
+    @Override
+    public String toString() {
+        return "FacebookResponse{" +
+                "response=" + response +
+                ", user=" + user +
+                ", errorMessage=" + errorMessage +
+                '}';
     }
 }

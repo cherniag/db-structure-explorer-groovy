@@ -6,6 +6,7 @@ import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,18 +26,20 @@ public class AutoOptInHttpService extends AbstractHttpService {
         UserDataCreator.TimestampTokenData token = createUserToken(accountCheck.userToken);
 
         String uri = getUri(deviceData, "AUTO_OPT_IN", format);
-        MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
-        request.add("USER_NAME", accountCheck.userName);
-        request.add("USER_TOKEN", token.getTimestampToken());
-        request.add("TIMESTAMP", token.getTimestamp());
-        request.add("DEVICE_UID", accountCheck.deviceUID);
+
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        parameters.add("USER_NAME", accountCheck.userName);
+        parameters.add("USER_TOKEN", token.getTimestampToken());
+        parameters.add("TIMESTAMP", token.getTimestamp());
+        parameters.add("DEVICE_UID", accountCheck.deviceUID);
         if(!isEmpty(otac)) {
-            request.add("OTAC_TOKEN", otac);
+            parameters.add("OTAC_TOKEN", otac);
         }
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
-        String body = restTemplate.postForEntity(uri, request, String.class).getBody();
-        logger.info("Response is [{}]", body);
+        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        ResponseEntity<String> entity = restTemplate.postForEntity(uri, parameters, String.class);
+        String body = entity.getBody();
+        logger.info("Response body [{}]\n", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
     }

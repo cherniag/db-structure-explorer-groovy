@@ -1,14 +1,20 @@
 package mobi.nowtechnologies.applicationtests.configuration;
 
+import com.google.common.base.Charsets;
+import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
 import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
 import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -17,7 +23,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
-import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -30,15 +35,22 @@ import java.util.Properties;
                 "mobi.nowtechnologies.applicationtests.features"
         })
 @Import(PropertyPlaceholderConfiguration.class)
-@ImportResource({"classpath:META-INF/dao.xml"})
+@ImportResource({
+        "classpath:META-INF/dao.xml",
+        "classpath:META-INF/service-application-tests.xml"
+})
 @EnableTransactionManagement(proxyTargetClass = true)
 public class ApplicationConfiguration {
 
     @Bean(name = "mno.RestTemplate")
     public RestTemplate getRestTemplate() {
-        //needed to parse 401 response body
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setOutputStreaming(false);
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10 * 1000);
+        DefaultHttpClient client = (DefaultHttpClient) requestFactory.getHttpClient();
+        PoolingClientConnectionManager conManager = (PoolingClientConnectionManager) client.getConnectionManager();
+        conManager.setDefaultMaxPerRoute(20);
+
+        // requestFactory.setOutputStreaming(false);
         RestTemplate restTemplate = new RestTemplate(requestFactory);
 
         //needed fo xml handling
@@ -102,6 +114,15 @@ public class ApplicationConfiguration {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
+    @Bean(name = "webReloadableResourceBundleMessageSource")
+    public MessageSource webReloadableResourceBundleMessageSource() {
+        ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+        source.setBasename("classpath:web/application_tests/i18n/messages");
+        source.setCacheSeconds(-1);
+        source.setDefaultEncoding(Charsets.UTF_8.name());
+        return source;
+    }
+
     private DataSource dataSource(String url, String username, String password) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
@@ -113,8 +134,8 @@ public class ApplicationConfiguration {
 
     Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "update");
-        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
+        properties.setProperty("hibernate.show_sql", "false");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
         return properties;
     }

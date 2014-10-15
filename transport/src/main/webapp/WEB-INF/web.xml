@@ -17,7 +17,7 @@
 	</context-param>
     <context-param>
         <param-name>spring.profiles.active</param-name>
-        <param-value>${profile}</param-value>
+        <param-value>@profile@</param-value>
     </context-param>
 
 	<listener>

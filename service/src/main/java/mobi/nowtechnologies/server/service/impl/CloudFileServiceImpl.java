@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service.impl;
 import com.google.common.io.Closeables;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
-import com.rackspacecloud.client.cloudfiles.FilesObject;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import org.apache.commons.collections.MapUtils;
@@ -18,11 +17,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -124,20 +120,6 @@ public class CloudFileServiceImpl implements CloudFileService {
         return isLogged;
     }
 
-    private Collection<FilesObject> findFilesStartWith(String prefix, int limit) {
-        if (!StringUtils.isEmpty(prefix)) {
-            login();
-            try {
-                Collection<FilesObject> result = filesClient.listObjectsStartingWith(containerName,  prefix, null, limit, null);
-                return isEmpty(result) ? Collections.<FilesObject>emptyList() : result;
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new ExternalServiceException("cloudFile.service.externalError.cantfindfiles", "Coudn't find files");
-            }
-        }
-        return Collections.emptyList();
-    }
-
     @Override
     public void deleteFile(String fileName) {
         LOGGER.info("delete file in container [] by fileName", containerName, fileName);
@@ -166,9 +148,27 @@ public class CloudFileServiceImpl implements CloudFileService {
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Coudn't find  file");
+            throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Couldn't find  file");
         }
 
+    }
+
+    @Override
+    public boolean fileExists(String destinationContainer, String fileName) {
+        LOGGER.info("get InputStream for file file in container [] by fileName", destinationContainer, fileName);
+        Assert.hasText(fileName);
+        login();
+        try {
+            filesClient.getObjectMetaData(destinationContainer, fileName);
+            return true;
+        }
+        catch (FilesNotFoundException e) {
+            return false;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Couldn't find  file");
+        }
     }
 
     @SuppressWarnings("unchecked")

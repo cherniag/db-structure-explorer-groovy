@@ -1,24 +1,17 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import mobi.nowtechnologies.common.dto.UserRegInfo;
-import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.MailService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Aspect
 public class MailNotification {
@@ -63,7 +56,7 @@ public class MailNotification {
 			model.put("email", user.getUserName());
 			model.put("password", newPassword);
 		
-		mailService.sendMail(from, new String[]{user.getUserName()}, subject , body , model);
+		mailService.sendMessage(from, new String[]{user.getUserName()}, subject, body, model);
 		LOGGER.info("User {} reset a password", user.getUserName());
 	}
 	
@@ -75,6 +68,6 @@ public class MailNotification {
 		String name = (String) joinPoint.getArgs()[1];
 		String subject = (String) joinPoint.getArgs()[2];
 		
-		mailService.sendMail(from, new String[]{messageSource.getMessage(null, "support.email",null, null)}, "From User "+name , subject, null);
+		mailService.sendMessage(from, new String[]{messageSource.getMessage(null, "support.email", null, null)}, "From User " + name, subject, null);
 	}
 }

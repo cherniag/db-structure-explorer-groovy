@@ -39,7 +39,6 @@ http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springfram
 
 	<bean id="persistence.PaymentDao" class="mobi.nowtechnologies.server.persistence.dao.PaymentDao">
 		<property name="entityManagerFactory" ref="persistence.EntityManagerFactory" />
-		<property name="userRepository" ref="userRepository" />
 	</bean>
 
 	<bean id="persistence.EntityDao" class="mobi.nowtechnologies.server.persistence.dao.EntityDao">

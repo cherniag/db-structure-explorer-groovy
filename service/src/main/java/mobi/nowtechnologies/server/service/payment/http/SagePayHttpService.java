@@ -4,6 +4,7 @@ import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.shared.service.PostService;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class SagePayHttpService extends PaymentHttpService {
+public class SagePayHttpService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SagePayHttpService.class);
 	
@@ -20,7 +21,16 @@ public class SagePayHttpService extends PaymentHttpService {
 	private String repeatUrl;
 	
 	private SagePayRequest request;
-	
+    private PostService httpService;
+
+    public void setPostService(PostService httpService) {
+        this.httpService = httpService;
+    }
+
+    public PostService getPostService() {
+        return httpService;
+    }
+
 	protected SagePayResponse sendRequest(String url, List<NameValuePair> nameValuePairs) {
 		LOGGER.debug("SagePay http request params {}", nameValuePairs);
         BasicResponse response = getPostService().sendHttpPost(url, nameValuePairs, null);

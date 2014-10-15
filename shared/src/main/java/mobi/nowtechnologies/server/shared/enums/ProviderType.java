@@ -12,7 +12,7 @@ public enum ProviderType {
         if (isNull(key)) {
             return null;
         }
-        for (ProviderType currentType : ProviderType.values()) {
+        for (ProviderType currentType : values()) {
             if (currentType.key.equals(key)) {
                 return currentType;
             }

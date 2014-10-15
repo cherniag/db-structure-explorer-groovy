@@ -1,8 +1,8 @@
+@Ready
 Feature: Merge accounts during activation via Google Plus and re-using same emails via Facebook activation
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #google plus supported versions: 6.0, 6.1
 #google plus supported communities: hl_uk, demo, demo2, demo3
-
   Scenario: User re-activates the same Google Plus account with updated details on same device
     Given Activated via Google Plus user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities
     When User registers using same device
@@ -34,12 +34,12 @@ Feature: Merge accounts during activation via Google Plus and re-using same emai
     And In database new user has Google Plus details the same as specified in new Google Plus account
 
   Scenario: User re-activates with same Google Plus account on another activated device
-    Given Activated via Google Plus user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities
+    Given Activated via Google Plus user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities and a second activated user
     When User registers using second activated device
-    Then Temporary account is created
+    Then Temporary account is created for the second device
     And Second account becomes deactivated
     When Registered user enters first Google Plus credentials
-    Then Temporary account is removed
+    Then Temporary account is removed for the second device
     And Second account remains deactivated
     And First account is updated with second device uid
 
@@ -48,7 +48,7 @@ Feature: Merge accounts during activation via Google Plus and re-using same emai
     When User registers using same device
     Then Temporary account is created
     And First account becomes deactivated
-    When Registered user enters Google Plus credentials
+    When Registered user enters Google Plus credentials with different email
     Then New user is successfully activated
     And Default promo is applied
     And First account remains deactivated
@@ -59,7 +59,7 @@ Feature: Merge accounts during activation via Google Plus and re-using same emai
     When User registers using same device
     Then Temporary account is created
     And First account becomes deactivated
-    When Registered user enters Facebook credentials
+    When Registered user enters Facebook credentials with different email
     Then New user is successfully activated
     And Default promo is applied
     And First account remains deactivated
@@ -88,7 +88,7 @@ Feature: Merge accounts during activation via Google Plus and re-using same emai
     And In database first user has details the same as specified in Facebook account
 
   Scenario: User with Facebook provider re-activates on same device with second activated Google Plus account
-    Given Activated via Facebook user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities
+    Given Activated via Facebook user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities with a second user activated via Google Plus
     When User registers using same device
     Then Temporary account is created
     And First account becomes deactivated
@@ -98,7 +98,7 @@ Feature: Merge accounts during activation via Google Plus and re-using same emai
     And Second account is updated with first device uid
 
   Scenario: User with Google Plus provider re-activates on same device with second activated Facebook account
-    Given Activated via Google Plus user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities
+    Given Activated via Google Plus user with all devices using JSON and XML format for all google plus supported versions and google plus supported communities with a second user activated via Facebook
     When User registers using same device
     Then Temporary account is created
     And First account becomes deactivated
