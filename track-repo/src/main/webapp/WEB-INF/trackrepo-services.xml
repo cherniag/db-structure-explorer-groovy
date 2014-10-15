@@ -3,7 +3,10 @@
        xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    
+
+    <bean id="trackRepo.cloudHttpClient" class="org.apache.http.impl.client.DefaultHttpClient"/>
+
+
     <bean id="trackRepo.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">
 		<property name="userName" value="${cloudFile.userName}" />
 		<property name="password" value="${cloudFile.password}" />
@@ -14,6 +17,7 @@
 		<property name="userAgent" value="${cloudFile.userAgent}" />
 		<property name="containerName" value="${cloudFile.containerName}" />
 		<property name="filesURL" value="${cloudFile.filesURL}" />
+        <property name="httpClient" ref="trackRepo.cloudHttpClient"/>
 	</bean>
     
     <bean id="trackRepo.TrackService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl">

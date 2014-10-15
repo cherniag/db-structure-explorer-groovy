@@ -20,11 +20,11 @@ public class StreamzineUpdateCreator {
     StreamzineUpdateRepository streamzineUpdateRepository;
 
     @Transactional(value = "applicationTestsTransactionManager")
-    public Update create(UserDeviceData data, Update update) {
+    public Update create(UserDeviceData data, Update update, int shiftSeconds) {
         Community c = communityRepository.findByRewriteUrlParameter(data.getCommunityUrl());
         Update restored = new Update(DateUtils.addMilliseconds(new Date(), 1000), c);
         restored.updateFrom(update);
-        restored.updateDate();
+        restored.updateDate(DateUtils.addSeconds(new Date(), shiftSeconds));
         return streamzineUpdateRepository.saveAndFlush(restored);
     }
 }
