@@ -354,4 +354,14 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         PhoneStateImpl state = states.get(deviceData);
         return getStreamzineHttpService.getStreamzineErrorEntity(deviceData, state, timestampToken, timestamp, resolution, userName);
     }
+
+    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data, long ifModifiedSince) {
+        PhoneState state = states.get(data);
+        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, ifModifiedSince);
+    }
+
+    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data) {
+        PhoneState state = states.get(data);
+        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state);
+    }
 }

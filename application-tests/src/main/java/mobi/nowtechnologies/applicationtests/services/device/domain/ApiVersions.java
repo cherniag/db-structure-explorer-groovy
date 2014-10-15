@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.applicationtests.services.device.domain;
 
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +22,7 @@ public class ApiVersions {
 
     public List<String> above(String of) {
         int indexOf = versions.indexOf(of);
+        Assert.isTrue(indexOf >= 0, "Not found version " + of + " in (" + versions + ")");
         return new ArrayList<String>(versions.subList(indexOf, versions.size()));
     }
 }

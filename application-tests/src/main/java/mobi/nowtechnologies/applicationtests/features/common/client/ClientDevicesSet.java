@@ -124,6 +124,8 @@ public abstract class ClientDevicesSet {
         return states.get(deviceData);
     }
 
+
+
     static class PhoneStateImpl implements PhoneState {
         String deviceUID;
         String email;

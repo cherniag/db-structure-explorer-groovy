@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary;
 
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 import java.util.*;
 
@@ -24,6 +26,15 @@ public class Word {
         Iterators.addAll(values, iterable.iterator());
 
         return values;
+    }
+
+    public <T extends Enum<T>> Set<T> set(final Class<T> type) {
+        return new HashSet<T>(Lists.transform(list(), new Function<String, T>() {
+            @Override
+            public T apply(String input) {
+                return Enum.valueOf(type, input);
+            }
+        }));
     }
 
     public List<String> list() {

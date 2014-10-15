@@ -27,4 +27,11 @@ public class StreamzineUpdateCreator {
         restored.updateDate(DateUtils.addSeconds(new Date(), shiftSeconds));
         return streamzineUpdateRepository.saveAndFlush(restored);
     }
+
+    @Transactional(value = "applicationTestsTransactionManager")
+    public Update create(UserDeviceData data, int shiftSeconds) {
+        Community c = communityRepository.findByRewriteUrlParameter(data.getCommunityUrl());
+        Update restored = new Update(DateUtils.addSeconds(new Date(), shiftSeconds+1), c);
+        return streamzineUpdateRepository.saveAndFlush(restored);
+    }
 }
