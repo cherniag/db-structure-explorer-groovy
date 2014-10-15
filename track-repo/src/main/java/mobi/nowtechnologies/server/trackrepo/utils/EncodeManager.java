@@ -143,8 +143,8 @@ public class EncodeManager {
 			String coverImageFileName = getImageDir() + track.getUniqueTrackId() + "_cover.png";
 			LOGGER.debug("Cover file: " + coverImageFileName + " and it exists: " + new File(coverImageFileName).exists()); 
 
-			for (String bitrate : new String[] {"48", "96"}) {
-			
+			for (BitRate currentBitrate : BitRate.values() ) {
+                String bitrate = currentBitrate.getValue();
 				LOGGER.debug("Start converting for bitrate " + bitrate);
 				
 				String bitrateFileName = getWorkDir() + track.getUniqueTrackId() + "_"+ bitrate + ".m4a";
@@ -191,7 +191,7 @@ public class EncodeManager {
 				LOGGER.debug("Header file is moved to " + targetHdrFileName + " and exists: " + new File(targetHdrFileName).exists());
 				LOGGER.debug("Encoded file is moved to " + targetEncFileName + " and exists: " + new File(targetEncFileName).exists());
 
-				if (isHighRate == (bitrate == "96")){
+				if (isHighRate == (currentBitrate.equals(BitRate.BITRATE96))){
 				
 					String targetAudFileNameNoBitrate = getAudioDir() + track.getUniqueTrackId() + ".aud";
 					String targetEncFileNameNoBitrate = getEncodedDir() + track.getUniqueTrackId() + ".enc";
