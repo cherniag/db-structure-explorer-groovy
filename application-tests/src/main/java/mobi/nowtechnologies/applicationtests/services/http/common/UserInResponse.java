@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author kots
  * @since 8/20/2014.
  */
-public abstract class UserInResponse {
+public class UserInResponse {
     private String displayName;
     private Integer subBalance;
     private String status;

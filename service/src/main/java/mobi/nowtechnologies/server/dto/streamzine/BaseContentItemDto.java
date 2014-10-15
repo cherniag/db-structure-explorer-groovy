@@ -78,6 +78,10 @@ public abstract class BaseContentItemDto {
         this.badgeIcon = badgeIcon;
     }
 
+    public DeeplinkType getLinkType() {
+        return linkType;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.applicationtests.services.http.domain.common;
 
+import mobi.nowtechnologies.applicationtests.services.http.common.Error;
+
 /**
  * Created by kots on 9/11/2014.
  */
 public class DataWrapper {
-    private mobi.nowtechnologies.applicationtests.services.http.domain.common.Error errorMessage;
+    private mobi.nowtechnologies.applicationtests.services.http.common.Error errorMessage;
     private User user;
 
     public User getUser() {
@@ -15,7 +17,7 @@ public class DataWrapper {
         this.user = user;
     }
 
-    public mobi.nowtechnologies.applicationtests.services.http.domain.common.Error getErrorMessage() {
+    public Error getErrorMessage() {
         return errorMessage;
     }
 

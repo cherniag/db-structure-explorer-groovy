@@ -10,4 +10,9 @@ public class NullableString {
     public boolean isNull() {
         return null == v;
     }
+
+    @Override
+    public String toString() {
+        return v;
+    }
 }
