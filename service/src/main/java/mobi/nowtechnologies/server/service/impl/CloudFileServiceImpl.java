@@ -10,7 +10,7 @@ import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpException;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -39,6 +39,11 @@ public class CloudFileServiceImpl implements CloudFileService {
     private String userAgent;
     private String containerName;
     private String filesURL;
+    private HttpClient httpClient;
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
 
     public void setUserName(String userName) {
         this.userName = userName;
@@ -85,8 +90,7 @@ public class CloudFileServiceImpl implements CloudFileService {
     }
 
     public boolean init() throws IOException, HttpException {
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
-        filesClient = new FilesClient(defaultHttpClient, userName, password, authenticationURL, account, connectionTimeOutMilliseconds);
+        filesClient = new FilesClient(httpClient, userName, password, authenticationURL, account, connectionTimeOutMilliseconds);
         if (userAgent != null)
             filesClient.setUserAgent(userAgent);
         filesClient.setUseETag(useETag);
