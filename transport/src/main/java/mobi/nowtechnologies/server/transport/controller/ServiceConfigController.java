@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;

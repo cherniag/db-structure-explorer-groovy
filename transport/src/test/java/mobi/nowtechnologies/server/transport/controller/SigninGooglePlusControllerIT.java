@@ -28,6 +28,7 @@ import java.util.TimeZone;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService.GOOGLE_PLUS_URL;
 import static mobi.nowtechnologies.server.shared.enums.Gender.MALE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService.*;
 
 
 /**

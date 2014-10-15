@@ -4,8 +4,6 @@ import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
-import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
-import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;

@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
