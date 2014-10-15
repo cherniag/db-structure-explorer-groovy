@@ -713,12 +713,47 @@ INSERT INTO qrtz_simple_triggers (TRIGGER_NAME, TRIGGER_GROUP, REPEAT_COUNT, REP
 
 INSERT INTO qrtz_cron_triggers (TRIGGER_NAME, TRIGGER_GROUP, CRON_EXPRESSION, TIME_ZONE_ID) VALUES ('jobTrigger.ForkO2UsersForUpdateJob', 'DEFAULT', '0/1 * * * * ?', 'Europe/Helsinki');
 
-
-
 INSERT INTO `tb_paymentpolicy` (`communityID`,`subWeeks`,`subCost`,`paymentType`,`operator`,`shortCode`,`currencyISO`,`availableInStore`,`app_store_product_id`,`contract`,`segment`,`content_category`,`content_type`,`content_description`,`sub_merchant_id`,`provider`,`tariff`,`media_type`,`is_default`,`advanced_payment_seconds`,`after_next_sub_payment_seconds`,`online`)
 values
 (10,2,'2','o2Psms',NULL,'3107055','GBP',1,NULL,'PAYG','CONSUMER','other','mqbed_tracks_3107055','Description of content','O2 Tracks','O2','_3G','AUDIO',1,86400,172800,1),
 (10,2,'2','o2Psms',NULL,'3107055','GBP',1,NULL,'PAYM','CONSUMER','other','mqbed_tracks_3107055','Description of content','O2 Tracks','O2','_3G','AUDIO',1,86400,0,1),
 (10,1,'1.5','o2Psms',NULL,'3107057','GBP',1,NULL,'PAYG','CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','O2','_4G','VIDEO_AND_AUDIO',1,86400,172800,1),
 (10,1,'1.5','o2Psms',NULL,'3107057','GBP',1,NULL,'PAYM','CONSUMER','other','mqbed_tracks_3107057','Description of content','O2 Tracks','O2','_4G','VIDEO_AND_AUDIO',1,86400,0,1);
+
+--
+-- Medias and Charts
+--
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (1,'Default Chart',20,1,1307035342,0, 'BASIC_CHART');
+
+insert into tb_artist (i, name, info, realName) values (50,'Lmfao/Lauren Bennett/Goonrock','LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.','Lmfao/Lauren Bennett/Goonrock');
+
+insert into tb_labels (i,name) values (9,'INTERSCOPE');
+
+INSERT INTO tb_fileTypes (i, name) VALUES (1, 'Header');
+INSERT INTO tb_fileTypes (i, name) VALUES (2, 'Audio');
+INSERT INTO tb_fileTypes (i, name) VALUES (3, 'Image');
+INSERT INTO tb_fileTypes (i, name) VALUES (4, 'VIDEO');
+
+insert into tb_files (i, filename, size, fileType, version, duration) values (1894,'US-UM7-11-00061.aud',1464070,2,1, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1893,'US-UM7-11-00061.hdr',162676,1,666, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1891,'US-UM7-11-00061S.jpg',6125,3,3, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1892,'US-UM7-11-00061L.jpg',41581,3,2, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1675,'US-UM7-11-00061.jpg',0,3,4, 0);
+insert into tb_files (i, filename, size, fileType, version, duration) values (1676,'US-UM7-11-00061.mp3',0,1,9999, 0);
+
+
+insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
+values (1,0,'SOME_ISRC','Party Rock Anthem-1',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 1);
+
+insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
+values (2,0,'SOME_ISRC','Party Rock Anthem-2',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 2);
+
+insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
+values (3,0,'SOME_ISRC','Party Rock Anthem-3',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 3);
+
+insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
+values (4,0,'SOME_ISRC','Party Rock Anthem-4',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 4);
+
+insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
+values (5,0,'SOME_ISRC','Party Rock Anthem-5',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 5);
 

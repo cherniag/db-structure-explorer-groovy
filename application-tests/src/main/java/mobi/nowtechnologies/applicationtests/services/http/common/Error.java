@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.applicationtests.services.http.domain.common;
+package mobi.nowtechnologies.applicationtests.services.http.common;
 
 /**
  * @author kots

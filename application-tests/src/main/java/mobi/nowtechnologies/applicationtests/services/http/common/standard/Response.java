@@ -1,10 +1,9 @@
-package mobi.nowtechnologies.applicationtests.services.http.domain.facebook;
+package mobi.nowtechnologies.applicationtests.services.http.common.standard;
 
 import java.util.List;
 
 /**
- * @author kots
- * @since 8/20/2014.
+ * Created by kots on 9/11/2014.
  */
 class Response {
     private List<DataWrapper> data;
@@ -15,5 +14,10 @@ class Response {
 
     public void setData(List<DataWrapper> data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(data);
     }
 }

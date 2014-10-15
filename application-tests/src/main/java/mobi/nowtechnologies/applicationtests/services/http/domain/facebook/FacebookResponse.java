@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.applicationtests.services.http.domain.facebook;
 
-import mobi.nowtechnologies.applicationtests.services.http.domain.common.Error;
+import mobi.nowtechnologies.applicationtests.services.http.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.Response;
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
 
@@ -15,7 +15,7 @@ public class FacebookResponse {
     //json hack
     private Response response;
     private User user;
-    private mobi.nowtechnologies.applicationtests.services.http.domain.common.Error errorMessage;
+    private Error errorMessage;
 
     public Error getErrorMessage() {
         return errorMessage != null ? errorMessage : response.getData().get(0).getErrorMessage();

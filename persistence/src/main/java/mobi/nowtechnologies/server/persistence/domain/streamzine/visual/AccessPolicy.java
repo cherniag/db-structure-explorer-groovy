@@ -89,4 +89,13 @@ public class AccessPolicy {
         result = 31 * result + userStatusTypes.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "AccessPolicy{" +
+                "userStatusTypes=" + userStatusTypes +
+                ", permission=" + permission +
+                ", id=" + id +
+                '}';
+    }
 }
