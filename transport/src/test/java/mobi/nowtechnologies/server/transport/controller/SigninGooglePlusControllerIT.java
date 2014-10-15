@@ -110,8 +110,8 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
     }
 
     @Test
-    public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessWithJSON_v6_1() throws Exception {
-        String apiVersion = "6.1";
+    public void testSignUpAndApplyPromoForGooglePlusForFirstSignUpWithSuccessWithJSON_LatestVersion() throws Exception {
+        String apiVersion = LATEST_SERVER_API_VERSION;
         ReflectionTestUtils.setField(googlePlusService, "templateCustomizer", new GooglePlusTemplateCustomizerImpl
                 (googlePlusEmail, googlePlusUserId, firstName, lastName, pictureUrlFromGooglePlus, accessToken, gender, birthday, location, displayName, buildHomepageUrl(googlePlusUserId) ));
 

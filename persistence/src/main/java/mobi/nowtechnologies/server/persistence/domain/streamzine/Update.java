@@ -50,8 +50,9 @@ public class Update {
         this.community = community;
     }
 
-    public void updateDate() {
-        this.date = new Date();
+    public void updateDate(Date incoming) {
+        Assert.notNull(incoming);
+        this.date = incoming;
     }
 
     public long getId() {

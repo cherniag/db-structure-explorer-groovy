@@ -28,4 +28,6 @@ public interface CloudFileService {
 
     InputStream getInputStream(String destinationContainer, String fileName) throws FilesNotFoundException;
 
+    boolean fileExists(String destinationContainer, String fileName);
+
 }

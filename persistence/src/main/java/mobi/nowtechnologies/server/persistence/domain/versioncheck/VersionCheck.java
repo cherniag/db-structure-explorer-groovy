@@ -48,15 +48,19 @@ public class VersionCheck {
     @Column(name="application_name",columnDefinition="char(100)", nullable = false)
     private String applicationName;
 
+    @Column(name="image_file_name",columnDefinition="char(255)")
+    private String imageFileName;
+
     protected VersionCheck() {
     }
 
-    public VersionCheck(DeviceType deviceType, Community community, VersionMessage message, VersionCheckStatus status, String applicationName, ClientVersion clientVersion) {
+    public VersionCheck(DeviceType deviceType, Community community, VersionMessage message, VersionCheckStatus status, String applicationName, ClientVersion clientVersion, String imageFileName) {
         this.deviceType = deviceType;
         this.community = community;
         this.message = message;
         this.status = status;
         this.applicationName = applicationName;
+        this.imageFileName = imageFileName;
 
         this.majorNumber = clientVersion.major();
         this.minorNumber = clientVersion.minor();
@@ -72,6 +76,9 @@ public class VersionCheck {
         return message;
     }
 
+    public String getImageFileName() {
+        return imageFileName;
+    }
 
     public static final String MAJOR_NUMBER_PROPERTY_NAME = "majorNumber";
 

@@ -9,10 +9,13 @@ public class VersionCheckResponse {
 
     private String uri;
 
-    public VersionCheckResponse(String messageKey, VersionCheckStatus status, String uri) {
+    private String imageFileName;
+
+    public VersionCheckResponse(String messageKey, VersionCheckStatus status, String uri, String imageFileName) {
         this.messageKey = messageKey;
         this.status = status;
         this.uri = uri;
+        this.imageFileName = imageFileName;
     }
 
     public String getMessageKey() {
@@ -25,5 +28,9 @@ public class VersionCheckResponse {
 
     public String getUri() {
         return uri;
+    }
+
+    public String getImageFileName() {
+        return imageFileName;
     }
 }

@@ -48,7 +48,7 @@ public class MediaLogDaoIT extends AbstractRepositoryIT {
         int userId = 1;
         Media media = new Media();
         byte mediaLogType = (byte) 1;
-
+        media.setTrackId(1L);
         entityDao.saveEntity(media);
         mediaLogDao.logMediaEvent(userId, media, mediaLogType);
     }
