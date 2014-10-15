@@ -9,7 +9,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import javax.mail.Session;
 import java.util.Date;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * MailService
@@ -33,7 +32,7 @@ public class MailService {
 		this.mailSender = mailSender;
 	}
 
-	public void sendMail(String from, String[] to, String subject, String body, Map<String, String> model) {
+	public void sendMessage(String from, String[] to, String subject, String body, Map<String, String> model) {
 		try {
 			SimpleMailMessage message = new SimpleMailMessage();
 				message.setFrom(from);

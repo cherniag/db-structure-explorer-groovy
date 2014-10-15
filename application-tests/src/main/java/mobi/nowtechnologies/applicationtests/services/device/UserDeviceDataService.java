@@ -20,6 +20,14 @@ public class UserDeviceDataService {
                                       Set<String> communities,
                                       Set<String> deviceTypes,
                                       Set<RequestFormat> formats) {
+        return table(versions, communities, deviceTypes, formats, null);
+    }
+
+    public List<UserDeviceData> table(List<String> versions,
+                                      Set<String> communities,
+                                      Set<String> deviceTypes,
+                                      Set<RequestFormat> formats,
+                                      String qualifier) {
         Assert.notEmpty(versions);
         Assert.notEmpty(communities);
         Assert.notEmpty(deviceTypes);
@@ -30,8 +38,8 @@ public class UserDeviceDataService {
         for (String version : versions) {
             for (String community : communities) {
                 for (String deviceType : deviceTypes) {
-                    for (RequestFormat format : Arrays.asList(RequestFormat.JSON)) {
-                        userDeviceData.add(new UserDeviceData(version, community, deviceType, format));
+                    for (RequestFormat format : formats) {
+                        userDeviceData.add(new UserDeviceData(version, community, deviceType, format, qualifier));
                     }
                 }
             }
@@ -39,6 +47,10 @@ public class UserDeviceDataService {
 
         return userDeviceData;
     }
+
+
+
+
 
     public List<UserDeviceData> table(List<String> version, List<String> communities, List<String> deviceTypes, RequestFormat format) {
         return table(version, new HashSet<String>(communities), new HashSet<String>(deviceTypes), Sets.newHashSet(format));

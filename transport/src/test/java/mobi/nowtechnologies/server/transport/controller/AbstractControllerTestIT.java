@@ -38,6 +38,7 @@ import static mobi.nowtechnologies.server.shared.enums.MessageType.NEWS;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -127,7 +128,7 @@ public abstract class AbstractControllerTestIT {
 
     @Before
     public void setUp() throws Exception {
-        mockMvc = webAppContextSetup(applicationContext).build();
+        mockMvc = webAppContextSetup(applicationContext).alwaysDo(print()).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
         o2ProviderServiceSpy = spy(o2ProviderServiceTarget);

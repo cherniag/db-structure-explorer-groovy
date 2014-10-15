@@ -6,6 +6,7 @@ import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,9 +35,10 @@ public class ApplyInitPromoHttpService extends AbstractHttpService {
             request.add("DEVICE_UID", accountCheck.deviceUID);
         }
 
-        logger.info("Posting to [" + uri + "] request: [" + request + "] for device data: [" + deviceData + "]");
-        String body = restTemplate.postForEntity(uri, request, String.class).getBody();
-        logger.info("Response is [{}]", body);
+        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, request);
+        ResponseEntity<String> entity = restTemplate.postForEntity(uri, request, String.class);
+        String body = entity.getBody();
+        logger.info("Response body [{}]\n", body);
 
         return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
     }

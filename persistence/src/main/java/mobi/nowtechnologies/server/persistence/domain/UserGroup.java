@@ -7,17 +7,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 
-/**
- * The persistent class for the tb_userGroups database table.
- * 
- */
 @Entity
 @Table(name="tb_userGroups")
 public class UserGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
 
     public static enum Fields {
-		i,chartId,communityId,drmPolicyId,name,newsId
+		i,chartId,communityId,drmPolicyId,name
 	}
 
 	@Id
@@ -47,16 +43,6 @@ public class UserGroup implements Serializable {
 
 	@Column(name="name",columnDefinition="char(25)")
 	private String name;
-
-	@Column(name="news", insertable=false,updatable=false, columnDefinition="tinyint(4)")
-	private Integer newsId;
-	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="news")
-	private News news;
-
-    public UserGroup() {
-    }
 
 	public Integer getId() {
 		return this.id;
@@ -100,19 +86,6 @@ public class UserGroup implements Serializable {
 		this.name = name;
 	}
 
-	public News getNews() {
-		return news;
-	}
-
-	public void setNews(News news) {
-		this.news = news;
-		newsId = new Integer(news.getI());
-	}
-
-	public byte getNewsId() {
-		return newsId.byteValue();
-	}
-
 	public DrmPolicy getDrmPolicy() {
 		return drmPolicy;
 	}
@@ -144,7 +117,6 @@ public class UserGroup implements Serializable {
                 .append("communityId", communityId)
                 .append("drmPolicyId", drmPolicyId)
                 .append("name", name)
-                .append("newsId", newsId)
                 .toString();
     }
 }

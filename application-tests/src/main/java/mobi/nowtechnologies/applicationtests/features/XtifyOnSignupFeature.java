@@ -7,8 +7,8 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.PartnerDeviceSet;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.DictionaryTransformer;
-import mobi.nowtechnologies.applicationtests.features.common.dictionary.Word;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
@@ -111,7 +111,7 @@ public class XtifyOnSignupFeature {
     }
 
     private User findUserInDatabase(UserDeviceData userDeviceData, PhoneState phoneState) {
-        return userDbService.getUserByDeviceUIDAndCommunity(phoneState.getDeviceUID(), userDeviceData.getCommunityUrl());
+        return userDbService.findUser(phoneState, userDeviceData);
     }
 
 }

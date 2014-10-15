@@ -18,6 +18,14 @@ public class CommunityFactory{
 		return community;
 	}
 
+    public static Community createCommunity(String url) {
+        Community community = new Community();
+        community.setName("name");
+        community.setDisplayName("displayName");
+        community.setRewriteUrlParameter(url);
+        return community;
+    }
+
     public static Community createCommunityMock(int id, String rewriteUrl) {
         Community community = mock(Community.class);
         when(community.getId()).thenReturn(id);
