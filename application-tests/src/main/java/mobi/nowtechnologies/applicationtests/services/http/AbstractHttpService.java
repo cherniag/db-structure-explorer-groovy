@@ -29,6 +29,10 @@ public abstract class AbstractHttpService {
         return webApplicationUriService.transport(deviceData, commandName, format);
     }
 
+    protected String getUri(String community, UserDeviceData deviceData, String commandName, RequestFormat format) {
+        return webApplicationUriService.transport(community, deviceData, commandName, format);
+    }
+
     protected UserDataCreator.TimestampTokenData createUserToken(String userToken) {
         return userDataCreator.createUserToken(userToken);
     }

@@ -1,19 +1,20 @@
-package mobi.nowtechnologies.applicationtests.services.http.domain.common;
+package mobi.nowtechnologies.applicationtests.services.http.common.standard;
 
 import mobi.nowtechnologies.applicationtests.services.http.common.Error;
+import mobi.nowtechnologies.applicationtests.services.http.common.UserInResponse;
 
 /**
  * Created by kots on 9/11/2014.
  */
 public class DataWrapper {
-    private mobi.nowtechnologies.applicationtests.services.http.common.Error errorMessage;
-    private User user;
+    private Error errorMessage;
+    private UserInResponse user;
 
-    public User getUser() {
+    public UserInResponse getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserInResponse user) {
         this.user = user;
     }
 
