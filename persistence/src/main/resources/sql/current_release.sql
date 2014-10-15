@@ -13,10 +13,9 @@ INSERT INTO cn_service.tb_labels (name)
 
 
 UPDATE cn_service.tb_media tb
-  LEFT JOIN cn_cms.Track tr ON (tb.trackId = tr.id)
-  LEFT JOIN cn_service.tb_labels tl ON (tr.label = tl.name)
-SET tb.label = tl.i
-WHERE tb.trackId IS NOT NULL;
+  JOIN cn_cms.Track tr ON (tb.trackId = tr.id)
+  JOIN cn_service.tb_labels tl ON (tr.label = tl.name)
+SET tb.label = tl.i;
 
 ALTER TABLE cn_service.tb_media ADD CONSTRAINT `media_label_fk` FOREIGN KEY (`label`) REFERENCES cn_service.tb_labels (i);
 -- end SRV-89
