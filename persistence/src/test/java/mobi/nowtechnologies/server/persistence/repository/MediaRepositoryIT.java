@@ -31,7 +31,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
         Label label = labelRepository.findOne((byte)9);
 
-        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall));
+        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
         List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
@@ -52,7 +52,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
         Label label = labelRepository.findOne((byte)9);
 
-        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall));
+        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
         List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
@@ -73,7 +73,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
         Label label = labelRepository.findOne((byte)9);
 
-        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall));
+        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
         List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
@@ -94,7 +94,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
         Label label = labelRepository.findOne((byte)9);
 
-        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall));
+        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
         List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
@@ -115,7 +115,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
         Label label = labelRepository.findOne((byte)9);
 
-        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall));
+        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
         List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);
@@ -136,7 +136,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
         Label label = labelRepository.findOne((byte)9);
 
-        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall));
+        Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
         //when
         List<Media> medias = mediaRepository.getMedias(searchWords, mediaType);

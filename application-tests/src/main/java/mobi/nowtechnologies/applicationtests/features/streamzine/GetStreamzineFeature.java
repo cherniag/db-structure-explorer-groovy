@@ -326,8 +326,9 @@ public class GetStreamzineFeature {
 
     @When("^user invokes get streamzine command$")
     public void userInvokesGetStreamzineCommand() {
+        int secondsShift = 0;
         for (UserDeviceData data : currentUserDevices) {
-            streamzineUpdateCreator.create(data, updates.get(data));
+            streamzineUpdateCreator.create(data, updates.get(data), secondsShift++);
 
             PhoneState state = deviceSet.getPhoneState(data);
             UserDataCreator.TimestampTokenData token = userDataCreator.createUserToken(state.getLastAccountCheckResponse().userToken);
