@@ -5,9 +5,8 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountCheckHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.chart.ChartHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
-import mobi.nowtechnologies.applicationtests.services.http.domain.common.UserDetails;
-import mobi.nowtechnologies.applicationtests.services.http.domain.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActivationDto;
 import mobi.nowtechnologies.applicationtests.services.http.signup.SignupHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
@@ -71,8 +70,8 @@ public abstract class ClientDevicesSet {
         if(state == null) {
             state = new PhoneStateImpl();
             state.email = userDataCreator.generateEmail();
-            states.put(deviceData, state);
             state.deviceUID = deviceUID;
+            states.put(deviceData, state);
         }
         else if (overrideDeviceUID) {
             state.deviceUID = deviceUID;

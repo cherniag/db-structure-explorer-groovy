@@ -4,6 +4,7 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -21,9 +22,10 @@ public class ChartHttpService extends AbstractHttpService {
         parameters.add("TIMESTAMP", token.getTimestamp());
         parameters.add("DEVICE_UID", deviceUID);
 
-        logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
-        String body = restTemplate.postForEntity(uri, parameters, String.class).getBody();
-        logger.info("Response body [{}]", body);
+        logger.info("\nSending for for [{}] to [{}] parameters: [{}]", deviceData, uri, parameters);
+        ResponseEntity<String> entity = restTemplate.postForEntity(uri, parameters, String.class);
+        String body = entity.getBody();
+        logger.info("Response body [{}]\n", body);
 
         return body;
     }

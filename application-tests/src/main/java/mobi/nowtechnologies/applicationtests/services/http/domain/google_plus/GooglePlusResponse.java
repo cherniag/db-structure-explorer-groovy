@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.applicationtests.services.http.domain.google_plus;
 
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.*;
-import mobi.nowtechnologies.applicationtests.services.http.domain.common.Error;
+import mobi.nowtechnologies.applicationtests.services.http.common.Error;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "response")
 public class GooglePlusResponse {
-    private mobi.nowtechnologies.applicationtests.services.http.domain.common.Error errorMessage;
+    private Error errorMessage;
     private Response response;
     private User user;
 
@@ -32,7 +32,7 @@ public class GooglePlusResponse {
         this.user = user;
     }
 
-    public mobi.nowtechnologies.applicationtests.services.http.domain.common.Error getErrorMessage() {
+    public Error getErrorMessage() {
         return errorMessage != null ? errorMessage : response.getData().get(0).getErrorMessage();
     }
 
