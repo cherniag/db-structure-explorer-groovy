@@ -18,4 +18,6 @@ ALTER TABLE tb_media MODIFY trackId BIGINT NOT NULL;
 
 commit;
 
--- end SRV-85alter table client_version_info add column image_file_name varchar(255) default null;
+-- end SRV-85
+
+alter table client_version_info add column image_file_name varchar(255) default null;
