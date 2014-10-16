@@ -14,7 +14,11 @@
         <bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
 	</mvc:interceptors>
 
-	<mvc:annotation-driven />
+	<mvc:annotation-driven>
+       <mvc:argument-resolvers>
+           <bean class="mobi.nowtechnologies.server.shared.web.spring.IfModifiedSinceArgumentResolver"/>
+       </mvc:argument-resolvers>
+    </mvc:annotation-driven>
 
     <context:annotation-config/>
 

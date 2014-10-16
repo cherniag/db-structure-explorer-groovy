@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -171,5 +172,12 @@ public abstract class AbstractControllerTestIT {
     protected void checkAccountCheck(ResultActions actionCall, ResultActions accountCheckCall) throws IOException {
         assertEquals(getAccCheckContentAsJsonObject(actionCall), getAccCheckContentAsJsonObject(accountCheckCall));
     }
+
+    protected HttpHeaders getHttpHeadersWithIfModifiedSince(long value) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfModifiedSince(value);
+        return httpHeaders;
+    }
+
 
 }

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.common.net.HttpHeaders;
 import mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm;
 import mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto;
 import mobi.nowtechnologies.server.editor.ResolutionParameterEditor;
@@ -11,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolutio
 import mobi.nowtechnologies.server.service.streamzine.StreamzineNotAvailable;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.web.spring.IfModifiedSinceHeader;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.stereotype.Controller;
@@ -52,9 +52,8 @@ public class GetStreamzineController extends CommonController {
                               @RequestParam("TIMESTAMP") String timestamp,
                               @RequestParam("WIDTHXHEIGHT") Resolution resolution,
                               @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-                              @RequestHeader(HttpHeaders.IF_MODIFIED_SINCE) Long modifiedSince,
+                              @IfModifiedSinceHeader Long modifiedSince,
                               ServletWebRequest webRequest) throws Exception {
-
         return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, webRequest, modifiedSince);
     }
 

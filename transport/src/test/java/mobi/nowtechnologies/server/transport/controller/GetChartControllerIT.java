@@ -16,13 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 
-import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
 import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
 import static junit.framework.Assert.assertEquals;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.IMAGE;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.ExtMockMvcRequestBuilders.extGet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -148,15 +147,13 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
                         .withChgPosition(DOWN)
                         .withPosition(18)
                         .withPublishTime(publishTime));
-
-
         ResultActions resultActions = mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-                        .header(IF_MODIFIED_SINCE, 0)
+                        .headers(getHttpHeadersWithIfModifiedSince(0))
         ).andExpect(header().longValue(LAST_MODIFIED, publishTime));
 
 
@@ -165,12 +162,12 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
                 .andDo(print())
                 .andExpect(jsonPath("$.response.data[1].chart.tracks[(@.length-1)].media").value(isrc + "_" + trackId));
         mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-                        .header(IF_MODIFIED_SINCE, publishTime)
+                        .headers(getHttpHeadersWithIfModifiedSince(publishTime))
         ).andExpect(status().isNotModified()).andExpect(content().string(""));
 
     }

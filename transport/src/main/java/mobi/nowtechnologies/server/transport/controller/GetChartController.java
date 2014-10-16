@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.net.HttpHeaders;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.ThrottlingService;
 import mobi.nowtechnologies.server.shared.dto.*;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
+import mobi.nowtechnologies.server.shared.web.spring.IfModifiedSinceHeader;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
@@ -49,7 +51,7 @@ public class GetChartController extends CommonController {
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestHeader(HttpHeaders.IF_MODIFIED_SINCE) Long modifiedSince,
+            @IfModifiedSinceHeader Long modifiedSince,
             ServletWebRequest servletWebRequest
     ) throws Exception {
         return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, servletWebRequest, ActivationStatus.ACTIVATED);

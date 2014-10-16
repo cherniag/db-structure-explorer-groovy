@@ -30,12 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 
-import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
 import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.ExtMockMvcRequestBuilders.extGet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -212,7 +211,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final String formatSpecific = (isJson) ? ".json" : "";
 
         return mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
                         .param("APP_VERSION", userName)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
@@ -221,15 +220,13 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("WIDTHXHEIGHT", resolution)
-                        .header(IF_MODIFIED_SINCE, modifiedSinceTime)
-
-        );
+                        .headers(getHttpHeadersWithIfModifiedSince(modifiedSinceTime)));
     }
 
 
     @Test
     public void testGetStreamzineFor63WithIfModifiedSuccess() throws Exception {
-        Date updateDate = new Date(System.currentTimeMillis() + 2000L);
+        Date updateDate = mobi.nowtechnologies.server.shared.util.DateUtils.getDateWithoutMilliseconds(new Date(System.currentTimeMillis() + 2000L));
 
         // parameters
         String userName = "test@ukr.net";
