@@ -1,4 +1,4 @@
-@Ready1
+@Ready
 Feature: Server returns json data about application upgrade 'call-to-action'
 
   Scenario: device sends User-Agent header not according to application upgrade format

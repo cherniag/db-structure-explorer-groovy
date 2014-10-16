@@ -48,10 +48,6 @@ public class UserDeviceDataService {
         return userDeviceData;
     }
 
-
-
-
-
     public List<UserDeviceData> table(List<String> version, List<String> communities, List<String> deviceTypes, RequestFormat format) {
         return table(version, new HashSet<String>(communities), new HashSet<String>(deviceTypes), Sets.newHashSet(format));
     }
@@ -63,6 +59,11 @@ public class UserDeviceDataService {
     public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes) {
         Assert.hasText(community);
         return table(version, Sets.newHashSet(community), Sets.newHashSet(deviceTypes), Sets.newHashSet(RequestFormat.JSON));
+    }
+
+    public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes, Set<RequestFormat> formats) {
+        Assert.hasText(community);
+        return table(version, Sets.newHashSet(community), Sets.newHashSet(deviceTypes), formats);
     }
 
     public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes, RequestFormat format) {
