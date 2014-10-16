@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.shared;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,12 +16,14 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Locale.*;
+import static java.util.Locale.ENGLISH;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
@@ -271,6 +274,18 @@ public class Utils {
             moneyString = moneyString.substring(0, centsIndex);
         }
         return moneyString;
+    }
+
+
+    public static String decodeUrl(String url){
+        if (!StringUtils.isEmpty(url)){
+            try {
+                return new URLCodec().decode(url);
+            } catch (DecoderException e) {
+                return url;
+            }
+        }
+        return url;
     }
 
 }

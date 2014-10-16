@@ -4,13 +4,13 @@
 # Separate with coma list values
 #
 facebook supported communities=hl_uk
-all facebook supported versions=5.2, 6.0, 6.1, 6.2
+all facebook supported versions=5.2, 6.0, 6.1, 6.2, 6.3
 
 google plus supported communities=hl_uk
-all google plus supported versions=6.0, 6.1, 6.2
+all google plus supported versions=6.0, 6.1, 6.2, 6.3
 
 email supported communities=hl_uk
-all email supported versions=5.3, 6.0, 6.1, 6.2
+all email supported versions=5.3, 6.0, 6.1, 6.2, 6.3
 
 streamzine supported communities=hl_uk
 all streamzine supported versions=6.1, 6.2, 6.3
@@ -24,7 +24,7 @@ all devices=ANDROID, IOS, BLACKBERRY, WINDOWS_PHONE
 
 partner communities=o2, vf_nz
 all communities=o2, vf_nz, hl_uk
-all versions=5.2, 6.0, 6.1, 6.2
+all versions=5.2, 6.0, 6.1, 6.2, 6.3
 
 #
 # MNO

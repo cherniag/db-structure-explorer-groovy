@@ -76,4 +76,63 @@ function getPosition(){
 function onSaveChart() {
 	var chartEditForm = $("form#chart-edit-form");
 	chartEditForm.submit();
-};	
+};
+
+var currId = -1;
+var iTunesSpan = null;
+
+function openDialog(buttonItem, mediaId){
+    currId = mediaId;
+    iTunesSpan = $(buttonItem).parent().parent().children('.iTunesSpan');
+    var currentValue = iTunesSpan.text().trim();
+    $("#iTunesUrl").val(currentValue);
+    $('#change_dialog').modal();
+}
+
+function closeDialog(){
+    $("#change_dialog").modal('hide');
+}
+function changeBtn(){
+    var newValue = $("#iTunesUrl").val();
+    iTunesSpan.text(newValue);
+    closeDialog();
+}
+function cancelBtn(){
+    currId = -1;
+    closeDialog();
+}
+
+function validateITunesUrls(){
+    var objects = chartItemsFromUl("#chartItemsSortable");
+    $( "#chartItemsSortable > li" ).each(function(index) {
+        $(this).removeClass("invalidITunesLink");
+    });
+    $.ajax({
+        url : "/jadmin/validateITunesLinks.json",
+        type : "post",
+        contentType: "application/json; charset=utf-8",
+        data: objects,
+        dataType: "json",
+        error: function(xhr) {
+            if (xhr.status == 400) {
+                var errors = jQuery.parseJSON(xhr.responseText);
+                var positions = jQuery.parseJSON(errors[0].message);
+                $("#chartItemsSortable > li").each(function (index) {
+                    var position = $(this).children('.position_chartItem').text().trim();
+                    var li = $(this);
+                    jQuery.each(positions, function (i, value) {
+                        if (value == position) {
+                            li.addClass("invalidITunesLink");
+                        }
+                    });
+                });
+            }
+
+            else {
+                alert("Error during validation");
+            }
+        }
+    });
+
+
+}

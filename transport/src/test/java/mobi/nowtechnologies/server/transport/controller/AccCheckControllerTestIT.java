@@ -25,7 +25,6 @@ import static mobi.nowtechnologies.server.transport.controller.core.CommonContro
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
@@ -485,9 +484,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void testAccCheckForVersion_6_1() throws Exception {
+    public void testAccCheck_LatestVersion() throws Exception {
         String userName = "+447111111114";
-        String apiVersion = "6.1";
+        String apiVersion = LATEST_SERVER_API_VERSION;
         String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";

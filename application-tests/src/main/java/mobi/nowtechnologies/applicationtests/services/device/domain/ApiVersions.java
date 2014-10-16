@@ -25,4 +25,9 @@ public class ApiVersions {
         Assert.isTrue(indexOf >= 0, "Not found version " + of + " in (" + versions + ")");
         return new ArrayList<String>(versions.subList(indexOf, versions.size()));
     }
+
+    public List<String> bellow(String of) {
+        int indexOf = versions.indexOf(of);
+        return new ArrayList<String>(versions.subList(0, indexOf));
+    }
 }

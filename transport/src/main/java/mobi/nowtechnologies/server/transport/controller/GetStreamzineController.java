@@ -62,7 +62,8 @@ public class GetStreamzineController extends CommonController {
     @RequestMapping(method = POST,
             value = {
                     "**/{community}/{apiVersion:6.1}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.2}/GET_STREAMZINE"
+                    "**/{community}/{apiVersion:6.2}/GET_STREAMZINE",
+                    "**/{community}/{apiVersion:6.3}/GET_STREAMZINE"
             })
     public Response getUpdate(@RequestParam("APP_VERSION") String appVersion,
                               @PathVariable("community") String community,

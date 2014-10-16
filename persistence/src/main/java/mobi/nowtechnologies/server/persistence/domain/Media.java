@@ -119,8 +119,9 @@ public class Media extends Item implements Serializable {
 	private String amazonUrl;
 
 	private int publishDate;
-	
-	private Long trackId;
+
+    @Column(name = "trackId", nullable = false)
+    private Long trackId;
 	
 	private boolean areArtistUrls;
 
@@ -412,6 +413,7 @@ public class Media extends Item implements Serializable {
         setAudioFile(mediaFile);
         return this;
     }
+
 
     public Media withGenre(Genre genre) {
         setGenre(genre);

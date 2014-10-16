@@ -58,13 +58,17 @@ public class MediaFileDto {
 		this.duration = duration;
 	}
 	
-	public String getFormattedDuration() {
+    public String getFormattedDuration() {
 		if (duration > 0) {
 			return "" + (duration / 60000) + ":" + String.format("%02d", (duration / 1000) % 60);
 		}
 		
 		return "0:00";
 	}
+
+    public void setFormattedDuration(String value){
+
+    }
 
 	@Override
 	public String toString() {

@@ -3,8 +3,8 @@ package mobi.nowtechnologies.server.editor;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.util.Assert;
@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UserAgentRequestEditor extends PropertyEditorSupport {
-    private static Pattern pattern = Pattern.compile("(.+)/(\\d\\.\\d.*) \\((\\S+); (\\S+)\\)");
+    private static Pattern pattern = Pattern.compile("(.+)/(\\d{1,2}\\.\\d.*) \\((\\S+); (\\S+)\\)");
 
     private CommunityRepository communityRepository;
 
