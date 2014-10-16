@@ -1,8 +1,8 @@
-package mobi.nowtechnologies.server.shared.web.spring;
+package mobi.nowtechnologies.server.shared.web.spring.modifiedsince;
 
+import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.MethodParameter;
-import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -34,9 +34,25 @@ public class IfModifiedSinceArgumentResolver implements HandlerMethodArgumentRes
             }
         }
         if (result == null) {
-            throw new ServletRequestBindingException("Error convert  header " + IF_MODIFIED_SINCE);
+            result = calculateDefaultValue(parameter);
         }
-        return result;
-
+        return checkThatDateIsNotInFuture(result);
     }
+
+    private Long checkThatDateIsNotInFuture(Long result) {
+        long epochMillis = Utils.getEpochMillis();
+        return result > epochMillis ? epochMillis : result;
+    }
+
+    private Long calculateDefaultValue(MethodParameter parameter) {
+        IfModifiedSinceHeader value = parameter.getParameterAnnotation(IfModifiedSinceHeader.class);
+        switch (value.defaultValue()) {
+            case CURRENT_DATE:
+                return Utils.getEpochMillis();
+            case ZERO:
+                return 0L;
+        }
+        return 0L;
+    }
+
 }

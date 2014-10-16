@@ -9,8 +9,9 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineNotAvailable;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
+import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.web.spring.IfModifiedSinceHeader;
+import mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedSinceHeader;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
+import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedDefaultValue.ZERO;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -52,7 +54,7 @@ public class GetStreamzineController extends CommonController {
                               @RequestParam("TIMESTAMP") String timestamp,
                               @RequestParam("WIDTHXHEIGHT") Resolution resolution,
                               @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-                              @IfModifiedSinceHeader Long modifiedSince,
+                              @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
                               ServletWebRequest webRequest) throws Exception {
         return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, webRequest, modifiedSince);
     }
@@ -63,7 +65,6 @@ public class GetStreamzineController extends CommonController {
             value = {
                     "**/{community}/{apiVersion:6.1}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.2}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.3}/GET_STREAMZINE"
             })
     public Response getUpdate(@RequestParam("APP_VERSION") String appVersion,
                               @PathVariable("community") String community,
@@ -87,19 +88,21 @@ public class GetStreamzineController extends CommonController {
 
             Date date = getDateForStreamzine(lastUpdateFromClient);
 
-            Update update = streamzineUpdateService.getUpdate(date, user, community);
-
             boolean checkCaching = ((webRequest != null) && (lastUpdateFromClient != null));
+
+
+            ContentDtoResult<Update> updateDtoResult = streamzineUpdateService.getUpdate(date, user, community, checkCaching);
+
             if (checkCaching){
-                Long lastUpdateTime = update.getDate().getTime();
+                Long lastUpdateTime = updateDtoResult.getLastUpdatedTime();
                 if (webRequest.checkNotModified(lastUpdateTime)){
                     return null;
                 }
             }
 
-            LOGGER.debug("found update {} for {}", update, date);
+            LOGGER.debug("found update {} for {}", updateDtoResult.getContent(), date);
 
-            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community, resolution.withDeviceType(user.getDeviceType().getName()));
+            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(updateDtoResult.getContent(), community, resolution.withDeviceType(user.getDeviceType().getName()));
 
             LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 
@@ -114,7 +117,7 @@ public class GetStreamzineController extends CommonController {
     }
 
     private Date getDateForStreamzine(Long lastUpdateFromClient) {
-        return (lastUpdateFromClient == null || lastUpdateFromClient == 0)? new Date() : new Date(lastUpdateFromClient);
+        return (lastUpdateFromClient == null)? new Date() : new Date(lastUpdateFromClient);
     }
 
 

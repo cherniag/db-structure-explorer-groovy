@@ -153,8 +153,7 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-                        .headers(getHttpHeadersWithIfModifiedSince(0))
-        ).andExpect(header().longValue(LAST_MODIFIED, publishTime));
+         ).andExpect(header().longValue(LAST_MODIFIED, publishTime));
 
 
         resultActions

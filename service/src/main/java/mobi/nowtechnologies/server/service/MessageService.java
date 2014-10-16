@@ -9,7 +9,6 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import mobi.nowtechnologies.server.service.exception.NoNewContentException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
@@ -43,6 +42,12 @@ public class MessageService {
 	private FilterService filterService;
 	private CommunityService communityService;
 	private CloudFileService cloudFileService;
+
+    private CacheContentService cacheContentService;
+
+    public void setCacheContentService(CacheContentService cacheContentService) {
+        this.cacheContentService = cacheContentService;
+    }
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -95,9 +100,7 @@ public class MessageService {
         Long nextBannersPublishTimeMillis = findNextBannersPublishDate(withBanners, lastClientUpdateNewsTimeMillis, community, currentTimeMillis);
         Long lastUpdateTimeFromDateFromClient = Math.max(nextNewsPublishTimeMillis, nextBannersPublishTimeMillis);
         if (checkCaching) {
-            if (lastUpdateTimeFromDateFromClient < lastClientUpdateNewsTimeMillis) {
-                throw new NoNewContentException(lastUpdateTimeFromDateFromClient, lastClientUpdateNewsTimeMillis);
-            }
+            cacheContentService.checkCacheContent(lastClientUpdateNewsTimeMillis, lastUpdateTimeFromDateFromClient);
         }
 		List<Message> messages;
 		if (withBanners) {
@@ -382,9 +385,9 @@ public class MessageService {
 
 	public Long findNearestLatestPublishDate(Community community, final long choosedPublishTimeMillis) {
 		LOGGER.debug("input parameters community, choosedPublishTimeMillis: [{}], [{}]", community, choosedPublishTimeMillis);
-		
+
 		Long nearestLatestPublishTimeMillis = messageRepository.findNearestLatestPublishDate(choosedPublishTimeMillis, community, MessageType.NEWS);
-		
+
 		LOGGER.debug("Output parameter nearestLatestPublishTimeMillis=[{}]", nearestLatestPublishTimeMillis);
 		return nearestLatestPublishTimeMillis;
 	}

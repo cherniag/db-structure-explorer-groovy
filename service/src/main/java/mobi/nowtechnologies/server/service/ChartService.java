@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
-import mobi.nowtechnologies.server.service.exception.NoNewContentException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
@@ -50,6 +49,12 @@ public class ChartService implements ApplicationContextAware {
     private StreamzineUpdateService streamzineUpdateService;
     private ChartDetailsConverter chartDetailsConverter;
     private ApplicationContext applicationContext;
+
+    private CacheContentService cacheContentService;
+
+    public void setCacheContentService(CacheContentService cacheContentService) {
+        this.cacheContentService = cacheContentService;
+    }
 
     public void setStreamzineUpdateService(StreamzineUpdateService streamzineUpdateService) {
         this.streamzineUpdateService = streamzineUpdateService;
@@ -135,12 +140,9 @@ public class ChartService implements ApplicationContextAware {
                 playlistDtos.add(ChartAsm.toPlaylistDto(chart, result.isSwitchable()));
             }
         }
-        Long lastUpdateTimeForChartDetails = -1L;
-        if (lastChartUpdateFromClient != null) {
-            lastUpdateTimeForChartDetails = findMaxPublishDate(chartDetails);
-            if (lastChartUpdateFromClient >= lastUpdateTimeForChartDetails) {
-                throw new NoNewContentException(lastUpdateTimeForChartDetails, lastChartUpdateFromClient);
-            }
+        Long lastUpdateTimeForChartDetails = findMaxPublishDate(chartDetails);
+        if (lastChartUpdateFromClient != null && lastChartUpdateFromClient > 0) {
+            cacheContentService.checkCacheContent(lastChartUpdateFromClient, lastUpdateTimeForChartDetails);
         }
 
         String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);

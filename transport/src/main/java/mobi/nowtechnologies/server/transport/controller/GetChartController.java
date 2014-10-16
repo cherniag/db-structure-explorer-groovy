@@ -7,7 +7,7 @@ import mobi.nowtechnologies.server.service.ThrottlingService;
 import mobi.nowtechnologies.server.shared.dto.*;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-import mobi.nowtechnologies.server.shared.web.spring.IfModifiedSinceHeader;
+import mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedSinceHeader;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +25,7 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
+import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedDefaultValue.ZERO;
 
 /**
  * GetChartController
@@ -51,7 +52,7 @@ public class GetChartController extends CommonController {
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @IfModifiedSinceHeader Long modifiedSince,
+            @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
             ServletWebRequest servletWebRequest
     ) throws Exception {
         return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, servletWebRequest, ActivationStatus.ACTIVATED);
@@ -171,7 +172,6 @@ public class GetChartController extends CommonController {
             "**/{community}/{apiVersion:6\\.0}/GET_CHART",
             "**/{community}/{apiVersion:6\\.1}/GET_CHART",
             "**/{community}/{apiVersion:6\\.2}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.3}/GET_CHART"
     })
     public ModelAndView getChart_O2_v4d0(
             HttpServletRequest request,

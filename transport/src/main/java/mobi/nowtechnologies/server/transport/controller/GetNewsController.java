@@ -6,7 +6,7 @@ import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
 import mobi.nowtechnologies.server.shared.dto.NewsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import mobi.nowtechnologies.server.shared.web.spring.IfModifiedSinceHeader;
+import mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedSinceHeader;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
+import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedDefaultValue.ZERO;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -38,7 +39,7 @@ public class GetNewsController extends CommonController {
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @IfModifiedSinceHeader Long modifiedSince,
+            @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
             ServletWebRequest webRequest
     ) throws Exception {
         return getNews(userName, userToken, timestamp, modifiedSince, deviceUID, true, webRequest, ACTIVATED);

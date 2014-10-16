@@ -16,7 +16,7 @@
 
 	<mvc:annotation-driven>
        <mvc:argument-resolvers>
-           <bean class="mobi.nowtechnologies.server.shared.web.spring.IfModifiedSinceArgumentResolver"/>
+           <bean class="mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedSinceArgumentResolver"/>
        </mvc:argument-resolvers>
     </mvc:annotation-driven>
 
