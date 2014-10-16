@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterators;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.list.ListValues;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Word {
     private String word;
@@ -21,24 +22,20 @@ public class Word {
     // Set API
     //
     public Set<String> set() {
-        Set<String> values = new LinkedHashSet<String>();
-
-        Iterable<String> iterable = Splitter.on(",").omitEmptyStrings().trimResults().split(word);
-
-        Iterators.addAll(values, iterable.iterator());
-
-        return values;
+        List<String> strings = ListValues.from(word).strings();
+        return new HashSet<String>(strings);
     }
 
     public <T extends Enum<T>> Set<T> set(Class<T> type) {
-        return new HashSet<T>(ListValues.from(set()).enums(type));
+        List<T> enums = ListValues.from(word).enums(type);
+        return new HashSet<T>(enums);
     }
 
     //
     // List API
     //
     public List<String> list() {
-        ArrayList<String> list = new ArrayList<String>(set());
+        List<String> list = ListValues.from(word).strings();
         Collections.sort(list);
         return list;
     }

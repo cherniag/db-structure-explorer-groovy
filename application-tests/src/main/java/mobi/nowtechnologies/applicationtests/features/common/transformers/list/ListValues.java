@@ -35,7 +35,7 @@ public class ListValues {
         }));
     }
 
-    public ArrayList<String> strings() {
+    public List<String> strings() {
         return new ArrayList<String>(values);
     }
 
