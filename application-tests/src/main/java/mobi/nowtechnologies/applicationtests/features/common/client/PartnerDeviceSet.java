@@ -1,10 +1,14 @@
 package mobi.nowtechnologies.applicationtests.features.common.client;
 
+import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.helper.OtacCodeCreator;
+import mobi.nowtechnologies.applicationtests.services.helper.PhoneNumberCreator;
 import mobi.nowtechnologies.applicationtests.services.http.activate.ApplyInitPromoHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.activate.AutoOptInHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneNumberHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.enums.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,15 +22,16 @@ import javax.annotation.Resource;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PartnerDeviceSet extends ClientDevicesSet {
-
     @Resource
-    private PhoneNumberHttpService phoneNumberHttpService;
-
+    PhoneNumberHttpService phoneNumberHttpService;
     @Resource
-    private AutoOptInHttpService autoOptInHttpService;
-
+    AutoOptInHttpService autoOptInHttpService;
     @Resource
-    private ApplyInitPromoHttpService applyInitPromoHttpService;
+    ApplyInitPromoHttpService applyInitPromoHttpService;
+    @Resource
+    PhoneNumberCreator phoneNumberCreator;
+    @Resource
+    OtacCodeCreator otacCodeCreator;
 
     public void enterPhoneNumber(UserDeviceData userDeviceData, String phoneNumber){
         final PhoneStateImpl state = states.get(userDeviceData);
@@ -48,5 +53,16 @@ public class PartnerDeviceSet extends ClientDevicesSet {
             state.accountCheck = response;
             state.activationResponse = response;
         }
+    }
+
+    public void signUpAndActivate(UserDeviceData userDeviceData){
+        singup(userDeviceData);
+
+        String phoneNumber = phoneNumberCreator.createValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);
+        enterPhoneNumber(userDeviceData, phoneNumber);
+
+        PhoneState phoneState = getPhoneState(userDeviceData);
+        String otac = otacCodeCreator.generateValidOtac(phoneState.getLastAccountCheckResponse());
+        activate(userDeviceData, otac);
     }
 }

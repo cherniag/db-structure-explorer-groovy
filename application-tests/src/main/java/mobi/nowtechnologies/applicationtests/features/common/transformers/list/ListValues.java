@@ -5,6 +5,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ListValues {
@@ -13,6 +14,12 @@ public class ListValues {
     public static ListValues from(String value) {
         ListValues listValues = new ListValues();
         listValues.values = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(value);
+        return listValues;
+    }
+
+    public static ListValues from(Collection<String> values) {
+        ListValues listValues = new ListValues();
+        listValues.values = new ArrayList<String>(values);
         return listValues;
     }
 

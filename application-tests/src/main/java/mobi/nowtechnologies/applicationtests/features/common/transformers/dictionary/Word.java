@@ -2,6 +2,7 @@ package mobi.nowtechnologies.applicationtests.features.common.transformers.dicti
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterators;
+import mobi.nowtechnologies.applicationtests.features.common.transformers.list.ListValues;
 
 import java.util.*;
 
@@ -16,6 +17,9 @@ public class Word {
         return word;
     }
 
+    //
+    // Set API
+    //
     public Set<String> set() {
         Set<String> values = new LinkedHashSet<String>();
 
@@ -26,6 +30,13 @@ public class Word {
         return values;
     }
 
+    public <T extends Enum<T>> Set<T> set(Class<T> type) {
+        return new HashSet<T>(ListValues.from(set()).enums(type));
+    }
+
+    //
+    // List API
+    //
     public List<String> list() {
         ArrayList<String> list = new ArrayList<String>(set());
         Collections.sort(list);
