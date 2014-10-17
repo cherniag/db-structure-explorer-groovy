@@ -30,9 +30,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
@@ -154,11 +152,11 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void givenValidO2Token_whenAPPLY_PROMOForVersionMore40_thenBigPromotionSetAndAccCheckInfo() throws Exception {
+    public void checkApplyInitPromo_Success_LatestVersion() throws Exception {
         //given
         String userName = "imei_351722057812748";
         User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = "6.1";
+        String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = user.getToken();
@@ -198,7 +196,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     }
     
     @Test
-    public void givenValidO2Token_whenUserWithPhoneExistsAndREgistrationFromNewDevice_thenReturnOldUserWithNewDeviceAndRemoveSecondUser() throws Exception {
+    public void givenValidO2Token_whenUserWithPhoneExistsAndRegistrationFromNewDevice_thenReturnOldUserWithNewDeviceAndRemoveSecondUser() throws Exception {
         //given
         String userName = "imei_351722057812749";
         User user = prepareUserForApplyInitPromo(userName);

@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service.impl;
 import com.google.common.io.Closeables;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
-import com.rackspacecloud.client.cloudfiles.FilesObject;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import org.apache.commons.collections.MapUtils;
@@ -11,22 +10,15 @@ import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpException;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.*;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -47,6 +39,11 @@ public class CloudFileServiceImpl implements CloudFileService {
     private String userAgent;
     private String containerName;
     private String filesURL;
+    private HttpClient httpClient;
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
 
     public void setUserName(String userName) {
         this.userName = userName;
@@ -93,8 +90,7 @@ public class CloudFileServiceImpl implements CloudFileService {
     }
 
     public boolean init() throws IOException, HttpException {
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
-        filesClient = new FilesClient(defaultHttpClient, userName, password, authenticationURL, account, connectionTimeOutMilliseconds);
+        filesClient = new FilesClient(httpClient, userName, password, authenticationURL, account, connectionTimeOutMilliseconds);
         if (userAgent != null)
             filesClient.setUserAgent(userAgent);
         filesClient.setUseETag(useETag);
@@ -122,20 +118,6 @@ public class CloudFileServiceImpl implements CloudFileService {
             throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
 
         return isLogged;
-    }
-
-    private Collection<FilesObject> findFilesStartWith(String prefix, int limit) {
-        if (!StringUtils.isEmpty(prefix)) {
-            login();
-            try {
-                Collection<FilesObject> result = filesClient.listObjectsStartingWith(containerName,  prefix, null, limit, null);
-                return isEmpty(result) ? Collections.<FilesObject>emptyList() : result;
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new ExternalServiceException("cloudFile.service.externalError.cantfindfiles", "Coudn't find files");
-            }
-        }
-        return Collections.emptyList();
     }
 
     @Override
@@ -166,9 +148,27 @@ public class CloudFileServiceImpl implements CloudFileService {
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Coudn't find  file");
+            throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Couldn't find  file");
         }
 
+    }
+
+    @Override
+    public boolean fileExists(String destinationContainer, String fileName) {
+        LOGGER.info("get InputStream for file file in container [] by fileName", destinationContainer, fileName);
+        Assert.hasText(fileName);
+        login();
+        try {
+            filesClient.getObjectMetaData(destinationContainer, fileName);
+            return true;
+        }
+        catch (FilesNotFoundException e) {
+            return false;
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ExternalServiceException("cloudFile.service.externalError.couldnotopenstream", "Couldn't find  file");
+        }
     }
 
     @SuppressWarnings("unchecked")

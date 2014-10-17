@@ -4,8 +4,6 @@ import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
-import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
-import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
@@ -492,10 +490,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
-    public void testActivatePhoneNumber_v6d1_Json_Success() throws Exception {
+    public void testActivatePhoneNumberJson_Success_LatestVersion() throws Exception {
         String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+64279000456";
-        String apiVersion = "6.1";
+        String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

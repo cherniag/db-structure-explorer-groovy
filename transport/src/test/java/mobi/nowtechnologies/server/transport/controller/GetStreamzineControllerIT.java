@@ -341,6 +341,78 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     }
 
     @Test
+    public void testGetStreamzineForSeveralMQUsers_Success_LatestVersion() throws Exception {
+        final Date updateDatePast = new Date(System.currentTimeMillis() + 1000L);
+        final Date updateDateFuture = new Date(System.currentTimeMillis() + 10000L);
+
+        // parameters
+        String userName1 = "test@ukr.net";
+        String userName2 = "dnepr@i.ua";
+        String userName3 = "mq@mq.com";
+        String apiVersion = LATEST_SERVER_API_VERSION;
+        String appVersion = "1.0";
+        String communityUrl = "hl_uk";
+        String timestamp = System.currentTimeMillis() + "";
+        User user1 = userRepository.findOne(userName1, communityUrl);
+        User user2 = userRepository.findOne(userName2, communityUrl);
+        User user3 = userRepository.findOne(userName3, communityUrl);
+        //
+        // Expected JSON data
+        //
+        final String externalLink = "http://example.com";
+        final Message newsMessage = createNewsMessage();
+        final Date publishDate = new Date();
+        final int chartId = 6;
+        final int existingTrackId = 49;
+        final Media existingMedia = mediaRepository.findOne(existingTrackId);
+        Community community = communityRepository.findByName(communityUrl);
+
+        prepareUpdate(updateDatePast, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
+        prepareUpdate(updateDateFuture, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user1, user2);
+
+        Thread.sleep(2500L);
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                        .param("APP_VERSION", appVersion)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", user1.getDeviceUID())
+                        .param("USER_NAME", userName1)
+                        .param("USER_TOKEN", createTimestampToken(user1.getToken(), timestamp))
+                        .param("WIDTHXHEIGHT", "320x800")
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk()).
+                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                        .param("APP_VERSION", appVersion)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", user2.getDeviceUID())
+                        .param("USER_NAME", userName2)
+                        .param("WIDTHXHEIGHT", "320x800")
+                        .param("USER_TOKEN",  createTimestampToken(user2.getToken(), timestamp))
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk()).
+                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                        .param("APP_VERSION", appVersion)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", user3.getDeviceUID())
+                        .param("USER_NAME", userName3)
+                        .param("WIDTHXHEIGHT", "320x800")
+                        .param("USER_TOKEN",  createTimestampToken(user3.getToken(), timestamp))
+                        .param("TIMESTAMP", timestamp))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
+    }
+
+    @Test
     public void testGetStreamzineForO2User_Fail() throws Exception {
         Date now = new Date();
         final Date updateDate = DateUtils.addDays(now, 1);

@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.shared.enums.ItemType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -46,7 +47,8 @@ public class MediaDto {
 
 	private String info;
 	
-	private String ITunesUrl;
+	@JsonProperty("ITunesUrl")
+    private String ITunesUrl;
 	
 	private String title;
 	

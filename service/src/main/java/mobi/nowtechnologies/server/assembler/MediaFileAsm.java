@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.MediaFile;
 import mobi.nowtechnologies.server.shared.dto.admin.MediaFileDto;
+import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ public class MediaFileAsm {
 		mediaFileDto.setId(mediaFile.getI());
 		mediaFileDto.setSize(mediaFile.getSize());
 		mediaFileDto.setDuration(mediaFile.getDuration());
+        mediaFileDto.setFileType(FileType.findById(mediaFile.getFileTypeId()));
 		
 		LOGGER.info("Output parameter mediaFileDto=[{}]", mediaFileDto);
 		return mediaFileDto;

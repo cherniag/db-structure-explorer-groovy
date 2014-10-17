@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Entity
-@Table(name = "sz_update")
+@Table(name = "sz_update", uniqueConstraints = {@UniqueConstraint(columnNames = {"community_id", "updated"})})
 public class Update {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +48,11 @@ public class Update {
         Assert.isTrue(date.after(new Date()));
         this.date = date;
         this.community = community;
+    }
+
+    public void updateDate(Date incoming) {
+        Assert.notNull(incoming);
+        this.date = incoming;
     }
 
     public long getId() {
@@ -116,9 +121,7 @@ public class Update {
         }
     }
 
-    private void copyBlocks(Update incoming) {
-        //Assert.isTrue(canEdit());
-
+    public void copyBlocks(Update incoming) {
         this.blocks.clear();
 
         for (Block block : incoming.getBlocks()) {
