@@ -147,16 +147,24 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
                         .withChgPosition(DOWN)
                         .withPosition(18)
                         .withPublishTime(publishTime));
-        ResultActions resultActions = mockMvc.perform(
+        mockMvc.perform(
                 extGet("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-         ).andExpect(header().longValue(LAST_MODIFIED, publishTime));
-
-
-        resultActions
+         ).andExpect(header().longValue(LAST_MODIFIED, publishTime))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.response.data[1].chart.tracks[(@.length-1)].media").value(isrc + "_" + trackId));
+        mockMvc.perform(
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .headers(getHttpHeadersWithIfModifiedSince("INVALID DATE"))
+        ).andExpect(header().longValue(LAST_MODIFIED, publishTime))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.response.data[1].chart.tracks[(@.length-1)].media").value(isrc + "_" + trackId));

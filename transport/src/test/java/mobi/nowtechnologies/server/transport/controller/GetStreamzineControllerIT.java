@@ -208,7 +208,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         );
     }
 
-    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, Long modifiedSinceTime) throws Exception {
+    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, Object modifiedSinceTime) throws Exception {
         final String formatSpecific = (isJson) ? ".json" : "";
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = extGet("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
@@ -262,6 +262,9 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         // check json format and the correct order of the blocks
         doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", null)
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", "INVALID DATE")
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
 

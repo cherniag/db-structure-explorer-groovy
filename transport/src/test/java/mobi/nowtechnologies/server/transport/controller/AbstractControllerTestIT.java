@@ -30,7 +30,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Date;
 
+import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
@@ -157,7 +159,7 @@ public abstract class AbstractControllerTestIT {
 
         chartDetail = chartDetailRepository.save(new ChartDetail().withChart(userGroup.getChart()).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1)
                 .withChgPosition(DOWN)
-                .withChannel("HEATSEEKER"));
+                .withChannel("HEATSEEKER").withPublishTime(new Date().getTime()));
 
         message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
     }
@@ -175,9 +177,14 @@ public abstract class AbstractControllerTestIT {
         assertEquals(getAccCheckContentAsJsonObject(actionCall), getAccCheckContentAsJsonObject(accountCheckCall));
     }
 
-    protected HttpHeaders getHttpHeadersWithIfModifiedSince(long value) {
+    protected HttpHeaders getHttpHeadersWithIfModifiedSince(Object value) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfModifiedSince(value);
+        if (value instanceof Long) {
+            httpHeaders.setIfModifiedSince((Long) value);
+        }
+        if (value instanceof String) {
+            httpHeaders.set(IF_MODIFIED_SINCE, (String) value);
+        }
         return httpHeaders;
     }
 

@@ -12,14 +12,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.REGISTERED;
 import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedDefaultValue.ZERO;
+import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedUtils.checkNotModified;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -40,9 +42,9 @@ public class GetNewsController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
             @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
-            ServletWebRequest webRequest
+            HttpServletRequest request, HttpServletResponse response
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, modifiedSince, deviceUID, true, webRequest, ACTIVATED);
+        return getNews(userName, userToken, timestamp, modifiedSince, deviceUID, true, request, response, ACTIVATED);
     }
 
 
@@ -56,7 +58,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, null, ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, null, null, ACTIVATED);
     }
 
 
@@ -74,7 +76,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, null, ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, null, null, ACTIVATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -88,7 +90,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, null, REGISTERED, ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, null, null, REGISTERED, ACTIVATED);
     }
 
     private ModelAndView getNews(String userName,
@@ -97,7 +99,7 @@ public class GetNewsController extends CommonController {
                                  Long lastUpdateNewsTimeMillis,
                                  String deviceUID,
                                  boolean withBanners,
-                                 ServletWebRequest servletWebRequest, ActivationStatus... activationStatuses) throws Exception {
+                                 HttpServletRequest request, HttpServletResponse response, ActivationStatus... activationStatuses) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -106,13 +108,13 @@ public class GetNewsController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
-            boolean checkCaching = ((servletWebRequest != null) & (lastUpdateNewsTimeMillis != null));
+            boolean checkCaching = ((request != null) & (lastUpdateNewsTimeMillis != null));
 
             ContentDtoResult<NewsDto> newsDtoResult = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, withBanners, checkCaching);
 
             if (checkCaching) {
                 Long lastUpdateTime = newsDtoResult.getLastUpdatedTime();
-                if (servletWebRequest.checkNotModified(lastUpdateTime)) {
+                if (checkNotModified(lastUpdateTime, request, response)) {
                     return null;
                 }
             }
