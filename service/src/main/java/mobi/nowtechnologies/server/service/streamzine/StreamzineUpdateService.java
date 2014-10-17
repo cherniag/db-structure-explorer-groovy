@@ -132,7 +132,7 @@ public class StreamzineUpdateService {
         Assert.notNull(date);
         Assert.notNull(user);
 
-        Date dateOfUpdate = calculateDate(date, user, c);
+        Date dateOfUpdate = calculateDate(user, c);
         Assert.notNull(dateOfUpdate, "No streamzine updates found for date: " + date);
         if (checkCaching) {
             cacheContentService.checkCacheContent(date.getTime(), dateOfUpdate.getTime());
@@ -143,11 +143,8 @@ public class StreamzineUpdateService {
         return new ContentDtoResult<Update>(dateOfUpdate.getTime(), result);
     }
 
-    private Date calculateDate(Date date, User user, Community c) {
-        Date startDate = date;
-        if (date.getTime() == 0) {
-            startDate = new Date();
-        }
+    private Date calculateDate(User user, Community c) {
+        Date startDate = new Date();
         Date result = streamzineUpdateRepository.findFirstDateAfterForUser(startDate, user, c);
         if (result == null) {
             result = streamzineUpdateRepository.findLastDateSince(startDate, c);
