@@ -5,11 +5,13 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Collections;
+import java.util.Date;
 
 import static mobi.nowtechnologies.server.shared.enums.MessageActionType.A_SPECIFIC_TRACK;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.*;
@@ -280,6 +282,17 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
                         .headers(getHttpHeadersWithIfModifiedSince("INVALID DATE")))
+                .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
+                .andExpect(jsonPath("$.response..news").exists())
+                .andExpect(header().longValue(HttpHeaders.LAST_MODIFIED, lastValue));
+        Date dateInFuture = DateUtils.addDays(new Date(), 1);
+        mockMvc.perform(
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .headers(getHttpHeadersWithIfModifiedSince(dateInFuture)))
                 .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
                 .andExpect(jsonPath("$.response..news").exists())
                 .andExpect(header().longValue(HttpHeaders.LAST_MODIFIED, lastValue));

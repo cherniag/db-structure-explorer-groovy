@@ -185,6 +185,9 @@ public abstract class AbstractControllerTestIT {
         if (value instanceof String) {
             httpHeaders.set(IF_MODIFIED_SINCE, (String) value);
         }
+        if (value instanceof Date) {
+            httpHeaders.setIfModifiedSince(((Date) value).getTime());
+        }
         return httpHeaders;
     }
 

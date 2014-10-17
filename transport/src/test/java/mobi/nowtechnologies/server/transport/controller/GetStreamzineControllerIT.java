@@ -267,7 +267,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", "INVALID DATE")
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
-
+        Date dateInFuture = DateUtils.addDays(new Date(), 1);
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", dateInFuture)
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
         doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", mobi.nowtechnologies.server.shared.util.DateUtils.getTimeWithoutMilliseconds(updateDate.getTime()))
                 .andExpect(status().isNotModified()).andExpect(content().string(""));
     }
