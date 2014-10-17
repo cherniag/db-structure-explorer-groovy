@@ -64,19 +64,35 @@ public class ClientCacheFeature {
 
     private boolean sendLastModifiedSince;
     private boolean timestampIsBigger;
+    private String corruptedHeader;
     private Set<String> communities;
 
     //
     // Given and After
     //
     @Given("^First time user with device using (.+) formats for (.+) starting from (.+) and (.+) and for (.+) available$")
-    public void firstTimeUserUsingFormat(@Transform(DictionaryTransformer.class) Word requestFormats,
+    public void firstTimeUserUsingFormatAfter(@Transform(DictionaryTransformer.class) Word requestFormats,
                                         @Transform(DictionaryTransformer.class) Word versions,
                                         String version,
                                         @Transform(DictionaryTransformer.class) Word communities,
                                         @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         List<String> cacheVersions = ApiVersions.from(versions.list()).above(version);
 
+        initUserDatas(requestFormats, communities, devices, cacheVersions);
+    }
+
+    @Given("^First time user with device using (.+) formats for (.+) starting before (.+) and (.+) and for (.+) available$")
+    public void firstTimeUserUsingFormatBefore(@Transform(DictionaryTransformer.class) Word requestFormats,
+                                         @Transform(DictionaryTransformer.class) Word versions,
+                                         String version,
+                                         @Transform(DictionaryTransformer.class) Word communities,
+                                         @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
+        List<String> cacheVersions = ApiVersions.from(versions.list()).bellow(version);
+
+        initUserDatas(requestFormats, communities, devices, cacheVersions);
+    }
+
+    private void initUserDatas(Word requestFormats, Word communities, Word devices, List<String> cacheVersions) {
         this.communities = communities.set();
         currentUserDevices = userDeviceDataService.table(cacheVersions, this.communities, devices.set(), requestFormats.set(RequestFormat.class));
         for (UserDeviceData data : currentUserDevices) {
@@ -86,10 +102,16 @@ public class ClientCacheFeature {
         positionGenerator.init(currentUserDevices);
     }
 
+
     @After
     public void cleanDevicesSet() {
         responses.clear();
         deviceSet.cleanup();
+        communities.clear();
+
+        sendLastModifiedSince = false;
+        timestampIsBigger = false;
+        corruptedHeader = null;
     }
 
     //
@@ -124,17 +146,45 @@ public class ClientCacheFeature {
         timestampIsBigger = false;
     }
 
+
+    @And("^user sends 'If-Modified-Since' header and it has '(.+)' value$")
+    public void userSendsAndIsCorrupted(String corruptedHeader) {
+        sendLastModifiedSince = true;
+        this.corruptedHeader = corruptedHeader;
+    }
+
     @When("^user invokes get streamzine command$")
     public void getStreamzineForVersion() {
+        for (UserDeviceData data : currentUserDevices) {
+            if(sendLastModifiedSince) {
+                if(corruptedHeader != null) {
+                    ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data, corruptedHeader);
+                    responses.put(data, response);
+                } else {
+                    Update saved = updates.get(data.getCommunityUrl());
+                    int delta = (timestampIsBigger) ? 1 : -1;
+                    final long ifModifiedSince = DateUtils.addSeconds(saved.getDate(), delta * 10).getTime();
+                    ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data, ifModifiedSince);
+                    responses.put(data, response);
+                }
+            } else {
+                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data);
+                responses.put(data, response);
+            }
+        }
+    }
+
+    @When("^user invokes get streamzine command for old clients$")
+    public void getStreamzineForVersionOld() {
         for (UserDeviceData data : currentUserDevices) {
             if(sendLastModifiedSince) {
                 Update saved = updates.get(data.getCommunityUrl());
                 int delta = (timestampIsBigger) ? 1 : -1;
                 final long ifModifiedSince = DateUtils.addSeconds(saved.getDate(), delta * 10).getTime();
-                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data, ifModifiedSince);
+                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSinceOld(data, ifModifiedSince);
                 responses.put(data, response);
             } else {
-                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data);
+                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSinceOld(data);
                 responses.put(data, response);
             }
         }
@@ -148,6 +198,17 @@ public class ClientCacheFeature {
                     httpCode,
                     responses.get(data).getStatusCode().value()
             );
+        }
+    }
+
+    @Then("^update time is the same$")
+    public void updateTime() {
+        for (UserDeviceData data : currentUserDevices) {
+/*            assertEquals(
+                    getErrorMessage(data),
+                    httpCode,
+                    responses.get(data).getStatusCode().value()
+            );*/
         }
     }
 
