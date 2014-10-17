@@ -17,14 +17,15 @@ import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedDefaultValue.ZERO;
+import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedUtils.checkNotModified;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -48,17 +49,16 @@ public class GetStreamzineController extends CommonController {
                     "**/{community}/{apiVersion:6.3}/GET_STREAMZINE",
             })
     public Response getUpdateWithCache(@RequestParam("APP_VERSION") String appVersion,
-                              @PathVariable("community") String community,
-                              @RequestParam("USER_NAME") String userName,
-                              @RequestParam("USER_TOKEN") String userToken,
-                              @RequestParam("TIMESTAMP") String timestamp,
-                              @RequestParam("WIDTHXHEIGHT") Resolution resolution,
-                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-                              @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
-                              ServletWebRequest webRequest) throws Exception {
-        return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, webRequest, modifiedSince);
+                                       @PathVariable("community") String community,
+                                       @RequestParam("USER_NAME") String userName,
+                                       @RequestParam("USER_TOKEN") String userToken,
+                                       @RequestParam("TIMESTAMP") String timestamp,
+                                       @RequestParam("WIDTHXHEIGHT") Resolution resolution,
+                                       @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+                                       @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
+                                       HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, request, response, modifiedSince);
     }
-
 
 
     @RequestMapping(method = POST,
@@ -72,11 +72,12 @@ public class GetStreamzineController extends CommonController {
                               @RequestParam("USER_TOKEN") String userToken,
                               @RequestParam("TIMESTAMP") String timestamp,
                               @RequestParam("WIDTHXHEIGHT") Resolution resolution,
-                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, null, null);
+                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+                              HttpServletResponse response) throws Exception {
+        return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, null, response, null);
     }
 
-    private Response getResponse(String community, String userName, String userToken, String timestamp, Resolution resolution, String deviceUID, ServletWebRequest webRequest, Long lastUpdateFromClient) throws Exception {
+    private Response getResponse(String community, String userName, String userToken, String timestamp, Resolution resolution, String deviceUID, HttpServletRequest request, HttpServletResponse response, Long lastUpdateFromClient) throws Exception {
         User user = null;
         Exception ex = null;
         try {
@@ -88,14 +89,14 @@ public class GetStreamzineController extends CommonController {
 
             Date date = getDateForStreamzine(lastUpdateFromClient);
 
-            boolean checkCaching = ((webRequest != null) && (lastUpdateFromClient != null));
+            boolean checkCaching = ((request != null) && (lastUpdateFromClient != null));
 
 
             ContentDtoResult<Update> updateDtoResult = streamzineUpdateService.getUpdate(date, user, community, checkCaching);
 
-            if (checkCaching){
+            if (checkCaching) {
                 Long lastUpdateTime = updateDtoResult.getLastUpdatedTime();
-                if (webRequest.checkNotModified(lastUpdateTime)){
+                if (checkNotModified(lastUpdateTime, request, response)) {
                     return null;
                 }
             }
@@ -117,7 +118,7 @@ public class GetStreamzineController extends CommonController {
     }
 
     private Date getDateForStreamzine(Long lastUpdateFromClient) {
-        return (lastUpdateFromClient == null)? new Date() : new Date(lastUpdateFromClient);
+        return (lastUpdateFromClient == null) ? new Date() : new Date(lastUpdateFromClient);
     }
 
 

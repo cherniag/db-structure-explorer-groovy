@@ -13,11 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,6 +26,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
 import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedDefaultValue.ZERO;
+import static mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedUtils.checkNotModified;
 
 /**
  * GetChartController
@@ -53,9 +54,9 @@ public class GetChartController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
             @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
-            ServletWebRequest servletWebRequest
+            HttpServletResponse response
     ) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, servletWebRequest, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, response, ActivationStatus.ACTIVATED);
     }
 
 
@@ -243,7 +244,7 @@ public class GetChartController extends CommonController {
                                   String userToken,
                                   String timestamp,
                                   String deviceUID,
-                                  Long lastDateOfUpdateChartOnClient, ServletWebRequest servletWebRequest, ActivationStatus... activationStatuses) throws Exception {
+                                  Long lastDateOfUpdateChartOnClient, HttpServletResponse response, ActivationStatus... activationStatuses) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -254,12 +255,12 @@ public class GetChartController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
-            boolean checkCaching = ((servletWebRequest != null) && (lastDateOfUpdateChartOnClient != null));
+            boolean checkCaching = ((response != null) && (lastDateOfUpdateChartOnClient != null));
             ContentDtoResult<ChartDto> chartResult = chartService.processGetChartCommand(user, community, false, true, lastDateOfUpdateChartOnClient);
 
             if (checkCaching) {
                 Long lastUpdateTime = chartResult.getLastUpdatedTime();
-                if (servletWebRequest.checkNotModified(lastUpdateTime)) {
+                if (checkNotModified(lastUpdateTime, request, response)) {
                     return null;
                 }
             }

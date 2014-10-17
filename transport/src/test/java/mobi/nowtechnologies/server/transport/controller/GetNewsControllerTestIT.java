@@ -279,6 +279,17 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
+                        .headers(getHttpHeadersWithIfModifiedSince("INVALID DATE")))
+                .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
+                .andExpect(jsonPath("$.response..news").exists())
+                .andExpect(header().longValue(HttpHeaders.LAST_MODIFIED, lastValue));
+
+        mockMvc.perform(
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
                         .headers(getHttpHeadersWithIfModifiedSince(lastValue)))
                 .andExpect(status().isNotModified()).andDo(print())
                 .andExpect(content().string(""));
