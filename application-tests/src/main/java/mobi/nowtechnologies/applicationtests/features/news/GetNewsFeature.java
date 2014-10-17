@@ -9,8 +9,6 @@ import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.PartnerDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
-import mobi.nowtechnologies.applicationtests.features.common.transformers.list.ListValues;
-import mobi.nowtechnologies.applicationtests.features.common.transformers.list.ListValuesTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableString;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableStringTransformer;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
@@ -29,6 +27,7 @@ import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class GetNewsFeature {
     @Resource
     private CommunityRepository communityRepository;
 
-    private List<UserDeviceData> userDeviceDatas;
+    private List<UserDeviceData> userDeviceDatas = new ArrayList<UserDeviceData>();
 
     private Map<UserDeviceData, NewsDetailDto[]> newsResponses = new HashMap<UserDeviceData, NewsDetailDto[]>();
     private String community;
@@ -68,8 +67,13 @@ public class GetNewsFeature {
                       @Transform(DictionaryTransformer.class) Word formats,
                       @Transform(DictionaryTransformer.class) Word versions,
                       String community){
+        // already activated if not empty
+        if(!userDeviceDatas.isEmpty()) {
+            return;
+        }
+
         this.community = community;
-        this.userDeviceDatas = userDeviceDataService.table(versions.list(), community, deviceTypes.list(), formats.set(RequestFormat.class));
+        this.userDeviceDatas.addAll(userDeviceDataService.table(versions.list(), community, deviceTypes.list(), formats.set(RequestFormat.class)));
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             partnerDeviceSet.signUpAndActivate(userDeviceData);
 
@@ -134,45 +138,36 @@ public class GetNewsFeature {
         }
     }
 
-    @And("^news message should have message types \\[(.+)\\]$")
-    public void andNewsMessagesShouldHaveMessageType(@Transform(ListValuesTransformer.class) ListValues listValues){
+    @And("^news message should have message type '(.+)'$")
+    public void andNewsMessagesShouldHaveMessageType(MessageType messageType){
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 
-            List<MessageType> types = listValues.enums(MessageType.class);
-            for(int i=0; i < types.size(); i++) {
-                assertEquals(getErrorMessage(userDeviceData),
-                        types.get(i),
-                        news[i].getMessageType());
-            }
+            assertEquals(getErrorMessage(userDeviceData),
+                    messageType,
+                    news[0].getMessageType());
         }
     }
 
-    @And("^details \\[(.+)\\]$")
-    public void andNewsMessagesShouldHaveBody(@Transform(ListValuesTransformer.class) ListValues listValues){
+    @And("^news message should have detail '(.+)'$")
+    public void andNewsMessagesShouldHaveBody(String detail){
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 
-            List<String> details = listValues.strings();
-            for(int i=0; i < details.size(); i++) {
-                assertEquals(getErrorMessage(userDeviceData),
-                        details.get(i),
-                        news[i].getDetail());
-            }
+            assertEquals(getErrorMessage(userDeviceData),
+                    detail,
+                    news[0].getDetail());
         }
     }
 
-    @And("^bodies \\[(.+)\\]$")
-    public void andNewsMessagesShouldHaveDetail(@Transform(ListValuesTransformer.class) ListValues listValues){
+    @And("^news message should have body '(.+)'$")
+    public void andNewsMessagesShouldHaveDetail(String body){
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 
-            List<String> bodies = listValues.strings();
-            for(int i=0; i < bodies.size(); i++) {
-                assertEquals(getErrorMessage(userDeviceData),
-                        bodies.get(i),
-                        news[i].getBody());
-            }
+            assertEquals(getErrorMessage(userDeviceData),
+                    body,
+                    news[0].getBody());
         }
     }
 
