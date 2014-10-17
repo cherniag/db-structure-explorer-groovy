@@ -18,21 +18,20 @@ import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamzineHttpService;
 import mobi.nowtechnologies.applicationtests.services.streamzine.PositionGenerator;
 import mobi.nowtechnologies.applicationtests.services.streamzine.StreamzineUpdateCreator;
-import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -47,13 +46,11 @@ public class ClientCacheFeature {
     @Resource
     UserDeviceDataService userDeviceDataService;
     @Resource
-    SimpleInterpolator interpolator;
-    @Resource
     CommunityRepository communityRepository;
     @Resource
-    ChartRepository chartRepository;
-    @Resource
     DbMediaService dbMediaService;
+    @Resource
+    StreamzineUpdateRepository streamzineUpdateRepository;
 
     @Resource
     MQAppClientDeviceSet deviceSet;
@@ -62,11 +59,12 @@ public class ClientCacheFeature {
 
     private Map<UserDeviceData, ResponseEntity<String>> responses = new HashMap<UserDeviceData, ResponseEntity<String>>();
 
-    private Map<UserDeviceData, Update> updates = new HashMap<UserDeviceData, Update>();
+    private Map<String, Update> updates = new HashMap<String, Update>();
     private PositionGenerator positionGenerator = new PositionGenerator();
 
     private boolean sendLastModifiedSince;
     private boolean timestampIsBigger;
+    private Set<String> communities;
 
     //
     // Given and After
@@ -79,7 +77,8 @@ public class ClientCacheFeature {
                                         @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         List<String> cacheVersions = ApiVersions.from(versions.list()).above(version);
 
-        currentUserDevices = userDeviceDataService.table(cacheVersions, communities.set(), devices.set(), requestFormats.set(RequestFormat.class));
+        this.communities = communities.set();
+        currentUserDevices = userDeviceDataService.table(cacheVersions, this.communities, devices.set(), requestFormats.set(RequestFormat.class));
         for (UserDeviceData data : currentUserDevices) {
             deviceSet.singup(data);
             deviceSet.loginUsingFacebook(data);
@@ -97,13 +96,14 @@ public class ClientCacheFeature {
     // Successful Scenario
     //
     @When("^update is prepared$")
-    @Transactional(value = "applicationTestsTransactionManager", readOnly = true)
     public void updateIsPrepared() {
         int shiftSeconds = 0;
 
-        for (UserDeviceData data : currentUserDevices) {
-            Update saved = streamzineUpdateCreator.create(data, shiftSeconds++);
-            updates.put(data, saved);
+        for (String community : communities) {
+            Update saved = streamzineUpdateCreator.create(community, shiftSeconds++);
+            // needed to get again to avoid potential issues with dates (milliseconds/seconds) cut
+            Update getAfterSave = streamzineUpdateRepository.findOne(saved.getId());
+            updates.put(community, getAfterSave);
         }
     }
 
@@ -128,7 +128,7 @@ public class ClientCacheFeature {
     public void getStreamzineForVersion() {
         for (UserDeviceData data : currentUserDevices) {
             if(sendLastModifiedSince) {
-                Update saved = updates.get(data);
+                Update saved = updates.get(data.getCommunityUrl());
                 int delta = (timestampIsBigger) ? 1 : -1;
                 final long ifModifiedSince = DateUtils.addSeconds(saved.getDate(), delta * 10).getTime();
                 ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data, ifModifiedSince);

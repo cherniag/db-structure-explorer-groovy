@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.applicationtests.services.streamzine;
 
-import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
@@ -20,8 +19,8 @@ public class StreamzineUpdateCreator {
     StreamzineUpdateRepository streamzineUpdateRepository;
 
     @Transactional(value = "applicationTestsTransactionManager")
-    public Update create(UserDeviceData data, Update update, int shiftSeconds) {
-        Community c = communityRepository.findByRewriteUrlParameter(data.getCommunityUrl());
+    public Update create(String communityUrl, Update update, int shiftSeconds) {
+        Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
         Update restored = new Update(DateUtils.addMilliseconds(new Date(), 1000), c);
         restored.updateFrom(update);
         restored.updateDate(DateUtils.addSeconds(new Date(), shiftSeconds));
@@ -29,8 +28,8 @@ public class StreamzineUpdateCreator {
     }
 
     @Transactional(value = "applicationTestsTransactionManager")
-    public Update create(UserDeviceData data, int shiftSeconds) {
-        Community c = communityRepository.findByRewriteUrlParameter(data.getCommunityUrl());
+    public Update create(String communityUrl, int shiftSeconds) {
+        Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
         Update restored = new Update(DateUtils.addSeconds(new Date(), shiftSeconds+1), c);
         return streamzineUpdateRepository.saveAndFlush(restored);
     }
