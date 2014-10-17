@@ -27,6 +27,9 @@ public class DateUtils {
         return c.getTime();
     }
 
+    public static Long getTimeWithoutMilliseconds(Long inputTime) {
+        return getDateWithoutMilliseconds(new Date(inputTime)).getTime();
+    }
 
 
 }

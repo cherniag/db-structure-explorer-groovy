@@ -245,7 +245,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         //
         final String externalLink = "http://example.com";
         final Message newsMessage = createNewsMessage();
-        final Date publishDate = new Date();
+        Date publishDate = DateUtils.setMilliseconds(new Date(), 300);
         final int chartId = 6;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
@@ -265,7 +265,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
 
-        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", updateDate.getTime())
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", mobi.nowtechnologies.server.shared.util.DateUtils.getTimeWithoutMilliseconds(updateDate.getTime()))
                 .andExpect(status().isNotModified()).andExpect(content().string(""));
     }
 
