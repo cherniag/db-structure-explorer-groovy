@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.applicationtests.features;
+package mobi.nowtechnologies.applicationtests.features.cached;
 
 import cucumber.api.Transform;
 import cucumber.api.java.After;
@@ -36,7 +36,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 @Component
-public class ClientCacheFeature {
+public class StreamzineClientCacheFeature {
     @Resource
     UserDataCreator userDataCreator;
     @Resource
