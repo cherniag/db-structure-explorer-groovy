@@ -1,4 +1,4 @@
-
+@Ready55
 Feature: Transport API call for the GET_STREAMZINE command sending special client header
   Scenario: device sends GET_STREAMZINE command with correct parameters and gets correct response
     Given First time user with device using JSON and XML formats for all streamzine supported versions starting from 6.3 and streamzine supported communities and for all devices available
@@ -26,7 +26,6 @@ Feature: Transport API call for the GET_STREAMZINE command sending special clien
     When user invokes get streamzine command for old clients
     Then response has 200 http response code
 
-  @Ready55
   Scenario: device sends GET_STREAMZINE command with correct parameters and gets correct response
     Given First time user with device using JSON and XML formats for all streamzine supported versions starting from 6.3 and streamzine supported communities and for all devices available
     And update is prepared
