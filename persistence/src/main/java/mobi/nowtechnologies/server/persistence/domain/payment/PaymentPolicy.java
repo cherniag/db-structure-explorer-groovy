@@ -326,8 +326,8 @@ public class PaymentPolicy {
 
         paymentPolicyDto.setPaymentType(paymentType);
         paymentPolicyDto.setSubcost(subcost);
-        paymentPolicyDto.setPeriod(period.getDuration());
-        paymentPolicyDto.setPeriodUnit(period.getPeriodUnit());
+        paymentPolicyDto.setDuration(period.getDuration());
+        paymentPolicyDto.setDurationUnit(period.getDurationUnit());
         return paymentPolicyDto;
     }
 

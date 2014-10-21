@@ -143,7 +143,7 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 			LOGGER.info("Processing started for user with id [{}], userName [{}], communityName [{}]", user.getId(), user.getUserName(), community.getName());
 			Period period = paymentPolicy.getPeriod();
 			String message = messageSource.getMessage(upperCaseCommunityName, messageToSearch, new Object[] { community.getDisplayName(),
-					paymentPolicy.getSubcost(), period.getDuration(), period.getPeriodUnit(), paymentPolicy.getShortCode() }, null);
+					paymentPolicy.getSubcost(), period.getDuration(), period.getDurationUnit(), paymentPolicy.getShortCode() }, null);
 
 			if ( message == null || message.isEmpty() ) {
 				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. The sms message was not sent for user [{}]", messageToSearch, user.getId());

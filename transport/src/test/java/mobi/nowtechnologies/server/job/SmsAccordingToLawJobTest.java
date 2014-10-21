@@ -130,7 +130,7 @@ public class SmsAccordingToLawJobTest {
 
 		final Object[] deltaSuccessfulPaymentSmsSendingTimestampMillisReachedMessageArgs = new Object[] { mockCommunity.getDisplayName(),
 				paymentPolicyForCurrentMigPaymentDetails.getSubcost(), paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDuration(),
-				paymentPolicyForCurrentMigPaymentDetails.getPeriod().getPeriodUnit(),
+				paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails.getShortCode() };
 		MigResponse successfulMigResponse = MigResponseFactory.createSuccessfulMigResponse();
 
@@ -181,7 +181,7 @@ public class SmsAccordingToLawJobTest {
 
 		final Object[] amountOfMoneyToUserNotificationMessageArgs = new Object[] { mockCommunity.getDisplayName(),
 				paymentPolicyForCurrentMigPaymentDetails.getSubcost(), paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDuration(),
-				paymentPolicyForCurrentMigPaymentDetails.getPeriod().getPeriodUnit(),
+				paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails.getShortCode() };
 		MigResponse successfulMigResponse = MigResponseFactory.createSuccessfulMigResponse();
 
@@ -240,11 +240,11 @@ public class SmsAccordingToLawJobTest {
 
 		final Object[] amountOfMoneyToUserNotificationMessageArgs1 = new Object[] { mockCommunity.getDisplayName(),
 				paymentPolicyForCurrentMigPaymentDetails1.getSubcost(), paymentPolicyForCurrentMigPaymentDetails1.getPeriod().getDuration(),
-				paymentPolicyForCurrentMigPaymentDetails1.getPeriod().getPeriodUnit(),
+				paymentPolicyForCurrentMigPaymentDetails1.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails1.getShortCode() };
 		final Object[] amountOfMoneyToUserNotificationMessageArgs2 = new Object[] { mockCommunity.getDisplayName(),
 				paymentPolicyForCurrentMigPaymentDetails2.getSubcost(), paymentPolicyForCurrentMigPaymentDetails2.getPeriod().getDuration(),
-				paymentPolicyForCurrentMigPaymentDetails2.getPeriod().getPeriodUnit(),
+				paymentPolicyForCurrentMigPaymentDetails2.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails2.getShortCode() };
 
 		MigResponse failureMigResponse = MigResponseFactory.createFailMigResponse();

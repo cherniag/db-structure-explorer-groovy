@@ -30,8 +30,8 @@ alter table `sz_update` add constraint `sz_update_updated_community` UNIQUE(`com
 -- END SRV-215
 
 -- SRV-295 - [SERVER] Allow payment policy to be configurable either by day, month or week
-alter table tb_paymentPolicy add column period_unit VARCHAR(255);
 alter table tb_paymentPolicy add column duration bigint;
+alter table tb_paymentPolicy add column duration_unit VARCHAR(255);
 
 START TRANSACTION;
 
@@ -39,7 +39,7 @@ UPDATE
     tb_paymentPolicy pp JOIN tb_communities c
       ON pp.comunityId = c.id
 SET
-  pp.period_unit = 'MONTHS' ,
+  pp.duration_unit = 'MONTHS' ,
   pp.duration = 1
 WHERE
     (
@@ -55,13 +55,13 @@ WHERE
           OR pp.provider IS NULL
         )
       )
-    )
+    ) or pp.paymentType='iTunesSubscription'
 ;
 
 UPDATE
   tb_paymentPolicy pp
 SET
-  pp.period_unit = 'WEEKS' ,
+  pp.duration_unit = 'WEEKS' ,
   pp.duration = subWeeks
 WHERE
   pp.duration IS NULL
@@ -69,18 +69,54 @@ WHERE
 
 commit;
 
-alter table tb_paymentPolicy modify column period_unit VARCHAR(255) not null;
 alter table tb_paymentPolicy modify column duration bigint not null;
+alter table tb_paymentPolicy modify column duration_unit VARCHAR(255) not null;
 
 alter table tb_paymentPolicy drop column subWeeks;
 
-alter table tb_pendingPayments add column duration_unit VARCHAR(255);
 alter table tb_pendingPayments add column duration bigint;
+alter table tb_pendingPayments add column duration_unit VARCHAR(255);
 
-alter table tb_submittedPayments add column period_unit VARCHAR(255);
 alter table tb_submittedPayments add column duration bigint;
+alter table tb_submittedPayments add column duration_unit VARCHAR(255);
 
-update tb_submittedPayments set duration = subWeeks, period_unit = 'WEEKS';
+alter table tb_promotionpaymentpolicy add column duration bigint;
+alter table tb_promotionpaymentpolicy add column duration_unit VARCHAR(255);
 
-alter table tb_submittedPayments modify column period_unit VARCHAR(255) not null;
+START TRANSACTION;
+
+UPDATE
+    tb_pendingPayments ppay JOIN tb_paymentdetails pd
+      ON ppay.paymentDetailsId = pd.i JOIN tb_paymentpolicy pp
+      ON pp.i = pd.paymentPolicyId
+SET
+  ppay.duration = pp.duration ,
+  ppay.duration_unit = pp.duration_unit
+;
+
+UPDATE
+    tb_submittedPayments sp JOIN tb_paymentdetails pd
+      ON sp.paymentDetailsId = pd.i JOIN tb_paymentpolicy pp
+      ON pp.i = pd.paymentPolicyId
+SET
+  sp.duration = pp.duration ,
+  sp.duration_unit = pp.duration_unit
+;
+
+update tb_submittedPayments set duration = subWeeks, duration_unit = 'WEEKS' where duration is null;
+
+update tb_promotionPaymentPolicy set duration = subweeks, duration_unit = 'WEEKS';
+
+commit;
+
+alter table tb_pendingPayments modify column duration bigint not null;
+alter table tb_pendingPayments modify column duration_unit VARCHAR(255) not null;
+
 alter table tb_submittedPayments modify column duration bigint not null;
+alter table tb_submittedPayments modify column duration_unit VARCHAR(255) not null;
+
+alter table tb_promotionPaymentPolicy modify column duration bigint not null;
+alter table tb_promotionPaymentPolicy modify column duration_unit VARCHAR(255) not null;
+
+alter table tb_promotionPaymentPolicy drop column subWeeks;
+

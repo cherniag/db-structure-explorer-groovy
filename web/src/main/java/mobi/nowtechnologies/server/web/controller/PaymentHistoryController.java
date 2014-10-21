@@ -39,7 +39,7 @@ public class PaymentHistoryController extends CommonController{
 		List<PaymentHistoryItemDto> paymentHistoryItemDtos = paymentService.findByUserIdOrderedByLogTimestampDesc(userId, maxResults);
 		
 		for (PaymentHistoryItemDto paymentHistoryItemDto : paymentHistoryItemDtos) {
-			String localizedDescription=messageSource.getMessage("transaction_history.historyTable.paymentType."+paymentHistoryItemDto.getDescription(), new Object[]{paymentHistoryItemDto.getPeriod(), paymentHistoryItemDto.getPeriodUnit()}, locale);
+			String localizedDescription=messageSource.getMessage("transaction_history.historyTable.paymentType."+paymentHistoryItemDto.getDescription(), new Object[]{paymentHistoryItemDto.getPeriod(), paymentHistoryItemDto.getDurationUnit()}, locale);
 			paymentHistoryItemDto.setDescription(localizedDescription);
 			String paymentMethod=messageSource.getMessage("transaction_history.historyTable.paymentMethod."+paymentHistoryItemDto.getPaymentMethod(), null, locale);
 			paymentHistoryItemDto.setPaymentMethod(paymentMethod);

@@ -66,7 +66,7 @@ import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -1025,7 +1025,7 @@ public class UserServiceTest {
 		User user = UserFactory.createUser(migPaymentDetails, amountOfMoneyToUserNotification, userGroup);
 
 		Period period = paymentPolicy.getPeriod();
-		final Object[] successfulPaymentMessageArgs = new Object[] { community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getPeriodUnit(),
+		final Object[] successfulPaymentMessageArgs = new Object[] { community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getDurationUnit(),
 				paymentPolicy.getShortCode() };
 
 		MigResponse successfulMigResponse = MigResponseFactory.createSuccessfulMigResponse();
@@ -1061,7 +1061,7 @@ public class UserServiceTest {
 		User user = UserFactory.createUser(migPaymentDetails, amountOfMoneyToUserNotification, userGroup);
 
 		Period period = paymentPolicy.getPeriod();
-		final Object[] successfulPaymentMessageArgs = new Object[] { community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getPeriodUnit(),
+		final Object[] successfulPaymentMessageArgs = new Object[] { community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getDurationUnit(),
 				paymentPolicy.getShortCode() };
 
 		MigResponse failureMigResponse = MigResponseFactory.createFailMigResponse();
@@ -1431,7 +1431,7 @@ public class UserServiceTest {
         user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
         user.setNextSubPayment(oldNextSubPayment);
 
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 
 		SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
@@ -1589,7 +1589,7 @@ public class UserServiceTest {
 		user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
 		user.setNextSubPayment(oldNextSubPayment);
 
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 
 		SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
@@ -1673,7 +1673,7 @@ public class UserServiceTest {
 		
 		final SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 		submittedPayment.setPeriod(period);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
@@ -1758,7 +1758,7 @@ public class UserServiceTest {
 		
 		final SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 		submittedPayment.setPeriod(period);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
@@ -1843,7 +1843,7 @@ public class UserServiceTest {
 		
 		final SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 		submittedPayment.setPeriod(period);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
@@ -1926,7 +1926,7 @@ public class UserServiceTest {
 		
 		SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 		submittedPayment.setPeriod(period);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, CARD_TOP_UP);
@@ -2008,7 +2008,7 @@ public class UserServiceTest {
 		
 		SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 		submittedPayment.setPeriod(period);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, oldSubBalance, CARD_TOP_UP);
@@ -2085,7 +2085,7 @@ public class UserServiceTest {
 		
 		SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(migSmsType);
-		submittedPayment.setPeriod(new Period().withDuration(5).withPeriodUnit(WEEKS));
+		submittedPayment.setPeriod(new Period().withDuration(5).withDurationUnit(WEEKS));
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 7, CARD_TOP_UP);
 		PowerMockito.whenNew(AccountLog.class).withArguments(user.getId(), submittedPayment, 7, CARD_TOP_UP).thenReturn(cardTopUpAccountLog);
@@ -2167,7 +2167,7 @@ public class UserServiceTest {
 		
 		final SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(paymentDetailsType);
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 		submittedPayment.setPeriod(period);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);
@@ -2251,7 +2251,7 @@ public class UserServiceTest {
 		
 		final SubmittedPayment submittedPayment = createSubmittedPayment();
 		submittedPayment.setPaymentSystem(paymentDetailsType);
-		final Period period = new Period().withDuration(5).withPeriodUnit(WEEKS);
+		final Period period = new Period().withDuration(5).withDurationUnit(WEEKS);
 		submittedPayment.setPeriod(period);
 		
 		AccountLog cardTopUpAccountLog = new AccountLog(user.getId(), submittedPayment, 2, CARD_TOP_UP);

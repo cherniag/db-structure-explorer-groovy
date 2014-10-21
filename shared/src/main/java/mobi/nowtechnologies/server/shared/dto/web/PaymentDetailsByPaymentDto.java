@@ -1,11 +1,9 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
-import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
-
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -24,14 +22,15 @@ public class PaymentDetailsByPaymentDto {
 		public static final String NAME = "paymentPolicyDto";
 
 		private BigDecimal subcost;
-		private long period;
-		private PeriodUnit periodUnit;
+		private long duration;
+		private DurationUnit durationUnit;
 		private Integer operator;
 		private String operatorName;
 		private String paymentType;
 		private String shortCode;
 		private BigDecimal oldSubcost;
-		private Integer oldSubweeks;
+		private Integer oldDuration;
+		private DurationUnit oldDurationUnit;
 		private String currencyISO;
 
 		public BigDecimal getSubcost() {
@@ -50,12 +49,12 @@ public class PaymentDetailsByPaymentDto {
 			this.oldSubcost = oldSubcost;
 		}
 
-		public Integer getOldSubweeks() {
-			return oldSubweeks;
+		public Integer getOldDuration() {
+			return oldDuration;
 		}
 
-		public void setOldSubweeks(Integer oldSubweeks) {
-			this.oldSubweeks = oldSubweeks;
+		public void setOldDuration(Integer oldDuration) {
+			this.oldDuration = oldDuration;
 		}
 
 		public Integer getOperator() {
@@ -98,34 +97,43 @@ public class PaymentDetailsByPaymentDto {
 			this.currencyISO = currencyISO;
 		}
 
-		public long getPeriod() {
-			return period;
+		public long getDuration() {
+			return duration;
 		}
 
-		public void setPeriod(long period) {
-			this.period = period;
+		public void setDuration(long duration) {
+			this.duration = duration;
 		}
 
-		public PeriodUnit getPeriodUnit() {
-			return periodUnit;
+		public DurationUnit getDurationUnit() {
+			return durationUnit;
 		}
 
-		public void setPeriodUnit(PeriodUnit periodUnit) {
-			this.periodUnit = periodUnit;
+		public void setDurationUnit(DurationUnit durationUnit) {
+			this.durationUnit = durationUnit;
+		}
+
+		public DurationUnit getOldDurationUnit() {
+			return oldDurationUnit;
+		}
+
+		public void setOldDurationUnit(DurationUnit oldDurationUnit) {
+			this.oldDurationUnit = oldDurationUnit;
 		}
 
 		@Override
 		public String toString() {
 			return new ToStringBuilder(this)
 					.append("subcost", subcost)
-					.append("period", period)
-					.append("periodUnit", periodUnit)
+					.append("duration", duration)
+					.append("periodUnit", durationUnit)
 					.append("operator", operator)
 					.append("operatorName", operatorName)
 					.append("paymentType", paymentType)
 					.append("shortCode", shortCode)
 					.append("oldSubcost", oldSubcost)
-					.append("oldSubweeks", oldSubweeks)
+					.append("oldDuration", oldDuration)
+					.append("oldDurationUnit", oldDurationUnit)
 					.append("currencyISO", currencyISO)
 					.toString();
 		}

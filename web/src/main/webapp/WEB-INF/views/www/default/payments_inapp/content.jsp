@@ -37,7 +37,7 @@
 											<a href="payments_inapp/${method_name}.html?paymentPolicyId=${paymentPolicy.id}" class="rel ${method_color}">
 												<img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/icons/${method_name}_method.png" alt="">
 												<span class="price abs"><s:message code="pays.select.currency" /><fmt:parseNumber integerOnly="true" value="${paymentPolicy.subcost}"/><br />
-													<span style="">${paymentPolicy.subweeks} <s:message code="pays.select.weeks" /></span>
+													<span style="">${paymentPolicy.duration} <s:message code="pays.select.weeks" /></span>
 												</span>
 												<span class="payBy abs"><s:message code="pays.select.payby" /><br/>
 													<span>${payment_label}</span>
@@ -107,7 +107,7 @@
 								<c:set var="currencyISO">
 									<s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
 								</c:set>
-								<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
+								<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.duration},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
 								<form action="payments_inapp/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
 									<div class="buttonShadow rad7">
 										<div class="buttonBox rad7">

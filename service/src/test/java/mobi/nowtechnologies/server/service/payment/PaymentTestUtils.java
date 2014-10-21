@@ -10,7 +10,7 @@ import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
 import java.math.BigDecimal;
 
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 /**
  * User: gch
@@ -36,7 +36,7 @@ public class PaymentTestUtils {
         paymentPolicy.setCurrencyISO("GBP");
         paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
         paymentPolicy.setSubcost(BigDecimal.TEN);
-        paymentPolicy.setPeriod(new Period().withDuration(0).withPeriodUnit(WEEKS));
+        paymentPolicy.setPeriod(new Period().withDuration(0).withDurationUnit(WEEKS));
         paymentPolicy.setMediaType(MediaType.AUDIO);
         paymentPolicy.setTariff(Tariff._3G);
         return paymentPolicy;

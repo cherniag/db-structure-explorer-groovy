@@ -179,7 +179,7 @@ public abstract class AbstractPayment {
 		else
 			paymentHistoryItemDto.setDescription("2");
 		paymentHistoryItemDto.setPeriod(period.getDuration());
-		paymentHistoryItemDto.setPeriodUnit(period.getPeriodUnit());
+		paymentHistoryItemDto.setDurationUnit(period.getDurationUnit());
 		paymentHistoryItemDto.setPaymentMethod(paymentSystem);
 		paymentHistoryItemDto.setAmount(amount);
 

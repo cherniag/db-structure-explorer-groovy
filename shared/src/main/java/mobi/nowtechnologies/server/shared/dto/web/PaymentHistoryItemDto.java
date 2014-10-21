@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
-import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ public class PaymentHistoryItemDto {
 
 	private long period;
 
-	private PeriodUnit periodUnit;
+	private DurationUnit durationUnit;
 
 	public String getTransactionId() {
 		return transactionId;
@@ -74,12 +74,12 @@ public class PaymentHistoryItemDto {
 		this.period = period;
 	}
 
-	public PeriodUnit getPeriodUnit() {
-		return periodUnit;
+	public DurationUnit getDurationUnit() {
+		return durationUnit;
 	}
 
-	public void setPeriodUnit(PeriodUnit periodUnit) {
-		this.periodUnit = periodUnit;
+	public void setDurationUnit(DurationUnit durationUnit) {
+		this.durationUnit = durationUnit;
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class PaymentHistoryItemDto {
 				.append("amount", amount)
 				.append("date", date)
 				.append("period", period)
-				.append("periodUnit", periodUnit)
+				.append("periodUnit", durationUnit)
 				.append("paymentMethod", paymentMethod)
 				.append("transactionId", transactionId)
 				.append("description", description)

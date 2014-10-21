@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
@@ -54,10 +54,10 @@ public class PaymentPolicyServiceTest {
 		
 		assertEquals(paymentPolicy.getSubcost(), paymentPolicyDto.getOldSubcost());
 		Period period = paymentPolicy.getPeriod();
-		assertEquals(Long.valueOf(period.getDuration()), paymentPolicyDto.getOldPeriod());
-		assertEquals(period.getPeriodUnit(), paymentPolicyDto.getOldPeriodUnit());
-		assertEquals(promotionPaymentPolicy.getPeriod().getDuration(), paymentPolicyDto.getPeriod());
-		assertEquals(promotionPaymentPolicy.getPeriod().getPeriodUnit(), paymentPolicyDto.getPeriodUnit());
+		assertEquals(Long.valueOf(period.getDuration()), paymentPolicyDto.getOldDuration());
+		assertEquals(period.getDurationUnit(), paymentPolicyDto.getOldDurationUnit());
+		assertEquals(promotionPaymentPolicy.getPeriod().getDuration(), paymentPolicyDto.getDuration());
+		assertEquals(promotionPaymentPolicy.getPeriod().getDurationUnit(), paymentPolicyDto.getDurationUnit());
 		assertEquals(promotionPaymentPolicy.getSubcost(), paymentPolicyDto.getSubcost());
 	}
 	
@@ -74,11 +74,11 @@ public class PaymentPolicyServiceTest {
 		assertEquals(paymentPolicy.getCurrencyISO(), paymentPolicyDto.getCurrencyISO());
 		
 		assertNull(paymentPolicyDto.getOldSubcost());
-		assertNull(paymentPolicyDto.getOldPeriod());
-		assertNull(paymentPolicyDto.getOldPeriodUnit());
+		assertNull(paymentPolicyDto.getOldDuration());
+		assertNull(paymentPolicyDto.getOldDurationUnit());
 		assertEquals(paymentPolicy.getSubcost(), paymentPolicyDto.getSubcost());
-		assertEquals(paymentPolicy.getPeriod().getDuration(), paymentPolicyDto.getPeriod());
-		assertEquals(paymentPolicy.getPeriod().getPeriodUnit(), paymentPolicyDto.getPeriodUnit());
+		assertEquals(paymentPolicy.getPeriod().getDuration(), paymentPolicyDto.getDuration());
+		assertEquals(paymentPolicy.getPeriod().getDurationUnit(), paymentPolicyDto.getDurationUnit());
 	}
 	
 	@Test
@@ -100,17 +100,17 @@ public class PaymentPolicyServiceTest {
 		assertEquals(paymentPolicy.getCurrencyISO(), dto.getCurrencyISO());
 
 		assertNull(dto.getOldSubcost());
-		assertNull(dto.getOldPeriod());
-		assertNull(dto.getOldPeriodUnit());
+		assertNull(dto.getOldDuration());
+		assertNull(dto.getOldDurationUnit());
 		assertEquals(paymentPolicy.getSubcost(), dto.getSubcost());
-		assertEquals(paymentPolicy.getPeriod().getDuration(), dto.getPeriod());
-		assertEquals(paymentPolicy.getPeriod().getPeriodUnit(), dto.getPeriodUnit());
+		assertEquals(paymentPolicy.getPeriod().getDuration(), dto.getDuration());
+		assertEquals(paymentPolicy.getPeriod().getDurationUnit(), dto.getDurationUnit());
 	}
 	
 	private PromotionPaymentPolicy createPromotionPaymentPolicy() {
 		PromotionPaymentPolicy promotion = new PromotionPaymentPolicy();
 			promotion.setSubcost(new BigDecimal(3));
-			promotion.setPeriod(new Period().withDuration(7).withPeriodUnit(WEEKS));
+			promotion.setPeriod(new Period().withDuration(7).withDurationUnit(WEEKS));
 		return promotion;
 	}
 
@@ -124,7 +124,7 @@ public class PaymentPolicyServiceTest {
 			paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
 			paymentPolicy.setShortCode("80988");
 			paymentPolicy.setSubcost(new BigDecimal(10));
-			paymentPolicy.setPeriod(new Period().withDuration(5).withPeriodUnit(WEEKS));
+			paymentPolicy.setPeriod(new Period().withDuration(5).withDurationUnit(WEEKS));
 				Community community = new Community();
 			paymentPolicy.setCommunity(community);
 		return paymentPolicy;

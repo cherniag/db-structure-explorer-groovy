@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.shared.dto;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
-import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
 
 @XmlRootElement(name="PaymentPolicy")
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -22,15 +23,15 @@ public class PaymentPolicyDto {
 
     private Integer id;
     private BigDecimal subcost;
-    private long period;
-    private PeriodUnit periodUnit;
+    private long duration;
+    private DurationUnit durationUnit;
     private Integer operator;
     private String operatorName;
     private String paymentType;
     private String shortCode;
     private BigDecimal oldSubcost;
-    private Long oldPeriod;
-    private PeriodUnit oldPeriodUnit;
+    private Long oldDuration;
+    private DurationUnit oldDurationUnit;
     private String currencyISO;
     private boolean videoAndAudio4GSubscription;
     private boolean fourG;
@@ -43,12 +44,12 @@ public class PaymentPolicyDto {
         this(policy);
         if (isNotNull(promotionPaymentPolicy)) {
             setSubcost(promotionPaymentPolicy.getSubcost());
-            setPeriod(promotionPaymentPolicy.getPeriod().getDuration());
-            setPeriodUnit(promotionPaymentPolicy.getPeriod().getPeriodUnit());
+            setDuration(promotionPaymentPolicy.getPeriod().getDuration());
+            setDurationUnit(promotionPaymentPolicy.getPeriod().getDurationUnit());
 
             setOldSubcost(policy.getSubcost());
-            setOldPeriod(policy.getPeriod().getDuration());
-            setOldPeriodUnit(policy.getPeriod().getPeriodUnit());
+            setOldDuration(policy.getPeriod().getDuration());
+            setOldDurationUnit(policy.getPeriod().getDurationUnit());
         }
     }
 
@@ -56,8 +57,8 @@ public class PaymentPolicyDto {
         setId(policy.getId());
         setCurrencyISO(policy.getCurrencyISO());
         setSubcost(policy.getSubcost());
-        setPeriod(policy.getPeriod().getDuration());
-        setPeriodUnit(policy.getPeriod().getPeriodUnit());
+        setDuration(policy.getPeriod().getDuration());
+        setDurationUnit(policy.getPeriod().getDurationUnit());
         if (isNotNull(policy.getOperator())) {
             setOperator(policy.getOperator().getId());
             setOperatorName(policy.getOperator().getName());
@@ -71,6 +72,10 @@ public class PaymentPolicyDto {
         setThreeG( Tariff._3G == policy.getTariff() );
     }
     
+	public boolean isMonthly() {
+		return durationUnit.equals(MONTHS);
+	}
+
     public Integer getId() {
         return id;
     }
@@ -168,36 +173,36 @@ public class PaymentPolicyDto {
 		this.threeG = threeG;
 	}
 
-    public Long getOldPeriod() {
-        return oldPeriod;
+    public Long getOldDuration() {
+        return oldDuration;
     }
 
-    public void setOldPeriod(Long oldPeriod) {
-        this.oldPeriod = oldPeriod;
+    public void setOldDuration(Long oldDuration) {
+        this.oldDuration = oldDuration;
     }
 
-    public PeriodUnit getOldPeriodUnit() {
-        return oldPeriodUnit;
+    public DurationUnit getOldDurationUnit() {
+        return oldDurationUnit;
     }
 
-    public void setOldPeriodUnit(PeriodUnit oldPeriodUnit) {
-        this.oldPeriodUnit = oldPeriodUnit;
+    public void setOldDurationUnit(DurationUnit oldDurationUnit) {
+        this.oldDurationUnit = oldDurationUnit;
     }
 
-    public long getPeriod() {
-        return period;
+    public long getDuration() {
+        return duration;
     }
 
-    public void setPeriod(long period) {
-        this.period = period;
+    public void setDuration(long duration) {
+        this.duration = duration;
     }
 
-    public PeriodUnit getPeriodUnit() {
-        return periodUnit;
+    public DurationUnit getDurationUnit() {
+        return durationUnit;
     }
 
-    public void setPeriodUnit(PeriodUnit periodUnit) {
-        this.periodUnit = periodUnit;
+    public void setDurationUnit(DurationUnit durationUnit) {
+        this.durationUnit = durationUnit;
     }
 
     @Override
@@ -205,15 +210,15 @@ public class PaymentPolicyDto {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("subcost", subcost)
-                .append("period", period)
-                .append("periodUnit", periodUnit)
+                .append("duration", duration)
+                .append("periodUnit", durationUnit)
                 .append("operator", operator)
                 .append("operatorName", operatorName)
                 .append("paymentType", paymentType)
                 .append("shortCode", shortCode)
                 .append("oldSubcost", oldSubcost)
-                .append("oldPeriod", oldPeriod)
-                .append("oldPeriodUnit", oldPeriodUnit)
+                .append("oldDuration", oldDuration)
+                .append("oldPeriodUnit", oldDurationUnit)
                 .append("currencyISO", currencyISO)
                 .append("videoAndAudio4GSubscription", videoAndAudio4GSubscription)
                 .append("fourG", fourG)

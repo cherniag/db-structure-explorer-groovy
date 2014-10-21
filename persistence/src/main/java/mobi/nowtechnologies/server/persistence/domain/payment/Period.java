@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
-import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -15,9 +15,9 @@ import static java.util.Collections.unmodifiableMap;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.Utils.millisToIntSeconds;
 import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.DAYS;
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.MONTHS;
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 /**
  * @autor: Titov Mykhaylo (titov)
@@ -27,8 +27,8 @@ import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 public class Period{
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "period_unit", nullable = false)
-    private PeriodUnit periodUnit;
+    @Column(name = "duration_unit", nullable = false)
+    private DurationUnit durationUnit;
 
     private long duration;
 
@@ -36,8 +36,8 @@ public class Period{
         return duration;
     }
 
-    public PeriodUnit getPeriodUnit() {
-        return periodUnit;
+    public DurationUnit getDurationUnit() {
+        return durationUnit;
     }
 
     public Period withDuration(long duration){
@@ -45,8 +45,8 @@ public class Period{
         return this;
     }
 
-    public Period withPeriodUnit(PeriodUnit periodUnit){
-        this.periodUnit = periodUnit;
+    public Period withDurationUnit(DurationUnit durationUnit){
+        this.durationUnit = durationUnit;
         return this;
     }
 
@@ -101,10 +101,10 @@ public class Period{
         }
     };
 
-    private static final Map<PeriodUnit, PeriodConverter> periodConverterMap;
+    private static final Map<DurationUnit, PeriodConverter> periodConverterMap;
 
     static{
-        Map<PeriodUnit, PeriodConverter> map = new EnumMap<PeriodUnit, PeriodConverter>(PeriodUnit.class);
+        Map<DurationUnit, PeriodConverter> map = new EnumMap<DurationUnit, PeriodConverter>(DurationUnit.class);
 
         map.put(DAYS, DAYS_PERIOD_CONVERTER);
         map.put(WEEKS, WEEKS_PERIOD_CONVERTER);
@@ -115,11 +115,11 @@ public class Period{
 
     public int toNextSubPaymentSeconds(int oldNextSubPaymentSeconds){
         int subscriptionStartTimeSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
-        return periodConverterMap.get(periodUnit).toNextSubPaymentSeconds(this, subscriptionStartTimeSeconds);
+        return periodConverterMap.get(durationUnit).toNextSubPaymentSeconds(this, subscriptionStartTimeSeconds);
     }
 
     public String toMessageCode(){
-        return periodConverterMap.get(periodUnit).toMessageCode(this);
+        return periodConverterMap.get(durationUnit).toMessageCode(this);
     }
 
     private static int getNextSubPaymentForMonthlyPeriod(Period period, int subscriptionStartTimeSeconds){
@@ -139,8 +139,8 @@ public class Period{
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("period", duration)
-                .append("periodUnit", periodUnit)
+                .append("duration", duration)
+                .append("durationUnit", durationUnit)
                 .toString();
     }
 }

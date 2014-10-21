@@ -149,12 +149,12 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
         PendingPayment pendingPayment = new PendingPayment();
-        PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicy(currentPaymentDetails);
+        PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicy(currentPaymentDetails);
         pendingPayment.setPaymentDetails(currentPaymentDetails);
-        pendingPayment.setAmount(paymentPolicy.getSubcost());
-        pendingPayment.setCurrencyISO(paymentPolicy.getCurrencyISO());
+        pendingPayment.setAmount(paymentPolicyDto.getSubcost());
+        pendingPayment.setCurrencyISO(paymentPolicyDto.getCurrencyISO());
         pendingPayment.setPaymentSystem(currentPaymentDetails.getPaymentType());
-        pendingPayment.setPeriod(new Period().withDuration(paymentPolicy.getPeriod()).withPeriodUnit(paymentPolicy.getPeriodUnit()));
+        pendingPayment.setPeriod(new Period().withDuration(paymentPolicyDto.getDuration()).withDurationUnit(paymentPolicyDto.getDurationUnit()));
         pendingPayment.setUser(user);
         pendingPayment.setExternalTxId(NONE);
         long currentTimeMillis = System.currentTimeMillis();

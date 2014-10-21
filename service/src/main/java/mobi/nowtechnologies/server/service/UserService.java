@@ -1261,7 +1261,7 @@ public class UserService {
             }
             Period period = paymentPolicy.getPeriod();
             final String message = messageSource.getMessage(upperCaseCommunityName, smsMessage, new Object[] { community.getDisplayName(),
-                    paymentPolicy.getSubcost(), period.getDuration(), period.getPeriodUnit(), paymentPolicy.getShortCode() }, null);
+                    paymentPolicy.getSubcost(), period.getDuration(), period.getDurationUnit(), paymentPolicy.getShortCode() }, null);
 
             if ( message == null || message.isEmpty() ) {
                 LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. User without message [{}]", smsMessage, user.getId());

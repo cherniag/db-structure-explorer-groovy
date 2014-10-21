@@ -89,8 +89,8 @@ public class PaymentsPayPalController extends CommonController {
 	public ModelAndView createPaymentDetails(@PathVariable("scopePrefix") String scopePrefix, HttpServletRequest request, 
 			@ModelAttribute(PayPalDto.NAME) PayPalDto dto,
 			@CookieValue(value = DEFAULT_COMMUNITY_COOKIE_NAME) Cookie communityUrl, Locale locale) {
-		PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());
-		dto.setBillingAgreementDescription(messageSource.getMessage(PAYPAL_BILLING_AGREEMENT_DESCRIPTION, new Object[]{paymentPolicy.getPeriod(), paymentPolicy.getPeriodUnit(), paymentPolicy.getSubcost()}, locale));
+		PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicyDto(dto.getPaymentPolicyId());
+		dto.setBillingAgreementDescription(messageSource.getMessage(PAYPAL_BILLING_AGREEMENT_DESCRIPTION, new Object[]{paymentPolicyDto.getDuration(), paymentPolicyDto.getDurationUnit(), paymentPolicyDto.getSubcost()}, locale));
 		StringBuilder callbackUrl = new StringBuilder(RequestUtils.getServerURL()).append(PATH_DELIM).append(scopePrefix).append(VIEW_PAYMENTS_PAYPAL).append(PAGE_EXT)
 				.append(START_PARAM_DELIM)
 				.append(REQUEST_PARAM_PAYPAL_PAYMENT_POLICY).append("=").append(dto.getPaymentPolicyId()).append("&")

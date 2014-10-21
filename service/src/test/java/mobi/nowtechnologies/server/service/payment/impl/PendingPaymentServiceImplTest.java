@@ -26,7 +26,7 @@ import org.mockito.stubbing.Answer;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
 import static org.mockito.Matchers.any;
@@ -79,8 +79,8 @@ public class PendingPaymentServiceImplTest {
 				PaymentPolicyDto paymentPolicyDto = new PaymentPolicyDto();
 				paymentPolicyDto.setSubcost(paymentPolicy.getSubcost());
 				Period period = paymentPolicy.getPeriod();
-				paymentPolicyDto.setPeriod(period.getDuration());
-				paymentPolicyDto.setPeriodUnit(period.getPeriodUnit());
+				paymentPolicyDto.setDuration(period.getDuration());
+				paymentPolicyDto.setDurationUnit(period.getDurationUnit());
 				paymentPolicyDto.setCurrencyISO(paymentPolicy.getCurrencyISO());
 				
 				return paymentPolicyDto;
@@ -185,7 +185,7 @@ public class PendingPaymentServiceImplTest {
 		paymentPolicy.setCurrencyISO("GBP");
 		paymentPolicy.setPaymentType(PaymentDetails.SAGEPAY_CREDITCARD_TYPE);
 		paymentPolicy.setSubcost(BigDecimal.TEN);
-		paymentPolicy.setPeriod(new Period().withDuration(10).withPeriodUnit(WEEKS));
+		paymentPolicy.setPeriod(new Period().withDuration(10).withDurationUnit(WEEKS));
 		currentPaymentDetails.setPaymentPolicy(paymentPolicy);
 		currentPaymentDetails.setLastPaymentStatus(status);
 		user.setCurrentPaymentDetails(currentPaymentDetails);
@@ -205,7 +205,7 @@ public class PendingPaymentServiceImplTest {
 		paymentPolicy.setSubcost(BigDecimal.TEN);
 		paymentPolicy.setProvider(O2);
 		paymentPolicy.setSegment(BUSINESS);
-		paymentPolicy.setPeriod(new Period().withDuration(10).withPeriodUnit(WEEKS));
+		paymentPolicy.setPeriod(new Period().withDuration(10).withDurationUnit(WEEKS));
 		currentPaymentDetails.setPaymentPolicy(paymentPolicy);
 		currentPaymentDetails.setLastPaymentStatus(status);
 		user.addPaymentDetails(currentPaymentDetails);

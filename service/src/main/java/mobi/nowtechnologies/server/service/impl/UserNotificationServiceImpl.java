@@ -214,11 +214,11 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
                 PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
                 String subCost = preFormatCurrency(paymentPolicy.getSubcost());
                 Period period = paymentPolicy.getPeriod();
-                String subWeeksPart = getSubWeeksPart(community, period);
+                String durationUnitPart = getDurationUnitPart(community, period);
                 String currencyISO = paymentPolicy.getCurrencyISO();
                 String shortCode = paymentPolicy.getShortCode();
 
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl, currencyISO, subCost, subWeeksPart, shortCode});
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl, currencyISO, subCost, durationUnitPart, shortCode});
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The subscription confirmation sms was sent successfully");
@@ -239,7 +239,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
     }
 
-    private String getSubWeeksPart(Community community, Period period) {
+    private String getDurationUnitPart(Community community, Period period) {
         return messageSource.getMessage(community.getRewriteUrlParameter(), period.toMessageCode(), new String[]{String.valueOf(period.getDuration())}, null);
     }
 

@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.service.payment.response.PayPalResponse;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.DAYS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
@@ -50,7 +49,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 		pendingPayment.setExpireTimeMillis(getExpireMillis());
 		pendingPayment.setType(PaymentDetailsType.PAYMENT);
 		pendingPayment.setPaymentDetails(newPaymentDetails);
-		pendingPayment.setPeriod(new Period().withDuration(0).withPeriodUnit(DAYS));
+		pendingPayment.setPeriod(new Period().withDuration(0).withDurationUnit(DAYS));
 		entityService.saveEntity(pendingPayment);
 
 		startPayment(pendingPayment);

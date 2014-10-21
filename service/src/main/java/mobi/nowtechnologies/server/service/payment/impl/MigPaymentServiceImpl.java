@@ -41,7 +41,7 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 		Period period = paymentPolicy.getPeriod();
 
 		String message = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.psms",
-				new Object[] {community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getPeriodUnit(), paymentPolicy.getShortCode() }, null);
+				new Object[] {community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getDurationUnit(), paymentPolicy.getShortCode() }, null);
 		
 		String internalTxId = Utils.getBigRandomInt().toString();
 		MigResponse response = httpService.makePremiumSMSRequest(internalTxId, paymentPolicy.getShortCode(), currentPaymentDetails.getMigPhoneNumber(), message);

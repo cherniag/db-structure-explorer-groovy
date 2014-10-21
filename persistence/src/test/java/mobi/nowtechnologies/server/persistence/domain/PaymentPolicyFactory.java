@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static java.math.BigDecimal.ONE;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.O2_PSMS_TYPE;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 
 /**
@@ -20,7 +20,7 @@ public class PaymentPolicyFactory{
 	public static PaymentPolicy createPaymentPolicy() {
 		PaymentPolicy paymentPolicy = new PaymentPolicy();
 		paymentPolicy.setSubcost(BigDecimal.ZERO);
-		paymentPolicy.setPeriod(new Period().withDuration(5).withPeriodUnit(WEEKS));
+		paymentPolicy.setPeriod(new Period().withDuration(5).withDurationUnit(WEEKS));
 		paymentPolicy.setCurrencyISO("GBP");
 		paymentPolicy.setShortCode("shortCode");
         paymentPolicy.setAvailableInStore(false);
@@ -35,6 +35,6 @@ public class PaymentPolicyFactory{
      }
 
     public static PaymentPolicy paymentPolicyWithDefaultNotNullFields() {
-        return new PaymentPolicy().withPeriod(new Period().withDuration(1).withPeriodUnit(WEEKS)).withMediaType(AUDIO).withTariff(_3G).withSubCost(ONE).withDefault(true).withCommunity(new Community()).withOnline(true);
+        return new PaymentPolicy().withPeriod(new Period().withDuration(1).withDurationUnit(WEEKS)).withMediaType(AUDIO).withTariff(_3G).withSubCost(ONE).withDefault(true).withCommunity(new Community()).withOnline(true);
     }
 }

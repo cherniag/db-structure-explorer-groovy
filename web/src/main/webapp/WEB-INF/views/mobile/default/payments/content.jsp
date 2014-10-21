@@ -24,7 +24,7 @@
 			<c:set var="currencyISO">
 				<s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
 			</c:set>
-			<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
+			<s:message code="pays.subscription.description" arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.duration},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}'/></p>
 			<div class="contentButton formButton rad5 rel" >
 				<form action="payments/paymentDetails/${paymentDetailsByPaymentDto.paymentDetailsId}" method="post">
 					<input class="button buttonSmall accounts" type="submit" value="<s:message code='pays.activate.submit' />" />

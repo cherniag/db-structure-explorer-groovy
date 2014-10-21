@@ -1,13 +1,13 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Date;
 
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class PaymentDetailsDto {
 	
@@ -25,11 +25,11 @@ public class PaymentDetailsDto {
 
 	private Date disableTimestamp;
 
-	private PaymentPolicyDto paymentPolicy;
+	private Object paymentPolicy;
 
 	private boolean activated;
 
-	private PromotionPaymentPolicyDto promotionPaymentPolicyDto;
+	private Object promotionPaymentPolicyDto;
 
 	private UserDto userDto;
 
@@ -89,12 +89,8 @@ public class PaymentDetailsDto {
 		this.disableTimestamp = disableTimestamp;
 	}
 
-	public PaymentPolicyDto getPaymentPolicy() {
+	public Object getPaymentPolicy() {
 		return paymentPolicy;
-	}
-
-	public void setPaymentPolicy(PaymentPolicyDto paymentPolicy) {
-		this.paymentPolicy = paymentPolicy;
 	}
 
 	public boolean isActivated() {
@@ -105,11 +101,11 @@ public class PaymentDetailsDto {
 		this.activated = activated;
 	}
 
-	public PromotionPaymentPolicyDto getPromotionPaymentPolicyDto() {
+	public Object getPromotionPaymentPolicyDto() {
 		return promotionPaymentPolicyDto;
 	}
 
-	public void setPromotionPaymentPolicyDto(PromotionPaymentPolicyDto promotionPaymentPolicyDto) {
+	public void setPromotionPaymentPolicyDto(Object promotionPaymentPolicyDto) {
 		this.promotionPaymentPolicyDto = promotionPaymentPolicyDto;
 	}
 
@@ -123,10 +119,18 @@ public class PaymentDetailsDto {
 
 	@Override
 	public String toString() {
-		return "PaymentDetailsDto [activated=" + activated + ", creationTimestamp=" + creationTimestamp + ", descriptionError=" + descriptionError
-				+ ", disableTimestamp=" + disableTimestamp + ", id=" + id + ", lastPaymentStatus=" + lastPaymentStatus + ", madeRetries=" + madeRetries
-				+ ", paymentPolicy=" + paymentPolicy + ", promotionPaymentPolicyDto=" + promotionPaymentPolicyDto + ", retriesOnError=" + retriesOnError
-				+ ", userDto=" + userDto + "]";
+		return new ToStringBuilder(this)
+				.append("id", id)
+				.append("madeRetries", madeRetries)
+				.append("retriesOnError", retriesOnError)
+				.append("lastPaymentStatus", lastPaymentStatus)
+				.append("descriptionError", descriptionError)
+				.append("creationTimestamp", creationTimestamp)
+				.append("disableTimestamp", disableTimestamp)
+				.append("paymentPolicy", paymentPolicy)
+				.append("activated", activated)
+				.append("promotionPaymentPolicyDto", promotionPaymentPolicyDto)
+				.append("userDto", userDto)
+				.toString();
 	}
-
 }
