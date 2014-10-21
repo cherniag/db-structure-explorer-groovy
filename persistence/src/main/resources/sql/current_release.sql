@@ -72,7 +72,7 @@ commit;
 alter table tb_paymentPolicy modify column duration bigint not null;
 alter table tb_paymentPolicy modify column duration_unit VARCHAR(255) not null;
 
-alter table tb_paymentPolicy drop column subWeeks;
+-- alter table tb_paymentPolicy drop column subWeeks;
 
 alter table tb_pendingPayments add column duration bigint;
 alter table tb_pendingPayments add column duration_unit VARCHAR(255);
@@ -111,12 +111,15 @@ commit;
 
 alter table tb_pendingPayments modify column duration bigint not null;
 alter table tb_pendingPayments modify column duration_unit VARCHAR(255) not null;
+alter table tb_pendingPayments change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
 
 alter table tb_submittedPayments modify column duration bigint not null;
 alter table tb_submittedPayments modify column duration_unit VARCHAR(255) not null;
+alter table tb_submittedPayments change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
 
 alter table tb_promotionPaymentPolicy modify column duration bigint not null;
 alter table tb_promotionPaymentPolicy modify column duration_unit VARCHAR(255) not null;
 
 alter table tb_promotionPaymentPolicy drop column subWeeks;
+
 
