@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
@@ -40,9 +37,11 @@ public class MigPaymentServiceImpl extends AbstractPaymentSystemService implemen
 		MigPaymentDetails currentPaymentDetails = (MigPaymentDetails) pendingPayment.getUser().getCurrentPaymentDetails();
 		PaymentPolicy paymentPolicy = currentPaymentDetails.getPaymentPolicy();
 		Community community = entityService.findById(Community.class, paymentPolicy.getCommunityId().byteValue());
-		
+
+		Period period = paymentPolicy.getPeriod();
+
 		String message = messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms.psms",
-				new Object[] {community.getDisplayName(), paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
+				new Object[] {community.getDisplayName(), paymentPolicy.getSubcost(), period.getDuration(), period.getPeriodUnit(), paymentPolicy.getShortCode() }, null);
 		
 		String internalTxId = Utils.getBigRandomInt().toString();
 		MigResponse response = httpService.makePremiumSMSRequest(internalTxId, paymentPolicy.getShortCode(), currentPaymentDetails.getMigPhoneNumber(), message);

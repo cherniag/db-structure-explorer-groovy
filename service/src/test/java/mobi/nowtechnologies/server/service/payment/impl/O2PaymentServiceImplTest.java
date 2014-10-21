@@ -14,6 +14,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import java.util.Locale;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.EXTERNAL_ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.*;
@@ -131,7 +133,8 @@ public class O2PaymentServiceImplTest {
 		PendingPayment pendingPayment = new PendingPayment();
 		pendingPayment.setUser(user);
 		pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
-		
+        pendingPayment.setPeriod(new Period().withDuration(1).withPeriodUnit(WEEKS));
+
 		final Boolean smsNotify = Boolean.TRUE;
 		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
 		final String message = "message";
@@ -260,6 +263,7 @@ public class O2PaymentServiceImplTest {
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
+        pendingPayment.setPeriod(new Period().withDuration(1).withPeriodUnit(WEEKS));
 
         final Boolean smsNotify = Boolean.TRUE;
         when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
@@ -390,6 +394,7 @@ public class O2PaymentServiceImplTest {
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
+        pendingPayment.setPeriod(new Period().withDuration(1).withPeriodUnit(WEEKS));
 
         final Boolean smsNotify = Boolean.TRUE;
         when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));

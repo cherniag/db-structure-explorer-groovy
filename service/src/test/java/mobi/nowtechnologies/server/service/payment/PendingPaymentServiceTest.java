@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+
 @Ignore
 public class PendingPaymentServiceTest {
 
@@ -69,7 +71,7 @@ public class PendingPaymentServiceTest {
 				PaymentPolicy paymentPolicy = new PaymentPolicy();
 					paymentPolicy.setCurrencyISO("GBP");
 					paymentPolicy.setSubcost(BigDecimal.TEN);
-					paymentPolicy.setSubweeks((byte)10);
+					paymentPolicy.setPeriod(new Period().withDuration(10).withPeriodUnit(WEEKS));
 				currentPaymentDetails.setPaymentPolicy(paymentPolicy);
 			user.addPaymentDetails(currentPaymentDetails);
 		return user;

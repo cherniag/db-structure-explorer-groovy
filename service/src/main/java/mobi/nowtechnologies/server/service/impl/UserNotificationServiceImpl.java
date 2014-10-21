@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -15,10 +16,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.shared.enums.UserStatus;
+import mobi.nowtechnologies.server.shared.enums.*;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.apache.commons.lang.StringUtils;
@@ -214,13 +212,13 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
             if (!rejectDevice(user, "sms.notification.subscribed.not.for.device.type")) {
                 PaymentPolicy paymentPolicy = user.getCurrentPaymentDetails().getPaymentPolicy();
-                String subcost = preFormatCurrency(paymentPolicy.getSubcost());
-                final byte subWeeks = paymentPolicy.getSubweeks();
-                String subWeeksPart = getSubWeeksPart(community, subWeeks);
+                String subCost = preFormatCurrency(paymentPolicy.getSubcost());
+                Period period = paymentPolicy.getPeriod();
+                String subWeeksPart = getSubWeeksPart(community, period);
                 String currencyISO = paymentPolicy.getCurrencyISO();
                 String shortCode = paymentPolicy.getShortCode();
 
-                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl, currencyISO, subcost, subWeeksPart, shortCode});
+                boolean wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.unsubscribe.potential.text", new String[]{unsubscribeUrl, currencyISO, subCost, subWeeksPart, shortCode});
 
                 if (wasSmsSentSuccessfully) {
                     LOGGER.info("The subscription confirmation sms was sent successfully");
@@ -241,14 +239,8 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
     }
 
-    private String getSubWeeksPart(Community community, byte subWeeks) {
-        String subWeeksPart;
-        if (subWeeks==1) {
-            subWeeksPart = messageSource.getMessage(community.getRewriteUrlParameter(), "per.week", null, null);
-        }else{
-            subWeeksPart = messageSource.getMessage(community.getRewriteUrlParameter(), "for.n.weeks", new String[]{String.valueOf(subWeeks)}, null);
-        }
-        return subWeeksPart;
+    private String getSubWeeksPart(Community community, Period period) {
+        return messageSource.getMessage(community.getRewriteUrlParameter(), period.toMessageCode(), new String[]{String.valueOf(period.getDuration())}, null);
     }
 
     @Async

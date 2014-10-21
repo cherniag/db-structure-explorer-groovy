@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
@@ -135,13 +136,14 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 		LOGGER
 				.debug(
 						"input parameters upperCaseCommunityName, community, user, currentActivePaymentDetails, paymentPolicy, messageCode: [{}], [{}], [{}], {{}}, [{}], [{}]",
-						new Object[] { upperCaseCommunityName, community, user, currentActivePaymentDetails, paymentPolicy, messageToSearch });
+						upperCaseCommunityName, community, user, currentActivePaymentDetails, paymentPolicy, messageToSearch);
 		try {
 			LogUtils.putSpecificMDC(user.getUserName(), community.getName());
 			
-			LOGGER.info("Processing started for user with id [{}], userName [{}], communityName [{}]", new Object[] { user.getId(), user.getUserName(), community.getName() });
+			LOGGER.info("Processing started for user with id [{}], userName [{}], communityName [{}]", user.getId(), user.getUserName(), community.getName());
+			Period period = paymentPolicy.getPeriod();
 			String message = messageSource.getMessage(upperCaseCommunityName, messageToSearch, new Object[] { community.getDisplayName(),
-					paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
+					paymentPolicy.getSubcost(), period.getDuration(), period.getPeriodUnit(), paymentPolicy.getShortCode() }, null);
 
 			if ( message == null || message.isEmpty() ) {
 				LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. The sms message was not sent for user [{}]", messageToSearch, user.getId());
@@ -153,16 +155,16 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 			if (migResponse.isSuccessful()) {
 				LOGGER
 						.info(
-								"The request for freeSms sent to MIG about user {} succesfully. The nextSubPayment, status, paymentStatus and subBalance was {}, {}, {}, {} respectively",
-								new Object[] { user, user.getNextSubPayment(), user.getStatus(), user.getPaymentStatus(), user.getSubBalance() });
+								"The request for freeSms sent to MIG about user {} successfully. The nextSubPayment, status, paymentStatus and subBalance was {}, {}, {}, {} respectively",
+								user, user.getNextSubPayment(), user.getStatus(), user.getPaymentStatus(), user.getSubBalance());
 			} else
 				throw new Exception(migResponse.getDescriptionError());
 
 			user = userService.resetSmsAccordingToLawAttributes(user);
-			LOGGER.info("Processing finished successfully for user with id [{}], userName [{}], communityName [{}]", new Object[] { user.getId(), user.getUserName(), community.getName() });
+			LOGGER.info("Processing finished successfully for user with id [{}], userName [{}], communityName [{}]", user.getId(), user.getUserName(), community.getName());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			LOGGER.error("Processing finished UNSUCCESSFULLY for user with id [{}], userName [{}], communityName [{}]", new Object[] { user.getId(), user.getUserName(), community.getName() });
+			LOGGER.error("Processing finished UNSUCCESSFULLY for user with id [{}], userName [{}], communityName [{}]", user.getId(), user.getUserName(), community.getName());
 		} finally {
 			LogUtils.removeSpecificMDC();
 		}

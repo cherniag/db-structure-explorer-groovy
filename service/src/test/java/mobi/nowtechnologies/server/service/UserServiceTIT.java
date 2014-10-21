@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.dao.EntityDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.domain.task.SendChargeNotificationTask;
 import mobi.nowtechnologies.server.persistence.domain.task.UserTask;
@@ -12,6 +13,7 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.service.MatchUtils.getUserIdAndUserNameMatcher;
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -261,9 +264,9 @@ public class UserServiceTIT {
         entityDao.saveEntity(user);
         SubmittedPayment submittedPayment = SubmittedPaymentFactory.createSubmittedPayment();
         submittedPayment.setPaymentSystem(PaymentDetails.VF_PSMS_TYPE);
-        submittedPayment.setNextSubPayment((int) ((System.currentTimeMillis() + 1000 * 60 * 60) / 1000));
+		submittedPayment.setPeriod(new Period().withDuration(1).withPeriodUnit(WEEKS));
         entityDao.saveEntity(submittedPayment);
-        userService.processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
+        userService.processPaymentSubBalanceCommand(user, submittedPayment);
         List<UserTask> taskList = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
         assertThat(taskList.size(), is(1));
         assertThat(taskList.get(0), instanceOf(SendChargeNotificationTask.class));

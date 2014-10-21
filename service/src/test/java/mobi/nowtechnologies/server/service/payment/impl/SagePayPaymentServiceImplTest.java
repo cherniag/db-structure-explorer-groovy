@@ -3,10 +3,7 @@ package mobi.nowtechnologies.server.service.payment.impl;
 import junit.framework.Assert;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -26,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 
@@ -224,7 +222,7 @@ public class SagePayPaymentServiceImplTest {
         pendingPayment.setCurrencyISO("GBP");
         pendingPayment.setInternalTxId(UUID.randomUUID().toString());
         pendingPayment.setPaymentSystem(PaymentDetails.SAGEPAY_CREDITCARD_TYPE);
-        pendingPayment.setSubweeks(2);
+        pendingPayment.setPeriod(new Period().withDuration(2).withPeriodUnit(WEEKS));
         pendingPayment.setTimestamp(System.currentTimeMillis());
 
         SagePayCreditCardPaymentDetails currentPaymentDetails = new SagePayCreditCardPaymentDetails();

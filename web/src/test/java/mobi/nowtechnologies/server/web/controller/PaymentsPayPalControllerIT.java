@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.MONTHS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.GOOGLE_PLUS;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -53,7 +55,7 @@ public class PaymentsPayPalControllerIT extends AbstractWebControllerIT {
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         Community o2Community = o2UserGroup.getCommunity();
 
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withSubWeeks((byte) 0).withSubCost(new BigDecimal("4.99")
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withPeriodUnit(MONTHS)).withSubCost(new BigDecimal("4.99")
         ).withPaymentType(PAY_PAL).withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
                 (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS)
                 .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);

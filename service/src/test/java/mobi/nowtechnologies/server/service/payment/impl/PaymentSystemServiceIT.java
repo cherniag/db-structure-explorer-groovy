@@ -5,10 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
@@ -30,6 +27,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.UUID;
+
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -80,7 +79,7 @@ public class PaymentSystemServiceIT {
 			pendingPayment.setCurrencyISO("GBP");
 			pendingPayment.setInternalTxId(UUID.randomUUID().toString());
 			pendingPayment.setPaymentSystem(PaymentDetails.SAGEPAY_CREDITCARD_TYPE);
-			pendingPayment.setSubweeks(2);
+			pendingPayment.setPeriod(new Period().withDuration(2).withPeriodUnit(WEEKS));
 			pendingPayment.setTimestamp(System.currentTimeMillis());
 			pendingPayment.setUser(user);
 			pendingPayment.setPaymentDetails(currentPaymentDetails);

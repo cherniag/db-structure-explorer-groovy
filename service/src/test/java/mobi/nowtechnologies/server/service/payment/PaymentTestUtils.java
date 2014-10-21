@@ -3,11 +3,14 @@ package mobi.nowtechnologies.server.service.payment;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 
 import java.math.BigDecimal;
+
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 
 /**
  * User: gch
@@ -33,7 +36,7 @@ public class PaymentTestUtils {
         paymentPolicy.setCurrencyISO("GBP");
         paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
         paymentPolicy.setSubcost(BigDecimal.TEN);
-        paymentPolicy.setSubweeks((byte)0);
+        paymentPolicy.setPeriod(new Period().withDuration(0).withPeriodUnit(WEEKS));
         paymentPolicy.setMediaType(MediaType.AUDIO);
         paymentPolicy.setTariff(Tariff._3G);
         return paymentPolicy;

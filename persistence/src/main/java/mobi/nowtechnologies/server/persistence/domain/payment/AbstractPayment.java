@@ -38,8 +38,9 @@ public abstract class AbstractPayment {
 	
 	@Column(insertable=false, updatable=false)
 	private int userId;
-	
-	private int subweeks;
+
+	@Embedded
+	private Period period;
 	
 	private Integer offerId;
 	
@@ -102,14 +103,6 @@ public abstract class AbstractPayment {
 		if(user!=null) userId=user.getId();
 	}
 
-	public int getSubweeks() {
-		return subweeks;
-	}
-
-	public void setSubweeks(int subweeks) {
-		this.subweeks = subweeks;
-	}
-
 	public String getCurrencyISO() {
 		return currencyISO;
 	}
@@ -164,45 +157,54 @@ public abstract class AbstractPayment {
 			paymentDetailsId = paymentDetails.getI();
 	}
 
-    public boolean isRetry(){
-        return RETRY.equals(type);
-    }
+	public Period getPeriod() {
+		return period;
+	}
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("internalTxId", internalTxId)
-                .append("externalTxId", externalTxId)
-                .append("amount", amount)
-                .append("timestamp", timestamp)
-                .append("user", user)
-                .append("userId", userId)
-                .append("subweeks", subweeks)
-                .append("offerId", offerId)
-                .append("currencyISO", currencyISO)
-                .append("paymentSystem", paymentSystem)
-                .append("type", type)
-                .append("paymentDetails", paymentDetails)
-                .append("paymentDetailsId", paymentDetailsId)
-                .toString();
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	public boolean isRetry(){
+        return RETRY.equals(type);
     }
 
     public PaymentHistoryItemDto toPaymentHistoryItemDto() {
 		PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
-		
+
 		paymentHistoryItemDto.setTransactionId(internalTxId);
 		paymentHistoryItemDto.setDate(new Date(timestamp));
 		if (type.equals(PaymentDetailsType.FIRST))
 			paymentHistoryItemDto.setDescription("1");
-		else 
+		else
 			paymentHistoryItemDto.setDescription("2");
-		paymentHistoryItemDto.setWeeks(subweeks);
+		paymentHistoryItemDto.setPeriod(period.getDuration());
+		paymentHistoryItemDto.setPeriodUnit(period.getPeriodUnit());
 		paymentHistoryItemDto.setPaymentMethod(paymentSystem);
 		paymentHistoryItemDto.setAmount(amount);
-		
+
 		LOGGER.debug("Output parameter paymentHistoryItemDto=[{}]", paymentHistoryItemDto);
 		return paymentHistoryItemDto;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("i", i)
+				.append("internalTxId", internalTxId)
+				.append("externalTxId", externalTxId)
+				.append("amount", amount)
+				.append("timestamp", timestamp)
+				.append("user", user)
+				.append("userId", userId)
+				.append("period", period)
+				.append("offerId", offerId)
+				.append("currencyISO", currencyISO)
+				.append("paymentSystem", paymentSystem)
+				.append("type", type)
+				.append("paymentDetails", paymentDetails)
+				.append("paymentDetailsId", paymentDetailsId)
+				.toString();
 	}
 
 	public static List<PaymentHistoryItemDto> toPaymentHistoryItemDto(List<AbstractPayment> abstractPayments) {

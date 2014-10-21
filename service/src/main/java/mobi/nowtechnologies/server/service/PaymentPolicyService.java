@@ -19,10 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -129,6 +128,12 @@ public class PaymentPolicyService {
         Community community = user.getUserGroup().getCommunity();
         List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, provider, segment, user.getContract(),
                 user.getTariff(), mediaTypes);
+        sort(paymentPolicies, new Comparator<PaymentPolicy>() {
+            @Override
+            public int compare(PaymentPolicy p1, PaymentPolicy p2) {
+                return p2.getPeriod().toNextSubPaymentSeconds(0) - p1.getPeriod().toNextSubPaymentSeconds(0);
+            }
+        });
         return mergePaymentPolicies(user, paymentPolicies);
     }
 

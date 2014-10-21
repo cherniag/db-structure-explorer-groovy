@@ -27,12 +27,7 @@ import java.util.concurrent.Future;
 import static org.mockito.Mockito.times;
 
 /**
- * The class <code>SubBalancePaymentListenerTest</code> contains tests for the
- * class <code>{@link SubBalancePaymentListener}</code>.
- * 
- * @generatedBy CodePro at 29.08.12 17:11
  * @author Titov Mykhaylo (titov)
- * @version $Revision: 1.0 $
  */
 @RunWith(PowerMockRunner.class)
 public class SubBalancePaymentListenerTest {
@@ -43,13 +38,6 @@ public class SubBalancePaymentListenerTest {
 	private MigHttpService mockMigHttpService;
 	private UserNotificationService mockUserNotificationService;
 
-	/**
-	 * Run the void setUserService(UserService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 17:11
-	 */
 	@Test
 	public void testOnApplicationEvent_Success() throws Exception {
 		PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
@@ -69,11 +57,10 @@ public class SubBalancePaymentListenerTest {
 		
 		Mockito.when(mockPaymentEvent.getPayment()).thenReturn(submittedPayment);
 
-		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
+		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment);
 
 		Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
-		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 
 		Future<Boolean> futureResponse = new AsyncResult<Boolean>(Boolean.TRUE);
 
@@ -113,11 +100,10 @@ public class SubBalancePaymentListenerTest {
 		
 		Mockito.when(mockPaymentEvent.getPayment()).thenReturn(submittedPayment);
 
-		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
+		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment);
 
 		Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.any(User.class), Mockito.anyInt(), Mockito.anyString())).thenReturn(Collections.<User>emptyList());
-		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 
 		Future<Boolean> futurResponse = new AsyncResult<Boolean>(Boolean.FALSE);
 
@@ -155,11 +141,10 @@ public class SubBalancePaymentListenerTest {
 		
 		Mockito.when(mockPaymentEvent.getPayment()).thenReturn(submittedPayment);
 
-		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment.getSubweeks(), submittedPayment);
+		Mockito.doNothing().when(mockUserService).processPaymentSubBalanceCommand(user, submittedPayment);
 
 		Mockito.when(mockPromotionService.applyInitialPromotion(submittedPayment.getUser())).thenReturn(new User());
 		Mockito.when(mockUserService.findUsersForItunesInAppSubscription(Mockito.eq(user), Mockito.eq(nextSubPayment), Mockito.eq(appStoreOriginalTransactionId))).thenReturn(users);
-		// Mockito.doNothing().when(mockPromotionService).applyPromotion(submittedPayment.getUser());
 
 		Future<Boolean> futureResponse = new AsyncResult<Boolean>(Boolean.TRUE);
 

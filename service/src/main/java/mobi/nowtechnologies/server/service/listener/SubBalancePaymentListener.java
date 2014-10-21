@@ -46,7 +46,6 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 					
 			LOGGER.info("handle SubBalance payment event: [{}]", payment);
 			User user = payment.getUser();
-			int subWeeks = payment.getSubweeks();
 			final String appStoreOriginalTransactionId = payment.getAppStoreOriginalTransactionId();
 			final int nextSubPayment = payment.getNextSubPayment();
 		
@@ -58,7 +57,7 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 			}
 			
 			for (User actualUser : users) {
-				userService.processPaymentSubBalanceCommand(actualUser, subWeeks, payment);
+				userService.processPaymentSubBalanceCommand(actualUser, payment);
 				if (FIRST.equals(payment.getType())) {
 					LOGGER
 							.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment

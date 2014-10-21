@@ -1,0 +1,146 @@
+package mobi.nowtechnologies.server.persistence.domain.payment;
+
+import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import javax.persistence.*;
+import java.util.Calendar;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Collections.unmodifiableMap;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+import static mobi.nowtechnologies.server.shared.Utils.millisToIntSeconds;
+import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.DAYS;
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.MONTHS;
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
+
+/**
+ * @autor: Titov Mykhaylo (titov)
+ * 24.12.13 15:43
+ */
+@Embeddable
+public class Period{
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "period_unit", nullable = false)
+    private PeriodUnit periodUnit;
+
+    private long duration;
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public PeriodUnit getPeriodUnit() {
+        return periodUnit;
+    }
+
+    public Period withDuration(long duration){
+        this.duration = duration;
+        return this;
+    }
+
+    public Period withPeriodUnit(PeriodUnit periodUnit){
+        this.periodUnit = periodUnit;
+        return this;
+    }
+
+    private static interface PeriodConverter{
+        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds);
+
+        public String toMessageCode(Period period);
+    }
+
+    private static final PeriodConverter DAYS_PERIOD_CONVERTER = new PeriodConverter(){
+        @Override
+        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
+            return subscriptionStartTimeSeconds + (int) TimeUnit.DAYS.toSeconds(period.getDuration());
+        }
+
+        @Override
+        public String toMessageCode(Period period) {
+            if(period.getDuration() == 1) {
+                return "per.day";
+            }
+            return "for.n.days";
+        }
+    };
+
+    private static final PeriodConverter WEEKS_PERIOD_CONVERTER = new PeriodConverter(){
+        @Override
+        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
+            return subscriptionStartTimeSeconds + 7*(int) TimeUnit.DAYS.toSeconds(period.duration);
+        }
+
+        @Override
+        public String toMessageCode(Period period) {
+            if(period.getDuration() == 1) {
+                return "per.week";
+            }
+            return "for.n.weeks";
+        }
+    };
+
+    private static final PeriodConverter MONTHS_PERIOD_CONVERTER = new PeriodConverter(){
+        @Override
+        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
+            return getNextSubPaymentForMonthlyPeriod(period, subscriptionStartTimeSeconds);
+        }
+
+        @Override
+        public String toMessageCode(Period period) {
+            if(period.getDuration() == 1) {
+                return "per.month";
+            }
+            return "for.n.months";
+        }
+    };
+
+    private static final Map<PeriodUnit, PeriodConverter> periodConverterMap;
+
+    static{
+        Map<PeriodUnit, PeriodConverter> map = new EnumMap<PeriodUnit, PeriodConverter>(PeriodUnit.class);
+
+        map.put(DAYS, DAYS_PERIOD_CONVERTER);
+        map.put(WEEKS, WEEKS_PERIOD_CONVERTER);
+        map.put(MONTHS, MONTHS_PERIOD_CONVERTER);
+
+        periodConverterMap = unmodifiableMap(map);
+    }
+
+    public int toNextSubPaymentSeconds(int oldNextSubPaymentSeconds){
+        int subscriptionStartTimeSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
+        return periodConverterMap.get(periodUnit).toNextSubPaymentSeconds(this, subscriptionStartTimeSeconds);
+    }
+
+    public String toMessageCode(){
+        return periodConverterMap.get(periodUnit).toMessageCode(this);
+    }
+
+    private static int getNextSubPaymentForMonthlyPeriod(Period period, int subscriptionStartTimeSeconds){
+        final Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.setTimeInMillis(secondsToMillis(subscriptionStartTimeSeconds));
+        int dayOfMonthBefore = calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.add(Calendar.MONTH, (int) period.getDuration());
+
+        int dayOfMonthAfter = calendar.get(Calendar.DAY_OF_MONTH);
+        if (dayOfMonthBefore != dayOfMonthAfter) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return millisToIntSeconds(calendar.getTimeInMillis());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("period", duration)
+                .append("periodUnit", periodUnit)
+                .toString();
+    }
+}

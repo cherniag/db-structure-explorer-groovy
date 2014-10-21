@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.shared.dto;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
+import mobi.nowtechnologies.server.shared.enums.PeriodUnit;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -10,6 +11,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 @XmlRootElement(name="PaymentPolicy")
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -19,13 +22,15 @@ public class PaymentPolicyDto {
 
     private Integer id;
     private BigDecimal subcost;
-    private Integer subweeks;
+    private long period;
+    private PeriodUnit periodUnit;
     private Integer operator;
     private String operatorName;
     private String paymentType;
     private String shortCode;
     private BigDecimal oldSubcost;
-    private Integer oldSubweeks;
+    private Long oldPeriod;
+    private PeriodUnit oldPeriodUnit;
     private String currencyISO;
     private boolean videoAndAudio4GSubscription;
     private boolean fourG;
@@ -34,22 +39,26 @@ public class PaymentPolicyDto {
 
     public PaymentPolicyDto() { }
 
-    public PaymentPolicyDto(PaymentPolicy policy, PromotionPaymentPolicy promotion){
+    public PaymentPolicyDto(PaymentPolicy policy, PromotionPaymentPolicy promotionPaymentPolicy){
         this(policy);
-        if (null != promotion) {
-            setSubcost(promotion.getSubcost());
-            setSubweeks(promotion.getSubweeks());
+        if (isNotNull(promotionPaymentPolicy)) {
+            setSubcost(promotionPaymentPolicy.getSubcost());
+            setPeriod(promotionPaymentPolicy.getPeriod().getDuration());
+            setPeriodUnit(promotionPaymentPolicy.getPeriod().getPeriodUnit());
+
+            setOldSubcost(policy.getSubcost());
+            setOldPeriod(policy.getPeriod().getDuration());
+            setOldPeriodUnit(policy.getPeriod().getPeriodUnit());
         }
     }
 
-    public PaymentPolicyDto(PaymentPolicy policy){
+    public PaymentPolicyDto(PaymentPolicy policy) {
         setId(policy.getId());
         setCurrencyISO(policy.getCurrencyISO());
-        setOldSubweeks(Integer.valueOf(policy.getSubweeks()));
         setSubcost(policy.getSubcost());
-        setOldSubcost(policy.getSubcost());
-        setSubweeks(Integer.valueOf(policy.getSubweeks()));
-        if (null!=policy.getOperator()) {
+        setPeriod(policy.getPeriod().getDuration());
+        setPeriodUnit(policy.getPeriod().getPeriodUnit());
+        if (isNotNull(policy.getOperator())) {
             setOperator(policy.getOperator().getId());
             setOperatorName(policy.getOperator().getName());
         }
@@ -61,10 +70,6 @@ public class PaymentPolicyDto {
         setFourG( Tariff._4G == policy.getTariff() );
         setThreeG( Tariff._3G == policy.getTariff() );
     }
-
-	public boolean isMonthly() {
-		return subweeks == null || subweeks.intValue() == 0;
-	}
     
     public Integer getId() {
         return id;
@@ -73,19 +78,13 @@ public class PaymentPolicyDto {
     public void setId(Integer id) {
         this.id = id;
     }
+
     public BigDecimal getSubcost() {
         return subcost;
     }
+
     public void setSubcost(BigDecimal subcost) {
         this.subcost = subcost;
-    }
-
-    public Integer getSubweeks() {
-        return subweeks;
-    }
-
-    public void setSubweeks(Integer subweeks) {
-        this.subweeks = subweeks;
     }
 
     public BigDecimal getOldSubcost() {
@@ -96,29 +95,26 @@ public class PaymentPolicyDto {
         this.oldSubcost = oldSubcost;
     }
 
-    public Integer getOldSubweeks() {
-        return oldSubweeks;
-    }
-
-    public void setOldSubweeks(Integer oldSubweeks) {
-        this.oldSubweeks = oldSubweeks;
-    }
-
     public Integer getOperator() {
         return operator;
     }
+
     public void setOperator(Integer operator) {
         this.operator = operator;
     }
+
     public String getPaymentType() {
         return paymentType;
     }
+
     public void setPaymentType(String paymentType) {
         this.paymentType = paymentType;
     }
+
     public String getShortCode() {
         return shortCode;
     }
+
     public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
     }
@@ -172,18 +168,52 @@ public class PaymentPolicyDto {
 		this.threeG = threeG;
 	}
 
+    public Long getOldPeriod() {
+        return oldPeriod;
+    }
+
+    public void setOldPeriod(Long oldPeriod) {
+        this.oldPeriod = oldPeriod;
+    }
+
+    public PeriodUnit getOldPeriodUnit() {
+        return oldPeriodUnit;
+    }
+
+    public void setOldPeriodUnit(PeriodUnit oldPeriodUnit) {
+        this.oldPeriodUnit = oldPeriodUnit;
+    }
+
+    public long getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(long period) {
+        this.period = period;
+    }
+
+    public PeriodUnit getPeriodUnit() {
+        return periodUnit;
+    }
+
+    public void setPeriodUnit(PeriodUnit periodUnit) {
+        this.periodUnit = periodUnit;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("subcost", subcost)
-                .append("subweeks", subweeks)
+                .append("period", period)
+                .append("periodUnit", periodUnit)
                 .append("operator", operator)
                 .append("operatorName", operatorName)
                 .append("paymentType", paymentType)
                 .append("shortCode", shortCode)
                 .append("oldSubcost", oldSubcost)
-                .append("oldSubweeks", oldSubweeks)
+                .append("oldPeriod", oldPeriod)
+                .append("oldPeriodUnit", oldPeriodUnit)
                 .append("currencyISO", currencyISO)
                 .append("videoAndAudio4GSubscription", videoAndAudio4GSubscription)
                 .append("fourG", fourG)

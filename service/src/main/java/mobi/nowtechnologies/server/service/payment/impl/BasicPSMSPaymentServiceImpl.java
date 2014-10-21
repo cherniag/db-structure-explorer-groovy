@@ -2,10 +2,7 @@ package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.PSMSPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.payment.AbstractPaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
@@ -14,6 +11,11 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
@@ -51,8 +53,9 @@ public abstract class BasicPSMSPaymentServiceImpl<T extends PSMSPaymentDetails> 
         Boolean smsNotify = Boolean.valueOf(messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms."+paymentPolicy.getPaymentType()+".send",
                 null, null));
 
+        Period period = pendingPayment.getPeriod();
         String message = smsNotify ? messageSource.getMessage(community.getRewriteUrlParameter().toLowerCase(), "sms."+paymentPolicy.getPaymentType(),
-                new Object[]{community.getDisplayName(), preFormatCurrency(pendingPayment.getAmount()), pendingPayment.getSubweeks(), paymentPolicy.getShortCode()}, null) : null;
+                new Object[]{community.getDisplayName(), preFormatCurrency(pendingPayment.getAmount()), period.getDuration(), period.getPeriodUnit(), paymentPolicy.getShortCode()}, null) : null;
 
         PaymentSystemResponse response = makePayment(pendingPayment, message);
 

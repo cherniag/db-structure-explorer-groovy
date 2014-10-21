@@ -1,25 +1,24 @@
 package mobi.nowtechnologies.server.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 
 import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
+import static mobi.nowtechnologies.server.shared.enums.PeriodUnit.WEEKS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
@@ -42,39 +41,44 @@ public class PaymentPolicyServiceTest {
 	public void mergePaymentPolicyWithPromotion() {
 		PaymentPolicy paymentPolicy = createPaymentPolicy();
 			
-		PromotionPaymentPolicy promotion = createPromotionPaymentPolicy();
+		PromotionPaymentPolicy promotionPaymentPolicy = createPromotionPaymentPolicy();
 		
-		PaymentPolicyDto dto = paymentPolicyServiceFixture.getPaymentPolicy(paymentPolicy, promotion);
+		PaymentPolicyDto paymentPolicyDto = paymentPolicyServiceFixture.getPaymentPolicy(paymentPolicy, promotionPaymentPolicy);
 		
-		assertNotNull(dto);
-		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), dto.getOperator());
-		assertEquals(paymentPolicy.getOperator().getName(), dto.getOperatorName());
-		assertEquals(paymentPolicy.getPaymentType(), dto.getPaymentType());
-		assertEquals(paymentPolicy.getShortCode(), dto.getShortCode());
-		assertEquals(paymentPolicy.getCurrencyISO(), dto.getCurrencyISO());
+		assertNotNull(paymentPolicyDto);
+		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), paymentPolicyDto.getOperator());
+		assertEquals(paymentPolicy.getOperator().getName(), paymentPolicyDto.getOperatorName());
+		assertEquals(paymentPolicy.getPaymentType(), paymentPolicyDto.getPaymentType());
+		assertEquals(paymentPolicy.getShortCode(), paymentPolicyDto.getShortCode());
+		assertEquals(paymentPolicy.getCurrencyISO(), paymentPolicyDto.getCurrencyISO());
 		
-		assertEquals(paymentPolicy.getSubcost(), dto.getOldSubcost());
-		assertEquals(Integer.valueOf(paymentPolicy.getSubweeks()), dto.getOldSubweeks());
-		assertEquals(promotion.getSubcost(), dto.getSubcost());
-		assertEquals(promotion.getSubweeks(), dto.getSubweeks());
+		assertEquals(paymentPolicy.getSubcost(), paymentPolicyDto.getOldSubcost());
+		Period period = paymentPolicy.getPeriod();
+		assertEquals(Long.valueOf(period.getDuration()), paymentPolicyDto.getOldPeriod());
+		assertEquals(period.getPeriodUnit(), paymentPolicyDto.getOldPeriodUnit());
+		assertEquals(promotionPaymentPolicy.getPeriod().getDuration(), paymentPolicyDto.getPeriod());
+		assertEquals(promotionPaymentPolicy.getPeriod().getPeriodUnit(), paymentPolicyDto.getPeriodUnit());
+		assertEquals(promotionPaymentPolicy.getSubcost(), paymentPolicyDto.getSubcost());
 	}
 	
 	@Test
 	public void mergePaymentPolicyWithNullPromotion() {
 		PaymentPolicy paymentPolicy = createPaymentPolicy();
-		PaymentPolicyDto dto = paymentPolicyServiceFixture.getPaymentPolicy(paymentPolicy, null);
+		PaymentPolicyDto paymentPolicyDto = paymentPolicyServiceFixture.getPaymentPolicy(paymentPolicy, null);
 		
-		assertNotNull(dto);
-		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), dto.getOperator());
-		assertEquals(paymentPolicy.getOperator().getName(), dto.getOperatorName());
-		assertEquals(paymentPolicy.getPaymentType(), dto.getPaymentType());
-		assertEquals(paymentPolicy.getShortCode(), dto.getShortCode());
-		assertEquals(paymentPolicy.getCurrencyISO(), dto.getCurrencyISO());
+		assertNotNull(paymentPolicyDto);
+		assertEquals(Integer.valueOf(paymentPolicy.getOperator().getId()), paymentPolicyDto.getOperator());
+		assertEquals(paymentPolicy.getOperator().getName(), paymentPolicyDto.getOperatorName());
+		assertEquals(paymentPolicy.getPaymentType(), paymentPolicyDto.getPaymentType());
+		assertEquals(paymentPolicy.getShortCode(), paymentPolicyDto.getShortCode());
+		assertEquals(paymentPolicy.getCurrencyISO(), paymentPolicyDto.getCurrencyISO());
 		
-		assertEquals(paymentPolicy.getSubcost(), dto.getOldSubcost());
-		assertEquals(Integer.valueOf(paymentPolicy.getSubweeks()), dto.getOldSubweeks());
-		assertEquals(paymentPolicy.getSubcost(), dto.getSubcost());
-		assertEquals(Integer.valueOf(paymentPolicy.getSubweeks()), dto.getSubweeks());
+		assertNull(paymentPolicyDto.getOldSubcost());
+		assertNull(paymentPolicyDto.getOldPeriod());
+		assertNull(paymentPolicyDto.getOldPeriodUnit());
+		assertEquals(paymentPolicy.getSubcost(), paymentPolicyDto.getSubcost());
+		assertEquals(paymentPolicy.getPeriod().getDuration(), paymentPolicyDto.getPeriod());
+		assertEquals(paymentPolicy.getPeriod().getPeriodUnit(), paymentPolicyDto.getPeriodUnit());
 	}
 	
 	@Test
@@ -94,17 +98,19 @@ public class PaymentPolicyServiceTest {
 		assertEquals(paymentPolicy.getPaymentType(), dto.getPaymentType());
 		assertEquals(paymentPolicy.getShortCode(), dto.getShortCode());
 		assertEquals(paymentPolicy.getCurrencyISO(), dto.getCurrencyISO());
-		
-		assertEquals(paymentPolicy.getSubcost(), dto.getOldSubcost());
-		assertEquals(Integer.valueOf(paymentPolicy.getSubweeks()), dto.getOldSubweeks());
+
+		assertNull(dto.getOldSubcost());
+		assertNull(dto.getOldPeriod());
+		assertNull(dto.getOldPeriodUnit());
 		assertEquals(paymentPolicy.getSubcost(), dto.getSubcost());
-		assertEquals(Integer.valueOf(paymentPolicy.getSubweeks()), dto.getSubweeks());
+		assertEquals(paymentPolicy.getPeriod().getDuration(), dto.getPeriod());
+		assertEquals(paymentPolicy.getPeriod().getPeriodUnit(), dto.getPeriodUnit());
 	}
 	
 	private PromotionPaymentPolicy createPromotionPaymentPolicy() {
 		PromotionPaymentPolicy promotion = new PromotionPaymentPolicy();
 			promotion.setSubcost(new BigDecimal(3));
-			promotion.setSubweeks(7);
+			promotion.setPeriod(new Period().withDuration(7).withPeriodUnit(WEEKS));
 		return promotion;
 	}
 
@@ -118,7 +124,7 @@ public class PaymentPolicyServiceTest {
 			paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
 			paymentPolicy.setShortCode("80988");
 			paymentPolicy.setSubcost(new BigDecimal(10));
-			paymentPolicy.setSubweeks((byte)5);
+			paymentPolicy.setPeriod(new Period().withDuration(5).withPeriodUnit(WEEKS));
 				Community community = new Community();
 			paymentPolicy.setCommunity(community);
 		return paymentPolicy;
