@@ -36,10 +36,14 @@ public class WebApplicationUriService {
     }
 
     public String transport(UserDeviceData deviceData, String commandName, RequestFormat format) {
+        return transport(deviceData.getCommunityUrl(), deviceData, commandName, format);
+    }
+
+    public String transport(String communityUrl, UserDeviceData deviceData, String commandName, RequestFormat format) {
         UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(environmentUrl);
         b.pathSegment("transport");
         b.pathSegment("service");
-        b.pathSegment(deviceData.getCommunityUrl());
+        b.pathSegment(communityUrl);
         b.pathSegment(deviceData.getApiVersion());
         b.pathSegment(commandName + format.getExt());
         return b.build().toUriString();

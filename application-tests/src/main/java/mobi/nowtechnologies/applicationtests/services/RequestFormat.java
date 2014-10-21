@@ -11,6 +11,10 @@ public enum RequestFormat {
         this.ext = ext;
     }
 
+    public boolean json() {
+        return JSON == this;
+    }
+
     public String getExt() {
         return ext;
     }

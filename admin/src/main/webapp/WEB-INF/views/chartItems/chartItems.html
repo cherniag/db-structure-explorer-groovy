@@ -162,27 +162,62 @@
 	    width: 15%;
 	}
 	
+    #chartItemsTable li div.iTunesUrl_chartItem {
+        font-size: 9px;
+        font-weight: bold;
+        height: 60px !important;
+        width: 10%;
+    }
+
 	#chartItemsTable li div.ArtistTitle_chartItem {
 	    font-size: 9px;
 	    font-weight: bold;
-	    width: 18%;
+	    width: 12%;
 	}
 	
 	#chartItemsTable li div.info_chartItem {
         font-size: 10px;
         height: 60px !important;
         overflow: hidden;
-        width: 15%;
+        width: 10%;
     }
 
 	#chartItemsTable li div.publishDate_chartItem {
 	    font-size: 10px;
 	    width: 17%;
 	}
+
+    #chartItemsTable li.invalidITunesLink {
+        border: 1px solid red;
+    }
 	
 </style>
+
 <body th:with="urlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateInURL.format}__')}">
 	<div th:substituteby="tpl::navbar"></div>
+
+
+<div class="modal fade sz-dialog-init" id="change_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header draggable-cursor">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Select link</h4>
+            </div>
+
+            <div id="mediaPlaylistsContainerId">
+                <input type="text" style="width: 530px" id="iTunesUrl"/>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="changeBtn();return false;">Save</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true" onclick="cancelBtn();return false;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 	<!-- Modal -->
 	<div id="windowTitleDialog" class="modal fade">
 		<div class="modal-body"></div>
@@ -222,7 +257,8 @@
 					<div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
 					<div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
 					<div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
-                    <div class="publishDate_chartItem" th:text="#{chartItems.page.chartItemsTable.head.trackId}">Track id</div>
+                    <div class="publishDate_chartItem" th:text="#{chartItems.page.mediasTable.head.trackId}">ISRC</div>
+                    <div class="iTunesUrl_chartItem" th:text="#{chartItems.page.mediasTable.head.iTunesUrl}">ITunes Url</div>
 				</li>
 			</ul>
 			<ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -250,6 +286,12 @@
 						<span th:text="${chartItemDto.mediaDto.trackId}">GB28K1100052</span>
 						<button type="button" class="btn btn-danger" onclick="onToBasketClick(this, false);" th:text="#{chartItems.page.button.basket}">Basket</button>
 					</div>
+                <span class="iTunesSpan" style="display: none" th:text="${chartItemDto.mediaDto.ITunesUrl}">HEATSEEKER</span>
+                <span class="fileTypeSpan" style="display: none" th:text="${chartItemDto.mediaDto.audioFileDto.fileType}">HEATSEEKER</span>
+                <span class="labelSpan" style="display: none" th:text="${chartItemDto.mediaDto.label}">HEATSEEKER</span>
+                <div class="iTunesUrl_chartItem" style="display:inline-block;">
+                    <button type="button" class="btn btn-danger"  th:onclick="'javascript:openDialog(this, \'' + ${chartItemDto.mediaDto.id} + '\');'"   th:text="#{chartItems.page.button.changeITunesUrl}">Basket</button>
+                </div>
 				</li>
 			</ul>
 		</div>
@@ -270,6 +312,14 @@
 							</li>
 						</ul>
 					</form>
+            <form class="del_btn">
+                <ul class="nav nav-pills table_margin">
+                    <li class="active">
+                        <a th:text="#{chartItems.page.button.validateITunes}" href="#" onclick="validateITunesUrls()">Validate ITunes Links</a>
+                    </li>
+                </ul>
+            </form>
+
 			</div>
 			<div>
 				<div id="basket" data-spy="affix" data-offset-top="200">
@@ -536,7 +586,8 @@
 		var artistTitleDiv = item.find("div.ArtistTitle_chartItem");
 		var imageDiv = item.find("div.image_chartItem, div.cover_media");
 		var infoDiv = item.find("div.info_chartItem");
-		
+       var changeITunesLink = item.find("div.iTunesUrl_chartItem");
+
 		positionDiv.text("0");
 		
 		imageDiv.detach().insertBefore(artistTitleDiv);
@@ -544,7 +595,8 @@
 		artistTitleDiv.css("display","inline-block");
 		imageDiv.css("display","inline-block");
 		infoDiv.css("display","inline-block");
-		
+        changeITunesLink.css("display","none");
+
 		artistTitleDiv.attr("class","ArtistTitle_chartItemBasket");
 		imageDiv.attr("class","image_chartItemBasket");
 		infoDiv.attr("class","info_chartItemBasket");
@@ -605,6 +657,7 @@
 		var imageDiv = item.find("div.image_chartItem, div.image_chartItemBasket, div.cover_media");
 		var infoDiv = item.find("div.info_chartItem, div.info_chartItemBasket");
 		var publishDateDiv = item.find("div.publishDate_chartItem");
+    var changeITunesLinkDiv = item.find("div.iTunesUrl_chartItem");
 
 		imageDiv.detach().insertBefore(artistTitleDiv);
 		
@@ -616,6 +669,7 @@
 		positionPrevDiv.css("display","inline-block");
 		chgPositionDiv.css("display","inline-block");
 		publishDateDiv.css("display","inline-block");
+    changeITunesLinkDiv.css("display","inline-block");
 
 		artistTitleDiv.attr("class","ArtistTitle_chartItem");
 		imageDiv.attr("class","image_chartItem");
@@ -848,12 +902,19 @@
 		var info = li.find("div.info_chartItem span").text().replace(/\'/g, "&apos;");
 		var channel = null;
 		var locked = li.find("div.locked_chartItem input").attr("checked") ? true : false;
+        var mediaId = li.find("div.mediaId_chartItem").text();
+        var iTunesUrl = escape(li.children('.iTunesSpan').text().trim());
+        var label = escape(li.children('.labelSpan').text().trim());
+        var artistName = escape(li.children('.ArtistTitle_chartItem').text().trim());
+    var fileType = li.children('.fileTypeSpan').text().trim();
 		json.push(
 		  "{'id':",id != null && id != '' ? id : 'null',",",
-		  "'mediaDto':{'id':",li.find("div.mediaId_chartItem").text(),"},",
+          "'mediaDto':{'id':",mediaId,", 'ITunesUrl':'" +
+                    iTunesUrl + "', 'label':'" +label +  "', 'artistDto': { 'name': '" + artistName + "'}, " +
+                    "'audioFileDto': {'fileType': '" + fileType + "'} },",
 		  "'position':",li.find("div.position_chartItem").text(),",",
 		  "'prevPosition':",li.find("div.prev_position_chartItem span").text(),",",
-		  "'chgPosition':",li.find("div.change_position_chartItem").text(),",",
+		  "'chgPosition': '",li.find("div.change_position_chartItem").text(),"',",
 		  "'locked':",locked,",",
 		  "'channel':'",channel,"',",
 		  "'info':'",info,"',",
@@ -915,6 +976,7 @@
 			lockedInput.attr("checked", "checked");
 		
 		var basketButtonLable = /*[[#{chartItems.page.button.basket}]]*/ "Basket";
+        var changeITunesButtonLabel = /*[[#{chartItems.page.button.changeITunesUrl}]]*/ "Change url";
 		var publishDateDiv = $('<div>').attr({
 			"class":"publishDate_chartItem",
 			"style":"display:none;"
@@ -968,7 +1030,21 @@
 			"onclick":"onToBasketClick(this, true)",
 			"class":"btn btn-danger"
 		}).text(basketButtonLable).appendTo(artistMediaDiv);
-		
+    var itunesValueNode = $("<span class='iTunesSpan' style='display: none'>"+ chartItem.mediaDto.itunesUrl + "</span>");
+         itunesValueNode.appendTo(li);
+         var iTunesDiv = $('<div >').attr({
+             "class": "iTunesUrl_chartItem",
+             "style": "display:none;"
+         }).appendTo(li);
+         $('<button>').attr({
+             "type": "button",
+             "onclick": "openDialog(this, " + chartItem.mediaDto.id + ")",
+             "class": "btn btn-danger"
+         }).text(changeITunesButtonLabel).appendTo(iTunesDiv);
+    var contentTypeNode = $("<span class='fileTypeSpan' style='display: none'>"+ chartItem.mediaDto.audioFileDto.fileType + "</span>");
+    contentTypeNode.appendTo(li);
+    var labelNode = $("<span class='labelSpan' style='display: none'>"+ chartItem.mediaDto.label + "</span>");
+    labelNode.appendTo(li);
 		return li;
 	}
 	

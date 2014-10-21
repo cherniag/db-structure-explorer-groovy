@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoITTest;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -12,18 +13,13 @@ import mobi.nowtechnologies.server.trackrepo.factory.TrackFactory;
 import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
-import org.apache.commons.lang.ArrayUtils;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -37,7 +33,6 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Oleg Artomov on 6/25/2014.
  */
-@Ignore
 public class TrackServiceIT extends AbstractTrackRepoITTest {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -55,23 +50,20 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     @Value("${trackRepo.encode.destination}")
     private org.springframework.core.io.Resource publishDir;
 
-    private RestTemplate template = new RestTemplate();
 
-    @Value("${cloudFile.filesURL}")
-    private String cloudUrl;
+    @Value("${trackRepo.pull.cdn.container.src}")
+    private String privateContainerName;
 
-    private boolean isFileInCloudExists(String fileName) {
-        String cloudFileName = cloudUrl + fileName;
-        logger.info("Check file in cloud: {}", cloudFileName);
-        try {
-            ResponseEntity<byte[]> result = template.getForEntity(cloudFileName, byte[].class);
-            return result.getStatusCode().equals(HttpStatus.OK) && ArrayUtils.isNotEmpty(result.getBody());
-        } catch (HttpClientErrorException clientErrorException) {
-            if (clientErrorException.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                return false;
-            } else
-                throw clientErrorException;
-        }
+    @Value("${trackRepo.pull.cdn.container.dest}")
+    private String publicContainerName;
+
+
+    @Resource
+    private CloudFileService cloudFileService;
+
+    private boolean isFileInCloudExists(String containerName, String fileName) {
+        logger.info("Check file in cloud: {}", fileName);
+        return cloudFileService.fileExists(containerName, fileName);
     }
 
     private void waitWhileCloudProcessCopying() throws InterruptedException {
@@ -105,6 +97,10 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
         result.add(prefix + ".enc");
         result.add(prefix + "_21.jpg");
         result.add(prefix + "_22.jpg");
+        result.add(prefix + "_48.aud");
+        result.add(prefix + "_48.hdr");
+        result.add(prefix + "_96.aud");
+        result.add(prefix + "_96.hdr");
         return result;
     }
 
@@ -133,14 +129,14 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     private void checkFilesExistsInCloudAfterEncoding(Track track) {
         Collection<String> filesInCloud = getFilesAfterEncoding(track);
         for (String currentFile : filesInCloud) {
-            assertTrue(isFileInCloudExists(currentFile));
+            assertTrue(isFileInCloudExists(privateContainerName, currentFile));
         }
     }
 
     private void checkFilesNotExistInCloudBeforeEncoding(Track track) {
         Collection<String> filesInCloud = getFilesAfterEncoding(track);
         for (String currentFile : filesInCloud) {
-            assertFalse(isFileInCloudExists(currentFile));
+            assertFalse(isFileInCloudExists(privateContainerName, currentFile));
         }
     }
 
@@ -148,7 +144,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     private void checkFilesNotExistsInCloudBeforePull(Track track) {
         Collection<String> filesInCloud = getFilesAfterPull(track);
         for (String currentFile : filesInCloud) {
-            assertFalse(isFileInCloudExists(currentFile));
+            assertFalse(isFileInCloudExists(publicContainerName, currentFile));
         }
     }
 
@@ -156,7 +152,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     private void checkFilesExistsInCloudAfterPull(Track track) {
         Collection<String> filesInCloud = getFilesAfterPull(track);
         for (String currentFile : filesInCloud) {
-            assertTrue(isFileInCloudExists(currentFile));
+            assertTrue(isFileInCloudExists(publicContainerName, currentFile));
         }
     }
 
@@ -197,6 +193,12 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     private Track prepareTrackForSearch() {
         Track track = TrackFactory.anyTrack();
         return trackRepository.save(track);
+    }
+
+
+    @Before
+    public void beforeEachTest(){
+        assertFalse(privateContainerName.contentEquals(publicContainerName));
     }
 
 }

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.applicationtests.services.http;
 
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.WebApplicationUriService;
+import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
@@ -29,7 +30,16 @@ public abstract class AbstractHttpService {
         return webApplicationUriService.transport(deviceData, commandName, format);
     }
 
+    protected String getUri(String community, UserDeviceData deviceData, String commandName, RequestFormat format) {
+        return webApplicationUriService.transport(community, deviceData, commandName, format);
+    }
+
     protected UserDataCreator.TimestampTokenData createUserToken(String userToken) {
+        return userDataCreator.createUserToken(userToken);
+    }
+
+    protected UserDataCreator.TimestampTokenData createUserToken(PhoneState state) {
+        String userToken = state.getLastAccountCheckResponse().userToken;
         return userDataCreator.createUserToken(userToken);
     }
 }

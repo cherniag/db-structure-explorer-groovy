@@ -252,6 +252,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="mediaService" ref="service.MediaService" />
+        <property name="mediaRepository" ref="mediaRepository"/>
 	</bean>
 
 	<bean id="service.MailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
@@ -388,7 +389,19 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="userAgent" value="${cloudFile.userAgent}" />
 		<property name="containerName" value="${cloudFile.containerName}" />
 		<property name="filesURL" value="${cloudFile.filesURL}" />
+        <property name="httpClient" ref="service.cloudHttpClient"/>
 	</bean>
+
+    <bean id="service.cloudHttpConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager">
+        <property name="maxTotal" value="${cloudFile.getFileThreadPoolCount}" />
+        <property name="defaultMaxPerRoute" value="${cloudFile.getFileThreadPoolCount}" />
+    </bean>
+
+    <bean id="service.cloudHttpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+       <constructor-arg index="0" ref="service.cloudHttpConnectionManager"/>
+       <constructor-arg index="1"><null/></constructor-arg>
+    </bean>
+
 
 	<bean id="service.MessageService" class="mobi.nowtechnologies.server.service.MessageService">
 		<property name="userService" ref="service.UserService" />

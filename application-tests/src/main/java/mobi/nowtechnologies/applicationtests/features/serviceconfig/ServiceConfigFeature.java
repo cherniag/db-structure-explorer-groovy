@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.applicationtests.features.serviceconfig;
 
+import com.google.common.collect.Sets;
 import cucumber.api.Transform;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -13,6 +14,7 @@ import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.Clie
 import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.ServiceConfigHttpService;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
@@ -60,18 +62,62 @@ public class ServiceConfigFeature {
     private Map<UserDeviceData, String> headers = new HashMap<UserDeviceData, String>();
 
 
-    @Given("^Mobile client makes Service Config call using (.+) format for (.+) and (.+) and (.+)$")
-    public void given(RequestFormat requestFormat,
-                      @Transform(DictionaryTransformer.class) Word devices,
-                       @Transform(DictionaryTransformer.class) Word communities,
-                       @Transform(DictionaryTransformer.class) Word versions) {
-        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Collections.singleton(requestFormat));
+    @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) above (.+)$")
+    public void givenVersionsAbove(@Transform(DictionaryTransformer.class) Word devices,
+                               @Transform(DictionaryTransformer.class) Word communities,
+                               @Transform(DictionaryTransformer.class) Word versions,
+                               String aboveVersion) {
+        List<String> above = ApiVersions.from(versions.set()).above(aboveVersion);
+        given(above, communities.set(), devices.set());
+    }
+
+    @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) bellow (.+)$")
+    public void givenVersionsBellow(@Transform(DictionaryTransformer.class) Word devices,
+                      @Transform(DictionaryTransformer.class) Word communities,
+                      @Transform(DictionaryTransformer.class) Word versions,
+                      String bellowVersion) {
+        List<String> bellow = ApiVersions.from(versions.set()).bellow(bellowVersion);
+        given(bellow, communities.set(), devices.set());
+    }
+
+    @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+)$")
+    public void given(@Transform(DictionaryTransformer.class) Word devices,
+                      @Transform(DictionaryTransformer.class) Word communities,
+                      @Transform(DictionaryTransformer.class) Word versions) {
+        given(versions.list(), communities.set(), devices.set());
+    }
+
+    @When("^client version info exist:$")
+    public void tableExist(List<ServiceConfigVersionRow> configVersionRows){
+        for (ServiceConfigVersionRow configVersionRow : configVersionRows) {
+            for (UserDeviceData userDeviceData : userDeviceDatas) {
+                String application = configVersionRow.applicationName;
+                String code = configVersionRow.messageKey;
+                String link = configVersionRow.url;
+                String imageFileName = configVersionRow.image;
+                ClientVersion clientVersion = ClientVersion.from(configVersionRow.appVersion);
+                VersionCheckStatus status = VersionCheckStatus.valueOf(configVersionRow.status);
+
+                String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", applicationName));
+                VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
+                Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
+                DeviceType deviceType = getDeviceType(userDeviceData);
+                versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName));
+            }
+        }
+    }
+
+
+    private void given(List<String> versions, Set<String> communities, Set<String> devices) {
+        userDeviceDatas = userDeviceDataService.table(versions, communities, devices, Sets.newHashSet(RequestFormat.JSON));
         applicationName = UUID.randomUUID().toString();
     }
 
     @When("^(.+) header is in old format \"(.+)\"$")
     public void whenUserAgent(String headerName, String headerValue) {
-        serviceConfigHttpService.setHeader(headerName, headerValue);
+        for (UserDeviceData data : userDeviceDatas) {
+            headers.put(data, headerValue);
+        }
     }
 
     @Then("^response has (\\d+) http response code$")
@@ -113,11 +159,12 @@ public class ServiceConfigFeature {
         }
     }
 
-    @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' link$")
+    @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' image and '(.+)' link$")
     public void whenServiceConfig(VersionCheckStatus status,
                                   @Transform(ClientVersionTransformer.class) ClientVersion clientVersion,
                                   String application,
                                   String code,
+                                  String imageFileName,
                                   String link) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
 
@@ -126,7 +173,7 @@ public class ServiceConfigFeature {
             VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
             Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
             DeviceType deviceType = getDeviceType(userDeviceData);
-            versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion));
+            versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName));
         }
     }
 
@@ -162,9 +209,9 @@ public class ServiceConfigFeature {
             Map<String, Object> stringObjectMap = jsonHelper.extractObjectMapByPath(response.getBody(), "$.response.data[0].versionCheck");
 
             if(nullable.isNull()) {
-                assertNull("Value by field: " + field + " is not null", stringObjectMap.get(field));
+                assertNull("Value by field: " + field + " is not null for " + userDeviceData, stringObjectMap.get(field));
             } else {
-                assertEquals("Value by field: " + field + " differs from expected", nullable.value(), stringObjectMap.get(field));
+                assertEquals("Value by field: " + field + " differs from expected for " + userDeviceData, nullable.value(), stringObjectMap.get(field));
             }
         }
     }

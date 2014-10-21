@@ -34,6 +34,10 @@ public class AccessPolicyDto {
         return grantedTo;
     }
 
+    public Permission getPermission() {
+        return permission;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

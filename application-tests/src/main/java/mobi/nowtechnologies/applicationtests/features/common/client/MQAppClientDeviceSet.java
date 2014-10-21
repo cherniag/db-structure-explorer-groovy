@@ -2,6 +2,7 @@ package mobi.nowtechnologies.applicationtests.features.common.client;
 
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.http.common.standard.StandardResponse;
 import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
 import mobi.nowtechnologies.applicationtests.services.http.domain.google_plus.GooglePlusResponse;
 import mobi.nowtechnologies.applicationtests.services.http.email.EmailHttpService;
@@ -9,6 +10,7 @@ import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookHttp
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator;
 import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusUserInfoGenerator;
+import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamzineHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -31,6 +33,8 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
     private GooglePlusHttpService googlePlusHttpService;
     @Resource
     private EmailHttpService emailHttpService;
+    @Resource
+    private GetStreamzineHttpService getStreamzineHttpService;
     //
     // Flow operations
     //
@@ -336,5 +340,18 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         String userToken = state.getLastAccountCheckResponse().userToken;
 
         emailHttpService.signIn(email, userToken, deviceData, state.getDeviceUID(), deviceData.getFormat(), signInEmailId, signInEmailToken);
+    }
+
+    //
+    // Streamzine
+    //
+    public <T> ResponseEntity<T> getStreamzine(String community, UserDeviceData deviceData, String timestampToken, String timestamp, String resolution, String userName, Class<T> type) {
+        PhoneStateImpl state = states.get(deviceData);
+        return getStreamzineHttpService.getStreamzine(community, deviceData, state, timestampToken, timestamp, resolution, userName, type);
+    }
+
+    public ResponseEntity<StandardResponse> getStreamzineErrorEntity(UserDeviceData deviceData, String timestampToken, String timestamp, String resolution, String userName) {
+        PhoneStateImpl state = states.get(deviceData);
+        return getStreamzineHttpService.getStreamzineErrorEntity(deviceData, state, timestampToken, timestamp, resolution, userName);
     }
 }

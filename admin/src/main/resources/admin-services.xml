@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:utils="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean name="mobileApplicationPagesService" class="mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService">
         <constructor-arg>
@@ -49,12 +49,23 @@
 
     <!-- Application Message Bundle -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basenames" value="file:#{systemProperties['catalina.base']}/conf/i18n/admin/messages, /i18n/messages" />
+        <property name="basenames" ref="messagesBaseName" />
         <property name="defaultEncoding" value="UTF-8" />
         <property name="fileEncodings" value="UTF-8" />
         <property name="cacheSeconds" value="180" />
         <property name="useCodeAsDefaultMessage" value="true" />
     </bean>
 
+    <utils:list id="messagesBaseName">
+        <value>file:#{systemProperties['catalina.base']}/conf/i18n/admin/messages</value>
+        <value>/i18n/messages</value>
+    </utils:list>
+
     <alias name="messageSource" alias="rootMessageSource"/>
+
+    <beans profile="TEST">
+        <utils:list id="messagesBaseName">
+            <value>classpath:i18n/messages</value>
+        </utils:list>
+    </beans>
 </beans>

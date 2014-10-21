@@ -26,7 +26,8 @@ public class GetNewsController extends CommonController {
     private MessageService messageService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.2}/GET_NEWS"
+            "**/{community}/{apiVersion:6\\.2}/GET_NEWS",
+            "**/{community}/{apiVersion:6\\.3}/GET_NEWS"
     })
     public ModelAndView getNewsWithBanners(
             @RequestParam("USER_NAME") String userName,
