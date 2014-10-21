@@ -43,4 +43,13 @@ public enum FileType {
 	public String getMime() {
 		return mime;
 	}
+
+    public static FileType findById(byte id){
+        for (FileType currentType: FileType.values()){
+            if (currentType.getId().byteValue() == id){
+                return currentType;
+            }
+        }
+        throw new IllegalArgumentException("Type not found");
+    }
 }

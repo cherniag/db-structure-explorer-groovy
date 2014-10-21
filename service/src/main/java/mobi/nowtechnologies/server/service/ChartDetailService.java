@@ -2,12 +2,17 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
+import mobi.nowtechnologies.server.shared.dto.admin.MediaDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +38,13 @@ public class ChartDetailService {
 	private ChartDetailRepository chartDetailRepository;
 	private MediaService mediaService;
 
-	public void setChartDetailDao(ChartDetailDao chartDetailDao) {
+    private MediaRepository mediaRepository;
+
+    public void setMediaRepository(MediaRepository mediaRepository) {
+        this.mediaRepository = mediaRepository;
+    }
+
+    public void setChartDetailDao(ChartDetailDao chartDetailDao) {
 		this.chartDetailDao = chartDetailDao;
 	}
 
@@ -338,9 +349,6 @@ public class ChartDetailService {
 				ChartDetail chartDetail = new ChartDetail();
 				Chart chart = new Chart();
 				chart.setI(chartItemDto.getChartId());
-				Media media = new Media();
-				media.setI(chartItemDto.getMediaDto().getId());
-
 				chartDetail.setChannel(StringUtils.hasText(chartItemDto.getChannel()) ? chartItemDto.getChannel().replace("&apos;", "'") : null);
 				chartDetail.setChgPosition(chartItemDto.getChgPosition());
 				chartDetail.setInfo(chartItemDto.getInfo().replace("&apos;", "'"));
@@ -348,7 +356,7 @@ public class ChartDetailService {
 				chartDetail.setPrevPosition(chartItemDto.getPrevPosition());
 				chartDetail.setPublishTimeMillis(chartItemDto.getPublishTime().getTime());
 				chartDetail.setChart(chart);
-				chartDetail.setMedia(media);
+				chartDetail.setMedia(saveMediaInfo(chartItemDto.getMediaDto()));
 				chartDetail.setLocked(chartItemDto.getLocked());
 
 				newChartItems.add(chartDetail);
@@ -367,7 +375,13 @@ public class ChartDetailService {
 		return newChartItems;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+    private Media saveMediaInfo(MediaDto mediaDto) {
+        Media media = mediaRepository.findOne(mediaDto.getId());
+        media.setiTunesUrl(Utils.decodeUrl(mediaDto.getITunesUrl()));
+        return mediaRepository.save(media);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
 	public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
 		LOGGER.debug("input parameters selectedPublishDateTime, chartId, afterPosition, chPosition: [{}], [{}], [{}], [{}]", new Object[] { selectedPublishDateTime, chartId,
 				afterPosition, chPosition });

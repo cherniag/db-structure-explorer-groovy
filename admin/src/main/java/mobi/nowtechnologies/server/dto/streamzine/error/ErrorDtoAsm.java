@@ -25,7 +25,7 @@ public class ErrorDtoAsm {
 
     public Set<ErrorDto> createUnknown() {
         Set<ErrorDto> errorDtos = new TreeSet<ErrorDto>();
-        errorDtos.add(createGlobalError("error.unknown"));
+        errorDtos.add(createGlobalError("error.unknown", null));
         return errorDtos;
     }
 
@@ -53,14 +53,14 @@ public class ErrorDtoAsm {
         }
 
         for (ObjectError objectError : errors.getGlobalErrors()) {
-            errorDtos.add(createGlobalError(objectError.getCode(), objectError.getDefaultMessage()));
+            errorDtos.add(createGlobalError(objectError.getCode(), objectError.getArguments(), objectError.getDefaultMessage()));
         }
 
         return errorDtos;
     }
 
-    public ErrorDto createGlobalError(String key) {
-        String description = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
+    public ErrorDto createGlobalError(String key, Object[] arguments) {
+        String description = messageSource.getMessage(key, arguments, LocaleContextHolder.getLocale());
 
         ErrorDto dto = new ErrorDto();
         dto.setKey("");
@@ -68,8 +68,8 @@ public class ErrorDtoAsm {
         return dto;
     }
 
-    public ErrorDto createGlobalError(String key, String defaultMessage) {
-        String description = messageSource.getMessage(key, null, defaultMessage, LocaleContextHolder.getLocale());
+    public ErrorDto createGlobalError(String key, Object[] arguments, String defaultMessage) {
+        String description = messageSource.getMessage(key, arguments, defaultMessage, LocaleContextHolder.getLocale());
 
         ErrorDto dto = new ErrorDto();
         dto.setKey("");

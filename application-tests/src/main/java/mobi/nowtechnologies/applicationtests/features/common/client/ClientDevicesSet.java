@@ -7,10 +7,15 @@ import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountC
 import mobi.nowtechnologies.applicationtests.services.http.chart.ChartHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
+import mobi.nowtechnologies.applicationtests.services.http.news.NewsHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.news.json.JsonNewsResponse;
+import mobi.nowtechnologies.applicationtests.services.http.news.xml.XmlNewsResponse;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActivationDto;
 import mobi.nowtechnologies.applicationtests.services.http.signup.SignupHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -27,6 +32,8 @@ public abstract class ClientDevicesSet {
     protected ChartHttpService chartHttpService;
     @Resource
     protected AccountCheckHttpService accountCheckHttpService;
+    @Resource
+    protected NewsHttpService newsHttpService;
 
     protected Map<UserDeviceData, PhoneStateImpl> states = new ConcurrentHashMap<UserDeviceData, PhoneStateImpl>();
 
@@ -89,6 +96,19 @@ public abstract class ClientDevicesSet {
         final PhoneState state = states.get(deviceData);
 
         return chartHttpService.getChart(deviceData, userName, state.getLastAccountCheckResponse().userToken, state.getDeviceUID(), deviceData.getFormat());
+    }
+
+    public NewsDetailDto[] getNews(UserDeviceData deviceData){
+        final PhoneState state = states.get(deviceData);
+
+        if(deviceData.getFormat().json()) {
+            ResponseEntity<JsonNewsResponse> entity = newsHttpService.getNews(deviceData, state, JsonNewsResponse.class);
+            return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
+        } else {
+            ResponseEntity<XmlNewsResponse> entity = newsHttpService.getNews(deviceData, state, XmlNewsResponse.class);
+            return entity.getBody().getNews().getNewsDetailDtos();
+        }
+
     }
 
     //
