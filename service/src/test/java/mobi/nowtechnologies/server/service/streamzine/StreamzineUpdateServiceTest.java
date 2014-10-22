@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
@@ -62,7 +63,7 @@ public class StreamzineUpdateServiceTest {
         when(community.getRewriteUrlParameter()).thenReturn("hl_uk");
 
         Update prevUpdate = new Update(addDays(new Date(), 2), community);
-        Block block = new Block(666, SLIM_BANNER, new MusicTrackDeeplinkInfo(null));
+        Block block = new Block(666, SLIM_BANNER, new MusicTrackDeeplinkInfo(null, PlayerType.MINI_PLAYER_ONLY));
         block.exclude();
         prevUpdate.addBlock(block);
 

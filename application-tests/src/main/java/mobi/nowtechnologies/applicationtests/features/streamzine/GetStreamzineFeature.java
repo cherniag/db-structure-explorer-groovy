@@ -39,6 +39,7 @@ import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -270,7 +271,7 @@ public class GetStreamzineFeature {
         Media media = dbMediaService.findByTrackIdAndIsrc(trackId, isrc);
 
         for (UserDeviceData data : currentUserDevices) {
-            MusicTrackDeeplinkInfo deeplinkInfo = new MusicTrackDeeplinkInfo(media);
+            MusicTrackDeeplinkInfo deeplinkInfo = new MusicTrackDeeplinkInfo(media, PlayerType.MINI_PLAYER_ONLY);
 
             Block block = new Block(positionGenerator.nextPosition(data), shapeType, deeplinkInfo);
             block.setTitle(title.value());
@@ -299,7 +300,7 @@ public class GetStreamzineFeature {
         for (UserDeviceData data : currentUserDevices) {
             if(MusicType.PLAYLIST == musicType) {
                 Chart chart = chartRepository.findOne(listValues.ints().get(0));
-                DeeplinkInfo deeplinkInfo = new MusicPlayListDeeplinkInfo(chart.getI());
+                DeeplinkInfo deeplinkInfo = new MusicPlayListDeeplinkInfo(chart.getI(), PlayerType.MINI_PLAYER_ONLY);
                 Block block = new Block(positionGenerator.nextPosition(data), shapeType, deeplinkInfo);
                 block.setTitle(title.value());
                 block.setSubTitle(subTitle.value());

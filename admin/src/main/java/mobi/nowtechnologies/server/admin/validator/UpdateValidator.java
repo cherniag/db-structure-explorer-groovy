@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.admin.validator;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.ApplicationPageData;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.dto.streamzine.DuplicatedContentKey;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
@@ -12,6 +14,7 @@ import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.BadgeMappingRules;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -28,6 +31,7 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
+import mobi.nowtechnologies.server.shared.CollectionUtils;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -41,9 +45,11 @@ import javax.annotation.Resource;
 import java.net.URI;
 import java.util.*;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasSubTitle;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.rules.TitlesMappingRules.hasTitle;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -241,7 +247,7 @@ public class UpdateValidator extends BaseValidator {
         LinkLocationType linkLocationType = LinkLocationType.valueOf(key);
 
         if(linkLocationType == LinkLocationType.INTERNAL_AD) {
-            DeepLinkInfoService.ApplicationPageData applicationPageData = new DeepLinkInfoService.ApplicationPageData(value);
+            ApplicationPageData applicationPageData = new ApplicationPageData(value);
 
             final Set<String> pages = mobileApplicationPagesService.getPages();
             if(!pages.contains(applicationPageData.getUrl())) {
@@ -258,7 +264,6 @@ public class UpdateValidator extends BaseValidator {
                     return;
                 }
             }
-
             return;
         }
 
@@ -302,22 +307,25 @@ public class UpdateValidator extends BaseValidator {
         MusicType musicType = MusicType.valueOf(key);
 
         if(musicType == MusicType.PLAYLIST) {
+            PlaylistData playlistData = new PlaylistData(value);
             try {
-                parseInt(value);
+                parseInt(playlistData.getChartIdString());
             } catch (IllegalArgumentException e) {
                 Object[] args = {value, Arrays.toString(ChartType.values())};
                 rejectValue("streamzine.error.notfound.playlist.id", args, errors);
             }
+            validatePlayerType(errors, playlistData.getPlayerTypeString());
             return;
         }
 
         if(musicType == MusicType.TRACK) {
-            Set<Media> media = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, Lists.newArrayList(Integer.valueOf(value)));
-            boolean notFoundMedia = (media == null || media.size() == 0);
-            if(notFoundMedia) {
-                Object[] args = {value};
-                rejectValue("streamzine.error.notfound.track.id", args, errors);
+            TrackData trackData = new TrackData(value);
+            Set<Media> mediaSet = mediaService.getMediasByChartAndPublishTimeAndMediaIds(communityRewriteUrl, publishTimeMillis, newArrayList(trackData.getMediaId()));
+            boolean mediaSetIsEmpty = CollectionUtils.isEmpty(mediaSet);
+            if(mediaSetIsEmpty) {
+                rejectValue("streamzine.error.notfound.track.id", new Object[]{value}, errors);
             }
+            validatePlayerType(errors, trackData.getPlayerTypeString());
             return;
         }
 
@@ -337,7 +345,19 @@ public class UpdateValidator extends BaseValidator {
         throw new IllegalArgumentException("No validation for music type: " + musicType);
     }
 
-   private void validateNews(OrdinalBlockDto blockDto, Errors errors) {
+    private void validatePlayerType(Errors errors,  String playerType) {
+        if (isNull(playerType)){
+            rejectValue("streamzine.error.no.playerType", new Object[]{playerType}, errors);
+        }
+        try {
+            PlayerType.valueOf(playerType);
+        } catch (IllegalArgumentException e) {
+            Object[] args = {playerType, Arrays.toString(PlayerType.values())};
+            rejectValue("streamzine.error.unknown.playerType", args, errors);
+        }
+    }
+
+    private void validateNews(OrdinalBlockDto blockDto, Errors errors) {
         final String key = blockDto.provideKeyString();
         final String value = blockDto.provideValueString();
 
