@@ -2,11 +2,15 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.DateTimeZone;
 
 import javax.persistence.*;
 import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.max;
@@ -18,6 +22,10 @@ import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+import static org.joda.time.DateTimeFieldType.dayOfMonth;
+import static org.joda.time.DateTimeZone.UTC;
+import static org.joda.time.Period.days;
+import static org.joda.time.Period.months;
 
 /**
  * @autor: Titov Mykhaylo (titov)
@@ -34,6 +42,10 @@ public class Period{
 
     public long getDuration() {
         return duration;
+    }
+
+    private int getDurationAsInt() {
+        return (int)duration;
     }
 
     public DurationUnit getDurationUnit() {
@@ -123,17 +135,14 @@ public class Period{
     }
 
     private static int getNextSubPaymentForMonthlyPeriod(Period period, int subscriptionStartTimeSeconds){
-        final Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.setTimeInMillis(secondsToMillis(subscriptionStartTimeSeconds));
-        int dayOfMonthBefore = calendar.get(Calendar.DAY_OF_MONTH);
-        calendar.add(Calendar.MONTH, (int) period.getDuration());
-
-        int dayOfMonthAfter = calendar.get(Calendar.DAY_OF_MONTH);
+        DateTime dateTime = new DateTime(secondsToMillis(subscriptionStartTimeSeconds), UTC);
+        int dayOfMonthBefore = dateTime.get(dayOfMonth());
+        dateTime = dateTime.plus(months(period.getDurationAsInt()));
+        int dayOfMonthAfter = dateTime.get(dayOfMonth());
         if (dayOfMonthBefore != dayOfMonthAfter) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            dateTime = dateTime.plus(days(1));
         }
-        return millisToIntSeconds(calendar.getTimeInMillis());
+        return millisToIntSeconds(dateTime.getMillis());
     }
 
     @Override

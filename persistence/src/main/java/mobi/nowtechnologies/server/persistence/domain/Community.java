@@ -125,14 +125,9 @@ public class Community implements Serializable {
 		return CommunityDao.getMapAsNames();
 	}
 
-
     public List<Chart> getCharts() {
         return charts;
     }
-
-	public boolean basedOnSubBalanceLogic() {
-		return rewriteUrlParameter.equals("RBTDevelopment") || rewriteUrlParameter.equals("CNQATesting") || rewriteUrlParameter.equals("ChartsNow") || rewriteUrlParameter.equals("MetalHammer_disabled") || rewriteUrlParameter.equals("disabled") || rewriteUrlParameter.equals("samsung") || rewriteUrlParameter.equals("runningtrax") || rewriteUrlParameter.equals("mobo") || rewriteUrlParameter.equals("occ");
-	}
 
     @Override
     public String toString() {

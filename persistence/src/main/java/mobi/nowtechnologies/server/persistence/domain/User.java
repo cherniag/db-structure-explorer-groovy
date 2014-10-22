@@ -1500,13 +1500,8 @@ public class User implements Serializable {
         return this;
     }
 
-
     public Collection<SocialInfo> getSocialInfo() {
         return socialInfo;
-    }
-
-    public boolean basedOnSubBalanceLogic() {
-        return userGroup.getCommunity().basedOnSubBalanceLogic();
     }
 
     @Override

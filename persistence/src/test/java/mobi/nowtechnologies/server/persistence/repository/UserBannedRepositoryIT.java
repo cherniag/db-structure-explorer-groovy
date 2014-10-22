@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
-
 public class UserBannedRepositoryIT  extends AbstractRepositoryIT{
 	
 	@Resource(name = "userRepository")

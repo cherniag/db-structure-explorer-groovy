@@ -14,7 +14,6 @@ import static org.junit.Assert.assertThat;
  * User: Titov Mykhaylo (titov)
  * 17.10.13 10:30
  */
-
 public class UserGroupRepositoryIT  extends AbstractRepositoryIT{
 
     @Resource(name = "userGroupRepository")

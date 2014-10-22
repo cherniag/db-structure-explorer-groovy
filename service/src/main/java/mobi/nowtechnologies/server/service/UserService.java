@@ -737,16 +737,13 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public void processPaymentSubBalanceCommand(User user, SubmittedPayment payment) {
-        LOGGER.debug("processPaymentSubBalanceCommand input parameters user, payment: [{}]", user, payment);
+        LOGGER.debug("processPaymentSubBalanceCommand input parameters user, payment: [{}], [{}]", user, payment);
         final String paymentSystem = payment.getPaymentSystem();
 
         user.setLastSuccessfulPaymentTimeMillis(getEpochMillis());
         user.setLastSubscribedPaymentSystem(paymentSystem);
         user.setLastSuccessfulPaymentDetails(payment.getPaymentDetails());
 
-        final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
-
-        final int oldNextSubPaymentSeconds = user.getNextSubPayment();
         Period period = payment.getPeriod();
         if (paymentSystem.equals(ITUNES_SUBSCRIPTION)) {
             if (user.isOnFreeTrial()) {
@@ -754,12 +751,9 @@ public class UserService {
             }
             user.setNextSubPayment(payment.getNextSubPayment());
             user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
-            user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-        } else if(user.basedOnSubBalanceLogic()){
-            user.setSubBalance(user.getSubBalance() + (int) period.getDuration());
-            user.setNextSubPayment(Utils.getNewNextSubPayment(oldNextSubPaymentSeconds));
+            user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
         } else{
-            user.setNextSubPayment(period.toNextSubPaymentSeconds(oldNextSubPaymentSeconds));
+            user.setNextSubPayment(period.toNextSubPaymentSeconds(user.getNextSubPayment()));
         }
 
         if(paymentSystem.equals(VF_PSMS_TYPE)){
@@ -767,14 +761,6 @@ public class UserService {
         }
 
         entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), CARD_TOP_UP));
-        // The main idea is that we do pre-payed service, this means that
-        // in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
-        if (user.hasLimitedStatus() || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-            if (user.basedOnSubBalanceLogic()) {
-                user.setSubBalance(user.getSubBalance() - 1);
-                entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), SUBSCRIPTION_CHARGE));
-            }
-        }
 
         user.setStatus(UserStatusDao.getSubscribedUserStatus());
 
