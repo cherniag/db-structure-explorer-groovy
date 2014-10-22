@@ -9,7 +9,7 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 -- begin SRV-85
 
 DELETE tb_chartDetail from tb_chartDetail
-LEFT JOIN tb_media  ON tb_chartDetail.media = tb_media.i
+JOIN tb_media  ON tb_chartDetail.media = tb_media.i
 WHERE tb_media.trackId is null;
 
 DELETE tb_drm from tb_drm
