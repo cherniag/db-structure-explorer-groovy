@@ -127,7 +127,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     public void testGetChartO2AndJsonAndAccCheckInfo_Success_LatestVersion() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-        String apiVersion = LATEST_SERVER_API_VERSION;
+        String apiVersion = "6.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

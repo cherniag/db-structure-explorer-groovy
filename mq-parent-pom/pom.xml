@@ -570,6 +570,12 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>spring-test-mvc-ext</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>junit</groupId>

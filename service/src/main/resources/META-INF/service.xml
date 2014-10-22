@@ -81,6 +81,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="streamzineUpdateRepository" ref="streamzineUpdateRepository" />
         <property name="availableCommunites" value="${streamzine.available.communities}" />
         <property name="communityRepository" ref="communityRepository" />
+        <property name="cacheContentService" ref="service.checkCacheService"/>
     </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
@@ -245,7 +246,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
         <property name="chartDetailsConverter" ref="service.ChartDetailsConverter"/>
-	<property name="streamzineUpdateService" ref="streamzineUpdateService"/>
+	     <property name="streamzineUpdateService" ref="streamzineUpdateService"/>
+        <property name="cacheContentService" ref="service.checkCacheService"/>
     </bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
@@ -409,6 +411,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="communityService" ref="service.communityService" />
 		<property name="messageRepository" ref="messageRepository" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
+        <property name="cacheContentService" ref="service.checkCacheService"/>
 	</bean>
 
 	<bean id="service.OfferService" class="mobi.nowtechnologies.server.service.OfferService">
@@ -590,6 +593,9 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 
     <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
+
+
+    <bean id="service.checkCacheService" class="mobi.nowtechnologies.server.service.CacheContentService"/>
 
 	<import resource="payment.xml" />
 

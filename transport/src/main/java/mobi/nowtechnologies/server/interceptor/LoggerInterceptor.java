@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.interceptor;
 
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-import mobi.nowtechnologies.server.transport.controller.CommonController;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;

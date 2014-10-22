@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
@@ -15,7 +16,6 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedT
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -65,7 +65,7 @@ public class DeepLinkInfoServiceTest {
         when(deepLinkInfo.isVip()).thenReturn(true);
         when(deepLinkInfo.getKey()).thenReturn(MusicType.PLAYLIST.name());
         when(deepLinkInfo.getContentType()).thenReturn(ContentType.MUSIC);
-        when(deepLinkInfo.getValue()).thenReturn("666");
+        when(deepLinkInfo.getValue()).thenReturn("666#"+ PlayerType.REGULAR_PLAYER_ONLY);
 
         AccessPolicy accessPolicy = deepLinkInfoService.tryToHandleSecuredTile(deepLinkInfo);
 

@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,7 +30,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Date;
 
+import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
 import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
@@ -156,7 +159,7 @@ public abstract class AbstractControllerTestIT {
 
         chartDetail = chartDetailRepository.save(new ChartDetail().withChart(userGroup.getChart()).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1)
                 .withChgPosition(DOWN)
-                .withChannel("HEATSEEKER"));
+                .withChannel("HEATSEEKER").withPublishTime(new Date().getTime()));
 
         message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
     }
@@ -173,5 +176,20 @@ public abstract class AbstractControllerTestIT {
     protected void checkAccountCheck(ResultActions actionCall, ResultActions accountCheckCall) throws IOException {
         assertEquals(getAccCheckContentAsJsonObject(actionCall), getAccCheckContentAsJsonObject(accountCheckCall));
     }
+
+    protected HttpHeaders getHttpHeadersWithIfModifiedSince(Object value) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        if (value instanceof Long) {
+            httpHeaders.setIfModifiedSince((Long) value);
+        }
+        if (value instanceof String) {
+            httpHeaders.set(IF_MODIFIED_SINCE, (String) value);
+        }
+        if (value instanceof Date) {
+            httpHeaders.setIfModifiedSince(((Date) value).getTime());
+        }
+        return httpHeaders;
+    }
+
 
 }

@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.transport.controller;
+package mobi.nowtechnologies.server.transport.controller.core;
 
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.common.util.ServerMessage;
@@ -22,7 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -31,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 import static org.apache.commons.lang.Validate.notNull;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -115,7 +117,7 @@ public abstract class CommonController extends ProfileController {
 
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception exception, HttpServletResponse response) {
-        return sendResponse(exception, response, HttpStatus.INTERNAL_SERVER_ERROR, true);
+        return sendResponse(exception, response, INTERNAL_SERVER_ERROR, true);
     }
 
 
@@ -127,10 +129,16 @@ public abstract class CommonController extends ProfileController {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = versionPriority > 0 ? BAD_REQUEST : INTERNAL_SERVER_ERROR;
 
         return sendResponse(exception, response, status, true);
     }
+
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public ModelAndView handleRequestBinding(MissingServletRequestParameterException exception, HttpServletResponse response) {
+        return sendResponse(exception, response, BAD_REQUEST , true);
+    }
+
 
     @ExceptionHandler({InvalidPhoneNumberException.class})
     public ModelAndView handleInvalidPhoneNumberException(InvalidPhoneNumberException exception, HttpServletResponse response) {
@@ -159,7 +167,7 @@ public abstract class CommonController extends ProfileController {
 
     private ModelAndView processException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = versionPriority > 0 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = versionPriority > 0 ? BAD_REQUEST : INTERNAL_SERVER_ERROR;
 
         ServerMessage serverMessage = validationException.getServerMessage();
         String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
@@ -255,7 +263,7 @@ public abstract class CommonController extends ProfileController {
             LOGGER.error(message);
         } else
             throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());
-        return sendResponse(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, response);
+        return sendResponse(errorMessage, INTERNAL_SERVER_ERROR, response);
     }
 
 
@@ -323,6 +331,12 @@ public abstract class CommonController extends ProfileController {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
         }
+    }
+
+    @ExceptionHandler(NoNewContentException.class)
+    @ResponseStatus(HttpStatus.NOT_MODIFIED)
+    public void handleNowNewContent(NoNewContentException exception) {
+        LOGGER.info("No new content. Check time from client: [{}]. Last updated time: [{}]", exception.getCheckForTimeInMillis(), exception.getDateOfLastUpdateInMillis());
     }
 
 }

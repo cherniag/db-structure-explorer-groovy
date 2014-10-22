@@ -2,25 +2,28 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
 
 import static java.lang.Integer.parseInt;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class DeepLinkInfoService {
@@ -122,24 +125,25 @@ public class DeepLinkInfoService {
         String key = data.getKey();
 
         final MusicType musicType = MusicType.valueOf(key.trim());
-        String value = data.getValue() != null ? data.getValue().trim() : "";
+        String value = StringUtils.trimToEmpty(data.getValue());
 
         if (musicType == MusicType.PLAYLIST) {
-            Integer chartId = null;
-            if (!value.isEmpty()) {
-                chartId = parseInt(value);
-            }
-            return new MusicPlayListDeeplinkInfo(chartId);
+            PlaylistData playlistData = new PlaylistData(value);
+            Integer chartId = playlistData.getChartId();
+            PlayerType playerType = playlistData.getPlayerType();
+            return new MusicPlayListDeeplinkInfo(chartId, playerType);
         }
 
         if (musicType == MusicType.TRACK) {
             Media restored = null;
-            if (!value.isEmpty()) {
-                final int id = parseInt(value);
-                restored = mediaRepository.findOne(id);
-                Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + id);
+            TrackData trackData = new TrackData(value);
+            Integer mediaId = trackData.getMediaId();
+            PlayerType playerType = trackData.getPlayerType();
+            if(isNotNull(mediaId)) {
+                restored = mediaRepository.findOne(mediaId);
+                Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + mediaId);
             }
-            return new MusicTrackDeeplinkInfo(restored);
+            return new MusicTrackDeeplinkInfo(restored, playerType);
         }
 
         if (musicType == MusicType.MANUAL_COMPILATION) {
@@ -295,8 +299,92 @@ public class DeepLinkInfoService {
         public List<Integer> getMediaIds() {
             return Lists.newArrayList(mediaIds);
         }
+    }
 
+    public static class TrackData {
+        public static final String TOKEN = "#";
 
+        private String[] values;
+
+        public TrackData(String value) {
+            this.values = value.split(TOKEN);
+        }
+
+        public TrackData(Media media, PlayerType playerType) {
+            values = new String[2];
+            if(isNotNull(media)) this.values[0] = String.valueOf(media.getI());
+            this.values[1] = playerType.name();
+        }
+
+        public String getMediaIdString(){
+            return values[0];
+        }
+
+        public Integer getMediaId(){
+            String mediaId = getMediaIdString();
+            if(isEmpty(mediaId)) {
+                return null;
+            }
+            return Integer.parseInt(mediaId);
+        }
+
+        public PlayerType getPlayerType(){
+            return PlayerType.valueOf(getPlayerTypeString());
+        }
+
+        public String getPlayerTypeString(){
+            return values[1];
+        }
+
+        public String toValueString(){
+            if (isNull(values[0])) {
+                return TOKEN + values[1];
+            }
+            return Joiner.on(TOKEN).join(values);
+        }
+    }
+
+    public static class PlaylistData{
+        public static final String TOKEN = "#";
+
+        private String[] values;
+
+        public PlaylistData(String value) {
+            this.values = value.split(TOKEN);
+        }
+
+        public PlaylistData(Integer chartId, PlayerType playerType) {
+            values = new String[2];
+            if(isNotNull(chartId)) this.values[0] = String.valueOf(chartId);
+            this.values[1] = playerType.name();
+        }
+
+        public String getChartIdString(){
+            return values[0];
+        }
+
+        public Integer getChartId(){
+            String chartId = getChartIdString();
+            if(isEmpty(chartId)) {
+                return null;
+            }
+            return Integer.parseInt(chartId);
+        }
+
+        public PlayerType getPlayerType(){
+            return PlayerType.valueOf(getPlayerTypeString());
+        }
+
+        public String getPlayerTypeString(){
+            return values[1];
+        }
+
+        public String toValueString(){
+            if (isNull(values[0])) {
+                return TOKEN + values[1];
+            }
+            return Joiner.on(TOKEN).join(values);
+        }
     }
 
 }

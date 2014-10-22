@@ -624,7 +624,8 @@
             var selectedPublishDate = /*[[${selectedPublishDate}]]*/'';
             var selectedPublishDateString = /*[[${#dates.format(selectedPublishDate, 'yyyy-MM-dd')}]]*/'';
             var opener = /*[[${opener}]]*/'';
-
+            var players = /*[[${players}]]*/'';
+            var defaultPlayer = /*[[${defaultPlayer}]]*/'';
 
             Streamzine.Presenter.Mapping.init(contentTypeMapping);
             Streamzine.Presenter.initModel(incomingModel, incomingModelCopy, canEdit);
@@ -644,7 +645,7 @@
                 var updateTmstp = /*[[${(update!=null)?update.date.time:-1}]]*/'';
                 var id = /*[[${update.id}]]*/'';
 
-                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgeMappingRules, titlesMappingRules);
+                Streamzine.Presenter.Editor.init(imagesBaseUrl, mediaTracksBaseUrl, playListUrl, id, updateTmstp, badgesGetAll, badgesUpdateName, badgeMappingRules, titlesMappingRules, players, defaultPlayer);
 
                 Streamzine.Presenter.Tile.init();
 

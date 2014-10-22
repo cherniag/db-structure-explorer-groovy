@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
 import mobi.nowtechnologies.server.service.versioncheck.VersionCheckResponse;
 import mobi.nowtechnologies.server.service.versioncheck.VersionCheckService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -39,7 +40,7 @@ public class ServiceConfigController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
-                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.0|6\\.1|6\\.2}/SERVICE_CONFIG"
+                    "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}|6\\.0|6\\.1|6\\.2|6\\.3}/SERVICE_CONFIG"
             })
     public Response getServiceConfig(
             @RequestHeader("User-Agent") UserAgentRequest userAgent,

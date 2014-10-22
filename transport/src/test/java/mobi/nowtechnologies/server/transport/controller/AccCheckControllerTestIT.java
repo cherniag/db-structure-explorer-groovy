@@ -20,8 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
-import static mobi.nowtechnologies.server.transport.controller.CommonController.OAUTH_REALM_USERS;
-import static mobi.nowtechnologies.server.transport.controller.CommonController.WWW_AUTHENTICATE_HEADER;
+import static mobi.nowtechnologies.server.transport.controller.core.CommonController.OAUTH_REALM_USERS;
+import static mobi.nowtechnologies.server.transport.controller.core.CommonController.WWW_AUTHENTICATE_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

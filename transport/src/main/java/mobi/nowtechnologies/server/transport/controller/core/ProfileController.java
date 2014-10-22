@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.transport.controller;
+package mobi.nowtechnologies.server.transport.controller.core;
 
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Titov Mykhaylo (titov)
  * 
  */
-public class ProfileController {
+public abstract class ProfileController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileController.class);
 	
