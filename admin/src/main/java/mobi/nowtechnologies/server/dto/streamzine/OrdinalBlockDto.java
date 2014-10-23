@@ -3,15 +3,21 @@ package mobi.nowtechnologies.server.dto.streamzine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.PlaylistData;
+import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Comparator;
 
-import static org.springframework.util.StringUtils.isEmpty;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVip {
     public static final Comparator<OrdinalBlockDto> COMPARATOR = new Comparator<OrdinalBlockDto>() {
@@ -63,7 +69,6 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
     @JsonIgnore
     private FileNameAliasDto badgeFileNameAlias;
-
 
     private DeepLinkInfoService.ApplicationPageData applicationPageData;
 
@@ -144,17 +149,11 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
     }
 
     public String provideKeyString() {
-        if(key == null) {
-            return "";
-        }
-        return key.trim();
+        return trimToEmpty(key);
     }
 
     public String provideValueString() {
-        if(value == null) {
-            return "";
-        }
-        return value.trim();
+        return trimToEmpty(value);
     }
 
     @Override
@@ -207,15 +206,28 @@ public class OrdinalBlockDto extends BlockDto implements DeeplinkInfoData, HasVi
 
 
     private DeepLinkInfoService.ApplicationPageData getApplicationPageData(){
-        if (applicationPageData == null){
-            applicationPageData = new DeepLinkInfoService.ApplicationPageData(isEmpty(value) ? "": value);
+        if (isNull(applicationPageData)){
+            applicationPageData = new DeepLinkInfoService.ApplicationPageData(defaultString(value));
         }
         return  applicationPageData;
     }
 
     @JsonIgnore
     public String getValueOpener(){
-        return getApplicationPageData().getAction();
+        if(key.equals(LinkLocationType.EXTERNAL_AD.name())|| key.equals(LinkLocationType.INTERNAL_AD.name()) ) {
+            return getApplicationPageData().getAction();
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public String getValuePlayerType(){
+        if(key.equals(MusicType.PLAYLIST.name())) {
+            return new PlaylistData(value).getPlayerTypeString();
+        }else if(key.equals(MusicType.TRACK.name())){
+            return new TrackData(value).getPlayerTypeString();
+        }
+        return null;
     }
 
     @JsonIgnore

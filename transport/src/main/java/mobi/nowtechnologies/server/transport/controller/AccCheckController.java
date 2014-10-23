@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.ITunesService;
 import mobi.nowtechnologies.server.service.UserDeviceDetailsService;
+import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

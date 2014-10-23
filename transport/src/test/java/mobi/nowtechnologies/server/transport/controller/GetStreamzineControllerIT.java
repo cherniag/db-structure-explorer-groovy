@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
@@ -25,18 +26,20 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
 
+import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.ExtMockMvcRequestBuilders.extGet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
 public class GetStreamzineControllerIT extends AbstractControllerTestIT {
@@ -68,7 +71,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
 
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "300a400").andExpect(status().isBadRequest());
+        doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "300a400").andExpect(status().isBadRequest());
     }
 
     @Test
@@ -85,7 +88,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String userToken = createTimestampToken(storedToken, timestamp);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "320x800").andExpect(status().isNotFound());
+        doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "320x800").andExpect(status().isNotFound());
     }
 
     @Test
@@ -123,14 +126,13 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         Community community = communityRepository.findByName(communityUrl);
         prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
 
-
         Thread.sleep(2500L);
 
         // check xml format
-        doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false, "60x60").andExpect(status().isOk()).andDo(print());
+        doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false, "60x60").andExpect(status().isOk()).andDo(print());
 
         // check json format and the correct order of the blocks
-        ResultActions resultActions = doRequest(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60").andExpect(status().isOk()).andDo(print());
+        ResultActions resultActions = doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60").andExpect(status().isOk()).andDo(print());
 
         resultActions.andDo(print())
                 // check the orders
@@ -163,10 +165,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?id=" + chartId)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.MINI_PLAYER_ONLY.getId()+"&id=" + chartId)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?id=" + existingMedia.getIsrcTrackId())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+ PlayerType.REGULAR_PLAYER_ONLY.getId()+"&id=" + existingMedia.getIsrcTrackId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
@@ -190,7 +192,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         return mapping.getFilenameAlias();
     }
 
-    private ResultActions doRequest(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
+    private ResultActions doRequestBefore63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
         final String formatSpecific = (isJson) ? ".json" : "";
 
         return mockMvc.perform(
@@ -206,15 +208,33 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         );
     }
 
+    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, Object modifiedSinceTime) throws Exception {
+        final String formatSpecific = (isJson) ? ".json" : "";
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = extGet("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
+                .param("APP_VERSION", userName)
+                .param("COMMUNITY_NAME", communityUrl)
+                .param("API_VERSION", apiVersion)
+                .param("DEVICE_UID", deviceUID)
+                .param("USER_NAME", userName)
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("WIDTHXHEIGHT", resolution);
+        if (modifiedSinceTime != null) {
+            mockHttpServletRequestBuilder.headers(getHttpHeadersWithIfModifiedSince(modifiedSinceTime));
+        }
+        return mockMvc.perform(mockHttpServletRequestBuilder);
+    }
+
 
     @Test
-    public void testGetStreamzineForSpecificMQUser_Success() throws Exception {
-        final Date updateDate = new Date(System.currentTimeMillis() + 1000L);
+    public void testGetStreamzineFor63WithIfModifiedSuccess() throws Exception {
+        Date updateDate = mobi.nowtechnologies.server.shared.util.DateUtils.getDateWithoutMilliseconds(new Date(System.currentTimeMillis() + 2000L));
 
         // parameters
         String userName = "test@ukr.net";
         String deviceUID = "b88106713409e92622461a876abcd74b1111";
-        String apiVersion = "6.1";
+        String apiVersion = "6.3";
         String communityUrl = "hl_uk";
         String timestamp = "" + updateDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -225,47 +245,34 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         //
         final String externalLink = "http://example.com";
         final Message newsMessage = createNewsMessage();
-        final Date publishDate = new Date();
+        Date publishDate = DateUtils.setMilliseconds(new Date(), 300);
         final int chartId = 6;
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
+
+        prepareDefaultBadge(communityUrl, originalUploadedFile);
+
         Community community = communityRepository.findByName(communityUrl);
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
 
         Thread.sleep(2500L);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", userName)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).
-                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDate.getTime()));
-
-        user = userRepository.findOne(userName, communityUrl);
-        final Date updateDateForSpecificUser = new Date(System.currentTimeMillis() + 1000L);
-        prepareUpdate(updateDateForSpecificUser, externalLink, publishDate, newsMessage, chartId, existingMedia, null, community, user);
-
-        Thread.sleep(2000L);
-
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", userName)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateForSpecificUser.getTime()));
+        // check json format and the correct order of the blocks
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", null)
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", "INVALID DATE")
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
+        Date dateInFuture = DateUtils.addDays(new Date(), 1);
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", dateInFuture)
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", mobi.nowtechnologies.server.shared.util.DateUtils.getTimeWithoutMilliseconds(updateDate.getTime()))
+                .andExpect(status().isNotModified()).andExpect(content().string(""));
     }
 
     @Test
@@ -301,7 +308,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         Thread.sleep(2500L);
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", appVersion)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
@@ -314,27 +321,27 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", appVersion)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
                         .param("DEVICE_UID", user2.getDeviceUID())
                         .param("USER_NAME", userName2)
                         .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN",  createTimestampToken(user2.getToken(), timestamp))
+                        .param("USER_TOKEN", createTimestampToken(user2.getToken(), timestamp))
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isOk()).
                 andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", appVersion)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
                         .param("DEVICE_UID", user3.getDeviceUID())
                         .param("USER_NAME", userName3)
                         .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN",  createTimestampToken(user3.getToken(), timestamp))
+                        .param("USER_TOKEN", createTimestampToken(user3.getToken(), timestamp))
                         .param("TIMESTAMP", timestamp))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
@@ -349,7 +356,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String userName1 = "test@ukr.net";
         String userName2 = "dnepr@i.ua";
         String userName3 = "mq@mq.com";
-        String apiVersion = LATEST_SERVER_API_VERSION;
+        String apiVersion = "6.2";
         String appVersion = "1.0";
         String communityUrl = "hl_uk";
         String timestamp = System.currentTimeMillis() + "";
@@ -373,7 +380,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         Thread.sleep(2500L);
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", appVersion)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
@@ -386,27 +393,27 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", appVersion)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
                         .param("DEVICE_UID", user2.getDeviceUID())
                         .param("USER_NAME", userName2)
                         .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN",  createTimestampToken(user2.getToken(), timestamp))
+                        .param("USER_TOKEN", createTimestampToken(user2.getToken(), timestamp))
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isOk()).
                 andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
         mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion +"/GET_STREAMZINE.json")
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
                         .param("APP_VERSION", appVersion)
                         .param("COMMUNITY_NAME", communityUrl)
                         .param("API_VERSION", apiVersion)
                         .param("DEVICE_UID", user3.getDeviceUID())
                         .param("USER_NAME", userName3)
                         .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN",  createTimestampToken(user3.getToken(), timestamp))
+                        .param("USER_TOKEN", createTimestampToken(user3.getToken(), timestamp))
                         .param("TIMESTAMP", timestamp))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
@@ -470,7 +477,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         u.addBlock(newBlock(8, ShapeType.SLIM_BANNER, createManualCompilationDeeplink(track), null));
         u.addBlock(newBlock(6, ShapeType.NARROW, createMusicTrackDeeplink(track), null));
 
-        if(users != null){
+        if (users != null) {
             for (User user : users) {
                 u.addUser(user);
             }
@@ -522,12 +529,12 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     }
 
     private DeeplinkInfo createMusicPlaylistDeeplink(int chartDetailsId) {
-        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartDetailsId);
+        MusicPlayListDeeplinkInfo d = new MusicPlayListDeeplinkInfo(chartDetailsId, PlayerType.MINI_PLAYER_ONLY);
         return d;
     }
 
     private DeeplinkInfo createMusicTrackDeeplink(Media media) {
-        MusicTrackDeeplinkInfo d = new MusicTrackDeeplinkInfo(media);
+        MusicTrackDeeplinkInfo d = new MusicTrackDeeplinkInfo(media, PlayerType.REGULAR_PLAYER_ONLY);
         return d;
     }
 
@@ -538,7 +545,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         b.setCoverUrl("image_" + System.nanoTime() + ".jpg");
         b.include();
         b.setAccessPolicy(AccessPolicy.enabledForVipOnly());
-        if(originalUploadedFile != null) {
+        if (originalUploadedFile != null) {
             b.setBadgeId(originalUploadedFile.getId());
         }
         return b;

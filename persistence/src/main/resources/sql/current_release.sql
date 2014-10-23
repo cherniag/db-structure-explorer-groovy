@@ -1,34 +1,3 @@
--- begin SRV-85
-
-SET autocommit = 0;
-START TRANSACTION;
-
-DELETE tb_chartDetail from tb_chartDetail
-LEFT JOIN tb_media  ON tb_chartDetail.media = tb_media.i
-WHERE tb_media.trackId is null;
-
-DELETE tb_drm from tb_drm
-LEFT JOIN tb_media  ON tb_drm.media = tb_media.i
-WHERE tb_media.trackId is null;
-
-delete from tb_media
-where trackId is null;
-
-ALTER TABLE tb_media MODIFY trackId BIGINT NOT NULL;
-
-commit;
-
--- end SRV-85
-
-alter table client_version_info add column image_file_name varchar(255) default null;
-
--- BEGIN SRV-215
-alter table `sz_update` drop index `sz_update`;
-
-alter table `sz_update` add constraint `sz_update_updated_community` UNIQUE(`community_id`, `updated`);
-
--- END SRV-215
-
 -- SRV-295 - [SERVER] Allow payment policy to be configurable either by day, month or week
 alter table tb_paymentPolicy add column duration bigint;
 alter table tb_paymentPolicy add column duration_unit VARCHAR(255);
@@ -42,20 +11,20 @@ SET
   pp.duration_unit = 'MONTHS' ,
   pp.duration = 1
 WHERE
-    (
-      c.rewriteURLParameter = 'o2'
+  (
+    c.rewriteURLParameter = 'o2'
+    AND(
+      pp.provider = 'NON_O2'
+      OR pp.provider IS NULL
+    )
+    OR(
+      c.rewriteURLParameter = 'vf_nz'
       AND(
-        pp.provider = 'NON_O2'
+        pp.provider = 'NON_VF'
         OR pp.provider IS NULL
       )
-      OR(
-        c.rewriteURLParameter = 'vf_nz'
-        AND(
-          pp.provider = 'NON_VF'
-          OR pp.provider IS NULL
-        )
-      )
-    ) or (pp.paymentType='iTunesSubscription' and pp.subWeeks=4)
+    )
+  ) or (pp.paymentType='iTunesSubscription' and pp.subWeeks=4)
 ;
 
 UPDATE

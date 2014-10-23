@@ -11,6 +11,7 @@
     <modules>
         <module>mq-parent-pom</module>
         <module>shared</module>
+        <module>spring-test-mvc-ext</module>
         <module>persistence</module>
         <module>service</module>
         <module>transport</module>

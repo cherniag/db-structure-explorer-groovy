@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository.ONE_RECORD_PAGEABLE;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static org.apache.commons.lang.time.DateUtils.addDays;
 import static org.apache.commons.lang.time.DateUtils.addHours;
@@ -23,8 +22,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
@@ -108,7 +106,7 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
     }
 
     @Test
-    public void testFindLastSincePublished() throws Exception {
+    public void testfindLastDateSince() throws Exception {
         Community community = findHlUkCommunity();
         final Date startDate = addDays(new Date(), 5);
         Date lessDate = addDays(startDate, -1);
@@ -121,9 +119,9 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
         Update moreUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(moreDate, null, community));
         Update lastUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(lastDate, null, community));
 
-        List<Update> all = streamzineUpdateRepository.findLastSince(startDate, community, ONE_RECORD_PAGEABLE);
-        assertEquals(1, all.size());
-        assertEquals(lessUpdate.getId(), all.get(0).getId());
+        Date date = streamzineUpdateRepository.findLastDateSince(startDate, community);
+        Update update = streamzineUpdateRepository.findByPublishDate(date, community);
+        assertEquals(lessUpdate.getId(), update.getId());
     }
 
     @Test
@@ -135,12 +133,12 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
         User user = UserFactory.createUser(ACTIVATED);
         user = userRepository.saveAndFlush(user);
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate, null, community));
-        List<Update> all = streamzineUpdateRepository.findFirstAfterForUser(dateToSearch, user, community, ONE_RECORD_PAGEABLE);
-        assertTrue(all.isEmpty());
+        Date date = streamzineUpdateRepository.findFirstDateAfterForUser(dateToSearch, user, community);
+        assertNull(date);
         Date updateDate1 = addDays(dateZero, 6);
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate1, user, community));
-        all = streamzineUpdateRepository.findFirstAfterForUser(dateZero, user, community, ONE_RECORD_PAGEABLE);
-        assertEquals(1, all.size());
+        date  = streamzineUpdateRepository.findFirstDateAfterForUser(dateZero, user, community);
+        assertEquals(updateDate1, date);
     }
 
     @Test

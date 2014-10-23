@@ -1,23 +1,26 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import com.google.common.net.HttpHeaders;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Collections;
+import java.util.Date;
 
 import static mobi.nowtechnologies.server.shared.enums.MessageActionType.A_SPECIFIC_TRACK;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.springframework.test.web.servlet.request.ExtMockMvcRequestBuilders.extGet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class GetNewsControllerTestIT extends AbstractControllerTestIT{
 
@@ -153,10 +156,10 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
     }
 
     @Test
-    public void testGetNewAndJsonAndAccCheckInfo_Success_LatestVersion() throws Exception {
+    public void testGetNewAndJsonAndAccCheckInfo_62() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
-        String apiVersion = LATEST_SERVER_API_VERSION;
+        String apiVersion = "6.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -251,4 +254,60 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
                         .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isNotFound());
     }
+
+
+    @Test
+    public void testGetNewsFor63WithCheckIfModified_Success() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.3";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        long lastValue = 1315686788000L;
+        mockMvc.perform(
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID))
+                .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
+                .andExpect(jsonPath("$.response..news").exists())
+                .andExpect(header().longValue(HttpHeaders.LAST_MODIFIED, lastValue));
+        mockMvc.perform(
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .headers(getHttpHeadersWithIfModifiedSince("INVALID DATE")))
+                .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
+                .andExpect(jsonPath("$.response..news").exists())
+                .andExpect(header().longValue(HttpHeaders.LAST_MODIFIED, lastValue));
+        Date dateInFuture = DateUtils.addDays(new Date(), 1);
+        mockMvc.perform(
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .headers(getHttpHeadersWithIfModifiedSince(dateInFuture)))
+                .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
+                .andExpect(jsonPath("$.response..news").exists())
+                .andExpect(header().longValue(HttpHeaders.LAST_MODIFIED, lastValue));
+
+        mockMvc.perform(
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .headers(getHttpHeadersWithIfModifiedSince(lastValue)))
+                .andExpect(status().isNotModified()).andDo(print())
+                .andExpect(content().string(""));
+    }
+
+
+
 }

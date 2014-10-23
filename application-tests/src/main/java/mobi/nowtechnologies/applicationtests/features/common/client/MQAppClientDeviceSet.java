@@ -14,6 +14,7 @@ import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamz
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -353,5 +354,30 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
     public ResponseEntity<StandardResponse> getStreamzineErrorEntity(UserDeviceData deviceData, String timestampToken, String timestamp, String resolution, String userName) {
         PhoneStateImpl state = states.get(deviceData);
         return getStreamzineHttpService.getStreamzineErrorEntity(deviceData, state, timestampToken, timestamp, resolution, userName);
+    }
+
+    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data, long ifModifiedSince) {
+        PhoneState state = states.get(data);
+        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, ifModifiedSince, HttpMethod.GET);
+    }
+
+    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data, String corruptedHeader) {
+        PhoneState state = states.get(data);
+        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, corruptedHeader, HttpMethod.GET);
+    }
+
+    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data) {
+        PhoneState state = states.get(data);
+        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, HttpMethod.GET);
+    }
+
+    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSinceOld(UserDeviceData data, long ifModifiedSince) {
+        PhoneState state = states.get(data);
+        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, ifModifiedSince, HttpMethod.POST);
+    }
+
+    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSinceOld(UserDeviceData data) {
+        PhoneState state = states.get(data);
+        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, HttpMethod.POST);
     }
 }
