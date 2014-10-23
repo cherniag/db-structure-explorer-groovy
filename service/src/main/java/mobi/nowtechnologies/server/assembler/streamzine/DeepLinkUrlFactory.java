@@ -9,8 +9,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
 /**
  * Composes URLs following this format:
  * <p/>
@@ -79,11 +77,15 @@ public class DeepLinkUrlFactory {
 
     private void putPlayerQueryParamForPlayableItemDeepLink(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder, String apiVersion) {
         if (deeplinkInfo instanceof PlayableItemDeepLink) {
-            boolean includeInUrl = ((!isEmpty(apiVersion)) && (Utils.compareVersions(apiVersion, API_VERSION_6_3) >= 0));
+            boolean includeInUrl = isApiVersionMoreThanOrEq6_3(apiVersion);
             if (includeInUrl) {
                 uriComponentsBuilder.queryParam(PLAYER, ((PlayableItemDeepLink) deeplinkInfo).getPlayerType().getId());
             }
         }
+    }
+
+    private boolean isApiVersionMoreThanOrEq6_3(String apiVersion) {
+        return Utils.compareVersions(apiVersion, API_VERSION_6_3) >= 0;
     }
 
     private void putActionOrOpenerQueryParamIfPromotional(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
