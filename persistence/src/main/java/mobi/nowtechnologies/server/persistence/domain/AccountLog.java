@@ -199,7 +199,6 @@ public class AccountLog implements Serializable {
 	public PaymentHistoryItemDto toPaymentHistoryItemDto() {
 		PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
 		
-		//paymentHistoryItemDto.setAmount(balanceAfter);
 		paymentHistoryItemDto.setDate(new Date(logTimestamp*1000L)); // TODO AccountLog field logTimestamp is type of int (UNIXTIME in seconds)
 		paymentHistoryItemDto.setDescription(String.valueOf(transactionType));
 		

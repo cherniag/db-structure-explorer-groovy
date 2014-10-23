@@ -22,7 +22,7 @@ public class PaymentHistoryItemDto {
 
 	private String paymentMethod;
 
-	private long period;
+	private long duration;
 
 	private DurationUnit durationUnit;
 
@@ -66,12 +66,12 @@ public class PaymentHistoryItemDto {
 		this.paymentMethod = paymentMethod;
 	}
 
-	public long getPeriod() {
-		return period;
+	public long getDuration() {
+		return duration;
 	}
 
-	public void setPeriod(long period) {
-		this.period = period;
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 
 	public DurationUnit getDurationUnit() {
@@ -87,7 +87,7 @@ public class PaymentHistoryItemDto {
 		return new ToStringBuilder(this)
 				.append("amount", amount)
 				.append("date", date)
-				.append("period", period)
+				.append("duration", duration)
 				.append("periodUnit", durationUnit)
 				.append("paymentMethod", paymentMethod)
 				.append("transactionId", transactionId)

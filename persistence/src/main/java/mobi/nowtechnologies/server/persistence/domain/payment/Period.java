@@ -3,14 +3,10 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.DateTimeZone;
 
 import javax.persistence.*;
-import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.max;
@@ -38,6 +34,7 @@ public class Period{
     @Column(name = "duration_unit", nullable = false)
     private DurationUnit durationUnit;
 
+    @Column(name = "duration", nullable = false)
     private long duration;
 
     public long getDuration() {
@@ -113,7 +110,7 @@ public class Period{
         }
     };
 
-    private static final Map<DurationUnit, PeriodConverter> periodConverterMap;
+    private static final Map<DurationUnit, PeriodConverter> DURATION_UNIT_PERIOD_CONVERTER_MAP;
 
     static{
         Map<DurationUnit, PeriodConverter> map = new EnumMap<DurationUnit, PeriodConverter>(DurationUnit.class);
@@ -122,16 +119,16 @@ public class Period{
         map.put(WEEKS, WEEKS_PERIOD_CONVERTER);
         map.put(MONTHS, MONTHS_PERIOD_CONVERTER);
 
-        periodConverterMap = unmodifiableMap(map);
+        DURATION_UNIT_PERIOD_CONVERTER_MAP = unmodifiableMap(map);
     }
 
     public int toNextSubPaymentSeconds(int oldNextSubPaymentSeconds){
         int subscriptionStartTimeSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
-        return periodConverterMap.get(durationUnit).toNextSubPaymentSeconds(this, subscriptionStartTimeSeconds);
+        return DURATION_UNIT_PERIOD_CONVERTER_MAP.get(durationUnit).toNextSubPaymentSeconds(this, subscriptionStartTimeSeconds);
     }
 
     public String toMessageCode(){
-        return periodConverterMap.get(durationUnit).toMessageCode(this);
+        return DURATION_UNIT_PERIOD_CONVERTER_MAP.get(durationUnit).toMessageCode(this);
     }
 
     private static int getNextSubPaymentForMonthlyPeriod(Period period, int subscriptionStartTimeSeconds){

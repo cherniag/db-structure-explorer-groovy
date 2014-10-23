@@ -37,7 +37,7 @@ START TRANSACTION;
 
 UPDATE
     tb_paymentPolicy pp JOIN tb_communities c
-      ON pp.comunityId = c.id
+      ON pp.communityID = c.id
 SET
   pp.duration_unit = 'MONTHS' ,
   pp.duration = 1
@@ -55,7 +55,7 @@ WHERE
           OR pp.provider IS NULL
         )
       )
-    ) or pp.paymentType='iTunesSubscription'
+    ) or (pp.paymentType='iTunesSubscription' and pp.subWeeks=4)
 ;
 
 UPDATE
@@ -121,5 +121,3 @@ alter table tb_promotionPaymentPolicy modify column duration bigint not null;
 alter table tb_promotionPaymentPolicy modify column duration_unit VARCHAR(255) not null;
 
 alter table tb_promotionPaymentPolicy drop column subWeeks;
-
-
