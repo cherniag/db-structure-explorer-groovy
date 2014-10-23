@@ -2,11 +2,14 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
+import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.net.util.Base64;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Composes URLs following this format:
@@ -26,13 +29,15 @@ public class DeepLinkUrlFactory {
     private final static String PLAYER = "player";
     private static final String OPEN_IN = "open";
 
+    private static final String API_VERSION_6_3 = "6.3";
+
     private DeepLinkInfoService deepLinkInfoService;
 
     public List<Integer> create(ManualCompilationDeeplinkInfo deeplinkInfo) {
         return deeplinkInfo.getMediaIds();
     }
 
-    public String create(DeeplinkInfo deeplinkInfo, String community) {
+    public String create(DeeplinkInfo deeplinkInfo, String community, String apiVersion) {
         Assert.isTrue(!(deeplinkInfo instanceof ManualCompilationDeeplinkInfo));
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
@@ -42,7 +47,7 @@ public class DeepLinkUrlFactory {
         uriComponentsBuilder.pathSegment(decideSubValueForPromotional(deeplinkInfo));
         // query params if needed
         putActionOrOpenerQueryParamIfPromotional(deeplinkInfo, uriComponentsBuilder);
-        putPlayerQueryParamForPlayableItemDeepLink(deeplinkInfo, uriComponentsBuilder);
+        putPlayerQueryParamForPlayableItemDeepLink(deeplinkInfo, uriComponentsBuilder, apiVersion);
         putIdQueryParamIfNotPromotional(deeplinkInfo, uriComponentsBuilder);
 
         return uriComponentsBuilder.build().toUriString();
@@ -72,9 +77,12 @@ public class DeepLinkUrlFactory {
         }
     }
 
-    private void putPlayerQueryParamForPlayableItemDeepLink(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {
+    private void putPlayerQueryParamForPlayableItemDeepLink(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder, String apiVersion) {
         if (deeplinkInfo instanceof PlayableItemDeepLink) {
-            uriComponentsBuilder.queryParam(PLAYER, ((PlayableItemDeepLink) deeplinkInfo).getPlayerType().getId());
+            boolean includeInUrl = ((!isEmpty(apiVersion)) && (Utils.compareVersions(apiVersion, API_VERSION_6_3) >= 0));
+            if (includeInUrl) {
+                uriComponentsBuilder.queryParam(PLAYER, ((PlayableItemDeepLink) deeplinkInfo).getPlayerType().getId());
+            }
         }
     }
 

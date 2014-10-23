@@ -55,13 +55,13 @@ public class StreamzineUpdateAsm {
     }
 
     @Transactional(readOnly = true)
-    public StreamzineUpdateDto convertOne(Update update, String community, Resolution resolution) {
+    public StreamzineUpdateDto convertOne(Update update, String community, Resolution resolution, String apiVersion) {
         StreamzineUpdateDto dto = new StreamzineUpdateDto(update.getDate().getTime());
 
         List<Block> blocks = update.getIncludedBlocks();
         Collections.sort(blocks, getComparator());
         for (Block block : blocks) {
-            BaseContentItemDto contentItemDto = convertToContentItemDto(block, community, resolution);
+            BaseContentItemDto contentItemDto = convertToContentItemDto(block, community, resolution, apiVersion);
 
             dto.addContentItem(contentItemDto);
             dto.addVisualBlock(convertToVisualBlock(block, contentItemDto));
@@ -70,7 +70,7 @@ public class StreamzineUpdateAsm {
         return dto;
     }
 
-    private BaseContentItemDto convertToContentItemDto(Block block, String community, Resolution resolution) {
+    private BaseContentItemDto convertToContentItemDto(Block block, String community, Resolution resolution, String apiVersion) {
         Community c = communityRepository.findByName(community);
 
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
@@ -85,7 +85,7 @@ public class StreamzineUpdateAsm {
             return dto;
         } else {
             DeeplinkValueItemDto dto = new DeeplinkValueItemDto(generateId(block), deeplinkType);
-            dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo, community));
+            dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo, community, apiVersion));
 
             assignValuesToItemDto(dto, block, c, resolution);
 
