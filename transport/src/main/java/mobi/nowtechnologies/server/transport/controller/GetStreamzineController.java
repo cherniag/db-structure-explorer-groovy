@@ -103,7 +103,7 @@ public class GetStreamzineController extends CommonController {
 
             LOGGER.debug("found update {} for {}", updateDtoResult.getContent(), date);
 
-            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(updateDtoResult.getContent(), community, resolution.withDeviceType(user.getDeviceType().getName()));
+            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(updateDtoResult.getContent(), community, resolution.withDeviceType(user.getDeviceType().getName()), getCurrentApiVersion());
 
             LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 
