@@ -1,7 +1,7 @@
 @Ready
 Feature: Transport API call for the GET_STREAMZINE command
   Scenario Outline: device sends GET_STREAMZINE command with wrong parameters
-    Given First time user with device using JSON format for all streamzine supported versions and streamzine supported communities and for all devices available
+    Given First time user with device using JSON format for all streamzine supported versions below 6.3 and streamzine supported communities and for all devices available
     When user invokes get streamzine for the <WIDTHXHEIGHT>, <TIMESTAMP>, <USER_NAME>, <USER_TOKEN> parameters
     Then user gets <http error code> code in response and <error code>, <message> also <display message> in the message body
   Examples:
@@ -12,7 +12,7 @@ Feature: Transport API call for the GET_STREAMZINE command
     | 200x400      | Valid     | Valid     | NotValid   | 401             | 12          | user login/pass check failed for [{username}] username and community [{community}] | user login/pass check failed for [{username}] username and community [{community}] |
 
   Scenario: device sends GET_STREAMZINE command with correct parameters and gets correct response
-    Given First time user with device using JSON format for all streamzine supported versions and streamzine supported communities and for all devices available
+    Given First time user with device using JSON format for all streamzine supported versions below 6.3 and streamzine supported communities and for all devices available
 
     When update is prepared
 
