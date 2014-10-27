@@ -1,8 +1,23 @@
 -- begin SRV-89
 
-ALTER TABLE cn_service.tb_labels MODIFY name VARCHAR(255);
-ALTER TABLE cn_service.tb_labels MODIFY i INT UNSIGNED;
-ALTER TABLE cn_service.tb_media MODIFY label INT UNSIGNED;
+ALTER TABLE cn_service.tb_media DROP  FOREIGN KEY media_label_fk;
+
+drop table  cn_service.tb_labels;
+
+
+CREATE TABLE `tb_labels` (
+  `i` bigint(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`i`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table tb_labels add constraint `label_name_uk` UNIQUE(`name`);
+
+ALTER TABLE cn_service.tb_media DROP COLUMN label;
+
+ALTER TABLE cn_service.tb_media add column label bigint(20) UNSIGNED;
+
+ALTER TABLE cn_service.tb_media ADD FOREIGN KEY (`label`) REFERENCES cn_service.tb_labels(i);
 
 INSERT INTO cn_service.tb_labels (name)
   SELECT DISTINCT
@@ -17,5 +32,5 @@ UPDATE cn_service.tb_media tb
   JOIN cn_service.tb_labels tl ON (tr.label = tl.name)
 SET tb.label = tl.i;
 
-ALTER TABLE cn_service.tb_media ADD CONSTRAINT `media_label_fk` FOREIGN KEY (`label`) REFERENCES cn_service.tb_labels (i);
+
 -- end SRV-89
