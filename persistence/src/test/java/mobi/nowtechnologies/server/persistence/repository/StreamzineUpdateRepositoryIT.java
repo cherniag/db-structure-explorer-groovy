@@ -17,7 +17,6 @@ import java.util.List;
 
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static org.apache.commons.lang.time.DateUtils.addDays;
-import static org.apache.commons.lang.time.DateUtils.addHours;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -65,44 +64,6 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
 
         assertEquals(1, all.size());
         assertEquals(update.getId(), all.get(0).getId());
-    }
-
-    @Test
-     public void shouldFindSecondUpdateWhenItIsInPastAndThirdUpdateIsInTheFuture() throws Exception {
-        //given
-        Community community = findHlUkCommunity();
-        Date firstUpdateDate = addDays(new Date(), 1);
-        Date secondUpdateDate = addDays(firstUpdateDate, 1);
-        Date thirdUpdateDate = addDays(secondUpdateDate, 1);
-
-        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(firstUpdateDate, null, community));
-        Update secondUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(secondUpdateDate, null, community));
-        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(thirdUpdateDate, null, community));
-
-        //when
-        Update update = streamzineUpdateRepository.findLatestUpdateBeforeDate(addHours(secondUpdateDate, 2), community);
-
-        //then
-        assertThat(update.getId(), is(secondUpdate.getId()));
-    }
-
-    @Test
-    public void shouldFindSecondUpdateWhenItIsEqNowAndThirdUpdateIsInTheFuture() throws Exception {
-        //given
-        Community community = findHlUkCommunity();
-        Date firstUpdateDate = addDays(new Date(), 1);
-        Date secondUpdateDate = addDays(firstUpdateDate, 1);
-        Date thirdUpdateDate = addDays(secondUpdateDate, 1);
-
-        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(firstUpdateDate, null, community));
-        Update secondUpdate = streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(secondUpdateDate, null, community));
-        streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(thirdUpdateDate, null, community));
-
-        //when
-        Update update = streamzineUpdateRepository.findLatestUpdateBeforeDate(secondUpdateDate, community);
-
-        //then
-        assertThat(update.getId(), is(secondUpdate.getId()));
     }
 
     @Test
