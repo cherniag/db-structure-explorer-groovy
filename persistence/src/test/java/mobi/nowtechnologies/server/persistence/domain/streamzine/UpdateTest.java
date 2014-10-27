@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UpdateTest {
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCanCreate() throws Exception {
         Date yesterday = DateUtils.addDays(new Date(), -1);
         Community community = mock(Community.class);
