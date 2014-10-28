@@ -2,15 +2,11 @@ package mobi.nowtechnologies.applicationtests.features.streamzine;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import cucumber.api.Transform;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import mobi.nowtechnologies.applicationtests.features.common.ValidType;
-import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.list.ListValues;
@@ -19,20 +15,14 @@ import mobi.nowtechnologies.applicationtests.features.common.transformers.util.N
 import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableStringTransformer;
 import mobi.nowtechnologies.applicationtests.features.streamzine.transform.AccessPolicyTransformer;
 import mobi.nowtechnologies.applicationtests.features.streamzine.transform.IncludedTransformer;
-import mobi.nowtechnologies.applicationtests.services.DbMediaService;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
-import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
-import mobi.nowtechnologies.applicationtests.services.http.common.standard.StandardResponse;
-import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamzineHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.json.ContentItemDto;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.json.StreamzimeResponse;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.json.StreamzineUpdateDto;
 import mobi.nowtechnologies.applicationtests.services.streamzine.PositionGenerator;
-import mobi.nowtechnologies.applicationtests.services.streamzine.StreamzineUpdateCreator;
-import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.dto.streamzine.DeeplinkType;
 import mobi.nowtechnologies.server.dto.streamzine.VisualBlock;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
@@ -50,51 +40,21 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPo
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 @Component
-public class GetStreamzineFeature {
-    @Resource
-    UserDataCreator userDataCreator;
-    @Resource
-    StreamzineUpdateCreator streamzineUpdateCreator;
-    @Resource
-    GetStreamzineHttpService getStreamzineHttpService;
-    @Resource
-    UserDeviceDataService userDeviceDataService;
-    @Resource
-    SimpleInterpolator interpolator;
-    @Resource
-    CommunityRepository communityRepository;
-    @Resource
-    ChartRepository chartRepository;
-    @Resource
-    DbMediaService dbMediaService;
-
-    @Resource
-    MQAppClientDeviceSet deviceSet;
-
-    private List<UserDeviceData> currentUserDevices;
-
-    private Map<UserDeviceData, ResponseEntity<StandardResponse>> errorResponses = new HashMap<UserDeviceData, ResponseEntity<StandardResponse>>();
+public class GetStreamzineFeature extends AbstractStreamzineFeature {
     private Map<UserDeviceData, StreamzineUpdateDto> okResponses = new HashMap<UserDeviceData, StreamzineUpdateDto>();
-
-    private Map<UserDeviceData, String> spoiledOrNotUserNames = new HashMap<UserDeviceData, String>();
 
     private Map<UserDeviceData, Update> updates = new HashMap<UserDeviceData, Update>();
     private PositionGenerator positionGenerator = new PositionGenerator();
@@ -106,88 +66,18 @@ public class GetStreamzineFeature {
     //
     @Given("^First time user with device using (.+) format for (.+) and (.+) and for (.+) available$")
     public void firstTimeUserUsingFormat(RequestFormat requestFormat,
-                                        @Transform(DictionaryTransformer.class) Word versions,
-                                        @Transform(DictionaryTransformer.class) Word communities,
-                                        @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Sets.newHashSet(requestFormat));
-        for (UserDeviceData data : currentUserDevices) {
-            deviceSet.singup(data);
-            deviceSet.loginUsingFacebook(data);
-        }
+                                         @Transform(DictionaryTransformer.class) Word versions,
+                                         @Transform(DictionaryTransformer.class) Word communities,
+                                         @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
+        currentUserDevices = super.initUserData(requestFormat, versions, communities, devices);
         positionGenerator.init(currentUserDevices);
     }
 
     @After
     public void cleanDevicesSet() {
         okResponses.clear();
-        errorResponses.clear();
         deviceSet.cleanup();
-    }
-
-
-    //
-    // Error codes Scenario
-    //
-    @When("^user invokes get streamzine for the (.+), (.+), (.+), (.+) parameters$")
-    public void userSendsParameters(@Transform(NullableStringTransformer.class) NullableString nullable,
-                                    ValidType timestamp,
-                                    ValidType userName,
-                                    ValidType userToken) {
-        for (UserDeviceData data : currentUserDevices) {
-            PhoneState state = deviceSet.getPhoneState(data);
-            UserDataCreator.TimestampTokenData token = userDataCreator.createUserToken(state.getLastAccountCheckResponse().userToken);
-
-            String userNameWrongOrCorrect = userName.decide(state.getLastFacebookInfo().getUserName());
-            spoiledOrNotUserNames.put(data, userNameWrongOrCorrect);
-
-            ResponseEntity<StandardResponse> response = deviceSet.getStreamzineErrorEntity(
-                    data,
-                    userToken.decide(token.getTimestampToken()),
-                    timestamp.decide(token.getTimestamp()),
-                    nullable.value(),
-                    userNameWrongOrCorrect);
-
-            errorResponses.put(data, response);
-        }
-    }
-
-    @Then("^user gets (.+) code in response and (.+), (.+) also (.+) in the message body$")
-    public void errorCodeAndMessages(final int httpCode,
-                                     final int errorCode,
-                                     @Transform(NullableStringTransformer.class) NullableString messageValue,
-                                     @Transform(NullableStringTransformer.class) NullableString displayMessageValue) {
-        for (UserDeviceData data : currentUserDevices) {
-            ResponseEntity<StandardResponse> response = errorResponses.get(data);
-
-            assertEquals(getErrorMessage(data),
-                    Integer.valueOf(httpCode),
-                    Integer.valueOf(response.getStatusCode().value())
-            );
-
-            if(errorCode > 0) {
-                Map<String, Object> model = new HashMap<String, Object>();
-                model.put("username", spoiledOrNotUserNames.get(data));
-                model.put("community", data.getCommunityUrl());
-
-                final String message = interpolator.interpolate(messageValue.value(), model);
-                final String displayMessage = interpolator.interpolate(displayMessageValue.value(), model);
-
-                assertEquals(getErrorMessage(data),
-                        Integer.valueOf(errorCode),
-                        Integer.valueOf(response.getBody().getErrorMessage().getErrorCode())
-                );
-                assertEquals(getErrorMessage(data),
-                        message,
-                        response.getBody().getErrorMessage().getMessage()
-                );
-                assertEquals(getErrorMessage(data),
-                        displayMessage,
-                        response.getBody().getErrorMessage().getDisplayMessage()
-                );
-            }
-        }
-
-        spoiledOrNotUserNames.clear();
+        currentUserDevices.clear();
     }
 
     //
@@ -362,37 +252,6 @@ public class GetStreamzineFeature {
         }
     }
 
-
-    //
-    // Incorrect community scenario
-    //
-    @When("^user invokes get streamzine command with incorrect community$")
-    public void userInvokesGetStreamzineCommandWithIncorrectCommunity() {
-        for (UserDeviceData data : currentUserDevices) {
-            PhoneState state = deviceSet.getPhoneState(data);
-            UserDataCreator.TimestampTokenData token = userDataCreator.createUserToken(state.getLastAccountCheckResponse().userToken);
-
-            ResponseEntity<StandardResponse> response = deviceSet.getStreamzine(
-                    "some_unknown_community",
-                    data,
-                    token.getTimestampToken(),
-                    token.getTimestamp(),
-                    validResolution,
-                    state.getLastFacebookInfo().getUserName(),
-                    StandardResponse.class);
-
-            errorResponses.put(data, response);
-        }
-    }
-
-    @Then("^user gets (.+) code in response$")
-    public void userGetsHttpErrorCodeInResponse(final int code) {
-        for (UserDeviceData data : currentUserDevices) {
-            ResponseEntity<StandardResponse> response = errorResponses.get(data);
-            assertEquals(getErrorMessage(data) + ", body: " + response.getBody(), code, response.getStatusCode().value());
-        }
-    }
-
     @And("^block on (\\d) position is (.+), (.+), \\[(.+)\\] with (.+) permission granted to (.+)$")
     public void checkResultWithPermissions(int position,
                              ShapeType shape,
@@ -458,14 +317,6 @@ public class GetStreamzineFeature {
         }
     }
 
-
-    //
-    // Helpers
-    //
-    private String getErrorMessage(UserDeviceData data) {
-        return "Failed to check for " + data;
-    }
-
     private List<Media> toMedias(List<Integer> longs) {
         return Lists.transform(longs, new Function<Integer, Media>() {
             @Override
@@ -474,9 +325,4 @@ public class GetStreamzineFeature {
             }
         });
     }
-
-    Logger logger() {
-        return LoggerFactory.getLogger(getClass());
-    }
-
 }
