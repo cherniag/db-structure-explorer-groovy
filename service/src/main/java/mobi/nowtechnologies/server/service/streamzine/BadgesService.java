@@ -49,17 +49,23 @@ public class BadgesService {
 
     @Transactional(readOnly = true)
     public Map<Resolution, Map<Long, BadgeMapping>> getMatrix(Community community) {
-        LinkedHashMap<Resolution, Map<Long, BadgeMapping>> matrix = new LinkedHashMap<Resolution, Map<Long, BadgeMapping>>();
+        Map<Resolution, Map<Long, BadgeMapping>> matrix = new LinkedHashMap<Resolution, Map<Long, BadgeMapping>>();
 
-        List<BadgeMapping> allDefault = badgeMappingRepository.findAllDefault(community);
-
-        for (Resolution resolution : resolutionRepository.findAllSorted()) {
+        List<Resolution> resolutions = resolutionRepository.findAllSorted();
+        for (Resolution resolution : resolutions) {
             matrix.put(resolution, new HashMap<Long, BadgeMapping>());
+        }
 
-            for (BadgeMapping badgeMapping : allDefault) {
-                BadgeMapping matched = badgeMappingRepository.findByCommunityResolutionAndOriginalAlias(community, resolution, badgeMapping.getOriginalFilenameAlias());
-                matrix.get(resolution).put(badgeMapping.getOriginalFilenameAlias().getId(), matched);
+        for (BadgeMapping badgeMapping : badgeMappingRepository.findAllDefault(community)) {
+            FilenameAlias originalFilenameAlias = badgeMapping.getOriginalFilenameAlias();
+
+            if(!resolutions.isEmpty()) {
+                List<BadgeMapping> matched = badgeMappingRepository.findByCommunityResolutionsAndOriginalAlias(community, originalFilenameAlias, resolutions);
+                for (BadgeMapping mapping : matched) {
+                    matrix.get(mapping.getResolution()).put(originalFilenameAlias.getId(), mapping);
+                }
             }
+
         }
         return matrix;
     }

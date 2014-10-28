@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface BadgeMappingRepository extends JpaRepository<BadgeMapping, Long> {
@@ -17,6 +18,9 @@ public interface BadgeMappingRepository extends JpaRepository<BadgeMapping, Long
 
     @Query(value="select b from BadgeMapping b where b.community=:community and b.resolution=:resolution and b.originalFilenameAlias=:original")
     BadgeMapping findByCommunityResolutionAndOriginalAlias(@Param("community") Community community, @Param("resolution") Resolution resolution, @Param("original") FilenameAlias original);
+
+    @Query(value="select b from BadgeMapping b where b.community=:community and b.originalFilenameAlias=:original and b.resolution in (:resolutions)")
+    List<BadgeMapping> findByCommunityResolutionsAndOriginalAlias(@Param("community") Community community, @Param("original") FilenameAlias original, @Param("resolutions") Collection<Resolution> resolutions);
 
     @Query(value="select b from BadgeMapping b where b.community=:community and b.originalFilenameAlias=:original")
     List<BadgeMapping> findByCommunityAndOriginalAlias(@Param("community") Community community, @Param("original") FilenameAlias original);
