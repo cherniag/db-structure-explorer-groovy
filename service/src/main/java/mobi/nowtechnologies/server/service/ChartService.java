@@ -217,39 +217,6 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(readOnly = true)
-    public ChartDetail getChartItemById(Integer chartItemId) {
-        LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
-
-        ChartDetail chartDetail = chartDetailService.getChartItemById(chartItemId);
-
-        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-        return chartDetail;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public boolean delete(Integer chartItemId) {
-        LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
-
-        ChartDetail chartDetail = getChartItemById(chartItemId);
-        boolean success = chartDetailService.delete(chartItemId);
-        updateChartItemsPositions(new Date(chartDetail.getPublishTimeMillis()), chartDetail.getChart().getI(), chartDetail.getPosition(), -1);
-
-        LOGGER.info("Output parameter success=[{}]", success);
-        return success;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
-        LOGGER.debug("input parameters updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): [{}]", new Object[] { selectedPublishDateTime, chartId, afterPosition,
-                chPosition });
-
-        List<ChartDetail> chartDetails = chartDetailService.updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition);
-
-        LOGGER.info("Output parameter updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): chartDetails=[{}]", chartDetails);
-        return chartDetails;
-    }
-
-    @Transactional(readOnly = true)
     public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName, ChartType chartType) {
         LOGGER.debug("input parameters communityURL, communityName, chartType: [{}] [{}]", new Object[] { communityURL, communityName, chartType });
 
