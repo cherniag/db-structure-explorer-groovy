@@ -1,6 +1,6 @@
 -- begin SRV-89
 
-ALTER TABLE cn_service.tb_media DROP  FOREIGN KEY media_label_fk;
+ALTER TABLE cn_service.tb_media DROP  FOREIGN KEY tb_media_ibfk_1;
 
 drop table  cn_service.tb_labels;
 
@@ -31,6 +31,8 @@ UPDATE cn_service.tb_media tb
   JOIN cn_cms.Track tr ON (tb.trackId = tr.id)
   JOIN cn_service.tb_labels tl ON (tr.label = tl.name)
 SET tb.label = tl.i;
+
+
 
 
 -- end SRV-89
