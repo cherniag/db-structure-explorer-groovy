@@ -156,7 +156,7 @@ public class AccountCheckDTOAsm {
     private UserDetailsDto convertGooglePlusInfoToDetails(GooglePlusUserInfo googlePlusUserInfo) {
         GooglePlusUserDetailsDto result = new GooglePlusUserDetailsDto();
         result.setEmail(googlePlusUserInfo.getEmail());
-        result.setUserName(googlePlusUserInfo.getEmail());
+        result.setUserName(googlePlusUserInfo.getDisplayName());
         result.setProfileUrl(googlePlusUserInfo.getPicture());
         result.setGooglePlusId(googlePlusUserInfo.getGooglePlusId());
         result.setFirstName(googlePlusUserInfo.getGivenName());

@@ -28,10 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -65,7 +62,7 @@ public class StreamzineClientCacheFeature {
     private boolean sendLastModifiedSince;
     private boolean timestampIsBigger;
     private String corruptedHeader;
-    private Set<String> communities;
+    private Set<String> communities = new HashSet<String>();
 
     //
     // Given and After

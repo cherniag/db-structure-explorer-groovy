@@ -1,8 +1,14 @@
 package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
+import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
+import mobi.nowtechnologies.server.shared.dto.social.SocialInfoType;
+import mobi.nowtechnologies.server.shared.enums.Gender;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
@@ -11,6 +17,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.text.SimpleDateFormat;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -22,6 +30,8 @@ public class AccountCheckDTOAsmTest {
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
     @Mock
     private RuleServiceSupport ruleServiceSupport;
+    @Mock
+    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
 
     private AutoOptInRuleService autoOptInRuleService;
 
@@ -106,5 +116,39 @@ public class AccountCheckDTOAsmTest {
         verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
 
         assertEquals(true, dto.subjectToAutoOptIn);
+    }
+
+    @Test
+    public void testToAccCheckDTOForGooglePlusUser() throws Exception {
+        when(user.getProvider()).thenReturn(ProviderType.GOOGLE_PLUS);
+        GooglePlusUserInfo googlePlusUserInfo = mock(GooglePlusUserInfo.class);
+        when(googlePlusUserInfoRepository.findByUser(user)).thenReturn(googlePlusUserInfo);
+        when(googlePlusUserInfo.getEmail()).thenReturn("a@bc.com");
+        when(googlePlusUserInfo.getDisplayName()).thenReturn("Display Name");
+        when(googlePlusUserInfo.getPicture()).thenReturn("http://gp.com/1/1.jpg");
+        when(googlePlusUserInfo.getGooglePlusId()).thenReturn("000001");
+        when(googlePlusUserInfo.getGivenName()).thenReturn("Name");
+        when(googlePlusUserInfo.getFamilyName()).thenReturn("Surname");
+        when(googlePlusUserInfo.getGender()).thenReturn(Gender.FEMALE);
+        when(googlePlusUserInfo.getLocation()).thenReturn("London");
+        when(googlePlusUserInfo.getBirthday()).thenReturn(new SimpleDateFormat("MM/dd/yyyy").parse("07/12/1980"));
+
+        when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
+        when(ruleServiceSupport.fireRules(eq(ALL), eq(user))).thenReturn(RuleResult.FAIL_RESULT);
+
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, true, false);
+
+        //check user details
+        GooglePlusUserDetailsDto dtoUserDetails = (GooglePlusUserDetailsDto) dto.getUserDetails();
+        assertEquals("a@bc.com", dtoUserDetails.getEmail());
+        assertEquals("Display Name", dtoUserDetails.getUserName());
+        assertEquals("http://gp.com/1/1.jpg", dtoUserDetails.getProfileUrl());
+        assertEquals("000001", dtoUserDetails.getGooglePlusId());
+        assertEquals("Name", dtoUserDetails.getFirstName());
+        assertEquals("Surname", dtoUserDetails.getSurname());
+        assertEquals(Gender.FEMALE, dtoUserDetails.getGender());
+        assertEquals("London", dtoUserDetails.getLocation());
+        assertEquals("07/12/1980", dtoUserDetails.getBirthDay());
+        assertEquals(SocialInfoType.GooglePlus, dtoUserDetails.getSocialInfoType());
     }
 }

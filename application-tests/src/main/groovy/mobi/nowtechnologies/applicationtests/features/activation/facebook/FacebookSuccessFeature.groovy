@@ -97,7 +97,17 @@ class FacebookSuccessFeature {
 
     @And('^User receives following in the SIGN_IN_FACEBOOK response:$')
     def "User receives following in the SIGN_IN_FACEBOOK_response"(DataTable userStateTable) {
-        commonAssertionsService.checkUserState(userStateTable.asList(UserState)[0], currentUserDevices, deviceSet)
+        def userState = userStateTable.asList(UserState)[0];
+        currentUserDevices.each {
+            def lastFacebookInfo = deviceSet.getPhoneState(it).lastFacebookInfo
+            assertEquals(userState.activation.name(), lastFacebookInfo.activation)
+            assertEquals(userState.freeTrial, lastFacebookInfo.freeTrial)
+            assertEquals(userState.fullyRegistred, lastFacebookInfo.fullyRegistred)
+            assertEquals(userState.hasAllDetails, lastFacebookInfo.hasAllDetails)
+            assertEquals(userState.paymentType, lastFacebookInfo.paymentType)
+            assertEquals(userState.provider, lastFacebookInfo.provider)
+            assertEquals(userState.status, lastFacebookInfo.status)
+        }
     }
 
     @And('^\'deviceType\' field is the same as sent during registration$')
@@ -129,6 +139,7 @@ class FacebookSuccessFeature {
 
             assertEquals(dateFormat.parse(facebookInfo.birthDay), dateFormat.parse(facebookProfile.getBirthday()))
             assertEquals(facebookInfo.email, phoneState.email)
+            assertEquals(facebookInfo.userName, facebookProfile.username)
             assertEquals(facebookInfo.firstName, facebookProfile.firstName)
             assertEquals(facebookInfo.surname, facebookProfile.lastName)
             assertEquals(facebookInfo.gender.toLowerCase(), facebookProfile.gender)
