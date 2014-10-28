@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
-import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
@@ -34,7 +33,6 @@ public class ChartDetailService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetailService.class);
 
-	private ChartDetailDao chartDetailDao;
 	private ChartDetailRepository chartDetailRepository;
 	private MediaService mediaService;
 
@@ -43,10 +41,6 @@ public class ChartDetailService {
     public void setMediaRepository(MediaRepository mediaRepository) {
         this.mediaRepository = mediaRepository;
     }
-
-    public void setChartDetailDao(ChartDetailDao chartDetailDao) {
-		this.chartDetailDao = chartDetailDao;
-	}
 
 	public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
 		this.chartDetailRepository = chartDetailRepository;
@@ -76,20 +70,6 @@ public class ChartDetailService {
 
 		LOGGER.debug("Output parameter chartDetails=[{}]", chartDetails);
 		return chartDetails;
-	}
-
-
-
-	public boolean isTrackCanBeBoughtAccordingToLicense(String isrc) {
-		if (isrc == null)
-			throw new ServiceException("The parameter isrc is null");
-		Object[] argArray = new Object[] { isrc };
-		LOGGER.debug("input parameters isrc: [{}]", argArray);
-
-		boolean isTrackCanBeBoughtAccordingToLicense = chartDetailDao.isTrackCanBeBoughtAccordingToLicense(isrc);
-
-		LOGGER.debug("Output parameter isTrackCanBeBoughtAccordingToLicense=[{}]", isTrackCanBeBoughtAccordingToLicense);
-		return isTrackCanBeBoughtAccordingToLicense;
 	}
 
 	@Transactional(readOnly = true)

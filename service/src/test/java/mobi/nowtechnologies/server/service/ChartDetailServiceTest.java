@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
-import mobi.nowtechnologies.server.persistence.dao.ChartDetailDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
@@ -19,7 +18,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.*;
 
@@ -41,8 +39,6 @@ public class ChartDetailServiceTest {
 	private List<ChartDetail> originalChartDetails;
 	private List<Media> medias;
 	private List<Drm> drms;
-	private static EntityService mockEntityService;
-	private static ChartDetailDao mockChartDetailDao;
 	private static MediaService mockMediaService;
     private MediaRepository mediaRepository;
 
@@ -985,118 +981,6 @@ public class ChartDetailServiceTest {
 
 	}
 
-	/**
-	 * Run the boolean isTrackCanBeBoughtAccordingToLicense(String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test
-	public void testIsTrackCanBeBoughtAccordingToLicense_Success() throws Exception {
-		String isrc = "";
-
-		boolean isTrackCanBeBoughtAccordingToLicense = true;
-		Mockito.when(mockChartDetailDao.isTrackCanBeBoughtAccordingToLicense(isrc)).thenReturn(isTrackCanBeBoughtAccordingToLicense);
-		boolean result = fixtureChartDetailService.isTrackCanBeBoughtAccordingToLicense(isrc);
-
-		assertTrue(result);
-	}
-
-	/**
-	 * Run the boolean isTrackCanBeBoughtAccordingToLicense(String) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test(expected = ServiceException.class)
-	public void testIsTrackCanBeBoughtAccordingToLicense_IsrcIsNull_Failure() throws Exception {
-		String isrc = null;
-
-		fixtureChartDetailService.isTrackCanBeBoughtAccordingToLicense(isrc);
-	}
-
-	/**
-	 * Run the ChartDetail saveChartItem(ChartItemDto,Chart) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test
-	public void testNotBonusSaveChartItem_Success() throws Exception {
-		final int mediaId = 1;
-		Integer chartId = mediaId;
-		final Date choosedPublishDate = new Date();
-		Byte position = (byte) 3;
-		final Integer chartDetailId = 55;
-
-		long choosedPublishTimeMillis = choosedPublishDate.getTime();
-
-		ChartItemDto chartItemDto = new ChartItemDto();
-		final MediaDto mediaDto = new MediaDto();
-		mediaDto.setId(mediaId);
-		chartItemDto.setMediaDto(mediaDto);
-		chartItemDto.setPublishTime(choosedPublishDate);
-		Chart chart = new Chart();
-		chart.setI(chartId);
-		chartItemDto.setChartId(chartId);
-		
-		Media originalMedia = getMediaInstance(mediaId);
-
-		Mockito.when(mockChartDetailRepository.findMaxPosition(Mockito.eq(chart), Mockito.eq(choosedPublishTimeMillis))).thenReturn(position);
-		Mockito.when(mockMediaService.findById(Mockito.eq(mediaId))).thenReturn(originalMedia);
-		Mockito.when(mockChartDetailRepository.save(Mockito.any(ChartDetail.class))).thenAnswer(new Answer<ChartDetail>() {
-
-			@Override
-			public ChartDetail answer(InvocationOnMock invocation) throws Throwable {
-				ChartDetail chartDetail = (ChartDetail) invocation.getArguments()[0];
-				chartDetail.setI(chartDetailId);
-				return chartDetail;
-			}
-		});
-
-		ChartDetail actualChartDetail = fixtureChartDetailService.saveChartItem(chartItemDto, chart);
-
-		assertNotNull(actualChartDetail);
-		assertChartItemDtoWithChartDetail((byte) (position+1), chartDetailId, chartItemDto, actualChartDetail, ChgPosition.UNCHANGED, (byte) 0);
-	}
-	
-	
-	/**
-	 * Run the ChartDetail saveChartItem(ChartItemDto,Chart) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test(expected=ServiceCheckedException.class)
-	public void testSaveChartItem_DataIntegrityViolationException_Failure() throws Exception {
-		final int mediaId = 1;
-		Integer chartId = mediaId;
-		final Date choosedPublishDate = new Date();
-		Byte position = (byte) 3;
-
-		long choosedPublishTimeMillis = choosedPublishDate.getTime();
-
-		ChartItemDto chartItemDto = new ChartItemDto();
-		final MediaDto mediaDto = new MediaDto();
-		mediaDto.setId(mediaId);
-		chartItemDto.setMediaDto(mediaDto);
-		chartItemDto.setPublishTime(choosedPublishDate);
-		Chart chart = new Chart();
-		chart.setI(chartId);
-		chartItemDto.setChartId(chartId);
-		
-		Media originalMedia = getMediaInstance(mediaId);
-
-		Mockito.when(mockChartDetailRepository.findMaxPosition(Mockito.eq(chart), Mockito.eq(choosedPublishTimeMillis))).thenReturn(position);
-		Mockito.when(mockMediaService.findById(Mockito.eq(mediaId))).thenReturn(originalMedia);
-		Mockito.when(mockChartDetailRepository.save(Mockito.any(ChartDetail.class))).thenThrow(new DataIntegrityViolationException(null));
-
-		fixtureChartDetailService.saveChartItem(chartItemDto, chart);
-	}
 
 	private void assertChartItemDtoWithChartDetail(byte expectedPosition, final Integer chartDetailId, ChartItemDto chartItemDto, ChartDetail actualChartDetail, final ChgPosition chgPosition, byte expectedPrevPosition) {
 		assertEquals(chartItemDto.getChannel(), actualChartDetail.getChannel());
@@ -1108,86 +992,6 @@ public class ChartDetailServiceTest {
 		assertEquals(expectedPrevPosition, actualChartDetail.getPrevPosition().byteValue());
 		assertEquals(chartItemDto.getPublishTime().getTime(), actualChartDetail.getPublishTimeMillis());
 		assertEquals(chartDetailId, actualChartDetail.getI());
-	}
-	
-	/**
-	 * Run the ChartDetail saveChartItem(ChartItemDto,Chart) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test
-	public void testSaveNotBonusChartItem_PositionIsNull_Success() throws Exception {
-		final int mediaId = 1;
-		Integer chartId = mediaId;
-		final Date choosedPublishDate = new Date();
-		Byte position = null;
-		final Integer chartDetailId = 55;
-
-		long choosedPublishTimeMillis = choosedPublishDate.getTime();
-
-		ChartItemDto chartItemDto = new ChartItemDto();
-		final MediaDto mediaDto = new MediaDto();
-		mediaDto.setId(mediaId);
-		chartItemDto.setMediaDto(mediaDto);
-		chartItemDto.setPublishTime(choosedPublishDate);
-		Chart chart = new Chart();
-		chart.setI(chartId);
-		chartItemDto.setChartId(chartId);
-		
-		Media originalMedia = getMediaInstance(mediaId);
-
-		Mockito.when(mockChartDetailRepository.findMaxPosition(Mockito.eq(chart), Mockito.eq(choosedPublishTimeMillis))).thenReturn(position);
-		Mockito.when(mockMediaService.findById(Mockito.eq(mediaId))).thenReturn(originalMedia);
-		Mockito.when(mockChartDetailRepository.save(Mockito.any(ChartDetail.class))).thenAnswer(new Answer<ChartDetail>() {
-
-			@Override
-			public ChartDetail answer(InvocationOnMock invocation) throws Throwable {
-				ChartDetail chartDetail = (ChartDetail) invocation.getArguments()[0];
-				chartDetail.setI(chartDetailId);
-				return chartDetail;
-			}
-		});
-
-		ChartDetail actualChartDetail = fixtureChartDetailService.saveChartItem(chartItemDto, chart);
-
-		assertNotNull(actualChartDetail);
-		
-		assertChartItemDtoWithChartDetail((byte)1, chartDetailId, chartItemDto, actualChartDetail, ChgPosition.UNCHANGED, (byte) 0);
-	}
-
-
-	/**
-	 * Run the ChartDetail saveChartItem(ChartItemDto,Chart) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test(expected = ServiceException.class)
-	public void testSaveChartItem_ChartItemDtoIsNull_Failure() throws Exception {
-
-		ChartItemDto chartItemDto = null;
-		Chart chart = new Chart();
-
-		fixtureChartDetailService.saveChartItem(chartItemDto, chart);
-	}
-
-	/**
-	 * Run the ChartDetail saveChartItem(ChartItemDto,Chart) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 07.08.12 17:19
-	 */
-	@Test(expected = ServiceException.class)
-	public void testSaveChartItem_ChartIsNull_Failure() throws Exception {
-
-		ChartItemDto chartItemDto = new ChartItemDto();
-		Chart chart = null;
-
-		fixtureChartDetailService.saveChartItem(chartItemDto, chart);
 	}
 
 	/**
@@ -1541,9 +1345,6 @@ public class ChartDetailServiceTest {
 		mockChartDetailRepository = PowerMockito.mock(ChartDetailRepository.class);
 		fixtureChartDetailService.setChartDetailRepository(mockChartDetailRepository);
         mediaRepository = PowerMockito.mock(MediaRepository.class);
-		mockEntityService = PowerMockito.mock(EntityService.class);
-		mockChartDetailDao = PowerMockito.mock(ChartDetailDao.class);
-		fixtureChartDetailService.setChartDetailDao(mockChartDetailDao);
 		mockMediaService = PowerMockito.mock(MediaService.class);
 
 		fixtureChartDetailService.setMediaService(mockMediaService);
