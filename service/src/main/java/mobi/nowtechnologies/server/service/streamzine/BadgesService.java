@@ -137,17 +137,17 @@ public class BadgesService {
     }
 
     @Transactional
-    public List<FilenameAlias> removeBadge(Community community, long id) {
+    public void hideBadge(Community community, long id) {
         FilenameAlias alias = filenameAliasRepository.findOne(id);
 
         if(alias == null) {
-            return Collections.emptyList();
+            return;
         }
 
         List<BadgeMapping> mappings = badgeMappingRepository.findByCommunityAndOriginalAlias(community, alias);
-        badgeMappingRepository.deleteByCommunityAndOriginalAlias(community, alias);
-
-        return getFilenameAliases(mappings);
+        for (BadgeMapping mapping : mappings) {
+            mapping.hide();
+        }
     }
 
     @Transactional

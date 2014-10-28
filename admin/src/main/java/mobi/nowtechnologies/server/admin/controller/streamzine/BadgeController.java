@@ -103,11 +103,7 @@ public class BadgeController {
 
         Community community = communityRepository.findByName(communityRewriteUrl);
 
-        List<FilenameAlias> filenameAliases = badgesService.removeBadge(community, id);
-
-        for (FilenameAlias filenameAlias : filenameAliases) {
-            badgesService.deleteCloudFileByAlias(filenameAlias);
-        }
+        badgesService.hideBadge(community, id);
 
         return new ModelAndView("redirect:/badges");
     }

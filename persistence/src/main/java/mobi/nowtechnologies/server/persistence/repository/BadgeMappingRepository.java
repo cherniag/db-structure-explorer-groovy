@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface BadgeMappingRepository extends JpaRepository<BadgeMapping, Long> {
-    @Query(value="select b from BadgeMapping b where b.community=:community and b.resolution is null order by b.uploaded desc")
+    @Query(value="select b from BadgeMapping b where b.community=:community and b.resolution is null and b.hidden is null order by b.uploaded desc")
     List<BadgeMapping> findAllDefault(@Param("community") Community community);
 
     @Query(value="select b from BadgeMapping b where b.community=:community and b.resolution=:resolution and b.originalFilenameAlias=:original")
@@ -24,10 +24,6 @@ public interface BadgeMappingRepository extends JpaRepository<BadgeMapping, Long
 
     @Query(value="select b from BadgeMapping b where b.community=:community and b.originalFilenameAlias=:original")
     List<BadgeMapping> findByCommunityAndOriginalAlias(@Param("community") Community community, @Param("original") FilenameAlias original);
-
-    @Modifying
-    @Query(value="delete from BadgeMapping b where b.community=:community and b.originalFilenameAlias=:original")
-    void deleteByCommunityAndOriginalAlias(@Param("community") Community community, @Param("original") FilenameAlias original);
 
     @Query(value="select b from BadgeMapping b where b.resolution=:resolution")
     List<BadgeMapping> findByResolution(@Param("resolution") Resolution resolution);
