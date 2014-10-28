@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import mobi.nowtechnologies.server.admin.validator.BadgeValidator;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.service.streamzine.ImageDTO;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeResolutionDto;
@@ -186,7 +187,8 @@ public class BadgeController {
         logger().info("Adding placeholder, info: {} for community: {}", badgeInfoDto, communityRewriteUrl);
 
         Community community = communityRepository.findByName(communityRewriteUrl);
-        badgesService.uploadBadge(community, badgeInfoDto.getTitle(), badgeInfoDto.getFile(), badgeInfoDto.getWidth(), badgeInfoDto.getHeight());
+        Dimensions dim = new Dimensions(badgeInfoDto.getWidth(), badgeInfoDto.getHeight());
+        badgesService.uploadBadge(community, badgeInfoDto.getTitle(), badgeInfoDto.getFile(), dim);
     }
 
     private Logger logger() {
