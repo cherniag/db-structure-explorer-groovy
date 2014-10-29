@@ -45,7 +45,7 @@ public class Update {
     public Update(Date date, Community community) {
         Assert.notNull(date);
         Assert.notNull(community);
-        Assert.isTrue(date.after(new Date()));
+
         this.date = date;
         this.community = community;
     }

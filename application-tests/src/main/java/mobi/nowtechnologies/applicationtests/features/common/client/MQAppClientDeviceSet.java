@@ -356,27 +356,27 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         return getStreamzineHttpService.getStreamzineErrorEntity(deviceData, state, timestampToken, timestamp, resolution, userName);
     }
 
-    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data, long ifModifiedSince) {
+    public ResponseEntity<String> getStreamzineAndSendIfModifiedSince(UserDeviceData data, long ifModifiedSince) {
         PhoneState state = states.get(data);
         return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, ifModifiedSince, HttpMethod.GET);
     }
 
-    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data, String corruptedHeader) {
+    public ResponseEntity<String> getStreamzineAndSendIfModifiedSince(UserDeviceData data, String corruptedHeader) {
         PhoneState state = states.get(data);
         return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, corruptedHeader, HttpMethod.GET);
     }
 
-    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSince(UserDeviceData data) {
+    public ResponseEntity<String> getStreamzineAndSendIfModifiedSince(UserDeviceData data) {
         PhoneState state = states.get(data);
         return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, HttpMethod.GET);
     }
 
-    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSinceOld(UserDeviceData data, long ifModifiedSince) {
+    public ResponseEntity<String> getStreamzineAndSendIfModifiedSinceOld(UserDeviceData data, long ifModifiedSince) {
         PhoneState state = states.get(data);
         return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, ifModifiedSince, HttpMethod.POST);
     }
 
-    public ResponseEntity<String> getStreamzineAnsSendIfModifiedSinceOld(UserDeviceData data) {
+    public ResponseEntity<String> getStreamzineAndSendIfModifiedSinceOld(UserDeviceData data) {
         PhoneState state = states.get(data);
         return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, HttpMethod.POST);
     }

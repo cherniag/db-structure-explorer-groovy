@@ -68,7 +68,8 @@ public class StreamzineUpdateServiceTest {
         prevUpdate.addBlock(block);
 
         Date newUpdateDate = addDays(prevUpdate.getDate(), 3);
-        when(streamzineUpdateRepositoryMock.findLatestUpdateBeforeDate(newUpdateDate, community)).thenReturn(prevUpdate);
+        when(streamzineUpdateRepositoryMock.findLastDateSince(newUpdateDate, community)).thenReturn(prevUpdate.getDate());
+        when(streamzineUpdateRepositoryMock.findByPublishDate(prevUpdate.getDate(), community)).thenReturn(prevUpdate);
 
         when(streamzineUpdateRepositoryMock.saveAndFlush(any(Update.class))).thenAnswer(streamzineUpdateRepositoryUpdateAndFlushAnswer);
 
@@ -80,7 +81,8 @@ public class StreamzineUpdateServiceTest {
         assertThat(update.getBlocks().size(), is(prevUpdate.getBlocks().size()));
         assertThat(update.getBlocks().get(0).isIncluded(), is(true));
 
-        verify(streamzineUpdateRepositoryMock, times(1)).findLatestUpdateBeforeDate(newUpdateDate, community);
+        verify(streamzineUpdateRepositoryMock, times(1)).findLastDateSince(newUpdateDate, community);
+        verify(streamzineUpdateRepositoryMock, times(1)).findByPublishDate(prevUpdate.getDate(), community);
         verify(streamzineUpdateRepositoryMock, times(1)).saveAndFlush(any(Update.class));
     }
 
@@ -92,7 +94,8 @@ public class StreamzineUpdateServiceTest {
         Date newUpdateDate = addDays(new Date(), 1);
         Update prevUpdate = null;
 
-        when(streamzineUpdateRepositoryMock.findLatestUpdateBeforeDate(newUpdateDate, community)).thenReturn(prevUpdate);
+
+        when(streamzineUpdateRepositoryMock.findLastDateSince(newUpdateDate, community)).thenReturn(null);
 
         when(streamzineUpdateRepositoryMock.saveAndFlush(any(Update.class))).thenAnswer(streamzineUpdateRepositoryUpdateAndFlushAnswer);
 
@@ -103,7 +106,7 @@ public class StreamzineUpdateServiceTest {
         assertThat(update, is(not(prevUpdate)));
         assertThat(update.getBlocks().size(), is(0));
 
-        verify(streamzineUpdateRepositoryMock, times(1)).findLatestUpdateBeforeDate(newUpdateDate, community);
+        verify(streamzineUpdateRepositoryMock, times(1)).findLastDateSince(newUpdateDate, community);
         verify(streamzineUpdateRepositoryMock, times(1)).saveAndFlush(any(Update.class));
     }
 

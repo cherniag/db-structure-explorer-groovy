@@ -48,7 +48,7 @@ public class StreamzineUpdateService {
     public Update create(Date date, Community community) {
         Assert.isTrue(isAvailable(community.getRewriteUrlParameter()), "Not available for " + community.getRewriteUrlParameter() + ", allowed for: " + availableCommunites);
 
-        Update lastOne = streamzineUpdateRepository.findLatestUpdateBeforeDate(date, community);
+        Update lastOne = findLatestUpdate(date, community);
 
         Update clonedOrCreated = new Update(date, community);
 
@@ -59,6 +59,11 @@ public class StreamzineUpdateService {
         }
 
         return streamzineUpdateRepository.saveAndFlush(clonedOrCreated);
+    }
+
+    private Update findLatestUpdate(Date date, Community community) {
+        Date lastDateSince = streamzineUpdateRepository.findLastDateSince(date, community);
+        return lastDateSince != null ? streamzineUpdateRepository.findByPublishDate(lastDateSince, community) : null;
     }
 
     @Transactional
