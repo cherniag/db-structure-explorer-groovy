@@ -79,20 +79,18 @@ public class SmsAccordingToLawJob extends StatefulMethodInvokingJob {
 			if (communityURL == null)
 				throw new NullPointerException("The parameter communityURL is null");
 
-			final String upperCaseCommunityName = communityURL.toUpperCase();
-
-			Community community = communityService.getCommunityByUrl(upperCaseCommunityName);
+			Community community = communityService.getCommunityByUrl(communityURL);
 
 			if (community == null)
 				throw new NullPointerException("The parameter community is null");
 
 			final String amountOfMoneyToUserNotificationString = messageSource
-					.getMessage(upperCaseCommunityName, "amountOfMoneyToUserNotification", null, null);
+					.getMessage(communityURL, "amountOfMoneyToUserNotification", null, null);
 
 			if (amountOfMoneyToUserNotificationString == null)
 				throw new NullPointerException("The parameter amountOfMoneyToUserNotificationString is null");
 
-			final String deltaSuccesfullPaymentSmsSendingTimestampMillisString = messageSource.getMessage(upperCaseCommunityName,
+			final String deltaSuccesfullPaymentSmsSendingTimestampMillisString = messageSource.getMessage(communityURL,
 					"deltaSuccesfullPaymentSmsSendingTimestampMillis", null, null);
 			if (deltaSuccesfullPaymentSmsSendingTimestampMillisString == null)
 				throw new NullPointerException("The parameter deltaSuccesfullPaymentSmsSendingTimestampMillisString is null");
