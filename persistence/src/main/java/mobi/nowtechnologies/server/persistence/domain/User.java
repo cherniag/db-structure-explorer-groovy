@@ -425,10 +425,6 @@ public class User implements Serializable {
         return O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(rewriteUrlParameter);
     }
 
-    public boolean isSMSActivatedUser() {
-        return getActivationStatus() == ActivationStatus.ACTIVATED || StringUtils.equals(getMobile(), getUserName()) || isVFNZCommunityUser() || isO2CommunityUser();
-    }
-
     public boolean isO2PAYGConsumer() {
         return isO2Consumer() && PAYG.equals(contract);
     }
@@ -1038,15 +1034,6 @@ public class User implements Serializable {
             accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
         LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
         return accountDto;
-    }
-
-    public ContactUsDto toContactUsDto() {
-        ContactUsDto contactUsDto = new ContactUsDto();
-        contactUsDto.setEmail(userName);
-        contactUsDto.setName(displayName);
-
-        LOGGER.debug("Output parameter contactUsDto=[{}]", contactUsDto);
-        return contactUsDto;
     }
 
     public Long getFirstDeviceLoginMillis() {
