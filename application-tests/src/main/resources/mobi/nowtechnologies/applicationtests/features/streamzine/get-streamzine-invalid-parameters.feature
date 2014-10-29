@@ -1,4 +1,4 @@
-@Ready33
+@Ready
 Feature: Transport API call for the GET_STREAMZINE command
 
   Scenario Outline: device sends GET_STREAMZINE command with wrong parameters

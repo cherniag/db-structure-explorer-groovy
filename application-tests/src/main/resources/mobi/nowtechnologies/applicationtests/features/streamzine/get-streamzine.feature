@@ -1,4 +1,4 @@
-@Ready33
+@Ready
 Feature: Transport API call for the GET_STREAMZINE command
   Scenario: device sends GET_STREAMZINE command with correct parameters and gets correct response
     Given First time user with device using JSON format for all streamzine supported versions below 6.3 and streamzine supported communities and for all devices available
