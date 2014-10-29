@@ -88,5 +88,4 @@ alter table tb_submittedPayments change column subWeeks subWeeks int(11) NOT NUL
 
 alter table tb_promotionPaymentPolicy modify column duration bigint not null;
 alter table tb_promotionPaymentPolicy modify column duration_unit VARCHAR(255) not null;
-
-alter table tb_promotionPaymentPolicy drop column subWeeks;
+alter table tb_promotionPaymentPolicy change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
