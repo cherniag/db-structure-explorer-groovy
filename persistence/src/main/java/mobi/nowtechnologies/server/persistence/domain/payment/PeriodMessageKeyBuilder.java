@@ -5,19 +5,19 @@ import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 public enum PeriodMessageKeyBuilder {
     Day(DurationUnit.DAYS) {
         @Override
-        String getMessageKey(Period period) {
+        public String getMessageKey(Period period) {
             return period.isOne() ? "per.day" : "for.n.days";
         }
     },
     Week(DurationUnit.WEEKS) {
         @Override
-        String getMessageKey(Period period) {
+        public String getMessageKey(Period period) {
             return period.isOne() ? "per.week" : "for.n.weeks";
         }
     },
     Month(DurationUnit.MONTHS) {
         @Override
-        String getMessageKey(Period period) {
+        public String getMessageKey(Period period) {
             return period.isOne() ? "per.month" : "for.n.months";
         }
     };
@@ -28,7 +28,7 @@ public enum PeriodMessageKeyBuilder {
         this.unit = unit;
     }
 
-    abstract String getMessageKey(Period period);
+    public abstract String getMessageKey(Period period);
 
     public static PeriodMessageKeyBuilder of(DurationUnit unit) {
         for (PeriodMessageKeyBuilder builder : values()) {

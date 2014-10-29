@@ -129,10 +129,6 @@ public class Period{
         return DURATION_UNIT_PERIOD_CONVERTER_MAP.get(durationUnit).toNextSubPaymentSeconds(this, subscriptionStartTimeSeconds);
     }
 
-    public String toMessageCode(){
-        return DURATION_UNIT_PERIOD_CONVERTER_MAP.get(durationUnit).toMessageCode(this);
-    }
-
     private static int getNextSubPaymentForMonthlyPeriod(Period period, int subscriptionStartTimeSeconds){
         DateTime dateTime = new DateTime(secondsToMillis(subscriptionStartTimeSeconds), UTC);
         int dayOfMonthBefore = dateTime.get(dayOfMonth());
