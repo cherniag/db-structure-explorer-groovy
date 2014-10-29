@@ -43,7 +43,10 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <bean id="accountCheckDTOAsm" class="mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm">
         <property name="autoOptInExemptPhoneNumberRepository" ref="autoOptInExemptPhoneNumberRepository" />
         <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
+        <property name="userDetailsDtoAsm" ref="userDetailsDtoAsm"/>
     </bean>
+
+    <bean id="userDetailsDtoAsm" class="mobi.nowtechnologies.server.assembler.UserDetailsDtoAsm"/>
 
     <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
         <property name="mediaRepository" ref="mediaRepository" />
