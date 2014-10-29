@@ -28,10 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -65,7 +62,7 @@ public class StreamzineClientCacheFeature {
     private boolean sendLastModifiedSince;
     private boolean timestampIsBigger;
     private String corruptedHeader;
-    private Set<String> communities;
+    private Set<String> communities = new HashSet<String>();
 
     //
     // Given and After
@@ -112,6 +109,8 @@ public class StreamzineClientCacheFeature {
         sendLastModifiedSince = false;
         timestampIsBigger = false;
         corruptedHeader = null;
+
+        streamzineUpdateCreator.deleteAll();
     }
 
     //
@@ -122,7 +121,7 @@ public class StreamzineClientCacheFeature {
         int shiftSeconds = 0;
 
         for (String community : communities) {
-            Update saved = streamzineUpdateCreator.create(community, shiftSeconds++);
+            Update saved = streamzineUpdateCreator.create(community, communities.size(), shiftSeconds++);
             // needed to get again to avoid potential issues with dates (milliseconds/seconds) cut
             Update getAfterSave = streamzineUpdateRepository.findOne(saved.getId());
             updates.put(community, getAfterSave);
@@ -158,17 +157,17 @@ public class StreamzineClientCacheFeature {
         for (UserDeviceData data : currentUserDevices) {
             if(sendLastModifiedSince) {
                 if(corruptedHeader != null) {
-                    ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data, corruptedHeader);
+                    ResponseEntity<String> response = deviceSet.getStreamzineAndSendIfModifiedSince(data, corruptedHeader);
                     responses.put(data, response);
                 } else {
                     Update saved = updates.get(data.getCommunityUrl());
                     int delta = (timestampIsBigger) ? 1 : -1;
-                    final long ifModifiedSince = DateUtils.addSeconds(saved.getDate(), delta * 10).getTime();
-                    ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data, ifModifiedSince);
+                    final long ifModifiedSince = DateUtils.addSeconds(saved.getDate(), delta).getTime();
+                    ResponseEntity<String> response = deviceSet.getStreamzineAndSendIfModifiedSince(data, ifModifiedSince);
                     responses.put(data, response);
                 }
             } else {
-                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSince(data);
+                ResponseEntity<String> response = deviceSet.getStreamzineAndSendIfModifiedSince(data);
                 responses.put(data, response);
             }
         }
@@ -181,10 +180,10 @@ public class StreamzineClientCacheFeature {
                 Update saved = updates.get(data.getCommunityUrl());
                 int delta = (timestampIsBigger) ? 1 : -1;
                 final long ifModifiedSince = DateUtils.addSeconds(saved.getDate(), delta * 10).getTime();
-                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSinceOld(data, ifModifiedSince);
+                ResponseEntity<String> response = deviceSet.getStreamzineAndSendIfModifiedSinceOld(data, ifModifiedSince);
                 responses.put(data, response);
             } else {
-                ResponseEntity<String> response = deviceSet.getStreamzineAnsSendIfModifiedSinceOld(data);
+                ResponseEntity<String> response = deviceSet.getStreamzineAndSendIfModifiedSinceOld(data);
                 responses.put(data, response);
             }
         }
@@ -194,7 +193,7 @@ public class StreamzineClientCacheFeature {
     public void thenResponse(final int httpCode) {
         for (UserDeviceData data : currentUserDevices) {
             assertEquals(
-                    getErrorMessage(data),
+                    getErrorMessage(data) + " for " + updates.get(data.getCommunityUrl()).getDate().getTime(),
                     httpCode,
                     responses.get(data).getStatusCode().value()
             );

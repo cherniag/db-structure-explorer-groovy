@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
@@ -8,9 +9,7 @@ import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
 import mobi.nowtechnologies.server.service.CloudFileService;
-import mobi.nowtechnologies.server.service.file.image.ImageInfo;
 import mobi.nowtechnologies.server.service.file.image.ImageService;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,24 +49,30 @@ public class BadgesService {
 
     @Transactional(readOnly = true)
     public Map<Resolution, Map<Long, BadgeMapping>> getMatrix(Community community) {
-        LinkedHashMap<Resolution, Map<Long, BadgeMapping>> matrix = new LinkedHashMap<Resolution, Map<Long, BadgeMapping>>();
+        Map<Resolution, Map<Long, BadgeMapping>> matrix = new LinkedHashMap<Resolution, Map<Long, BadgeMapping>>();
 
-        List<BadgeMapping> allDefault = badgeMappingRepository.findAllDefault(community);
-
-        for (Resolution resolution : resolutionRepository.findAllSorted()) {
+        List<Resolution> resolutions = resolutionRepository.findAllSorted();
+        for (Resolution resolution : resolutions) {
             matrix.put(resolution, new HashMap<Long, BadgeMapping>());
+        }
 
-            for (BadgeMapping badgeMapping : allDefault) {
-                BadgeMapping matched = badgeMappingRepository.findByCommunityResolutionAndOriginalAlias(community, resolution, badgeMapping.getOriginalFilenameAlias());
-                matrix.get(resolution).put(badgeMapping.getOriginalFilenameAlias().getId(), matched);
+        for (BadgeMapping badgeMapping : badgeMappingRepository.findAllDefault(community)) {
+            FilenameAlias originalFilenameAlias = badgeMapping.getOriginalFilenameAlias();
+
+            if(!resolutions.isEmpty()) {
+                List<BadgeMapping> matched = badgeMappingRepository.findByCommunityResolutionsAndOriginalAlias(community, originalFilenameAlias, resolutions);
+                for (BadgeMapping mapping : matched) {
+                    matrix.get(mapping.getResolution()).put(originalFilenameAlias.getId(), mapping);
+                }
             }
+
         }
         return matrix;
     }
 
     @Transactional
-    public void uploadBadge(Community community, String title, String file, int width, int height) throws IOException {
-        FilenameAlias generalAlias = new FilenameAlias(file, title, width, height).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+    public void uploadBadge(Community community, String title, String file, Dimensions dim) throws IOException {
+        FilenameAlias generalAlias = new FilenameAlias(file, title, dim).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         filenameAliasRepository.saveAndFlush(generalAlias);
         BadgeMapping generalMapping = BadgeMapping.general(community, generalAlias);
         badgeMappingRepository.saveAndFlush(generalMapping);
@@ -102,9 +107,9 @@ public class BadgesService {
         }
 
         byte[] bytes = imageService.resize(outputStream.toByteArray(), width, height);
-        ImageInfo imageFormat = imageService.getImageFormat(bytes);
-        FilenameAlias specificAlias = createSpecificBasedOnPrevious(resolution, original, imageFormat, bytes);
-        bytes = null;
+        Dimensions dim = imageService.getImageFormat(bytes).getDimension();
+        FilenameAlias specificAlias = original.createSpecific(resolution, dim);
+        cloudFileImagesService.uploadImageWithGivenName(bytes, specificAlias.getFileName());
         if(found.getFilenameAlias() == null) {
             found.setFilenameAlias(specificAlias);
         } else {
@@ -113,7 +118,7 @@ public class BadgesService {
     }
 
     @Transactional(readOnly = true)
-    public List<FilenameAlias> findAllBadges(Community community) {
+    public List<FilenameAlias> findFilenameAliases(Community community) {
         List<BadgeMapping> allDefault = badgeMappingRepository.findAllDefault(community);
         List<FilenameAlias> aliases = new ArrayList<FilenameAlias>();
         for (BadgeMapping badgeMapping : allDefault) {
@@ -132,17 +137,17 @@ public class BadgesService {
     }
 
     @Transactional
-    public List<FilenameAlias> removeBadge(Community community, long id) {
+    public void hideBadge(Community community, long id) {
         FilenameAlias alias = filenameAliasRepository.findOne(id);
 
         if(alias == null) {
-            return Collections.emptyList();
+            return;
         }
 
         List<BadgeMapping> mappings = badgeMappingRepository.findByCommunityAndOriginalAlias(community, alias);
-        badgeMappingRepository.deleteByCommunityAndOriginalAlias(community, alias);
-
-        return getFilenameAliases(mappings);
+        for (BadgeMapping mapping : mappings) {
+            mapping.hide();
+        }
     }
 
     @Transactional
@@ -150,7 +155,7 @@ public class BadgesService {
         resolutionRepository.saveAndFlush(resolution);
 
         List<BadgeMapping> allDefault = badgeMappingRepository.findAllDefault(community);
-        badgeMappingRepository.save(collectMappings(community, resolution, allDefault));
+        badgeMappingRepository.save(collectMappings(resolution, community, allDefault));
     }
 
     @Transactional
@@ -190,15 +195,6 @@ public class BadgesService {
         }
     }
 
-    private FilenameAlias createSpecificBasedOnPrevious(Resolution resolution, FilenameAlias original, ImageInfo imageFormat, byte[] bytes) {
-        final int newRealWidth = imageFormat.getDimension().getWidth();
-        final int newRealHeight = imageFormat.getDimension().getHeight();
-        String newTitle = original.getAlias() + " for " + newRealWidth + "x" + newRealHeight;
-        String newFileName = generateUniqueFileName(original, resolution, resolution.newResolution(newRealWidth, newRealHeight));
-        cloudFileImagesService.uploadImageWithGivenName(bytes, newFileName);
-        return new FilenameAlias(newFileName, newTitle, newRealWidth, newRealHeight).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
-    }
-
     private List<FilenameAlias> getFilenameAliases(List<BadgeMapping> mappings) {
         List<FilenameAlias> aliases = new ArrayList<FilenameAlias>();
 
@@ -211,7 +207,7 @@ public class BadgesService {
         return aliases;
     }
 
-    private List<BadgeMapping> collectMappings(Community community, Resolution resolution, List<BadgeMapping> allDefault) {
+    private List<BadgeMapping> collectMappings(Resolution resolution, Community community, List<BadgeMapping> allDefault) {
         List<BadgeMapping> placeholders = new ArrayList<BadgeMapping>();
 
         for (BadgeMapping mapping : allDefault) {
@@ -219,17 +215,6 @@ public class BadgesService {
         }
 
         return placeholders;
-
-    }
-
-    private String generateUniqueFileName(FilenameAlias original, Resolution previous, Resolution newOne) {
-        String originalFilename = original.getFileName();
-
-        final String fileName = FilenameUtils.getBaseName(originalFilename);
-        final String fileExt = FilenameUtils.getExtension(originalFilename);
-
-        return fileName + "_o_" + previous.getSizeInfo() + "_a_" + newOne.getFullInfo() + "." + fileExt;
-
 
     }
 
