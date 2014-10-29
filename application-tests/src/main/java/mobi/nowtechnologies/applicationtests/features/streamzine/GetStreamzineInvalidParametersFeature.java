@@ -32,13 +32,13 @@ public class GetStreamzineInvalidParametersFeature extends AbstractStreamzineFea
     // Given and After
     //
     @Given("^First time user with device using (.+) format for (.+) and (.+) and for (.+) available$")
-    public void firstTimeUserUsingFormat(RequestFormat requestFormat,
+    public void firstTimeUserUsingFormat(@Transform(DictionaryTransformer.class) Word requestFormats,
                                         @Transform(DictionaryTransformer.class) Word versions,
                                         @Transform(DictionaryTransformer.class) Word communities,
                                         @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         // init once for examples table
         if(currentUserDevices.isEmpty()) {
-            currentUserDevices = super.initUserData(requestFormat, versions, communities, devices);
+            currentUserDevices = super.initUserData(requestFormats.set(RequestFormat.class), versions, communities, devices);
         }
     }
 

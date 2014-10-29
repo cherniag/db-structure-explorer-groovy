@@ -2,6 +2,7 @@ package mobi.nowtechnologies.applicationtests.features.streamzine;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import cucumber.api.Transform;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
@@ -69,7 +70,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
                                          @Transform(DictionaryTransformer.class) Word versions,
                                          @Transform(DictionaryTransformer.class) Word communities,
                                          @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
-        currentUserDevices = super.initUserData(requestFormat, versions, communities, devices);
+        currentUserDevices = super.initUserData(Sets.newHashSet(requestFormat), versions, communities, devices);
         positionGenerator.init(currentUserDevices);
     }
 

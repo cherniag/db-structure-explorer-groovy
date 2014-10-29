@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.streamzine;
 
-import com.google.common.collect.Sets;
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.services.DbMediaService;
@@ -19,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractStreamzineFeature {
     @Resource
@@ -43,8 +43,8 @@ public abstract class AbstractStreamzineFeature {
 
     protected List<UserDeviceData> currentUserDevices = new ArrayList<UserDeviceData>();
 
-    protected List<UserDeviceData> initUserData(RequestFormat requestFormat, Word versions, Word communities, Word devices) {
-        List<UserDeviceData> datas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Sets.newHashSet(requestFormat));
+    protected List<UserDeviceData> initUserData(Set<RequestFormat> requestFormats, Word versions, Word communities, Word devices) {
+        List<UserDeviceData> datas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), requestFormats);
         for (UserDeviceData data : datas) {
             deviceSet.singup(data);
             deviceSet.loginUsingFacebook(data);

@@ -2,7 +2,7 @@
 Feature: Transport API call for the GET_STREAMZINE command
 
   Scenario Outline: device sends GET_STREAMZINE command with wrong parameters
-    Given First time user with device using JSON format for all streamzine supported versions below 6.3 and streamzine supported communities and for all devices available
+    Given First time user with device using JSON and XML format for all streamzine supported versions below 6.3 and streamzine supported communities and for all devices available
     When user invokes get streamzine for the <WIDTHXHEIGHT>, <TIMESTAMP>, <USER_NAME>, <USER_TOKEN> parameters
     Then user gets <http error code> code in response and <error code>, <message> also <display message> in the message body
   Examples:
