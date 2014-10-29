@@ -4,20 +4,18 @@ import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.util.Collections.unmodifiableMap;
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-import static mobi.nowtechnologies.server.shared.Utils.millisToIntSeconds;
-import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.*;
 import static org.joda.time.DateTimeFieldType.dayOfMonth;
 import static org.joda.time.DateTimeZone.UTC;
 import static org.joda.time.Period.days;
@@ -57,6 +55,10 @@ public class Period{
     public Period withDurationUnit(DurationUnit durationUnit){
         this.durationUnit = durationUnit;
         return this;
+    }
+
+    public boolean isOne() {
+        return 1 == duration;
     }
 
     private static interface PeriodConverter{
