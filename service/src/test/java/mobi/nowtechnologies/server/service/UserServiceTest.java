@@ -2326,7 +2326,7 @@ public class UserServiceTest {
 				User passedUser = (User)invocation.getArguments()[0];
 				
 				assertEquals(2, passedUser.getSubBalance());
-				assertEquals(monthlyNextSubPayment, passedUser.getNextSubPayment());
+				assertEquals(0, passedUser.getNextSubPayment());
 				assertEquals(subscribedUserStatus, passedUser.getStatus());
 				assertEquals(currentTimeSeconds, passedUser.getLastSuccessfulPaymentTimeMillis());
 				

@@ -12,9 +12,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.max;
 import static java.util.Collections.unmodifiableMap;
-import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.Utils.millisToIntSeconds;
+import static mobi.nowtechnologies.server.shared.Utils.secondsToMillis;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.*;
 import static org.joda.time.DateTimeFieldType.dayOfMonth;
 import static org.joda.time.DateTimeZone.UTC;
@@ -61,24 +61,26 @@ public class Period{
         return 1 == duration;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("duration", duration)
+                .append("durationUnit", durationUnit)
+                .toString();
+    }
+
+
+
+
+
     private static interface PeriodConverter{
         public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds);
-
-        public String toMessageCode(Period period);
     }
 
     private static final PeriodConverter DAYS_PERIOD_CONVERTER = new PeriodConverter(){
         @Override
         public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
             return subscriptionStartTimeSeconds + (int) TimeUnit.DAYS.toSeconds(period.getDuration());
-        }
-
-        @Override
-        public String toMessageCode(Period period) {
-            if(period.getDuration() == 1) {
-                return "per.day";
-            }
-            return "for.n.days";
         }
     };
 
@@ -87,28 +89,12 @@ public class Period{
         public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
             return subscriptionStartTimeSeconds + 7*(int) TimeUnit.DAYS.toSeconds(period.duration);
         }
-
-        @Override
-        public String toMessageCode(Period period) {
-            if(period.getDuration() == 1) {
-                return "per.week";
-            }
-            return "for.n.weeks";
-        }
     };
 
     private static final PeriodConverter MONTHS_PERIOD_CONVERTER = new PeriodConverter(){
         @Override
         public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
             return getNextSubPaymentForMonthlyPeriod(period, subscriptionStartTimeSeconds);
-        }
-
-        @Override
-        public String toMessageCode(Period period) {
-            if(period.getDuration() == 1) {
-                return "per.month";
-            }
-            return "for.n.months";
         }
     };
 
@@ -124,9 +110,8 @@ public class Period{
         DURATION_UNIT_PERIOD_CONVERTER_MAP = unmodifiableMap(map);
     }
 
-    public int toNextSubPaymentSeconds(int oldNextSubPaymentSeconds){
-        int subscriptionStartTimeSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
-        return DURATION_UNIT_PERIOD_CONVERTER_MAP.get(durationUnit).toNextSubPaymentSeconds(this, subscriptionStartTimeSeconds);
+    public int toNextSubPaymentSeconds(int oldNextSubPaymentSeconds) {
+        return DURATION_UNIT_PERIOD_CONVERTER_MAP.get(durationUnit).toNextSubPaymentSeconds(this, oldNextSubPaymentSeconds);
     }
 
     private static int getNextSubPaymentForMonthlyPeriod(Period period, int subscriptionStartTimeSeconds){
@@ -140,11 +125,5 @@ public class Period{
         return millisToIntSeconds(dateTime.getMillis());
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("duration", duration)
-                .append("durationUnit", durationUnit)
-                .toString();
-    }
+
 }
