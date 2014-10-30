@@ -241,9 +241,17 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     private Label getLabel(TrackDto trackDto) {
         String label = trackDto.getLabel();
         if (!StringUtils.isEmpty(label)){
-          return labelRepository.findByName(label);
+          Label result =  labelRepository.findByName(label);
+          return result != null ? result : createAndSaveLabel(label);
         }
         return null;
+    }
+
+    private Label createAndSaveLabel(String label) {
+        Label result = new Label();
+        result.setName(label);
+        labelRepository.save(result);
+        return result;
     }
 
     private String getiTunesURL(TrackDto sourceTrackDto) {
