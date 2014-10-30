@@ -37,15 +37,26 @@ function onCreateChartEditForm() {
 	var description = chart.description;
 	var imageTitle = chart.imageTitle;
 	var imageFileName = chart.imageFileName;
-	var imageFileUrl = filesURL+imageFileName;
+	var imageFileUrl = filesURL + imageFileName;
 	var chartDetailId = chart.chartDetailId;
 	var defaultChart = chart.defaultChart;
 	var chartType = chart.chartType;
-	
+    var fileNameAlias = chart.fileNameAlias;
+    var badgeFileUrl = null;
+    var badgeId = null;
+    var fileName = null;
+
+    if(fileNameAlias){
+        badgeFileUrl = filesURL + chart.fileNameAlias.fileName;
+        badgeId = fileNameAlias.id;
+        fileName= fileNameAlias.fileName;
+    }
+
 	var chartEditForm = $("form#chart-edit-form");
 	chartEditForm.find("input[name='id']").val(id);
 	chartEditForm.find("input[name='name']").val(name);
 	chartEditForm.find("input[name='subtitle']").val(subtitle);
+	chartEditForm.find("input[name='badgeId']").val(badgeId);
 	chartEditForm.find("input[name='position']").val(position);
 	chartEditForm.find("input[name='imageTitle']").val(imageTitle);
 	chartEditForm.find("input[name='description']").val(description);
@@ -54,6 +65,8 @@ function onCreateChartEditForm() {
 	chartEditForm.find("input[name='defaultChart']").val(defaultChart);
 	chartEditForm.find("input[name='chartType']").val(chartType);
 	chartEditForm.find(".addedImage").attr('src', imageFileUrl);	
+	chartEditForm.find(".badgeImage").attr('src', badgeFileUrl);
+	chartEditForm.find(".badgeImage").attr('title', fileName);
 };
 
 function getPosition(){

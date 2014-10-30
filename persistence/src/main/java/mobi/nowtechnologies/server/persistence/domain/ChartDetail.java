@@ -73,6 +73,9 @@ public class ChartDetail {
 	
 	private Boolean defaultChart;
 
+    @Column(name = "badge_filename_id")
+    private Long badgeId;
+
 	@Version
 	private Integer version;
 
@@ -259,8 +262,9 @@ public class ChartDetail {
 		newChartDetail.setChart(chartDetail.getChart());
 		newChartDetail.setChgPosition(chartDetail.getChgPosition());
 		newChartDetail.setInfo(chartDetail.getInfo());
-		if(chartDetail.getMedia() != null)
-			newChartDetail.setMedia(chartDetail.getMedia());
+		if(chartDetail.getMedia() != null) {
+            newChartDetail.setMedia(chartDetail.getMedia());
+        }
 		newChartDetail.setPosition(chartDetail.getPosition());
 		newChartDetail.setPrevPosition(chartDetail.getPrevPosition());
 		newChartDetail.setTitle(chartDetail.getTitle());
@@ -269,6 +273,7 @@ public class ChartDetail {
 		newChartDetail.setImageTitle(chartDetail.getImageTitle());
 		newChartDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
 		newChartDetail.setDefaultChart(chartDetail.getDefaultChart());
+        newChartDetail.setBadgeId(chartDetail.getBadgeId());
 
 		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
 		return newChartDetail;
@@ -309,6 +314,14 @@ public class ChartDetail {
         return this;
     }
 
+    public Long getBadgeId() {
+        return badgeId;
+    }
+
+    public void setBadgeId(Long badgeId) {
+        this.badgeId = badgeId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -327,6 +340,7 @@ public class ChartDetail {
                 .append("publishTimeMillis", publishTimeMillis)
                 .append("locked", locked)
                 .append("defaultChart", defaultChart)
+                .append("badgeId", badgeId)
                 .append("version", version)
                 .toString();
     }

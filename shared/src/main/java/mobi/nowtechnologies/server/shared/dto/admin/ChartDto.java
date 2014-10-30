@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-import mobi.nowtechnologies.server.validator.constraints.FileSize;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,8 +31,7 @@ public class ChartDto {
 	@NotNull
 	@Length(min = 1, max = 50)
 	private String subtitle;
-	
-	@FileSize(min = 1, max = 50000, message="file size must be from 1 to 50 kbytes")
+
 	private MultipartFile file;
 
 	private String imageFileName;
@@ -43,6 +43,10 @@ public class ChartDto {
 	private Boolean defaultChart;
 	
 	private ChartType chartType;
+
+    private FileNameAliasDto fileNameAlias;
+
+    private Long badgeId;
 
     public Integer getId() {
         return id;
@@ -132,10 +136,37 @@ public class ChartDto {
 		this.defaultChart = defaultChart;
 	}
 
-	@Override
-	public String toString() {
-		return "ChartDto [id=" + id + ", chartDetailId=" + chartDetailId + ", position=" + position + ", name=" + name + ", subtitle=" + subtitle + ", file=" + file + ", imageFileName="
-				+ imageFileName + ", imageTitle=" + imageTitle + ", description=" + description + ", defaultChart=" + defaultChart + ", chartType=" + chartType + "]";
-	}
+    public FileNameAliasDto getFileNameAlias() {
+        return fileNameAlias;
+    }
 
+    public void setFileNameAlias(FileNameAliasDto fileNameAlias) {
+        this.fileNameAlias = fileNameAlias;
+    }
+
+    public Long getBadgeId() {
+        return badgeId;
+    }
+
+    public void setBadgeId(Long badgeId) {
+        this.badgeId = badgeId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("chartDetailId", chartDetailId)
+                .append("position", position)
+                .append("name", name)
+                .append("subtitle", subtitle)
+                .append("file", file)
+                .append("imageFileName", imageFileName)
+                .append("imageTitle", imageTitle)
+                .append("description", description)
+                .append("defaultChart", defaultChart)
+                .append("chartType", chartType)
+                .append("fileNameAlias", fileNameAlias)
+                .toString();
+    }
 }

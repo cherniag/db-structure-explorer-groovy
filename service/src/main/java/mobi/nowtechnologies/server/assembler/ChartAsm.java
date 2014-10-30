@@ -1,18 +1,20 @@
 package mobi.nowtechnologies.server.assembler;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
+import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -21,8 +23,10 @@ import org.slf4j.LoggerFactory;
 public class ChartAsm extends ModelMapper{
 	protected final static ModelMapper modelMapper = new ChartAsm();
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartAsm.class);
+
+    private FilenameAliasRepository filenameAliasRepository;
 	
-	private ChartAsm(){
+	public ChartAsm(){
 		this.addMappings(new PropertyMap<ChartDetail, PlaylistDto>() {
 			@Override
 			protected void configure() {
@@ -35,30 +39,31 @@ public class ChartAsm extends ModelMapper{
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<ChartDto> toChartDtos(List<ChartDetail> chartDetails) {
+	public List<ChartDto> toChartDtos(List<ChartDetail> chartDetails) {
 		LOGGER.debug("input parameters charts: [{}]", chartDetails);
 
 		if (!chartDetails.isEmpty()) {
             List<ChartDto> chartDtos = new LinkedList<ChartDto>();
 			for (ChartDetail chartDetail: chartDetails) {
-				chartDtos.add(ChartAsm.toChartDto(chartDetail));
+				chartDtos.add(toChartDto(chartDetail));
 			}
             return chartDtos;
 		}
         return Collections.EMPTY_LIST;
 	}
 
-	public static ChartDto toChartDto(ChartDetail chartDetail) {
+	public ChartDto toChartDto(ChartDetail chartDetail) {
 		LOGGER.debug("input parameters chartDetail: [{}]", chartDetail);
-		if(chartDetail.isChartItem())
-			throw new IllegalArgumentException("ChartDetail is chart item(not details of chart)");
+
+		if(chartDetail.isChartItem()) {
+            throw new IllegalArgumentException("ChartDetail is chart item(not details of chart)");
+        }
 		
 		ChartDto chartDto = new ChartDto();
 		
 		Chart chart = chartDetail.getChart();
 		
 		chartDto.setId(chart.getI());
-		
 		chartDto.setName(chartDetail.getTitle() != null ? chartDetail.getTitle() : chart.getName());
 		chartDto.setChartDetailId(chartDetail.getI());
 		chartDto.setPosition(chartDetail.getTitle() != null ? chartDetail.getPosition() : null);
@@ -68,12 +73,13 @@ public class ChartAsm extends ModelMapper{
 		chartDto.setImageTitle(chartDetail.getImageTitle());
 		chartDto.setChartType(chart.getType());
 		chartDto.setDescription(chartDetail.getInfo());
+        chartDto.setFileNameAlias(getBadgeFilenameAliasDto(chartDetail.getBadgeId()));
 		
 		LOGGER.info("Output parameter chartDto=[{}]", chartDto);
 		return chartDto;
 	}
 	
-	public static ChartDetail toChart(ChartDto chartDto) {
+	public ChartDetail toChart(ChartDto chartDto) {
 		LOGGER.debug("input parameters chart: [{}]", chartDto);
 		
 		Chart chart = new Chart();
@@ -89,7 +95,8 @@ public class ChartAsm extends ModelMapper{
 		chartDetail.setImageTitle(chartDto.getImageTitle());
 		chartDetail.setInfo(chartDto.getDescription());
 		chartDetail.setImageFileName(chartDto.getImageFileName());
-		
+        chartDetail.setBadgeId(chartDto.getBadgeId());
+
 		if (null != chartDto.getFile() && !chartDto.getFile().isEmpty()) {
 			Integer id = chart.getI() != null ? chart.getI() : (int)(Math.random() * 100);
 			String imageFileName = "CHART_" + System.currentTimeMillis() + "_" + id;
@@ -101,14 +108,37 @@ public class ChartAsm extends ModelMapper{
 	}
 	
 	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail,final boolean switchable) {
-		LOGGER.debug("input parameters chart: [{}], [{}]", chartDetail);
+		LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
 		
 		PlaylistDto playlistDto = modelMapper.map(chartDetail, PlaylistDto.class);
-		playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI().intValue() : null);
+		playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI() : null);
 		playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
 		playlistDto.setSwitchable(switchable);
 		
 		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
 		return playlistDto;
 	}
+
+    private FileNameAliasDto getBadgeFilenameAliasDto(Long badgeId) {
+        if(badgeId == null) {
+            return null;
+        }
+
+        FilenameAlias filenameAlias = filenameAliasRepository.findOne(badgeId);
+
+        if(filenameAlias == null) {
+            return null;
+        } else {
+            FileNameAliasDto dto = new FileNameAliasDto();
+            dto.setId(filenameAlias.getId());
+            dto.setFileName(filenameAlias.getFileName());
+            dto.setAlias(filenameAlias.getAlias());
+            return dto;
+        }
+    }
+
+
+    public void setFilenameAliasRepository(FilenameAliasRepository filenameAliasRepository) {
+        this.filenameAliasRepository = filenameAliasRepository;
+    }
 }

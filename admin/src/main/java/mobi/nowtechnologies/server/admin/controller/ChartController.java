@@ -45,30 +45,7 @@ public class ChartController extends AbstractCommonController {
 	private String chartFilesURL;
 	private Map<ChartType, String> viewByChartType;
     private CommunityRepository communityRepository;
-
-	public void setViewByChartType(Map<ChartType, String> viewByChartType) {
-		this.viewByChartType = viewByChartType;
-	}
-
-	public void setChartService(ChartService chartService) {
-		this.chartService = chartService;
-	}
-
-	public void setChartItemController(ChartItemController chartItemController) {
-		this.chartItemController = chartItemController;
-	}
-
-	public void setFilesURL(String filesURL) {
-		this.filesURL = filesURL;
-	}
-	
-	public void setChartFilesURL(String chartFilesURL) {
-		this.chartFilesURL = chartFilesURL;
-	}
-
-    public void setCommunityRepository(CommunityRepository communityRepository) {
-        this.communityRepository = communityRepository;
-    }
+    private ChartAsm chartAsm;
 
     @InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -94,30 +71,30 @@ public class ChartController extends AbstractCommonController {
 
         String communityURL = RequestUtils.getCommunityURL();
         List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, null);
-        List<ChartDto> chartDtos = ChartAsm.toChartDtos(charts);
+        List<ChartDto> chartDTOs = chartAsm.toChartDtos(charts);
 
         return new ModelAndView("charts/charts")
-                .addObject(ChartDto.CHART_DTO_LIST, chartDtos);
+                .addObject(ChartDto.CHART_DTO_LIST, chartDTOs);
     }
 
     @RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.POST)
 	public ModelAndView updateChart(
-			@PathVariable("chartId") Integer chartId,
-			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
-			@Valid @ModelAttribute(ChartDto.CHART_DTO) ChartDto chartDto,
-            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl,
-			BindingResult bindingResult,
-			Locale locale
-			) {
+                            @PathVariable("chartId") Integer chartId,
+                            @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
+                            @Valid @ModelAttribute(ChartDto.CHART_DTO) ChartDto chartDto,
+                            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl,
+                            BindingResult bindingResult,
+                            Locale locale
+                            ) {
 
         Community community = communityRepository.findByName(communityRewriteUrl);
 
-        LOGGER.debug("input parameters chartDto, chartId: [{}], [{}], [{}]", new Object[] { chartDto, chartId});
+        LOGGER.info("input parameters chartId=[{}], chartDto=[{}], selectedPublishDateTime=[{}], communityRewriteUrl=[{}]", chartId, chartDto, selectedPublishDateTime, communityRewriteUrl);
 
 		ModelAndView modelAndView;
 		
 		if(!bindingResult.hasErrors()){			
-			ChartDetail chartDetail = ChartAsm.toChart(chartDto);
+			ChartDetail chartDetail = chartAsm.toChart(chartDto);
 			chartDetail.setPublishTimeMillis(selectedPublishDateTime.getTime());
 			chartService.updateChart(chartDetail, chartDto.getFile(), community);
 			modelAndView = new ModelAndView("redirect:/charts/" + chartId);
@@ -131,29 +108,41 @@ public class ChartController extends AbstractCommonController {
 
 	@RequestMapping(value = "/charts/{chartId}", method = RequestMethod.GET)
 	public ModelAndView getChartCalendarPage(
-			HttpServletRequest request,
-			@RequestParam(required = false, value = "selectedPublishDateTime", defaultValue = "") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
-			@PathVariable("chartId") Integer chartId) {
+                            @RequestParam(required = false, value = "selectedPublishDateTime", defaultValue = "") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
+                            @PathVariable("chartId") Integer chartId) {
 
-		LOGGER.debug("input parameters request, selectedPublishDateTime, chartId: [{}], [{}], [{}]", new Object[] { request, selectedPublishDateTime, chartId });
+		LOGGER.debug("input parameters selectedPublishDateTime, chartId: [{}], [{}], [{}]", selectedPublishDateTime, chartId);
 
-		if (selectedPublishDateTime == null)
-			selectedPublishDateTime = new Date();
+		if (selectedPublishDateTime == null) {
+            selectedPublishDateTime = new Date();
+        }
 
 		Chart chart = chartService.getChartById(chartId);
 		ChartDetail chartDetail = chartService.getChartDetails(Collections.singletonList(chart), selectedPublishDateTime, false).get(0);
 		List<ChartDetail> chartItems = chartService.getActualChartItems(chartId, selectedPublishDateTime);
-		List<ChartItemDto> chartItemDtos = ChartDetailsAsm.toChartItemDtos(chartItems);
-		ChartDto chartDto = ChartAsm.toChartDto(chartDetail);
+		List<ChartItemDto> chartItemDTOs = ChartDetailsAsm.toChartItemDtos(chartItems);
+		ChartDto chartDto = chartAsm.toChartDto(chartDetail);
 
         return new ModelAndView(viewByChartType.get(chart.getType()))
-		.addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDtos)
-		.addObject("selectedPublishDateTime", getSelectedPublishDateAsString(selectedPublishDateTime, chartItemDtos))
-		.addObject("selectedDateTime", selectedPublishDateTime)
-		.addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId))
-		.addObject("filesURL", filesURL)
-		.addObject("chartFilesURL", chartFilesURL)
-		.addObject("chart", chartDto);
+                    .addObject(ChartItemDto.CHART_ITEM_DTO_LIST, chartItemDTOs)
+                    .addObject("selectedPublishDateTime", getSelectedPublishDateAsString(selectedPublishDateTime, chartItemDTOs))
+                    .addObject("selectedDateTime", selectedPublishDateTime)
+                    .addObject("allPublishTimeMillis", chartService.getAllPublishTimeMillis(chartId))
+                    .addObject("filesURL", filesURL)
+                    .addObject("chartFilesURL", chartFilesURL)
+                    .addObject("chart", chartDto);
+	}
+
+
+	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.DELETE)
+	public ModelAndView deleteChartItems(
+                            @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime,
+                            @PathVariable("chartId") Integer chartId) {
+
+		LOGGER.debug("input parameters selectedPublishDateTime=[{}], chartId=[{}]", selectedPublishDateTime, chartId);
+
+		chartService.deleteChartItems(chartId, selectedPublishDateTime);
+        return new ModelAndView("redirect:/charts/" + chartId);
 	}
 
     private String getSelectedPublishDateAsString(Date selectedPublishDateTime, List<ChartItemDto> chartItemDtos) {
@@ -165,23 +154,31 @@ public class ChartController extends AbstractCommonController {
         }
     }
 
-    /**
-	 * Delete chart items for selected date
-	 * 
-	 * @param request
-	 * @param selectedPublishDateTime
-	 *            - selected date and time for which we delete chart items
-	 * @return
-	 */
-	@RequestMapping(value = "/charts/{chartId}/{selectedPublishDateTime}", method = RequestMethod.DELETE)
-	public ModelAndView deleteChartItems(HttpServletRequest request,
-			@PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
+    public void setViewByChartType(Map<ChartType, String> viewByChartType) {
+        this.viewByChartType = viewByChartType;
+    }
 
-		LOGGER.debug("input parameters request, selectedPublishDateTime, chartId: [{}], [{}], [{}]", new Object[] { request,
-				selectedPublishDateTime, chartId });
+    public void setChartService(ChartService chartService) {
+        this.chartService = chartService;
+    }
 
-		chartService.deleteChartItems(chartId, selectedPublishDateTime);
-		ModelAndView modelAndView = new ModelAndView("redirect:/charts/" + chartId);
-		return modelAndView;
-	}
+    public void setChartItemController(ChartItemController chartItemController) {
+        this.chartItemController = chartItemController;
+    }
+
+    public void setFilesURL(String filesURL) {
+        this.filesURL = filesURL;
+    }
+
+    public void setChartFilesURL(String chartFilesURL) {
+        this.chartFilesURL = chartFilesURL;
+    }
+
+    public void setCommunityRepository(CommunityRepository communityRepository) {
+        this.communityRepository = communityRepository;
+    }
+
+    public void setChartAsm(ChartAsm chartAsm) {
+        this.chartAsm = chartAsm;
+    }
 }

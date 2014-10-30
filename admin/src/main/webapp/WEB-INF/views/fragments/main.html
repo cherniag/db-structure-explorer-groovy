@@ -151,10 +151,11 @@ section {
 				<input type="hidden" name="imageFileName" />
 				<input type="hidden" name="position" />
 				<input type="hidden" name="defaultChart" />
-				<input type="hidden" name="hasErrors" th:value="${#fields.hasErrors('*')}"/>				
+				<input type="hidden" name="badgeId" />
+				<input type="hidden" name="hasErrors" th:value="${#fields.hasErrors('*')}"/>
 				<div class="filtersSelect">
 					<div id="selectImageDiv">
-						<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.image}">Select Image:</strong></label> <img class="addedImage" src="###" width="240" height="180" /> 
+						<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.image}">Select Image:</strong></label> <img class="addedImage" src="###" width="640" height="580" />
 						<br />
 						<br /> 
 						<input id="file" name="file" type="file" accept="image" />
@@ -163,7 +164,15 @@ section {
 						Wrong image
 					</p>
 				</div>
-				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.title}">Title:</strong></label> <input type="text" maxlength="50" name="name" style="width: 98%;" />
+                <label><strong th:text="#{chartItems.page.chart.edit.dialog.item.badge}">Select badge:</strong></label>
+                <img class="badgeImage" src="###" alt="No badge selected" width="70" height="70" title=""
+                     onclick="Dialogs.badgePicker.show(
+                        {
+                            id:$('#chart-edit-form').find('input[name=badgeId]').val(),
+                            fileName:$('#chart-edit-form').find('img.badgeImage').attr('title')
+                        }
+                     )"/>
+				<label style="margin-top: 20px;"><strong th:text="#{chartItems.page.chart.edit.dialog.item.title}">Title:</strong></label> <input type="text" maxlength="50" name="name" style="width: 98%;" />
 				<p class="hasError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
 						Wrong title value
 				</p>
@@ -195,6 +204,7 @@ section {
 				chart.chartDetailId = /*[[${chart.chartDetailId}]]*/ '1';
 				chart.defaultChart = /*[[${chart.defaultChart}]]*/ 'false';
 				chart.chartType = /*[[${chart.chartType.name()}]]*/ 'BASIC_CHART';
+                chart.fileNameAlias = /*[[${chart.fileNameAlias}]]*/ {};
 		/*]]>*/</script>
 	</div>
 

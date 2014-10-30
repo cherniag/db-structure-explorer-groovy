@@ -413,6 +413,53 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade sz-dialog-init" id="badgePickerId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header draggable-cursor">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Manage badges</h4>
+            </div>
+            <div>
+                <div class="loading-container" style="margin-top:20px;"><img src="/jadmin/assets/img/loading-thumb-small.gif" /></div>
+                <ul class="table headerFrame sz-badges-grid">
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="submit">Unassign</button>
+                <button class="btn btn-primary" type="submit">Save</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true" type="submit">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/assets/js/streamzine/template.js}">
+</script>
+<script th:src="@{/assets/js/streamzine/badges/badges.js}">
+</script>
+<script th:inline="javascript">
+    var badgesGetAll = /*[[@{__${'/streamzine/badges/list.json'}__}]]*/ '#';
+    var badgesUpdateName = /*[[@{__${'/streamzine/badges/update.json'}__}]]*/ '#';
+    var imagesBaseUrl = /*[[@{__${chartFilesURL}__}]]*/ '###';
+    var Dialogs = {};
+    var badgeSaveHandler = function(value){
+        if(value){
+            $("#chart-edit-form input[name=badgeId]").val(value.id);
+            var badgeFileUrl = filesURL + value.fileName;
+            $("#chart-edit-form img.badgeImage").attr('src', badgeFileUrl);
+            $("#chart-edit-form img.badgeImage").attr('title', value.fileName);
+        }else{
+            $("#chart-edit-form input[name=badgeId]").val(null);
+            $("#chart-edit-form img.badgeImage").attr('src', '###');
+            $("#chart-edit-form img.badgeImage").attr('title', '');
+        }
+    }
+
+    $(function() {
+        Dialogs.badgePicker = new BadgePicker('badgePickerId', badgeSaveHandler, badgesGetAll, badgesUpdateName, imagesBaseUrl);
+    });
+</script>
 <script th:inline="javascript">/*<![CDATA[*/
 var $saving = false;
 var $sameMediaError = /*[[#{chartItems.error.sameMedia}]]*/ 'Chart Item with same media already exists!';

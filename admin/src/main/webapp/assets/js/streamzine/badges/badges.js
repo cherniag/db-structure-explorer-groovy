@@ -460,5 +460,163 @@ if(Badges == undefined) {
             _genericDialog.show();
         }
     };
+
+    var BadgePicker = function(dialogId, okHandler, badgesGetAll, badgesUpdateName, imagesBaseUrl) {
+        var _genericDialog = new GenericDialog(dialogId, okHandler, beforeShow).markAsOptional();
+
+        var _rowTemplate = '<li class="streamzine-playlist-picker-item" data-id="{id}" data-name="{fileName}"><div><img src="{src}" height="50px"/></div></li>';
+        var _renTemplate = '<a href="javascript:;" data-id="{a.id}">{a.alias}</a>';
+        var _renTemplateEmpty = '<a href="javascript:;" data-id="{a.id}">No name</a>';
+        var _inPlaceEditorTextTemplate = '<input type="text" maxlength="128" value="{alias}"/>';
+        var _inPlaceEditorDoneTemplate = '<a href="javascript:;">Done</a>';
+        //
+        // Construction
+        //
+        init();
+
+        var array = [];
+
+        //
+        // Internal functions
+        //
+        function init() {
+            $('#' + dialogId + ' ul.table').selectable({
+                selected: function( event, ui ) {
+                    var id = $(ui.selected).attr('data-id');
+
+                    for(var i=0; i<array.length; i++) {
+                        if(array[i].id == id) {
+                            _genericDialog.setValue(array[i]);
+                        }
+                    }
+                }
+            });
+
+            $('div#' + dialogId + ' button.btn-warning').click(unAssignBadgeHandler);
+        }
+
+        function unAssignBadgeHandler() {
+            if(_genericDialog.getValue()) {
+                _genericDialog.setValue(null);
+                loadNames();
+            }
+        }
+
+        function beforeShow() {
+            loadNames();
+        }
+
+        function getGrid() {
+            return $('#' + dialogId + ' ul');
+        }
+
+        function fillGrid(data) {
+            array = data['fileNames'];
+            for(var i=0; i < array.length; i++) {
+                var a = array[i];
+
+                var row = $(Template.render(_rowTemplate, {
+                    src: imagesBaseUrl + a.fileName,
+                    fileName: a.fileName,
+                    alias: a.fileName,
+                    id: a.id
+                }));
+
+                getGrid().append(
+                    fillRow(row, a)
+                );
+            }
+        }
+
+        function fillRow(row, a) {
+            var nameLink = (a.alias) ? $(Template.render(_renTemplate, {a: a})) : $(Template.render(_renTemplateEmpty, {a: a}));
+
+            nameLink.click(function(ui) {
+                renameItem(ui, a)
+            });
+
+            return row.append($('<div></div>').append(nameLink));
+        }
+
+        function request(url, data, success) {
+            $.ajax({
+                url : url,
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "GET",
+                data: data || {},
+                success : function(d, t) {
+                    success(d, t);
+                },
+                error: function() {
+                    alert('Server error');
+                }
+            });
+        }
+
+        function loadNames() {
+            _showLoadingBar();
+            getGrid().empty();
+
+            request(badgesGetAll, null, function(data, textStatus) {
+                _hideLoadingBar();
+                fillGrid(data);
+                highlightBadge();
+            });
+        }
+
+        function highlightBadge() {
+            var theValue = _genericDialog.getValue();
+            if(theValue) {
+                $('#' + dialogId + ' li[data-id="' + theValue.id + '"]').addClass('ui-selected');
+            }
+        }
+
+        function _hideLoadingBar() {
+            $('#' + dialogId + ' .loading-container').hide();
+        }
+
+        function _showLoadingBar() {
+            $('#' + dialogId + ' .loading-container').show();
+        }
+
+        function renameItem(ui, a) {
+            var link = $(ui.target);
+            var placeToPut = link.parent();
+            link.remove();
+
+            var wrapper = $('<div></div>');
+            var text = $(Template.render(_inPlaceEditorTextTemplate, {alias: a.alias}));
+            var done = $(Template.render(_inPlaceEditorDoneTemplate, {}));
+            wrapper.append(text).append(done);
+            placeToPut.append(wrapper);
+
+            done.click(function() {
+                var newName = text.val();
+
+                if(newName != a.alias) {
+                    _showLoadingBar();
+                    request(badgesUpdateName, {id: a.id, newName: newName}, function(data) {
+                        _hideLoadingBar();
+                        getGrid().empty();
+                        fillGrid(data);
+                    });
+                } else {
+                    var nameLink = (a.alias) ? $(Template.render(_renTemplate, {a: a})) : $(Template.render(_renTemplateEmpty, {a: a}));
+                    nameLink.click(function(ui) {renameItem(ui, a)});
+                    wrapper.empty().append(nameLink);
+                }
+            });
+        }
+
+        //
+        // API
+        //
+        this.show = function(selectedId) {
+            _genericDialog.originalValue(selectedId);
+            _genericDialog.setValue(selectedId);
+            _genericDialog.show();
+        }
+    };
 }
 

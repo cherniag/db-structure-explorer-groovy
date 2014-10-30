@@ -80,7 +80,8 @@
 		<property name="chartItemController" ref="admin.ChartItemController" />
 		<property name="viewByChartType" ref="chartViewByChartType"/>
 		<property name="communityRepository" ref="communityRepository"/>
-	</bean>
+        <property name="chartAsm" ref="chartAsm"/>
+    </bean>
 	
 	<bean name="admin.ChartItemController"
 		class="mobi.nowtechnologies.server.admin.controller.ChartItemController" parent="admin.CommonChartController">
@@ -88,7 +89,12 @@
 		<property name="mediaService" ref="service.MediaService" />
 		<property name="viewByChartType" ref="chartItemsViewByChartType"/>
         <property name="trackRepoService" ref="service.TrackRepoService" />
+        <property name="chartAsm" ref="chartAsm"/>
 	</bean>
+
+    <bean id="chartAsm" class="mobi.nowtechnologies.server.assembler.ChartAsm">
+        <property name="filenameAliasRepository" ref="filenameAliasRepository"/>
+    </bean>
 	
 	<bean name="admin.UserController"
 		class="mobi.nowtechnologies.server.admin.controller.UserController">

@@ -1,0 +1,2 @@
+alter table tb_chartDetail add column badge_filename_id bigint(20);
+alter table tb_chartDetail add CONSTRAINT `badge_filename_id_fk` FOREIGN KEY (`badge_filename_id`) REFERENCES `sz_filename_alias` (`id`);
