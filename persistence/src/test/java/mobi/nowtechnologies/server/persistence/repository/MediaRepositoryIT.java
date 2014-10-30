@@ -29,7 +29,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         Artist artist = artistRepository.save(new Artist().withName("artist name"));
         MediaFile audioMediaFile = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(mediaType).withName(MOBILE_AUDIO.name())));
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
-        Label label = labelRepository.findOne((byte)9);
+        Label label = labelRepository.findOne(9L);
 
         Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
@@ -50,7 +50,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         Artist artist = artistRepository.save(new Artist().withName("artist name"));
         MediaFile audioMediaFile = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(mediaType).withName(VIDEO.name())));
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
-        Label label = labelRepository.findOne((byte)9);
+        Label label = labelRepository.findOne(9L);
 
         Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
@@ -71,7 +71,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         Artist artist = artistRepository.save(new Artist().withName("artist name"));
         MediaFile audioMediaFile = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(mediaType).withName(MOBILE_AUDIO.name())));
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
-        Label label = labelRepository.findOne((byte)9);
+        Label label = labelRepository.findOne(9L);
 
         Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
@@ -92,7 +92,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         Artist artist = artistRepository.save(new Artist().withName("artist name"));
         MediaFile audioMediaFile = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(mediaType).withName(VIDEO.name())));
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
-        Label label = labelRepository.findOne((byte)9);
+        Label label = labelRepository.findOne(9L);
 
         Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
@@ -113,7 +113,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         Artist artist = artistRepository.save(new Artist().withName("artist name"));
         MediaFile audioMediaFile = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(mediaType).withName(MOBILE_AUDIO.name())));
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
-        Label label = labelRepository.findOne((byte)9);
+        Label label = labelRepository.findOne(9L);
 
         Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
@@ -134,7 +134,7 @@ public class MediaRepositoryIT extends AbstractRepositoryIT {
         Artist artist = artistRepository.save(new Artist().withName("artist name"));
         MediaFile audioMediaFile = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(mediaType).withName(VIDEO.name())));
         MediaFile imageFileSmall = mediaFileRepository.save(new MediaFile().withFileType(new FileType().withI(IMAGE.getIdAsByte()).withName(IMAGE.name())));
-        Label label = labelRepository.findOne((byte)9);
+        Label label = labelRepository.findOne(9L);
 
         Media media = mediaRepository.save(new Media().withIsrc("media isrc").withTitle("media title").withLabel(label).withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmall).withTrackId(1L));
 
