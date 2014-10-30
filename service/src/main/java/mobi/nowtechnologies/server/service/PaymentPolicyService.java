@@ -25,6 +25,7 @@ import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
@@ -131,7 +132,8 @@ public class PaymentPolicyService {
         sort(paymentPolicies, new Comparator<PaymentPolicy>() {
             @Override
             public int compare(PaymentPolicy p1, PaymentPolicy p2) {
-                return p2.getPeriod().toNextSubPaymentSeconds(0) - p1.getPeriod().toNextSubPaymentSeconds(0);
+                int nextSeconds = getEpochSeconds();
+                return p2.getPeriod().toNextSubPaymentSeconds(nextSeconds) - p1.getPeriod().toNextSubPaymentSeconds(nextSeconds);
             }
         });
         return mergePaymentPolicies(user, paymentPolicies);

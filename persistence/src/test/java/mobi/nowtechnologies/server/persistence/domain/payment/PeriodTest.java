@@ -8,7 +8,9 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static java.lang.Math.max;
 import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.*;
 import static org.hamcrest.core.Is.is;
 import static org.joda.time.DateTimeFieldType.dayOfMonth;
@@ -35,7 +37,8 @@ public class PeriodTest {
         when(Utils.getEpochSeconds()).thenReturn(WEEK_SECONDS);
 
         //when
-        int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(oldNextSubPaymentSeconds);
+        int nextSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
+        int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(nextSeconds);
 
         //then
         assertThat(newNextSubPaymentSeconds, is(2*WEEK_SECONDS));
@@ -51,7 +54,8 @@ public class PeriodTest {
         when(Utils.getEpochSeconds()).thenReturn(2*WEEK_SECONDS);
 
         //when
-        int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(oldNextSubPaymentSeconds);
+        int nextSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
+        int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(nextSeconds);
 
         //then
         assertThat(newNextSubPaymentSeconds, is(3*WEEK_SECONDS));
@@ -89,7 +93,8 @@ public class PeriodTest {
         when(Utils.millisToIntSeconds(expectedNewNextSubPaymentMillis)).thenReturn(expectedNewNextSubPaymentSeconds);
 
         //when
-        int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(oldNextSubPaymentSeconds);
+        int nextSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
+        int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(nextSeconds);
 
         //then
         assertThat(newNextSubPaymentSeconds, is(expectedNewNextSubPaymentSeconds));
