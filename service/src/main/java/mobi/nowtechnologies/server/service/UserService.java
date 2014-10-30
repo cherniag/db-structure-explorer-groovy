@@ -753,8 +753,8 @@ public class UserService {
             user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
             user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
         } else{
-            int nextSecondsToPay = max(getEpochSeconds(), user.getNextSubPayment());
-            user.setNextSubPayment(period.toNextSubPaymentSeconds(nextSecondsToPay));
+            int subscriptionStartTimeSeconds = max(getEpochSeconds(), user.getNextSubPayment());
+            user.setNextSubPayment(period.toNextSubPaymentSeconds(subscriptionStartTimeSeconds));
         }
 
         if(paymentSystem.equals(VF_PSMS_TYPE)){

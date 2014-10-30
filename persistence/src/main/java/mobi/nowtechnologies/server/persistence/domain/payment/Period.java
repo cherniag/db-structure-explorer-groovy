@@ -61,63 +61,23 @@ public class Period{
         return 1 == duration;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("duration", duration)
-                .append("durationUnit", durationUnit)
-                .toString();
-    }
-
-
-
-
-
-    private static interface PeriodConverter{
-        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds);
-    }
-
-    private static final PeriodConverter DAYS_PERIOD_CONVERTER = new PeriodConverter(){
-        @Override
-        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
-            return subscriptionStartTimeSeconds + (int) TimeUnit.DAYS.toSeconds(period.getDuration());
+    public int toNextSubPaymentSeconds(int subscriptionStartTimeSeconds) {
+        switch (durationUnit){
+            case DAYS:
+                return subscriptionStartTimeSeconds + (int) TimeUnit.DAYS.toSeconds(duration);
+            case WEEKS:
+                return subscriptionStartTimeSeconds + 7*(int) TimeUnit.DAYS.toSeconds(duration);
+            case MONTHS:
+                return getNextSubPaymentForMonthlyPeriod(subscriptionStartTimeSeconds);
+            default:
+                throw new IllegalArgumentException("Unsupported duration unit " + durationUnit);
         }
-    };
-
-    private static final PeriodConverter WEEKS_PERIOD_CONVERTER = new PeriodConverter(){
-        @Override
-        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
-            return subscriptionStartTimeSeconds + 7*(int) TimeUnit.DAYS.toSeconds(period.duration);
-        }
-    };
-
-    private static final PeriodConverter MONTHS_PERIOD_CONVERTER = new PeriodConverter(){
-        @Override
-        public int toNextSubPaymentSeconds(Period period, int subscriptionStartTimeSeconds) {
-            return getNextSubPaymentForMonthlyPeriod(period, subscriptionStartTimeSeconds);
-        }
-    };
-
-    private static final Map<DurationUnit, PeriodConverter> DURATION_UNIT_PERIOD_CONVERTER_MAP;
-
-    static{
-        Map<DurationUnit, PeriodConverter> map = new EnumMap<DurationUnit, PeriodConverter>(DurationUnit.class);
-
-        map.put(DAYS, DAYS_PERIOD_CONVERTER);
-        map.put(WEEKS, WEEKS_PERIOD_CONVERTER);
-        map.put(MONTHS, MONTHS_PERIOD_CONVERTER);
-
-        DURATION_UNIT_PERIOD_CONVERTER_MAP = unmodifiableMap(map);
     }
 
-    public int toNextSubPaymentSeconds(int oldNextSubPaymentSeconds) {
-        return DURATION_UNIT_PERIOD_CONVERTER_MAP.get(durationUnit).toNextSubPaymentSeconds(this, oldNextSubPaymentSeconds);
-    }
-
-    private static int getNextSubPaymentForMonthlyPeriod(Period period, int subscriptionStartTimeSeconds){
+    private int getNextSubPaymentForMonthlyPeriod(int subscriptionStartTimeSeconds){
         DateTime dateTime = new DateTime(secondsToMillis(subscriptionStartTimeSeconds), UTC);
         int dayOfMonthBefore = dateTime.get(dayOfMonth());
-        dateTime = dateTime.plus(months(period.getDurationAsInt()));
+        dateTime = dateTime.plus(months(getDurationAsInt()));
         int dayOfMonthAfter = dateTime.get(dayOfMonth());
         if (dayOfMonthBefore != dayOfMonthAfter) {
             dateTime = dateTime.plus(days(1));
@@ -125,5 +85,12 @@ public class Period{
         return millisToIntSeconds(dateTime.getMillis());
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("duration", duration)
+                .append("durationUnit", durationUnit)
+                .toString();
+    }
 
 }
