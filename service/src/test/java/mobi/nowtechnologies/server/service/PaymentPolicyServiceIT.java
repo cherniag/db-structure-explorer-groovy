@@ -29,6 +29,7 @@ import static junit.framework.Assert.assertEquals;
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
@@ -552,8 +553,6 @@ public class PaymentPolicyServiceIT {
         assertThat(paymentPolicyDtos.get(2).getId(), is(o2PAYMConsumer1PoundPaymentPolicy.getId()));
     }
 
-
-
     @Test(expected = IncorrectResultSizeDataAccessException.class)
     public void testGetPaymentPolicyFor2SamePolicies(){
         PaymentPolicy paymentPolicy1 =  paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withSubCost(new BigDecimal("4.99")
@@ -581,7 +580,38 @@ public class PaymentPolicyServiceIT {
         assertEquals(resultPolicy, paymentPolicy1);
     }
 
+    @Test
+    public void shouldReturnSortedPaymentPolicies(){
+        //given
+        User user = new User().withTariff(_3G).withUserGroup(o2UserGroup).withProvider(O2).withContract(PAYG).withSegment(CONSUMER);
 
+        PaymentPolicy twoMonthsPaymentPolicy = new PaymentPolicy();
+        PaymentPolicy sevenWeeksPaymentPolicy = new PaymentPolicy();
+        PaymentPolicy fortyDaysPaymentPolicy = new PaymentPolicy();
+        PaymentPolicy oneMonthPaymentPolicy = new PaymentPolicy();
+
+        BeanUtils.copyProperties(paymentPolicy96, twoMonthsPaymentPolicy);
+        BeanUtils.copyProperties(paymentPolicy96, sevenWeeksPaymentPolicy);
+        BeanUtils.copyProperties(paymentPolicy96, fortyDaysPaymentPolicy);
+        BeanUtils.copyProperties(paymentPolicy96, oneMonthPaymentPolicy);
+
+        twoMonthsPaymentPolicy = paymentPolicyRepository.save(twoMonthsPaymentPolicy.withPeriod(new Period().withDuration(2).withDurationUnit(MONTHS)).withContract(PAYG).withOnline(true).withId(null));
+        sevenWeeksPaymentPolicy = paymentPolicyRepository.save(sevenWeeksPaymentPolicy.withPeriod(new Period().withDuration(7).withDurationUnit(WEEKS)).withContract(PAYG).withOnline(true).withId(null));
+        fortyDaysPaymentPolicy = paymentPolicyRepository.save(fortyDaysPaymentPolicy.withPeriod(new Period().withDuration(40).withDurationUnit(DAYS)).withContract(PAYG).withOnline(true).withId(null));
+        oneMonthPaymentPolicy = paymentPolicyRepository.save(oneMonthPaymentPolicy.withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withContract(PAYG).withOnline(true).withId(null));
+
+        turnOffOldO2ConsumerO2PsmsPaymentPolicies();
+
+        //when
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
+
+        //then
+        assertThat(paymentPolicyDtos.size(), is(4));
+        assertThat(paymentPolicyDtos.get(0).getId(), is(twoMonthsPaymentPolicy.getId()));
+        assertThat(paymentPolicyDtos.get(1).getId(), is(oneMonthPaymentPolicy.getId()));
+        assertThat(paymentPolicyDtos.get(2).getId(), is(sevenWeeksPaymentPolicy.getId()));
+        assertThat(paymentPolicyDtos.get(3).getId(), is(fortyDaysPaymentPolicy.getId()));
+    }
 
     private void turnOffOldO2ConsumerO2PsmsPaymentPolicies() {
         paymentPolicy96 = paymentPolicyRepository.save(paymentPolicy96.withOnline(false));

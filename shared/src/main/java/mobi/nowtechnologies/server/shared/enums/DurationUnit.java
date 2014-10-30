@@ -7,13 +7,13 @@ public enum DurationUnit {
     public int compareWith(DurationUnit durationUnit){
         switch (this){
             case DAYS:
-                return durationUnit.equals(DAYS) ? 0 : 1;
+                return durationUnit.equals(DAYS) ? 0 : -1;
             case WEEKS:
-                if (durationUnit.equals(DAYS)) return -1;
-                if (durationUnit.equals(MONTHS)) return 1;
+                if (durationUnit.equals(DAYS)) return 1;
+                if (durationUnit.equals(MONTHS)) return -1;
                 return 0;
             case MONTHS:
-                return durationUnit.equals(MONTHS) ? 0 : -1;
+                return durationUnit.equals(MONTHS) ? 0 : 1;
             default:
                 throw new IllegalArgumentException("Unknown duration unit " + durationUnit);
         }
