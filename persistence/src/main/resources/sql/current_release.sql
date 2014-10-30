@@ -38,18 +38,18 @@ WHERE
 
 commit;
 
-alter table tb_paymentPolicy modify column duration bigint not null;
+alter table tb_paymentPolicy modify column duration int unsigned not null;
 alter table tb_paymentPolicy modify column duration_unit VARCHAR(255) not null;
 
 -- alter table tb_paymentPolicy drop column subWeeks;
 
-alter table tb_pendingPayments add column duration bigint;
+alter table tb_pendingPayments add column duration int unsigned;
 alter table tb_pendingPayments add column duration_unit VARCHAR(255);
 
-alter table tb_submittedPayments add column duration bigint;
+alter table tb_submittedPayments add column duration int unsigned;
 alter table tb_submittedPayments add column duration_unit VARCHAR(255);
 
-alter table tb_promotionpaymentpolicy add column duration bigint;
+alter table tb_promotionpaymentpolicy add column duration int unsigned;
 alter table tb_promotionpaymentpolicy add column duration_unit VARCHAR(255);
 
 START TRANSACTION;
@@ -78,14 +78,14 @@ update tb_promotionPaymentPolicy set duration = subweeks, duration_unit = 'WEEKS
 
 commit;
 
-alter table tb_pendingPayments modify column duration bigint not null;
+alter table tb_pendingPayments modify column duration int unsigned not null;
 alter table tb_pendingPayments modify column duration_unit VARCHAR(255) not null;
 alter table tb_pendingPayments change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
 
-alter table tb_submittedPayments modify column duration bigint not null;
+alter table tb_submittedPayments modify column duration int unsigned not null;
 alter table tb_submittedPayments modify column duration_unit VARCHAR(255) not null;
 alter table tb_submittedPayments change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
 
-alter table tb_promotionPaymentPolicy modify column duration bigint not null;
+alter table tb_promotionPaymentPolicy modify column duration int unsigned not null;
 alter table tb_promotionPaymentPolicy modify column duration_unit VARCHAR(255) not null;
 alter table tb_promotionPaymentPolicy change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;

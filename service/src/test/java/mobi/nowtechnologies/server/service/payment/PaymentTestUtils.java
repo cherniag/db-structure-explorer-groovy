@@ -36,7 +36,7 @@ public class PaymentTestUtils {
         paymentPolicy.setCurrencyISO("GBP");
         paymentPolicy.setPaymentType(UserRegInfo.PaymentType.CREDIT_CARD);
         paymentPolicy.setSubcost(BigDecimal.TEN);
-        paymentPolicy.setPeriod(new Period().withDuration(0).withDurationUnit(WEEKS));
+        paymentPolicy.setPeriod(new Period().withDuration(1).withDurationUnit(WEEKS));
         paymentPolicy.setMediaType(MediaType.AUDIO);
         paymentPolicy.setTariff(Tariff._3G);
         return paymentPolicy;

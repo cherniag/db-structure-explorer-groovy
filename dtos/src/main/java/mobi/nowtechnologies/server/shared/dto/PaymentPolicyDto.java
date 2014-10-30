@@ -23,14 +23,14 @@ public class PaymentPolicyDto {
 
     private Integer id;
     private BigDecimal subcost;
-    private long duration;
+    private int duration;
     private DurationUnit durationUnit;
     private Integer operator;
     private String operatorName;
     private String paymentType;
     private String shortCode;
     private BigDecimal oldSubcost;
-    private Long oldDuration;
+    private Integer oldDuration;
     private DurationUnit oldDurationUnit;
     private String currencyISO;
     private boolean videoAndAudio4GSubscription;
@@ -173,11 +173,11 @@ public class PaymentPolicyDto {
 		this.threeG = threeG;
 	}
 
-    public Long getOldDuration() {
+    public Integer getOldDuration() {
         return oldDuration;
     }
 
-    public void setOldDuration(Long oldDuration) {
+    public void setOldDuration(Integer oldDuration) {
         this.oldDuration = oldDuration;
     }
 
@@ -189,11 +189,11 @@ public class PaymentPolicyDto {
         this.oldDurationUnit = oldDurationUnit;
     }
 
-    public long getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 

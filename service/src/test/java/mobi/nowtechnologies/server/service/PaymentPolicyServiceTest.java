@@ -54,7 +54,7 @@ public class PaymentPolicyServiceTest {
 		
 		assertEquals(paymentPolicy.getSubcost(), paymentPolicyDto.getOldSubcost());
 		Period period = paymentPolicy.getPeriod();
-		assertEquals(Long.valueOf(period.getDuration()), paymentPolicyDto.getOldDuration());
+		assertEquals(Integer.valueOf(period.getDuration()), paymentPolicyDto.getOldDuration());
 		assertEquals(period.getDurationUnit(), paymentPolicyDto.getOldDurationUnit());
 		assertEquals(promotionPaymentPolicy.getPeriod().getDuration(), paymentPolicyDto.getDuration());
 		assertEquals(promotionPaymentPolicy.getPeriod().getDurationUnit(), paymentPolicyDto.getDurationUnit());

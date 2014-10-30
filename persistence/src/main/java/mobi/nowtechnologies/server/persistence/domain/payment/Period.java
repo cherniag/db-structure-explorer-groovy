@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
+import org.springframework.util.Assert;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -30,29 +31,27 @@ public class Period{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "duration_unit", nullable = false)
-    private DurationUnit durationUnit;
+    private DurationUnit durationUnit = WEEKS;
 
     @Column(name = "duration", nullable = false)
-    private long duration;
+    private int duration;
 
-    public long getDuration() {
+    public int getDuration() {
         return duration;
-    }
-
-    private int getDurationAsInt() {
-        return (int)duration;
     }
 
     public DurationUnit getDurationUnit() {
         return durationUnit;
     }
 
-    public Period withDuration(long duration){
+    public Period withDuration(int duration){
+        Assert.isTrue(duration >=  0, "The duration [" + duration + "] must be more than 0");
         this.duration = duration;
         return this;
     }
 
     public Period withDurationUnit(DurationUnit durationUnit){
+        Assert.notNull(durationUnit);
         this.durationUnit = durationUnit;
         return this;
     }
@@ -77,7 +76,7 @@ public class Period{
     private int getNextSubPaymentForMonthlyPeriod(int subscriptionStartTimeSeconds){
         DateTime dateTime = new DateTime(secondsToMillis(subscriptionStartTimeSeconds), UTC);
         int dayOfMonthBefore = dateTime.get(dayOfMonth());
-        dateTime = dateTime.plus(months(getDurationAsInt()));
+        dateTime = dateTime.plus(months(duration));
         int dayOfMonthAfter = dateTime.get(dayOfMonth());
         if (dayOfMonthBefore != dayOfMonthAfter) {
             dateTime = dateTime.plus(days(1));

@@ -22,7 +22,7 @@ public class PaymentDetailsByPaymentDto {
 		public static final String NAME = "paymentPolicyDto";
 
 		private BigDecimal subcost;
-		private long duration;
+		private int duration;
 		private DurationUnit durationUnit;
 		private Integer operator;
 		private String operatorName;
@@ -101,7 +101,7 @@ public class PaymentDetailsByPaymentDto {
 			return duration;
 		}
 
-		public void setDuration(long duration) {
+		public void setDuration(int duration) {
 			this.duration = duration;
 		}
 

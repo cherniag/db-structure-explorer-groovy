@@ -162,13 +162,13 @@ public class SmsAccordingToLawJobTest {
 	public void testExecuteInternal_amountOfMoneyToUserNotification_Success() throws Exception {
 		String communityURL = "nowtop40";
 		String amountOfMoneyToUserNotificationStringConfigValue = "20";
-		Long deltaSuccesfulPaymentSmsSendingTimestampMillisConfigValue = 321L;
+		Long deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue = 321L;
 		BigDecimal amountOfMoneyToUserNotification = new BigDecimal("20");
 
 		JobDataMap jobDataMap = getJobDataMap(communityURL);
 
 		BigDecimal amountOfMoneyToUserNotificationConfigValue = new BigDecimal(amountOfMoneyToUserNotificationStringConfigValue);
-		String deltaSuccesfulPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccesfulPaymentSmsSendingTimestampMillisConfigValue.toString();
+		String deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue.toString();
 
         User user = createUser(amountOfMoneyToUserNotification);
 
@@ -187,12 +187,12 @@ public class SmsAccordingToLawJobTest {
 		PowerMockito.when(mockCommunityService.getCommunityByUrl(Mockito.eq(communityURL))).thenReturn(mockCommunity);
 
 		mockMessage(amountOfMoneyToUserNotificationStringConfigValue, communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATION_VALUE_MESSAGE_CODE);
-		mockMessage(deltaSuccesfulPaymentSmsSendingTimestampMillisConfigValueString, communityURL,
+		mockMessage(deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValueString, communityURL,
 				DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_VALUE_MESSAGE_CODE);
 
 		PowerMockito.when(
 				mockUserService.findActivePsmsUsers(Mockito.eq(communityURL), Mockito.eq(amountOfMoneyToUserNotificationConfigValue), Mockito
-						.eq(deltaSuccesfulPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(users);
+						.eq(deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(users);
 
 		mockMessage(communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE_CODE, amountOfMoneyToUserNotificationMessageArgs,
 				AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE);
