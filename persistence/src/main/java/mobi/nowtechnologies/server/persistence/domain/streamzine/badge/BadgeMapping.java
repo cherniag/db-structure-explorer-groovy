@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.badge;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.util.Assert;
@@ -27,6 +28,9 @@ public class BadgeMapping {
     @OneToOne
     @JoinColumn(name = "resolution_id")
     private Resolution resolution;
+
+    @JoinColumn(name = "hidden")
+    private Boolean hidden;
 
     @OneToOne(orphanRemoval = true)
     @Cascade(CascadeType.ALL)
@@ -95,7 +99,12 @@ public class BadgeMapping {
                 "id=" + id +
                 ", community=" + community.getRewriteUrlParameter() +
                 ", resolution=" + resolution +
+                ", hidden=" + BooleanUtils.isTrue(hidden) +
                 ", uploaded=" + uploaded +
                 '}';
+    }
+
+    public void hide() {
+        hidden = true;
     }
 }

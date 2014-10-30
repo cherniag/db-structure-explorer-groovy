@@ -45,7 +45,6 @@ http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd">
         <property name="mappingResources">
             <list>
                 <value>META-INF/jpql/paymentPolicy.xml</value>
-                <value>META-INF/jpql/chartDetail.xml</value>
                 <value>META-INF/jpql/drm.xml</value>
             </list>
         </property>

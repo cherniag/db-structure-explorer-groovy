@@ -1,3 +1,4 @@
+alter table sz_badge_mapping add column hidden bit(1) default null;
 -- SRV-315 - [SERVER] Setup Promotions plan for MTV1 community
 
 set AUTOCOMMIT=0;
