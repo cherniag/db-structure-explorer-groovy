@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.assembler;
 
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
-import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
+import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import org.junit.Test;
@@ -26,12 +25,14 @@ public class ChartAsmTest {
     @Mock
     private FilenameAliasRepository filenameAliasRepository;
 
+    @Mock
+    private BadgesService badgesService;
+
     @InjectMocks
     private ChartAsm chartAsm;
 	
 	@Test
-	public void testToChartDto_Success()
-		throws Exception {
+	public void testToChartDto_Success() throws Exception {
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		Chart chart = chartDetail.getChart();
 
@@ -85,8 +86,7 @@ public class ChartAsmTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void testToChartDto_IsChartItem_Failure()
-			throws Exception {
+	public void testToChartDto_IsChartItem_Failure() throws Exception {
 		
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		chartDetail.setMedia(new Media());
@@ -95,8 +95,7 @@ public class ChartAsmTest {
 	}
 	
 	@Test
-	public void testToChart_NullFile_Success()
-		throws Exception {
+	public void testToChart_NullFile_Success() throws Exception {
 		ChartDto chartDto = chartAsm.toChartDto(ChartDetailFactory.createChartDetail());
 
 		ChartDetail result = chartAsm.toChart(chartDto);
@@ -134,8 +133,7 @@ public class ChartAsmTest {
     }
 	
 	@Test
-	public void testToChart_NotNullFile_Success()
-		throws Exception {
+	public void testToChart_NotNullFile_Success() throws Exception {
 		ChartDto chartDto = chartAsm.toChartDto(ChartDetailFactory.createChartDetail());
 		chartDto.setFile(new MockMultipartFile("file", "1".getBytes()));
 
@@ -153,12 +151,11 @@ public class ChartAsmTest {
 	}
 	
 	@Test
-	public void testToPlaylistDto_Success()
-		throws Exception {
+	public void testToPlaylistDto_Success() throws Exception {
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		Chart chart = chartDetail.getChart();
 
-		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail, true);
+		PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, true);
 
 		assertNotNull(result);
 		assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -173,15 +170,39 @@ public class ChartAsmTest {
 	}
 	
 	@Test
-	public void testToPlaylistDto_NullTitle_Success()
-			throws Exception {
+	public void testToPlaylistDto_NullTitle_Success() throws Exception {
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		chartDetail.setTitle(null);
 		Chart chart = chartDetail.getChart();
 		
-		PlaylistDto result = ChartAsm.toPlaylistDto(chartDetail, false);
+		PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, false);
 		
 		assertNotNull(result);
 		assertEquals(chart.getName(), result.getPlaylistTitle());
 	}
+
+    @Test
+    public void testToPlaylistDtoWithBadge() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+        chartDetail.setBadgeId(123L);
+        Chart chart = chartDetail.getChart();
+        Community community = mock(Community.class);
+        Resolution resolution = mock(Resolution.class);
+
+        when(badgesService.getBadgeFileName(123L, community, resolution)).thenReturn("badgeIconFileName");
+
+        PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, resolution, community, true);
+
+        assertNotNull(result);
+        assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
+        assertEquals(chart.getI().byteValue(), result.getId().byteValue());
+        assertEquals(chartDetail.getImageFileName(), result.getImage());
+        assertEquals(chartDetail.getSubtitle(), result.getSubtitle());
+        assertEquals(chartDetail.getPosition(), result.getPosition().byteValue());
+        assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
+        assertEquals(chartDetail.getInfo(), result.getDescription());
+        assertEquals(true, result.getSwitchable());
+        assertEquals(chart.getType(), result.getType());
+        assertEquals("badgeIconFileName", result.getBadgeIcon());
+    }
 }

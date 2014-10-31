@@ -7,9 +7,9 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
 
@@ -18,13 +18,45 @@ import static mobi.nowtechnologies.server.shared.enums.MessageType.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.springframework.test.web.servlet.request.ExtMockMvcRequestBuilders.extGet;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class GetNewsControllerTestIT extends AbstractControllerTestIT{
 
-    @Autowired CommunityRepository communityRepository;
+    @Resource
+    CommunityRepository communityRepository;
+
+    @Test
+    public void testGetNewAndJsonAndAccCheckInfo_Success_LatestVersion() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = LATEST_SERVER_API_VERSION;
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ResultActions resultActions = mockMvc.perform(
+                get("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists()).
+                andExpect(jsonPath("$.response..news").exists()).
+                andExpect(jsonPath("$.response..user").exists());
+
+
+        ResultActions accountCheckCall = mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andDo(print());
+        checkAccountCheck(resultActions, accountCheckCall);
+    }
 
     @Test
     public void shouldReturnBannerMessage() throws Exception {
@@ -130,36 +162,6 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = "6.0";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-        ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists()).
-                andExpect(jsonPath("$.response..news").exists()).
-                andExpect(jsonPath("$.response..user").exists());
-
-
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andDo(print());
-        checkAccountCheck(resultActions, accountCheckCall);
-    }
-
-    @Test
-    public void testGetNewAndJsonAndAccCheckInfo_62() throws Exception {
-        String userName = "+447111111114";
-        String deviceUID = "b88106713409e92622461a876abcd74b";
-        String apiVersion = "6.2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

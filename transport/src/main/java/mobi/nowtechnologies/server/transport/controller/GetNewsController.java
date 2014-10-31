@@ -34,7 +34,8 @@ public class GetNewsController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.3}/GET_NEWS"
+            "**/{community}/{apiVersion:6\\.3}/GET_NEWS",
+            "**/{community}/{apiVersion:6\\.4}/GET_NEWS"
     })
     public ModelAndView getNewsWithBannersWithCaching(
             @RequestParam("USER_NAME") String userName,
@@ -49,7 +50,7 @@ public class GetNewsController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.2}/GET_NEWS",
+            "**/{community}/{apiVersion:6\\.2}/GET_NEWS"
     })
     public ModelAndView getNewsWithBanners(
             @RequestParam("USER_NAME") String userName,

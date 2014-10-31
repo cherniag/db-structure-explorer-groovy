@@ -24,10 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
-
     @Value("${store.path}\\image\\US-UM7-11-00061S.jpg")
     private File file;
-
 
     @Resource
     private CloudFileService cloudFileService;
@@ -38,12 +36,11 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
     @Resource
     private TaskExecutor getFileTaskExecutor;
 
-
     @Test
-    public void testGetFile_O2_v6d0_Success() throws Exception {
+    public void testGetFileO2_Success_LatestVersion() throws Exception {
         String userName = "+447111111114";
         String fileType = "VIDEO";
-        String apiVersion = "6.0";
+        String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
@@ -66,10 +63,10 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
-    public void testGetFileO2_Success_LatestVersion() throws Exception {
+    public void testGetFile_O2_v6d0_Success() throws Exception {
         String userName = "+447111111114";
         String fileType = "VIDEO";
-        String apiVersion = LATEST_SERVER_API_VERSION;
+        String apiVersion = "6.0";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";

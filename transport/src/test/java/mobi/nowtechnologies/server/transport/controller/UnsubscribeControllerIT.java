@@ -11,11 +11,11 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MvcResult;
 import org.xml.sax.InputSource;
 
+import javax.annotation.Resource;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.*;
 import java.io.StringReader;
@@ -31,6 +31,7 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
 
     private static final XPathExpression PHONE_NUMBER_XPATHEXPRESSION;
     private static final XPathExpression OPERATOR_XPATHEXPRESSION;
+    private static O2PSMSPaymentDetails o2psmsPaymentDetails;
 
     static {
         XPathFactory xPathFactory = XPathFactory.newInstance();
@@ -43,15 +44,99 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
         }
     }
 
-
-    @Autowired
+    @Resource
     private PaymentDetailsRepository paymentDetailsRepository;
 
-    @Autowired
+    @Resource
     private UserRepository userRepository;
 
-    @Autowired
+    @Resource(name = "serviceMessageSource")
     protected CommunityResourceBundleMessageSource messageSource;
+
+    @Before
+    public void setUpContext() throws Exception {
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+
+        user = userRepository.save(user);
+
+        o2psmsPaymentDetails = new O2PSMSPaymentDetails();
+        o2psmsPaymentDetails.setActivated(true);
+        o2psmsPaymentDetails.setCreationTimestampMillis(0L);
+        o2psmsPaymentDetails.setDisableTimestampMillis(0L);
+        o2psmsPaymentDetails.resetMadeAttempts();
+        o2psmsPaymentDetails.setRetriesOnError(0);
+        o2psmsPaymentDetails.setOwner(user);
+
+        o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
+
+        user.setCurrentPaymentDetails(o2psmsPaymentDetails);
+
+        userRepository.save(user);
+    }
+
+    @Test
+    public void test_unsubscribe_success() throws Exception {
+        for (String currentXML : xml) {
+            test_unsubscribe_success1(currentXML);
+        }
+    }
+
+
+    public void test_unsubscribe_success1(String xml) throws Exception {
+
+
+        String community = "o2";
+        String requestURI = "/" + community + "/3.8/stop_subscription";
+
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true); // never forget this!
+        StringReader characterStream = new StringReader(xml);
+
+        InputSource source = new InputSource(characterStream);
+
+        String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
+        final String o2PsmsPhoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
+
+        o2psmsPaymentDetails.setPhoneNumber(o2PsmsPhoneNumber);
+
+        o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Length", "409");
+        headers.add("Content-Type", "text/xml");
+        headers.add("User-Agent", "Java1.3.1_06");
+        headers.add("Host", "goat.london.02.net:8080");
+        headers.add("Accept", "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
+
+
+        long beforeUnsubscribeMillis = Utils.getEpochMillis();
+
+        MvcResult result = mockMvc.perform(post(requestURI).content(xml.getBytes()).headers(headers)).
+                andExpect(status().isOk()).andReturn();
+
+        long afterUnsubscribeMillis = Utils.getEpochMillis();
+
+        String responseBody = result.getResponse().getContentAsString();
+
+        assertNotNull(responseBody);
+
+        String message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
+        assertEquals(message, responseBody);
+
+        characterStream = new StringReader(xml);
+        source = new InputSource(characterStream);
+        String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
+        String operatorName = receivedOperatorName.replaceAll("\\*", "");
+
+        PaymentDetails actualPaymentDetails = paymentDetailsRepository.findOne(o2psmsPaymentDetails.getI());
+
+        assertNotNull(actualPaymentDetails);
+
+        assertEquals(false, actualPaymentDetails.isActivated());
+        assertEquals("STOP sms", actualPaymentDetails.getDescriptionError());
+        assertTrue(beforeUnsubscribeMillis <= actualPaymentDetails.getDisableTimestampMillis() && actualPaymentDetails.getDisableTimestampMillis() <= afterUnsubscribeMillis);
+
+    }
 
     public static final String[] xml = new String[]{"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<methodCall>"
@@ -162,93 +247,5 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
             + "</param>"
             + "</params>"
             + "</methodCall>"};
-
-    private static O2PSMSPaymentDetails o2psmsPaymentDetails;
-
-    @Before
-    public void setUpContext() throws Exception {
-        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-
-        user = userRepository.save(user);
-
-        o2psmsPaymentDetails = new O2PSMSPaymentDetails();
-        o2psmsPaymentDetails.setActivated(true);
-        o2psmsPaymentDetails.setCreationTimestampMillis(0L);
-        o2psmsPaymentDetails.setDisableTimestampMillis(0L);
-        o2psmsPaymentDetails.resetMadeAttempts();
-        o2psmsPaymentDetails.setRetriesOnError(0);
-        o2psmsPaymentDetails.setOwner(user);
-
-        o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
-
-        user.setCurrentPaymentDetails(o2psmsPaymentDetails);
-
-        user = userRepository.save(user);
-    }
-
-    @Test
-    public void test_unsubscribe_success() throws Exception {
-        for (String currentXML : xml) {
-            test_unsubscribe_success1(currentXML);
-        }
-    }
-
-
-    public void test_unsubscribe_success1(String xml) throws Exception {
-
-
-        String community = "o2";
-        String requestURI = "/" + community + "/3.8/stop_subscription";
-
-        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-        domFactory.setNamespaceAware(true); // never forget this!
-        StringReader characterStream = new StringReader(xml);
-
-        InputSource source = new InputSource(characterStream);
-
-        String receivedPhoneNumber = (String) PHONE_NUMBER_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
-        final String o2PsmsPhoneNumber = receivedPhoneNumber.replaceAll("\\*", "");
-
-        o2psmsPaymentDetails.setPhoneNumber(o2PsmsPhoneNumber);
-
-        o2psmsPaymentDetails = paymentDetailsRepository.save(o2psmsPaymentDetails);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Length", "409");
-        headers.add("Content-Type", "text/xml");
-        headers.add("User-Agent", "Java1.3.1_06");
-        headers.add("Host", "goat.london.02.net:8080");
-        headers.add("Accept", "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
-
-
-        long beforeUnsubscribeMillis = Utils.getEpochMillis();
-
-        MvcResult result = mockMvc.perform(post(requestURI).content(xml.getBytes()).headers(headers)).
-                andExpect(status().isOk()).andReturn();
-
-        long afterUnsubscribeMillis = Utils.getEpochMillis();
-
-        String responseBody = result.getResponse().getContentAsString();
-
-        assertNotNull(responseBody);
-
-        String message = messageSource.getMessage(community, "unsubscribe.mrs.message", null, null);
-        assertEquals(message, responseBody);
-
-        characterStream = new StringReader(xml);
-        source = new InputSource(characterStream);
-        String receivedOperatorName = (String) OPERATOR_XPATHEXPRESSION.evaluate(source, XPathConstants.STRING);
-        String operatorName = receivedOperatorName.replaceAll("\\*", "");
-
-        PaymentDetails actualPaymentDetails = paymentDetailsRepository.findOne(o2psmsPaymentDetails.getI());
-
-        assertNotNull(actualPaymentDetails);
-
-        assertEquals(false, actualPaymentDetails.isActivated());
-        assertEquals("STOP sms", actualPaymentDetails.getDescriptionError());
-        assertTrue(beforeUnsubscribeMillis <= actualPaymentDetails.getDisableTimestampMillis() && actualPaymentDetails.getDisableTimestampMillis() <= afterUnsubscribeMillis);
-
-    }
-
 }
 

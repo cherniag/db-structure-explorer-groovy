@@ -1,14 +1,17 @@
 package mobi.nowtechnologies.server.service;
 
+import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.service.chart.CommunityGetChartContentManager;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
+import mobi.nowtechnologies.server.service.streamzine.BadgesService;
+import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
@@ -47,6 +50,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(UserAsm.class)
@@ -81,10 +85,55 @@ public class ChartServiceTest {
     @Mock
     private ApplicationContext mockApplicationContext;
 
+    @Mock
+    private BadgesService badgesService;
+
+
+
     //test data
     private User testUser;
 
     private CommunityGetChartContentManager getChartContentManager = new CommunityGetChartContentManager();
+
+    @Before
+    public void setUp()
+            throws Exception {
+
+        testUser = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("kyiv")));
+        testUser.setId(1);
+        DrmType drmType = new DrmType();
+        DrmPolicy drmPolicy = new DrmPolicy();
+        drmPolicy.setDrmType(drmType);
+        testUser.getUserGroup().setDrmPolicy(drmPolicy);
+
+        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
+
+        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
+
+        PowerMockito.mockStatic(UserAsm.class);
+
+        fixture = spy(new ChartService());
+        fixture.setChartRepository(mockChartRepository);
+        fixture.setUserService(mockUserService);
+        fixture.setMessageSource(mockMessageSource);
+        fixture.setChartDetailService(mockChartDetailService);
+        fixture.setCloudFileService(mockCloudFileService);
+        fixture.setChartDetailRepository(mockChartDetailRepository);
+        fixture.setDrmService(mockDrmService);
+        fixture.setApplicationContext(mockApplicationContext);
+
+        ChartAsm chartAsm = new ChartAsm();
+        chartAsm.setBadgesService(badgesService);
+        fixture.setChartAsm(chartAsm);
+
+        ChartDetailsConverter chartDetailsConverter = new ChartDetailsConverter();
+        chartDetailsConverter.setMessageSource(mockMessageSource);
+        when(mockMessageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
+        when(mockMessageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
+        when(mockMessageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
+        fixture.setChartDetailsConverter(spy(chartDetailsConverter));
+        fixture.setStreamzineUpdateService(streamzineUpdateService);
+    }
 
     @Test
     public void testSelectChartByType_NotNullChartNotNullUserNotNullSelectedCharts_Success()
@@ -418,43 +467,20 @@ public class ChartServiceTest {
         verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
-    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-    public void testProcessGetChartCommand_UserIsNull_Failure() throws Exception {
-        User user = null;
-        String communityName = "o2";
-
-        fixture.processGetChartCommand(user, communityName, true, true, null);
-    }
-
-    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-    public void testProcessGetChartCommand_DrmPolicyIsNull_Failure() throws Exception {
-        User user = new User();
-        user.setUserGroup(new UserGroup().withId(1));
-        String communityName = "o2";
-
-        when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(user);
-
-        fixture.processGetChartCommand(user, communityName, true, true, null);
-    }
-
-    @Test(expected = mobi.nowtechnologies.server.service.exception.ServiceException.class)
-    public void testProcessGetChartCommand_DrmTypeIsNull_Failure() throws Exception {
-        User user = new User();
-        DrmPolicy drmPolicy = new DrmPolicy();
-        final UserGroup userGroup = new UserGroup().withId(1);
-        userGroup.setDrmPolicy(drmPolicy);
-        user.setUserGroup(userGroup);
-        String communityName = "o2";
-
-        when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(user);
-
-        fixture.processGetChartCommand(user, communityName, true, true, null);
-    }
 
     @Test
-    public void testProcessGetChartCommand_Success()
-            throws Exception {
-        String communityName = "chartsnow";
+    public void testProcessGetChartCommand_Success() throws Exception {
+        User user = mock(User.class);
+        Community c = mock(Community.class);
+        when(c.getRewriteUrlParameter()).thenReturn("o2");
+        UserGroup userGroup = mock(UserGroup.class);
+        when(userGroup.getCommunity()).thenReturn(c);
+        when(user.getUserGroup()).thenReturn(userGroup);
+        DrmPolicy drmPolicy = mock(DrmPolicy.class);
+        when(userGroup.getDrmPolicy()).thenReturn(drmPolicy);
+        DrmType drmType = mock(DrmType.class);
+        when(drmPolicy.getDrmType()).thenReturn(drmType);
+        Resolution resolution = mock(Resolution.class);
 
         Media media = getMediaInstance(1);
 
@@ -465,6 +491,7 @@ public class ChartServiceTest {
         ChartDetail basicChart1 = ChartDetailFactory.createChartDetail();
         basicChart1.getChart().setType(ChartType.BASIC_CHART);
         basicChart1.getChart().setI(5);
+        basicChart1.setBadgeId(908L);
         ChartDetail topChart = ChartDetailFactory.createChartDetail();
         topChart.getChart().setType(ChartType.HOT_TRACKS);
         topChart.getChart().setI(2);
@@ -475,13 +502,15 @@ public class ChartServiceTest {
         ChartDetail otherChart2 = ChartDetailFactory.createChartDetail();
         otherChart2.getChart().setType(ChartType.OTHER_CHART);
         otherChart2.getChart().setI(4);
+        otherChart2.setBadgeId(909L);
         ChartDetail videoChart3 = ChartDetailFactory.createChartDetail();
         videoChart3.getChart().setType(ChartType.VIDEO_CHART);
         videoChart3.getChart().setI(6);
+        when(user.getSelectedCharts()).thenReturn(Arrays.asList(otherChart2.getChart(), basicChart1.getChart()));
+        when(user.isSelectedChart(basicChart1)).thenReturn(true);
+        when(user.isSelectedChart(otherChart2)).thenReturn(true);
 
-        testUser.setSelectedCharts(Arrays.asList(otherChart2.getChart(), basicChart1.getChart()));
-
-        when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(testUser);
+        when(mockUserService.getUserWithSelectedCharts(anyInt())).thenReturn(user);
 
         ChartDetail basicChartDetail = getChartDetailInstance(0, 1, media, basicChart.getChart());
         ChartDetail basicChartDetail1 = getChartDetailInstance(0, 1, media, basicChart1.getChart());
@@ -501,7 +530,7 @@ public class ChartServiceTest {
         when(mockDrmService.findDrmByUserAndMedia(any(User.class), any(Media.class), any(DrmPolicy.class), anyBoolean())).thenAnswer(new Answer<Drm>() {
             @Override
             public Drm answer(InvocationOnMock invocation) throws Throwable {
-                Media media = (Media)invocation.getArguments()[1];
+                Media media = (Media) invocation.getArguments()[1];
 
                 return media.getDrms().get(0);
             }
@@ -509,8 +538,10 @@ public class ChartServiceTest {
         when(mockMessageSource.getMessage(anyString(), eq("getChartContentManager.beanName"), any(Object[].class), any(Locale.class))).thenReturn("communityChartManager");
         when(mockMessageSource.getMessage(anyString(), eq("get.chart.command.default.amazon.url"), any(Object[].class), anyString(), any(Locale.class))).thenReturn("defaultAmazonUrl");
         when(mockApplicationContext.getBean("communityChartManager", GetChartContentManager.class)).thenReturn(getChartContentManager);
+        when(badgesService.getBadgeFileName(eq(908L), eq(c), eq(resolution))).thenReturn("image_908");
+        when(badgesService.getBadgeFileName(909L, c, resolution)).thenReturn("image_909");
 
-        ChartDto result = fixture.processGetChartCommand(testUser, communityName, true, true, null).getContent();
+        ChartDto result = fixture.processGetChartCommand(user, true, true, resolution, null).getContent();
 
         assertNotNull(result);
 
@@ -518,6 +549,7 @@ public class ChartServiceTest {
         assertNotNull(playlists);
         assertEquals(4, playlists.length);
         assertEquals(basicChart1.getTitle(), playlists[0].getPlaylistTitle());
+        assertEquals("image_908", playlists[0].getBadgeIcon());
         assertEquals(topChart.getTitle(), playlists[1].getPlaylistTitle());
         assertEquals(otherChart2.getTitle(), playlists[2].getPlaylistTitle());
         assertEquals(basicChart1.getSubtitle(), playlists[0].getSubtitle());
@@ -526,6 +558,7 @@ public class ChartServiceTest {
         assertEquals(basicChart1.getImageFileName(), playlists[0].getImage());
         assertEquals(topChart.getImageFileName(), playlists[1].getImage());
         assertEquals(otherChart2.getImageFileName(), playlists[2].getImage());
+        assertEquals("image_909", playlists[2].getBadgeIcon());
         assertEquals(basicChart1.getChart().getI().byteValue(), playlists[0].getId().byteValue());
         assertEquals(topChart.getChart().getI().byteValue(), playlists[1].getId().byteValue());
         assertEquals(otherChart2.getChart().getI().byteValue(), playlists[2].getId().byteValue());
@@ -839,44 +872,6 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()));
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()));
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()));
-    }
-
-
-
-    @Before
-    public void setUp()
-            throws Exception {
-
-        testUser = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("kyiv")));
-        testUser.setId(1);
-        DrmType drmType = new DrmType();
-        DrmPolicy drmPolicy = new DrmPolicy();
-        drmPolicy.setDrmType(drmType);
-        testUser.getUserGroup().setDrmPolicy(drmPolicy);
-
-        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
-
-        when(mockUserService.findUserTree(anyInt())).thenReturn(testUser);
-
-        PowerMockito.mockStatic(UserAsm.class);
-
-        fixture = spy(new ChartService());
-        fixture.setChartRepository(mockChartRepository);
-        fixture.setUserService(mockUserService);
-        fixture.setMessageSource(mockMessageSource);
-        fixture.setChartDetailService(mockChartDetailService);
-        fixture.setCloudFileService(mockCloudFileService);
-        fixture.setChartDetailRepository(mockChartDetailRepository);
-        fixture.setDrmService(mockDrmService);
-        fixture.setApplicationContext(mockApplicationContext);
-
-        ChartDetailsConverter chartDetailsConverter = new ChartDetailsConverter();
-        chartDetailsConverter.setMessageSource(mockMessageSource);
-        when(mockMessageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
-        when(mockMessageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
-        when(mockMessageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
-        fixture.setChartDetailsConverter(spy(chartDetailsConverter));
-        fixture.setStreamzineUpdateService(streamzineUpdateService);
     }
 
     @After

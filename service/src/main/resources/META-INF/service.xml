@@ -239,7 +239,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
-		<property name="mediaService" ref="service.MediaService" />
 		<property name="drmService" ref="service.DrmService" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
@@ -248,6 +247,12 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="chartDetailsConverter" ref="service.ChartDetailsConverter"/>
 	     <property name="streamzineUpdateService" ref="streamzineUpdateService"/>
         <property name="cacheContentService" ref="service.checkCacheService"/>
+        <property name="chartAsm" ref="service.ChartAsm"/>
+    </bean>
+
+    <bean id="service.ChartAsm" class="mobi.nowtechnologies.server.assembler.ChartAsm">
+        <property name="filenameAliasRepository" ref="filenameAliasRepository"/>
+        <property name="badgesService" ref="badgesService"/>
     </bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">

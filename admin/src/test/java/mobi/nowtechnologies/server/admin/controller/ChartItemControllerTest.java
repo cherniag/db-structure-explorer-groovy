@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.factory.admin.ChartItemFactory;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
@@ -45,13 +46,37 @@ public class ChartItemControllerTest{
 	private MediaService mediaService;
 	@Mock
 	private ChartService chartService;
+    @Mock
+	private ChartAsm chartAsm;
+
+    @Before
+    public void setUp() throws Exception {
+
+        mockStatic( ChartDetailsAsm.class );
+
+        Map<ChartType, String> viewByChartType = new HashMap<ChartType, String>();
+        viewByChartType.put(ChartType.BASIC_CHART, "chartItems/chartItems");
+        viewByChartType.put(ChartType.HOT_TRACKS, "chartItems/hotTracks");
+        viewByChartType.put(ChartType.OTHER_CHART, "chartItems/hotTracks");
+
+        fixture = new ChartItemController();
+        fixture.setViewByChartType(viewByChartType);
+        fixture.setMediaService(mediaService);
+        fixture.setChartService(chartService);
+        fixture.setChartDetailService(chartDetailService);
+        fixture.setFilesURL("");
+        fixture.setChartAsm(chartAsm);
+        // fixture.dateTimeFormat = new SimpleDateFormat();
+        //fixture.dateFormat = new SimpleDateFormat();
+        fixture.messageSource = mock(MessageSource.class);
+    }
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUpdateChartItems_Successful()
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
         List<ChartItemDto> items = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
 		when(chartDetailService.saveChartItems(any(List.class))).thenReturn(Collections.<ChartDetail>emptyList());
@@ -69,7 +94,7 @@ public class ChartItemControllerTest{
 	public void testUpdateChartItems_ServiceException()
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
         List<ChartItemDto> items = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 
 		doThrow(ServiceException.getInstance("")).when(chartDetailService).saveChartItems(any(List.class));
@@ -81,7 +106,7 @@ public class ChartItemControllerTest{
 	@Test
 	public void testGetChartItemsPage_BasicChart_Successful()
 		throws Exception {
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
 		Chart chart = new Chart();
 		chart.setI(chartId);
 		chart.setType(ChartType.BASIC_CHART);
@@ -114,7 +139,7 @@ public class ChartItemControllerTest{
 	@Test
 	public void testGetChartItemsPage_HotChart_Successful()
 		throws Exception {
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
 		Chart chart = new Chart();
 		chart.setI(chartId);
 		chart.setType(ChartType.HOT_TRACKS);
@@ -147,7 +172,7 @@ public class ChartItemControllerTest{
 	@Test
 	public void testGetChartItemsPage_OtherChart_Successful()
 		throws Exception {
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
 		Chart chart = new Chart();
 		chart.setI(chartId);
 		chart.setType(ChartType.OTHER_CHART);
@@ -180,7 +205,7 @@ public class ChartItemControllerTest{
 	public void testGetChartItemsPage_ServiceException()
 		throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
 		List<ChartDetail> chartDetails = Collections.singletonList(ChartDetailFactory.createChartDetail());
 		
 		when(chartService.getChartDetails(any(List.class), any(Date.class), anyBoolean())).thenReturn(chartDetails);
@@ -193,7 +218,7 @@ public class ChartItemControllerTest{
 	@Test
 	public void testGetMediaList_Successful() throws Exception {
 		Date selectedPublishDateTime = new Date();
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
 		String searchWords = "some words";
 		List<ChartItemDto> chartItemDtos = ChartItemFactory.getChartItemDtos(2, chartId, selectedPublishDateTime);
 		
@@ -215,33 +240,11 @@ public class ChartItemControllerTest{
 	public void testGetMediaList_ServiceException() throws Exception {
 		String searchWords = "some words";
 		Date selectedPublishDateTime = new Date();
-		Integer chartId = new Integer((byte) 1);
+		Integer chartId = 1;
 		
 		doThrow(ServiceException.getInstance("")).when(mediaService).getMusic(anyString());
 
 		fixture.getMediaList(searchWords, selectedPublishDateTime, chartId, "media");
-	}
-
-	@Before
-	public void setUp()
-		throws Exception {
-
-		mockStatic( ChartDetailsAsm.class );
-
-		Map<ChartType, String> viewByChartType = new HashMap<ChartType, String>();
-		viewByChartType.put(ChartType.BASIC_CHART, "chartItems/chartItems");
-		viewByChartType.put(ChartType.HOT_TRACKS, "chartItems/hotTracks");
-		viewByChartType.put(ChartType.OTHER_CHART, "chartItems/hotTracks");
-		
-		fixture = new ChartItemController();
-		fixture.setViewByChartType(viewByChartType);
-		fixture.setMediaService(mediaService);
-		fixture.setChartService(chartService);
-		fixture.setChartDetailService(chartDetailService);
-		fixture.setFilesURL("");
-		// fixture.dateTimeFormat = new SimpleDateFormat();
-		//fixture.dateFormat = new SimpleDateFormat();
-		fixture.messageSource = mock(MessageSource.class);
 	}
 
 }

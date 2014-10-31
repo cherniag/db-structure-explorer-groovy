@@ -139,7 +139,8 @@ public class AccCheckController extends CommonController {
             "**/{community}/{apiVersion:6\\.0}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.1}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.2}/ACC_CHECK",
-            "**/{community}/{apiVersion:6\\.3}/ACC_CHECK"
+            "**/{community}/{apiVersion:6\\.3}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.4}/ACC_CHECK"
     })
     public ModelAndView accountCheckWithPossibilityOfReactivation(
             @RequestParam("USER_NAME") String userName,

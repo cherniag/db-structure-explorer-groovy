@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
@@ -12,7 +13,6 @@ import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartItemPositionDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
@@ -43,85 +43,30 @@ public class ChartService implements ApplicationContextAware {
     private ChartRepository chartRepository;
     private DrmService drmService;
     private ChartDetailRepository chartDetailRepository;
-    private MediaService mediaService;
     private CommunityResourceBundleMessageSource messageSource;
     private CloudFileService cloudFileService;
     private StreamzineUpdateService streamzineUpdateService;
     private ChartDetailsConverter chartDetailsConverter;
     private ApplicationContext applicationContext;
+    private ChartAsm chartAsm;
 
     private CacheContentService cacheContentService;
 
-    public void setCacheContentService(CacheContentService cacheContentService) {
-        this.cacheContentService = cacheContentService;
-    }
-
-    public void setStreamzineUpdateService(StreamzineUpdateService streamzineUpdateService) {
-        this.streamzineUpdateService = streamzineUpdateService;
-    }
-
-    public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
-        this.chartDetailsConverter = chartDetailsConverter;
-    }
-
-    public void setDrmService(DrmService drmService) {
-        this.drmService = drmService;
-    }
-
-    public void setCloudFileService(CloudFileService cloudFileService) {
-        this.cloudFileService = cloudFileService;
-    }
-
-    public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
-        this.chartDetailRepository = chartDetailRepository;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setChartDetailService(ChartDetailService chartDetailService) {
-        this.chartDetailService = chartDetailService;
-    }
-
-    public void setChartRepository(ChartRepository chartRepository) {
-        this.chartRepository = chartRepository;
-    }
-
-    public void setMediaService(MediaService mediaService) {
-        this.mediaService = mediaService;
-    }
-
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
-    public ContentDtoResult<ChartDto> processGetChartCommand(User user, String communityName, boolean createDrmIfNotExists, boolean fetchLocked, Long lastChartUpdateFromClient) {
-        if (user == null)
-            throw new ServiceException("The parameter user is null");
+    public ContentDtoResult<ChartDto> processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution, Long lastChartUpdateFromClient) {
+        LOGGER.debug("input parameters user=[{}], createDrmIfNotExists=[{}], fetchLocked=[{}], resolution=[{}], lastChartUpdateFromClient=[{}]",
+                user, createDrmIfNotExists, fetchLocked, resolution, lastChartUpdateFromClient);
 
         user = userService.getUserWithSelectedCharts(user.getId());
-
-        UserGroup userGroup = user.getUserGroup();
-        if (userGroup == null)
-            throw new ServiceException("The parameter userGroup is null");
-
-        DrmPolicy drmPolicy = userGroup.getDrmPolicy();
-
-        if (drmPolicy == null)
-            throw new ServiceException("The parameter drmPolicy is null");
-
+        Community community = user.getUserGroup().getCommunity();
+        String rewriteUrlParameter = community.getRewriteUrlParameter();
+        DrmPolicy drmPolicy = user.getUserGroup().getDrmPolicy();
         DrmType drmType = drmPolicy.getDrmType();
-        if (drmType == null)
+        if (drmType == null) {
             throw new ServiceException("The parameter drmType is null");
+        }
 
-        if (communityName == null)
-            throw new ServiceException("The parameter communityName is null");
-
-        LOGGER.debug("input parameters user, communityName: [{}], [{}]", new Object[] { user, communityName });
-
-        List<ChartDetail> charts = getChartsByCommunity(null, communityName, null);
+        List<ChartDetail> charts = getChartsByCommunity(null, rewriteUrlParameter, null);
 
         Map<ChartType, Integer> chartGroups = new HashMap<ChartType, Integer>();
         for(ChartDetail chart:charts){
@@ -132,12 +77,12 @@ public class ChartService implements ApplicationContextAware {
 
         List<ChartDetail> chartDetails = new ArrayList<ChartDetail>();
         List<PlaylistDto> playlistDtos = new ArrayList<PlaylistDto>();
-        GetChartContentManager supporter = resolveChartSupporter(communityName);
+        GetChartContentManager supporter = resolveChartSupporter(rewriteUrlParameter);
         for (ChartDetail chart : charts) {
             ChartSupportResult result = supporter.support(user, chartGroups, chart);
             if (result.isSupport()){
                 chartDetails.addAll(chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked));
-                playlistDtos.add(ChartAsm.toPlaylistDto(chart, result.isSwitchable()));
+                playlistDtos.add(chartAsm.toPlaylistDto(chart, resolution, community, result.isSwitchable()));
             }
         }
         Long lastUpdateTimeForChartDetails = findMaxPublishDate(chartDetails);
@@ -145,7 +90,7 @@ public class ChartService implements ApplicationContextAware {
             cacheContentService.checkCacheContent(lastChartUpdateFromClient, lastUpdateTimeForChartDetails);
         }
 
-        String defaultAmazonUrl = messageSource.getMessage(communityName, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
+        String defaultAmazonUrl = messageSource.getMessage(rewriteUrlParameter, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
         for (ChartDetail chartDetail : chartDetails) {
             Media media = chartDetail.getMedia();
@@ -155,7 +100,7 @@ public class ChartService implements ApplicationContextAware {
             media.setDrms(Collections.singletonList(drmForCurrentUser));
         }
 
-        List<ChartDetailDto> chartDetailDtos = chartDetailsConverter.toChartDetailDtoList(chartDetails, user.getUserGroup().getCommunity(), defaultAmazonUrl);
+        List<ChartDetailDto> chartDetailDtos = chartDetailsConverter.toChartDetailDtoList(chartDetails, community, defaultAmazonUrl);
 
         ChartDto chartDto = new ChartDto();
         chartDto.setPlaylistDtos(playlistDtos.toArray(new PlaylistDto[playlistDtos.size()]));
@@ -251,16 +196,6 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChartDetail> updateChartItemsPositions(ChartItemPositionDto chartItemPositionDto) {
-        LOGGER.debug("input parameters chartItemPositionDto: [{}]", chartItemPositionDto);
-
-        List<ChartDetail> chartDetails = chartDetailService.updateChartItemsPositions(chartItemPositionDto);
-
-        LOGGER.info("Output parameter chartDetails=[{}]", chartDetails);
-        return chartDetails;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
         LOGGER.debug("input parameters updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): [{}]", new Object[] { selectedPublishDateTime, chartId, afterPosition,
                 chPosition });
@@ -273,7 +208,7 @@ public class ChartService implements ApplicationContextAware {
 
     @Transactional(readOnly = true)
     public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName, ChartType chartType) {
-        LOGGER.debug("input parameters communityURL, communityName, chartType: [{}] [{}]", new Object[] { communityURL, communityName, chartType });
+        LOGGER.debug("input parameters communityURL=[{}], communityName=[{}], chartType=[{}]", communityURL, communityName, chartType);
 
         List<Chart> charts = Collections.emptyList();
         if (communityURL != null)
@@ -396,17 +331,6 @@ public class ChartService implements ApplicationContextAware {
         return chartDetail;
     }
 
-    private boolean isChartDetailAlreadyPresent(ChartDetail chartDetail) {
-        return chartDetail.getI() != null;
-    }
-
-    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail, Community community) {
-        if(streamzineUpdateService.isAvailable(community.getRewriteUrlParameter())) {
-            Date publishDate = new Date(chartDetail.getPublishTimeMillis());
-            streamzineUpdateService.createOrReplace(publishDate, community);
-        }
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public User selectChartByType(Integer userId, Integer playlistId) {
         LOGGER.info("select chart by type input  [{}] [{}]", userId, playlistId);
@@ -435,8 +359,63 @@ public class ChartService implements ApplicationContextAware {
         return user;
     }
 
+    private boolean isChartDetailAlreadyPresent(ChartDetail chartDetail) {
+        return chartDetail.getI() != null;
+    }
+
+    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail, Community community) {
+        if(streamzineUpdateService.isAvailable(community.getRewriteUrlParameter())) {
+            Date publishDate = new Date(chartDetail.getPublishTimeMillis());
+            streamzineUpdateService.createOrReplace(publishDate, community);
+        }
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    public void setCacheContentService(CacheContentService cacheContentService) {
+        this.cacheContentService = cacheContentService;
+    }
+
+    public void setStreamzineUpdateService(StreamzineUpdateService streamzineUpdateService) {
+        this.streamzineUpdateService = streamzineUpdateService;
+    }
+
+    public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
+        this.chartDetailsConverter = chartDetailsConverter;
+    }
+
+    public void setDrmService(DrmService drmService) {
+        this.drmService = drmService;
+    }
+
+    public void setCloudFileService(CloudFileService cloudFileService) {
+        this.cloudFileService = cloudFileService;
+    }
+
+    public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
+        this.chartDetailRepository = chartDetailRepository;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setChartDetailService(ChartDetailService chartDetailService) {
+        this.chartDetailService = chartDetailService;
+    }
+
+    public void setChartRepository(ChartRepository chartRepository) {
+        this.chartRepository = chartRepository;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
+    public void setChartAsm(ChartAsm chartAsm) {
+        this.chartAsm = chartAsm;
     }
 }

@@ -49,24 +49,23 @@ import static org.mockito.Mockito.*;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class BusinessTaskJobTestIT {
-    @Autowired
+
+    @Resource
     private BusinessTaskJob businessTaskJob;
 
-    @Autowired
+    @Resource
     private TaskRepository taskRepository;
 
-    @Autowired
+    @Resource
     private UserRepository userRepository;
 
-
-    @Autowired
-    @Qualifier("vf_nz.service.SmsProviderSpy")
+    @Resource(name = "vf_nz.service.SmsProviderSpy")
     private VFNZSMSGatewayServiceImpl smsGatewayService;
-
-    private SMPPServiceImpl smppService;
 
     @Resource
     private UserGroupRepository userGroupRepository;
+
+    private SMPPServiceImpl smppService;
 
     @Before
     public void setUp() throws Exception {

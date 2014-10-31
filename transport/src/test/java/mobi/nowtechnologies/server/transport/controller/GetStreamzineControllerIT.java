@@ -59,6 +59,89 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     private FilenameAliasRepository filenameAliasRepository;
 
     @Test
+    public void testGetStreamzineForAnyMQUser_Success_LatestVersion() throws Exception {
+        Date updateDate = new Date(System.currentTimeMillis() + 2000L);
+
+        // parameters
+        String userName = "test@ukr.net";
+        String deviceUID = "b88106713409e92622461a876abcd74b1111";
+        String apiVersion = LATEST_SERVER_API_VERSION;
+        String communityUrl = "hl_uk";
+        String timestamp = "" + updateDate.getTime();
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = createTimestampToken(storedToken, timestamp);
+        User user = null;
+
+        //
+        // Expected JSON data
+        //
+        final String externalLink = "http://example.com";
+        final Message newsMessage = createNewsMessage();
+        final Date publishDate = new Date();
+        final int chartId = 6;
+        final int existingTrackId = 49;
+        final Media existingMedia = mediaRepository.findOne(existingTrackId);
+        final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
+
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
+
+        prepareDefaultBadge(communityUrl, originalUploadedFile);
+        prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
+        FilenameAlias filenameAlias1 = prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
+
+        Community community = communityRepository.findByName(communityUrl);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
+
+        Thread.sleep(2500L);
+
+        // check xml format
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false, "60x60", null).andExpect(status().isOk()).andDo(print());
+
+        // check json format and the correct order of the blocks
+        ResultActions resultActions = doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", null).andExpect(status().isOk()).andDo(print());
+
+        resultActions.andDo(print())
+                // check the orders
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
+
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
+                        // check badges
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.MINI_PLAYER_ONLY.getId()+"&id=" + chartId)))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+ PlayerType.REGULAR_PLAYER_ONLY.getId()+"&id=" + existingMedia.getIsrcTrackId())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
+    }
+
+    @Test
     public void testGetStreamzineForAnyMQUser_400_forBadResolution() throws Exception {
         Date updateDate = new Date(System.currentTimeMillis() + 1000L);
 
@@ -257,60 +340,6 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
     }
-
-
-    private void prepareDefaultBadge(String communityUrl, FilenameAlias originalUploadedFile) {
-        Community commmunity = communityRepository.findByName(communityUrl);
-        BadgeMapping mapping = BadgeMapping.general(commmunity, originalUploadedFile);
-        badgeMappingRepository.saveAndFlush(mapping);
-    }
-
-    private FilenameAlias prepareBadge(String communityUrl, String deviceType, String fileName, int width, int height, FilenameAlias originalUploadedFile) {
-        Community commmunity = communityRepository.findByName(communityUrl);
-        Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
-
-        BadgeMapping mapping = BadgeMapping.specific(resolution, commmunity, originalUploadedFile);
-        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, 5, 5).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
-
-        badgeMappingRepository.saveAndFlush(mapping);
-
-        return mapping.getFilenameAlias();
-    }
-
-    private ResultActions doRequestBefore63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
-        final String formatSpecific = (isJson) ? ".json" : "";
-
-        return mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
-                        .param("APP_VERSION", userName)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("WIDTHXHEIGHT", resolution)
-        );
-    }
-
-    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, Object modifiedSinceTime) throws Exception {
-        final String formatSpecific = (isJson) ? ".json" : "";
-
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = extGet("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
-                .param("APP_VERSION", userName)
-                .param("COMMUNITY_NAME", communityUrl)
-                .param("API_VERSION", apiVersion)
-                .param("DEVICE_UID", deviceUID)
-                .param("USER_NAME", userName)
-                .param("USER_TOKEN", userToken)
-                .param("TIMESTAMP", timestamp)
-                .param("WIDTHXHEIGHT", resolution);
-        if (modifiedSinceTime != null) {
-            mockHttpServletRequestBuilder.headers(getHttpHeadersWithIfModifiedSince(modifiedSinceTime));
-        }
-        return mockMvc.perform(mockHttpServletRequestBuilder);
-    }
-
 
     @Test
     public void testGetStreamzineFor63WithIfModifiedSuccess() throws Exception {
@@ -530,6 +559,60 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                         .param("TIMESTAMP", timestamp)).
                 andExpect(status().isNotFound());
     }
+
+
+    private void prepareDefaultBadge(String communityUrl, FilenameAlias originalUploadedFile) {
+        Community commmunity = communityRepository.findByName(communityUrl);
+        BadgeMapping mapping = BadgeMapping.general(commmunity, originalUploadedFile);
+        badgeMappingRepository.saveAndFlush(mapping);
+    }
+
+    private FilenameAlias prepareBadge(String communityUrl, String deviceType, String fileName, int width, int height, FilenameAlias originalUploadedFile) {
+        Community commmunity = communityRepository.findByName(communityUrl);
+        Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
+
+        BadgeMapping mapping = BadgeMapping.specific(resolution, commmunity, originalUploadedFile);
+        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, 5, 5).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+
+        badgeMappingRepository.saveAndFlush(mapping);
+
+        return mapping.getFilenameAlias();
+    }
+
+    private ResultActions doRequestBefore63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
+        final String formatSpecific = (isJson) ? ".json" : "";
+
+        return mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
+                        .param("APP_VERSION", userName)
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("API_VERSION", apiVersion)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("WIDTHXHEIGHT", resolution)
+        );
+    }
+
+    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, Object modifiedSinceTime) throws Exception {
+        final String formatSpecific = (isJson) ? ".json" : "";
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = extGet("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
+                .param("APP_VERSION", userName)
+                .param("COMMUNITY_NAME", communityUrl)
+                .param("API_VERSION", apiVersion)
+                .param("DEVICE_UID", deviceUID)
+                .param("USER_NAME", userName)
+                .param("USER_TOKEN", userToken)
+                .param("TIMESTAMP", timestamp)
+                .param("WIDTHXHEIGHT", resolution);
+        if (modifiedSinceTime != null) {
+            mockHttpServletRequestBuilder.headers(getHttpHeadersWithIfModifiedSince(modifiedSinceTime));
+        }
+        return mockMvc.perform(mockHttpServletRequestBuilder);
+    }
+
 
     private void prepareUpdate(Date updateDate, String externalLink, Date publishDate, Message newsMessage, int chartId, Media track, FilenameAlias filenameAlias, Community community, User... users) {
         Update update = streamzineUpdateService.create(updateDate, community);

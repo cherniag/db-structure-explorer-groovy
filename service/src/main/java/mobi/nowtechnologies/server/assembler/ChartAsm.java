@@ -3,8 +3,11 @@ package mobi.nowtechnologies.server.assembler;
 import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
+import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import org.modelmapper.ModelMapper;
@@ -21,21 +24,23 @@ import java.util.List;
  * 
  */
 public class ChartAsm extends ModelMapper{
-	protected final static ModelMapper modelMapper = new ChartAsm();
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartAsm.class);
 
     private FilenameAliasRepository filenameAliasRepository;
+    private BadgesService badgesService;
+
 	
 	public ChartAsm(){
 		this.addMappings(new PropertyMap<ChartDetail, PlaylistDto>() {
-			@Override
-			protected void configure() {
-				skip().setId(null);
-				skip().setPlaylistTitle(null);	
-				skip().setSwitchable(null);	
-				map().setImage(source.getImageFileName());
-			}
-		});
+            @Override
+            protected void configure() {
+                skip().setId(null);
+                skip().setPlaylistTitle(null);
+                skip().setSwitchable(null);
+                skip().setBadgeIcon(null);
+                map().setImage(source.getImageFileName());
+            }
+        });
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,14 +112,19 @@ public class ChartAsm extends ModelMapper{
 		return chartDetail;
 	}
 	
-	public static PlaylistDto toPlaylistDto(ChartDetail chartDetail,final boolean switchable) {
+	public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable) {
 		LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
 		
-		PlaylistDto playlistDto = modelMapper.map(chartDetail, PlaylistDto.class);
+		PlaylistDto playlistDto = map(chartDetail, PlaylistDto.class);
 		playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI() : null);
 		playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
 		playlistDto.setSwitchable(switchable);
-		
+
+		if(chartDetail.getBadgeId() != null && resolution != null){
+            String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
+            playlistDto.setBadgeIcon(badgeFileName);
+        }
+
 		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
 		return playlistDto;
 	}
@@ -140,5 +150,9 @@ public class ChartAsm extends ModelMapper{
 
     public void setFilenameAliasRepository(FilenameAliasRepository filenameAliasRepository) {
         this.filenameAliasRepository = filenameAliasRepository;
+    }
+
+    public void setBadgesService(BadgesService badgesService) {
+        this.badgesService = badgesService;
     }
 }

@@ -11,21 +11,21 @@ import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.annotation.Resource;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
-    @Autowired
-    @Qualifier("promotionRepository")
+
+    @Resource(name = "promotionRepository")
     protected PromotionRepository promotionRepository;
 
-    @Autowired
-    @Qualifier("promoCodeRepository")
+    @Resource(name = "promoCodeRepository")
     protected PromoCodeRepository promoCodeRepository;
+
     private Promotion promotion;
     private PromoCode promoCode;
 
@@ -64,36 +64,6 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
 
     }
 
-    private void prepare(User user) {
-        int now = (int)(System.currentTimeMillis()/1000);
-        promotion = new Promotion();
-        promotion.setEndDate(now + 10000000);
-        promotion.setStartDate(now - 10000000);
-        promotion.setUserGroup(user.getUserGroup());
-        promotion.setMaxUsers(30);
-        promotion.setNumUsers(1);
-        promotion.setIsActive(true);
-        promotion.setType(Promotion.ADD_FREE_WEEKS_PROMOTION);
-        promotion = promotionRepository.save(promotion);
-
-        promoCode = new PromoCode();
-        promoCode.setCode("o2.consumer.4g.paym.direct");
-        promoCode.setMediaType(MediaType.VIDEO_AND_AUDIO);
-        promoCode.setPromotion(promotion);
-        promoCode = promoCodeRepository.save(promoCode);
-        promotion.setPromoCode(promoCode);
-    }
-
-    @After
-    public void tireDown() {
-        super.tireDown();
-        if (promoCode != null) {
-            promoCodeRepository.delete(promoCode);
-        }
-        if (promotion != null) {
-            promotionRepository.delete(promotion);
-        }
-    }
 
     @Test
     public void testActivateVideoAudioFreeTrial_EmptyDeviceUIDAndNotEligableForVideo_Failure() throws Exception {
@@ -204,6 +174,37 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
         ).andExpect(status().isNotFound());
+    }
+
+    @After
+    public void tireDown() {
+        super.tireDown();
+        if (promoCode != null) {
+            promoCodeRepository.delete(promoCode);
+        }
+        if (promotion != null) {
+            promotionRepository.delete(promotion);
+        }
+    }
+
+    private void prepare(User user) {
+        int now = (int)(System.currentTimeMillis()/1000);
+        promotion = new Promotion();
+        promotion.setEndDate(now + 10000000);
+        promotion.setStartDate(now - 10000000);
+        promotion.setUserGroup(user.getUserGroup());
+        promotion.setMaxUsers(30);
+        promotion.setNumUsers(1);
+        promotion.setIsActive(true);
+        promotion.setType(Promotion.ADD_FREE_WEEKS_PROMOTION);
+        promotion = promotionRepository.save(promotion);
+
+        promoCode = new PromoCode();
+        promoCode.setCode("o2.consumer.4g.paym.direct");
+        promoCode.setMediaType(MediaType.VIDEO_AND_AUDIO);
+        promoCode.setPromotion(promotion);
+        promoCode = promoCodeRepository.save(promoCode);
+        promotion.setPromoCode(promoCode);
     }
 
 }

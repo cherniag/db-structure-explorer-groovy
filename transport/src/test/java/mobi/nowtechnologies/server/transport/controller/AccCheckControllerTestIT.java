@@ -41,6 +41,33 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     @Test
+    public void testAccCheck_LatestVersion() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = LATEST_SERVER_API_VERSION;
+        String communityName = "o2";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        List<Chart> charts = new ArrayList<Chart>();
+        Chart chart = chartRepository.findOne(5);
+        charts.add(chart);
+        User user = userService.findByNameAndCommunity(userName, communityName);
+        user.setSelectedCharts(charts);
+        userService.updateUser(user);
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("COMMUNITY_NAME", communityName)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)).
+                andExpect(status().isOk()).andDo(print());
+
+    }
+
+    @Test
     public void testAccountCheckForO2Client_WithSelectedCharts_Success() throws Exception {
         String userName = "+447111111114";
         String apiVersion = "4.0";
@@ -481,33 +508,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(604))
                 .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("error.604.activation.status.ACTIVATED.invalid.userName"))
                 .andExpect(jsonPath("$.response.data[0].errorMessage.displayMessage").value("User activation status [ACTIVATED] is invalid. User must have activated userName"));
-    }
-
-    @Test
-    public void testAccCheck_LatestVersion() throws Exception {
-        String userName = "+447111111114";
-        String apiVersion = LATEST_SERVER_API_VERSION;
-        String communityName = "o2";
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
-        userService.updateUser(user);
-
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).andDo(print());
-
     }
 
 

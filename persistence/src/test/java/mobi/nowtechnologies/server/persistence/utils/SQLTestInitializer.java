@@ -8,8 +8,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: Alexsandr_Kolpakov
@@ -81,7 +82,7 @@ public class SQLTestInitializer {
             }
         }
 
-        List<Chart> charts = new ArrayList<Chart>();
+        Set<Chart> charts = new HashSet<Chart>();
         List<ChartDetail> chartDetails = chartDetailRepository.findAll();
         for (ChartDetail chartDetail : chartDetails) {
             Chart chart = chartDetail.getChart();

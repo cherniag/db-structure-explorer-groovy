@@ -82,24 +82,27 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessWithJSON_LatestVersion() throws Exception {
+        final String apiVersion = LATEST_SERVER_API_VERSION;
+        String widthHeight = "720x1280";
         setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));
 
-        ResultActions resultActions = signUpDevice(deviceUID, deviceType, LATEST_SERVER_API_VERSION, communityUrl);
+        ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         String userToken = getUserToken(resultActions, timestamp);
 
         mockMvc.perform(
-                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, LATEST_SERVER_API_VERSION, communityUrl, timestamp, fbUserId, fbToken, true)
+                buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
         ).andExpect(status().isOk());
 
         User user = userRepository.findByDeviceUIDAndCommunity(deviceUID, communityRepository.findByRewriteUrlParameter(communityUrl));
         FacebookUserInfo fbDetails = fbDetailsRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), fbEmail);
         mockMvc.perform(
-                extGet("/" + communityUrl + "/" + LATEST_SERVER_API_VERSION + "/GET_CHART.json")
+                extGet("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
                         .param("USER_NAME", user.getUserName())
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
+                        .param("WIDTHXHEIGHT", widthHeight)
         ).andExpect(status().isOk());
     }
 

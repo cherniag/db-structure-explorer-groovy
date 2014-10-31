@@ -16,7 +16,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 
@@ -34,11 +33,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
-    @Autowired
+    @Resource
     private UserStatusRepository userStatusRepository;
 
     @Resource
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
+
+    @Test
+    public void checkApplyInitPromo_Success_LatestVersion() throws Exception {
+        //given
+        String userName = "imei_351722057812748";
+        User user = prepareUserForApplyInitPromo(userName);
+        String apiVersion = LATEST_SERVER_API_VERSION;
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = user.getToken();
+        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
+        providerUserDetails.withContract("PAYG").withOperator("o2");
+        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
+        doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
+
+        //then
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("OTAC_TOKEN", otac)
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
+
+        //when
+        user = userService.findByName(user.getMobile());
+        Assert.assertEquals(13, days(user.getNextSubPayment()));
+        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
+        Assert.assertEquals(O2, user.getProvider());
+        Assert.assertEquals(PAYG, user.getContract());
+
+        verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
+        verify(updateO2UserTaskSpy, times(0)).handleUserUpdate(any(User.class));
+
+        mockMvc.perform(
+                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
+                        .param("USER_NAME", user.getMobile())
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+    }
 
     @Test
     public void givenValidO2Token_whenAPPLY_PROMO_v3d6_PromoPhoneNumber() throws Exception {
@@ -151,50 +194,6 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
 
     }
 
-    @Test
-    public void checkApplyInitPromo_Success_LatestVersion() throws Exception {
-        //given
-        String userName = "imei_351722057812748";
-        User user = prepareUserForApplyInitPromo(userName);
-        String apiVersion = LATEST_SERVER_API_VERSION;
-        String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
-        String storedToken = user.getToken();
-        String otac = "00000000-c768-4fe7-bb56-a5e0c722cd44";
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
-
-        ProviderUserDetails providerUserDetails = new ProviderUserDetails();
-        providerUserDetails.withContract("PAYG").withOperator("o2");
-        doReturn(providerUserDetails).when(o2ProviderServiceSpy).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
-        doNothing().when(updateO2UserTaskSpy).handleUserUpdate(any(User.class));
-
-        //then
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/APPLY_INIT_PROMO.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
-
-        //when
-        user = userService.findByName(user.getMobile());
-        Assert.assertEquals(13, days(user.getNextSubPayment()));
-        Assert.assertEquals(ActivationStatus.ACTIVATED, user.getActivationStatus());
-        Assert.assertEquals(O2, user.getProvider());
-        Assert.assertEquals(PAYG, user.getContract());
-
-        verify(o2ProviderServiceSpy, times(1)).getUserDetails(eq(otac), eq(user.getMobile()), any(Community.class));
-        verify(updateO2UserTaskSpy, times(0)).handleUserUpdate(any(User.class));
-
-        mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", user.getMobile())
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
-    }
-    
     @Test
     public void givenValidO2Token_whenUserWithPhoneExistsAndRegistrationFromNewDevice_thenReturnOldUserWithNewDeviceAndRemoveSecondUser() throws Exception {
         //given

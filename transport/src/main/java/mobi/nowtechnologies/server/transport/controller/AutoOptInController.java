@@ -34,7 +34,8 @@ public class AutoOptInController extends CommonController {
             "**/{communityUri}/{apiVersion:6\\.0}/AUTO_OPT_IN",
             "**/{communityUri}/{apiVersion:6\\.1}/AUTO_OPT_IN",
             "**/{communityUri}/{apiVersion:6\\.2}/AUTO_OPT_IN",
-            "**/{communityUri}/{apiVersion:6\\.3}/AUTO_OPT_IN"
+            "**/{communityUri}/{apiVersion:6\\.3}/AUTO_OPT_IN",
+            "**/{communityUri}/{apiVersion:6\\.4}/AUTO_OPT_IN"
     })
     public ModelAndView autoOptInWithCheckReactivation(
             @PathVariable("communityUri") String communityUri,
