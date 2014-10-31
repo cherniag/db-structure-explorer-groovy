@@ -133,7 +133,7 @@ public class UniversalParserTest {
         Assert.assertEquals("2011", track.year);
         Assert.assertEquals(null, track.label);
         Assert.assertEquals("05037128167051", track.physicalProductId);
-        Assert.assertEquals(null, track.album);
+        Assert.assertEquals("Get Back (ASAP)", track.album);
         Assert.assertEquals(null, track.info);
         Assert.assertEquals(true, track.licensed);
         Assert.assertEquals(false, track.exists);
@@ -179,7 +179,7 @@ public class UniversalParserTest {
         Assert.assertEquals("2013", track.year);
         Assert.assertEquals(null, track.label);
         Assert.assertEquals("00602537560646", track.physicalProductId);
-        Assert.assertEquals(null, track.album);
+        Assert.assertEquals("Jamaïque", track.album);
         Assert.assertEquals(null, track.info);
         Assert.assertEquals(true, track.licensed);
         Assert.assertEquals(false, track.exists);
