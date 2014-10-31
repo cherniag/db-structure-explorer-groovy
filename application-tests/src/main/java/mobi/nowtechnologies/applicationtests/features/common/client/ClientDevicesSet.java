@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.applicationtests.features.common.client;
 
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountCheckHttpService;
@@ -98,17 +99,28 @@ public abstract class ClientDevicesSet {
         return chartHttpService.getChart(deviceData, userName, state.getLastAccountCheckResponse().userToken, state.getDeviceUID(), deviceData.getFormat());
     }
 
-    public NewsDetailDto[] getNews(UserDeviceData deviceData){
+    public NewsDetailDto[] getNews(UserDeviceData deviceData, ApiVersions allVersions){
         final PhoneState state = states.get(deviceData);
 
-        if(deviceData.getFormat().json()) {
-            ResponseEntity<JsonNewsResponse> entity = newsHttpService.getNews(deviceData, state, JsonNewsResponse.class);
-            return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
-        } else {
-            ResponseEntity<XmlNewsResponse> entity = newsHttpService.getNews(deviceData, state, XmlNewsResponse.class);
-            return entity.getBody().getNews().getNewsDetailDtos();
-        }
+        boolean needToSendGet = allVersions.above("6.3").contains(deviceData.getApiVersion());
 
+        if(deviceData.getFormat().json()) {
+            if(needToSendGet) {
+                ResponseEntity<JsonNewsResponse> entity = newsHttpService.getNews(deviceData, state, JsonNewsResponse.class);
+                return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
+            } else {
+                ResponseEntity<JsonNewsResponse> entity = newsHttpService.postNews(deviceData, state, JsonNewsResponse.class);
+                return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
+            }
+        } else {
+            if(needToSendGet) {
+                ResponseEntity<XmlNewsResponse> entity = newsHttpService.getNews(deviceData, state, XmlNewsResponse.class);
+                return entity.getBody().getNews().getNewsDetailDtos();
+            } else {
+                ResponseEntity<XmlNewsResponse> entity = newsHttpService.postNews(deviceData, state, XmlNewsResponse.class);
+                return entity.getBody().getNews().getNewsDetailDtos();
+            }
+        }
     }
 
     //
