@@ -1,7 +1,5 @@
 -- begin SRV-89
 
-ALTER TABLE cn_service.tb_media DROP  FOREIGN KEY tb_media_ibfk_1;
-
 drop table  cn_service.tb_labels;
 
 
