@@ -3,6 +3,8 @@ package mobi.nowtechnologies.server.shared.enums;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -32,7 +34,7 @@ public class DurationUnitTest {
         DurationUnit days = DAYS;
 
         //when
-        int result = days.compareWith(DAYS);
+        int result = days.compareTo(DAYS);
 
         //then
         assertThat(result, is(0));
@@ -44,10 +46,10 @@ public class DurationUnitTest {
         DurationUnit days = DAYS;
 
         //when
-        int result = days.compareWith(WEEKS);
+        int result = days.compareTo(WEEKS);
 
         //then
-        assertThat(result, is(-1));
+        assertThat(result, lessThan(0));
     }
 
     @Test
@@ -56,10 +58,10 @@ public class DurationUnitTest {
         DurationUnit days = DAYS;
 
         //when
-        int result = days.compareWith(MONTHS);
+        int result = days.compareTo(MONTHS);
 
         //then
-        assertThat(result, is(-1));
+        assertThat(result, lessThan(0));
     }
 
     @Test
@@ -68,10 +70,10 @@ public class DurationUnitTest {
         DurationUnit weeks = WEEKS;
 
         //when
-        int result = weeks.compareWith(DAYS);
+        int result = weeks.compareTo(DAYS);
 
         //then
-        assertThat(result, is(1));
+        assertThat(result, greaterThan(0));
     }
 
     @Test
@@ -80,7 +82,7 @@ public class DurationUnitTest {
         DurationUnit weeks = WEEKS;
 
         //when
-        int result = weeks.compareWith(WEEKS);
+        int result = weeks.compareTo(WEEKS);
 
         //then
         assertThat(result, is(0));
@@ -92,10 +94,10 @@ public class DurationUnitTest {
         DurationUnit weeks = WEEKS;
 
         //when
-        int result = weeks.compareWith(MONTHS);
+        int result = weeks.compareTo(MONTHS);
 
         //then
-        assertThat(result, is(-1));
+        assertThat(result, lessThan(0));
     }
 
 
@@ -105,10 +107,10 @@ public class DurationUnitTest {
         DurationUnit months = MONTHS;
 
         //when
-        int result = months.compareWith(DAYS);
+        int result = months.compareTo(DAYS);
 
         //then
-        assertThat(result, is(1));
+        assertThat(result, greaterThan(0));
     }
 
     @Test
@@ -117,10 +119,10 @@ public class DurationUnitTest {
         DurationUnit months = MONTHS;
 
         //when
-        int result = months.compareWith(WEEKS);
+        int result = months.compareTo(WEEKS);
 
         //then
-        assertThat(result, is(1));
+        assertThat(result, greaterThan(0));
     }
 
     @Test
@@ -129,11 +131,9 @@ public class DurationUnitTest {
         DurationUnit months = MONTHS;
 
         //when
-        int result = months.compareWith(MONTHS);
+        int result = months.compareTo(MONTHS);
 
         //then
         assertThat(result, is(0));
     }
-
-
 }

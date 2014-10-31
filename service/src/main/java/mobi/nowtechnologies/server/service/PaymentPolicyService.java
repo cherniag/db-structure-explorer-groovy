@@ -133,7 +133,7 @@ public class PaymentPolicyService {
         sort(paymentPolicies, new Comparator<PaymentPolicy>() {
             @Override
             public int compare(PaymentPolicy p1, PaymentPolicy p2) {
-                int result = p2.getPeriod().getDurationUnit().compareWith(p1.getPeriod().getDurationUnit());
+                int result = p2.getPeriod().getDurationUnit().compareTo(p1.getPeriod().getDurationUnit());
                 if(result == 0) return new Integer(p2.getPeriod().getDuration()).compareTo(p1.getPeriod().getDuration());
                 return result;
             }
