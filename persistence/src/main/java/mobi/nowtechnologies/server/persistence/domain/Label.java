@@ -13,7 +13,7 @@ public class Label implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private byte i;
+	private Long i;
 
 	@Column(name="name",columnDefinition="char(30)")
 	private String name;
@@ -21,12 +21,8 @@ public class Label implements Serializable {
     public Label() {
     }
 
-	public byte getI() {
+	public Long getI() {
 		return this.i;
-	}
-
-	public void setI(byte i) {
-		this.i = i;
 	}
 
 	public String getName() {

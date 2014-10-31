@@ -108,7 +108,7 @@ public class GetNewsController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
-            boolean checkCaching = ((request != null) & (lastUpdateNewsTimeMillis != null));
+            boolean checkCaching = ((request != null) && (lastUpdateNewsTimeMillis != null));
 
             ContentDtoResult<NewsDto> newsDtoResult = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, withBanners, checkCaching);
 
