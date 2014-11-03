@@ -31,7 +31,7 @@
 	   	<c:set var="hrefValue">href="${pageContext.request.contextPath}/${param.callingPage}/${method_name}.html?paymentPolicyId=${paymentPolicy.id}"</c:set>
 	   	<c:set var="onClickEvent" value="onclick='markSelected(this)'" />
 	   	
-	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.duration == paymentPolicy.duration}">
+	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.period.duration == paymentPolicy.duration}">
 	   		<c:set var="disabledAttrib">disabled="true"</c:set>
 	   		<%--<c:set var="buttonStyle" value="button-on" /> --%>
 	   		<c:set var="displayButtonOff" value="false" />
