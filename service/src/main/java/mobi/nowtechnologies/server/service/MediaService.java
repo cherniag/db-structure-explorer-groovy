@@ -96,16 +96,6 @@ public class MediaService {
         return mediaRepository.getMedias("%"+searchWords+"%", FileType.MOBILE_AUDIO.getIdAsByte());
     }
 	
-	@Transactional(readOnly = true)
-	public Media findById(Integer id) {
-		LOGGER.debug("input parameters id: [{}]", id);
-		
-		Media media = mediaRepository.findOne(id);
-		
-		LOGGER.info("Output parameter media=[{}]", media);
-		return media;
-	}
-
     @Transactional(readOnly = true)
     public Set<Media> getMediasForAvailableCommunityCharts(String communityRewriteUrl, long timeMillis, String searchWord, Collection<Integer> excludedIds){
         LOGGER.debug("input parameters communityRewriteUrl [{}] timeMillis [{}] searchWord [{}] excludedIds [{}]", communityRewriteUrl, timeMillis, searchWord, excludedIds);

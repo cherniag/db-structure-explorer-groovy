@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.file.image;
 
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.util.Assert;
 

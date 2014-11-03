@@ -22,6 +22,8 @@ public class AccountCheckDTOAsmTest {
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
     @Mock
     private RuleServiceSupport ruleServiceSupport;
+    @Mock
+    private UserDetailsDtoAsm userDetailsDtoAsm;
 
     private AutoOptInRuleService autoOptInRuleService;
 
@@ -70,7 +72,7 @@ public class AccountCheckDTOAsmTest {
     public void testToAccountCheckDTOWhenUserIsInDatabase() throws Exception {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(autoOptInExemptPhoneNumber);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false);
         verify(ruleServiceSupport, times(0)).fireRules(eq(ALL), any(User.class));
 
         assertFalse(dto.subjectToAutoOptIn);
@@ -84,7 +86,7 @@ public class AccountCheckDTOAsmTest {
         boolean isSubjectToAutoOptIn = true;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false);
 
         verify(user, times(1)).isSubjectToAutoOptIn();
         verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
@@ -100,11 +102,25 @@ public class AccountCheckDTOAsmTest {
         boolean isSubjectToAutoOptIn = false;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "remember-me-token", null, false, false, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false);
 
         verify(user, times(0)).isSubjectToAutoOptIn();
         verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
 
         assertEquals(true, dto.subjectToAutoOptIn);
     }
+
+    @Test
+    public void testToAccCheckDTOWithDetails() throws Exception {
+        when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
+        when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);
+
+        boolean isSubjectToAutoOptIn = true;
+        when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
+
+        accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false);
+
+        verify(userDetailsDtoAsm, times(1)).toUserDetailsDto(user);
+    }
+
 }
