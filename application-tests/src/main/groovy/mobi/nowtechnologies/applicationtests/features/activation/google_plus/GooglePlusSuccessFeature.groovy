@@ -83,7 +83,17 @@ class GooglePlusSuccessFeature {
 
     @And('^User receives following in the SIGN_IN_GOOGLE_PLUS response:$')
     def "User receives following in the SIGN_IN_GOOGLE_PLUS response"(DataTable userStateTable) {
-        commonAssertionsService.checkUserState(userStateTable.asList(UserState)[0], currentUserDevices, deviceSet)
+        def userState = userStateTable.asList(UserState)[0];
+        currentUserDevices.each {
+            def lastGooglePlusInfo = deviceSet.getPhoneState(it).lastGooglePlusInfo
+            assertEquals(userState.activation.name(), lastGooglePlusInfo.activation)
+            assertEquals(userState.freeTrial, lastGooglePlusInfo.freeTrial)
+            assertEquals(userState.fullyRegistred, lastGooglePlusInfo.fullyRegistred)
+            assertEquals(userState.hasAllDetails, lastGooglePlusInfo.hasAllDetails)
+            assertEquals(userState.paymentType, lastGooglePlusInfo.paymentType)
+            assertEquals(userState.provider, lastGooglePlusInfo.provider)
+            assertEquals(userState.status, lastGooglePlusInfo.status)
+        }
     }
 
     @And('^\'deviceType\' field is the same as sent during registration$')
@@ -119,6 +129,7 @@ class GooglePlusSuccessFeature {
             assertEquals(googlePlusInfo.gender.toLowerCase(), person.gender)
             assertEquals(googlePlusInfo.firstName, person.givenName)
             assertEquals(googlePlusInfo.surname, person.familyName)
+            assertEquals(googlePlusInfo.userName, person.displayName)
         }
     }
 

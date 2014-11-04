@@ -373,7 +373,7 @@ if(Streamzine == undefined) {
         // timepicker
         //
         $('#timepicker_customrange').timepicker({
-            minutes: { interval: 15 },
+            minutes: { interval: 3 },
             showCloseButton: true,
             rows: 3,
             showPeriodLabels: true,

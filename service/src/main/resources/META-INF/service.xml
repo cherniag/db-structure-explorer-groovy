@@ -43,7 +43,10 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <bean id="accountCheckDTOAsm" class="mobi.nowtechnologies.server.assembler.AccountCheckDTOAsm">
         <property name="autoOptInExemptPhoneNumberRepository" ref="autoOptInExemptPhoneNumberRepository" />
         <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
+        <property name="userDetailsDtoAsm" ref="userDetailsDtoAsm"/>
     </bean>
+
+    <bean id="userDetailsDtoAsm" class="mobi.nowtechnologies.server.assembler.UserDetailsDtoAsm"/>
 
     <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
         <property name="mediaRepository" ref="mediaRepository" />
@@ -239,19 +242,16 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
 		<property name="chartDetailService" ref="service.ChartDetailService" />
 		<property name="userService" ref="service.UserService" />
-		<property name="mediaService" ref="service.MediaService" />
 		<property name="drmService" ref="service.DrmService" />
 		<property name="chartRepository" ref="chartRepository" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
         <property name="chartDetailsConverter" ref="service.ChartDetailsConverter"/>
-	     <property name="streamzineUpdateService" ref="streamzineUpdateService"/>
         <property name="cacheContentService" ref="service.checkCacheService"/>
     </bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">
-		<property name="chartDetailDao" ref="persistence.ChartDetailDao" />
 		<property name="chartDetailRepository" ref="chartDetailRepository" />
 		<property name="mediaService" ref="service.MediaService" />
         <property name="mediaRepository" ref="mediaRepository"/>

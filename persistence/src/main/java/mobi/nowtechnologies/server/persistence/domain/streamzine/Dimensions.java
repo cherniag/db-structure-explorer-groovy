@@ -1,7 +1,4 @@
-package mobi.nowtechnologies.server.service.file.image;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-
+package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
 public class Dimensions {
     private int width;
@@ -29,11 +26,12 @@ public class Dimensions {
         this.height = height;
     }
 
+    public String getInfo() {
+        return width + "x" + height;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("width", width)
-                .append("height", height)
-                .toString();
+        return getInfo();
     }
 }
