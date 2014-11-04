@@ -4,11 +4,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <c:choose>
-    <c:when test="${suweeks == 1}">
+    <c:when test="${period.duration == 1}">
         <c:set var="paymentPolicyOptionNo" value="2" />
         <c:set var="imageWeeks" value="2" />
     </c:when>
-    <c:when test="${suweeks == 4}">
+    <c:when test="${period.duration == 4}">
         <c:set var="paymentPolicyOptionNo" value="1" />
         <c:set var="imageWeeks" value="1" />
     </c:when>

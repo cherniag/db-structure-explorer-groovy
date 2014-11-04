@@ -9,19 +9,19 @@
 </div>
 
 <c:choose>
-    <c:when test="${suweeks == 1}">
+    <c:when test="${period.duration == 1}">
         <c:set var="paymentPolicyOptionNo" value="3" />
         <c:set var="imageWeeks" value="3" />
     </c:when>
-    <c:when test="${suweeks == 2}">
+    <c:when test="${period.duration == 2}">
         <c:set var="paymentPolicyOptionNo" value="2" />
         <c:set var="imageWeeks" value="2" />
     </c:when>
-    <c:when test="${suweeks == 3}">
+    <c:when test="${period.duration == 3}">
         <c:set var="paymentPolicyOptionNo" value="4" />
         <c:set var="imageWeeks" value="1" />
     </c:when>
-    <c:when test="${suweeks == 5}">
+    <c:when test="${period.duration == 5}">
         <c:set var="paymentPolicyOptionNo" value="1" />
         <c:set var="imageWeeks" value="1" />
     </c:when>
