@@ -5,28 +5,18 @@ import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
-import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
-import mobi.nowtechnologies.server.shared.dto.social.FacebookUserDetailsDto;
-import mobi.nowtechnologies.server.shared.dto.social.GooglePlusUserDetailsDto;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
@@ -40,12 +30,7 @@ public class AccountCheckDTOAsm {
 
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
 
-    @Resource
-    private FacebookUserInfoRepository facebookUserInfoRepository;
-
-    @Resource
-    private GooglePlusUserInfoRepository googlePlusUserInfoRepository;
-
+    private UserDetailsDtoAsm userDetailsDtoAsm;
 
     private AutoOptInRuleService autoOptInRuleService;
 
@@ -54,7 +39,8 @@ public class AccountCheckDTOAsm {
     }
 
     public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation) {
-        LOGGER.debug("user=[{}]", user);
+        LOGGER.debug("user=[{}], appStoreProductIds=[{}], canActivateVideoTrial={}, withUserDetails={}, firstActivation={}",
+                user, appStoreProductIds, canActivateVideoTrial, withUserDetails, firstActivation);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
         int nextSubPayment = user.getNextSubPayment();
@@ -67,10 +53,12 @@ public class AccountCheckDTOAsm {
         DrmPolicy drmPolicy = userGroup.getDrmPolicy();
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
-        boolean paymentEnabled = ((null != currentPaymentDetails && currentPaymentDetails.isActivated() && (currentPaymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) || currentPaymentDetails
-                .getLastPaymentStatus().equals(PaymentDetailsStatus.SUCCESSFUL))) || (lastSubscribedPaymentSystem != null
-                && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
-                && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name())));
+
+        boolean hasOtherPaymentDetails = currentPaymentDetails != null && currentPaymentDetails.isActivated()
+                && (currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.NONE || currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.SUCCESSFUL);
+        boolean hasITunesSubscription =  lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
+                && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name());
+
         String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
 
@@ -90,7 +78,7 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.deviceType = user.getDeviceType().getName();
         accountCheckDTO.deviceUID = user.getDeviceUID();
         accountCheckDTO.paymentType = oldPaymentType;
-        accountCheckDTO.paymentEnabled = paymentEnabled;
+        accountCheckDTO.paymentEnabled = hasOtherPaymentDetails || hasITunesSubscription;
         accountCheckDTO.phoneNumber = user.getMobile();
         accountCheckDTO.operator = user.getOperator();
         accountCheckDTO.paymentStatus = oldPaymentStatus;
@@ -130,63 +118,11 @@ public class AccountCheckDTOAsm {
             accountCheckDTO.appStoreProductId = Joiner.on(",").skipNulls().join(appStoreProductIds);
         }
         if (withUserDetails) {
-            accountCheckDTO.setUserDetails(buildUserDetails(user));
+            UserDetailsDto userDetailsDto = userDetailsDtoAsm.toUserDetailsDto(user);
+            accountCheckDTO.setUserDetails(userDetailsDto);
         }
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
-    }
-
-    private UserDetailsDto buildUserDetails(User user) {
-        if (ProviderType.FACEBOOK.equals(user.getProvider())) {
-            FacebookUserInfo facebookUserInfo = facebookUserInfoRepository.findByUser(user);
-            if (facebookUserInfo != null) {
-                return convertFacebookInfoToDetails(facebookUserInfo);
-            }
-        }
-
-        if (ProviderType.GOOGLE_PLUS.equals(user.getProvider())) {
-            GooglePlusUserInfo googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user);
-            if (googlePlusUserInfo != null) {
-                return convertGooglePlusInfoToDetails(googlePlusUserInfo);
-            }
-        }
-        return null;
-    }
-
-    private UserDetailsDto convertGooglePlusInfoToDetails(GooglePlusUserInfo googlePlusUserInfo) {
-        GooglePlusUserDetailsDto result = new GooglePlusUserDetailsDto();
-        result.setEmail(googlePlusUserInfo.getEmail());
-        result.setUserName(googlePlusUserInfo.getEmail());
-        result.setProfileUrl(googlePlusUserInfo.getPicture());
-        result.setGooglePlusId(googlePlusUserInfo.getGooglePlusId());
-        result.setFirstName(googlePlusUserInfo.getGivenName());
-        result.setSurname(googlePlusUserInfo.getFamilyName());
-        result.setGender(googlePlusUserInfo.getGender());
-        result.setLocation(googlePlusUserInfo.getLocation());
-        result.setBirthDay(convertBirthday(googlePlusUserInfo.getBirthday()));
-        return result;
-    }
-
-    private String convertBirthday(Date birthday) {
-        if (birthday != null){
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            return dateFormat.format(birthday);
-        }
-        return null;
-    }
-
-    private FacebookUserDetailsDto convertFacebookInfoToDetails(FacebookUserInfo details) {
-        FacebookUserDetailsDto result = new FacebookUserDetailsDto();
-        result.setUserName(details.getUserName());
-        result.setFirstName(details.getFirstName());
-        result.setSurname(details.getSurname());
-        result.setEmail(details.getEmail());
-        result.setProfileUrl(details.getProfileUrl());
-        result.setFacebookId(details.getFacebookId());
-        result.setLocation(details.getCity());
-        result.setGender(details.getGender());
-        result.setBirthDay(convertBirthday(details.getBirthday()));
-        return result;
     }
 
     private boolean calcSubjectToAutoOptIn(User user) {
@@ -252,5 +188,9 @@ public class AccountCheckDTOAsm {
 
     public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {
         this.autoOptInRuleService = autoOptInRuleService;
+    }
+
+    public void setUserDetailsDtoAsm(UserDetailsDtoAsm userDetailsDtoAsm) {
+        this.userDetailsDtoAsm = userDetailsDtoAsm;
     }
 }

@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.badge;
 
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -48,8 +49,8 @@ public class Resolution {
         return this;
     }
 
-    public Resolution newResolution(int width, int height) {
-        return new Resolution(deviceType, width, height);
+    public Resolution newResolution(Dimensions dim) {
+        return new Resolution(deviceType, dim.getWidth(), dim.getHeight());
     }
 
     public long getId() {
@@ -95,7 +96,7 @@ public class Resolution {
     }
 
     public String getSizeInfo() {
-        return width + "x" + height;
+        return new Dimensions(width, height).getInfo();
     }
 
     @Override

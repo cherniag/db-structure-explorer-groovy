@@ -33,29 +33,14 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	@Query("select chartDetail.media from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.locked = true order by chartDetail.media.trackId")
 	List<Media> getLockedChartItemByDate(Integer chartId, long publishTimeMillis);
 	
-	@Query("select chartDetail.i from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2 and chartDetail.position>?3 order by chartDetail.position asc")
-	List<Integer> getIdsByDateAndPosition(Integer chartId, long publishTimeMillis, byte afterPosition);
-
 	@Query("select count(chartDetail) from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2")
 	long getCount(Integer chartId, long choosedPublishTimeMillis);
 
 	@Query("select max(chartDetail.publishTimeMillis) from ChartDetail chartDetail where chartDetail.chart.i=?2 and chartDetail.publishTimeMillis<=?1")
 	Long findNearestLatestPublishDate(long choosedPublishTimeMillis, Integer chartId);
 
-	@Query("select chartDetail from ChartDetail chartDetail where chartDetail.chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis order by chartDetail.position asc")
-	List<ChartDetail> findByChartAndPublishTimeMillis(@Param("chartId") Integer chartId, @Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
-
-	@Query("select max(chartDetail.position) from ChartDetail chartDetail where chartDetail.chart=?1 and chartDetail.publishTimeMillis=?2")
-	Byte findMaxPosition(Chart chart, long publishTimeMillis);
-
-	@Query("select chartDetail from ChartDetail chartDetail where chartDetail.i in :ids")
-	List<ChartDetail> getByIds(@Param("ids") Set<Integer> ids);
-
 	@Query("select chartDetail.channel from ChartDetail chartDetail where chartDetail.channel is not null group by chartDetail.channel")
 	List<String> getAllChannels();
-
-	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.media media join FETCH media.artist artist join FETCH media.imageFileSmall imageFileSmall where chartDetail.i=?1")
-	ChartDetail findById(Integer chartItemId);
 
 	@Query("select chartDetail from ChartDetail chartDetail join FETCH chartDetail.chart chart join FETCH chartDetail.media media join FETCH chart.genre genre1 join FETCH media.artist artist join FETCH media.genre genre2 left join FETCH media.headerFile headerFile join FETCH media.audioFile audioFile join FETCH media.imageFIleLarge imageFileLarge join FETCH media.imageFileSmall imageFileSmall where chart.i=:chartId and chartDetail.publishTimeMillis=:publishTimeMillis order by chartDetail.position")
 	List<ChartDetail> findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(@Param("chartId") Integer chartId,

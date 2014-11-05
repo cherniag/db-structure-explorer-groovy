@@ -15,6 +15,7 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
@@ -60,6 +61,7 @@ public class GetNewsFeature {
     private Map<UserDeviceData, NewsDetailDto[]> newsResponses = new HashMap<UserDeviceData, NewsDetailDto[]>();
     private String community;
     private long publishTimeMillis = System.currentTimeMillis();
+    private ApiVersions allVersions;
 
 
     @Given("^Activated via OTAC user with (.+) using (.+) format for (.+) and (\\w+) community$")
@@ -67,6 +69,8 @@ public class GetNewsFeature {
                       @Transform(DictionaryTransformer.class) Word formats,
                       @Transform(DictionaryTransformer.class) Word versions,
                       String community){
+        this.allVersions = ApiVersions.from(versions.list());
+
         // already activated if not empty
         if(!userDeviceDatas.isEmpty()) {
             return;
@@ -108,7 +112,7 @@ public class GetNewsFeature {
     @And("^User invokes get news command$")
     public void andUserMakesGetNewsCall(){
         for (UserDeviceData userDeviceData : userDeviceDatas) {
-            NewsDetailDto[] news = partnerDeviceSet.getNews(userDeviceData);
+            NewsDetailDto[] news = partnerDeviceSet.getNews(userDeviceData, allVersions);
             newsResponses.put(userDeviceData, news);
         }
     }

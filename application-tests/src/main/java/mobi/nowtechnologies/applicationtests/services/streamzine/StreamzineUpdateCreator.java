@@ -28,9 +28,16 @@ public class StreamzineUpdateCreator {
     }
 
     @Transactional(value = "applicationTestsTransactionManager")
-    public Update create(String communityUrl, int shiftSeconds) {
+    public Update create(String communityUrl, int secondsInThePast, int plusSecondsInTheFuture) {
         Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
-        Update restored = new Update(DateUtils.addSeconds(new Date(), shiftSeconds+1), c);
+        Update restored = new Update(DateUtils.addSeconds(new Date(), plusSecondsInTheFuture - secondsInThePast), c);
         return streamzineUpdateRepository.saveAndFlush(restored);
+    }
+
+    @Transactional(value = "applicationTestsTransactionManager")
+    public void deleteAll() {
+        for (Update update : streamzineUpdateRepository.findAll()) {
+            streamzineUpdateRepository.delete(update.getId());
+        }
     }
 }

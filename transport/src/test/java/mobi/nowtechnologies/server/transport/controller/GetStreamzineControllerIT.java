@@ -7,10 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
@@ -116,7 +113,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
 
         prepareDefaultBadge(communityUrl, originalUploadedFile);
@@ -165,6 +162,90 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?id=" + chartId)))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?id=" + existingMedia.getIsrcTrackId())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
+    }
+
+
+    @Test
+    public void testGetStreamzineForAnyMQUserAPI63_Success() throws Exception {
+        Date updateDate = new Date(System.currentTimeMillis() + 2000L);
+
+        // parameters
+        String userName = "test@ukr.net";
+        String deviceUID = "b88106713409e92622461a876abcd74b1111";
+        String apiVersion = "6.3";
+        String communityUrl = "hl_uk";
+        String timestamp = "" + updateDate.getTime();
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = createTimestampToken(storedToken, timestamp);
+        User user = null;
+
+        //
+        // Expected JSON data
+        //
+        final String externalLink = "http://example.com";
+        final Message newsMessage = createNewsMessage();
+        final Date publishDate = new Date();
+        final int chartId = 6;
+        final int existingTrackId = 49;
+        final Media existingMedia = mediaRepository.findOne(existingTrackId);
+        final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
+
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
+
+        prepareDefaultBadge(communityUrl, originalUploadedFile);
+        FilenameAlias filenameAlias1 = prepareBadge(communityUrl, "IOS", "fileName1", 60, 60, originalUploadedFile);
+        FilenameAlias filenameAlias2 = prepareBadge(communityUrl, "IOS", "fileName2", 50, 50, originalUploadedFile);
+
+        Community community = communityRepository.findByName(communityUrl);
+        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
+
+        Thread.sleep(2500L);
+
+        // check xml format
+        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, false, "60x60", null).andExpect(status().isOk()).andDo(print());
+
+        // check json format and the correct order of the blocks
+        ResultActions resultActions = doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", null).andExpect(status().isOk()).andDo(print());
+
+        resultActions.andDo(print())
+                // check the orders
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
+
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
+                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
+                        // check badges
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
+                        //
+                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.MINI_PLAYER_ONLY.getId()+"&id=" + chartId)))
                         //
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
@@ -173,6 +254,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
                 .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
     }
+
 
     private void prepareDefaultBadge(String communityUrl, FilenameAlias originalUploadedFile) {
         Community commmunity = communityRepository.findByName(communityUrl);
@@ -185,7 +267,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
 
         BadgeMapping mapping = BadgeMapping.specific(resolution, commmunity, originalUploadedFile);
-        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, 5, 5).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, new Dimensions(5, 5)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
 
         badgeMappingRepository.saveAndFlush(mapping);
 
@@ -250,7 +332,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
-        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
 
         prepareDefaultBadge(communityUrl, originalUploadedFile);
