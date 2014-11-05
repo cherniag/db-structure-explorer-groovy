@@ -45,7 +45,7 @@ public class PaymentsPsmsController extends CommonController {
         return new ModelAndView(scopePrefix+"/"+type)
                 .addObject(POLICY_REQ_PARAM, policyId)
                 .addObject("subcost", policy.getSubcost())
-                .addObject("suweeks", policy.getSubweeks())
+                .addObject("period", policy.getPeriod())
                 .addObject("isVideoPaymentPolicy", policy.is4GVideoAudioSubscription());
     }
 

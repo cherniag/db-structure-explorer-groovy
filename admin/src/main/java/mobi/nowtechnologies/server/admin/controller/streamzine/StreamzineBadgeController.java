@@ -31,7 +31,7 @@ public class StreamzineBadgeController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView getBadges(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) {
         Community community = communityRepository.findByName(communityRewriteUrl);
-        List<FilenameAlias> fileNames = badgesService.findAllBadges(community);
+        List<FilenameAlias> fileNames = badgesService.findFilenameAliases(community);
         List<FileNameAliasDto> dtos = badgesDtoAsm.toFilenameDtos(fileNames);
         return new ModelAndView().addObject("fileNames", dtos);
     }

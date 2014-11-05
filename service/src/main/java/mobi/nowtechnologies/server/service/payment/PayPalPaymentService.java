@@ -7,15 +7,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 
 public interface PayPalPaymentService extends PaymentSystemService {
-	
-	/**
-	 * 
-	 * @param dto
-	 * @param user
-	 * @param paymentPolicy
-	 * @return An URL to PayPal with token for creating billing agreement.
-	 * @throws ServiceException
-	 */
 
 	PayPalPaymentDetails createPaymentDetails(String billingDescription, String successUrl, String failUrl, User user, PaymentPolicy paymentPolicy) throws ServiceException;
 

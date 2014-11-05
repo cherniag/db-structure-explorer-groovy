@@ -109,7 +109,8 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 			if (PROFILE_LOGGER.isDebugEnabled()) {
 				String userPaymentPolicyId = null;
 				String userPaymentPolicySubCost = null;
-				String userPaymentPolicySubWeeks = null;
+				String userPaymentPolicyPeriod = null;
+				String userPaymentPolicyPeriodUnit = null;
 				String userPaymentPolicyAdditionalInfo = null;
 				String selectedPaymentPolicyId = null;
 				String existedPaymentPolicies = null;
@@ -162,7 +163,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 									if (paymentPolicy != null) {
 										userPaymentPolicyAdditionalInfo = paymentPolicy.toString();
 										userPaymentPolicyId = String.valueOf(paymentPolicy.getId());
-										userPaymentPolicySubWeeks = String.valueOf(paymentPolicy.getSubweeks());
+										userPaymentPolicyPeriod = String.valueOf(paymentPolicy.getPeriod());
 										final BigDecimal subcost = paymentPolicy.getSubcost();
 										if (subcost != null) {
 											userPaymentPolicySubCost = subcost.toString();
@@ -203,13 +204,13 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
 				PROFILE_LOGGER
 						.debug(
-								"execTimeMillis=[{}]; currentPaymentDetailsId=[{}]; isCurrentPaymentDetailsActivated=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicySubWeeks=[{}]; userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
+								"execTimeMillis=[{}]; currentPaymentDetailsId=[{}]; isCurrentPaymentDetailsActivated=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicyPeriod=[{}]; userPaymentPolicyPeriodUnit=[{}]; userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
 								execTimeMillis, currentPaymentDetailsId,
 								isCurrentPaymentDetailsActivated, selectedPaymentPolicyId, existedPaymentPolicies,
 								userContract,
 								userSegment,
 								userProvider,
-								userPaymentPolicyId, userPaymentPolicySubCost, userPaymentPolicySubWeeks, userPaymentPolicyAdditionalInfo,
+								userPaymentPolicyId, userPaymentPolicySubCost, userPaymentPolicyPeriod, userPaymentPolicyPeriodUnit, userPaymentPolicyAdditionalInfo,
 								result, errorMessages);
 			}
 		} catch (Exception e) {

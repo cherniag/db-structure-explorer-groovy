@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:set var="optionPrice" value="${paymentPolicy.subcost}" />
-<c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
+<c:set var="duration" value="${paymentPolicy.duration}" />
 <c:set var="monthlyOrWeekly" value="${paymentPolicy.monthly}" />
 
 <div class="header pie-pp" id="header">
@@ -41,7 +41,7 @@
                             <s:message code='pays.page.header.txt.business_2.month' />
                         </c:when>
                         <c:otherwise>
-                            <s:message code='pays.page.header.txt.business_2.weeks' arguments="${numWeeks}"/>
+                            <s:message code='pays.page.header.txt.business_2.weeks' arguments="${duration}"/>
                         </c:otherwise>
                     </c:choose>
                 </div>

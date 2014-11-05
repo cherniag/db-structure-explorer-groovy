@@ -17,7 +17,7 @@
 					<input type="hidden" name="paymentPolicyId" value="${paymentPolicy.id}"/>
 					<div class="payDetails">
 						<h3><s:message code="pay.cc.form.description" 
-						    	arguments="${paymentPolicy.subweeks};${paymentPolicy.subcost}"
+						    	arguments="${paymentPolicy.duration};${paymentPolicy.subcost}"
        							htmlEscape="false"
        							argumentSeparator=";"/>
 						</h3>

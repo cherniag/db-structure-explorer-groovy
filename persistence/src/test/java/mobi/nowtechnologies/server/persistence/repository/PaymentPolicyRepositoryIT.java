@@ -123,7 +123,7 @@ public class PaymentPolicyRepositoryIT extends AbstractRepositoryIT{
         assertEquals(paymentPolicy.getTariff(), actualPaymentPolicy.getTariff());
         assertEquals(paymentPolicy.getContract(), actualPaymentPolicy.getContract());
         assertEquals(paymentPolicy.getSubcost(), actualPaymentPolicy.getSubcost());
-        assertEquals(paymentPolicy.getSubweeks(), actualPaymentPolicy.getSubweeks());
+        assertEquals(paymentPolicy.getPeriod(), actualPaymentPolicy.getPeriod());
         assertEquals(paymentPolicy.getPaymentType(), actualPaymentPolicy.getPaymentType());
 
         Community actualCommunity = actualPaymentPolicy.getCommunity();

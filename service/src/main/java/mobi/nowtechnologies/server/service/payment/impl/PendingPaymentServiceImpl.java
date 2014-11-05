@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
@@ -148,12 +149,12 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
         PendingPayment pendingPayment = new PendingPayment();
-        PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicy(currentPaymentDetails);
+        PaymentPolicyDto paymentPolicyDto = paymentPolicyService.getPaymentPolicy(currentPaymentDetails);
         pendingPayment.setPaymentDetails(currentPaymentDetails);
-        pendingPayment.setAmount(paymentPolicy.getSubcost());
-        pendingPayment.setCurrencyISO(paymentPolicy.getCurrencyISO());
+        pendingPayment.setAmount(paymentPolicyDto.getSubcost());
+        pendingPayment.setCurrencyISO(paymentPolicyDto.getCurrencyISO());
         pendingPayment.setPaymentSystem(currentPaymentDetails.getPaymentType());
-        pendingPayment.setSubweeks(paymentPolicy.getSubweeks());
+        pendingPayment.setPeriod(new Period().withDuration(paymentPolicyDto.getDuration()).withDurationUnit(paymentPolicyDto.getDurationUnit()));
         pendingPayment.setUser(user);
         pendingPayment.setExternalTxId(NONE);
         long currentTimeMillis = System.currentTimeMillis();

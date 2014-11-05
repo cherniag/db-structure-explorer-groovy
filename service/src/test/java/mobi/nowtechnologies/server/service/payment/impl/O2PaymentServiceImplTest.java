@@ -31,6 +31,7 @@ import java.util.Locale;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.EXTERNAL_ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.junit.Assert.*;
@@ -131,7 +132,8 @@ public class O2PaymentServiceImplTest {
 		PendingPayment pendingPayment = new PendingPayment();
 		pendingPayment.setUser(user);
 		pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
-		
+        pendingPayment.setPeriod(new Period().withDuration(1).withDurationUnit(WEEKS));
+
 		final Boolean smsNotify = Boolean.TRUE;
 		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
 		final String message = "message";
@@ -260,6 +262,7 @@ public class O2PaymentServiceImplTest {
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
+        pendingPayment.setPeriod(new Period().withDuration(1).withDurationUnit(WEEKS));
 
         final Boolean smsNotify = Boolean.TRUE;
         when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
@@ -390,6 +393,7 @@ public class O2PaymentServiceImplTest {
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
+        pendingPayment.setPeriod(new Period().withDuration(1).withDurationUnit(WEEKS));
 
         final Boolean smsNotify = Boolean.TRUE;
         when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));

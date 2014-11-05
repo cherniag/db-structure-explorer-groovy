@@ -9,7 +9,7 @@ Feature: Successful user activation via Facebook in facebook supported communiti
     Then Default promo set in services properties is applied
     And User receives following in the SIGN_IN_FACEBOOK response:
       | status     | paymentType | fullyRegistred | freeTrial | activation | provider | hasAllDetails |
-      | SUBSCRIBED | UNKNOWN     | true           | true      | ACTIVATED  | fb  | true         |
+      | SUBSCRIBED | UNKNOWN     | true           | true      | ACTIVATED  | fb       | true          |
     And 'deviceType' field is the same as sent during registration
     And 'deviceUID' field is the same as sent during registration
     And 'username' field is the same as entered Facebook email

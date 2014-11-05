@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Alexander Kolpakov (akolpakov)
  */
-
 public class UserLogRepositoryIT  extends AbstractRepositoryIT{
 	
 	@Resource(name = "userLogRepository")

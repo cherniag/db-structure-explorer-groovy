@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="optionPrice" value="${paymentPolicy.subcost}" />
-<c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
+<c:set var="duration" value="${paymentPolicy.duration}" />
 
 
 <div class="header pie-pp" id="header">
@@ -27,7 +27,7 @@
     <div class="body-message-pp"><s:message code='unsub.page.start.description.start' />
         &pound;
             <fmt:formatNumber pattern="0.00" value="${optionPrice}" />
-            <s:message code='pays.page.header.txt.business_2.weeks' arguments="${numWeeks}"/>
+            <s:message code='pays.page.header.txt.business_2.weeks' arguments="${duration}"/>
             <s:message code='unsub.page.start.description.finish' />
     </div>
     <a href="javascript:;" onclick="_submitForm()" class="button-unsubscribe-pp button-uns"><span class="button-text-uns"><s:message code='unsub.page.start.button.title' /></span></a>

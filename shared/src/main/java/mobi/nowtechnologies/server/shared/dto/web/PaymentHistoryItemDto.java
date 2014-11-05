@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class PaymentHistoryItemDto {
 	public static final String PAYMENT_HISTORY_ITEM_DTO = "PaymentHistoryItemDto";
@@ -19,8 +21,10 @@ public class PaymentHistoryItemDto {
 	private BigDecimal amount;
 
 	private String paymentMethod;
-	
-	private int weeks;
+
+	private int duration;
+
+	private DurationUnit durationUnit;
 
 	public String getTransactionId() {
 		return transactionId;
@@ -62,18 +66,32 @@ public class PaymentHistoryItemDto {
 		this.paymentMethod = paymentMethod;
 	}
 
-	public int getWeeks() {
-		return weeks;
+	public long getDuration() {
+		return duration;
 	}
 
-	public void setWeeks(int weeks) {
-		this.weeks = weeks;
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+
+	public DurationUnit getDurationUnit() {
+		return durationUnit;
+	}
+
+	public void setDurationUnit(DurationUnit durationUnit) {
+		this.durationUnit = durationUnit;
 	}
 
 	@Override
 	public String toString() {
-		return "PaymentHistoryItemDto [amount=" + amount + ", date=" + date + ", description=" + description + ", paymentMethod=" + paymentMethod
-				+ ", transactionId=" + transactionId + ", weeks=" + weeks + "]";
+		return new ToStringBuilder(this)
+				.append("amount", amount)
+				.append("date", date)
+				.append("duration", duration)
+				.append("periodUnit", durationUnit)
+				.append("paymentMethod", paymentMethod)
+				.append("transactionId", transactionId)
+				.append("description", description)
+				.toString();
 	}
-
 }

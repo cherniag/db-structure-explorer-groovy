@@ -4,11 +4,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <c:set var="optionPrice" />
-<c:set var="numWeeks" />
+<c:set var="duration" />
 <c:set var="monthlyOrWeekly" />
 <c:forEach var="paymentPolicy" items="${paymentsPage.paymentPolicies}">
 	<c:set var="optionPrice" value="${paymentPolicy.subcost}" />
-	<c:set var="numWeeks" value="${paymentPolicy.subweeks}" />
+	<c:set var="duration" value="${paymentPolicy.duration}" />
 	<c:set var="monthlyOrWeekly" value="${paymentPolicy.monthly}" />
 </c:forEach>
 

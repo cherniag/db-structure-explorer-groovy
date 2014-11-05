@@ -19,7 +19,7 @@
 		<c:set var="currencyISO">
 			<s:message code="${paymentDetailsByPaymentDto.paymentPolicyDto.currencyISO}"/>
 		</c:set>
-		<p><s:message code='one.click.subscription.dialog.successful.body.inapp' arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.subweeks},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}' /></p>
+		<p><s:message code='one.click.subscription.dialog.successful.body.inapp' arguments='${paymentType},${paymentDetailsByPaymentDto.paymentPolicyDto.duration},${currencyISO},${paymentDetailsByPaymentDto.paymentPolicyDto.subcost}' /></p>
 		<div class="clr"></div>				
 		<div class="addSmallSpace"></div>		
 		<!--button-->

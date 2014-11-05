@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class PromotionDto {
 	
@@ -130,9 +131,19 @@ public class PromotionDto {
 
 	@Override
 	public String toString() {
-		return "PromotionDto [description=" + description + ", endDate=" + endDate + ", freeWeeks=" + freeWeeks + ", i=" + i + ", isActive=" + isActive
-				+ ", label=" + label + ", maxUsers=" + maxUsers + ", numUsers=" + numUsers + ", showPromotion=" + showPromotion + ", startDate=" + startDate
-				+ ", subWeeks=" + subWeeks + ", type=" + type + "]";
+		return new ToStringBuilder(this)
+				.append("i", i)
+				.append("description", description)
+				.append("type", type)
+				.append("endDate", endDate)
+				.append("freeWeeks", freeWeeks)
+				.append("isActive", isActive)
+				.append("maxUsers", maxUsers)
+				.append("numUsers", numUsers)
+				.append("startDate", startDate)
+				.append("subWeeks", subWeeks)
+				.append("showPromotion", showPromotion)
+				.append("label", label)
+				.toString();
 	}
-
 }

@@ -54,8 +54,7 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "and (paymentPolicy.contract=?4 or paymentPolicy.contract is null)" +
             "and paymentPolicy.tariff=?5 " +
             "and paymentPolicy.mediaType in ?6 " +
-            "and paymentPolicy.online is true " +
-            "order by paymentPolicy.subweeks desc")
+            "and paymentPolicy.online is true ")
     List<PaymentPolicy> getPaymentPolicies(Community community, ProviderType provider, SegmentType segment, Contract contract, Tariff tariff,
                                            List<MediaType> mediaTypes);
 

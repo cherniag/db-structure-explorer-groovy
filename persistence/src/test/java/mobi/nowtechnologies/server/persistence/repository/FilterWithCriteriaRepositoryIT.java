@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * @author Titov Mykhaylo (titov)
  */
-
 public class FilterWithCriteriaRepositoryIT extends AbstractRepositoryIT {
 	
 	@Resource(name="filterWithCriteriaRepository")

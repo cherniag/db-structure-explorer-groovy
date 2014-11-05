@@ -27,8 +27,6 @@ public class AccountLog implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final String NQ_FIND_BY_USER_AND_LOG_TYPE = "findByUserAndLogType";
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountLog.class);
-	
 	public static enum Fields {
 		userId,
 		balanceAfter,
@@ -183,31 +181,8 @@ public class AccountLog implements Serializable {
 		calendar.setTimeInMillis(TimeUnit.SECONDS.toMillis(logTimestamp));
 		return calendar;
 	}
-	
-	public static List<PaymentHistoryItemDto> toPaymentHistoryItemDto(List<AccountLog> accountLogs){
-		LOGGER.debug("input parameters accountLogs: [{}]", accountLogs);
-		
-		List<PaymentHistoryItemDto> paymentHistoryItemDtos = new LinkedList<PaymentHistoryItemDto>();
-		for (AccountLog accountLog : accountLogs) {
-			paymentHistoryItemDtos.add(accountLog.toPaymentHistoryItemDto());
-		}
-		
-		LOGGER.debug("Output parameter paymentHistoryItemDtos=[{}]", paymentHistoryItemDtos);
-		return paymentHistoryItemDtos;
-	}
 
-	public PaymentHistoryItemDto toPaymentHistoryItemDto() {
-		PaymentHistoryItemDto paymentHistoryItemDto = new PaymentHistoryItemDto();
-		
-		//paymentHistoryItemDto.setAmount(balanceAfter);
-		paymentHistoryItemDto.setDate(new Date(logTimestamp*1000L)); // TODO AccountLog field logTimestamp is type of int (UNIXTIME in seconds)
-		paymentHistoryItemDto.setDescription(String.valueOf(transactionType));
-		
-		LOGGER.debug("Output parameter paymentHistoryItemDto=[{}]", paymentHistoryItemDto);
-		return paymentHistoryItemDto;
-	}
-
-	public Offer getOffer() {
+    public Offer getOffer() {
 		return offer;
 	}
 
