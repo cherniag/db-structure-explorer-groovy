@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.chart.CommunityGetChartContentManager;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
-import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
@@ -78,9 +77,6 @@ public class ChartServiceTest {
 
     @Mock
     private CloudFileService mockCloudFileService;
-
-    @Mock
-    private StreamzineUpdateService streamzineUpdateService;
 
     @Mock
     private ApplicationContext mockApplicationContext;
@@ -599,7 +595,7 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
         assertNotNull(result);
         assertEquals(chartDetail1.getVersionAsPrimitive(), result.getVersionAsPrimitive());
@@ -609,7 +605,6 @@ public class ChartServiceTest {
 
         verify(mockChartDetailRepository, times(1)).findOne(eq(chartDetail.getI()));
         verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
-        verify(streamzineUpdateService, never()).createOrReplace(any(Date.class), eq(community));
         verify(mockCloudFileService, times(1)).uploadFile(any(MultipartFile.class), anyString());
     }
 
@@ -625,11 +620,10 @@ public class ChartServiceTest {
         chartDetail.setI(null);
         MultipartFile imageFile = new MockMultipartFile("file", "".getBytes());
 
-        when(streamzineUpdateService.isAvailable("hl_uk")).thenReturn(true);
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getTitle());
@@ -638,14 +632,12 @@ public class ChartServiceTest {
 
         verify(mockChartDetailRepository, times(0)).findOne(eq(chartDetail.getI()));
         verify(mockChartDetailRepository, times(1)).save(eq(chartDetail));
-        verify(streamzineUpdateService, times(1)).createOrReplace(eq(publishDate), eq(community));
         verify(mockCloudFileService, times(0)).uploadFile(any(MultipartFile.class), anyString());
     }
 
     @Test
     public void testUpdateChart_FileEmpty_Success()
             throws Exception {
-        Community community = mock(Community.class);
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
         chartDetail.setI(null);
         MultipartFile imageFile = null;
@@ -653,7 +645,7 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getTitle());
@@ -668,14 +660,13 @@ public class ChartServiceTest {
     @Test
     public void testUpdateChart_ChartNull_Failure()
             throws Exception {
-        Community community = mock(Community.class);
         ChartDetail chartDetail = null;
         MultipartFile imageFile = new MockMultipartFile("file", "1".getBytes());
 
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile, community);
+        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
 
         assertNull(result);
 

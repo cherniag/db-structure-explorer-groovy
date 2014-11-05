@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
+import org.apache.commons.io.FilenameUtils;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -51,11 +54,10 @@ public class FilenameAlias {
         this.alias = alias;
     }
 
-    public FilenameAlias(String fileName, String alias, int width, int height) {
-        this.fileName = fileName;
-        this.alias = alias;
-        this.width = width;
-        this.height = height;
+    public FilenameAlias(String fileName, String alias, Dimensions dim) {
+        this(fileName, alias);
+        this.width = dim.getWidth();
+        this.height = dim.getHeight();
     }
 
     public void updateFrom(FilenameAlias from) {
@@ -102,5 +104,18 @@ public class FilenameAlias {
                 ", width=" + width +
                 ", height=" + height +
                 '}';
+    }
+
+    public FilenameAlias createSpecific(Resolution resolution, Dimensions newDimension) {
+        String newFileName = createUniqueFileName(resolution, resolution.newResolution(newDimension));
+        String newTitle = alias + " for " + newDimension.getInfo();
+        return new FilenameAlias(newFileName, newTitle, newDimension).forDomain(domain);
+    }
+
+    private String createUniqueFileName(Resolution previous, Resolution newOne) {
+        final String name = FilenameUtils.getBaseName(fileName);
+        final String ext = FilenameUtils.getExtension(fileName);
+
+        return name + "_o_" + previous.getSizeInfo() + "_a_" + newOne.getFullInfo() + "." + ext;
     }
 }

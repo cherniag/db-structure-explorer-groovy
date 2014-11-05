@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.service.chart.ChartSupportResult;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
@@ -45,7 +44,6 @@ public class ChartService implements ApplicationContextAware {
     private ChartDetailRepository chartDetailRepository;
     private CommunityResourceBundleMessageSource messageSource;
     private CloudFileService cloudFileService;
-    private StreamzineUpdateService streamzineUpdateService;
     private ChartDetailsConverter chartDetailsConverter;
     private ApplicationContext applicationContext;
     private ChartAsm chartAsm;
@@ -174,39 +172,6 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(readOnly = true)
-    public ChartDetail getChartItemById(Integer chartItemId) {
-        LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
-
-        ChartDetail chartDetail = chartDetailService.getChartItemById(chartItemId);
-
-        LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
-        return chartDetail;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public boolean delete(Integer chartItemId) {
-        LOGGER.debug("input parameters chartItemId: [{}]", chartItemId);
-
-        ChartDetail chartDetail = getChartItemById(chartItemId);
-        boolean success = chartDetailService.delete(chartItemId);
-        updateChartItemsPositions(new Date(chartDetail.getPublishTimeMillis()), chartDetail.getChart().getI(), chartDetail.getPosition(), -1);
-
-        LOGGER.info("Output parameter success=[{}]", success);
-        return success;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChartDetail> updateChartItemsPositions(Date selectedPublishDateTime, Integer chartId, int afterPosition, int chPosition) {
-        LOGGER.debug("input parameters updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): [{}]", new Object[] { selectedPublishDateTime, chartId, afterPosition,
-                chPosition });
-
-        List<ChartDetail> chartDetails = chartDetailService.updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition);
-
-        LOGGER.info("Output parameter updateChartItemsPositions(selectedPublishDateTime, chartId, afterPosition, chPosition): chartDetails=[{}]", chartDetails);
-        return chartDetails;
-    }
-
-    @Transactional(readOnly = true)
     public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName, ChartType chartType) {
         LOGGER.debug("input parameters communityURL=[{}], communityName=[{}], chartType=[{}]", communityURL, communityName, chartType);
 
@@ -307,15 +272,13 @@ public class ChartService implements ApplicationContextAware {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile, Community community) {
+    public ChartDetail updateChart(ChartDetail chartDetail, MultipartFile imageFile) {
         LOGGER.debug("input updateChart(Chart chart) [{}]", chartDetail);
 
         if(chartDetail != null){
             if(isChartDetailAlreadyPresent(chartDetail)){
                 ChartDetail createdOne = chartDetailRepository.findOne(chartDetail.getI());
                 chartDetail.setVersionAsPrimitive(createdOne.getVersionAsPrimitive());
-            } else{
-                createCorrespondingStreamzineUpdate(chartDetail, community);
             }
 
             chartDetail = chartDetailRepository.save(chartDetail);
@@ -329,6 +292,10 @@ public class ChartService implements ApplicationContextAware {
         LOGGER.debug("Output updateChart(Chart chart)", chartDetail);
 
         return chartDetail;
+    }
+
+    private boolean isChartDetailAlreadyPresent(ChartDetail chartDetail) {
+        return chartDetail.getI() != null;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -357,17 +324,6 @@ public class ChartService implements ApplicationContextAware {
         }
 
         return user;
-    }
-
-    private boolean isChartDetailAlreadyPresent(ChartDetail chartDetail) {
-        return chartDetail.getI() != null;
-    }
-
-    private void createCorrespondingStreamzineUpdate(ChartDetail chartDetail, Community community) {
-        if(streamzineUpdateService.isAvailable(community.getRewriteUrlParameter())) {
-            Date publishDate = new Date(chartDetail.getPublishTimeMillis());
-            streamzineUpdateService.createOrReplace(publishDate, community);
-        }
     }
 
     @Override

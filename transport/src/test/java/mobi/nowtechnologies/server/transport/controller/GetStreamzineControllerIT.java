@@ -7,10 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
@@ -83,7 +80,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
 
         prepareDefaultBadge(communityUrl, originalUploadedFile);
@@ -199,7 +196,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
 
         prepareDefaultBadge(communityUrl, originalUploadedFile);
@@ -283,7 +280,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
         final String deepLinkTypeValue = DeeplinkType.DEEPLINK.name();
 
-        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
 
         prepareDefaultBadge(communityUrl, originalUploadedFile);
@@ -364,7 +361,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         final int existingTrackId = 49;
         final Media existingMedia = mediaRepository.findOne(existingTrackId);
 
-        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", 100, 100).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
 
         prepareDefaultBadge(communityUrl, originalUploadedFile);

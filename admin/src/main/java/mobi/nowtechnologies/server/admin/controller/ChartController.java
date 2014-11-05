@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
@@ -87,16 +86,14 @@ public class ChartController extends AbstractCommonController {
                             Locale locale
                             ) {
 
-        Community community = communityRepository.findByName(communityRewriteUrl);
-
-        LOGGER.info("input parameters chartId=[{}], chartDto=[{}], selectedPublishDateTime=[{}], communityRewriteUrl=[{}]", chartId, chartDto, selectedPublishDateTime, communityRewriteUrl);
+        LOGGER.debug("input parameters chartDto, chartId: [{}], [{}], [{}]", new Object[] { chartDto, chartId});
 
 		ModelAndView modelAndView;
 		
 		if(!bindingResult.hasErrors()){			
 			ChartDetail chartDetail = chartAsm.toChart(chartDto);
 			chartDetail.setPublishTimeMillis(selectedPublishDateTime.getTime());
-			chartService.updateChart(chartDetail, chartDto.getFile(), community);
+			chartService.updateChart(chartDetail, chartDto.getFile());
 			modelAndView = new ModelAndView("redirect:/charts/" + chartId);
 		}else{
 			modelAndView = chartItemController.getChartItemsPage(selectedPublishDateTime, chartId, false, locale);
