@@ -569,7 +569,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
 
         BadgeMapping mapping = BadgeMapping.specific(resolution, commmunity, originalUploadedFile);
-        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, 5, 5).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + width + "x" + height, "title for " + fileName, new Dimensions(5, 5)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
 
         badgeMappingRepository.saveAndFlush(mapping);
 

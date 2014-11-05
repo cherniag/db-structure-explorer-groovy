@@ -335,10 +335,6 @@ public class ChartService implements ApplicationContextAware {
         this.cacheContentService = cacheContentService;
     }
 
-    public void setStreamzineUpdateService(StreamzineUpdateService streamzineUpdateService) {
-        this.streamzineUpdateService = streamzineUpdateService;
-    }
-
     public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {
         this.chartDetailsConverter = chartDetailsConverter;
     }

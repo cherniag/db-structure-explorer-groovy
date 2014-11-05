@@ -128,7 +128,6 @@ public class ChartServiceTest {
         when(mockMessageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
         when(mockMessageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
         fixture.setChartDetailsConverter(spy(chartDetailsConverter));
-        fixture.setStreamzineUpdateService(streamzineUpdateService);
     }
 
     @Test

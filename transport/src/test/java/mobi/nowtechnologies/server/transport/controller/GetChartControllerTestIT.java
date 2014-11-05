@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
@@ -188,7 +189,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         String widthHeight = "640x960";
 
         // prepare badges
-        FilenameAlias originalUploadedFile = new FilenameAlias("badge_picture_orig", "alias_orig", 1000, 1000).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        FilenameAlias originalUploadedFile = new FilenameAlias("badge_picture_orig", "alias_orig", new Dimensions(1000, 1000)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
         prepareDefaultBadge(communityUrl, originalUploadedFile);
         prepareBadge(communityUrl, "IOS", "badge_picture", 640, 1136, 20, 20, originalUploadedFile);
         prepareBadge(communityUrl, "IOS", "badge_picture", 640, 960, 10, 10, originalUploadedFile);
@@ -244,7 +245,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         Resolution resolution = resolutionRepository.saveAndFlush(new Resolution(deviceType, width, height));
 
         BadgeMapping mapping = BadgeMapping.specific(resolution, community, originalUploadedFile);
-        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + deviceType + "_" + width + "x" + height, "title for " + fileName, iconWidth, iconHeight).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
+        mapping.setFilenameAlias(new FilenameAlias(fileName + "_" + deviceType + "_" + width + "x" + height, "title for " + fileName, new Dimensions(iconWidth, iconHeight)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES));
 
         badgeMappingRepository.saveAndFlush(mapping);
 
