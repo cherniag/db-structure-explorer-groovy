@@ -56,7 +56,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static java.lang.Boolean.TRUE;
-import static java.lang.Math.min;
+import static java.lang.Math.max;
 import static mobi.nowtechnologies.server.builder.PromoRequestBuilder.PromoRequest;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.VF_PSMS_TYPE;
@@ -753,7 +753,8 @@ public class UserService {
             user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
             user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
         } else{
-            user.setNextSubPayment(period.toNextSubPaymentSeconds(user.getNextSubPayment()));
+            int subscriptionStartTimeSeconds = max(getEpochSeconds(), user.getNextSubPayment());
+            user.setNextSubPayment(period.toNextSubPaymentSeconds(subscriptionStartTimeSeconds));
         }
 
         if(paymentSystem.equals(VF_PSMS_TYPE)){

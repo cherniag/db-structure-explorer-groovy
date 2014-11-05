@@ -39,7 +39,7 @@
 	   	<c:set var="disabledAttrib" />
 	   	<c:set var="buttonStyle" value="button-off" />
 	   	<c:set var="hrefValue">href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}"</c:set>
-	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.duration == paymentPolicy.duration}">
+	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.period.duration == paymentPolicy.duration}">
 	   		<c:set var="disabledAttrib">disabled="true"</c:set>
 	   		<c:set var="buttonStyle" value="button-on" />
 	   		<c:set var="hrefValue" value="" />

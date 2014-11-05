@@ -45,8 +45,10 @@ public class SupportController extends CommonController{
 
 		int userId = getUserId();
 		User user = userService.findById(userId);
-		
-		ContactUsDto contactUsDto = user.toContactUsDto();
+
+        ContactUsDto contactUsDto = new ContactUsDto();
+        contactUsDto.setEmail(user.getUserName());
+        contactUsDto.setName(user.getDisplayName());
 
 		ModelAndView modelAndView = new ModelAndView("contact_us");
 		modelAndView.getModelMap().put(ContactUsDto.NAME, contactUsDto);

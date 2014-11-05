@@ -52,7 +52,7 @@ public class UniversalParser extends IParser {
         for (File file : files) {
             if (file.getName().endsWith(".xml")) {
                 try {
-                    LOGGER.debug("Loading " + file.getPath());
+                    LOGGER.debug("Loading [{}]",  file.getPath());
 
                     Document document = builder.build(file);
                     Element product = document.getRootElement();
@@ -85,30 +85,31 @@ public class UniversalParser extends IParser {
         for (Element track : tracks) {
             String isrc = track.getAttributeValue("isrc");
 
-            DropTrack data = resultDropTracks.get(isrc);
-            if (data == null) {
-                data = new DropTrack();
-                resultDropTracks.put(isrc, data);
+            DropTrack dropTrack = resultDropTracks.get(isrc);
+            if (dropTrack == null) {
+                dropTrack = new DropTrack();
+                resultDropTracks.put(isrc, dropTrack);
             }
 
-            data.type = type;
-            data.productCode = code;
-            data.productId = code;
-            data.physicalProductId = code;
-            data.copyright = copyright;
-            data.genre = genre;
-            data.year = year;
-            data.isrc = isrc;
-            data.explicit = parseExplicit(prdExplicit, track);
-            data.artist = parseArtist(track);
-            data.title = track.getChildText("track_title");
-            data.subTitle = track.getChildText("track_version_title");
-            data.xml = new XMLOutputter().outputString(track);
+            dropTrack.type = type;
+            dropTrack.productCode = code;
+            dropTrack.productId = code;
+            dropTrack.physicalProductId = code;
+            dropTrack.copyright = copyright;
+            dropTrack.genre = genre;
+            dropTrack.year = year;
+            dropTrack.isrc = isrc;
+            dropTrack.explicit = parseExplicit(prdExplicit, track);
+            dropTrack.artist = parseArtist(track);
+            dropTrack.title = track.getChildText("track_title");
+            dropTrack.subTitle = track.getChildText("track_version_title");
+            dropTrack.xml = new XMLOutputter().outputString(track);
+            dropTrack.album = product.getChildText("prd_title");
 
-            parseTerritories(country, provider, startDate, track, data);
+            parseTerritories(country, provider, startDate, track, dropTrack);
 
-            insertIntoDropTrackDropAssetFiles(fulfillmentFiles, data, isrc);
-            insertIntoDropTrackDropAssetFiles(fulfillmentFiles, data, null);
+            insertIntoDropTrackDropAssetFiles(fulfillmentFiles, dropTrack, isrc);
+            insertIntoDropTrackDropAssetFiles(fulfillmentFiles, dropTrack, null);
         }
     }
 
