@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.Locale.ENGLISH;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
@@ -111,6 +112,14 @@ public class Utils {
     public static long secondsToMillis(long seconds){
         return SECONDS.toMillis(seconds);
     }
+
+	public static long millisToSeconds(long millis){
+		return MILLISECONDS.toSeconds(millis);
+	}
+
+	public static int millisToIntSeconds(long millis){
+		return (int) millisToSeconds(millis);
+	}
 
 	public static String getOTACode(int userId, String userName) {
 		if (userName == null)

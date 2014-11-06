@@ -1,19 +1,12 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="tb_promotionPaymentPolicy")
@@ -29,17 +22,15 @@ public class PromotionPaymentPolicy {
 	private Long id;
 	
 	private BigDecimal subcost;
-	
-	private Integer subweeks;
+
+	@Embedded
+	private Period period;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Promotion promotion;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	private List<PaymentPolicy> paymentPolicies;
-
-	public PromotionPaymentPolicy() {
-	}
 	
 	public Long getId() {
 		return id;
@@ -57,14 +48,6 @@ public class PromotionPaymentPolicy {
 		this.subcost = subcost;
 	}
 
-	public Integer getSubweeks() {
-		return subweeks;
-	}
-
-	public void setSubweeks(Integer subweeks) {
-		this.subweeks = subweeks;
-	}
-
 	public Promotion getPromotion() {
 		return promotion;
 	}
@@ -79,5 +62,24 @@ public class PromotionPaymentPolicy {
 
 	public void setPaymentPolicies(List<PaymentPolicy> paymentPolicies) {
 		this.paymentPolicies = paymentPolicies;
+	}
+
+	public Period getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("id", id)
+				.append("subcost", subcost)
+				.append("period", period)
+				.append("promotion", promotion)
+				.append("paymentPolicies", paymentPolicies)
+				.toString();
 	}
 }

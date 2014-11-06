@@ -9,10 +9,7 @@ import mobi.nowtechnologies.server.builder.PromoRequestBuilder;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.payment.MigPaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
-import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -59,11 +56,14 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import static java.lang.Boolean.TRUE;
+import static java.lang.Math.max;
 import static mobi.nowtechnologies.server.builder.PromoRequestBuilder.PromoRequest;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.VF_PSMS_TYPE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.*;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
@@ -696,7 +696,7 @@ public class UserService {
     public void makeUserActive(User user) {
         if (user == null)
             throw new ServiceException("The parameter user is null");
-        user.setLastDeviceLogin(Utils.getEpochSeconds());
+        user.setLastDeviceLogin(getEpochSeconds());
         updateUser(user);
     }
 
@@ -736,57 +736,33 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public void processPaymentSubBalanceCommand(User user, int subweeks, SubmittedPayment payment) {
-        LOGGER.debug("processPaymentSubBalanceCommand input parameters user, subweeks, payment: [{}]", new Object[] { user, subweeks, payment });
+    public void processPaymentSubBalanceCommand(User user, SubmittedPayment payment) {
+        LOGGER.debug("processPaymentSubBalanceCommand input parameters user, payment: [{}], [{}]", user, payment);
         final String paymentSystem = payment.getPaymentSystem();
 
-        // Update last Successful payment time
-        final long epochMillis = getEpochMillis();
-        user.setLastSuccessfulPaymentTimeMillis(epochMillis);
+        user.setLastSuccessfulPaymentTimeMillis(getEpochMillis());
         user.setLastSubscribedPaymentSystem(paymentSystem);
         user.setLastSuccessfulPaymentDetails(payment.getPaymentDetails());
 
-        final String base64EncodedAppStoreReceipt = payment.getBase64EncodedAppStoreReceipt();
-
-        boolean wasInLimitedStatus = UserStatusDao.LIMITED.equals(user.getStatus().getName());
-
-        final int oldNextSubPayment = user.getNextSubPayment();
-        if (paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)){
+        Period period = payment.getPeriod();
+        if (paymentSystem.equals(ITUNES_SUBSCRIPTION)) {
             if (user.isOnFreeTrial()) {
                 skipFreeTrial(user);
             }
             user.setNextSubPayment(payment.getNextSubPayment());
             user.setAppStoreOriginalTransactionId(payment.getAppStoreOriginalTransactionId());
-            user.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-        }else if (user.isMonthlyPaidUser()) {
-            user.setNextSubPayment(Utils.getMonthlyNextSubPayment(oldNextSubPayment));
-        }else if (user.isSMSActivatedUser()){
-            if (Utils.getEpochSeconds() > oldNextSubPayment){
-                user.setNextSubPayment(Utils.getEpochSeconds() + subweeks * WEEK_SECONDS);
-            }else{
-                user.setNextSubPayment(oldNextSubPayment + subweeks * WEEK_SECONDS);
-            }
-        } else {
-            user.setSubBalance(user.getSubBalance() + subweeks);
-
-            user.setNextSubPayment(Utils.getNewNextSubPayment(oldNextSubPayment));
+            user.setBase64EncodedAppStoreReceipt(payment.getBase64EncodedAppStoreReceipt());
+        } else{
+            int subscriptionStartTimeSeconds = max(getEpochSeconds(), user.getNextSubPayment());
+            user.setNextSubPayment(period.toNextSubPaymentSeconds(subscriptionStartTimeSeconds));
         }
 
-        if(paymentSystem.equals(PaymentDetails.VF_PSMS_TYPE)){
+        if(paymentSystem.equals(VF_PSMS_TYPE)){
             taskService.createSendChargeNotificationTask(user);
         }
 
         entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), CARD_TOP_UP));
-        // The main idea is that we do pre-payed service, this means that
-        // in case of first payment or after LIMITED status we need to decrease subBalance of user immediately
-        if (wasInLimitedStatus || UserStatusDao.getEulaUserStatus().getI() == user.getStatus().getI()) {
-            if (!user.isSMSActivatedUser() && !paymentSystem.equals(PaymentDetails.ITUNES_SUBSCRIPTION)) {
-                user.setSubBalance(user.getSubBalance() - 1);
-                entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), SUBSCRIPTION_CHARGE));
-            }
-        }
 
-        // Update user status to subscribed
         user.setStatus(UserStatusDao.getSubscribedUserStatus());
 
         entityService.updateEntity(user);
@@ -1110,7 +1086,7 @@ public class UserService {
     public User updateLastDeviceLogin(User user) {
         LOGGER.debug("input parameters user: [{}]", user);
 
-        user.setLastDeviceLogin(Utils.getEpochSeconds());
+        user.setLastDeviceLogin(getEpochSeconds());
         updateUser(user);
 
         LOGGER.debug("Output parameter user=[{}]", user);
@@ -1121,7 +1097,7 @@ public class UserService {
     public User updateLastWebLogin(User user) {
         LOGGER.debug("input parameters user: [{}]", user);
 
-        user.setLastWebLogin(Utils.getEpochSeconds());
+        user.setLastWebLogin(getEpochSeconds());
         updateUser(user);
 
         LOGGER.debug("Output parameter user=[{}]", user);
@@ -1270,8 +1246,9 @@ public class UserService {
             if ( user.has4GVideoAudioSubscription() ) {
                 smsMessage = new StringBuilder().append(smsMessage).append(".video").toString();
             }
+            Period period = paymentPolicy.getPeriod();
             final String message = messageSource.getMessage(upperCaseCommunityName, smsMessage, new Object[] { community.getDisplayName(),
-                    paymentPolicy.getSubcost(), paymentPolicy.getSubweeks(), paymentPolicy.getShortCode() }, null);
+                    paymentPolicy.getSubcost(), period.getDuration(), period.getDurationUnit(), paymentPolicy.getShortCode() }, null);
 
             if ( message == null || message.isEmpty() ) {
                 LOGGER.error("The message for video users is missing in services.properties!!! Key should be [{}]. User without message [{}]", smsMessage, user.getId());
@@ -1455,7 +1432,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public ListDataResult<User> getUsersForPendingPayment(int maxCount) {
-        int epochSeconds = Utils.getEpochSeconds();
+        int epochSeconds = getEpochSeconds();
 
         List<User> users = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
 
@@ -1470,7 +1447,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<User> getListOfUsersForWeeklyUpdate() {
-        List<User> users = userRepository.getListOfUsersForWeeklyUpdate(Utils.getEpochSeconds(), PAGEABLE_FOR_WEEKLY_UPDATE);
+        List<User> users = userRepository.getListOfUsersForWeeklyUpdate(getEpochSeconds(), PAGEABLE_FOR_WEEKLY_UPDATE);
         LOGGER.debug("Output parameter users=[{}]", users);
         return users;
     }
@@ -1498,7 +1475,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public ListDataResult<User> getUsersForRetryPayment(int maxCount) {
-        int epochSeconds = Utils.getEpochSeconds();
+        int epochSeconds = getEpochSeconds();
 
         List<User> users = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
 
@@ -1561,7 +1538,7 @@ public class UserService {
     }
 
     private User skipBoughtPeriod(User userWithOldTariffOnOldBoughtPeriod, ActionReason actionReason) {
-        int epochSeconds = Utils.getEpochSeconds();
+        int epochSeconds = getEpochSeconds();
         final int nextSubPayment = userWithOldTariffOnOldBoughtPeriod.getNextSubPayment();
 
         LOGGER.info("Attempt to skip nextSubPayment [{}] by assigning current time [{}]", nextSubPayment, epochSeconds);
@@ -1575,7 +1552,7 @@ public class UserService {
     }
 
     private User skipFreeTrial(User user){
-        int currentTimeSeconds = Utils.getEpochSeconds();
+        int currentTimeSeconds = getEpochSeconds();
         long currentTimeMillis = currentTimeSeconds * 1000L;
 
         LOGGER.info("Attempt of skipping free trial. The nextSubPayment [{}] and freeTrialExpiredMillis [{}] will be changed to [{}] and [{}] corresponding", user.getNextSubPayment(), user.getFreeTrialExpiredMillis(), currentTimeSeconds, currentTimeMillis);

@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
 /**
  * 
  * @author Mayboroda Dmytro
@@ -97,14 +99,14 @@ public class NowTechTokenBasedRememberMeServices extends TokenBasedRememberMeSer
 	 */
 	@Override
 	protected String extractRememberMeCookie(HttpServletRequest httpServletRequest) {
-		String rememberMeCookie = httpServletRequest.getHeader(getCookieName());
-		if (rememberMeCookie == null) {
-			rememberMeCookie = super.extractRememberMeCookie(httpServletRequest);
+		String rememberMe = httpServletRequest.getHeader(getCookieName());
+        if(isNull(rememberMe)){
+            rememberMe = httpServletRequest.getParameter(getCookieName());
 		}
-        if(rememberMeCookie == null){
-            rememberMeCookie = httpServletRequest.getParameter(getCookieName());
+		if (isNull(rememberMe)) {
+			rememberMe = super.extractRememberMeCookie(httpServletRequest);
         }
-		return rememberMeCookie;
+		return rememberMe;
 	}
 
 	/**

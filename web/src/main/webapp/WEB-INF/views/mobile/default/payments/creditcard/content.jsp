@@ -17,7 +17,7 @@
 			<h1><s:message code="pay.cc.form.title" /></h1>
 			<div class="payDetails">
 				<p><s:message code="pay.cc.form.description"
-							arguments="${paymentPolicy.subweeks};${paymentPolicy.subcost}"
+							arguments="${paymentPolicy.duration};${paymentPolicy.subcost}"
        						htmlEscape="false"
        						argumentSeparator=";"/>
 				</p>

@@ -72,7 +72,6 @@ public class OfferPaymentsPayPalController extends CommonController {
 
 	@RequestMapping(value = PAGE_PAYMENTS_PAYPAL_CALLBACK, method = RequestMethod.GET)
 	public ModelAndView buyByPaymentDetails(
-			HttpServletRequest request,
 			@PathVariable(OfferDto.OFFER_ID) Integer offerId,
 			@RequestParam(value = REQUEST_PARAM_PAYPAL) String result,
 			@RequestParam(value = REQUEST_PARAM_PAYPAL_TOKEN) String token,

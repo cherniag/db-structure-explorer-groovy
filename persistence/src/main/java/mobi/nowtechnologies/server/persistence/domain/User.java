@@ -23,6 +23,7 @@ import java.util.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.UserStatus.LIMITED;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.O2_PSMS_TYPE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
@@ -422,14 +423,6 @@ public class User implements Serializable {
         Community community = userGroup.getCommunity();
         String rewriteUrlParameter = community.getRewriteUrlParameter();
         return O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(rewriteUrlParameter);
-    }
-
-    public boolean isSMSActivatedUser() {
-        return getActivationStatus() == ActivationStatus.ACTIVATED || StringUtils.equals(getMobile(), getUserName()) || isVFNZCommunityUser() || isO2CommunityUser();
-    }
-
-    public boolean isMonthlyPaidUser() {
-        return (isO2CommunityUser() && isNonO2User()) || (isVFNZCommunityUser() && isNonVFUser());
     }
 
     public boolean isO2PAYGConsumer() {
@@ -1043,15 +1036,6 @@ public class User implements Serializable {
         return accountDto;
     }
 
-    public ContactUsDto toContactUsDto() {
-        ContactUsDto contactUsDto = new ContactUsDto();
-        contactUsDto.setEmail(userName);
-        contactUsDto.setName(displayName);
-
-        LOGGER.debug("Output parameter contactUsDto=[{}]", contactUsDto);
-        return contactUsDto;
-    }
-
     public Long getFirstDeviceLoginMillis() {
         return firstDeviceLoginMillis;
     }
@@ -1176,7 +1160,7 @@ public class User implements Serializable {
     }
 
     public boolean isLimited() {
-        return this.status != null && UserStatus.LIMITED.equals(this.status.getName())
+        return this.status != null && LIMITED.equals(this.status.getName())
                 || (new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
                 && getLastSubscribedPaymentSystem() != null
                 && !hasActivePaymentDetails());
@@ -1426,6 +1410,10 @@ public class User implements Serializable {
         return null;
     }
 
+    public boolean hasLimitedStatus(){
+        return status.getName().equals(LIMITED);
+    }
+
     public User withOldUser(User oldUser) {
         this.oldUser = oldUser;
         return this;
@@ -1499,11 +1487,9 @@ public class User implements Serializable {
         return this;
     }
 
-
     public Collection<SocialInfo> getSocialInfo() {
         return socialInfo;
     }
-
 
     @Override
     public String toString() {

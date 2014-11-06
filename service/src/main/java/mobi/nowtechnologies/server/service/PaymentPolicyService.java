@@ -19,13 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
@@ -129,6 +129,15 @@ public class PaymentPolicyService {
         Community community = user.getUserGroup().getCommunity();
         List<PaymentPolicy> paymentPolicies = paymentPolicyRepository.getPaymentPolicies(community, provider, segment, user.getContract(),
                 user.getTariff(), mediaTypes);
+
+        sort(paymentPolicies, new Comparator<PaymentPolicy>() {
+            @Override
+            public int compare(PaymentPolicy p1, PaymentPolicy p2) {
+                int result = p2.getPeriod().getDurationUnit().compareTo(p1.getPeriod().getDurationUnit());
+                if(result == 0) return new Integer(p2.getPeriod().getDuration()).compareTo(p1.getPeriod().getDuration());
+                return result;
+            }
+        });
         return mergePaymentPolicies(user, paymentPolicies);
     }
 

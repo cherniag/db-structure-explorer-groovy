@@ -1,10 +1,12 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
+import mobi.nowtechnologies.server.shared.enums.DurationUnit;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.math.BigDecimal;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class PaymentDetailsByPaymentDto {
 
@@ -20,17 +22,16 @@ public class PaymentDetailsByPaymentDto {
 		public static final String NAME = "paymentPolicyDto";
 
 		private BigDecimal subcost;
-		private Integer subweeks;
+		private int duration;
+		private DurationUnit durationUnit;
 		private Integer operator;
 		private String operatorName;
 		private String paymentType;
 		private String shortCode;
 		private BigDecimal oldSubcost;
-		private Integer oldSubweeks;
+		private Integer oldDuration;
+		private DurationUnit oldDurationUnit;
 		private String currencyISO;
-
-		public PaymentPolicyDto() {
-		}
 
 		public BigDecimal getSubcost() {
 			return subcost;
@@ -38,14 +39,6 @@ public class PaymentDetailsByPaymentDto {
 
 		public void setSubcost(BigDecimal subcost) {
 			this.subcost = subcost;
-		}
-
-		public Integer getSubweeks() {
-			return subweeks;
-		}
-
-		public void setSubweeks(Integer subweeks) {
-			this.subweeks = subweeks;
 		}
 
 		public BigDecimal getOldSubcost() {
@@ -56,12 +49,12 @@ public class PaymentDetailsByPaymentDto {
 			this.oldSubcost = oldSubcost;
 		}
 
-		public Integer getOldSubweeks() {
-			return oldSubweeks;
+		public Integer getOldDuration() {
+			return oldDuration;
 		}
 
-		public void setOldSubweeks(Integer oldSubweeks) {
-			this.oldSubweeks = oldSubweeks;
+		public void setOldDuration(Integer oldDuration) {
+			this.oldDuration = oldDuration;
 		}
 
 		public Integer getOperator() {
@@ -104,12 +97,46 @@ public class PaymentDetailsByPaymentDto {
 			this.currencyISO = currencyISO;
 		}
 
-		@Override
-		public String toString() {
-			return "PaymentPolicyDto [currencyISO=" + currencyISO + ", oldSubcost=" + oldSubcost + ", oldSubweeks=" + oldSubweeks + ", operator=" + operator + ", operatorName=" + operatorName
-					+ ", paymentType=" + paymentType + ", shortCode=" + shortCode + ", subcost=" + subcost + ", subweeks=" + subweeks + "]";
+		public long getDuration() {
+			return duration;
 		}
 
+		public void setDuration(int duration) {
+			this.duration = duration;
+		}
+
+		public DurationUnit getDurationUnit() {
+			return durationUnit;
+		}
+
+		public void setDurationUnit(DurationUnit durationUnit) {
+			this.durationUnit = durationUnit;
+		}
+
+		public DurationUnit getOldDurationUnit() {
+			return oldDurationUnit;
+		}
+
+		public void setOldDurationUnit(DurationUnit oldDurationUnit) {
+			this.oldDurationUnit = oldDurationUnit;
+		}
+
+		@Override
+		public String toString() {
+			return new ToStringBuilder(this)
+					.append("subcost", subcost)
+					.append("duration", duration)
+					.append("periodUnit", durationUnit)
+					.append("operator", operator)
+					.append("operatorName", operatorName)
+					.append("paymentType", paymentType)
+					.append("shortCode", shortCode)
+					.append("oldSubcost", oldSubcost)
+					.append("oldDuration", oldDuration)
+					.append("oldDurationUnit", oldDurationUnit)
+					.append("currencyISO", currencyISO)
+					.toString();
+		}
 	}
 
 	public void setPaymentType(String paymentType) {
@@ -146,7 +173,11 @@ public class PaymentDetailsByPaymentDto {
 
 	@Override
 	public String toString() {
-		return "PaymentDetailsByPaymentDto [paymentDetailsId=" + paymentDetailsId + ", paymentPolicyDto=" + paymentPolicyDto + ", paymentType=" + paymentType + ", activated=" + activated + "]";
+		return new ToStringBuilder(this)
+				.append("paymentDetailsId", paymentDetailsId)
+				.append("paymentType", paymentType)
+				.append("paymentPolicyDto", paymentPolicyDto)
+				.append("activated", activated)
+				.toString();
 	}
-
 }

@@ -543,13 +543,13 @@ public class UserNotificationServiceImplTest {
                 String unsUrl = (String) args[0];
                 String currencyISO = (String) args[1];
                 String subcost = (String) args[2];
-                String subWeeksPart = (String) args[3];
+                String durtionUnitPart = (String) args[3];
                 String shortCode = (String) args[4];
 
                 assertEquals(userNotificationImplSpy.getUnsubscribeUrl(), unsUrl);
                 assertEquals(paymentPolicy.getCurrencyISO(), currencyISO);
                 assertEquals(paymentPolicy.getSubcost().toString(), subcost);
-                assertEquals(forNWeeks, subWeeksPart);
+                assertEquals(forNWeeks, durtionUnitPart);
                 assertEquals(paymentPolicy.getShortCode(), shortCode);
 
 				return true;
@@ -601,14 +601,14 @@ public class UserNotificationServiceImplTest {
 
 				String unsUrl = (String) args[0];
 				String currencyISO = (String) args[1];
-				String subcost = (String) args[2];
-				String subWeeksPart = (String) args[3];
+				String subCost = (String) args[2];
+				String durtionUnitPart = (String) args[3];
                 String shortCode = (String) args[4];
 
 				assertEquals(userNotificationImplSpy.getUnsubscribeUrl(), unsUrl);
 				assertEquals(paymentPolicy.getCurrencyISO(), currencyISO);
-				assertEquals(paymentPolicy.getSubcost().toString(), subcost);
-				assertEquals(forNWeeks, subWeeksPart);
+				assertEquals(paymentPolicy.getSubcost().toString(), subCost);
+				assertEquals(forNWeeks, durtionUnitPart);
                 assertEquals(paymentPolicy.getShortCode(), shortCode);
 
 				return true;

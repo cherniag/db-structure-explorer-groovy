@@ -50,8 +50,8 @@ public class PaymentPolicy {
     @Column(name = "subCost", columnDefinition = "char(5)", length = 5, nullable = false)
     private BigDecimal subcost;
 
-    @Column(name = "subWeeks", columnDefinition = "tinyint(3)", length = 3, nullable = false)
-    private byte subweeks;
+    @Embedded
+    private Period period;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "operator")
@@ -155,14 +155,6 @@ public class PaymentPolicy {
 
     public Integer getOperatorId() {
         return operatorId;
-    }
-
-    public void setSubweeks(byte subweeks) {
-        this.subweeks = subweeks;
-    }
-
-    public byte getSubweeks() {
-        return subweeks;
     }
 
     public String getPaymentType() {
@@ -314,9 +306,15 @@ public class PaymentPolicy {
         return advancedPaymentSeconds;
     }
 
-    public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
-        LOGGER.debug("input parameters paymentDetailsByPaymentDto: [{}]", paymentDetailsByPaymentDto);
+    public Period getPeriod() {
+        return period;
+    }
 
+    public void setPeriod(Period period) {
+        this.period = period;
+    }
+
+    public PaymentPolicyDto toPaymentPolicyDto(PaymentDetailsByPaymentDto paymentDetailsByPaymentDto) {
         PaymentPolicyDto paymentPolicyDto = paymentDetailsByPaymentDto.new PaymentPolicyDto();
 
         paymentPolicyDto.setCurrencyISO(currencyISO);
@@ -328,9 +326,8 @@ public class PaymentPolicy {
 
         paymentPolicyDto.setPaymentType(paymentType);
         paymentPolicyDto.setSubcost(subcost);
-        paymentPolicyDto.setSubweeks(new Integer(subweeks));
-
-        LOGGER.debug("Output parameter [{}]", paymentPolicyDto);
+        paymentPolicyDto.setDuration(period.getDuration());
+        paymentPolicyDto.setDurationUnit(period.getDurationUnit());
         return paymentPolicyDto;
     }
 
@@ -404,11 +401,6 @@ public class PaymentPolicy {
         return this;
     }
 
-    public PaymentPolicy withSubWeeks(byte subWeeks) {
-        setSubweeks(subWeeks);
-        return this;
-    }
-
     public PaymentPolicy withAvailableInStore(boolean availableInStore) {
         setAvailableInStore(availableInStore);
         return this;
@@ -469,13 +461,18 @@ public class PaymentPolicy {
         return this;
     }
 
+    public PaymentPolicy withPeriod(Period period){
+        this.period = period;
+        return this;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("communityId", communityId)
                 .append("subcost", subcost)
-                .append("subweeks", subweeks)
+                .append("period", period)
                 .append("operatorId", operatorId)
                 .append("paymentType", paymentType)
                 .append("operatorName", operatorName)

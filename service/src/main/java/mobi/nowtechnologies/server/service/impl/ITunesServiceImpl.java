@@ -128,6 +128,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 					submittedPayment.setAppStoreOriginalTransactionId(latestReceiptInfo.getOriginalTransactionId());
 					submittedPayment.setPaymentSystem(PaymentDetails.ITUNES_SUBSCRIPTION);
 					submittedPayment.setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+					submittedPayment.setPeriod(paymentPolicy.getPeriod());
 					
 					submitedPaymentService.save(submittedPayment);
 

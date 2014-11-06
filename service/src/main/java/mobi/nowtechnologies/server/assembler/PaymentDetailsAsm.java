@@ -9,30 +9,10 @@ import java.util.*;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class PaymentDetailsAsm {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDetailsAsm.class);
-
-	@SuppressWarnings("unchecked")
-	public static List<PaymentDetailsDto> toPaymentDetailsDtos(Collection<PaymentDetails> paymentDetailsList) {
-		LOGGER.debug("input parameters paymentDetailsList: [{}]", paymentDetailsList);
-
-		final List<PaymentDetailsDto> paymentDetailsDtos;
-		if (paymentDetailsList.isEmpty()) {
-			paymentDetailsDtos = Collections.EMPTY_LIST;
-		} else {
-			paymentDetailsDtos = new ArrayList<PaymentDetailsDto>(paymentDetailsList.size());
-
-			for (PaymentDetails paymentDetails : paymentDetailsList) {
-				paymentDetailsDtos.add(toPaymentDetailsDto(paymentDetails));
-			}
-		}
-
-		LOGGER.debug("Output parameter paymentDetailsDtos=[{}]", paymentDetailsDtos);
-		return paymentDetailsDtos;
-	}
 
 	public static PaymentDetailsDto toPaymentDetailsDto(PaymentDetails paymentDetails) {
 		LOGGER.debug("input parameters paymentDetails: [{}] ", paymentDetails);
@@ -46,10 +26,7 @@ public class PaymentDetailsAsm {
 		paymentDetailsDto.setId(paymentDetails.getI());
 		paymentDetailsDto.setLastPaymentStatus(paymentDetails.getLastPaymentStatus());
 		paymentDetailsDto.setMadeRetries(paymentDetails.getMadeRetries());
-		// paymentDetailsDto.setPaymentPolicy(paymentPolicy);
-		// paymentDetailsDto.setPromotionPaymentPolicyDto(promotionPaymentPolicyDto);
 		paymentDetailsDto.setRetriesOnError(paymentDetails.getRetriesOnError());
-		// paymentDetailsDto.setUserDto(userDto);
 
 		LOGGER.info("Output parameter paymentDetailsDto=[{}]", paymentDetailsDto);
 		return paymentDetailsDto;

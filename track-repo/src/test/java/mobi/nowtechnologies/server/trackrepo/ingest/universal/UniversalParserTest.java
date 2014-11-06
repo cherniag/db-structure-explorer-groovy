@@ -21,6 +21,7 @@ import static mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalPa
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
 
 /**
  * User: sanya
@@ -132,7 +133,7 @@ public class UniversalParserTest {
         Assert.assertEquals("2011", track.year);
         Assert.assertEquals(null, track.label);
         Assert.assertEquals("05037128167051", track.physicalProductId);
-        Assert.assertEquals(null, track.album);
+        Assert.assertEquals("Get Back (ASAP)", track.album);
         Assert.assertEquals(null, track.info);
         Assert.assertEquals(true, track.licensed);
         Assert.assertEquals(false, track.exists);
@@ -178,7 +179,7 @@ public class UniversalParserTest {
         Assert.assertEquals("2013", track.year);
         Assert.assertEquals(null, track.label);
         Assert.assertEquals("00602537560646", track.physicalProductId);
-        Assert.assertEquals(null, track.album);
+        Assert.assertEquals("Jamaïque", track.album);
         Assert.assertEquals(null, track.info);
         Assert.assertEquals(true, track.licensed);
         Assert.assertEquals(false, track.exists);
@@ -291,6 +292,22 @@ public class UniversalParserTest {
         assertThat(dropTrackTerritories, hasSize(2));
         assertThat(dropTrackTerritories, hasTerritoryWithCountry("GB"));
         assertThat(dropTrackTerritories, hasTerritoryWithCountry("NZ"));
+    }
+
+    @Test
+    public void shouldParseAlbum(){
+        //given
+        String code = "05037128167051";
+        String drop = "3000007191631";
+        Map<String, List<DropAssetFile>> fulfillmentFiles = new HashMap<String, List<DropAssetFile>>();
+
+        //when
+        Map<String, DropTrack> result = fixture.loadXml(drop, code, fulfillmentFiles);
+
+        //then
+        for (DropTrack dropTrack : result.values()) {
+            assertThat(dropTrack.album, is("Get Back (ASAP)"));
+        }
     }
 
     static class TerritoryMatcher extends TypeSafeMatcher<Collection<DropTerritory>> {

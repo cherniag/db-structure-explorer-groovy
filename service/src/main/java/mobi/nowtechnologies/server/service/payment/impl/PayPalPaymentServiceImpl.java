@@ -20,10 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
+
 /**
- * 
  * @author Alexander Kolpakov (akolpakov)
- *
  */
 public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService implements PayPalPaymentService {
 
@@ -45,11 +45,11 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 		pendingPayment.setPaymentSystem(PaymentDetails.PAYPAL_TYPE);
 		pendingPayment.setUser(user);
 		pendingPayment.setExternalTxId("NONE");
-		long currentTimeMillis = System.currentTimeMillis();
-		pendingPayment.setTimestamp(currentTimeMillis);
-		pendingPayment.setExpireTimeMillis(currentTimeMillis);
+		pendingPayment.setTimestamp(Utils.getEpochMillis());
+		pendingPayment.setExpireTimeMillis(getExpireMillis());
 		pendingPayment.setType(PaymentDetailsType.PAYMENT);
 		pendingPayment.setPaymentDetails(newPaymentDetails);
+		pendingPayment.setPeriod(new Period().withDuration(0).withDurationUnit(DAYS));
 		entityService.saveEntity(pendingPayment);
 
 		startPayment(pendingPayment);

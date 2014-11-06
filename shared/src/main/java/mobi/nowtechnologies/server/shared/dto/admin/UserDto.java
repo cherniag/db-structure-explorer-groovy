@@ -13,7 +13,6 @@ import static mobi.nowtechnologies.server.shared.Utils.truncatedToSeconds;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class UserDto {
 

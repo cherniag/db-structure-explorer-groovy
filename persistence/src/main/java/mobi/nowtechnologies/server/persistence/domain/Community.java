@@ -125,7 +125,6 @@ public class Community implements Serializable {
 		return CommunityDao.getMapAsNames();
 	}
 
-
     public List<Chart> getCharts() {
         return charts;
     }

@@ -13,19 +13,19 @@
     </c:if>
     
 	<c:choose>
-	    <c:when test="${paymentPolicy.subweeks == 1}">
+	    <c:when test="${paymentPolicy.duration == 1}">
 	        <c:set var="paymentPolicyOptionNo" value="3" />
 	        <c:set var="imageWeeks" value="3" />
 	    </c:when>
-	    <c:when test="${paymentPolicy.subweeks == 2}">
+	    <c:when test="${paymentPolicy.duration == 2}">
 	        <c:set var="paymentPolicyOptionNo" value="2" />
 	        <c:set var="imageWeeks" value="2" />
 	    </c:when>
-	    <c:when test="${paymentPolicy.subweeks == 3}">
+	    <c:when test="${paymentPolicy.duration == 3}">
 	        <c:set var="paymentPolicyOptionNo" value="4" />
 	        <c:set var="imageWeeks" value="1" />
 	    </c:when>
-	    <c:when test="${paymentPolicy.subweeks == 5}">
+	    <c:when test="${paymentPolicy.duration == 5}">
 	        <c:set var="paymentPolicyOptionNo" value="1" />
 	        <c:set var="imageWeeks" value="1" />
 	    </c:when>
@@ -39,7 +39,7 @@
 	   	<c:set var="disabledAttrib" />
 	   	<c:set var="buttonStyle" value="button-off" />
 	   	<c:set var="hrefValue">href="${pageContext.request.contextPath}/<%=request.getParameter("callingPage")%>/${method_name}.html?paymentPolicyId=${paymentPolicy.id}"</c:set>
-	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.subweeks == paymentPolicy.subweeks}">
+	   	<c:if test="${paymentsPage.paymentDetails != null && paymentsPage.activePaymentPolicy != null && paymentsPage.paymentDetails.activated && paymentsPage.activePaymentPolicy.subcost == paymentPolicy.subcost && paymentsPage.activePaymentPolicy.period.duration == paymentPolicy.duration}">
 	   		<c:set var="disabledAttrib">disabled="true"</c:set>
 	   		<c:set var="buttonStyle" value="button-on" />
 	   		<c:set var="hrefValue" value="" />

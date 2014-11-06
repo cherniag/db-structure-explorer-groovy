@@ -108,56 +108,46 @@ public class SmsAccordingToLawJobTest {
 		return user;
 	}
 
-	/**
-	 * Run the void executeInternal(JobExecutionContext) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test
-	public void testExecuteInternal_deltaSuccesfullPaymentSmsSendingTimestampMillis_Success() throws Exception {
+	public void testExecuteInternal_deltaSuccessfulPaymentSmsSendingTimestampMillis_Success() throws Exception {
 		String communityURL = "nowtop40";
 		String amountOfMoneyToUserNotificationStringConfigValue = "20";
-		Long deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue = 321L;
+		Long deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue = 321L;
 		BigDecimal amountOfMoneyToUserNotification = BigDecimal.TEN;
 
 		JobDataMap jobDataMap = getJobDataMap(communityURL);
 
 		BigDecimal amountOfMoneyToUserNotificationConfigValue = new BigDecimal(amountOfMoneyToUserNotificationStringConfigValue);
-		String deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue.toString();
-		final String upperCaseCommunityURL = communityURL.toUpperCase();
+		String deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue.toString();
 
-		User user = createUser(amountOfMoneyToUserNotification);
+        User user = createUser(amountOfMoneyToUserNotification);
 
-		List<User> userUnmodifableList = new ArrayList<User>(1);
-		userUnmodifableList.add(user);
-
-		userUnmodifableList = Collections.unmodifiableList(userUnmodifableList);
+		List<User> users = Collections.singletonList(user);
 
 		final MigPaymentDetails currentMigPaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
 		final PaymentPolicy paymentPolicyForCurrentMigPaymentDetails = currentMigPaymentDetails.getPaymentPolicy();
 
-		final Object[] deltaSuccesfullPaymentSmsSendingTimestampMillisReachedMessageArgs = new Object[] { mockCommunity.getDisplayName(),
-				paymentPolicyForCurrentMigPaymentDetails.getSubcost(), paymentPolicyForCurrentMigPaymentDetails.getSubweeks(),
+		final Object[] deltaSuccessfulPaymentSmsSendingTimestampMillisReachedMessageArgs = new Object[] { mockCommunity.getDisplayName(),
+				paymentPolicyForCurrentMigPaymentDetails.getSubcost(), paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDuration(),
+				paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails.getShortCode() };
-		MigResponse successfullMigResponse = MigResponseFactory.createSuccessfulMigResponse();
+		MigResponse successfulMigResponse = MigResponseFactory.createSuccessfulMigResponse();
 
 		PowerMockito.when(mockJobExecutionContext.getMergedJobDataMap()).thenReturn(jobDataMap);
-		PowerMockito.when(mockCommunityService.getCommunityByUrl(Mockito.eq(upperCaseCommunityURL))).thenReturn(mockCommunity);
+		PowerMockito.when(mockCommunityService.getCommunityByUrl(Mockito.eq(communityURL))).thenReturn(mockCommunity);
 
-		mockMessage(amountOfMoneyToUserNotificationStringConfigValue, upperCaseCommunityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATION_VALUE_MESSAGE_CODE);
-		mockMessage(deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString, upperCaseCommunityURL,
+		mockMessage(amountOfMoneyToUserNotificationStringConfigValue, communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATION_VALUE_MESSAGE_CODE);
+		mockMessage(deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString, communityURL,
 				DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_VALUE_MESSAGE_CODE);
 
 		PowerMockito.when(
 				mockUserService.findActivePsmsUsers(Mockito.eq(communityURL), Mockito.eq(amountOfMoneyToUserNotificationConfigValue), Mockito
-						.eq(deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(userUnmodifableList);
+						.eq(deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(users);
 
-		mockMessage(upperCaseCommunityURL, DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_REACHED_MESSAGE_CODE,
-				deltaSuccesfullPaymentSmsSendingTimestampMillisReachedMessageArgs, DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_REACHED_MESSAGE);
+		mockMessage(communityURL, DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_REACHED_MESSAGE_CODE,
+				deltaSuccessfulPaymentSmsSendingTimestampMillisReachedMessageArgs, DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_REACHED_MESSAGE);
 
-		mockMakeFreeSMSRequest(currentMigPaymentDetails, DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_REACHED_MESSAGE, successfullMigResponse);
+		mockMakeFreeSMSRequest(currentMigPaymentDetails, DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_REACHED_MESSAGE, successfulMigResponse);
 
 		PowerMockito.when(mockUserService.resetSmsAccordingToLawAttributes(user)).thenReturn(user);
 
@@ -168,56 +158,46 @@ public class SmsAccordingToLawJobTest {
 		Mockito.verify(mockUserService).resetSmsAccordingToLawAttributes(user);
 	}
 
-	/**
-	 * Run the void executeInternal(JobExecutionContext) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test
 	public void testExecuteInternal_amountOfMoneyToUserNotification_Success() throws Exception {
 		String communityURL = "nowtop40";
 		String amountOfMoneyToUserNotificationStringConfigValue = "20";
-		Long deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue = 321L;
+		Long deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue = 321L;
 		BigDecimal amountOfMoneyToUserNotification = new BigDecimal("20");
 
 		JobDataMap jobDataMap = getJobDataMap(communityURL);
 
 		BigDecimal amountOfMoneyToUserNotificationConfigValue = new BigDecimal(amountOfMoneyToUserNotificationStringConfigValue);
-		String deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue.toString();
-		final String upperCaseCommunityURL = communityURL.toUpperCase();
+		String deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue.toString();
 
-		User user = createUser(amountOfMoneyToUserNotification);
+        User user = createUser(amountOfMoneyToUserNotification);
 
-		List<User> userUnmodifableList = new ArrayList<User>(1);
-		userUnmodifableList.add(user);
-
-		userUnmodifableList = Collections.unmodifiableList(userUnmodifableList);
+		List<User> users = Collections.singletonList(user);
 
 		final MigPaymentDetails currentMigPaymentDetails = (MigPaymentDetails) user.getCurrentPaymentDetails();
 		final PaymentPolicy paymentPolicyForCurrentMigPaymentDetails = currentMigPaymentDetails.getPaymentPolicy();
 
 		final Object[] amountOfMoneyToUserNotificationMessageArgs = new Object[] { mockCommunity.getDisplayName(),
-				paymentPolicyForCurrentMigPaymentDetails.getSubcost(), paymentPolicyForCurrentMigPaymentDetails.getSubweeks(),
+				paymentPolicyForCurrentMigPaymentDetails.getSubcost(), paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDuration(),
+				paymentPolicyForCurrentMigPaymentDetails.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails.getShortCode() };
-		MigResponse successfullMigResponse = MigResponseFactory.createSuccessfulMigResponse();
+		MigResponse successfulMigResponse = MigResponseFactory.createSuccessfulMigResponse();
 
 		PowerMockito.when(mockJobExecutionContext.getMergedJobDataMap()).thenReturn(jobDataMap);
-		PowerMockito.when(mockCommunityService.getCommunityByUrl(Mockito.eq(upperCaseCommunityURL))).thenReturn(mockCommunity);
+		PowerMockito.when(mockCommunityService.getCommunityByUrl(Mockito.eq(communityURL))).thenReturn(mockCommunity);
 
-		mockMessage(amountOfMoneyToUserNotificationStringConfigValue, upperCaseCommunityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATION_VALUE_MESSAGE_CODE);
-		mockMessage(deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString, upperCaseCommunityURL,
+		mockMessage(amountOfMoneyToUserNotificationStringConfigValue, communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATION_VALUE_MESSAGE_CODE);
+		mockMessage(deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValueString, communityURL,
 				DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_VALUE_MESSAGE_CODE);
 
 		PowerMockito.when(
 				mockUserService.findActivePsmsUsers(Mockito.eq(communityURL), Mockito.eq(amountOfMoneyToUserNotificationConfigValue), Mockito
-						.eq(deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(userUnmodifableList);
+						.eq(deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(users);
 
-		mockMessage(upperCaseCommunityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE_CODE, amountOfMoneyToUserNotificationMessageArgs,
+		mockMessage(communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE_CODE, amountOfMoneyToUserNotificationMessageArgs,
 				AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE);
 
-		mockMakeFreeSMSRequest(currentMigPaymentDetails, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE,  successfullMigResponse);
+		mockMakeFreeSMSRequest(currentMigPaymentDetails, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE,  successfulMigResponse);
 
 		PowerMockito.when(mockUserService.resetSmsAccordingToLawAttributes(user)).thenReturn(user);
 
@@ -228,27 +208,19 @@ public class SmsAccordingToLawJobTest {
 		Mockito.verify(mockUserService).resetSmsAccordingToLawAttributes(user);
 	}
 
-	/**
-	 * Run the void executeInternal(JobExecutionContext) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test
 	public void testExecuteInternal_failureMigResponse_Success() throws Exception {
 		String communityURL = "nowtop40";
 		String amountOfMoneyToUserNotificationStringConfigValue = "20";
-		Long deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue = 321L;
+		Long deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue = 321L;
 		BigDecimal amountOfMoneyToUserNotification = new BigDecimal("20");
 
 		JobDataMap jobDataMap = getJobDataMap(communityURL);
 
 		BigDecimal amountOfMoneyToUserNotificationConfigValue = new BigDecimal(amountOfMoneyToUserNotificationStringConfigValue);
-		String deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue.toString();
-		final String upperCaseCommunityURL = communityURL.toUpperCase();
+		String deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValueString = deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue.toString();
 
-		User user1 = createUser(amountOfMoneyToUserNotification);
+        User user1 = createUser(amountOfMoneyToUserNotification);
 		User user2 = createUser(amountOfMoneyToUserNotification);
 
 		List<User> userUnmodifableList = new ArrayList<User>(1);
@@ -264,37 +236,39 @@ public class SmsAccordingToLawJobTest {
 		final PaymentPolicy paymentPolicyForCurrentMigPaymentDetails2 = currentMigPaymentDetails2.getPaymentPolicy();
 
 		final Object[] amountOfMoneyToUserNotificationMessageArgs1 = new Object[] { mockCommunity.getDisplayName(),
-				paymentPolicyForCurrentMigPaymentDetails1.getSubcost(), paymentPolicyForCurrentMigPaymentDetails1.getSubweeks(),
+				paymentPolicyForCurrentMigPaymentDetails1.getSubcost(), paymentPolicyForCurrentMigPaymentDetails1.getPeriod().getDuration(),
+				paymentPolicyForCurrentMigPaymentDetails1.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails1.getShortCode() };
 		final Object[] amountOfMoneyToUserNotificationMessageArgs2 = new Object[] { mockCommunity.getDisplayName(),
-				paymentPolicyForCurrentMigPaymentDetails2.getSubcost(), paymentPolicyForCurrentMigPaymentDetails2.getSubweeks(),
+				paymentPolicyForCurrentMigPaymentDetails2.getSubcost(), paymentPolicyForCurrentMigPaymentDetails2.getPeriod().getDuration(),
+				paymentPolicyForCurrentMigPaymentDetails2.getPeriod().getDurationUnit(),
 				paymentPolicyForCurrentMigPaymentDetails2.getShortCode() };
 
 		MigResponse failureMigResponse = MigResponseFactory.createFailMigResponse();
-		MigResponse successfullMigResponse = MigResponseFactory.createSuccessfulMigResponse();
+		MigResponse successfulMigResponse = MigResponseFactory.createSuccessfulMigResponse();
 
 		PowerMockito.when(mockJobExecutionContext.getMergedJobDataMap()).thenReturn(jobDataMap);
-		PowerMockito.when(mockCommunityService.getCommunityByUrl(Mockito.eq(upperCaseCommunityURL))).thenReturn(mockCommunity);
+		PowerMockito.when(mockCommunityService.getCommunityByUrl(Mockito.eq(communityURL))).thenReturn(mockCommunity);
 
-		mockMessage(amountOfMoneyToUserNotificationStringConfigValue, upperCaseCommunityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATION_VALUE_MESSAGE_CODE);
-		mockMessage(deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValueString, upperCaseCommunityURL,
+		mockMessage(amountOfMoneyToUserNotificationStringConfigValue, communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATION_VALUE_MESSAGE_CODE);
+		mockMessage(deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValueString, communityURL,
 				DELTA_SUCCESFULL_PAYMENT_SMS_SENDING_TIMESTAMP_MILLIS_VALUE_MESSAGE_CODE);
 
 		PowerMockito.when(
 				mockUserService.findActivePsmsUsers(Mockito.eq(communityURL), Mockito.eq(amountOfMoneyToUserNotificationConfigValue), Mockito
-						.eq(deltaSuccesfullPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(userUnmodifableList);
+						.eq(deltaSuccessfulPaymentSmsSendingTimestampMillisConfigValue))).thenReturn(userUnmodifableList);
 
-		mockMessage(upperCaseCommunityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE_CODE, amountOfMoneyToUserNotificationMessageArgs1,
+		mockMessage(communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE_CODE, amountOfMoneyToUserNotificationMessageArgs1,
 				AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE);
-		mockMessage(upperCaseCommunityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE_CODE, amountOfMoneyToUserNotificationMessageArgs2,
+		mockMessage(communityURL, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE_CODE, amountOfMoneyToUserNotificationMessageArgs2,
 				AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE);
 
 		mockMakeFreeSMSRequest(currentMigPaymentDetails1, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE, failureMigResponse);
-		mockMakeFreeSMSRequest(currentMigPaymentDetails2, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE, successfullMigResponse);
+		mockMakeFreeSMSRequest(currentMigPaymentDetails2, AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE, successfulMigResponse);
 
 		PowerMockito.when(
 				mockMigHttpService.makeFreeSMSRequest(currentMigPaymentDetails2.getMigPhoneNumber(), AMOUNT_OF_MONEY_TO_USER_NOTIFICATIONIS_REACHED_MESSAGE))
-				.thenReturn(successfullMigResponse);
+				.thenReturn(successfulMigResponse);
 
 		PowerMockito.when(mockUserService.resetSmsAccordingToLawAttributes(user1)).thenReturn(user1);
 		PowerMockito.when(mockUserService.resetSmsAccordingToLawAttributes(user2)).thenReturn(user2);
@@ -309,112 +283,49 @@ public class SmsAccordingToLawJobTest {
 		Mockito.verify(mockUserService).resetSmsAccordingToLawAttributes(user2);
 	}
 
-	/**
-	 * Run the void setCommunityService(CommunityService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
+
 	@Test
 	public void testSetCommunityService_notNull_Success() throws Exception {
 		smsAccordingToLawJobFixture.setCommunityService(mockCommunityService);
 	}
 
-	/**
-	 * Run the void setCommunityService(CommunityService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test(expected = java.lang.NullPointerException.class)
 	public void testSetCommunityService_null_Failure() throws Exception {
 		smsAccordingToLawJobFixture.setCommunityService(null);
 	}
 
-	/**
-	 * Run the void setMessageSource(CommunityResourceBundleMessageSource)
-	 * method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
+
 	@Test
 	public void testSetMessageSource_notNull_Success() throws Exception {
 		smsAccordingToLawJobFixture.setMessageSource(mockCommunityResourceBundleMessageSource);
 	}
 
-	/**
-	 * Run the void setMessageSource(CommunityResourceBundleMessageSource)
-	 * method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
+
 	@Test(expected = java.lang.NullPointerException.class)
 	public void testSetMessageSource_null_Failure() throws Exception {
 		smsAccordingToLawJobFixture.setMessageSource(null);
 	}
 
-	/**
-	 * Run the void setMigHttpService(MigHttpService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test
 	public void testSetMigHttpService_notNull_Success() throws Exception {
 		smsAccordingToLawJobFixture.setMigHttpService(mockMigHttpService);
 	}
 
-	/**
-	 * Run the void setMigHttpService(MigHttpService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test(expected = java.lang.NullPointerException.class)
 	public void testSetMigHttpService_null_Failure() throws Exception {
 		smsAccordingToLawJobFixture.setMigHttpService(null);
 	}
 
-	/**
-	 * Run the void setUserService(UserService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test
 	public void testSetUserService_notNull_Success() throws Exception {
 		smsAccordingToLawJobFixture.setUserService(mockUserService);
 	}
 
-	/**
-	 * Run the void setUserService(UserService) method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Test(expected = java.lang.NullPointerException.class)
 	public void testSetUserService_null_Failure() throws Exception {
 		smsAccordingToLawJobFixture.setUserService(null);
 	}
 
-	/**
-	 * Perform pre-test initialization.
-	 * 
-	 * @throws Exception
-	 *             if the initialization fails for some reason
-	 * 
-	 * @generatedBy CodePro at 29.08.12 10:04
-	 */
 	@Before
 	public void setUp() throws Exception {
 		smsAccordingToLawJobFixture = new SmsAccordingToLawJob();
