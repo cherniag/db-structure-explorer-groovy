@@ -85,14 +85,14 @@ alter table tb_pendingPayments add column duration_unit VARCHAR(255);
 alter table tb_submittedPayments add column duration int unsigned;
 alter table tb_submittedPayments add column duration_unit VARCHAR(255);
 
-alter table tb_promotionpaymentpolicy add column duration int unsigned;
-alter table tb_promotionpaymentpolicy add column duration_unit VARCHAR(255);
+alter table tb_promotionPaymentPolicy add column duration int unsigned;
+alter table tb_promotionPaymentPolicy add column duration_unit VARCHAR(255);
 
 START TRANSACTION;
 
 UPDATE
-    tb_pendingPayments ppay JOIN tb_paymentdetails pd
-      ON ppay.paymentDetailsId = pd.i JOIN tb_paymentpolicy pp
+    tb_pendingPayments ppay JOIN tb_paymentDetails pd
+      ON ppay.paymentDetailsId = pd.i JOIN tb_paymentPolicy pp
       ON pp.i = pd.paymentPolicyId
 SET
   ppay.duration = pp.duration ,
@@ -100,8 +100,8 @@ SET
 ;
 
 UPDATE
-    tb_submittedPayments sp JOIN tb_paymentdetails pd
-      ON sp.paymentDetailsId = pd.i JOIN tb_paymentpolicy pp
+    tb_submittedPayments sp JOIN tb_paymentDetails pd
+      ON sp.paymentDetailsId = pd.i JOIN tb_paymentPolicy pp
       ON pp.i = pd.paymentPolicyId
 SET
   sp.duration = pp.duration ,
