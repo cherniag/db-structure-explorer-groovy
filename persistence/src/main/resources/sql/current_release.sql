@@ -35,7 +35,7 @@ SET tb.label = tl.i;
 
 -- end SRV-89
 -- SRV-295 - [SERVER] Allow payment policy to be configurable either by day, month or week
-alter table tb_paymentPolicy add column duration bigint;
+alter table tb_paymentPolicy add column duration int;
 alter table tb_paymentPolicy add column duration_unit VARCHAR(255);
 
 START TRANSACTION;
@@ -125,6 +125,20 @@ alter table tb_submittedPayments change column subWeeks subWeeks int(11) NOT NUL
 alter table tb_promotionPaymentPolicy modify column duration int unsigned not null;
 alter table tb_promotionPaymentPolicy modify column duration_unit VARCHAR(255) not null;
 alter table tb_promotionPaymentPolicy change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
+
+-- begin SRV-294
+set AUTOCOMMIT=0;
+START TRANSACTION;
+select @mtv1_community_id:= c.id from tb_communities c where c.name = 'mtv1';
+update tb_paymentPolicy
+set subcost = 4.99, duration_unit = 'MONTHS', duration=1
+where communityID = @mtv1_community_id and paymentType in ('iTunesSubscription', 'PAY_PAL');
+
+update tb_paymentPolicy
+set app_store_product_id = 'com.musicqubed.ios.mtv1.subscription.monthly.0'
+where communityID = @mtv1_community_id and paymentType='iTunesSubscription';
+COMMIT;
+--  end SRV-294
 
 -- SRV-113 [JADMIN] Allow content manager to apply badges to playlists at Chart level
 alter table tb_chartDetail add column badge_filename_id bigint(20);
