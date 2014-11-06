@@ -88,7 +88,7 @@ alter table tb_submittedPayments add column duration int unsigned;
 alter table tb_submittedPayments add column duration_unit VARCHAR(255);
 
 alter table tb_promotionPaymentPolicy add column duration int unsigned;
-alter table tb_promotionpaymentPolicy add column duration_unit VARCHAR(255);
+alter table tb_promotionPaymentPolicy add column duration_unit VARCHAR(255);
 
 START TRANSACTION;
 
