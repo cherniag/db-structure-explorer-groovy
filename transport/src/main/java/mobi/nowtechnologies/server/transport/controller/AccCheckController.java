@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
@@ -94,7 +95,7 @@ public class AccCheckController extends CommonController {
                 LOGGER.error(e.getMessage(), e);
             }
 
-            mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck);
         } catch (Exception e) {
@@ -140,7 +141,8 @@ public class AccCheckController extends CommonController {
             "**/{community}/{apiVersion:6\\.1}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.2}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.3}/ACC_CHECK",
-            "**/{community}/{apiVersion:6\\.4}/ACC_CHECK"
+            "**/{community}/{apiVersion:6\\.4}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.5}/ACC_CHECK"
     })
     public ModelAndView accountCheckWithPossibilityOfReactivation(
             @RequestParam("USER_NAME") String userName,

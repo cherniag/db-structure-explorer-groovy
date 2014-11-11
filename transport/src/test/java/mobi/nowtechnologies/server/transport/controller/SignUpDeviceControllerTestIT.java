@@ -23,12 +23,11 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
     private DeviceUserDataRepository deviceUserDataRepository;
 
     @Test
-    public void signUpDevice_WithXtifyShouldCreateDeviceUserData_LatestVersion() throws Exception {
+    public void signUpDevice_LatestVersion() throws Exception {
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String deviceType = "ANDROID";
         String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "o2";
-        String timestamp = "2011_12_26_07_04_23";
         String xtifyToken = "dsfhosduyajdfy78cyuaidyfo67vc6754g5";
 
         ResultActions resultActions = mockMvc.perform(
@@ -38,22 +37,36 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
                         .param("XTIFY_TOKEN", xtifyToken)
         ).andExpect(status().isOk());
         AccountCheckDto dto = getAccCheckContent(resultActions);
-        String storedToken = dto.userToken;
-        String userName = dto.userName;
-        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        User found = userRepository.findOne(dto.userName, communityUrl);
 
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
+        assertEquals(found.getUserName(), dto.userName);
+        assertEquals(found.getToken(), dto.userToken);
+        assertEquals(found.getDeviceUID(), dto.deviceUID);
+        assertEquals(found.getDeviceType().getName(), dto.deviceType);
+        assertEquals(found.getActivationStatus(), dto.activation);
+        assertEquals(found.getStatus().getName(), dto.status);
+        assertEquals(found.getNextSubPayment(), dto.nextSubPaymentSeconds);
+        assertFalse(dto.hasAllDetails);
+    }
+
+    @Test
+    public void testSignUpDevice_v6d5_shouldReturnUserUUID() throws Exception {
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String deviceType = "ANDROID";
+        String apiVersion = "6.5";
+        String communityUrl = "o2";
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
         ).andExpect(status().isOk());
-        checkAccountCheck(resultActions, accountCheckCall);
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+        User found = userRepository.findOne(dto.userName, communityUrl);
 
-        DeviceUserData found = deviceUserDataRepository.findByXtifyToken(xtifyToken);
-        assertNotNull(found);
-        assertEquals(deviceUID, found.getDeviceUid());
-        assertEquals(xtifyToken, found.getXtifyToken());
+        assertNotNull(dto.uuid);
+        assertEquals(36, dto.uuid.length());
+        assertEquals(found.getUuid(), dto.uuid);
     }
 
 

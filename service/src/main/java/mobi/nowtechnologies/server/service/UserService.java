@@ -602,25 +602,28 @@ public class UserService {
     }
 
     @Transactional(propagation = REQUIRED)
-    public User mergeUser(User oldUser, User userByDeviceUID) {
-        LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, userByDeviceUID);
+    public User mergeUser(User oldUser, User tempUser) {
+        LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, tempUser);
 
-        userDeviceDetailsService.removeUserDeviceDetails(userByDeviceUID);
+        userDeviceDetailsService.removeUserDeviceDetails(tempUser);
 
         deviceUserDataService.removeDeviceUserData(oldUser);
-        deviceUserDataService.removeDeviceUserData(userByDeviceUID);
+        deviceUserDataService.removeDeviceUserData(tempUser);
 
-        int deletedUsers = userRepository.deleteUser(userByDeviceUID.getId());
-        if(deletedUsers>1) throw new ServiceException("Couldn't remove user with id ["+userByDeviceUID.getId()+"]. There are ["+deletedUsers +"] users with id ["+userByDeviceUID.getId()+"]");
+        int deletedUsers = userRepository.deleteUser(tempUser.getId());
+        if(deletedUsers > 1) {
+            throw new ServiceException("Couldn't remove user with id ["+tempUser.getId()+"]. There are ["+deletedUsers +"] users with id ["+tempUser.getId()+"]");
+        }
 
-        oldUser.setDeviceUID(userByDeviceUID.getDeviceUID());
-        oldUser.setDeviceType(userByDeviceUID.getDeviceType());
-        oldUser.setDeviceModel(userByDeviceUID.getDeviceModel());
-        oldUser.setIpAddress(userByDeviceUID.getIpAddress());
+        oldUser.setDeviceUID(tempUser.getDeviceUID());
+        oldUser.setDeviceType(tempUser.getDeviceType());
+        oldUser.setDeviceModel(tempUser.getDeviceModel());
+        oldUser.setIpAddress(tempUser.getIpAddress());
+        oldUser.setUuid(tempUser.getUuid());
 
         oldUser = userRepository.save(oldUser);
 
-        accountLogService.logAccountMergeEvent(oldUser, userByDeviceUID);
+        accountLogService.logAccountMergeEvent(oldUser, tempUser);
 
         LOGGER.info("The current user after merge now is [{}]", oldUser);
         return oldUser;
@@ -842,6 +845,7 @@ public class UserService {
     private User newUser(UserRegDetailsDto userRegDetailsDto, String userName, DeviceType deviceType, String deviceString, Community community) {
         User user = new User();
         user.setUserName(userName);
+        user.setUuid(Utils.getRandomUUID());
         user.setToken(Utils.createStoredToken(userName, userRegDetailsDto.getPassword()));
 
         user.setDeviceType(deviceType);
@@ -883,7 +887,7 @@ public class UserService {
 
     public boolean checkPromotionCode(String code, String community) {
         Promotion promotion = promotionService.getActivePromotion(code, community);
-        return (null != promotion) ? true : false;
+        return promotion != null;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -973,9 +977,7 @@ public class UserService {
         MigResponse response = migHttpService.makeFreeSMSRequest(getMigPhoneNumber(user.getOperator(), migPhone),
                 messageSource.getMessage(user.getUserGroup().getCommunity().getRewriteUrlParameter().toLowerCase(), "sms.otalink.text", args, null));
         LOGGER.info("OTA link has been sent to user {}", userId);
-        if (200 == response.getHttpStatus())
-            return true;
-        return false;
+        return response.getHttpStatus() == 200;
     }
 
     public AccountDto saveAccountDetails(AccountDto accountDto, int userId) {
@@ -1018,52 +1020,55 @@ public class UserService {
         Community community = communityService.getCommunityByUrl(userDeviceRegDetailsDto.getCommunityUri());
         User user = findUserWithUserNameAsPassedDeviceUID(deviceUID, community);
 
-        if (isNull(user)) {
+        if (user == null) {
             detectUserAccountWithSameDeviceAndDisableIt(deviceUID, community);
-
-            DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(userDeviceRegDetailsDto.getDeviceType());
-            if (isNull(deviceType)) deviceType = DeviceTypeDao.getNoneDeviceType();
-
-            user = createUser(userDeviceRegDetailsDto, deviceUID, deviceType, community);
-        } else if (isNotNull(user) && updateUserPendingActivation && ActivationStatus.PENDING_ACTIVATION == user.getActivationStatus()) {
+            user = createUser(userDeviceRegDetailsDto, deviceUID, community);
+        } else if (isNotNull(user) && updateUserPendingActivation && PENDING_ACTIVATION == user.getActivationStatus()) {
             user.setActivationStatus(REGISTERED);
         }
 
+        user.setUuid(Utils.getRandomUUID());
+        user = userRepository.save(user);
+
         if (createPotentialPromo && user.getNextSubPayment() == 0) {
-            String communityUri = community.getRewriteUrlParameter().toLowerCase();
-            String deviceModel = user.getDeviceModel();
-
-            final String promotionCode;
-
-            if (canBePromoted(community, deviceUID, deviceModel)) {
-                promotionCode = messageSource.getMessage(communityUri, "promotionCode", null, null);
-            } else {
-                String blackListModels = messageSource.getMessage(communityUri, "promotion.blackListModels", null, null);
-                if (deviceModel != null && blackListModels.contains(deviceModel)) {
-                    promotionCode = null;
-                } else
-                    promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
-            }
-
-            promotionService.setPotentialPromoByPromoCode(user, promotionCode);
+            assignPotentialPromo(user, community);
         }
 
-        userRepository.save(user);
         LOGGER.info("REGISTER_USER user[{}] changed activation_status to[{}]", user.getUserName(), REGISTERED);
         return user;
     }
 
-    private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, DeviceType deviceType, Community community) {
+    private void assignPotentialPromo(User user, Community community) {
+        String communityUri = community.getRewriteUrlParameter().toLowerCase();
+        String deviceModel = user.getDeviceModel();
+
+        final String promotionCode;
+
+        if (canBePromoted(community, user.getDeviceUID(), deviceModel)) {
+            promotionCode = messageSource.getMessage(communityUri, "promotionCode", null, null);
+        } else {
+            String blackListModels = messageSource.getMessage(communityUri, "promotion.blackListModels", null, null);
+            if (deviceModel != null && blackListModels.contains(deviceModel)) {
+                promotionCode = null;
+            } else
+                promotionCode = messageSource.getMessage(communityUri, "defaultPromotionCode", null, null);
+        }
+
+        promotionService.setPotentialPromoByPromoCode(user, promotionCode);
+    }
+
+
+    private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, Community community) {
         User user = new User();
         user.setUserName(deviceUID);
         user.setToken(Utils.createStoredToken(deviceUID, Utils.getRandomString(20)));
 
+        DeviceType deviceType = getDeviceType(userDeviceRegDetailsDto.getDeviceType());
         user.setDeviceType(deviceType);
-        user.setUserGroup(UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId()));
+        user.setUserGroup(getUserGroup(community));
         user.setCountry(countryService.findIdByFullName("Great Britain"));
         user.setIpAddress(userDeviceRegDetailsDto.getIpAddress());
-        Entry<Integer, Operator> entry = OperatorDao.getMapAsIds().entrySet().iterator().next();
-        user.setOperator(entry.getKey());
+        user.setOperator(getOperator());
         user.setStatus(UserStatusDao.getLimitedUserStatus());
         user.setDeviceUID(deviceUID);
         user.setDeviceModel(userDeviceRegDetailsDto.getDeviceModel() != null ? userDeviceRegDetailsDto.getDeviceModel() : deviceType.getName());
@@ -1071,7 +1076,27 @@ public class UserService {
         user.setFirstDeviceLoginMillis(System.currentTimeMillis());
         user.setActivationStatus(REGISTERED);
 
-        return userRepository.save(user);
+        return user;
+    }
+
+    protected Integer getOperator(){
+        Iterator<Entry<Integer, Operator>> iterator = OperatorDao.getMapAsIds().entrySet().iterator();
+        if (iterator.hasNext()){
+            return iterator.next().getKey();
+        }
+        throw new ServiceException("Couldn't find any operators in cache");
+    }
+
+    protected UserGroup getUserGroup(Community community) {
+        return UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId());
+    }
+
+    protected DeviceType getDeviceType(String device){
+        DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(device);
+        if (deviceType == null) {
+            return DeviceTypeDao.getNoneDeviceType();
+        }
+        return deviceType;
     }
 
     // TODO: PERFORMANCE: could be improved by avoiding unneeded queries basing on the condition

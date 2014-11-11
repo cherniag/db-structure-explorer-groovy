@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +46,14 @@ public class AccCheckService {
 
 
     public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails) {
-        return processAccCheck(mergeResult.getResultOfOperation(), withUserDetails, !mergeResult.isMergeDone());
+        return processAccCheck(mergeResult.getResultOfOperation(), withUserDetails, !mergeResult.isMergeDone(), false);
     }
 
-    public AccountCheckDto processAccCheck(User user, boolean withUserDetails) {
-        return processAccCheck(user, withUserDetails, null);
+    public AccountCheckDto processAccCheck(User user, boolean withUserDetails, boolean withUuid) {
+        return processAccCheck(user, withUserDetails, null, withUuid);
     }
 
-    private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation) {
+    private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation, boolean withUuid) {
         if (firstActivation != null){
             LOGGER.info("First activation: {}", firstActivation);
         }
@@ -61,7 +62,8 @@ public class AccCheckService {
         Community community = user.getUserGroup().getCommunity();
 
         List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
-        mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, userService.canActivateVideoTrial(user), withUserDetails, firstActivation);
+        Boolean canActivateVideoTrial = userService.canActivateVideoTrial(user);
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial, withUserDetails, firstActivation, withUuid);
 
         accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
         accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
@@ -76,7 +78,7 @@ public class AccCheckService {
         return precessRememberMeToken(accountCheck);
     }
 
-    private mobi.nowtechnologies.server.dto.transport.AccountCheckDto precessRememberMeToken(mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheckDTO) {
+    private AccountCheckDto precessRememberMeToken(AccountCheckDto accountCheckDTO) {
         LOGGER.debug("input parameters: [{}]", new Object[]{accountCheckDTO});
 
         accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);

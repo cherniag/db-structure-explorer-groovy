@@ -35,7 +35,8 @@ public class GetNewsController extends CommonController {
 
     @RequestMapping(method = RequestMethod.GET, value = {
             "**/{community}/{apiVersion:6\\.3}/GET_NEWS",
-            "**/{community}/{apiVersion:6\\.4}/GET_NEWS"
+            "**/{community}/{apiVersion:6\\.4}/GET_NEWS",
+            "**/{community}/{apiVersion:6\\.5}/GET_NEWS"
     })
     public ModelAndView getNewsWithBannersWithCaching(
             @RequestParam("USER_NAME") String userName,
@@ -120,7 +121,7 @@ public class GetNewsController extends CommonController {
                 }
             }
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, newsDtoResult.getContent());
         } catch (Exception e) {

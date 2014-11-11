@@ -37,18 +37,10 @@ public class SignUpDeviceController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}}/SIGN_UP_DEVICE"
+            "**/{community}/{apiVersion:6\\.5}/SIGN_UP_DEVICE"
     })
-    public ModelAndView signUpDevice(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
-        return processSignUpDevice(userDeviceDetailsDto, false, false);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:5\\.[3-9]{1,3}}/SIGN_UP_DEVICE",
-            "**/{community}/{apiVersion:6\\.0}/SIGN_UP_DEVICE"
-    })
-    public ModelAndView signUpDeviceV5_3(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
-        return processSignUpDevice(userDeviceDetailsDto, true, false);
+    public ModelAndView signUpDeviceV6_5(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
+        return processSignUpDevice(userDeviceDetailsDto, true, true, true);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -58,12 +50,27 @@ public class SignUpDeviceController extends CommonController {
             "**/{community}/{apiVersion:6\\.4}/SIGN_UP_DEVICE"
     })
     public ModelAndView signUpDeviceV6_1(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
-        return processSignUpDevice(userDeviceDetailsDto, true, true);
+        return processSignUpDevice(userDeviceDetailsDto, true, true, false);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:5\\.[3-9]{1,3}}/SIGN_UP_DEVICE",
+            "**/{community}/{apiVersion:6\\.0}/SIGN_UP_DEVICE"
+    })
+    public ModelAndView signUpDeviceV5_3(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
+        return processSignUpDevice(userDeviceDetailsDto, true, false, false);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}}/SIGN_UP_DEVICE"
+    })
+    public ModelAndView signUpDevice(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
+        return processSignUpDevice(userDeviceDetailsDto, false, false, false);
     }
 
 
 
-    private ModelAndView processSignUpDevice(UserDeviceRegDetailsDto userDeviceDetailsDto, boolean updateUserPendingActivation, boolean updateXtifyToken) {
+    private ModelAndView processSignUpDevice(UserDeviceRegDetailsDto userDeviceDetailsDto, boolean updateUserPendingActivation, boolean updateXtifyToken, boolean withUuid) {
         String community = getCurrentCommunityUri();
         LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]", userDeviceDetailsDto, community);
 
@@ -76,7 +83,7 @@ public class SignUpDeviceController extends CommonController {
                 deviceUserDataService.saveXtifyToken(user, userDeviceDetailsDto.getXtifyToken());
             }
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, withUuid);
 
             return buildModelAndView(accountCheck);
         } catch (ValidationException ve) {

@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.assembler;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
+import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
@@ -15,8 +16,10 @@ import org.mockito.MockitoAnnotations;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("unchecked")
 public class AccountCheckDTOAsmTest {
     @Mock
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
@@ -47,6 +50,7 @@ public class AccountCheckDTOAsmTest {
     @Mock
     private DeviceType deviceType;
     private String mobile = "+447111111111";
+    private String uuid = Utils.getRandomUUID();
 
     @Before
     public void setUp() throws Exception {
@@ -55,6 +59,7 @@ public class AccountCheckDTOAsmTest {
         when(user.getStatus()).thenReturn(userStatus);
         when(user.getDeviceType()).thenReturn(deviceType);
         when(user.getMobile()).thenReturn(mobile);
+        when(user.getUuid()).thenReturn(uuid);
         when(userGroup.getChart()).thenReturn(chart);
         when(userGroup.getDrmPolicy()).thenReturn(drmPolicy);
         when(drmPolicy.getDrmType()).thenReturn(drmType);
@@ -72,26 +77,24 @@ public class AccountCheckDTOAsmTest {
     public void testToAccountCheckDTOWhenUserIsInDatabase() throws Exception {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(autoOptInExemptPhoneNumber);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false);
-        verify(ruleServiceSupport, times(0)).fireRules(eq(ALL), any(User.class));
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false);
 
         assertFalse(dto.subjectToAutoOptIn);
+        verify(ruleServiceSupport, times(0)).fireRules(eq(ALL), any(User.class));
     }
 
     @Test
     public void testToAccCheckDTOForNotExemptAndNotCampaignUser() throws Exception {
-        when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
-        when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);
+        userIsNotEligibleForPromo();
 
-        boolean isSubjectToAutoOptIn = true;
+        final boolean isSubjectToAutoOptIn = true;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false);
-
-        verify(user, times(1)).isSubjectToAutoOptIn();
-        verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false);
 
         assertEquals(isSubjectToAutoOptIn, dto.subjectToAutoOptIn);
+        verify(user, times(1)).isSubjectToAutoOptIn();
+        verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
     }
 
     @Test
@@ -99,28 +102,50 @@ public class AccountCheckDTOAsmTest {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
         when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(new RuleResult(true, true));
 
-        boolean isSubjectToAutoOptIn = false;
+        final boolean isSubjectToAutoOptIn = false;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false);
-
-        verify(user, times(0)).isSubjectToAutoOptIn();
-        verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false);
 
         assertEquals(true, dto.subjectToAutoOptIn);
+        verify(user, times(0)).isSubjectToAutoOptIn();
+        verify(ruleServiceSupport, times(1)).fireRules(eq(ALL), any(User.class));
     }
 
     @Test
     public void testToAccCheckDTOWithDetails() throws Exception {
-        when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
-        when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);
+        userIsNotEligibleForPromo();
 
-        boolean isSubjectToAutoOptIn = true;
-        when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
-
-        accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false);
+        accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false);
 
         verify(userDetailsDtoAsm, times(1)).toUserDetailsDto(user);
+    }
+
+    @Test
+    public void testToAccCheckDTOWithUuid() throws Exception {
+        userIsNotEligibleForPromo();
+
+        final boolean withUuid = true;
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, withUuid);
+
+        assertEquals(uuid, accountCheckDTO.uuid);
+        verify(user, times(1)).getUuid();
+    }
+
+    @Test
+    public void testToAccCheckDTOWithoutUuid() throws Exception {
+        userIsNotEligibleForPromo();
+
+        final boolean withUuid = false;
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, withUuid);
+
+        assertNull(accountCheckDTO.uuid);
+        verify(user, never()).getUuid();
+    }
+
+    private void userIsNotEligibleForPromo() {
+        when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
+        when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);
     }
 
 }

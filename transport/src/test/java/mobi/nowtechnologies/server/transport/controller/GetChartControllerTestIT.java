@@ -55,7 +55,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     private BadgeMappingRepository badgeMappingRepository;
 
     @Test
-    public void testGetChartO2AndJsonAndAccCheckInfo_Success_LatestVersion() throws Exception {
+    public void testGetChart_LatestVersion() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = LATEST_SERVER_API_VERSION;

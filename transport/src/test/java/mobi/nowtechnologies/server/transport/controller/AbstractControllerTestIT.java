@@ -54,7 +54,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public abstract class AbstractControllerTestIT {
 
-    public static final String LATEST_SERVER_API_VERSION = "6.4";
+    public static final String LATEST_SERVER_API_VERSION = "6.5";
 
     protected MockMvc mockMvc;
 
@@ -123,14 +123,6 @@ public abstract class AbstractControllerTestIT {
     private static Message message;
     private static ChartDetail chartDetail;
 
-    @After
-    public void tireDown() {
-        o2ProviderService.setO2Service(o2Service);
-        userService.setMobileProviderService(o2ProviderService);
-        ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
-        sqlTestInitializer.cleanDynamicTestData();
-    }
-
     @Before
     public void setUp() throws Exception {
         mockMvc = webAppContextSetup(applicationContext).alwaysDo(print()).build();
@@ -162,6 +154,14 @@ public abstract class AbstractControllerTestIT {
                 .withChannel("HEATSEEKER").withPublishTime(new Date().getTime()));
 
         message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
+    }
+
+    @After
+    public void tireDown() {
+        o2ProviderService.setO2Service(o2Service);
+        userService.setMobileProviderService(o2ProviderService);
+        ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
+        sqlTestInitializer.cleanDynamicTestData();
     }
 
 

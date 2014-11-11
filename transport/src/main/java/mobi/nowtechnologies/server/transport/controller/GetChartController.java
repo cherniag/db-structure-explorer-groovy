@@ -53,7 +53,8 @@ public class GetChartController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.4}/GET_CHART"
+            "**/{community}/{apiVersion:6\\.4}/GET_CHART",
+            "**/{community}/{apiVersion:6\\.5}/GET_CHART"
     })
     public ModelAndView getChartV64(
             HttpServletRequest request,
@@ -141,7 +142,7 @@ public class GetChartController extends CommonController {
             ChartDto chartDto = contentDtoResult.getContent();
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -177,7 +178,7 @@ public class GetChartController extends CommonController {
             ChartDto chartDto = chartDtoResult.getContent();
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -215,7 +216,7 @@ public class GetChartController extends CommonController {
 
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -256,7 +257,7 @@ public class GetChartController extends CommonController {
                 }
             }
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartResult.getContent());
         } catch (Exception e) {

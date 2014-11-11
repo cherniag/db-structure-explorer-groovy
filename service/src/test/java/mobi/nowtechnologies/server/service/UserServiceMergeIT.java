@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,10 +34,13 @@ public class UserServiceMergeIT {
         User oldUser = userService.findById(102);
         String deviceUID = oldUser.getDeviceUID();
         oldUser.setDeviceUID(deviceUID + "disabled_at");
+        oldUser.setUuid(Utils.getRandomUUID());
         oldUser = userRepository.saveAndFlush(oldUser);
         deviceUserDataRepository.saveAndFlush(new DeviceUserData(oldUser.getCommunityRewriteUrl(), oldUser.getId(), deviceUID, "x1"));
         //register temp user
         User tempUser = new User();
+        String tempUUID = Utils.getRandomUUID();
+        tempUser.setUuid(tempUUID);
         tempUser.setUserName(deviceUID);
         tempUser.setMobile(oldUser.getMobile());
         tempUser.setUserGroup(oldUser.getUserGroup());
@@ -53,6 +57,7 @@ public class UserServiceMergeIT {
         assertNull(temp);
         User old = userRepository.findOne(oldUser.getId());
         assertEquals(deviceUID, old.getDeviceUID());
+        assertEquals(tempUUID, old.getUuid());
         DeviceUserData deviceUserDataForTempUser = deviceUserDataRepository.find(tempUser.getId(), tempUser.getCommunityRewriteUrl(), tempUser.getDeviceUID());
         assertNull(deviceUserDataForTempUser);
     }

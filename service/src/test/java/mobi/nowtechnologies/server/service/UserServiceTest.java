@@ -1178,7 +1178,7 @@ public class UserServiceTest {
         assertNotNull(actualUser);
         assertThat(actualUser, is(expectedUser));
 
-        verify(userRepositoryMock, times(2)).save(any(User.class));
+        verify(userRepositoryMock, times(1)).save(any(User.class));
         verify(userRepositoryMock, times(1)).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
@@ -1209,7 +1209,7 @@ public class UserServiceTest {
 
 		verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
-		verify(userRepositoryMock, times(2)).save(any(User.class));
+		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(anyInt());
 		verifyStatic(times(1));
 		createStoredToken(anyString(), anyString());

@@ -37,7 +37,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
     private TaskExecutor getFileTaskExecutor;
 
     @Test
-    public void testGetFileO2_Success_LatestVersion() throws Exception {
+    public void testGetFileO2_LatestVersion() throws Exception {
         String userName = "+447111111114";
         String fileType = "VIDEO";
         String apiVersion = LATEST_SERVER_API_VERSION;
@@ -245,7 +245,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
         final byte[] fileContent = Files.toByteArray(file);
         cloudFileService.uploadFile(file, file.getName(), MediaType.IMAGE_JPEG_VALUE, audioContentContainerName);
         final List<MvcResult> resultActionsList = new ArrayList<MvcResult>();
-        int countOfRequests = 20;
+        int countOfRequests = 2;
         for (int i = 0, n = countOfRequests; i < n; i++) {
             getFileTaskExecutor.execute(new Runnable() {
                 @Override
@@ -265,7 +265,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
                 }
             });
         }
-        Thread.sleep(30000);
+        Thread.sleep(4000);
         for (int current = 0; current<countOfRequests; current++){
             MvcResult currentValue = resultActionsList.get(current);
             Assert.assertArrayEquals(fileContent, currentValue.getResponse().getContentAsByteArray());

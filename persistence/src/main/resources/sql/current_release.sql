@@ -2,7 +2,6 @@
 
 drop table  cn_service.tb_labels;
 
-
 CREATE TABLE `tb_labels` (
   `i` bigint(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) DEFAULT NULL,
@@ -138,8 +137,14 @@ update tb_paymentPolicy
 set app_store_product_id = 'com.musicqubed.ios.mtv1.subscription.monthly.0'
 where communityID = @mtv1_community_id and paymentType='iTunesSubscription';
 COMMIT;
+set AUTOCOMMIT=1;
 --  end SRV-294
 
 -- SRV-113 [JADMIN] Allow content manager to apply badges to playlists at Chart level
 alter table tb_chartDetail add column badge_filename_id bigint(20);
 alter table tb_chartDetail add CONSTRAINT `badge_filename_id_fk` FOREIGN KEY (`badge_filename_id`) REFERENCES `sz_filename_alias` (`id`);
+
+-- SRV-232
+alter table tb_users add column uuid varchar(64);
+update tb_users set uuid = uuid() where uuid is null;
+alter table tb_users modify column uuid varchar(64) not null;

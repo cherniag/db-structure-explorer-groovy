@@ -30,23 +30,12 @@ public class SigninFacebookController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:5\\.2}/SIGN_IN_FACEBOOK"})
-    public ModelAndView applyPromotionByFacebook(
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("ACCESS_TOKEN") String facebookAccessToken,
-            @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("DEVICE_UID") String deviceUID) {
-        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, false);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.0}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.1}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.2}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.3}/SIGN_IN_FACEBOOK",
-            "**/{community}/{apiVersion:6\\.4}/SIGN_IN_FACEBOOK"
+            "**/{community}/{apiVersion:6\\.4}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.5}/SIGN_IN_FACEBOOK"
     })
     public ModelAndView applyPromotionByFacebookWithCheckReactivation(
             @RequestParam("USER_TOKEN") String userToken,
@@ -58,7 +47,17 @@ public class SigninFacebookController extends CommonController {
         return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, true);
     }
 
-
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:5\\.2}/SIGN_IN_FACEBOOK"})
+    public ModelAndView applyPromotionByFacebook(
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("ACCESS_TOKEN") String facebookAccessToken,
+            @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, false);
+    }
 
     private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean disableReactivation) {
         Exception ex = null;
