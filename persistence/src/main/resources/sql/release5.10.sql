@@ -1,3 +1,5 @@
+insert into system (release_time_millis, version, release_name) values(unix_timestamp(now()), "5.10", "5.10");
+
 -- begin SRV-89
 
 drop table  cn_service.tb_labels;
@@ -35,8 +37,7 @@ SET tb.label = tl.i;
 
 -- end SRV-89
 -- SRV-295 - [SERVER] Allow payment policy to be configurable either by day, month or week
-alter table tb_paymentPolicy add column duration int;
-alter table tb_paymentPolicy add column duration_unit VARCHAR(255);
+alter table tb_paymentPolicy add column duration int, add column duration_unit VARCHAR(255);
 
 START TRANSACTION;
 
@@ -74,25 +75,19 @@ WHERE
 
 commit;
 
-alter table tb_paymentPolicy modify column duration int unsigned not null;
-alter table tb_paymentPolicy modify column duration_unit VARCHAR(255) not null;
+alter table tb_paymentPolicy modify column duration int unsigned not null, modify column duration_unit VARCHAR(255) not null;
 
 -- alter table tb_paymentPolicy drop column subWeeks;
 
-alter table tb_pendingPayments add column duration int unsigned;
-alter table tb_pendingPayments add column duration_unit VARCHAR(255);
-
-alter table tb_submittedPayments add column duration int unsigned;
-alter table tb_submittedPayments add column duration_unit VARCHAR(255);
-
-alter table tb_promotionpaymentpolicy add column duration int unsigned;
-alter table tb_promotionpaymentpolicy add column duration_unit VARCHAR(255);
+alter table tb_pendingPayments add column duration int unsigned, add column duration_unit VARCHAR(255);
+alter table tb_submittedPayments add column duration int unsigned, add column duration_unit VARCHAR(255);
+alter table tb_promotionPaymentPolicy add column duration int unsigned, add column duration_unit VARCHAR(255);
 
 START TRANSACTION;
 
 UPDATE
-    tb_pendingPayments ppay JOIN tb_paymentdetails pd
-      ON ppay.paymentDetailsId = pd.i JOIN tb_paymentpolicy pp
+    tb_pendingPayments ppay JOIN tb_paymentDetails pd
+      ON ppay.paymentDetailsId = pd.i JOIN tb_paymentPolicy pp
       ON pp.i = pd.paymentPolicyId
 SET
   ppay.duration = pp.duration ,
@@ -100,8 +95,8 @@ SET
 ;
 
 UPDATE
-    tb_submittedPayments sp JOIN tb_paymentdetails pd
-      ON sp.paymentDetailsId = pd.i JOIN tb_paymentpolicy pp
+    tb_submittedPayments sp JOIN tb_paymentDetails pd
+      ON sp.paymentDetailsId = pd.i JOIN tb_paymentPolicy pp
       ON pp.i = pd.paymentPolicyId
 SET
   sp.duration = pp.duration ,
@@ -109,22 +104,13 @@ SET
 ;
 
 update tb_submittedPayments set duration = subWeeks, duration_unit = 'WEEKS' where duration is null;
-
 update tb_promotionPaymentPolicy set duration = subweeks, duration_unit = 'WEEKS';
 
 commit;
 
-alter table tb_pendingPayments modify column duration int unsigned not null;
-alter table tb_pendingPayments modify column duration_unit VARCHAR(255) not null;
-alter table tb_pendingPayments change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
-
-alter table tb_submittedPayments modify column duration int unsigned not null;
-alter table tb_submittedPayments modify column duration_unit VARCHAR(255) not null;
-alter table tb_submittedPayments change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
-
-alter table tb_promotionPaymentPolicy modify column duration int unsigned not null;
-alter table tb_promotionPaymentPolicy modify column duration_unit VARCHAR(255) not null;
-alter table tb_promotionPaymentPolicy change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
+alter table tb_pendingPayments modify column duration int unsigned not null, modify column duration_unit VARCHAR(255) not null, change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
+alter table tb_submittedPayments modify column duration int unsigned not null, modify column duration_unit VARCHAR(255) not null, change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
+alter table tb_promotionPaymentPolicy modify column duration int unsigned not null, modify column duration_unit VARCHAR(255) not null, change column subWeeks subWeeks int(11) NOT NULL DEFAULT 0;
 
 -- begin SRV-294
 set AUTOCOMMIT=0;
