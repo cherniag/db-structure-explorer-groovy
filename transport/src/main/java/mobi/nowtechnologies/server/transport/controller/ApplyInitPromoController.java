@@ -27,12 +27,13 @@ public class ApplyInitPromoController extends CommonController {
     private UpdateO2UserTask updateO2UserTask;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.3}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.6}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.5}/APPLY_INIT_PROMO",
             "**/{community}/{apiVersion:6\\.4}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.5}/APPLY_INIT_PROMO"
+            "**/{community}/{apiVersion:6\\.3}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO"
     })
     public ModelAndView applyPromotionWithReactivation(
             @RequestParam("USER_NAME") String userName,

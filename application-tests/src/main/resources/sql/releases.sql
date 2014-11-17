@@ -1,8 +1,4 @@
--- SRV-232
-alter table tb_users add column uuid varchar(64);
-update tb_users set uuid = uuid() where uuid is null;
-alter table tb_users modify column uuid varchar(64) not null;
-
+-- 5.11
 -- SRV-226
 create table apps_flyer_data(
   id BIGINT(20) NOT NULL AUTO_INCREMENT,

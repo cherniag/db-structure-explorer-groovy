@@ -33,6 +33,9 @@ public class UserServiceMergeTest {
     @Mock
     private DeviceUserDataService deviceUserDataService;
 
+    @Mock
+    private AppsFlyerDataService appsFlyerDataService;
+
     @InjectMocks
     private UserService userService;
 
@@ -71,6 +74,7 @@ public class UserServiceMergeTest {
         verify(deviceUserDataService).removeDeviceUserData(tempUser);
         verify(userRepository).deleteUser(987);
         verify(accountLogService).logAccountMergeEvent(oldUser, tempUser);
+        verify(appsFlyerDataService).mergeAppsFlyerData(tempUser, oldUser);
 
         verify(oldUser).setDeviceUID("deviceUID");
         verify(oldUser).setDeviceType(deviceType);

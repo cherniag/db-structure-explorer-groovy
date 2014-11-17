@@ -132,6 +132,7 @@ public class UserService {
 
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
     private DeviceUserDataService deviceUserDataService;
+    private AppsFlyerDataService appsFlyerDataService;
 
     public void setReactivationUserInfoRepository(ReactivationUserInfoRepository reactivationUserInfoRepository) {
         this.reactivationUserInfoRepository = reactivationUserInfoRepository;
@@ -609,6 +610,8 @@ public class UserService {
 
         deviceUserDataService.removeDeviceUserData(oldUser);
         deviceUserDataService.removeDeviceUserData(tempUser);
+
+        appsFlyerDataService.mergeAppsFlyerData(tempUser, oldUser);
 
         int deletedUsers = userRepository.deleteUser(tempUser.getId());
         if(deletedUsers > 1) {
@@ -1696,5 +1699,9 @@ public class UserService {
 
     public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
         this.deviceUserDataService = deviceUserDataService;
+    }
+
+    public void setAppsFlyerDataService(AppsFlyerDataService appsFlyerDataService) {
+        this.appsFlyerDataService = appsFlyerDataService;
     }
 }

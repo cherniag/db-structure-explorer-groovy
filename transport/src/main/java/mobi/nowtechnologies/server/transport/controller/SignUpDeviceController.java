@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.service.AppsFlyerDataService;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.validator.UserDeviceRegDetailsDtoValidator;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static org.springframework.util.StringUtils.isEmpty;
@@ -31,46 +31,55 @@ public class SignUpDeviceController extends CommonController {
     @Resource
     private DeviceUserDataService deviceUserDataService;
 
+    @Resource
+    private AppsFlyerDataService appsFlyerDataService;
+
     @InitBinder(UserDeviceRegDetailsDto.NAME)
-    public void initUserDeviceRegDetailsDtoBinder(HttpServletRequest request, WebDataBinder binder) {
+    public void initUserDeviceRegDetailsDtoBinder(WebDataBinder binder) {
         binder.setValidator(new UserDeviceRegDetailsDtoValidator(getCurrentCommunityUri(), getCurrentRemoteAddr(), userService, communityService));
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.6}/SIGN_UP_DEVICE"
+    })
+    public ModelAndView signUpDeviceV6_6(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
+        return processSignUpDevice(userDeviceDetailsDto, true, true, true, true);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.5}/SIGN_UP_DEVICE"
     })
     public ModelAndView signUpDeviceV6_5(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
-        return processSignUpDevice(userDeviceDetailsDto, true, true, true);
+        return processSignUpDevice(userDeviceDetailsDto, true, true, true, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.1}/SIGN_UP_DEVICE",
-            "**/{community}/{apiVersion:6\\.2}/SIGN_UP_DEVICE",
+            "**/{community}/{apiVersion:6\\.4}/SIGN_UP_DEVICE",
             "**/{community}/{apiVersion:6\\.3}/SIGN_UP_DEVICE",
-            "**/{community}/{apiVersion:6\\.4}/SIGN_UP_DEVICE"
+            "**/{community}/{apiVersion:6\\.2}/SIGN_UP_DEVICE",
+            "**/{community}/{apiVersion:6\\.1}/SIGN_UP_DEVICE"
     })
     public ModelAndView signUpDeviceV6_1(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
-        return processSignUpDevice(userDeviceDetailsDto, true, true, false);
+        return processSignUpDevice(userDeviceDetailsDto, true, true, false, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:5\\.[3-9]{1,3}}/SIGN_UP_DEVICE",
-            "**/{community}/{apiVersion:6\\.0}/SIGN_UP_DEVICE"
+            "**/{community}/{apiVersion:6\\.0}/SIGN_UP_DEVICE",
+            "**/{community}/{apiVersion:5\\.[3-9]{1,3}}/SIGN_UP_DEVICE"
     })
     public ModelAndView signUpDeviceV5_3(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
-        return processSignUpDevice(userDeviceDetailsDto, true, false, false);
+        return processSignUpDevice(userDeviceDetailsDto, true, false, false, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:3\\.[6-9]|4\\.[0-9]{1,3}|5\\.[0-2]{1,3}}/SIGN_UP_DEVICE"
     })
     public ModelAndView signUpDevice(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {
-        return processSignUpDevice(userDeviceDetailsDto, false, false, false);
+        return processSignUpDevice(userDeviceDetailsDto, false, false, false, false);
     }
 
 
-
-    private ModelAndView processSignUpDevice(UserDeviceRegDetailsDto userDeviceDetailsDto, boolean updateUserPendingActivation, boolean updateXtifyToken, boolean withUuid) {
+    private ModelAndView processSignUpDevice(UserDeviceRegDetailsDto userDeviceDetailsDto, boolean updateUserPendingActivation, boolean updateXtifyToken, boolean withUuid, boolean updateAppsFlyerUid) {
         String community = getCurrentCommunityUri();
         LOGGER.info("SIGN_UP_DEVICE Started for [{}] community[{}]", userDeviceDetailsDto, community);
 
@@ -81,6 +90,10 @@ public class SignUpDeviceController extends CommonController {
 
             if (updateXtifyToken && !isEmpty(userDeviceDetailsDto.getXtifyToken())){
                 deviceUserDataService.saveXtifyToken(user, userDeviceDetailsDto.getXtifyToken());
+            }
+
+            if(updateAppsFlyerUid && !isEmpty(userDeviceDetailsDto.getAppsFlyerUid())){
+                appsFlyerDataService.saveAppsFlyerData(user, userDeviceDetailsDto.getAppsFlyerUid());
             }
 
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, withUuid);

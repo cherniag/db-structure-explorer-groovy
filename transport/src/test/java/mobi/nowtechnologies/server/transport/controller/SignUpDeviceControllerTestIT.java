@@ -1,8 +1,10 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
+import mobi.nowtechnologies.server.persistence.domain.AppsFlyerData;
 import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository;
 import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -21,6 +24,9 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
 
     @Resource
     private DeviceUserDataRepository deviceUserDataRepository;
+
+    @Resource
+    private AppsFlyerDataRepository appsFlyerDataRepository;
 
     @Test
     public void signUpDevice_LatestVersion() throws Exception {
@@ -129,6 +135,30 @@ public class SignUpDeviceControllerTestIT extends AbstractControllerTestIT {
         assertNotNull(found);
         assertEquals(deviceUID, found.getDeviceUid());
         assertEquals(xtifyToken, found.getXtifyToken());
+    }
+
+    @Test
+    public void signUpDevice_6d6_WithAppsFlyerUidShouldCreateAppsFlyerData() throws Exception {
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String deviceType = "ANDROID";
+        String apiVersion = "6.6";
+        String communityUrl = "o2";
+        String appsFlyerUid = "1234-5678-9000-0000";
+
+        ResultActions resultActions = mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/SIGN_UP_DEVICE.json")
+                        .param("DEVICE_TYPE", deviceType)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("APPSFLYER_UID", appsFlyerUid)
+        ).andExpect(status().isOk());
+        AccountCheckDto dto = getAccCheckContent(resultActions);
+
+        User registered = userRepository.findOne(dto.userName, communityUrl);
+
+        AppsFlyerData found = appsFlyerDataRepository.findDataByUserId(registered.getId());
+
+        assertEquals(appsFlyerUid, found.getAppsFlyerUid());
+        assertEquals(deviceUID, dto.userName);
     }
 
     @Test

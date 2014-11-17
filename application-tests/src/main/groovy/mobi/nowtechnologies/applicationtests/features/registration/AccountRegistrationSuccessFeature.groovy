@@ -202,7 +202,7 @@ public class AccountRegistrationSuccessFeature {
     def "User registers using same device"() {
         userDeviceDatas.each {
             def phoneState = partnerDeviceSet.getPhoneState(it)
-            partnerDeviceSet.singup(it, null, true, phoneState.deviceUID);
+            partnerDeviceSet.singup(it, null, null, true, phoneState.deviceUID);
         }
     }
 

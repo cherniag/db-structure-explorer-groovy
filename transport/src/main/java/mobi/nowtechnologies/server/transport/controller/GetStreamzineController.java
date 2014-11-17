@@ -46,12 +46,12 @@ public class GetStreamzineController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
-                    "**/{community}/{apiVersion:6.3}/GET_STREAMZINE",
+                    "**/{community}/{apiVersion:6.6}/GET_STREAMZINE",
+                    "**/{community}/{apiVersion:6.5}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.4}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.5}/GET_STREAMZINE"
+                    "**/{community}/{apiVersion:6.3}/GET_STREAMZINE"
             })
-    public Response getUpdateWithCache(@RequestParam("APP_VERSION") String appVersion,
-                                       @PathVariable("community") String community,
+    public Response getUpdateWithCache(@PathVariable("community") String community,
                                        @RequestParam("USER_NAME") String userName,
                                        @RequestParam("USER_TOKEN") String userToken,
                                        @RequestParam("TIMESTAMP") String timestamp,
@@ -65,11 +65,10 @@ public class GetStreamzineController extends CommonController {
 
     @RequestMapping(method = POST,
             value = {
-                    "**/{community}/{apiVersion:6.1}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.2}/GET_STREAMZINE",
+                    "**/{community}/{apiVersion:6.1}/GET_STREAMZINE"
             })
-    public Response getUpdate(@RequestParam("APP_VERSION") String appVersion,
-                              @PathVariable("community") String community,
+    public Response getUpdate(@PathVariable("community") String community,
                               @RequestParam("USER_NAME") String userName,
                               @RequestParam("USER_TOKEN") String userToken,
                               @RequestParam("TIMESTAMP") String timestamp,

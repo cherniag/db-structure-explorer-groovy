@@ -30,12 +30,13 @@ public class SigninFacebookController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.0}/SIGN_IN_FACEBOOK",
-            "**/{community}/{apiVersion:6\\.1}/SIGN_IN_FACEBOOK",
-            "**/{community}/{apiVersion:6\\.2}/SIGN_IN_FACEBOOK",
-            "**/{community}/{apiVersion:6\\.3}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.6}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.5}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.4}/SIGN_IN_FACEBOOK",
-            "**/{community}/{apiVersion:6\\.5}/SIGN_IN_FACEBOOK"
+            "**/{community}/{apiVersion:6\\.3}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.2}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.1}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.0}/SIGN_IN_FACEBOOK"
     })
     public ModelAndView applyPromotionByFacebookWithCheckReactivation(
             @RequestParam("USER_TOKEN") String userToken,

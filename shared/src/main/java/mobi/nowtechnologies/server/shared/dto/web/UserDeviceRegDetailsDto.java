@@ -25,14 +25,16 @@ public class UserDeviceRegDetailsDto {
 
     private String xtifyToken;
 
-    public void setCommunityUri(String communityUri) {
-        this.communityUri = communityUri;
-    }
+    private String appsFlyerUid;
 
     public UserDeviceRegDetailsDto withCommunityUri(String communityUri) {
         this.communityUri = communityUri;
 
         return this;
+    }
+
+    public void setCommunityUri(String communityUri) {
+        this.communityUri = communityUri;
     }
 
     public String getCommunityUri() {
@@ -94,6 +96,14 @@ public class UserDeviceRegDetailsDto {
         return this;
     }
 
+    public String getAppsFlyerUid() {
+        return appsFlyerUid;
+    }
+
+    public void setAPPSFLYER_UID(String appsFlyerUid) {
+        this.appsFlyerUid = appsFlyerUid;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -102,6 +112,7 @@ public class UserDeviceRegDetailsDto {
                 .append("ipAddress", ipAddress)
                 .append("communityUri", communityUri)
                 .append("xtifyToken", xtifyToken)
+                .append("appsFlyerUid", appsFlyerUid)
                 .toString();
     }
 }

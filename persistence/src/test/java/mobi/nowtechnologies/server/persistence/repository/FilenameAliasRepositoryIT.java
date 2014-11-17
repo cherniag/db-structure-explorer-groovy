@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 
 import static org.junit.Assert.assertTrue;
 
-public class FilenameAliasRepositoryTest extends AbstractRepositoryIT {
+public class FilenameAliasRepositoryIT extends AbstractRepositoryIT {
     @Resource
     FilenameAliasRepository filenameAliasRepository;
 
