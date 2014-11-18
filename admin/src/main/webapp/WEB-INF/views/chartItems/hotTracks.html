@@ -242,6 +242,7 @@
     <div th:substituteby="tpl::chartDetailsForm"></div>
 
     <div class="newsListWide">
+        <div id="duplicatedTracksDiv" style="text-align: center"/>
 
         <ul class="table">
             <li class="title">
@@ -290,6 +291,14 @@
     </div>
     <div class="container chartControl" style="overflow-x: auto;" th:with="curDate=${#dates.format(#dates.createToday(), '__#{chartItems.publishDateZeroTimeInURL.format}__')}">
         <div class="navButtonsWithoutBorder" th:with="cancelUrlDate=${#dates.format(selectedPublishDateTime, '__#{chartItems.publishDateZeroTimeInURL.format}__')}">
+            <form id="showDuplicatesForm">
+                <ul class="nav nav-pills table_margin">
+                    <li class="active">
+                        <a href="#" th:text="#{chartItems.page.button.show.duplicates}"
+                           onclick="onShowDuplicates(); return 0;">Show duplicates</a>
+                    </li>
+                </ul>
+            </form>
             <form id="addNew" class="del_btn">
                 <ul class="nav nav-pills table_margin">
                     <li class="active">
@@ -905,6 +914,46 @@ function keypressNumericHandler(event){
     } else {
         event.preventDefault();
     }
+}
+
+function onShowDuplicates(){
+    var params = "mediaId=";
+    var i = 0;
+    $("#chartItemsSortable").children().each(function() {
+        var li = $(this);
+        if(li.attr('id') != "emptyList"){
+            if(i > 0)
+                params+="&mediaId=";
+
+            var mediaId = li.find("div.mediaId_chartItem").text();
+            params += mediaId;
+            i++;
+        }
+    });
+
+    $.ajax({
+        url : /*[[@{/chartsNEW/__${chart.id}__/__${urlDate}__/}]]*/ '/jadmin/chartsNEW/1/2012-09-05_02:45:00/2012-09-25_02:45:00',
+        type : "get",
+        contentType: "application/json; charset=utf-8",
+        data: params,
+        dataType: "json",
+        error: function(xhr) {
+            alert("Sorry, some error occurred");
+        },
+        success: function(json){
+            var duplicatedTracksDivContent="";
+            var baseChartPath = /*[[@{/chartsNEW/}]]*/ '/jadmin/chartsNEW/';
+            var dateformat = /*[[#{chartItems.publishDateInURL.format}]]*/ 'yyyy-MM-dd_HH:mm:ss';
+            $.each(json.duplicatedMediaAcrossNearestChartsDtos, function( index, duplicatedMediaAcrossNearestChartsDto ) {
+                var publishTime = dateFormat(duplicatedMediaAcrossNearestChartsDto.publishTimeMillis, dateformat);
+                duplicatedTracksDivContent+="<a href='" + baseChartPath + duplicatedMediaAcrossNearestChartsDto.chartId + "/" + publishTime + "'>" + duplicatedMediaAcrossNearestChartsDto.trackId + " in " + duplicatedMediaAcrossNearestChartsDto.chartName + " on "+ publishTime +" in position " + duplicatedMediaAcrossNearestChartsDto.position + "</a><br>"
+            });
+            if(!duplicatedTracksDivContent){
+                duplicatedTracksDivContent = "No duplicates";
+            }
+            $("#duplicatedTracksDiv").html(duplicatedTracksDivContent);
+        }
+    });
 }
 
 function onSaveChartItems(){

@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
+// @author Alexander Kolpakov (akolpakov)
 @XmlRootElement(name = "track")
 public class ChartDetailDto {
 
@@ -37,8 +39,7 @@ public class ChartDetailDto {
     private Integer duration;
 	private Integer playlistId;
 	
-	public ChartDetailDto(ChartDetailDto chartDetailDto) 
-	{
+	public ChartDetailDto(ChartDetailDto chartDetailDto) {
 	    this.position = chartDetailDto.position;
 	    this.media = chartDetailDto.media;
 	    this.title = chartDetailDto.title;
@@ -295,36 +296,37 @@ public class ChartDetailDto {
         isArtistUrl = artistUrl;
     }
 
-    @Override
-    public String toString() {
-        return "ChartDetailDto{" +
-                "position=" + position +
-                ", media='" + media + '\'' +
-                ", title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
-                ", info='" + info + '\'' +
-                ", genre1='" + genre1 + '\'' +
-                ", genre2='" + genre2 + '\'' +
-                ", drmType='" + drmType + '\'' +
-                ", drmValue=" + drmValue +
-                ", trackSize=" + trackSize +
-                ", headerSize=" + headerSize +
-                ", audioSize=" + audioSize +
-                ", imageLargeSize=" + imageLargeSize +
-                ", imageSmallSize=" + imageSmallSize +
-                ", iTunesUrl='" + iTunesUrl + '\'' +
-                ", amazonUrl='" + amazonUrl + '\'' +
-                ", previousPosition=" + previousPosition +
-                ", changePosition='" + changePosition + '\'' +
-                ", channel='" + channel + '\'' +
-                ", chartDetailVersion=" + chartDetailVersion +
-                ", headerVersion=" + headerVersion +
-                ", audioVersion=" + audioVersion +
-                ", imageLargeVersion=" + imageLargeVersion +
-                ", imageSmallVersion=" + imageSmallVersion +
-                ", isArtistUrl=" + isArtistUrl +
-                ", duration=" + duration +
-                ", playlistId=" + playlistId +
-                "} " + super.toString();
-    }
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+				.appendSuper(super.toString())
+				.append("position", position)
+				.append("media", media)
+				.append("title", title)
+				.append("artist", artist)
+				.append("info", info)
+				.append("genre1", genre1)
+				.append("genre2", genre2)
+				.append("drmType", drmType)
+				.append("drmValue", drmValue)
+				.append("trackSize", trackSize)
+				.append("headerSize", headerSize)
+				.append("audioSize", audioSize)
+				.append("imageLargeSize", imageLargeSize)
+				.append("imageSmallSize", imageSmallSize)
+				.append("iTunesUrl", iTunesUrl)
+				.append("amazonUrl", amazonUrl)
+				.append("previousPosition", previousPosition)
+				.append("changePosition", changePosition)
+				.append("channel", channel)
+				.append("chartDetailVersion", chartDetailVersion)
+				.append("headerVersion", headerVersion)
+				.append("audioVersion", audioVersion)
+				.append("imageLargeVersion", imageLargeVersion)
+				.append("imageSmallVersion", imageSmallVersion)
+				.append("isArtistUrl", isArtistUrl)
+				.append("duration", duration)
+				.append("playlistId", playlistId)
+				.toString();
+	}
 }

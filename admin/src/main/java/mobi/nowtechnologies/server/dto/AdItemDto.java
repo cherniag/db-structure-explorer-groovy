@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.enums.AdActionType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,10 +17,7 @@ import java.util.*;
 import static mobi.nowtechnologies.server.shared.enums.AdActionType.*;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
-/**
- * @author Titov Mykhaylo (titov)
- * 
- */
+// @author Titov Mykhaylo (titov)
 public class AdItemDto {
 
 	public static final String NAME = "AD_ITEM_DTO";
@@ -219,8 +217,16 @@ public class AdItemDto {
 
 	@Override
 	public String toString() {
-		return "AdItemDto [id=" + id + ", action=" + action + ", message=" + message + ", activated=" + activated + ", imageFileName=" + imageFileName + ", actionType=" + actionType + ", filterDtos="
-				+ filterDtos + ", position=" + position + ", removeImage=" + removeImage + "]";
+		return new ToStringBuilder(this)
+				.append("id", id)
+				.append("actionType", actionType)
+				.append("action", action)
+				.append("message", message)
+				.append("activated", activated)
+				.append("filterDtos", filterDtos)
+				.append("imageFileName", imageFileName)
+				.append("position", position)
+				.append("removeImage", removeImage)
+				.toString();
 	}
-
 }

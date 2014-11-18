@@ -11,7 +11,6 @@ import java.util.Date;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class MediaDto {
 	

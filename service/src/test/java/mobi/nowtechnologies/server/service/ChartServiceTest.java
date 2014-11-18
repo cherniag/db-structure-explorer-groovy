@@ -21,7 +21,6 @@ import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,9 +36,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -49,51 +51,28 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(UserAsm.class)
 public class ChartServiceTest {
 
-    private ChartService fixture;
+    ChartService chartServiceFixture;
 
-    @Mock
-    private ChartRepository mockChartRepository;
+    @Mock ChartRepository mockChartRepository;
+    @Mock DrmService mockDrmService;
+    @Mock ChartDetailRepository mockChartDetailRepository;
+    @Mock UserService mockUserService;
+    @Mock CommunityResourceBundleMessageSource mockMessageSource;
+    @Mock ChartDetailService mockChartDetailService;
+    @Mock CloudFileService mockCloudFileService;
+    @Mock ApplicationContext mockApplicationContext;
+    @Mock BadgesService badgesService;
 
-    @Mock
-    private DrmService mockDrmService;
-
-    @Mock
-    private ChartDetailRepository mockChartDetailRepository;
-
-    @Mock
-    private UserService mockUserService;
-
-    @Mock
-    private CommunityResourceBundleMessageSource mockMessageSource;
-
-    @Mock
-    private ChartDetailService mockChartDetailService;
-
-    @Mock
-    private CloudFileService mockCloudFileService;
-
-    @Mock
-    private ApplicationContext mockApplicationContext;
-
-    @Mock
-    private BadgesService badgesService;
-
-
-
-    //test data
-    private User testUser;
-
-    private CommunityGetChartContentManager getChartContentManager = new CommunityGetChartContentManager();
+    User testUser;
+    CommunityGetChartContentManager getChartContentManager = new CommunityGetChartContentManager();
 
     @Before
-    public void setUp()
-            throws Exception {
+    public void setUp() throws Exception {
 
         testUser = new User().withUserGroup(new UserGroup().withCommunity(new Community().withRewriteUrl("kyiv")));
         testUser.setId(1);
@@ -108,31 +87,30 @@ public class ChartServiceTest {
 
         PowerMockito.mockStatic(UserAsm.class);
 
-        fixture = spy(new ChartService());
-        fixture.setChartRepository(mockChartRepository);
-        fixture.setUserService(mockUserService);
-        fixture.setMessageSource(mockMessageSource);
-        fixture.setChartDetailService(mockChartDetailService);
-        fixture.setCloudFileService(mockCloudFileService);
-        fixture.setChartDetailRepository(mockChartDetailRepository);
-        fixture.setDrmService(mockDrmService);
-        fixture.setApplicationContext(mockApplicationContext);
+        chartServiceFixture = spy(new ChartService());
+        chartServiceFixture.setChartRepository(mockChartRepository);
+        chartServiceFixture.setUserService(mockUserService);
+        chartServiceFixture.setMessageSource(mockMessageSource);
+        chartServiceFixture.setChartDetailService(mockChartDetailService);
+        chartServiceFixture.setCloudFileService(mockCloudFileService);
+        chartServiceFixture.setChartDetailRepository(mockChartDetailRepository);
+        chartServiceFixture.setDrmService(mockDrmService);
+        chartServiceFixture.setApplicationContext(mockApplicationContext);
 
         ChartAsm chartAsm = new ChartAsm();
         chartAsm.setBadgesService(badgesService);
-        fixture.setChartAsm(chartAsm);
+        chartServiceFixture.setChartAsm(chartAsm);
 
         ChartDetailsConverter chartDetailsConverter = new ChartDetailsConverter();
         chartDetailsConverter.setMessageSource(mockMessageSource);
         when(mockMessageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
-        when(mockMessageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "NZ");
-        when(mockMessageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
-        fixture.setChartDetailsConverter(spy(chartDetailsConverter));
+        when(mockMessageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn("NZ");
+        when(mockMessageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn("GB");
+        chartServiceFixture.setChartDetailsConverter(spy(chartDetailsConverter));
     }
 
     @Test
-    public void testSelectChartByType_NotNullChartNotNullUserNotNullSelectedCharts_Success()
-            throws Exception {
+    public void testSelectChartByType_NotNullChartNotNullUserNotNullSelectedCharts_Success() throws Exception {
         List<Chart> charts = Arrays.asList(ChartFactory.createChart(), ChartFactory.createChart());
         charts.get(1).setType(ChartType.OTHER_CHART);
 
@@ -145,7 +123,7 @@ public class ChartServiceTest {
         when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
         when(mockUserService.updateUser(eq(user))).thenReturn(user);
 
-        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
+        User result = chartServiceFixture.selectChartByType(user.getId(), selectedChart.getI());
 
         assertNotNull(result);
         assertEquals(user.getId(), result.getId());
@@ -169,7 +147,7 @@ public class ChartServiceTest {
         when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
         when(mockUserService.updateUser(eq(user))).thenReturn(user);
 
-        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
+        User result = chartServiceFixture.selectChartByType(user.getId(), selectedChart.getI());
 
         assertNotNull(result);
         assertEquals(user.getId(), result.getId());
@@ -182,8 +160,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testSelectChartByType_NullChartNotNullUser_Success()
-            throws Exception {
+    public void testSelectChartByType_NullChartNotNullUser_Success() throws Exception {
         List<Chart> charts = Arrays.asList(ChartFactory.createChart(), ChartFactory.createChart());
         charts.get(1).setType(ChartType.OTHER_CHART);
 
@@ -196,7 +173,7 @@ public class ChartServiceTest {
         when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(user);
         when(mockUserService.updateUser(eq(user))).thenReturn(user);
 
-        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
+        User result = chartServiceFixture.selectChartByType(user.getId(), selectedChart.getI());
 
         assertNotNull(result);
         assertEquals(user.getId(), result.getId());
@@ -209,8 +186,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testSelectChartByType_NotNullChartNullUser_Success()
-            throws Exception {
+    public void testSelectChartByType_NotNullChartNullUser_Success() throws Exception {
         List<Chart> charts = Arrays.asList(ChartFactory.createChart(), ChartFactory.createChart());
         charts.get(1).setType(ChartType.OTHER_CHART);
 
@@ -223,7 +199,7 @@ public class ChartServiceTest {
         when(mockUserService.getUserWithSelectedCharts(eq(user.getId()))).thenReturn(null);
         when(mockUserService.updateUser(eq(user))).thenReturn(user);
 
-        User result = fixture.selectChartByType(user.getId(), selectedChart.getI());
+        User result = chartServiceFixture.selectChartByType(user.getId(), selectedChart.getI());
 
         assertNull(result);
 
@@ -233,8 +209,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testGetLockedChartItems_NotSubscribedNotPendingNotExpiring_Success()
-            throws Exception {
+    public void testGetLockedChartItems_NotSubscribedNotPendingNotExpiring_Success() throws Exception {
 		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
@@ -242,7 +217,7 @@ public class ChartServiceTest {
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
-        List<ChartDetail> result = fixture.getLockedChartItems(user);
+        List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -253,8 +228,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testGetLockedChartItems_UserSubscribedOnFreeTrial_Success()
-            throws Exception {
+    public void testGetLockedChartItems_UserSubscribedOnFreeTrial_Success() throws Exception {
 		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
@@ -262,12 +236,12 @@ public class ChartServiceTest {
         paymentDetails.setActivated(true);
         user.setCurrentPaymentDetails(paymentDetails);
         user.setNextSubPayment(Utils.getEpochSeconds()+48*60*60);
-        user.setFreeTrialExpiredMillis(user.getNextSubPayment()*1000L);
+        user.setFreeTrialExpiredMillis(user.getNextSubPayment() * 1000L);
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
-        List<ChartDetail> result = fixture.getLockedChartItems(user);
+        List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
 
         assertNotNull(result);
         assertEquals(0, result.size());
@@ -277,8 +251,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testGetLockedChartItems_UserPending_Success()
-            throws Exception {
+    public void testGetLockedChartItems_UserPending_Success() throws Exception {
 		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
@@ -291,7 +264,7 @@ public class ChartServiceTest {
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
-        List<ChartDetail> result = fixture.getLockedChartItems(user);
+        List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
 
         assertNotNull(result);
         assertEquals(0, result.size());
@@ -301,8 +274,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testGetLockedChartItems_UserExpiring_Success()
-            throws Exception {
+    public void testGetLockedChartItems_UserExpiring_Success() throws Exception {
 		List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
@@ -316,7 +288,7 @@ public class ChartServiceTest {
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
         when(mockChartDetailService.getLockedChartItemISRCs(eq(charts.get(0).getI()), any(Date.class))).thenReturn(chartDetailIds);
 
-        List<ChartDetail> result = fixture.getLockedChartItems(user);
+        List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
 
         assertNotNull(result);
         assertEquals(0, result.size());
@@ -326,8 +298,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnEmptyListForUserOnWhiteListedVideoAudioFreeTrial()
-            throws Exception {
+    public void shouldReturnEmptyListForUserOnWhiteListedVideoAudioFreeTrial() throws Exception {
         //given
         String communityName = "chartsnow";
         User user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
@@ -337,7 +308,7 @@ public class ChartServiceTest {
         when(mockChartDetailService.getLockedChartItemISRCs(any(Integer.class), any(Date.class))).thenReturn(Collections.<Media>emptyList());
 
         //when
-        List<ChartDetail> result = fixture.getLockedChartItems(user);
+        List<ChartDetail> result = chartServiceFixture.getLockedChartItems(user);
 
         assertNotNull(result);
         assertEquals(Collections.<ChartDetail>emptyList(), result);
@@ -348,8 +319,7 @@ public class ChartServiceTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetChartsByCommunity_NullNameNotNullType_Success()
-            throws Exception {
+    public void testGetChartsByCommunity_NullNameNotNullType_Success() throws Exception {
         List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
         String communityUrl = "chartsnow";
         String communityName = null;
@@ -358,9 +328,9 @@ public class ChartServiceTest {
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
         when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
         when(mockChartRepository.getByCommunityURLAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
-        doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
+        doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
-        List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, chartType);
+        List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, chartType);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -368,35 +338,33 @@ public class ChartServiceTest {
         verify(mockChartRepository, times(0)).getByCommunityName(anyString());
         verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
         verify(mockChartRepository, times(1)).getByCommunityURLAndChartType(anyString(), any(ChartType.class));
-        verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
+        verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetChartsByCommunity_NullNameNullType_Success()
-            throws Exception {
+    public void testGetChartsByCommunity_NullNameNullType_Success() throws Exception {
         List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
         String communityUrl = "chartsnow";
         String communityName = null;
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
         when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
-        doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
+        doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
-        List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
+        List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, null);
 
         assertNotNull(result);
         assertEquals(1, result.size());
 
         verify(mockChartRepository, times(0)).getByCommunityName(anyString());
         verify(mockChartRepository, times(1)).getByCommunityURL(anyString());
-        verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
+        verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetChartsByCommunity_NullUrlNotNullType_Success()
-            throws Exception {
+    public void testGetChartsByCommunity_NullUrlNotNullType_Success() throws Exception {
         List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
         String communityUrl = null;
         String communityName = "chartsnow";
@@ -405,9 +373,9 @@ public class ChartServiceTest {
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
         when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
         when(mockChartRepository.getByCommunityNameAndChartType(anyString(), any(ChartType.class))).thenReturn(singletonList(new Chart()));
-        doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
+        doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
-        List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, chartType);
+        List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, chartType);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -415,51 +383,49 @@ public class ChartServiceTest {
         verify(mockChartRepository, times(0)).getByCommunityName(anyString());
         verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
         verify(mockChartRepository, times(1)).getByCommunityNameAndChartType(anyString(), any(ChartType.class));
-        verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
+        verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetChartsByCommunity_NullUrlNullType_Success()
-            throws Exception {
+    public void testGetChartsByCommunity_NullUrlNullType_Success() throws Exception {
         List<ChartDetail> chartDetails = singletonList(ChartDetailFactory.createChartDetail());
         String communityUrl = null;
         String communityName = "chartsnow";
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
         when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
-        doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
+        doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
-        List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
+        List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, null);
 
         assertNotNull(result);
         assertEquals(1, result.size());
 
         verify(mockChartRepository, times(1)).getByCommunityName(anyString());
         verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
-        verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
+        verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetChartsByCommunity_NullUrlAndNullNameNullType_Success()
-            throws Exception {
+    public void testGetChartsByCommunity_NullUrlAndNullNameNullType_Success() throws Exception {
         List<ChartDetail> chartDetails = EMPTY_LIST;
         String communityUrl = null;
         String communityName = null;
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(singletonList(new Chart()));
         when(mockChartRepository.getByCommunityURL(anyString())).thenReturn(singletonList(new Chart()));
-        doReturn(chartDetails).when(fixture).getChartDetails(any(List.class), any(Date.class), eq(false));
+        doReturn(chartDetails).when(chartServiceFixture).getChartDetails(any(List.class), any(Date.class), eq(false));
 
-        List<ChartDetail> result = fixture.getChartsByCommunity(communityUrl, communityName, null);
+        List<ChartDetail> result = chartServiceFixture.getChartsByCommunity(communityUrl, communityName, null);
 
         assertNotNull(result);
         assertEquals(0, result.size());
 
         verify(mockChartRepository, times(0)).getByCommunityName(anyString());
         verify(mockChartRepository, times(0)).getByCommunityURL(anyString());
-        verify(fixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
+        verify(chartServiceFixture, times(1)).getChartDetails(any(List.class), any(Date.class), eq(false));
     }
 
 
@@ -515,7 +481,7 @@ public class ChartServiceTest {
         ChartDetail videoChartDetail = getChartDetailInstance(0, 5, media, videoChart3.getChart());
         videoChartDetail.getMedia().setHeaderFile(null);
 
-        doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1, videoChart3)).when(fixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
+        doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1, videoChart3)).when(chartServiceFixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
         when(mockChartDetailService.findChartDetailTree(eq(1), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
         when(mockChartDetailService.findChartDetailTree(eq(2), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
         when(mockChartDetailService.findChartDetailTree(eq(3), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
@@ -536,7 +502,7 @@ public class ChartServiceTest {
         when(badgesService.getBadgeFileName(eq(908L), eq(c), eq(resolution))).thenReturn("image_908");
         when(badgesService.getBadgeFileName(909L, c, resolution)).thenReturn("image_909");
 
-        ChartDto result = fixture.processGetChartCommand(user, true, true, resolution, null).getContent();
+        ChartDto result = chartServiceFixture.processGetChartCommand(user, true, true, resolution, null).getContent();
 
         assertNotNull(result);
 
@@ -571,7 +537,7 @@ public class ChartServiceTest {
         assertEquals(topChart.getChart().getI().byteValue(), list[1].getPlaylistId().byteValue());
         assertEquals(otherChart2.getChart().getI().byteValue(), list[2].getPlaylistId().byteValue());
 
-        verify(fixture).getChartsByCommunity(eq((String) null), anyString(), any(ChartType.class));
+        verify(chartServiceFixture).getChartsByCommunity(eq((String) null), anyString(), any(ChartType.class));
         verify(mockChartDetailService).findChartDetailTree(eq(5), any(Date.class), anyBoolean());
         verify(mockChartDetailService).findChartDetailTree(eq(2), any(Date.class), anyBoolean());
         verify(mockChartDetailService, times(0)).findChartDetailTree(eq(3), any(Date.class), anyBoolean());
@@ -580,8 +546,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testUpdateChart_Success()
-            throws Exception {
+    public void testUpdateChart_Success() throws Exception {
         Community community = mock(Community.class);
 
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
@@ -594,7 +559,7 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = chartServiceFixture.updateChart(chartDetail, imageFile);
 
         assertNotNull(result);
         assertEquals(chartDetail1.getVersionAsPrimitive(), result.getVersionAsPrimitive());
@@ -608,8 +573,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testUpdateChart_FileNull_Success()
-            throws Exception {
+    public void testUpdateChart_FileNull_Success() throws Exception {
         Community community = mock(Community.class);
         when(community.getRewriteUrlParameter()).thenReturn("hl_uk");
 
@@ -622,7 +586,7 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = chartServiceFixture.updateChart(chartDetail, imageFile);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getTitle());
@@ -635,8 +599,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testUpdateChart_FileEmpty_Success()
-            throws Exception {
+    public void testUpdateChart_FileEmpty_Success() throws Exception {
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
         chartDetail.setI(null);
         MultipartFile imageFile = null;
@@ -644,7 +607,7 @@ public class ChartServiceTest {
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = chartServiceFixture.updateChart(chartDetail, imageFile);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getTitle());
@@ -657,15 +620,14 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testUpdateChart_ChartNull_Failure()
-            throws Exception {
+    public void testUpdateChart_ChartNull_Failure() throws Exception {
         ChartDetail chartDetail = null;
         MultipartFile imageFile = new MockMultipartFile("file", "1".getBytes());
 
         when(mockChartDetailRepository.save(eq(chartDetail))).thenReturn(chartDetail);
         when(mockCloudFileService.uploadFile(any(MultipartFile.class), anyString(), anyMap())).thenReturn(true);
 
-        ChartDetail result = fixture.updateChart(chartDetail, imageFile);
+        ChartDetail result = chartServiceFixture.updateChart(chartDetail, imageFile);
 
         assertNull(result);
 
@@ -674,8 +636,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testGetChartDetails_IsChoosedChartDetails_Success()
-            throws Exception {
+    public void testGetChartDetails_IsChoosedChartDetails_Success() throws Exception {
         ChartDetail chartDetail1 = ChartDetailFactory.createChartDetail();
         chartDetail1.getChart().setI(1);
         ChartDetail chartDetail2 = ChartDetailFactory.createChartDetail();
@@ -684,20 +645,20 @@ public class ChartServiceTest {
         chartDetail3.getChart().setI(3);
         List<Chart> charts = Arrays.asList(chartDetail1.getChart(), chartDetail2.getChart(), chartDetail3.getChart());
         Long nearestLatestDate = new Date().getTime()-10000;
-        Date choosenDate = new Date();
+        Date chosenDate = new Date();
 
         when(mockChartDetailRepository.findNearestLatestPublishDate(anyLong(), anyInt())).thenReturn(nearestLatestDate);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate))).thenReturn(chartDetail1);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate))).thenReturn(chartDetail2);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate))).thenReturn(chartDetail3);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()))).thenReturn(chartDetail1);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()))).thenReturn(chartDetail2);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()))).thenReturn(chartDetail3);
-        when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()))).thenReturn(1L);
-        when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()))).thenReturn(1L);
-        when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()))).thenReturn(1L);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()))).thenReturn(chartDetail1);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()))).thenReturn(chartDetail2);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()))).thenReturn(chartDetail3);
+        when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()))).thenReturn(1L);
+        when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()))).thenReturn(1L);
+        when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()))).thenReturn(1L);
 
-        List<ChartDetail> result = fixture.getChartDetails(charts, choosenDate, false);
+        List<ChartDetail> result = chartServiceFixture.getChartDetails(charts, chosenDate, false);
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -715,17 +676,16 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()));
     }
 
     @Test
-    public void testGetChartDetails_CloneIsLatestDetailsNotChoosedChartDetails_Success()
-            throws Exception {
+    public void testGetChartDetails_CloneIsLatestDetailsNotChosenChartDetails_Success() throws Exception {
         ChartDetail chartDetail1 = ChartDetailFactory.createChartDetail();
         chartDetail1.getChart().setI(1);
         ChartDetail chartDetail2 = ChartDetailFactory.createChartDetail();
@@ -734,20 +694,20 @@ public class ChartServiceTest {
         chartDetail3.getChart().setI(3);
         List<Chart> charts = Arrays.asList(chartDetail1.getChart(), chartDetail2.getChart(), chartDetail3.getChart());
         Long nearestLatestDate = new Date().getTime()-100000;
-        Date choosenDate = new Date();
+        Date chosenDate = new Date();
 
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyInt())).thenReturn(nearestLatestDate);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate))).thenReturn(chartDetail1);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate))).thenReturn(chartDetail2);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate))).thenReturn(chartDetail3);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()))).thenReturn(null);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()))).thenReturn(null);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()))).thenReturn(null);
         when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate))).thenReturn(1L);
         when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate))).thenReturn(1L);
         when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate))).thenReturn(1L);
 
-        List<ChartDetail> result = fixture.getChartDetails(charts, choosenDate, true);
+        List<ChartDetail> result = chartServiceFixture.getChartDetails(charts, chosenDate, true);
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -765,17 +725,16 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()));
         verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate));
     }
 
     @Test
-    public void testGetChartDetails_NotCloneIsLatestDetailsNotChoosedChartDetails_Success()
-            throws Exception {
+    public void testGetChartDetails_NotCloneIsLatestDetailsNotChosenChartDetails_Success() throws Exception {
         ChartDetail chartDetail1 = ChartDetailFactory.createChartDetail();
         chartDetail1.getChart().setI(1);
         ChartDetail chartDetail2 = ChartDetailFactory.createChartDetail();
@@ -784,20 +743,20 @@ public class ChartServiceTest {
         chartDetail3.getChart().setI(3);
         List<Chart> charts = Arrays.asList(chartDetail1.getChart(), chartDetail2.getChart(), chartDetail3.getChart());
         Long nearestLatestDate = new Date().getTime()-100000;
-        Date choosenDate = new Date();
+        Date chosenDate = new Date();
 
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyInt())).thenReturn(nearestLatestDate);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate))).thenReturn(chartDetail1);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate))).thenReturn(chartDetail2);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate))).thenReturn(chartDetail3);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()))).thenReturn(null);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()))).thenReturn(null);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()))).thenReturn(null);
         when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate))).thenReturn(1L);
         when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate))).thenReturn(1L);
         when(mockChartDetailRepository.countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate))).thenReturn(1L);
 
-        List<ChartDetail> result = fixture.getChartDetails(charts, choosenDate, false);
+        List<ChartDetail> result = chartServiceFixture.getChartDetails(charts, chosenDate, false);
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -815,17 +774,16 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()));
         verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(1)).countChartDetailTreeByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate));
     }
 
     @Test
-    public void testGetChartDetails_NotLatestDetailsNotChoosedChartDetails_Success()
-            throws Exception {
+    public void testGetChartDetails_NotLatestDetailsNotChosenChartDetails_Success() throws Exception {
         ChartDetail chartDetail1 = ChartDetailFactory.createChartDetail();
         chartDetail1.getChart().setI(1);
         ChartDetail chartDetail2 = ChartDetailFactory.createChartDetail();
@@ -834,17 +792,17 @@ public class ChartServiceTest {
         chartDetail3.getChart().setI(3);
         List<Chart> charts = Arrays.asList(chartDetail1.getChart(), chartDetail2.getChart(), chartDetail3.getChart());
         Long nearestLatestDate = null;
-        Date choosenDate = new Date();
+        Date chosenDate = new Date();
 
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyInt())).thenReturn(nearestLatestDate);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate))).thenReturn(chartDetail1);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate))).thenReturn(chartDetail1);
         when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate))).thenReturn(chartDetail1);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()))).thenReturn(null);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()))).thenReturn(null);
-        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()))).thenReturn(null);
+        when(mockChartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()))).thenReturn(null);
 
-        List<ChartDetail> result = fixture.getChartDetails(charts, choosenDate, false);
+        List<ChartDetail> result = chartServiceFixture.getChartDetails(charts, chosenDate, false);
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -859,14 +817,352 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(nearestLatestDate));
         verify(mockChartDetailRepository, times(0)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(nearestLatestDate));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(choosenDate.getTime()));
-        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(choosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(1), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(2), eq(chosenDate.getTime()));
+        verify(mockChartDetailRepository, times(1)).findChartWithDetailsByChartAndPublishTimeMillis(eq(3), eq(chosenDate.getTime()));
     }
 
-    @After
-    public void tearDown()
-            throws Exception {
+    @Test
+    public void shouldReturnDuplicatedMediaChartDetails(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = asList(333, 666, 999);
+        int excludedChartId = 3;
+
+        List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
+
+        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(null);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 1)).thenReturn(11L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1)).thenReturn(12L);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
+
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(4));
+
+        assertThat(duplicatedMediaChartDetails.get(0).getI(), is(111));
+        assertThat(duplicatedMediaChartDetails.get(1).getI(), is(112));
+        assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
+        assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
+
+        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 1);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
+
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
+    }
+
+    @Test
+    public void shouldReturnDuplicatedMediaChartDetailsTillFeatureUpdateOfExcludedChartPublishTimeMillis(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = asList(333, 666, 999);
+        int excludedChartId = 3;
+
+        List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
+
+        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = 555L;
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(featureUpdateOfExcludedChartPublishTimeMillis);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 1)).thenReturn(11L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1)).thenReturn(12L);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
+
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(4));
+
+        assertThat(duplicatedMediaChartDetails.get(0).getI(), is(111));
+        assertThat(duplicatedMediaChartDetails.get(1).getI(), is(112));
+        assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
+        assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
+
+        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 1);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
+
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
+    }
+
+    @Test
+    public void shouldReturnDuplicatedMediaChartDetailsWhenNoFeatureChartsUpdates(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = asList(333, 666, 999);
+        int excludedChartId = 3;
+
+        List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
+
+        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = 555L;
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(featureUpdateOfExcludedChartPublishTimeMillis);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 1)).thenReturn(11L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1)).thenReturn(null);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(null);
+
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(4));
+
+        assertThat(duplicatedMediaChartDetails.get(0).getI(), is(111));
+        assertThat(duplicatedMediaChartDetails.get(1).getI(), is(112));
+        assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
+        assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
+
+        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 1);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
+
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L), mediaIds);
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L), mediaIds);
+    }
+
+    @Test
+    public void shouldReturnDuplicatedMediaChartDetailsWhenNoLatestChartUpdate(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = asList(333, 666, 999);
+        int excludedChartId = 3;
+
+        List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
+
+        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = 555L;
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(featureUpdateOfExcludedChartPublishTimeMillis);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 1)).thenReturn(null);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1)).thenReturn(12L);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
+
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(12L), mediaIds)).thenReturn(asList(new ChartDetail().withI(111), new ChartDetail().withI(112)));
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(asList(new ChartDetail().withI(221), new ChartDetail().withI(222)));
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(4));
+
+        assertThat(duplicatedMediaChartDetails.get(0).getI(), is(111));
+        assertThat(duplicatedMediaChartDetails.get(1).getI(), is(112));
+        assertThat(duplicatedMediaChartDetails.get(2).getI(), is(221));
+        assertThat(duplicatedMediaChartDetails.get(3).getI(), is(222));
+
+        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 1);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
+
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(12L), mediaIds);
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
+    }
+
+    @Test
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoCharts(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = asList(333, 666, 999);
+        int excludedChartId = 3;
+
+        List<Chart> charts = new ArrayList<Chart>();
+
+        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(0));
+
+        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+
+        verify(mockChartDetailRepository, times(0)).findNearestLatestChartPublishDate(eq(selectedTimeMillis), anyInt());
+        verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDateBeforeGivenDate(eq(selectedTimeMillis), eq(featureUpdateOfExcludedChartPublishTimeMillis), anyInt());
+
+        verify(mockChartDetailRepository, times(0)).findNearestLatestChartPublishDate(eq(selectedTimeMillis), anyInt());
+        verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDateBeforeGivenDate(eq(selectedTimeMillis), eq(featureUpdateOfExcludedChartPublishTimeMillis), anyInt());
+
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class),  anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class),  anyListOf(Integer.class));
+    }
+
+    @Test
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoAnyMedias(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = emptyList();
+        int excludedChartId = 3;
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(0));
+
+        verify(mockChartRepository, times(0)).getByCommunityURLAndExcludedChartId(anyString(), anyInt());
+
+        verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDate(anyLong(), anyInt());
+
+        verify(mockChartDetailRepository, times(0)).findNearestLatestChartPublishDate(anyLong(), anyInt());
+        verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDateBeforeGivenDate(anyLong(), anyLong(), anyInt());
+
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+    }
+
+    @Test
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoAnyUpdates(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = asList(333, 666, 999);
+        int excludedChartId = 3;
+
+        List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
+
+        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(null);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 1)).thenReturn(null);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1)).thenReturn(null);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(null);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(null);
+
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), new ArrayList<Long>(), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), new ArrayList<Long>(), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(0));
+
+        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 1);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
+
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+    }
+
+    @Test
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoDuplicates(){
+        //given
+        String communityUrl = "mtv1";
+        long selectedTimeMillis = 111;
+        List<Integer> mediaIds = asList(333, 666, 999);
+        int excludedChartId = 3;
+
+        List<Chart> charts = asList(new Chart().withI(1), new Chart().withI(2));
+
+        when(mockChartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId)).thenReturn(charts);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId)).thenReturn(null);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 1)).thenReturn(11L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1)).thenReturn(12L);
+
+        when(mockChartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, 2)).thenReturn(21L);
+        when(mockChartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2)).thenReturn(22L);
+
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+        when(mockChartDetailRepository.getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds)).thenReturn(new ArrayList<ChartDetail>());
+
+        //when
+        List<ChartDetail> duplicatedMediaChartDetails = chartServiceFixture.getDuplicatedMediaChartDetails(communityUrl, excludedChartId, selectedTimeMillis, mediaIds);
+
+        //then
+        assertThat(duplicatedMediaChartDetails.size(), is(0));
+
+        verify(mockChartRepository).getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 1);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 1);
+
+        verify(mockChartDetailRepository).findNearestLatestChartPublishDate(selectedTimeMillis, 2);
+        verify(mockChartDetailRepository).findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, 2);
+
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(0), asList(11L, 12L), mediaIds);
+        verify(mockChartDetailRepository).getDuplicatedMediaChartDetails(charts.get(1), asList(21L, 22L), mediaIds);
     }
 
     private ChartDetail getChartDetailInstance(final long publishTimeMillis, int i, Media media, final Chart chart) {

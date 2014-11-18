@@ -11,7 +11,7 @@ create table apps_flyer_data(
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_apps_flyer_user_id` FOREIGN KEY (`user_id`) REFERENCES `tb_users`(i),
   CONSTRAINT `unique_apps_flyer_user_id` UNIQUE (`user_id`)
-)
+);
 -- SRV-374
 UPDATE tb_submittedPayments sp join tb_users u on sp.userId = u.i join tb_userGroups ug on u.userGroup = ug.id join tb_communities c on ug.community = c.id
 SET

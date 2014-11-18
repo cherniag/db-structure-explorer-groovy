@@ -27,7 +27,6 @@ import static org.apache.commons.lang.Validate.notNull;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 public class ChartDetailService {
 
@@ -236,12 +235,12 @@ public class ChartDetailService {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public int updateChartItems(Integer chartId, long selectedPublishDateTime, long newPublishDateTime) throws ServiceCheckedException{
-		LOGGER.debug("input parameters chartId, selectedPublishDateTime, newPublishDateTime: [{}], [{}]", new Object[] { chartId, selectedPublishDateTime, newPublishDateTime });
+		LOGGER.debug("input parameters chartId, selectedPublishDateTime, newPublishDateTime: [{}], [{}], [{}]", chartId, selectedPublishDateTime, newPublishDateTime);
 
 		final long count = chartDetailRepository.getCount(chartId, newPublishDateTime);
 		boolean isItemsForChoosedPublishDateAlreadyExist = (count > 0);
 		if (isItemsForChoosedPublishDateAlreadyExist)
-			throw new ServiceCheckedException("chartItems.changingPublishTimeOnAlreadyScheduledTime.error", "Coudn't change the chart items publishDateTime from [" + selectedPublishDateTime + "] to " + newPublishDateTime + " for chartId [" + chartId
+			throw new ServiceCheckedException("chartItems.changingPublishTimeOnAlreadyScheduledTime.error", "Couldn't change the chart items publishDateTime from [" + selectedPublishDateTime + "] to " + newPublishDateTime + " for chartId [" + chartId
 					+ "] because ones already exists");
 
 		int updatedRowCount = chartDetailRepository.updateChartItems(newPublishDateTime, selectedPublishDateTime, chartId);

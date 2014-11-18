@@ -273,7 +273,6 @@ public class AdItemDtoTest {
 		AdItemDto result = AdItemDto.toDtoItem(message);
 
 		assertNotNull(result);
-		assertEquals("AdItemDto [id=1, action=https://i.ua, message=body, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
 		assertEquals("body", result.getMessage());
 		assertEquals(new Integer(1), result.getId());
 		assertEquals(null, result.getFile());
@@ -302,7 +301,6 @@ public class AdItemDtoTest {
 		AdItemDto result = AdItemDto.toDtoItem(message);
 
 		assertNotNull(result);
-		assertEquals("AdItemDto [id=1, action=file://ggg, message=body, activated=true, imageFileName=imageFileName, actionType=TRACK_ID, filterDtos=[FilterDto [name=null]], position=0, removeImage=false]", result.toString());
 		assertEquals("body", result.getMessage());
 		assertEquals(new Integer(1), result.getId());
 		assertEquals(null, result.getFile());
@@ -363,17 +361,5 @@ public class AdItemDtoTest {
 		List<AdItemDto> result = AdItemDto.toDtoList(messages);
 
 		assertNotNull(result);
-	}
-
-	@Test
-	public void testToString_Success()
-		throws Exception {
-		AdItemDto fixture = AdItemDtoFactory.createAdItemDto("https://i.ua", AdActionType.URL);
-
-		String result = fixture.toString();
-		
-		assertNotNull(result);
-		
-		assertEquals("AdItemDto [id=1, action=https://i.ua, message=message, activated=true, imageFileName=imageFileName, actionType=URL, filterDtos=[], position=null, removeImage=false]", result);
 	}
 }

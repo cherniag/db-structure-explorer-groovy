@@ -14,6 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Table(name="tb_charts")
 @XmlRootElement
@@ -22,11 +27,11 @@ public class Chart implements Serializable {
 
 	@XmlTransient
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = IDENTITY)
     @Column(name="i", columnDefinition="tinyint(4)")
 	private Integer i;
 
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "genre")
 	private Genre genre;
 	
@@ -36,7 +41,7 @@ public class Chart implements Serializable {
 	@Column(name="name",columnDefinition="char(25)")
 	private String name;
 
-	@Enumerated(value=EnumType.STRING)
+	@Enumerated(STRING)
 	private ChartType type;
 	
 	private byte numTracks;
@@ -45,11 +50,11 @@ public class Chart implements Serializable {
 
 	private int timestamp;
 	
-	@OneToMany(mappedBy="chart",fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="chart",fetch = LAZY)
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private Set<ChartDetail> chartDetails = new HashSet<ChartDetail>();
 
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch = LAZY)
 	@JoinTable(name="community_charts",
     joinColumns=
         @JoinColumn(name="chart_id", referencedColumnName="i"),
@@ -161,6 +166,11 @@ public class Chart implements Serializable {
         communities.add(community);
         return this;
     }
+
+	public  Chart withChartType(ChartType chartType){
+		setType(chartType);
+		return this;
+	}
 
     @Override
     public String toString() {

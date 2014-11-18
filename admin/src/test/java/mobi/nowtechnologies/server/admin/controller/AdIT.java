@@ -21,9 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * @author Titov Mykhaylo (titov)
- */
+// @author Titov Mykhaylo (titov)
 public class AdIT extends AbstractAdminITTest {
 
 
@@ -34,7 +32,7 @@ public class AdIT extends AbstractAdminITTest {
     public void testGetAdsPage_Success() throws Exception {
         String requestURI = "/ads";
         String communityUrl = "nowtop40";
-        mockMvc.perform(get(requestURI).headers(getHttpHeaders(true)).cookie(getCommunityCoockie(communityUrl))).andExpect(status().isOk()).
+        mockMvc.perform(get(requestURI).headers(getHttpHeaders(true)).cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk()).
                 andDo(print()).
                 andExpect(jsonPath("$.allAdFilterDtos[0].name").value("J2ME")).
                 andExpect(jsonPath("$.allAdFilterDtos[1].name").value("ONE_MONTH_PROMO")).
@@ -48,7 +46,7 @@ public class AdIT extends AbstractAdminITTest {
     public void testGetAddAdPage_Success() throws Exception {
         String requestURI = "/ads/";
         String communityUrl = "nowtop40";
-        mockMvc.perform(get(requestURI).headers(getHttpHeaders(true)).cookie(getCommunityCoockie(communityUrl))).andExpect(status().isOk()).
+        mockMvc.perform(get(requestURI).headers(getHttpHeaders(true)).cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk()).
                 andDo(print()).
                 andExpect(jsonPath("$.allAdFilterDtos[0].name").value("J2ME")).
                 andExpect(jsonPath("$.allAdFilterDtos[1].name").value("ONE_MONTH_PROMO")).
@@ -72,7 +70,7 @@ public class AdIT extends AbstractAdminITTest {
         when(filesClient.storeStreamedObject(anyString(), any(InputStream.class), Mockito.matches("application/octet-stream"), anyString(), Mockito.anyMap())).thenReturn("");
 
         mockMvc.perform(fileUpload(requestURI).file(new MockMultipartFile("file", "1".getBytes())).
-                cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true)).
+                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true)).
                 param("actionType", AdActionType.URL.name()).
                 param("message", "some message").
                 param("activated", "true").
@@ -101,7 +99,7 @@ public class AdIT extends AbstractAdminITTest {
         when(filesClient.storeStreamedObject(Mockito.eq("test-storage"), any(ByteArrayInputStream.class), Mockito.eq("application/octet-stream"), Mockito.endsWith(id.toString()), Mockito.eq(Collections.EMPTY_MAP))).thenReturn("");
 
         mockMvc.perform(fileUpload(requestURI).file(new MockMultipartFile("file", "1".getBytes())).
-                cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true)).
+                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true)).
                 param("id", id.toString()).
                 param("actionType", AdActionType.URL.name()).
                 param("message", "some message").
@@ -124,7 +122,7 @@ public class AdIT extends AbstractAdminITTest {
         String requestURI = "/ads/" + id;
         String communityUrl = "nowtop40";
 
-        mockMvc.perform(get(requestURI).cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))).
+        mockMvc.perform(get(requestURI).cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
                 andExpect(status().isOk()).
                 andDo(print()).
                 andExpect(
@@ -137,7 +135,7 @@ public class AdIT extends AbstractAdminITTest {
     public void testDelete_Success() throws Exception {
         String requestURI = "/ads/81";
         String communityUrl = "nowtop40";
-        mockMvc.perform(delete(requestURI).headers(getHttpHeaders(true)).cookie(getCommunityCoockie(communityUrl)))
+        mockMvc.perform(delete(requestURI).headers(getHttpHeaders(true)).cookie(getCommunityCookie(communityUrl)))
                 .andExpect(status().isMovedTemporarily());
     }
 

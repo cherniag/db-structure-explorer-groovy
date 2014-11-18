@@ -15,6 +15,7 @@ import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -27,8 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static org.joda.time.DateTimeZone.UTC;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -175,7 +179,7 @@ public class ChartService implements ApplicationContextAware {
     public List<ChartDetail> getChartsByCommunity(String communityURL, String communityName, ChartType chartType) {
         LOGGER.debug("input parameters communityURL=[{}], communityName=[{}], chartType=[{}]", communityURL, communityName, chartType);
 
-        List<Chart> charts = Collections.emptyList();
+        List<Chart> charts = emptyList();
         if (communityURL != null)
             charts = chartType != null ? chartRepository.getByCommunityURLAndChartType(communityURL, chartType)
                     : chartRepository.getByCommunityURL(communityURL);
@@ -306,17 +310,17 @@ public class ChartService implements ApplicationContextAware {
         User user = userService.getUserWithSelectedCharts(userId);
 
         if(user != null && chart != null){
-            List<Chart> playlists = new ArrayList<Chart>();
+            List<Chart> playLists = new ArrayList<Chart>();
             if(user.getSelectedCharts() != null){
                 for (Chart playlist : user.getSelectedCharts()) {
                     if(playlist.getType() != chart.getType()){
-                        playlists.add(playlist);
+                        playLists.add(playlist);
                     }
                 }
             }
 
-            playlists.add(chart);
-            user.setSelectedCharts(playlists);
+            playLists.add(chart);
+            user.setSelectedCharts(playLists);
 
             userService.updateUser(user);
 
@@ -324,6 +328,44 @@ public class ChartService implements ApplicationContextAware {
         }
 
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChartDetail> getDuplicatedMediaChartDetails(String communityUrl, int excludedChartId, long selectedTimeMillis, List<Integer> mediaIds) {
+
+        LOGGER.info("Attempt to find duplicated tracks among given tracks across all charts' updates of [{}] community for [{}] date with [{}] chart updates exclusion", communityUrl, new DateTime(selectedTimeMillis, UTC), excludedChartId);
+
+        if(mediaIds.isEmpty()){
+            return emptyList();
+        }
+
+        List<Chart> charts = chartRepository.getByCommunityURLAndExcludedChartId(communityUrl, excludedChartId);
+
+        Long featureUpdateOfExcludedChartPublishTimeMillis = chartDetailRepository.findNearestFeatureChartPublishDate(selectedTimeMillis, excludedChartId);
+        if(isNull(featureUpdateOfExcludedChartPublishTimeMillis)){
+            featureUpdateOfExcludedChartPublishTimeMillis = Long.MAX_VALUE;
+        }
+
+        List<ChartDetail> duplicatedMediaChartDetails = new ArrayList<ChartDetail>();
+        for (Chart chart : charts) {
+            Long lastUpdatePublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(selectedTimeMillis, chart.getI());
+            Long featureUpdatePublishTimeMillis = chartDetailRepository.findNearestFeatureChartPublishDateBeforeGivenDate(selectedTimeMillis, featureUpdateOfExcludedChartPublishTimeMillis, chart.getI());
+
+            List<Long> publishTimeMillisList = new ArrayList<Long>(2);
+            if(isNotNull(lastUpdatePublishTimeMillis)){
+                publishTimeMillisList.add(lastUpdatePublishTimeMillis);
+            }
+            if(isNotNull(featureUpdatePublishTimeMillis)){
+                publishTimeMillisList.add(featureUpdatePublishTimeMillis);
+            }
+            if(!publishTimeMillisList.isEmpty()){
+                duplicatedMediaChartDetails.addAll(chartDetailRepository.getDuplicatedMediaChartDetails(chart, publishTimeMillisList, mediaIds));
+            }
+        }
+
+        LOGGER.info("[{}] duplicated tracks found", duplicatedMediaChartDetails.size());
+
+        return duplicatedMediaChartDetails;
     }
 
     @Override

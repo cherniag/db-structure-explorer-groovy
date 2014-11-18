@@ -67,7 +67,7 @@ public abstract class AbstractAdminITTest {
         mockMvc = webAppContextSetup(webApplicationContext).build();
     }
 
-    protected Cookie getCommunityCoockie(String communityUrl) {
+    protected Cookie getCommunityCookie(String communityUrl) {
         Cookie cookie = new Cookie("_chartsnow_community", communityUrl);
         cookie.setMaxAge(365 * 24 * 60 * 60);
         return cookie;
