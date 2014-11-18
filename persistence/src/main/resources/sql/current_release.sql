@@ -12,3 +12,21 @@ create table apps_flyer_data(
   CONSTRAINT `fk_apps_flyer_user_id` FOREIGN KEY (`user_id`) REFERENCES `tb_users`(i),
   CONSTRAINT `unique_apps_flyer_user_id` UNIQUE (`user_id`)
 )
+-- SRV-374
+UPDATE tb_submittedPayments sp join tb_users u on sp.userId = u.i join tb_userGroups ug on u.userGroup = ug.id join tb_communities c on ug.community = c.id
+SET
+  duration = 1,
+  duration_unit = 'WEEKS'
+where
+  sp.paymentSystem='iTunesSubscription'
+  and sp.duration = 0
+  and sp.duration_unit = 'WEEKS'
+  and c.id in (12,13,14,15);
+
+UPDATE tb_submittedPayments SET
+  duration = 1,
+  duration_unit = 'MONTHS'
+where
+  paymentSystem='iTunesSubscription'
+  and duration = 0
+  and duration_unit = 'WEEKS';
