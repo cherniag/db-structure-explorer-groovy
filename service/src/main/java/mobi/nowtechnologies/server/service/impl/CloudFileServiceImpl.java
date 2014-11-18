@@ -286,4 +286,7 @@ public class CloudFileServiceImpl implements CloudFileService {
         return uploaded;
     }
 
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
 }

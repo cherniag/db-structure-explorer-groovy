@@ -93,7 +93,7 @@
 				</bean>
 				<bean class="mobi.nowtechnologies.server.trackrepo.utils.image.ThumbnailType">
 					<property name="fileNameTail" value="_22"/>
-					<property name="imageSizeForAudio" value="200"/>
+					<property name="imageSizeForAudio" value="350"/>
 					<property name="imageSizeForVideo" value="640"/>
 					<property name="coverFilePath" value="/WEB-INF/bin/images/coming-soon-200.png"/>
                     <property name="additionalParams" value="${coming-soon.additionalParams}"/>
