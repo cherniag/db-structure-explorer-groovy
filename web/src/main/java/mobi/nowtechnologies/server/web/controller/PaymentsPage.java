@@ -29,6 +29,7 @@ public class PaymentsPage {
 	private PaymentPageData paymentPageData;
 	private boolean freeTrialPeriod;
     private boolean awaitingPaymentStatus;
+    private SubscriptionInfo subscriptionInfo;
 
     public String getMobilePhoneNumber() {
 		return mobilePhoneNumber;
@@ -145,5 +146,13 @@ public class PaymentsPage {
 
     public void setAwaitingPaymentStatus(boolean awaitingPaymentStatus) {
         this.awaitingPaymentStatus = awaitingPaymentStatus;
+    }
+
+    public void setSubscriptionInfo(SubscriptionInfo subscriptionInfo) {
+        this.subscriptionInfo = subscriptionInfo;
+    }
+
+    public SubscriptionInfo getSubscriptionInfo() {
+        return subscriptionInfo;
     }
 }

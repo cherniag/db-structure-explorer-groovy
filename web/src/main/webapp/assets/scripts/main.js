@@ -12,6 +12,38 @@ function returnToApp(){
     window.location = "/exitFromApp.html";
 }
 
+function calcScaleCoeff(pattern, actual) {
+    return pattern / actual;
+}
+
+function adjustImage(img, placeholderDim) {
+    if(img.height == img.width) {
+        var scale = calcScaleCoeff(placeholderDim, img.height);
+        img.width = scale * img.height ;
+    } else {
+        var min = Math.max(img.height, img.width);
+
+        var scale = calcScaleCoeff(placeholderDim, min);
+        if(img.height < img.width) {
+            img.height = scale * min;
+        } else {
+            img.width = scale * min;
+        }
+    }
+}
+
+function feedback(email) {
+    window.location = "/feedback.html?email=" + email;
+}
+
+function goTo(uri){
+    window.location = uri;
+}
+
+function submitForm(id) {
+    document.getElementById(id).submit();
+}
+
 function showHideBox(id, id2) {
 
 	if(document.getElementById(id).style.display == 'none') {

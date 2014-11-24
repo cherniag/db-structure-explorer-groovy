@@ -72,8 +72,14 @@ public class FacebookUserInfo extends SocialInfo {
         this.email = email;
     }
 
+    @Override
     public String getFirstName() {
         return firstName;
+    }
+
+    @Override
+    public String getAvatarUrl() {
+        return getProfileUrl();
     }
 
     public void setFirstName(String firstName) {

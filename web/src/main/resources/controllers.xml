@@ -7,6 +7,10 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean id="subscriptionInfoAsm" class="mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm">
+        <property name="timeService" ref="timeService"/>
+    </bean>
+
     <bean name="web.VersionController" class="mobi.nowtechnologies.server.controller.VersionController"/>
 
     <bean name="web.HomeController" class="mobi.nowtechnologies.server.web.controller.HomeController"/>
@@ -54,6 +58,7 @@
     	<property name="promotionService" ref="service.PromotionService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
+        <property name="subscriptionInfoAsm" ref="subscriptionInfoAsm"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
@@ -66,6 +71,7 @@
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="userService" ref="service.UserService"/>
+        <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsMigController">

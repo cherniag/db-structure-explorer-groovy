@@ -32,7 +32,9 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="manifest" value="META-INF/MANIFEST.MF" />
 	</bean>
 
-	<bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
+    <bean id="timeService" class="mobi.nowtechnologies.server.TimeService"/>
+
+    <bean id="service.EntityService" class="mobi.nowtechnologies.server.service.EntityService">
 		<property name="entityDao" ref="persistence.EntityDao" />
 	</bean>
 	

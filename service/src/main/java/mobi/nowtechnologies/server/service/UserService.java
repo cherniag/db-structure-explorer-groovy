@@ -711,6 +711,13 @@ public class UserService {
         return entityService.findById(User.class, id);
     }
 
+    @Transactional(readOnly = true)
+    public User getWithSocial(int id) {
+        User byId = findById(id);
+        byId.getSocialInfo().size();
+        return byId;
+    }
+
     @Transactional(propagation = REQUIRED)
     public User changePassword(Integer userId, String newPassword) {
         LOGGER.debug("input parameters changePassword(Integer userId, String newPassword): [{}], [{}]", new Object[]{userId, newPassword});

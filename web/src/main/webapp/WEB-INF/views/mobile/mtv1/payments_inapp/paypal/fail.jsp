@@ -9,11 +9,12 @@
     <div class="go-premium-unsubscribe-2-banner go-premium-unsubscribe-banner go-premium-unsubscribe-banner-device">
     </div>
     <span class="go-premium-body-title go-premium-body-title-device">
-        <s:message code="errors.404.title" />
+        <s:message code="errors.paypal.title" />
     </span>
     <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device">
         <span class="go-premium-text-message go-premium-text-message-device">
-            <s:message code="errors.404.description" />
+            <s:message code="paypal.error.text" />
+            <s:message code="feedback.email" />
         </span>
         <br/>
     </div>

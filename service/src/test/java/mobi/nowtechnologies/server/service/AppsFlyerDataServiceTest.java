@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepositor
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -22,7 +23,8 @@ public class AppsFlyerDataServiceTest {
     @InjectMocks
     private AppsFlyerDataService appsFlyerDataService;
 
-    private ArgumentCaptor<AppsFlyerData> appsFlyerDataArgumentCaptor = ArgumentCaptor.forClass(AppsFlyerData.class);
+    @Captor
+    private ArgumentCaptor<AppsFlyerData> appsFlyerDataArgumentCaptor;
 
     @Test
     public void saveAppsFlyerData() throws Exception {
