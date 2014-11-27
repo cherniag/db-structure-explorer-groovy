@@ -17,11 +17,11 @@ public class ChartDetail {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer i;
 
-	@Column(name = "chart", insertable = false, updatable = false, columnDefinition = "tinyint(4)")
+	@Column(name = "chart", insertable = false, updatable = false)
 	private Integer chartId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "chart", columnDefinition = "tinyint(4)")
+	@JoinColumn(name = "chart")
 	private Chart chart;
 
 	@Column(name = "media", insertable = false, updatable = false)

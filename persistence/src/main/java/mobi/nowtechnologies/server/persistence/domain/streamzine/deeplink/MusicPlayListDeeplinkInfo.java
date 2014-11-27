@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "sz_deeplink_music_list")
 public class MusicPlayListDeeplinkInfo extends DeeplinkInfo implements PlayableItemDeepLink{
 
-    @Column(name="chart_id", columnDefinition="tinyint(4)")
+    @Column(name="chart_id")
     private Integer chartId;
 
     @Column(name = "player_type", nullable = false)
