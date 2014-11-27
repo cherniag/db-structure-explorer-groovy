@@ -15,10 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
-/**
- * @author Titov Mykhaylo (titov)
- *
- */
+// @author Titov Mykhaylo (titov)
 public abstract class AbstractCommonController implements MessageSourceAware{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCommonController.class);

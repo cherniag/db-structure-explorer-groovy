@@ -32,7 +32,7 @@ public class ITunesLinksControllerIT extends AbstractAdminITTest {
         List<ChartItemDto> dto = new ArrayList<ChartItemDto>();
         dto.add(buildDto("", "a", "a", ""));
         mockMvc.perform(post("/validateITunesLinks").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)).
-                cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))).
+                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
                 andExpect(status().isBadRequest()).andDo(print()).andExpect(jsonPath("$.[0].message").value("[0]"));
     }
 
@@ -42,7 +42,7 @@ public class ITunesLinksControllerIT extends AbstractAdminITTest {
         List<ChartItemDto> dto = new ArrayList<ChartItemDto>();
         dto.add(buildDto("", "Appcast", "a", ""));
         mockMvc.perform(post("/validateITunesLinks").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)).
-                cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))).
+                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
                 andExpect(status().isOk());
     }
 

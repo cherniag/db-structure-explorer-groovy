@@ -24,7 +24,6 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
     private PromotionService promotionService;
 
 
-
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{communityUri}/{apiVersion:[4-9]{1}\\.[0-9]{1,3}}/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL"})
     public ModelAndView activateVideo(
@@ -41,7 +40,7 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
 
             user = promotionService.activateVideoAudioFreeTrial(user);
 
-            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheckDTO);
         } catch (Exception e) {

@@ -74,6 +74,9 @@ public class User implements Serializable {
     @Column(name = "i")
     private int id;
 
+    @Column(name = "uuid")
+    private String uuid;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_promo", columnDefinition = "INT default NULL")
     private PromoCode lastPromo;
@@ -1487,6 +1490,14 @@ public class User implements Serializable {
         return this;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     public Collection<SocialInfo> getSocialInfo() {
         return socialInfo;
     }
@@ -1497,6 +1508,7 @@ public class User implements Serializable {
                 .add("id", id)
                 .add("old_user_id", getOldUserId())
                 .add("userName", userName)
+                .add("uuid", uuid)
                 .add("facebookId", facebookId)
                 .add("deviceUID", deviceUID)
                 .add("subBalance", subBalance)

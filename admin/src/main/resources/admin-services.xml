@@ -47,6 +47,8 @@
         <property name="dataSource" ref="securityDataSource"/>
     </bean>
 
+    <bean id="duplicatedMediaAcrossNearestChartsDtoAssembler" class="mobi.nowtechnologies.server.admin.asm.DuplicatedMediaAcrossNearestChartsDtoAssembler" />
+
     <!-- Application Message Bundle -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames" ref="messagesBaseName" />

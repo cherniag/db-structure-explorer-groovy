@@ -5,12 +5,14 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm;
 import mobi.nowtechnologies.server.web.subscription.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Locale;
 
 import static mobi.nowtechnologies.server.persistence.domain.PromoCode.PROMO_CODE_FOR_FREE_TRIAL_BEFORE_SUBSCRIBE;
@@ -50,6 +53,8 @@ public class PaymentsController extends CommonController {
 
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
+    private SubscriptionInfoAsm subscriptionInfoAsm;
+
     public CommunityResourceBundleMessageSource getCommunityResourceBundleMessageSource() {
         return communityResourceBundleMessageSource;
     }
@@ -78,6 +83,10 @@ public class PaymentsController extends CommonController {
         this.promotionService = promotionService;
     }
 
+    public void setSubscriptionInfoAsm(SubscriptionInfoAsm subscriptionInfoAsm) {
+        this.subscriptionInfoAsm = subscriptionInfoAsm;
+    }
+
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale, String scopePrefix) {
         User user = userService.findById(getUserId());
         Community community = communityService.getCommunityByUrl(communityUrl);
@@ -91,21 +100,23 @@ public class PaymentsController extends CommonController {
         	LOGGER.info("Showing holding page for user [{}] with provider [{}]", user.getId(), user.getProvider());
         	return new ModelAndView(scopePrefix+"/notimplemented");
         }
-        if (!hasCommunityPaymentsPage(community)){
+        if (!paymentRequired(user, community)){
             return new ModelAndView("payments_coming_soon");
         }
 
-        paymentsPage.setAwaitingPaymentStatus(calcIsAwaitingPaymentStatus(user));
-        paymentsPage.setMobilePhoneNumber( user.getMobile() );
-        paymentsPage.setPaymentPolicies(paymentPolicyService.getPaymentPolicyDtos(user));
-        paymentsPage.setConsumerUser( isConsumerUser(user) );
-        paymentsPage.setPaymentDetails( user.getCurrentPaymentDetails() );
-        paymentsPage.setPaymentPoliciesNote( paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE) );
-        paymentsPage.setUserCanGetVideo( user.is4G() );
-        paymentsPage.setUserIsOptedInToVideo( user.is4G() && user.isVideoFreeTrialHasBeenActivated() );
-        paymentsPage.setAppleIOSAndNotBusiness( user.isIOSDevice() && !(isBusinessUser(user)) );
-        paymentsPage.setFreeTrialPeriod( user.isOnFreeTrial() );
+        List<PaymentPolicyDto> paymentPolicyDtos = paymentPolicyService.getPaymentPolicyDtos(user);
 
+        paymentsPage.setAwaitingPaymentStatus(calcIsAwaitingPaymentStatus(user));
+        paymentsPage.setMobilePhoneNumber(user.getMobile());
+        paymentsPage.setPaymentPolicies(paymentPolicyDtos);
+        paymentsPage.setConsumerUser(isConsumerUser(user));
+        paymentsPage.setPaymentDetails(user.getCurrentPaymentDetails());
+        paymentsPage.setPaymentPoliciesNote(paymentsMessage(locale, user, PAYMENTS_NOTE_MSG_CODE));
+        paymentsPage.setUserCanGetVideo(user.is4G());
+        paymentsPage.setUserIsOptedInToVideo(user.is4G() && user.isVideoFreeTrialHasBeenActivated());
+        paymentsPage.setAppleIOSAndNotBusiness(user.isIOSDevice() && !(isBusinessUser(user)));
+        paymentsPage.setFreeTrialPeriod(user.isOnFreeTrial());
+        paymentsPage.setSubscriptionInfo(subscriptionInfoAsm.createSubscriptionInfo(locale, user, paymentPolicyDtos));
         SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
         PaymentPageData paymentPageData = new PaymentPageData(subscriptionState, subscriptionTexts);
@@ -122,8 +133,17 @@ public class PaymentsController extends CommonController {
         return mav;
     }
 
-    private boolean hasCommunityPaymentsPage(Community community) {
-        return communityResourceBundleMessageSource.readBoolean(community.getRewriteUrlParameter(), "paymentsPageEnable", true);
+    private boolean paymentRequired(User user, Community community) {
+        final String allDevicesKey = "web.portal.payment.enabled";
+
+        boolean paymentEnabled = communityResourceBundleMessageSource.readBoolean(community.getRewriteUrlParameter(), allDevicesKey, true);
+
+        if(paymentEnabled) {
+            final String perDeviceKey = allDevicesKey + "." + user.getDeviceType().getName();
+            return communityResourceBundleMessageSource.readBoolean(community.getRewriteUrlParameter(), perDeviceKey, true);
+        }
+
+        return false;
     }
 
     private boolean calcIsAwaitingPaymentStatus(User user) {
@@ -225,9 +245,9 @@ public class PaymentsController extends CommonController {
             paymentsNoteMsg = getFirstSutableMessage(locale, codes);
         } else {
             if (user.isIOsNonO2ITunesSubscribedUser())
-                paymentsNoteMsg = message(locale, msgCodeBase+".not.o2.inapp.subs");
+                paymentsNoteMsg = message(msgCodeBase+".not.o2.inapp.subs", null, locale);
             else
-                paymentsNoteMsg = message(locale, msgCodeBase);
+                paymentsNoteMsg = message(msgCodeBase, null, locale);
         }
         return paymentsNoteMsg;
     }
@@ -243,8 +263,8 @@ public class PaymentsController extends CommonController {
         return "";
     }
 
-    private String message(Locale locale, String messageCode) {
-        return messageSource.getMessage(messageCode, null, "",  locale);
+    private String message(String messageCode, Object[] args, Locale locale) {
+        return messageSource.getMessage(messageCode, args, "",  locale);
     }
 
     private boolean userIsLimitedAndPromotionIsActive(User user, Community community) {

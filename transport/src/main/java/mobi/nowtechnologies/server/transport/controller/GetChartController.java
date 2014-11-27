@@ -53,9 +53,11 @@ public class GetChartController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = {
+            "**/{community}/{apiVersion:6\\.6}/GET_CHART",
+            "**/{community}/{apiVersion:6\\.5}/GET_CHART",
             "**/{community}/{apiVersion:6\\.4}/GET_CHART"
     })
-    public ModelAndView getChartV64(
+    public ModelAndView getChartV6(
             HttpServletRequest request,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("USER_TOKEN") String userToken,
@@ -86,11 +88,11 @@ public class GetChartController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART",
-            "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.0}/GET_CHART",
+            "**/{community}/{apiVersion:6\\.2}/GET_CHART",
             "**/{community}/{apiVersion:6\\.1}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.2}/GET_CHART"
+            "**/{community}/{apiVersion:6\\.0}/GET_CHART",
+            "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART",
+            "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART"
     })
     public ModelAndView getChart_O2_v4d0(
             HttpServletRequest request,
@@ -141,7 +143,7 @@ public class GetChartController extends CommonController {
             ChartDto chartDto = contentDtoResult.getContent();
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -177,7 +179,7 @@ public class GetChartController extends CommonController {
             ChartDto chartDto = chartDtoResult.getContent();
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -215,7 +217,7 @@ public class GetChartController extends CommonController {
 
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
         } catch (Exception e) {
@@ -256,7 +258,7 @@ public class GetChartController extends CommonController {
                 }
             }
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck, chartResult.getContent());
         } catch (Exception e) {

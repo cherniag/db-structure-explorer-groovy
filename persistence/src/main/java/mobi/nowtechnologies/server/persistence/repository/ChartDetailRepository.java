@@ -12,10 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Titov Mykhaylo (titov)
- * 
- */
+// @author Titov Mykhaylo (titov)
 public interface ChartDetailRepository extends JpaRepository<ChartDetail, Integer> {
 
 	@Query("select chartDetail.publishTimeMillis from ChartDetail chartDetail where chartDetail.chart.i=?1 group by chartDetail.publishTimeMillis")
@@ -34,10 +31,10 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 	List<Media> getLockedChartItemByDate(Integer chartId, long publishTimeMillis);
 	
 	@Query("select count(chartDetail) from ChartDetail chartDetail where chartDetail.chart.i=?1 and chartDetail.publishTimeMillis=?2")
-	long getCount(Integer chartId, long choosedPublishTimeMillis);
+	long getCount(Integer chartId, long chosenPublishTimeMillis);
 
 	@Query("select max(chartDetail.publishTimeMillis) from ChartDetail chartDetail where chartDetail.chart.i=?2 and chartDetail.publishTimeMillis<=?1")
-	Long findNearestLatestPublishDate(long choosedPublishTimeMillis, Integer chartId);
+	Long findNearestLatestPublishDate(long chosenPublishTimeMillis, Integer chartId);
 
 	@Query("select chartDetail.channel from ChartDetail chartDetail where chartDetail.channel is not null group by chartDetail.channel")
 	List<String> getAllChannels();
@@ -59,7 +56,25 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 			@Param("publishTimeMillis") Long nearestLatestPublishTimeMillis);
 	
 	@Query("select max(chartDetail.publishTimeMillis) from ChartDetail chartDetail where chartDetail.media is null and chartDetail.chart.i=?2 and chartDetail.publishTimeMillis<=?1")
-	Long findNearestLatestChartPublishDate(long choosedPublishTimeMillis, Integer chartId);
+	Long findNearestLatestChartPublishDate(long chosenPublishTimeMillis, Integer chartId);
+
+	@Query("select min(chartDetail.publishTimeMillis) from ChartDetail chartDetail where chartDetail.media is null and chartDetail.chart.i=?2 and chartDetail.publishTimeMillis>?1")
+	Long findNearestFeatureChartPublishDate(long chosenPublishTimeMillis, Integer chartId);
+
+	@Query("select min(chartDetail.publishTimeMillis) from ChartDetail chartDetail " +
+			"where " +
+			"chartDetail.media is null " +
+			"and chartDetail.chart.i=:chartId " +
+			"and chartDetail.publishTimeMillis > :chosenPublishTimeMillis " +
+			"and chartDetail.publishTimeMillis < :beforeDateTimeMillis")
+	Long findNearestFeatureChartPublishDateBeforeGivenDate(@Param("chosenPublishTimeMillis") long chosenPublishTimeMillis, @Param("beforeDateTimeMillis") long beforeDateTimeMillis, @Param("chartId") Integer chartId);
+
+	@Query("select chartDetail from ChartDetail chartDetail " +
+			"join FETCH chartDetail.chart chart " +
+			"where chart=:chart " +
+			"and chartDetail.publishTimeMillis in :publishTimeMillisList " +
+			"and chartDetail.media.i in :mediaIds")
+	List<ChartDetail> getDuplicatedMediaChartDetails(@Param("chart") Chart chart, @Param("publishTimeMillisList") List<Long> publishTimeMillisList, @Param("mediaIds") List<Integer> mediaIds);
 	
 	@Modifying
 	@Query(value="update ChartDetail chartDetail " +
@@ -69,13 +84,4 @@ public interface ChartDetailRepository extends JpaRepository<ChartDetail, Intege
 			"chartDetail.publishTimeMillis=:oldPublishTimeMillis " +
 			"and chartDetail.chart.i=:chartId")
 	int updateChartItems(@Param("newPublishTimeMillis") long newPublishTimeMillis, @Param("oldPublishTimeMillis") long oldPublishTimeMillis, @Param("chartId") Integer chartId);
-
-	@Query(value="select max(chartDetail.publishTimeMillis) "
-			+ "from ChartDetail chartDetail "
-			+ "join chartDetail.chart chart "
-			+ "join chart.communities communities "
-			+ "where "
-			+ "communities=?2 "
-			+ "and chartDetail.publishTimeMillis<=?1")
-	Long findNearestLatestPublishDate(long choosedPublishTimeMillis, Community community);
 }

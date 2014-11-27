@@ -85,6 +85,8 @@ public class AccountCheckDTO {
 
     public Boolean firstActivation;
 
+    public String uuid;
+
     public AccountCheckDTO(){
 		
 	}
@@ -144,6 +146,7 @@ public class AccountCheckDTO {
         this.setUserDetails(accountCheckDTO.getUserDetails());
         accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
         this.firstActivation = accountCheckDTO.firstActivation;
+        this.uuid = accountCheckDTO.uuid;
 	}
 
     public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
@@ -217,6 +220,7 @@ public class AccountCheckDTO {
                 .append("subjectToAutoOptIn", subjectToAutoOptIn)
                 .append("userDetails", userDetails)
                 .append("firstActivation", firstActivation)
+                .append("uuid", uuid)
                 .toString();
     }
 }

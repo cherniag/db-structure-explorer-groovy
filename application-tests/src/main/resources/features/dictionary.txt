@@ -4,7 +4,7 @@
 # Separate with coma list values
 #
 facebook supported communities=hl_uk
-all facebook supported versions=5.2, 6.0, 6.1, 6.2, 6.3
+all facebook supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6
 
 google plus supported communities=hl_uk
 all google plus supported versions=6.0, 6.1, 6.2, 6.3
@@ -16,6 +16,9 @@ streamzine supported communities=hl_uk
 all streamzine supported versions=6.1, 6.2, 6.3
 all streamzine supported versions below 6.3=6.1, 6.2
 
+providers supported communities=hl_uk
+all providers supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6
+
 JSON and XML=JSON, XML
 XML and JSON=JSON, XML
 all formats=JSON, XML
@@ -25,7 +28,7 @@ all devices=ANDROID, IOS, BLACKBERRY, WINDOWS_PHONE
 
 partner communities=o2, vf_nz
 all communities=o2, vf_nz, hl_uk
-all versions=5.2, 6.0, 6.1, 6.2, 6.3
+all versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6
 
 #
 # MNO

@@ -80,7 +80,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
                 get("/streamzine/chart/list")
                         //.accept(MediaType.APPLICATION_JSON)
                         .headers(getHttpHeaders(true))
-                        .cookie(getCommunityCoockie(communityUrl))
+                        .cookie(getCommunityCookie(communityUrl))
                         .param("id", String.valueOf(update.getId()))
         ).andExpect(status().isOk());
     }
@@ -110,7 +110,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .headers(getHttpHeaders(true))
                         .content(objectMapper.writeValueAsString(dto))
-                        .cookie(getCommunityCoockie(communityUrl))
+                        .cookie(getCommunityCookie(communityUrl))
         ).andExpect(status().isOk());
     }
 
@@ -136,7 +136,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .headers(getHttpHeaders(true))
                         .content(objectMapper.writeValueAsString(dto)).
-                        cookie(getCommunityCoockie(communityUrl))
+                        cookie(getCommunityCookie(communityUrl))
         )
         .andDo(print())
         .andExpect(status().isBadRequest())
@@ -185,13 +185,13 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .headers(getHttpHeaders(true))
                         .content(objectMapper.writeValueAsString(dto)).
-                        cookie(getCommunityCoockie(communityUrl))
+                        cookie(getCommunityCookie(communityUrl))
         ).andExpect(status().isOk());
         chartDetailRepository.flush();
         mockMvc.perform(
                 get("/streamzine/edit/" + dto.getId())
                         .headers(getHttpHeaders(true))
-                        .cookie(getCommunityCoockie(communityUrl))
+                        .cookie(getCommunityCookie(communityUrl))
         ).andExpect(status().isOk());
         chartDetailRepository.flush();
 

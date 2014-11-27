@@ -15,7 +15,6 @@ import org.junit.Test;
 import javax.annotation.Resource;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
@@ -30,7 +29,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
     private PromoCode promoCode;
 
     @Test
-    public void testActivateVideoAudioFreeTrialWithAccCheckDetails_Success_LatestVersion() throws Exception {
+    public void testActivateVideoAudioFreeTrial_LatestVersion() throws Exception {
         String userName = "+447111111114";
         String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "o2";
@@ -53,14 +52,14 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
 
         mockMvc.perform(
                 post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
 
     }
 
@@ -81,7 +80,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isInternalServerError()).andDo(print()).andExpect(xpath("/response/errorMessage/errorCode").number(5001d));
+        ).andExpect(status().isInternalServerError()).andExpect(xpath("/response/errorMessage/errorCode").number(5001d));
 
     }
 
@@ -101,7 +100,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isInternalServerError()).andDo(print()).andExpect(jsonPath("response.data[0].errorMessage.errorCode").value(5001));
+        ).andExpect(status().isInternalServerError()).andExpect(jsonPath("response.data[0].errorMessage.errorCode").value(5001));
     }
 
     @Test

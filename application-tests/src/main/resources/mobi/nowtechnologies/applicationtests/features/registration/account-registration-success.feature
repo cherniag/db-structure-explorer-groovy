@@ -2,9 +2,9 @@ Feature: Successful registration flow for all communities
 #devices: ANDROID, IOS, WINDOWS_PHONE
 #all versions: 3.6, 3.7, 4.0, 4.2, 5.0, 5.2, 6.0, 6.1
 #all communities: o2, vf_nz, hl_uk, hl_uk, demo, demo2, demo3
-
+  @Ready
   Scenario: Registration of new user
-    Given First time user with all devices using JSON and XML format for all api versions and all communities
+    Given First time user with all devices using JSON and XML formats for all versions and all communities
     When User registers using device
     Then Temporary account is created
     And User receives following in SIGN_UP_DEVICE response:
@@ -20,14 +20,22 @@ Feature: Successful registration flow for all communities
     And In database user does not have last promotions
     And In database user does not have payment details
 
+  @Ready
+  Scenario: Registration of new user and get uuid
+    Given First time user with all devices using JSON and XML formats with all versions above 6.5 and all communities
+    When User registers using device
+    Then Temporary account is created
+    And 'uuid' field is present in response and has UUID pattern
+
+  @Ready
   Scenario: Re-registration of user on same device
-    Given Registered user with all devices using JSON and XML format for all api versions and all communities
+    Given Registered user with all devices using JSON and XML format for all versions and all communities
     When User registers using same device
     Then In database new temporary account does not appear
     And In database user account remains unchanged
 
   Scenario: Re-registration of user after entering number
-    Given Entered phone number user with all devices using JSON and XML format for api versions 5.0 and below and above 6.0 and o2 and vodafone communities
+    Given Entered phone number user with all devices using JSON and XML format for api versions 5.0 and below and above 6.0 and o2 and vf_nz communities
     When User registers using same device
     Then In database new temporary account does not appear
     And In database user account remains unchanged

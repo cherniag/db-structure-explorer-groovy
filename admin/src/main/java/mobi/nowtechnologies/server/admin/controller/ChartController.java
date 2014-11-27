@@ -29,10 +29,7 @@ import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-/**
- * @author Titov Mykhaylo (titov)
- * 
- */
+// @author Titov Mykhaylo (titov)
 @Controller
 public class ChartController extends AbstractCommonController {
 

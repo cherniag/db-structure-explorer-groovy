@@ -5,6 +5,8 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.shared.enums.MessageActionType;
+import mobi.nowtechnologies.server.shared.enums.MessageType;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
@@ -29,7 +31,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
     CommunityRepository communityRepository;
 
     @Test
-    public void testGetNewAndJsonAndAccCheckInfo_Success_LatestVersion() throws Exception {
+    public void testGetNews_LatestVersion() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
         String apiVersion = LATEST_SERVER_API_VERSION;
@@ -38,24 +40,23 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        ResultActions resultActions = mockMvc.perform(
+        long newsPublishTimestamp = System.currentTimeMillis() - 1000L;
+        Message message = createMessage(communityUrl, "title", NOTIFICATION, true, "body_latest", MessageActionType.SUBSCRIPTION_PAGE, "action", newsPublishTimestamp);
+
+        mockMvc.perform(
                 get("/" + communityUrl + "/" + apiVersion + "/GET_NEWS.json")
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("DEVICE_UID", deviceUID)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists()).
-                andExpect(jsonPath("$.response..news").exists()).
-                andExpect(jsonPath("$.response..user").exists());
-
-
-        ResultActions accountCheckCall = mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andDo(print());
-        checkAccountCheck(resultActions, accountCheckCall);
+        )
+                .andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response..items").exists())
+                .andExpect(jsonPath("$.response..user").exists())
+                .andExpect(jsonPath("$.response..news").exists())
+                .andExpect(jsonPath("$.response.data[1].news.items[?(@.body == '" + message.getBody() + "')]").exists())
+                .andExpect(jsonPath("$.response.data[1].news.items[?(@.body == '" + message.getBody() + "')].detail").value(message.getTitle()))
+                .andExpect(jsonPath("$.response.data[1].news.items[?(@.body == '" + message.getBody() + "')].messageType").value(message.getMessageType().name()))
+                .andExpect(jsonPath("$.response.data[1].news.items[?(@.body == '" + message.getBody() + "')].timestampMilis").value(message.getPublishTimeMillis()));
     }
 
     @Test
@@ -69,8 +70,7 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
-        Message message = messageRepository.save(new Message().withTitle("title").withMessageType(LIMITED_BANNER).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
+        Message message = createMessage(communityUrl, "title", LIMITED_BANNER, true, "body", A_SPECIFIC_TRACK, "action", System.currentTimeMillis() - 1000L);
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -101,10 +101,10 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
-        messageRepository.save(new Message().withTitle("title").withMessageType(AD).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
-        messageRepository.save(new Message().withTitle("title").withMessageType(NOTIFICATION).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
-        messageRepository.save(new Message().withTitle("title").withMessageType(FREE_TRIAL_BANNER).withActivated(true).withCommunity(community).withBody("body").withActionType(A_SPECIFIC_TRACK).withAction("action"));
+        long publishTimestamp = System.currentTimeMillis() - 1000L;
+        createMessage(communityUrl, "title", AD, true, "body", A_SPECIFIC_TRACK, "action", publishTimestamp);
+        createMessage(communityUrl, "title", NOTIFICATION, true, "body", A_SPECIFIC_TRACK, "action", publishTimestamp);
+        createMessage(communityUrl, "title", FREE_TRIAL_BANNER, true, "body", A_SPECIFIC_TRACK, "action", publishTimestamp);
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -311,5 +311,18 @@ public class GetNewsControllerTestIT extends AbstractControllerTestIT{
     }
 
 
+    private Message createMessage(String communityUrl, String title, MessageType messageType, boolean activated, String body, MessageActionType messageActionType, String action, long publishTimestamp) {
+        Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
+        Message message = new Message()
+                .withTitle(title)
+                .withMessageType(messageType)
+                .withActivated(activated)
+                .withCommunity(community)
+                .withBody(body)
+                .withActionType(messageActionType)
+                .withAction(action)
+                .withPublishTimeMillis(publishTimestamp);
+        return messageRepository.save(message);
+    }
 
 }

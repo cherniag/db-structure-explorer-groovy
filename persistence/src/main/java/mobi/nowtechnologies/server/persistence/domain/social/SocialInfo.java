@@ -40,5 +40,10 @@ public abstract class SocialInfo {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+    public abstract String getFirstName();
+
+    public abstract String getAvatarUrl();
+
 }
 

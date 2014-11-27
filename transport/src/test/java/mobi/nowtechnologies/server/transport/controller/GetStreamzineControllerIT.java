@@ -56,7 +56,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     private FilenameAliasRepository filenameAliasRepository;
 
     @Test
-    public void testGetStreamzineForAnyMQUser_Success_LatestVersion() throws Exception {
+    public void testGetStreamzineForAnyMQUser_LatestVersion() throws Exception {
         Date updateDate = new Date(System.currentTimeMillis() + 2000L);
 
         // parameters

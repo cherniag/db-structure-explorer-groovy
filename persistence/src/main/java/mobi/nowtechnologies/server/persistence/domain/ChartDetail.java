@@ -271,6 +271,11 @@ public class ChartDetail {
 		return newChartDetail;
 	}
 
+	public ChartDetail withI(Integer i) {
+		setI(i);
+		return this;
+	}
+
     public ChartDetail withMedia(Media media) {
         setMedia(media);
         return this;

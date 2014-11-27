@@ -17,6 +17,26 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class AutoOptInController extends CommonController {
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{communityUri}/{apiVersion:6\\.6}/AUTO_OPT_IN",
+            "**/{communityUri}/{apiVersion:6\\.5}/AUTO_OPT_IN",
+            "**/{communityUri}/{apiVersion:6\\.4}/AUTO_OPT_IN",
+            "**/{communityUri}/{apiVersion:6\\.3}/AUTO_OPT_IN",
+            "**/{communityUri}/{apiVersion:6\\.2}/AUTO_OPT_IN",
+            "**/{communityUri}/{apiVersion:6\\.1}/AUTO_OPT_IN",
+            "**/{communityUri}/{apiVersion:6\\.0}/AUTO_OPT_IN"
+    })
+    public ModelAndView autoOptInWithCheckReactivation(
+            @PathVariable("communityUri") String communityUri,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("DEVICE_UID") String deviceUID,
+            @RequestParam(value = "OTAC_TOKEN", required = false) String otac) throws Exception {
+        return autoOptInCheckImpl(communityUri, userName, userToken, timestamp, deviceUID, otac, true);
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{communityUri}/{apiVersion:[4-5]{1}\\.[0-9]{1,3}}/AUTO_OPT_IN"
     })
@@ -30,23 +50,6 @@ public class AutoOptInController extends CommonController {
         return autoOptInCheckImpl(communityUri, userName, userToken, timestamp, deviceUID, otac, false);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{communityUri}/{apiVersion:6\\.0}/AUTO_OPT_IN",
-            "**/{communityUri}/{apiVersion:6\\.1}/AUTO_OPT_IN",
-            "**/{communityUri}/{apiVersion:6\\.2}/AUTO_OPT_IN",
-            "**/{communityUri}/{apiVersion:6\\.3}/AUTO_OPT_IN",
-            "**/{communityUri}/{apiVersion:6\\.4}/AUTO_OPT_IN"
-    })
-    public ModelAndView autoOptInWithCheckReactivation(
-            @PathVariable("communityUri") String communityUri,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("DEVICE_UID") String deviceUID,
-            @RequestParam(value = "OTAC_TOKEN", required = false) String otac) throws Exception {
-        return autoOptInCheckImpl(communityUri, userName, userToken, timestamp, deviceUID, otac, true);
-    }
-
     private ModelAndView autoOptInCheckImpl(String communityUri, String userName, String userToken, String timestamp, String deviceUID, String otac, boolean checkReactivation) throws Exception {
         User user = null;
         Exception ex = null;
@@ -54,6 +57,7 @@ public class AutoOptInController extends CommonController {
             LOGGER.info("command processing started");
 
             MergeResult mergeResult = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac, checkReactivation);
+            user = mergeResult.getResultOfOperation();
             AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false).withHasPotentialPromoCodePromotion(true);
 
             return buildModelAndView(accountCheckDTO);

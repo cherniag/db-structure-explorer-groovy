@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
@@ -37,6 +38,57 @@ public class AccCheckController extends CommonController {
 
     @Resource
     private ITunesService iTunesService;
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.6}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.5}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.4}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.3}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.2}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.1}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.0}/ACC_CHECK"
+    })
+    public ModelAndView accountCheckWithPossibilityOfReactivation(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
+
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community:o2}/{apiVersion:3.9}/ACC_CHECK"
+    })
+    public ModelAndView accountCheckForO2Client_v3d9(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa,
+            @PathVariable("community") String community) throws Exception {
+
+        // hack for IOS7 users that needs to remove it soon
+        User user = userService.findByNameAndCommunity(userName, community);
+        if(user != null && DeviceType.IOS.equals(user.getDeviceType().getName())){
+            user.setDeviceUID(deviceUID);
+            userService.updateUser(user);
+        }
+        ///
+
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:3\\.[6-9]|[4-5]{1}\\.[0-9]{1,3}}/ACC_CHECK"
@@ -94,7 +146,7 @@ public class AccCheckController extends CommonController {
                 LOGGER.error(e.getMessage(), e);
             }
 
-            mobi.nowtechnologies.server.dto.transport.AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false);
+            AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, false);
 
             return buildModelAndView(accountCheck);
         } catch (Exception e) {
@@ -104,57 +156,6 @@ public class AccCheckController extends CommonController {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community:o2}/{apiVersion:3.9}/ACC_CHECK"
-    })
-    public ModelAndView accountCheckForO2Client_v3d9(
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa,
-            @PathVariable("community") String community) throws Exception {
-
-        // hack for IOS7 users that needs to remove it soon
-        User user = userService.findByNameAndCommunity(userName, community);
-        if(user != null && DeviceType.IOS.equals(user.getDeviceType().getName())){
-            user.setDeviceUID(deviceUID);
-            userService.updateUser(user);
-        }
-        ///
-
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false);
-    }
-
-
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.0}/ACC_CHECK",
-            "**/{community}/{apiVersion:6\\.1}/ACC_CHECK",
-            "**/{community}/{apiVersion:6\\.2}/ACC_CHECK",
-            "**/{community}/{apiVersion:6\\.3}/ACC_CHECK",
-            "**/{community}/{apiVersion:6\\.4}/ACC_CHECK"
-    })
-    public ModelAndView accountCheckWithPossibilityOfReactivation(
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
-            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
-            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
-            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
-            @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
-
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true);
     }
 
 

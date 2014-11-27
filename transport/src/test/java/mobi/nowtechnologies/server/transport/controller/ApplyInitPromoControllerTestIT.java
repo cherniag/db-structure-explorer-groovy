@@ -40,7 +40,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     @Test
-    public void checkApplyInitPromo_Success_LatestVersion() throws Exception {
+    public void checkApplyInitPromo_LatestVersion() throws Exception {
         //given
         String userName = "imei_351722057812748";
         User user = prepareUserForApplyInitPromo(userName);
@@ -115,7 +115,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
         user = userService.findByName(user.getMobile());
@@ -134,7 +134,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_NAME", user.getMobile())
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andDo(print()).
+        ).andExpect(status().isOk()).
                 andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
 
     }
@@ -171,7 +171,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
                         .param("OTAC_TOKEN", otac)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(true));
 
         //when
         user = userService.findByName(user.getMobile());
@@ -190,7 +190,7 @@ public class ApplyInitPromoControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_NAME", user.getMobile())
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
+        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.hasPotentialPromoCodePromotion").value(false));
 
     }
 

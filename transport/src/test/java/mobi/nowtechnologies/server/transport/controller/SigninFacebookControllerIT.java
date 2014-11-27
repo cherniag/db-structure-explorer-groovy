@@ -81,7 +81,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
 
 
     @Test
-    public void testSignUpAndApplyPromoForFacebookForFirstSignUpWithSuccessWithJSON_LatestVersion() throws Exception {
+    public void testSignUpAndApplyPromoForFacebook_LatestVersion() throws Exception {
         final String apiVersion = LATEST_SERVER_API_VERSION;
         String widthHeight = "720x1280";
         setTemplateCustomizer(new FacebookTemplateCustomizerImpl(userName, firstName, lastName, fbUserId, fbEmail, locationFromFacebook, fbToken));

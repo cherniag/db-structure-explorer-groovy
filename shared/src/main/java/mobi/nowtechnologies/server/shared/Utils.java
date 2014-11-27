@@ -16,10 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,6 +108,10 @@ public class Utils {
 
     public static long secondsToMillis(long seconds){
         return SECONDS.toMillis(seconds);
+    }
+
+    public static String getRandomUUID(){
+        return UUID.randomUUID().toString();
     }
 
 	public static long millisToSeconds(long millis){

@@ -53,7 +53,7 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
 
     private Collection<ImageDTO>  findByPrefix(String communityUrl, String fileNameBB) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/images/find").param("prefix", fileNameBB).cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))
+        MvcResult mvcResult = mockMvc.perform(get("/images/find").param("prefix", fileNameBB).cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))
         ).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
         return  mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<Collection<ImageDTO>>() {
@@ -63,7 +63,7 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
     private MvcResult uploadAndWait(String communityUrl, File fileResource, String fileName) throws Exception {
         MvcResult result = mockMvc.perform(post("/streamzine/upload/image").with(buildProcessorForFileUpload("file", fileName, fileResource)).
-                        cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))
+                        cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))
         ).andExpect(status().isOk()).andReturn();
         Thread.sleep(3000);
         return result;
@@ -109,7 +109,7 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
         Collection<ImageDTO> images = findByPrefix(communityUrl, fileNameBB);
         assertEquals(images.size(), 1);
         mockMvc.perform(get("/images/delete").param("fileName", fileNameBB).
-                cookie(getCommunityCoockie(communityUrl)).headers(getHttpHeaders(true))).
+                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
                 andExpect(status().isOk());
         images = findByPrefix(communityUrl, fileNameBB);
         assertEquals(images.size(), 0);

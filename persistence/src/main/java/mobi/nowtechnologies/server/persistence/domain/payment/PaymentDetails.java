@@ -11,10 +11,9 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.*;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -139,6 +138,10 @@ public class PaymentDetails {
 	public boolean isActivated() {
 		return activated;
 	}
+
+    public boolean isDeactivated() {
+        return !isActivated();
+    }
 
 	public String getErrorCode() {
 		return errorCode;

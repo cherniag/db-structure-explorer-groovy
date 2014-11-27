@@ -42,7 +42,7 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
     private VFNZSMSGatewayServiceImpl vfGatewayServiceSpy;
 
     @Test
-    public void testActivatePhoneNumberJson_Success_LatestVersion() throws Exception {
+    public void testActivatePhoneNumber_LatestVersion() throws Exception {
         String userName = "b88106713409e92622461a876abcd74a";
         String phone = "+64279000456";
         String apiVersion = LATEST_SERVER_API_VERSION;

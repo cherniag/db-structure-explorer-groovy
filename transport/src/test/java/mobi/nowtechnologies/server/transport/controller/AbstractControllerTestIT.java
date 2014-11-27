@@ -8,7 +8,6 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.impl.OtacValidationServiceImpl;
 import mobi.nowtechnologies.server.service.impl.details.O2ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl;
@@ -41,7 +40,6 @@ import static mobi.nowtechnologies.server.shared.enums.MessageType.NEWS;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,7 +52,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public abstract class AbstractControllerTestIT {
 
-    public static final String LATEST_SERVER_API_VERSION = "6.4";
+    public static final String LATEST_SERVER_API_VERSION = "6.6";
 
     protected MockMvc mockMvc;
 
@@ -63,9 +61,6 @@ public abstract class AbstractControllerTestIT {
 
     @Autowired
     protected O2ProviderServiceImpl o2ProviderService;
-
-    @Autowired
-    private OtacValidationServiceImpl otacValidationService;
 
     @Autowired
     private ApplyInitPromoController applyInitPromoController;
@@ -106,9 +101,6 @@ public abstract class AbstractControllerTestIT {
     @Resource(name = "chartDetailRepository")
     private ChartDetailRepository chartDetailRepository;
 
-    @Resource(name = "chartRepository")
-    private ChartRepository chartRepository;
-
     @Resource(name = "mediaRepository")
     private MediaRepository mediaRepository;
 
@@ -123,17 +115,9 @@ public abstract class AbstractControllerTestIT {
     private static Message message;
     private static ChartDetail chartDetail;
 
-    @After
-    public void tireDown() {
-        o2ProviderService.setO2Service(o2Service);
-        userService.setMobileProviderService(o2ProviderService);
-        ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
-        sqlTestInitializer.cleanDynamicTestData();
-    }
-
     @Before
     public void setUp() throws Exception {
-        mockMvc = webAppContextSetup(applicationContext).alwaysDo(print()).build();
+        mockMvc = webAppContextSetup(applicationContext).build();
 
         O2ProviderServiceImpl o2ProviderServiceTarget = o2ProviderService;
         o2ProviderServiceSpy = spy(o2ProviderServiceTarget);
@@ -162,6 +146,14 @@ public abstract class AbstractControllerTestIT {
                 .withChannel("HEATSEEKER").withPublishTime(new Date().getTime()));
 
         message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
+    }
+
+    @After
+    public void tireDown() {
+        o2ProviderService.setO2Service(o2Service);
+        userService.setMobileProviderService(o2ProviderService);
+        ReflectionTestUtils.setField(applyInitPromoController, "updateO2UserTask", updateO2UserTaskSpy);
+        sqlTestInitializer.cleanDynamicTestData();
     }
 
 

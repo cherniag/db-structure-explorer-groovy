@@ -12,7 +12,6 @@ import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRe
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -28,10 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
-    @Autowired
+    @Resource
     private ChartRepository chartRepository;
 
-    @Autowired
+    @Resource
     private ChartDetailRepository chartDetailRepository;
 
     @Resource(name = "communityRepository")
@@ -44,27 +43,35 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
     public void testAccCheck_LatestVersion() throws Exception {
         String userName = "+447111111114";
         String apiVersion = LATEST_SERVER_API_VERSION;
-        String communityName = "o2";
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
-        userService.updateUser(user);
+        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        setUserSelectedCharts(user, 5);
 
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
-                        .param("COMMUNITY_NAME", communityName)
+                        .param("COMMUNITY_NAME", communityUrl)
                         .param("USER_NAME", userName)
                         .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).andDo(print());
-
+                        .param("TIMESTAMP", timestamp))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response.data[0].user.userName").value("+447111111114"))
+                .andExpect(jsonPath("$.response.data[0].user.status").value("SUBSCRIBED"))
+                .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
+                .andExpect(jsonPath("$.response.data[0].user.deviceUID").value("b88106713409e92622461a876abcd74b"))
+                .andExpect(jsonPath("$.response.data[0].user.phoneNumber").value("+447111111114"))
+                .andExpect(jsonPath("$.response.data[0].user.userToken").value("f701af8d07e5c95d3f5cf3bd9a62344d"))
+                .andExpect(jsonPath("$.response.data[0].user.nextSubPaymentSeconds").value(1988143200))
+                .andExpect(jsonPath("$.response.data[0].user.activation").value("ACTIVATED"))
+                .andExpect(jsonPath("$.response.data[0].user.provider").value("o2"))
+                .andExpect(jsonPath("$.response.data[0].user.contract").value("PAYM"))
+                .andExpect(jsonPath("$.response.data[0].user.segment").value("CONSUMER"))
+                .andExpect(jsonPath("$.response.data[0].user.tariff").value("_3G"))
+                .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.playlists[0].id").value(5));
     }
 
     @Test
@@ -77,12 +84,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
-        userService.updateUser(user);
+        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        setUserSelectedCharts(user, 5);
+
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
                         .param("COMMUNITY_NAME", communityName)
@@ -105,17 +109,13 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
-        userService.updateUser(user);
+        User user = userService.findByNameAndCommunity(userName, communityUrl);
 
         ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
         reactivationUserInfo.setUser(user);
         reactivationUserInfo.setReactivationRequest(true);
         reactivationUserInfoRepository.save(reactivationUserInfo);
+
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
                         .param("COMMUNITY_NAME", communityName)
@@ -148,12 +148,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
-        userService.updateUser(user);
+        User user = userService.findByNameAndCommunity(userName, communityUrl);
 
         ReactivationUserInfo reactivationUserInfo = new ReactivationUserInfo();
         reactivationUserInfo.setUser(user);
@@ -208,8 +203,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
         String deviceUID = "0f607264fc6318a92b9e13c65db7cd3c";
-
-        userService.findByNameAndCommunity(userName, communityName);
 
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
@@ -269,6 +262,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         User user = userService.findByNameAndCommunity(userName, communityName);
         user.setProvider(NON_VF);
         userService.updateUser(user);
+
         mockMvc.perform(
                 post("/somekey/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
                         .param("USER_NAME", userName)
@@ -459,11 +453,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
         User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
         user.setProvider(null);
         userService.updateUser(user);
 
@@ -490,11 +480,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
         User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
         user.setMobile("1");
         userService.updateUser(user);
 
@@ -521,12 +507,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
-        userService.updateUser(user);
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
                         .param("COMMUNITY_NAME", communityName)
@@ -548,12 +528,6 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        List<Chart> charts = new ArrayList<Chart>();
-        Chart chart = chartRepository.findOne(5);
-        charts.add(chart);
-        User user = userService.findByNameAndCommunity(userName, communityName);
-        user.setSelectedCharts(charts);
-        userService.updateUser(user);
         mockMvc.perform(
                 post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
                         .param("COMMUNITY_NAME", communityName)
@@ -563,5 +537,14 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 andExpect(status().isOk()).
                 andExpect(jsonPath(AccountCheckResponseConstants.USER_JSON_PATH + ".firstActivation").doesNotExist());
     }
+
+    private void setUserSelectedCharts(User user, int selectedChartId) {
+        List<Chart> charts = new ArrayList<Chart>();
+        Chart chart = chartRepository.findOne(selectedChartId);
+        charts.add(chart);
+        user.setSelectedCharts(charts);
+        userService.updateUser(user);
+    }
+
 }
 

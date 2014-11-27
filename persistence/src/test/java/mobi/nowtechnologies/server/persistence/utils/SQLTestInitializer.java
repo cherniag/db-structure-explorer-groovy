@@ -38,6 +38,9 @@ public class SQLTestInitializer {
     @Resource
     private AccountLogRepository accountLogRepository;
 
+    @Resource
+    private AppsFlyerDataRepository appsFlyerDataRepository;
+
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
     }
@@ -94,6 +97,7 @@ public class SQLTestInitializer {
         }
         chartRepository.delete(charts);
 
+        appsFlyerDataRepository.deleteAll();
         drmRepository.deleteAll();
         accountLogRepository.deleteAll();
         reactivationUserInfoRepository.deleteAll();

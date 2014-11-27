@@ -4,14 +4,15 @@ import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-/**
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+// @author Alexander Kolpakov (akolpakov)
 public interface ChartRepository extends JpaRepository<Chart, Integer> {
+
+	@Query("select chart from Chart chart join chart.communities community where community.rewriteUrlParameter=:communityURL and chart.i!=:excludedChartId")
+	List<Chart> getByCommunityURLAndExcludedChartId(@Param("communityURL") String communityURL, @Param("excludedChartId") Integer excludedChartId);
 
 	@Query("select chart from Chart chart join chart.communities community where community.rewriteUrlParameter like ?1 order by chart.name asc")
 	List<Chart> getByCommunityURL(String communityURL);

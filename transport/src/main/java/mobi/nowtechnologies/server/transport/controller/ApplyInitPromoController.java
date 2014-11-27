@@ -26,6 +26,24 @@ public class ApplyInitPromoController extends CommonController {
     @Resource
     private UpdateO2UserTask updateO2UserTask;
 
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.6}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.5}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.4}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.3}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO",
+            "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO"
+    })
+    public ModelAndView applyPromotionWithReactivation(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("OTAC_TOKEN") String token,
+            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID) {
+
+        return applyInitPromoImpl(userName, userToken, timestamp, token, deviceUID, true);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:3\\.[6-9]|[4-5]{1}\\.[0-9]{1,3}}/APPLY_INIT_PROMO"
@@ -38,24 +56,6 @@ public class ApplyInitPromoController extends CommonController {
             @RequestParam(value = "DEVICE_UID", required = false) String deviceUID) {
 
         return applyInitPromoImpl(userName, userToken, timestamp, token, deviceUID, false);
-    }
-
-
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.0}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.1}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.2}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.3}/APPLY_INIT_PROMO",
-            "**/{community}/{apiVersion:6\\.4}/APPLY_INIT_PROMO"
-    })
-    public ModelAndView applyPromotionWithReactivation(
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam("OTAC_TOKEN") String token,
-            @RequestParam(value = "DEVICE_UID", required = false) String deviceUID) {
-
-        return applyInitPromoImpl(userName, userToken, timestamp, token, deviceUID, true);
     }
 
     private ModelAndView applyInitPromoImpl(String userName, String userToken, String timestamp, String token, String deviceUID, boolean checkReactivation) {

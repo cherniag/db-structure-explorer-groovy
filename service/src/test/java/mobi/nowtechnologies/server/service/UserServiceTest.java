@@ -143,6 +143,8 @@ public class UserServiceTest {
     private Answer userWithPromoAnswer;
     private Answer userWithoutPromoAnswer;
     private DeviceUserDataService deviceUserDataService;
+    @Mock
+    private AppsFlyerDataService appsFlyerDataService;
 
     @Before
     public void setUp() throws Exception {
@@ -220,6 +222,7 @@ public class UserServiceTest {
         userServiceSpy.setTaskService(taskService);
         userServiceSpy.setAutoOptInRuleService(autoOptInRuleServiceMock);
         userServiceSpy.setDeviceUserDataService(deviceUserDataService);
+        userServiceSpy.setAppsFlyerDataService(appsFlyerDataService);
 
         PowerMockito.mockStatic(UserStatusDao.class);
 
@@ -1178,7 +1181,7 @@ public class UserServiceTest {
         assertNotNull(actualUser);
         assertThat(actualUser, is(expectedUser));
 
-        verify(userRepositoryMock, times(2)).save(any(User.class));
+        verify(userRepositoryMock, times(1)).save(any(User.class));
         verify(userRepositoryMock, times(1)).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
@@ -1209,7 +1212,7 @@ public class UserServiceTest {
 
 		verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
-		verify(userRepositoryMock, times(2)).save(any(User.class));
+		verify(userRepositoryMock, times(1)).save(any(User.class));
 		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(anyInt());
 		verifyStatic(times(1));
 		createStoredToken(anyString(), anyString());
@@ -3152,6 +3155,7 @@ public class UserServiceTest {
         verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
         verify(userRepositoryMock, times(1)).save(oldUser);
         verify(accountLogServiceMock, times(1)).logAccountMergeEvent(oldUser, currentUser);
+        verify(appsFlyerDataService, times(1)).mergeAppsFlyerData(currentUser, oldUser);
     }
 
     @Test(expected = NullPointerException.class)
@@ -3372,6 +3376,7 @@ public class UserServiceTest {
         verify(promotionServiceMock, times(1)).applyPromotionByPromoCode(mobileUser, promotion);
         verify(paymentDetailsServiceMock, times(1)).createDefaultO2PsmsPaymentDetails(mobileUser);
         verify(userRepositoryMock, times(2)).save(mobileUser);
+        verify(appsFlyerDataService, times(1)).mergeAppsFlyerData(deviceUIdUser, mobileUser);
     }
 
     @Test

@@ -56,22 +56,26 @@ public abstract class ClientDevicesSet {
     // Sign up
     //
     public void singup(UserDeviceData deviceData) {
-        singup(deviceData, null, false, userDataCreator.generateDeviceUID());
+        singup(deviceData, null, null, false, userDataCreator.generateDeviceUID());
     }
 
     public void singupWithOtherDevice(UserDeviceData userData, UserDeviceData otherDeviceData) {
-        singup(userData, null, true, states.get(otherDeviceData).deviceUID);
+        singup(userData, null, null, true, states.get(otherDeviceData).deviceUID);
     }
 
     public void singupWithNewDevice(UserDeviceData deviceData) {
-        singup(deviceData, null, true, userDataCreator.generateDeviceUID());
+        singup(deviceData, null, null, true, userDataCreator.generateDeviceUID());
     }
 
     public void singup(UserDeviceData deviceData, String xtifyToken) {
-        singup(deviceData, xtifyToken, true, userDataCreator.generateDeviceUID());
+        singup(deviceData, xtifyToken, xtifyToken, true, userDataCreator.generateDeviceUID());
     }
 
-    public void singup(UserDeviceData deviceData, String xtifyToken, boolean overrideDeviceUID, String deviceUID) {
+    public void singupWithAppsFlyer(UserDeviceData deviceData, String appsFlyerUid) {
+        singup(deviceData, null, appsFlyerUid, true, userDataCreator.generateDeviceUID());
+    }
+
+    public void singup(UserDeviceData deviceData, String xtifyToken, String appsFlyerUid, boolean overrideDeviceUID, String deviceUID) {
         PhoneStateImpl state = states.get(deviceData);
 
         // signup device could be called twice for the same device when user changes the phone (different device uid or changes the api version)
@@ -86,7 +90,7 @@ public abstract class ClientDevicesSet {
         }
 
         state.lastSentXTofyToken = xtifyToken;
-        state.accountCheck = signupHttpService.signUp(deviceData, state.getDeviceUID(), deviceData.getFormat(), xtifyToken);
+        state.accountCheck = signupHttpService.signUp(deviceData, state.getDeviceUID(), deviceData.getFormat(), xtifyToken, appsFlyerUid);
 
     }
 
