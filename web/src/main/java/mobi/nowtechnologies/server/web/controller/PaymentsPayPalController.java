@@ -84,9 +84,18 @@ public class PaymentsPayPalController extends CommonController {
             Collection<SocialInfo> socialInfo = user.getSocialInfo();
             Assert.isTrue(!socialInfo.isEmpty(), "No social info for " + user.getId());
             SocialInfo first = socialInfo.iterator().next();
-            modelAndModel.addObject("customerName", first.getFirstName());
+            modelAndModel.addObject("customerName", getFormattedName(first));
             modelAndModel.addObject("customerAvatar", first.getAvatarUrl());
         }
+    }
+
+    private String getFormattedName(SocialInfo socialInfo) {
+        final int maxLength = 15;
+        String customerName = socialInfo.getFirstName();
+        if(customerName.length() > maxLength) {
+            customerName = customerName.substring(0, maxLength) + "...";
+        }
+        return customerName.toUpperCase();
     }
 
     @RequestMapping(value = PAGE_PAYMENTS_START_PAYPAL, method = RequestMethod.GET)

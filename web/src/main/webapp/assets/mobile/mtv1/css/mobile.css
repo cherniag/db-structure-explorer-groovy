@@ -568,7 +568,7 @@ body {
 }
 
 .go-premium-success-close-button-container {
-     position: absolute;
+    position: absolute;
 }
 
 
@@ -902,9 +902,9 @@ body {
 
 @media all and (max-width: 480px) {
     .go-premium-button-close-device {
-        width: 36px;
-        height: 36px;
-        margin: 10px;
+        width: 28px;
+        height: 28px;
+        margin: 22px 18px 18px;
     }
 
     .go-premium-container-device {
@@ -912,33 +912,34 @@ body {
     }
 
     .go-premium-text-message-device {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 100%;
     }
 
     .go-premium-body-title-device {
-        font-size: 30px;
-        margin: 10px auto 10px;
+        font-size: 28px;
+        margin: 26px auto 18px;
     }
 
     .go-premium-button-device {
         padding: 14px 60px 14px 60px;
-        font-size: 22px;
+        font-size: 20px;
         border-radius: 40px;
     }
 
     .go-premium-header-delimiter {
         width: 100%;
         height: 9px;
-        background: url(../imgs/dot_1200x3.png) no-repeat;
+        background: url(../imgs/dot_1200x9.png) no-repeat;
+        background-size: 120%;
         margin-top: 30px;
         margin-bottom: 30px;
     }
 
     .go-premium-unsubscribe-banner-device {
         margin-top: 10px;
-        width: 89px;
-        height: 143px;
+        width: 78px;
+        height: 125px;
     }
 
     .go-premium-body-button-up {
@@ -951,7 +952,7 @@ body {
 
     .go-premium-header-hint-device {
         font-size: 16px;
-        line-height: 120%;
+        line-height: 200%;
     }
 
     .go-premium-header-price-device {
@@ -970,8 +971,8 @@ body {
     }
 
     .go-premium-text-message-wrapper-device {
-        width: 100%;
-        margin: 0 auto;
+        width: 90%;
+        margin: 0 auto 30px;
     }
 
     .go-premium-success-solutation-container-device {
@@ -979,11 +980,11 @@ body {
     }
     .go-premium-success-ad-text-1-device {
         padding: 4px;
-        font-size: 30px;
+        font-size: 20px;
     }
     .go-premium-success-ad-text-2-device {
         padding: 4px;
-        font-size: 30px;
+        font-size: 20px;
     }
     .go-premium-success-solutation-device {
         padding: 7px;
@@ -1004,13 +1005,39 @@ body {
         margin-top:10px;
     }
 
+    .go-premium-success-avatar-container {
+        width: 100%;
+        height: 200px;
+        margin: -105px auto 0;
+        position: absolute;
+    }
+
+    .go-premium-success-avatar {
+        width: 200px;
+        margin: 0 auto;
+        height: 100%;
+    }
+
+    .go-premium-success-avatar-customer {
+        width: 150px;
+        height: 150px;
+        margin-top: 25px;
+        margin-left: 25px;
+        border-radius: 75px;
+    }
+
+    .go-premium-success-avatar-border {
+        width: 200px;
+        height: 200px;
+        margin-top: -175px;
+    }
 }
 
 @media all and (max-width: 320px) {
     .go-premium-button-close-device {
-        width: 24px;
-        height: 24px;
-        margin: 0;
+        width: 22px;
+        height: 22px;
+        margin: 5px;
     }
 
     .go-premium-container-device {
@@ -1024,35 +1051,37 @@ body {
 
     .go-premium-body-title-device {
         font-size: 20px;
-        margin: 8px auto 8px;
+        margin: 24px auto 6px;
     }
 
     .go-premium-button-device {
-        padding: 16px;
-        font-size: 18px;
-        border-radius: 32px;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 24px;
     }
 
     .go-premium-header-delimiter {
         width: 100%;
-        height: 9px;
-        background: url(../imgs/dot_1200x3.png) no-repeat;
+        height: 6px;
+        background: url(../imgs/dot_1200x6.png) no-repeat;
+        background-size: 200%;
         margin-top: 30px;
         margin-bottom: 30px;
     }
 
     .go-premium-unsubscribe-banner-device {
-        margin-top: 0;
-        width: 71px;
-        height: 114px;
+        margin-top: 16px;
+        margin-bottom: 0px;
+        width: 62px;
+        height: 100px;
     }
 
     .go-premium-body-button-up {
-        margin: 12px 26px 0 26px;
+        margin: 13px 26px 0 26px;
     }
 
     .go-premium-body-button-below {
-        margin: 12px 26px 0 26px;
+        margin: 13px 26px 0 26px;
     }
 
     .go-premium-header-hint-device {
