@@ -22,7 +22,7 @@
     <div class="go-premium-success-avatar-container">
         <div class="go-premium-success-avatar">
             <div class="go-premium-success-avatar-customer">
-                <img src="${customerAvatar}" style="display:block;" onload="adjustImage(this, 200)"/>
+                <img src="${customerAvatar}" style="display:block;" onload="adjustImage(this, this.parentNode.clientWidth)"/>
             </div>
             <img src="${pageContext.request.contextPath}/assets/mobile/mtv1/imgs/img_stars_no_border.png" class="go-premium-success-avatar-border" />
         </div>
