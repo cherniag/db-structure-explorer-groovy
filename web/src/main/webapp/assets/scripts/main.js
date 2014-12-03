@@ -27,11 +27,11 @@ function adjustImage(img, placeholderDim) {
         if(img.height < img.width) {
             img.height = scale * min;
             // center image
-            //img.style.marginLeft= (img.height - img.width) / 2 + "px";
+            //img.style.marginLeft = (img.height - img.width) / 2 + "px";
         } else {
             img.width = scale * min;
             // center image
-            //img.style.marginTop= (img.width - img.height) / 2 + "px";
+            //img.style.marginTop = (img.width - img.height) / 2 + "px";
         }
     }
 }
@@ -62,16 +62,6 @@ function showHideBox(id, id2) {
 			document.getElementById(id2).style.display = 'none';
 		}
 	}
-}
-
-function getInfo(){
-   var hrefs = document.getElementsByTagName('link');
-    var resultString = "css:\n";
-    for (var i = 0; i < hrefs.length; i++) {
-        resultString +=hrefs[i].href + "\n";
-    }
-    resultString+="window.innerWidth: " + window.innerWidth + " window.innerHeight: "  +  window.innerHeight + "\n";
-    document.getElementById("info").innerHTML = resultString;
 }
 
 var simpleDialogOptions={opacity:100, overlayClose:true};
