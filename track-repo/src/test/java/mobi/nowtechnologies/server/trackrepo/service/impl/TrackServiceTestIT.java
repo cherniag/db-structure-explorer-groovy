@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import mobi.nowtechnologies.server.service.CloudFileService;
-import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoITTest;
+import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoIT;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class TrackServiceTestIT extends AbstractTrackRepoITTest{
+public class TrackServiceTestIT extends AbstractTrackRepoIT {
 	private final String DEFAULT_FILE_NAME = "work/APPCASTP_777.m4a";
 
 	@Resource(name = "trackRepo.TrackServiceStub")

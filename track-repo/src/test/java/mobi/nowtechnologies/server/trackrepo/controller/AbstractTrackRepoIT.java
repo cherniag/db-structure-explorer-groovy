@@ -15,9 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-/**
- * Created by oar on 2/5/14.
- */
+// Created by oar on 2/5/14.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextHierarchy({
         @ContextConfiguration(value = "classpath:META-INF/application-test.xml", initializers = TrackRepoEnvironmentInitializer.class),
@@ -27,10 +25,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 @TransactionConfiguration(transactionManager = "trackRepo.TransactionManager", defaultRollback = true)
 @Transactional
-public abstract class AbstractTrackRepoITTest {
+public abstract class AbstractTrackRepoIT {
 
-    @Autowired
-    private WebApplicationContext applicationContext;
+    @Autowired WebApplicationContext applicationContext;
 
     protected MockMvc mockMvc;
 

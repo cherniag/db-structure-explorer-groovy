@@ -20,11 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TrackRepoControllerIT extends AbstractAdminITTest {
 
-/*
-    @Autowired
-    private TrackRepository trackRepository;
-    */
-
     @Test
     @Ignore
     public void verifyThatTrackCanBeFetchedByGenre() throws Exception {

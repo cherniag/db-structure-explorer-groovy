@@ -20,15 +20,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+// @author Alexander Kolpakov (akolpakov)
 @Controller
 public class FileController extends AbstractCommonController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
-	private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB
+	private static final int DEFAULT_BUFFER_SIZE_BYTES = 10240; // 10KB
 	
 	private FileService fileService;
 
@@ -40,23 +36,19 @@ public class FileController extends AbstractCommonController{
 	public void file(@RequestParam("id") Long id, HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			AssetFile file = fileService.getFile(id);
-//			LOGGER.info("file [id:{}, assetFile:{}]", id, file);
 			if (file == null)
 				return;
 			File respFile = new File(file.getPath());
-//			File respFile = new File(mockFile(file));
 
             String contentType = file.getPath().endsWith("wav") ? "audio/wav" : AssetFileDto.toFileType(file.getType()).getMime();
 
             stream(respFile, contentType, req, resp);
-//			stream(respFile, AssetFileDto.toFileType(file.getType()).getMime(), req, resp);
 		} catch (Exception e) {
 			LOGGER.error("Can't send file", e);
 		}
 	}
 	
 	public void stream(File file, String contentType, HttpServletRequest req, HttpServletResponse resp) {
-
 		long[] range = parseRange(req, file.length());
 		long start = range[0];
 		long end = range[1];
@@ -80,7 +72,6 @@ public class FileController extends AbstractCommonController{
 				IOUtils.closeQuietly(out);
 			}
 		}
-
 	}
 	
 	private long[] parseRange(HttpServletRequest request, long fileLength){
@@ -105,7 +96,7 @@ public class FileController extends AbstractCommonController{
 	}
 	
 	private static void copy(RandomAccessFile input, OutputStream output, long start, long length) throws IOException {
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE_BYTES];
 		int read;
 
 		if (input.length() == length) {
@@ -128,12 +119,4 @@ public class FileController extends AbstractCommonController{
 			}
 		}
 	}
-	
-//	private String mockFile(AssetFile asset){
-//		if(FileType.DOWNLOAD.equals(asset.getType()))
-//			return "/Users/denis/Downloads/tmp/_test.mp3";		
-//		if(FileType.IMAGE.equals(asset.getType()))
-//			return "/Users/denis/Downloads/tmp/1323834.xlarge.jpeg";
-//		return asset.getPath();
-//	}
 }

@@ -10,4 +10,6 @@ public interface CommunityService {
 	Community getCommunityByName(String communityName);
 	
 	List<Community> list();
+
+	List<Community> getLiveCommunities();
 }

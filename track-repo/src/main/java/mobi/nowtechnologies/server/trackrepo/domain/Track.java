@@ -1,125 +1,130 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
+import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.InheritanceType.JOINED;
+import static javax.persistence.TemporalType.DATE;
 import static mobi.nowtechnologies.common.util.TrackIdGenerator.buildUniqueTrackId;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.trackrepo.enums.AudioResolution.RATE_ORIGINAL;
+import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.REPORTED_BY_TAGS;
+import static mobi.nowtechnologies.server.trackrepo.enums.TrackStatus.NONE;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+// @author Alexander Kolpakov (akolpakov)
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = JOINED)
 public class Track extends AbstractEntity {
-	//------------basic properties----------------//
-	@Basic(optional=false)
-	@Column(name="Ingestor")
+
+	@Column(name="Ingestor", nullable = false)
 	protected String ingestor;
-	@Basic(optional=false)
-	@Column(name="ISRC")
+
+	@Column(name="ISRC", nullable = false)
 	protected String isrc;
-	@Basic(optional=false)
-	@Column(name="Title")
+
+	@Column(name="Title", nullable = false)
 	protected String title;
-	@Basic(optional=false)
-	@Column(name="Artist")
-	protected String artist;	
-	@Temporal(TemporalType.DATE)
-	@Basic(optional=false)
-	@Column(name="IngestionDate")
+
+	@Column(name="Artist", nullable = false)
+	protected String artist;
+
+	@Temporal(DATE)
+	@Column(name="IngestionDate", nullable = false)
 	protected Date ingestionDate;
-	@Basic(optional=false)
-	@Enumerated(EnumType.STRING)
+
+	@Enumerated(STRING)
+	@Column(nullable = false)
 	protected TrackStatus status;
-    @Basic(optional=false)
-    @Enumerated(EnumType.STRING)
-    protected AssetFile.FileType mediaType;
+
+    @Enumerated(STRING)
+	@Column(nullable = false)
+    protected FileType mediaType;
 	
-	//-------------optional properties---------------//
-	@Basic(optional=true)
 	@Column(name="SubTitle")
 	protected String subTitle;
-	@Basic(optional=true)
+
 	@Column(name="ProductId")
 	protected String productId;
-	@Basic(optional=true)
+
 	@Column(name="ProductCode")
 	protected String productCode;
-	@Basic(optional=true)
+
 	@Column(name="Genre")
 	protected String genre;
-	@Basic(optional=true)
+
 	@Column(name="Copyright", length=1024)
 	protected String copyright;
-	@Basic(optional=true)
+
 	@Column(name="Year")
 	protected String year;	
-	@Basic(optional=true)
+
 	@Column(name="Album")
 	protected String album;	
-	@Basic(optional=true)
+
 	@Column(name="Info")
 	protected String info;	
-	@Basic(optional=true)
+
 	@Column(name="Licensed")
 	protected Boolean licensed;
-    @Basic(optional=true)
+
 	@Column(name="explicit")
 	protected Boolean explicit;
-	@Temporal(TemporalType.DATE)
-	@Basic(optional=true)
+
+	@Temporal(DATE)
 	@Column(name="IngestionUpdateDate")
-	protected Date ingestionUpdateDate;	
-	@Temporal(TemporalType.DATE)
-	@Basic(optional=true)
+	protected Date ingestionUpdateDate;
+
+	@Temporal(DATE)
 	@Column(name="PublishDate")
 	protected Date publishDate;
 	
     @Column(name="Xml", columnDefinition="LONGBLOB")
-	@Lob()
+	@Lob
 	protected byte[] xml;	
 
-	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY)
+	@OneToMany(cascade= ALL)
     @JoinColumn(name="TrackId") 
 	@Column(name="Territories")
 	protected Set<Territory> territories; 
 
-	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY)
+	@OneToMany(cascade= ALL)
     @JoinColumn(name="TrackId")
 	@Column(name="Files")
 	protected Set<AssetFile> files;
 	
-	@Basic(optional=true)
-	@Enumerated(EnumType.STRING)
-	protected AudioResolution resolution; 
+	@Enumerated(STRING)
+	protected AudioResolution resolution;
+
 	protected String itunesUrl;
+
 	protected String amazonUrl;
 
-    @Basic(optional=true)
     @Column(name="territoryCodes", length=1024)
     protected String territoryCodes;
 
-    @Basic(optional=true)
     @Column(name="label")
     protected String label;
 
-    @Temporal(TemporalType.DATE)
-    @Basic(optional=true)
+    @Temporal(DATE)
     @Column(name="releaseDate")
     protected Date releaseDate;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="mediaFile")
     protected AssetFile mediaFile;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="coverFile")
     protected AssetFile coverFile;
 
@@ -129,10 +134,16 @@ public class Track extends AbstractEntity {
     @Column(name = "mediaFile", insertable = false, updatable = false)
     private Long mediaFileId;
 
-	public Track()
-	{
-		status = TrackStatus.NONE;
-		resolution = AudioResolution.RATE_ORIGINAL;
+	@Enumerated(STRING)
+	@Column(nullable = false)
+	private ReportingType reportingType = REPORTED_BY_TAGS;
+
+	@OneToMany(mappedBy = "track", fetch = EAGER, cascade = ALL, orphanRemoval = true)
+	private Set<NegativeTag> negativeTags;
+
+	public Track() {
+		status = NONE;
+		resolution = RATE_ORIGINAL;
 	}
 
 	public String getIngestor() {
@@ -319,44 +330,27 @@ public class Track extends AbstractEntity {
 		this.amazonUrl = amazonUrl;
 	}
 
-	public String getFileName(AssetFile.FileType type) {
-		if(files != null)
-		{
+	public String getFileName(FileType type) {
+		if(files != null) {
 			for (AssetFile file : files) {
 				if (file.getType() == type) {
 					return file.getPath();
 				}
 			}
 		}
-		
 		return "";
 	}
 
-    public AssetFile getFile(AssetFile.FileType type) {
-        if(files != null)
-        {
+    public AssetFile getFile(FileType type) {
+        if(files != null) {
             for (AssetFile file : files) {
                 if (file.getType() == type) {
                     return file;
                 }
             }
         }
-
         return null;
     }
-	
-	public Long getFileId(AssetFile.FileType type) {
-		if(files != null)
-		{
-			for (AssetFile file : files) {
-				if (file.getType() == type) {
-					return file.getId();
-				}
-			}
-		}
-		
-		return null;
-	}
 	
 	public Territory getValidTerritory(String country) {
 		Set<Territory> territories = this.getTerritories();
@@ -450,42 +444,115 @@ public class Track extends AbstractEntity {
         return mediaFileId;
     }
 
-    public AssetFile.FileType getMediaType() {
+    public FileType getMediaType() {
         return mediaType;
     }
 
-    public void setMediaType(AssetFile.FileType mediaType) {
+    public void setMediaType(FileType mediaType) {
         this.mediaType = mediaType;
     }
 
-    @Override
-    public String toString() {
-        return "Track{" +
-                "ingestor='" + ingestor + '\'' +
-                ", isrc='" + isrc + '\'' +
-                ", title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
-                ", ingestionDate=" + ingestionDate +
-                ", status=" + status +
-                ", subTitle='" + subTitle + '\'' +
-                ", productId='" + productId + '\'' +
-                ", productCode='" + productCode + '\'' +
-                ", genre='" + genre + '\'' +
-                ", copyright='" + copyright + '\'' +
-                ", year='" + year + '\'' +
-                ", album='" + album + '\'' +
-                ", info='" + info + '\'' +
-                ", licensed=" + licensed +
-                ", explicit=" + explicit +
-                ", ingestionUpdateDate=" + ingestionUpdateDate +
-                ", publishDate=" + publishDate +
-//                ", xml=" + Arrays.toString(xml) +
-                ", resolution=" + resolution +
-                ", itunesUrl='" + itunesUrl + '\'' +
-                ", territoryCodes='" + territoryCodes + '\'' +
-                ", label='" + label + '\'' +
-                ", startDate=" + releaseDate +
-                ", mediaType=" + mediaType +
-                "} " + super.toString();
-    }
+	public ReportingType getReportingType() {
+		return reportingType;
+	}
+
+	public void setReportingType(ReportingType reportingType) {
+		this.reportingType = reportingType;
+	}
+
+	public Set<NegativeTag> getNegativeTags() {
+		return negativeTags;
+	}
+
+	public void setNegativeTags(Set<NegativeTag> negativeTags) {
+		this.negativeTags = negativeTags;
+	}
+
+	public Track withIngestor(String ingestor){
+		this.ingestor = ingestor;
+		return this;
+	}
+
+	public Track withIsrc(String isrc){
+		this.isrc = isrc;
+		return this;
+	}
+
+	public Track withTitle(String title){
+		this.title = title;
+		return this;
+	}
+
+	public Track withArtist(String artist){
+		this.artist = artist;
+		return this;
+	}
+
+	public Track withIngestionDate(Date ingestionDate){
+		this.ingestionDate = ingestionDate;
+		return this;
+	}
+
+	public Track withMediaType(FileType mediaType){
+		this.mediaType = mediaType;
+		return this;
+	}
+
+	public Track withNegativeTags(Set<NegativeTag> negativeTags){
+		this.negativeTags = negativeTags;
+		if(isNotNull(negativeTags)){
+			for (NegativeTag negativeTag : negativeTags) {
+				negativeTag.setTrack(this);
+			}
+		}
+		return this;
+	}
+
+	public Track assignNegativeTags(Set<String> negativeTagSet) {
+		negativeTags.clear();
+
+		for (String negativeTagString : negativeTagSet) {
+			NegativeTag negativeTag = new NegativeTag();
+			negativeTag.setTag(negativeTagString);
+			negativeTag.setTrack(this);
+
+			negativeTags.add(negativeTag);
+		}
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.appendSuper(super.toString())
+				.append("ingestor", ingestor)
+				.append("isrc", isrc)
+				.append("title", title)
+				.append("artist", artist)
+				.append("ingestionDate", ingestionDate)
+				.append("status", status)
+				.append("mediaType", mediaType)
+				.append("subTitle", subTitle)
+				.append("productId", productId)
+				.append("productCode", productCode)
+				.append("genre", genre)
+				.append("copyright", copyright)
+				.append("year", year)
+				.append("album", album)
+				.append("info", info)
+				.append("licensed", licensed)
+				.append("explicit", explicit)
+				.append("ingestionUpdateDate", ingestionUpdateDate)
+				.append("publishDate", publishDate)
+				.append("resolution", resolution)
+				.append("itunesUrl", itunesUrl)
+				.append("amazonUrl", amazonUrl)
+				.append("territoryCodes", territoryCodes)
+				.append("label", label)
+				.append("releaseDate", releaseDate)
+				.append("coverFileId", coverFileId)
+				.append("mediaFileId", mediaFileId)
+				.append("reportingType", reportingType)
+				.toString();
+	}
 }

@@ -7,10 +7,6 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<!--
-		DispatcherServlet Context: defines this servlet's request-processing
-		infrastructure
-	-->
     <!-- Application properties     -->
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -50,10 +46,6 @@
 		        <property name="useCacheControlNoStore" value="true"/>
 		    </bean>
 		</mvc:interceptor>
-		
-		<!--<bean class="mobi.nowtechnologies.server.shared.web.interceptor.LoggerInterceptor" >-->
-            <!--<property name="userService" ref="service.UserService"/>-->
-        <!--</bean>-->
 	</mvc:interceptors>
 	
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
@@ -70,9 +62,6 @@
 		  </bean>
 		 </list>
 	  </property>
-	  <!-- 
-	  <property name="ignoreAcceptHeader" value="true" />
-	   -->
 	</bean>
 	
 	<import resource="trackrepo-controllers.xml" />

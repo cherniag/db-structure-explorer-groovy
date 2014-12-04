@@ -1,5 +1,8 @@
 package mobi.nowtechnologies.server.admin.controller;
 
+import mobi.nowtechnologies.server.dto.CommunityDto;
+import mobi.nowtechnologies.server.dto.asm.CommunityDtoAsm;
+import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
@@ -8,7 +11,6 @@ import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -18,41 +20,47 @@ import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.ArrayList;
-
-import java.util.Arrays;
-import java.util.Collections;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
+
+import static mobi.nowtechnologies.server.shared.dto.PageListDto.PAGE_LIST_DTO;
+import static mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto.ACTION;
+import static mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto.INGEST_WIZARD_DATA_DTO;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class TrackRepoController extends AbstractCommonController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoController.class);
+
 	public static final String TRACK_REPO_FILES_URL = "trackRepoFilesURL";
     private static final int DEFAULT_EXECUTOR_TIMEOUT = 60000;
-	
-	private TrackRepoService trackRepoService;
+
+    @Resource(name = "service.communityService") private CommunityService communityService;
+    @Resource private CommunityDtoAsm communityDtoAsm;
+    private TrackRepoService trackRepoService;
+
+    private String trackRepoUrl;
 	private String trackRepoFilesURL;
     private Integer executorTimeout = DEFAULT_EXECUTOR_TIMEOUT;
-	
+
 	public void setTrackRepoService(TrackRepoService trackRepoService) {
 		this.trackRepoService = trackRepoService;
 	}
 
-	public void setTrackRepoFilesURL(String trackRepoFilesURL) {
+    public void setTrackRepoUrl(String trackRepoUrl) {
+        this.trackRepoUrl = trackRepoUrl;
+    }
+
+    public void setTrackRepoFilesURL(String trackRepoFilesURL) {
 		this.trackRepoFilesURL = trackRepoFilesURL;
 	}
 
@@ -66,12 +74,22 @@ public class TrackRepoController extends AbstractCommonController{
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(URL_DATE_FORMAT), true));
 	}
 
-    @InitBinder({IngestWizardDataDto.INGEST_WIZARD_DATA_DTO})
+    @InitBinder({INGEST_WIZARD_DATA_DTO})
     public void initBinderForIngestWizardDataDto(WebDataBinder binder) {
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
     }
 
-	@RequestMapping(value = "/tracks/list", method = RequestMethod.GET)
+    @ModelAttribute("trackRepoReportingOptionsUrl")
+    public String getTrackRepoReportingOptionsUrl() {
+        return UriComponentsBuilder.fromUriString(trackRepoUrl).path("/").path("reportingOptions").build().toUriString();
+    }
+
+    @ModelAttribute("liveCommunities")
+    public List<CommunityDto> getLiveCommunities(){
+        return communityDtoAsm.toCommunityDtos(communityService.getLiveCommunities());
+    }
+
+	@RequestMapping(value = "/tracks/list", method = GET)
 	public ModelAndView findTracks(@RequestParam(value = "query", required = false) String query,
                                    @ModelAttribute(SearchTrackDto.SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto,
                                    BindingResult bindingResult,
@@ -84,7 +102,7 @@ public class TrackRepoController extends AbstractCommonController{
         } else {
 			PageListDto<TrackDto> tracks =  query != null ? trackRepoService.find(query, pageable) : trackRepoService.find(searchTrackDto, pageable);
 
-			modelAndView.addObject(PageListDto.PAGE_LIST_DTO, tracks);
+			modelAndView.addObject(PAGE_LIST_DTO, tracks);
             modelAndView.addObject("mediaType", searchTrackDto.getMediaType());
 			modelAndView.addObject(TRACK_REPO_FILES_URL, trackRepoFilesURL);
 		}
@@ -93,9 +111,9 @@ public class TrackRepoController extends AbstractCommonController{
 		return modelAndView ;
 	}
 	
-	@RequestMapping(value = "/tracks/encode", method = RequestMethod.POST)
+	@RequestMapping(value = "/tracks/encode", method = POST)
 	public @ResponseBody WebAsyncTask<TrackDto> encodeTrack(final @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
-		LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[] { track });
+		LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[]{track});
 
         WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
@@ -117,7 +135,7 @@ public class TrackRepoController extends AbstractCommonController{
 		return encodeTask;
 	}
 
-    @RequestMapping(value = "/tracks/encode2", method = RequestMethod.POST)
+    @RequestMapping(value = "/tracks/encode2", method = POST)
       public @ResponseBody Callable<String> encodeTrack2(@RequestParam Map<String, String> params) {
 
         final List<TrackDto> tracks = mapParamsToTracks(params);
@@ -159,7 +177,7 @@ public class TrackRepoController extends AbstractCommonController{
         };
     }
 	
-	@RequestMapping(value = "/tracks/pull", method = RequestMethod.POST)
+	@RequestMapping(value = "/tracks/pull", method = POST)
 	public @ResponseBody WebAsyncTask<TrackDto> pullTrack(final @Valid @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
 		LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[] { track });
 
@@ -167,9 +185,9 @@ public class TrackRepoController extends AbstractCommonController{
             @Override
             public TrackDto call() throws Exception {
             	try{
-            		LOGGER.info("Start WebAsyncTask: pullig track with id {}", track.getId());
+            		LOGGER.info("Start WebAsyncTask: pulling track with id {}", track.getId());
             		TrackDto ret = trackRepoService.pull(track);
-            		LOGGER.info("Finish WebAsyncTask: pullig track with id {}", track.getId());
+            		LOGGER.info("Finish WebAsyncTask: pulling track with id {}", track.getId());
             		return ret;
             	}catch(Exception e){
             		LOGGER.error("Error while pulling track with ID " + track.getId() + ": " + e.getMessage(), e);
@@ -190,47 +208,47 @@ public class TrackRepoController extends AbstractCommonController{
 		return pullTask;
 	}
 
-	@RequestMapping(value = "/drops", method = RequestMethod.GET)
+	@RequestMapping(value = "/drops", method = GET)
 	public ModelAndView getDrops(@RequestParam(value="ingestors", required=false) String[] ingestors) {
 		LOGGER.debug("input getDrops({}) request", Arrays.toString(ingestors));
 
 		IngestWizardDataDto data = trackRepoService.getDrops(ingestors);
 
 		ModelAndView modelAndView = new ModelAndView("tracks/drops");
-		modelAndView.addObject(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO, data);
-		modelAndView.addObject(IngestWizardDataDto.ACTION, "/drops/select");
+		modelAndView.addObject(INGEST_WIZARD_DATA_DTO, data);
+		modelAndView.addObject(ACTION, "/drops/select");
 
 		return modelAndView;
 	}
 
-    @RequestMapping(value = "/drops/select", method = RequestMethod.POST)
-    public ModelAndView selectDrops(@Valid @ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
+    @RequestMapping(value = "/drops/select", method = POST)
+    public ModelAndView selectDrops(@Valid @ModelAttribute(INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
         LOGGER.debug("input selectDrops(data) request, [{}]", new Object[] { data });
 
         data = trackRepoService.selectDrops(data);
 
         ModelAndView modelAndView = new ModelAndView("tracks/drops");
-        modelAndView.addObject(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO, data);
-        modelAndView.addObject(IngestWizardDataDto.ACTION, "/drops/tracks/select");
+        modelAndView.addObject(INGEST_WIZARD_DATA_DTO, data);
+        modelAndView.addObject(ACTION, "/drops/tracks/select");
 
         return modelAndView;
     }
 
-    @RequestMapping(value = "/drops/tracks/select", method = RequestMethod.POST)
-    public ModelAndView selectTrackDrops(@Valid @ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
+    @RequestMapping(value = "/drops/tracks/select", method = POST)
+    public ModelAndView selectTrackDrops(@Valid @ModelAttribute(INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
         LOGGER.debug("input selectDrops(data) request, [{}]", new Object[] { data });
 
         data = trackRepoService.selectTrackDrops(data);
 
         ModelAndView modelAndView = new ModelAndView("tracks/drops");
-        modelAndView.addObject(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO, data);
-        modelAndView.addObject(IngestWizardDataDto.ACTION, "/drops/commit");
+        modelAndView.addObject(INGEST_WIZARD_DATA_DTO, data);
+        modelAndView.addObject(ACTION, "/drops/commit");
 
         return modelAndView;
     }
 
-    @RequestMapping(value = "/drops/commit", method = RequestMethod.POST)
-    public ModelAndView commitDrops(@Valid @ModelAttribute(IngestWizardDataDto.INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
+    @RequestMapping(value = "/drops/commit", method = POST)
+    public ModelAndView commitDrops(@Valid @ModelAttribute(INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
         LOGGER.debug("input commitDrops(data) request, [{}]", new Object[] { data });
 
         trackRepoService.commitDrops(data);

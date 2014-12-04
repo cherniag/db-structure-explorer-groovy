@@ -1,20 +1,20 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+import static javax.persistence.GenerationType.AUTO;
+
+// @author Alexander Kolpakov (akolpakov)
 @MappedSuperclass
 public abstract class AbstractEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = AUTO)
 	protected Long id;
 
 	public Long getId() {
@@ -24,9 +24,11 @@ public abstract class AbstractEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "id=" + id;
+		return new ToStringBuilder(this)
+				.append("id", id)
+				.toString();
 	}
 }

@@ -9,7 +9,6 @@ import java.rmi.ServerException;
 
 
 /**
- * 
  * @author Alexander Kolpakov (akolpakov)
  * This interface contains all methods to work with Tracks in Track Repository. 
  */

@@ -1,21 +1,21 @@
-/**
- * 
- */
 package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.shared.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
+
 /**
- *
  * @author Alexander Kolpakov (akolpakov)
  * @author Mayboroda Dmytro
- *
  */
 public class SearchTrackDto implements SearchTrackCriteria{
 	public static final String SEARCH_TRACK_DTO = "searchTrackDto";
@@ -23,13 +23,13 @@ public class SearchTrackDto implements SearchTrackCriteria{
 	private String artist;
 	private String title;
 	private String isrc;
-	@DateTimeFormat(iso=ISO.DATE)
+	@DateTimeFormat(iso= DATE)
 	private Date ingestFrom;
-	@DateTimeFormat(iso=ISO.DATE)
+	@DateTimeFormat(iso= DATE)
 	private Date ingestTo;
-	@DateTimeFormat(iso=ISO.DATE)
+	@DateTimeFormat(iso= DATE)
 	private Date releaseTo;
-	@DateTimeFormat(iso=ISO.DATE)
+	@DateTimeFormat(iso= DATE)
 	private Date releaseFrom;
 	private String label;
 	private String ingestor;
@@ -160,7 +160,7 @@ public class SearchTrackDto implements SearchTrackCriteria{
         this.mediaType = mediaType;
     }
 
-    @Override
+	@Override
 	public int hashCode() {
         return hash(artist, ingestFrom, ingestTo, ingestor, isrc, label, releaseFrom, releaseTo, title, territory);
 	}
@@ -244,10 +244,23 @@ public class SearchTrackDto implements SearchTrackCriteria{
 
     @Override
 	public String toString() {
-		return "SearchTrackDto [isrc=" + isrc + ", artist=" + artist + ", album=" + album + ", genre=" + genre + ", title=" + title + ", ingestor=" + ingestor + ", label=" + label + ", ingestFrom="
-				+ ingestFrom + ", ingestTo=" + ingestTo + ", releaseFrom=" + releaseFrom + ", releaseTo=" + releaseTo + ", territory=" + territory + "]";
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+				.append("isrc", isrc)
+				.append("artist", artist)
+				.append("album", album)
+				.append("genre", genre)
+				.append("title", title)
+				.append("ingestor", ingestor)
+				.append("label", label)
+				.append("ingestFrom", ingestFrom)
+				.append("ingestTo", ingestTo)
+				.append("releaseFrom", releaseFrom)
+				.append("releaseTo", releaseTo)
+				.append("withTerritories", withTerritories)
+				.append("withFiles", withFiles)
+				.append("territory", territory)
+				.append("trackIds", trackIds)
+				.append("mediaType", mediaType)
+				.toString();
 	}
-
-    
-    
 }

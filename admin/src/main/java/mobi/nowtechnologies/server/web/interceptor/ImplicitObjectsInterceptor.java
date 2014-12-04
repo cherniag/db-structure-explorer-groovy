@@ -18,7 +18,6 @@ import java.util.List;
  * ImplicitObjectsInterceptor stands for adding business objects to all pages and templates
  * @author Alexander Kolpakov (akolpakov)
  * @author dmytro
- *
  */
 public class ImplicitObjectsInterceptor extends HandlerInterceptorAdapter {
 	
@@ -29,10 +28,10 @@ public class ImplicitObjectsInterceptor extends HandlerInterceptorAdapter {
 		
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			if (authentication != null && modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
-				List<CommunityDto> communitiesbyUser = adminUserService.getCommunitiesbyUser(authentication.getName());
+				List<CommunityDto> communitiesByUser = adminUserService.getCommunitiesbyUser(authentication.getName());
 				Cookie cookie = WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
 				if(cookie != null){
-					for (CommunityDto communityDto : communitiesbyUser) {
+					for (CommunityDto communityDto : communitiesByUser) {
 						if (cookie.getValue().equals(communityDto.getUrl())) {
 							communityDto.setActive(true);
                             modelAndView.getModel().put("activeCommunity", communityDto.getUrl());
@@ -41,7 +40,7 @@ public class ImplicitObjectsInterceptor extends HandlerInterceptorAdapter {
 					}
 				}
 				
-				modelAndView.getModel().put("communities", communitiesbyUser);
+				modelAndView.getModel().put("communities", communitiesByUser);
 			}
 	}
 

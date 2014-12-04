@@ -2,9 +2,13 @@ package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 public class AssetFileDto {
 	private FileType type;
@@ -13,7 +17,6 @@ public class AssetFileDto {
 	private byte[] content;
 	
 	public AssetFileDto(){
-		
 	}
 	
 	public AssetFileDto(AssetFile file){
@@ -25,24 +28,31 @@ public class AssetFileDto {
 	public FileType getType() {
 		return type;
 	}
+
 	public void setType(FileType type) {
 		this.type = type;
 	}
+
 	public String getPath() {
 		return path;
 	}
+
 	public void setPath(String path) {
 		this.path = path;
 	}
+
 	public String getMd5() {
 		return md5;
 	}
+
 	public void setMd5(String md5) {
 		this.md5 = md5;
 	}
+
 	public byte[] getContent() {
 		return content;
 	}
+
 	public void setContent(byte[] content) {
 		this.content = content;
 	}
@@ -53,30 +63,32 @@ public class AssetFileDto {
 		for (AssetFile track : files) {
 			fileDtos.add(new AssetFileDto(track));
 		}
-
 		return fileDtos;
 	}
 
-	public static FileType toFileType(AssetFile.FileType fileType)
-	{
+	public static FileType toFileType(AssetFile.FileType fileType) {
 		switch (fileType) {
-		case DOWNLOAD:
-			return FileType.ORIGINAL_MP3;
-		case MOBILE:
-			return FileType.ORIGINAL_ACC;
-		case IMAGE:
-			return FileType.IMAGE;
-		case PREVIEW:
-			return FileType.ORIGINAL_ACC;
-        case VIDEO:
-			return FileType.VIDEO;
+			case DOWNLOAD:
+				return FileType.ORIGINAL_MP3;
+			case MOBILE:
+				return FileType.ORIGINAL_ACC;
+			case IMAGE:
+				return FileType.IMAGE;
+			case PREVIEW:
+				return FileType.ORIGINAL_ACC;
+			case VIDEO:
+				return FileType.VIDEO;
 		}
-
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "TrackDto [type=" + type + ", path=" + path + ", md5=" + md5 + ", content=" + content + "]";
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+				.append("type", type)
+				.append("path", path)
+				.append("md5", md5)
+				.append("content", content)
+				.toString();
 	}
 }

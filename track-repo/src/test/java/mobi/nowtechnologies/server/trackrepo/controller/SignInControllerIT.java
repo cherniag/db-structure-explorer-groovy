@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 
 import javax.annotation.Resource;
@@ -9,25 +8,20 @@ import javax.annotation.Resource;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-/**
- * @author Alexander Kolpakov (akolpakov)
- */
-public class SignInControllerIT extends AbstractTrackRepoITTest {
-	@Resource
-	private SignInController fixture;
+// @author Alexander Kolpakov (akolpakov)
+public class SignInControllerIT extends AbstractTrackRepoIT {
+	@Resource SignInController fixture;
 
 	@Test
 	public void testLogin() throws Exception {
-		MockHttpServletRequest request = new MockHttpServletRequest();
-
-		Boolean result = fixture.login(request);
+		Boolean result = fixture.login();
 
 		assertNotNull(result);
 		assertEquals(true, result.booleanValue());
 	}
 	
 	@Test
-	public void generateMd5Passowrd_Admin$Admin_Successful() {
+	public void generateMd5Password_Admin$Admin_Successful() {
 
 		String password = "admin";
 		String salt = "admin";
@@ -39,7 +33,7 @@ public class SignInControllerIT extends AbstractTrackRepoITTest {
 	}
 	
 	@Test
-	public void generateMd5Passowrd_album$MQIph5ao2l_Successful() {
+	public void generateMd5Password_album$MQIph5ao2l_Successful() {
 		
 		String password = "MQIph5ao2l";
 		String salt = "album";

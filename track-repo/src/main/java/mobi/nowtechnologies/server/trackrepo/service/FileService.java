@@ -3,9 +3,7 @@ package mobi.nowtechnologies.server.trackrepo.service;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 
 /**
- * 
  * @author Alexander Kolpakov (akolpakov)
- *
  */
 public interface FileService {
 	/**

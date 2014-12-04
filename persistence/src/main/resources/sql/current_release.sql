@@ -107,3 +107,31 @@ COMMIT;
 SET AUTOCOMMIT = 1;
 
 
+
+-- SRV-229 - [JADMIN] Allow content manager to define whether track is eligible for the label reporting by community/communities or not
+alter table cn_cms.Track add column reportingType varchar(255);
+
+CREATE TABLE cn_cms.NegativeTag (
+  id  BIGINT(20)   NOT NULL AUTO_INCREMENT,
+  trackId BIGINT(20)   NOT NULL,
+  tag VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  CONSTRAINT negativeTag_fk_Track_id FOREIGN KEY (trackId) REFERENCES cn_cms.Track (id) on delete cascade
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+alter table cn_service.tb_communities add column live bit;
+
+START TRANSACTION;
+
+update cn_service.tb_communities set live = false where rewriteURLParameter in ('RBTDevelopment', 'CNQATesting', 'ChartsNow', 'MetalHammer_disabled', 'disabled', 'samsung', 'runningtrax', 'mobo', 'occ');
+update cn_service.tb_communities set live = true where live is null;
+
+update cn_cms.Track set reportingType = 'INTERNAL_REPORTED' where Ingestor = 'MANUAL';
+update cn_cms.Track set reportingType = 'REPORTED_BY_TAGS' where reportingType is null;
+
+COMMIT;
+
+alter table cn_cms.Track modify column reportingType varchar(255) not null;
+alter table cn_service.tb_communities modify column live bit not null;

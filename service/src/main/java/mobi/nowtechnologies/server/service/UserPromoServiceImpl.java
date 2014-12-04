@@ -86,6 +86,4 @@ public class UserPromoServiceImpl implements UserPromoService {
     private User getUserForMerge(User userAfterSignUp, String email) {
         return userRepository.findOne(email, userAfterSignUp.getCommunityRewriteUrl());
     }
-
-
 }

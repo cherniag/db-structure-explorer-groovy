@@ -102,6 +102,7 @@
 		<property name="trackRepoService" ref="service.TrackRepoService" />
 		<property name="executorTimeout" value="${trackRepo.executor.queueCapacity}" />
 		<property name="trackRepoFilesURL" value="${trackRepo.filesURL}" />
+		<property name="trackRepoUrl" value="${trackRepo.baseURL}" />
 	</bean>
 	
 	<bean name="admin.AccountLogController"

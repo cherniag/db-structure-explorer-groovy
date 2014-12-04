@@ -1,5 +1,5 @@
 insert into tb_appVersions ( description, name) values( 'Development Environment', 'CBEMA'), ('Commercial Beta', 'CNBETA');
-INSERT INTO `tb_communities` (`id`, `name`, `appVersion`, `communityTypeID`, `displayName`, `assetName`, `rewriteURLParameter`) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment'),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting'),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow'),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer'),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40'),(6,'OCC',1,6,'OCC','occ','occ'),(7,'o2',1,7,'o2','o2','o2'),(8,'vf_nz',1,8,'vf_nz','vf_nz','vf_nz'), (9,'hl_uk',1,8,'hl_uk','hl_uk','hl_uk'), (10,'mtv1',1,8,'mtv1','mtv1','mtv1');
+INSERT INTO tb_communities (id, name, appVersion, communityTypeID, displayName, assetName, rewriteURLParameter, live) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment', false),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting', false),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow', false),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer', false),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40', false),(6,'OCC',1,6,'OCC','occ','occ',false),(7,'o2',1,7,'o2','o2','o2', true),(8,'vf_nz',1,8,'vf_nz','vf_nz','vf_nz', true), (9,'hl_uk',1,8,'hl_uk','hl_uk','hl_uk', true), (10,'mtv1',1,8,'mtv1','mtv1','mtv1', true);
 
 INSERT INTO `tb_deviceTypes` (`i`, `name`)  VALUES (1,'NONE'),(2,'ANDROID'),(3,'J2ME'),(4,'BLACKBERRY'),(5,'IOS'),(6,'SYMBIAN'),(7,'WINDOWS_PHONE');
 
@@ -30,7 +30,7 @@ insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, typ
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (15,'Default Chart',21,1,1321452650,6, 'HL_UK_PLAYLIST_2');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (16,'Default Chart',21,1,1321452650,6, 'OTHER_CHART');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (17,'Default Chart',21,1,1321452650,6, 'HL_UK_PLAYLIST_2');
-insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (18,'Default Chart',21,1,1321452650,6, 'MTV1_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (18,'Default Chart',21,1,1321452650,6, 'BASIC_CHART');
 
 insert into community_charts (chart_id, community_id) values (1,1);
 insert into community_charts (chart_id, community_id) values (1,2);

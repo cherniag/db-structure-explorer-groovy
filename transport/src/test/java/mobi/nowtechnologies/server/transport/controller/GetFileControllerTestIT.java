@@ -31,7 +31,6 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
     @Value("${cloudFile.audioContentContainerName}")
     private String audioContentContainerName;
 
-
     @Test
     public void testGetFileO2_LatestVersion() throws Exception {
         String apiVersion = LATEST_SERVER_API_VERSION;

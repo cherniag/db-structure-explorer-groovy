@@ -1,10 +1,13 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.REPORTED_BY_TAGS;
 
 public class DropTrack {
 	public enum Type {
@@ -35,6 +38,7 @@ public class DropTrack {
 	public List<DropAssetFile> files = new ArrayList<DropAssetFile>();
 	public List<DropTerritory> territories = new ArrayList<DropTerritory>();
 	public String productId;
+	public ReportingType reportingType = REPORTED_BY_TAGS;
 
 	public String getXml() {
 		return xml;
@@ -252,7 +256,15 @@ public class DropTrack {
         return this;
 	}
 
-    @Override
+	public ReportingType getReportingType() {
+		return reportingType;
+	}
+
+	public void setReportingType(ReportingType reportingType) {
+		this.reportingType = reportingType;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("xml", xml)
@@ -273,6 +285,7 @@ public class DropTrack {
                 .append("exists", exists)
                 .append("explicit", explicit)
                 .append("productId", productId)
-                .toString();
+				.append("reportingType", reportingType)
+				.toString();
     }
 }

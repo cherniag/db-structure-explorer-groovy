@@ -1,14 +1,15 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.manual;
 
-import mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
 
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class ManualParser extends IParser {
@@ -89,7 +90,7 @@ public class ManualParser extends IParser {
 				String[] tokens = line.split("#");
 				LOGGER.info("Token length [{}] line", tokens.length);
 				DropTrack track = new DropTrack();
-				track.type = Type.INSERT;
+				track.type = INSERT;
 				track.xml = "";
 				track.title = tokens[1];
 				track.artist = tokens[2];
@@ -102,39 +103,40 @@ public class ManualParser extends IParser {
 
                 track.files = new ArrayList<DropAssetFile>();
                 DropAssetFile image = new DropAssetFile();
-                image.type = FileType.IMAGE;
+                image.type = IMAGE;
                 image.file = dropFile.getParent()+"/"+tokens[5];
                 track.files.add(image);
 
                 if (!"".equals(tokens[4])) {
-                    DropAssetFile download = new DropAssetFile();
-                    download.type = FileType.DOWNLOAD;
-                    download.file = dropFile.getParent()+"/"+tokens[4];
-                    track.files.add(download);
-                }
+					DropAssetFile download = new DropAssetFile();
+					download.type = DOWNLOAD;
+					download.file = dropFile.getParent()+"/"+tokens[4];
+					track.files.add(download);
+				}
+				track.setReportingType(ReportingType.valueOf(tokens[9]));
 
-				if (tokens.length > 9 && !"".equals(tokens[9])) {
+				if (tokens.length > 10 && !"".equals(tokens[10])) {
 					// Mobile file
 					DropAssetFile mobile = new DropAssetFile();
-					mobile.type = FileType.MOBILE;
-					mobile.file = dropFile.getParent()+"/"+tokens[9];
+					mobile.type = MOBILE;
+					mobile.file = dropFile.getParent() + "/" + tokens[10];
 					track.files.add(mobile);
 				}
 
-                if (tokens.length > 10 && !"".equals(tokens[10])) {
-                    // Video file
-                    DropAssetFile mobile = new DropAssetFile();
-                    mobile.type = FileType.VIDEO;
-                    mobile.file = dropFile.getParent()+"/"+tokens[10];
-                    if (tokens.length > 11 && !"".equals(tokens[11])) {
-                        mobile.duration = Integer.parseInt(tokens[11]);
-                    }
-                    track.files.add(mobile);
-                }
+				if (tokens.length > 11 && !"".equals(tokens[11])) {
+					// Video file
+					DropAssetFile mobile = new DropAssetFile();
+					mobile.type = VIDEO;
+					mobile.file = dropFile.getParent() + "/" + tokens[11];
+					if (tokens.length > 12 && !"".equals(tokens[12])) {
+						mobile.duration = Integer.parseInt(tokens[12]);
+					}
+					track.files.add(mobile);
+				}
 
-				if (tokens.length > 12) {
+				if (tokens.length > 13) {
 					// Unlicensed flag
-					if ("no".equalsIgnoreCase(tokens[12])) {
+					if ("no".equalsIgnoreCase(tokens[13])) {
 						track.licensed = false;
 					} else {
 						track.licensed = true;
@@ -144,12 +146,11 @@ public class ManualParser extends IParser {
 				}
 
 				result.put(track.isrc, track);
-				
 			}
 		} catch (FileNotFoundException e) {
-			LOGGER.error("Ingest failed "+e.getMessage());
+			LOGGER.error("Ingest failed", e);
 		} catch (IOException e) {
-			LOGGER.error("Ingest failed "+e.getMessage());
+			LOGGER.error("Ingest failed", e);
 		}
 		return result;
 	}

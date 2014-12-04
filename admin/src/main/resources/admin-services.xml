@@ -49,6 +49,8 @@
 
     <bean id="duplicatedMediaAcrossNearestChartsDtoAssembler" class="mobi.nowtechnologies.server.admin.asm.DuplicatedMediaAcrossNearestChartsDtoAssembler" />
 
+    <bean id="communityDtoAsm" class="mobi.nowtechnologies.server.dto.asm.CommunityDtoAsm"/>
+
     <!-- Application Message Bundle -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames" ref="messagesBaseName" />

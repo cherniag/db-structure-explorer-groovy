@@ -23,12 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-/**
- * @author Alexander Kolpakov (akolpakov)
- */
-
-public class IngestTracksWizardControllerIT extends AbstractTrackRepoITTest {
+// @author Alexander Kolpakov (akolpakov)
+public class IngestTracksWizardControllerIT extends AbstractTrackRepoIT {
 
     @Resource
     private TrackRepository trackRepository;

@@ -77,7 +77,6 @@
                 <div class="span5" style="float:right;">
                     <button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-deco pull-right" type="button"  onclick="preEncodeAll()">Encode all</button>
                     <a th:text="#{tracks.ingest.page.form.commit}" class="btn btn-default btn-deco pull-right" th:href="@{/drops}" style="margin-right:8px">Ingest</a>
-                    <!--<button th:if="${!#lists.isEmpty(PAGE_LIST_DTO.list)}" id="but-encode" class="btn btn-primary btn-deco" type="button" onclick="toEncode()">encode all</button>-->
                 </div>
             </div>
             <div>
@@ -203,6 +202,31 @@
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.amazonUrl}">Amazon URL:</strong></label>
                             <a class="details-value" th:href="${trackDto.amazonUrl}" rel="tooltip" th:text="${trackDto.amazonUrl}" target="_blank"></a>
                         </div>
+
+                        <form th:id="${'trackReportingOptionsForm_'+trackDto.id}"  th:action="${trackRepoReportingOptionsUrl}">
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.reportingType}">Reporting Type:</strong></label>
+                            <input type="hidden" name="trackId" th:value="${trackDto.id}"/>
+                            <select name="reportingType" th:onchange="'onChangeReportingType(\'trackReportingOptionsForm_' + ${trackDto.id} + '\');'">
+                                <option th:each="reportingType :${T(mobi.nowtechnologies.server.trackrepo.enums.ReportingType).values()}"
+                                        th:value="${reportingType}"
+                                        th:selected="${trackDto.reportingType==reportingType}"
+                                        th:text="#{${'tracks.page.trackList.reportingType.option.' + reportingType}}">
+                                    REVIEW
+                                </option>
+                            </select>
+                            <label class="details-label"><strong th:text="#{tracks.page.trackList.head.reportingNegativeTags}">Reporting negative tags:</strong></label>
+                            <select name="negativeTags" multiple="multiple">
+                                <option
+                                        th:each="liveCommunity :${liveCommunities}"
+                                        th:value="${liveCommunity.url}"
+                                        th:selected="${#arrays.contains(trackDto.negativeTags, liveCommunity.url)}"
+                                        th:text="${liveCommunity.url}">
+                                    o2
+                                </option>
+                            </select>
+                            <button class='btn btn-primary' type="button" th:onclick="'onSaveTracksReportingOptions(\'trackReportingOptionsForm_' + ${trackDto.id} + '\');'" th:text="#{tracks.page.trackList.reportingOptions.save.button.text}">Save reporting options</button>
+                        </form>
+
                         <ul class="table trackFiles">
                             <li class="title">
                                 <div class="type_asset_columns" th:text="#{tracks.page.assetList.head.type}">Type</div>

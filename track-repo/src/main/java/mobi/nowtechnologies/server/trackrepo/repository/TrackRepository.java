@@ -8,11 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+// @author Alexander Kolpakov (akolpakov)
 public interface TrackRepository extends JpaRepository<Track, Long>, TrackRepositoryCustom {
 
     @Query("SELECT t FROM Track t WHERE t.isrc = :isrc")

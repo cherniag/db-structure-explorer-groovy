@@ -7,10 +7,8 @@ import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import org.springframework.data.domain.Pageable;
 
 /**
- * 
  * @author Alexander Kolpakov (akolpakov)
  * @author Mayboroda Dmytro
- *
  */
 public interface TrackRepositoryClient {
 	

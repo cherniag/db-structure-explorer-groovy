@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IngestTracksWizardController extends AbstractCommonController {
 
-//    private static final Logger LOGGER = LoggerFactory.getLogger(IngestTracksWizardController.class);
-
 	private IngestService ingestService;
 
 	public void setIngestService(IngestService ingestService) {

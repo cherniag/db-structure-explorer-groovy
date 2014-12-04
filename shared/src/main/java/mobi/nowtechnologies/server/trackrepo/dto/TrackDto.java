@@ -3,25 +3,32 @@ package mobi.nowtechnologies.server.trackrepo.dto;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 public class TrackDto {
+	private static final Logger LOGGER = LoggerFactory.getLogger(TrackDto.class);
+
 	public static final String TRACK_DTO_LIST = "TRACK_DTO_LIST";
 	public static final String TRACK_DTO = "TRACK_DTO";
     protected static final String URL_DATE_FORMAT = "yyyy-MM-dd";
 
-	// ------------------basic properties-----------------------//
 	private Long id;
 	private String ingestor;
 	private String isrc;
@@ -33,8 +40,6 @@ public class TrackDto {
 	private String mediaFileName;
     private FileType mediaType;
 
-
-	// ------------------additional properties------------------//
 	private String label;
 	private String subTitle;
 	private String productId;
@@ -63,10 +68,10 @@ public class TrackDto {
 	private String territoryCodes;
 	private List<ResourceFileDto> files;
     private List<TerritoryDto> territories;
-
+	private ReportingType reportingType;
+	private Set<String> negativeTags;
 
 	public TrackDto() {
-
 	}
 
 	public TrackDto(TrackDto track) {
@@ -97,6 +102,8 @@ public class TrackDto {
         this.explicit = track.explicit;
         this.territories = track.territories;
         this.uniqueTrackId = track.uniqueTrackId;
+		this.reportingType = track.reportingType;
+		this.negativeTags = track.negativeTags;
 	}
 
 	public Long getId() {
@@ -287,15 +294,13 @@ public class TrackDto {
 		return files;
 	}
 
-	public ResourceFileDto getFile(FileType type, Resolution resolution)
-	{
+	public ResourceFileDto getFile(FileType type, Resolution resolution) {
 		if (files != null) {
 			for (ResourceFileDto file : files) {
 				if (file.getType().equals(type.name()) && file.getResolution().equals(resolution.name()))
 					return file;
 			}
 		}
-
 		return null;
 	}
 
@@ -384,8 +389,23 @@ public class TrackDto {
         this.uniqueTrackId = uniqueTrackId;
     }
 
+	public ReportingType getReportingType() {
+		return reportingType;
+	}
 
-    public String getFormattedDuration() {
+	public void setReportingType(ReportingType reportingType) {
+		this.reportingType = reportingType;
+	}
+
+	public Set<String> getNegativeTags() {
+		return negativeTags;
+	}
+
+	public void setNegativeTags(Set<String> negativeTags) {
+		this.negativeTags = negativeTags;
+	}
+
+	public String getFormattedDuration() {
     	
     	if (files == null) {
     		return "";
@@ -433,6 +453,8 @@ public class TrackDto {
 		result = prime * result + ((year == null) ? 0 : year.hashCode());
 		result = prime * result + ((label == null) ? 0 :label.hashCode());
 		result = prime * result + ((releaseDate == null) ? 0 : releaseDate.hashCode());
+		result = prime * result + ((reportingType == null) ? 0 : reportingType.hashCode());
+		result = prime * result + ((negativeTags == null) ? 0 : negativeTags.hashCode());
 		return result;
 	}
 
@@ -571,49 +593,20 @@ public class TrackDto {
 				return false;
 		} else if (!year.equals(other.year))
 			return false;
+		if (reportingType == null) {
+			if (other.reportingType != null)
+				return false;
+		} else if (!reportingType.equals(other.reportingType))
+			return false;
+		if (negativeTags == null) {
+			if (other.negativeTags != null)
+				return false;
+		} else if (!negativeTags.equals(other.negativeTags))
+			return false;
 		return true;
 	}
 
-    @Override
-    public String toString() {
-        return "TrackDto{" +
-                "id=" + id +
-                ", ingestor='" + ingestor + '\'' +
-                ", isrc='" + isrc + '\'' +
-                ", title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
-                ", ingestionDate=" + ingestionDate +
-                ", status=" + status +
-                ", coverFileName='" + coverFileName + '\'' +
-                ", mediaFileName='" + mediaFileName + '\'' +
-                ", mediaType=" + mediaType +
-                ", label='" + label + '\'' +
-                ", subTitle='" + subTitle + '\'' +
-                ", productId='" + productId + '\'' +
-                ", productCode='" + productCode + '\'' +
-                ", genre='" + genre + '\'' +
-                ", copyright='" + copyright + '\'' +
-                ", year='" + year + '\'' +
-                ", album='" + album + '\'' +
-                ", info='" + info + '\'' +
-                ", licensed=" + licensed +
-                ", explicit=" + explicit +
-                ", ingestionUpdateDate=" + ingestionUpdateDate +
-                ", publishDate=" + publishDate +
-                ", releaseDate=" + releaseDate +
-                ", publishTitle='" + publishTitle + '\'' +
-                ", publishArtist='" + publishArtist + '\'' +
-                ", itunesUrl='" + itunesUrl + '\'' +
-                ", amazonUrl='" + amazonUrl + '\'' +
-                ", areArtistUrls=" + areArtistUrls +
-                ", resolution=" + resolution +
-                ", territoryCodes='" + territoryCodes + '\'' +
-                ", files=" + files +
-                ", territories=" + territories +
-                "} " + super.toString();
-    }
-
-    public JSONObject toJson(){
+	public JSONObject toJson(){
         JSONObject result = new JSONObject();
         try {
             result.put("id", id);
@@ -650,9 +643,52 @@ public class TrackDto {
             result.put("files", files);
             result.put("territories", territories);
         } catch (JSONException e) {
-            e.printStackTrace();
+			LOGGER.error("Couldn't convert to json", e);
         }
         return result;
     }
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+				.appendSuper(super.toString())
+				.append("id", id)
+				.append("ingestor", ingestor)
+				.append("isrc", isrc)
+				.append("title", title)
+				.append("artist", artist)
+				.append("ingestionDate", ingestionDate)
+				.append("status", status)
+				.append("coverFileName", coverFileName)
+				.append("mediaFileName", mediaFileName)
+				.append("mediaType", mediaType)
+				.append("label", label)
+				.append("subTitle", subTitle)
+				.append("productId", productId)
+				.append("productCode", productCode)
+				.append("genre", genre)
+				.append("copyright", copyright)
+				.append("year", year)
+				.append("album", album)
+				.append("info", info)
+				.append("licensed", licensed)
+				.append("explicit", explicit)
+				.append("ingestionUpdateDate", ingestionUpdateDate)
+				.append("publishDate", publishDate)
+				.append("releaseDate", releaseDate)
+				.append("publishTitle", publishTitle)
+				.append("publishArtist", publishArtist)
+				.append("itunesUrl", itunesUrl)
+				.append("amazonUrl", amazonUrl)
+				.append("uniqueTrackId", uniqueTrackId)
+				.append("areArtistUrls", areArtistUrls)
+				.append("resolution", resolution)
+				.append("territoryCodes", territoryCodes)
+				.append("files", files)
+				.append("territories", territories)
+				.append("reportingType", reportingType)
+				.append("negativeTags", negativeTags)
+				.toString();
+	}
 
 }

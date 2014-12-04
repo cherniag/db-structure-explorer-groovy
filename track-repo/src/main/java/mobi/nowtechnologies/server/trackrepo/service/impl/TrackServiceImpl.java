@@ -43,9 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author Alexander Kolpakov (akolpakov)
- */
+// @author Alexander Kolpakov (akolpakov)
 public class TrackServiceImpl implements TrackService {
     protected static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
     private static final java.util.logging.Logger BRIGHTCOVE_LOGGER = java.util.logging.Logger.getLogger("BrightcoveLog");
@@ -234,21 +232,21 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Track> find(SearchTrackCriteria searchTrackCriteria, Pageable page) {
+    public Page<Track> find(SearchTrackCriteria searchTrackCriteria, Pageable pageable) {
         LOGGER.debug("input find(searchTrackDto, page): [{}]", new Object[]{searchTrackCriteria});
 
-        Page<Track> pagelist = new PageImpl<Track>(Collections.<Track>emptyList(), page, 0L);
+        Page<Track> page = new PageImpl<Track>(Collections.<Track>emptyList(), pageable, 0L);
         try {
             if (searchTrackCriteria != null) {
-                pagelist = trackRepository.find(searchTrackCriteria, page);
+                page = trackRepository.find(searchTrackCriteria, pageable);
             }
         } catch (Exception e) {
             LOGGER.error("Cannot find tracks.", e);
             throw new RuntimeException("Cannot find tracks.");
         }
 
-        LOGGER.info("output find(searchTrackDto, page): [{}]", new Object[]{pagelist});
-        return pagelist;
+        LOGGER.info("output find(searchTrackDto, page): [{}]", new Object[]{page});
+        return page;
     }
 
     private void moveFiles(File srcDir, File destDir) {

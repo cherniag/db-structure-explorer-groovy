@@ -24,11 +24,9 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 7/17/13
  * Time: 12:25 PM
- * To change this template use File | Settings | File Templates.
  */
 @RunWith(PowerMockRunner.class)
 public class IngestServiceImplTest {

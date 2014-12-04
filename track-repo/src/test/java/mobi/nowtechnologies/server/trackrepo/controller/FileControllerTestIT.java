@@ -13,11 +13,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * @author Alexander Kolpakov (akolpakov)
- */
-
-public class FileControllerTestIT extends AbstractTrackRepoITTest {
+// @author Alexander Kolpakov (akolpakov)
+public class FileControllerTestIT extends AbstractTrackRepoIT {
 
     @Autowired
     private FileRepository fileRepository;

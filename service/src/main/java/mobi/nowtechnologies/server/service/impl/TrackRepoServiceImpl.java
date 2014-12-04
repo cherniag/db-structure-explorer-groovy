@@ -27,11 +27,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- * 
- */
+// @author Alexander Kolpakov (akolpakov)
 public class TrackRepoServiceImpl implements TrackRepoService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoServiceImpl.class);
 

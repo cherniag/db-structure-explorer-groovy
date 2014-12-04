@@ -16,10 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * EntityDao
- * 
  * @author Maksym Chernolevskyi (maksym)
- * 
  */
 public class EntityDao extends JpaDaoSupport {
 	private static final Logger LOGGER = LoggerFactory

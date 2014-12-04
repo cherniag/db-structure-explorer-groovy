@@ -22,14 +22,13 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Mayboroda Dmytro
- *
- */
+// @author Mayboroda Dmytro
 public class TrackRepoControllerTest {
 	
 	private TrackRepoController trackRepositoryController;
@@ -123,5 +122,29 @@ public class TrackRepoControllerTest {
 
         WebAsyncTask<TrackDto> task = trackRepositoryController.pullTrack(configTrackDto);
         task.getCallable().call();
+	}
+
+	@Test
+	public void shouldReturnTrackRepoUrlWhenTrackRepoUrl() {
+		//given
+		trackRepositoryController.setTrackRepoUrl("http://localhost/track-repo");
+
+		//when
+		String trackRepoUrl = trackRepositoryController.getTrackRepoReportingOptionsUrl();
+
+		//then
+		assertThat(trackRepoUrl, is("http://localhost/track-repo/reportingOptions"));
+	}
+
+	@Test
+	public void shouldReturnTrackRepoUrlWhenTrackRepoUrlHasSlashEnding() {
+		//given
+		trackRepositoryController.setTrackRepoUrl("http://localhost/track-repo/");
+
+		//when
+		String trackRepoUrl = trackRepositoryController.getTrackRepoReportingOptionsUrl();
+
+		//then
+		assertThat(trackRepoUrl, is("http://localhost/track-repo/reportingOptions"));
 	}
 }

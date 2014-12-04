@@ -1,38 +1,39 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.InheritanceType.JOINED;
+import static javax.persistence.TemporalType.TIMESTAMP;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
-@SuppressWarnings("serial")
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = JOINED)
 public class IngestionLog extends AbstractEntity {
 
-	
-	@Basic(optional=false)
-    @Column(name="Ingestor")
+    @Column(name="Ingestor", nullable = false)
 	protected String ingestor;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Basic(optional=false)
-    @Column(name="IngestionDate")
+	@Temporal(TIMESTAMP)
+    @Column(name="IngestionDate", nullable = false)
     protected Date ingestionDate;
 	
-	@Basic(optional=false)
-    @Column(name="Status")
+    @Column(name="Status", nullable = false)
     protected Boolean status;
 	
 	@Basic(optional=true)
     @Column(name="DropName")
     protected String dropName;
 
-	@Basic(optional=true)
     @Column(name="Message")
     protected String message;
 
-	@OneToMany(cascade={CascadeType.ALL})
+	@OneToMany(cascade=ALL)
     @JoinColumn(name="DropId") 
 	protected Set<DropContent> content;
 
@@ -86,12 +87,13 @@ public class IngestionLog extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "IngestionLog{" +
-                "ingestor='" + ingestor + '\'' +
-                ", ingestionDate=" + ingestionDate +
-                ", status=" + status +
-                ", dropName='" + dropName + '\'' +
-                ", message='" + message + '\'' +
-                "} " + super.toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+                .appendSuper(super.toString())
+                .append("ingestor", ingestor)
+                .append("ingestionDate", ingestionDate)
+                .append("status", status)
+                .append("dropName", dropName)
+                .append("message", message)
+                .toString();
     }
 }
