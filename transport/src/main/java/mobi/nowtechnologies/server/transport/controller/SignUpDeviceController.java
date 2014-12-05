@@ -40,6 +40,7 @@ public class SignUpDeviceController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.7}/SIGN_UP_DEVICE",
             "**/{community}/{apiVersion:6\\.6}/SIGN_UP_DEVICE"
     })
     public ModelAndView signUpDeviceV6_6(@Valid @ModelAttribute(UserDeviceRegDetailsDto.NAME) UserDeviceRegDetailsDto userDeviceDetailsDto) {

@@ -245,15 +245,18 @@
         <div id="duplicatedTracksDiv" style="text-align: center"/>
 
         <ul class="table">
-            <li class="title">
+            <li class="title" style="padding-bottom: 0px;">
                 <div class="position_chartItem" th:text="#{chartItems.page.chartItemsTable.head.position}">Position</div>
                 <div class="image_chartItem" th:text="#{chartItems.page.chartItemsTable.head.image}">Image</div>
-                <div class="channel_chartItem" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
+                <div class="channel_chartItem" style="height: 35px!important;" th:text="#{chartItems.page.chartItemsTable.head.channel}">Channel</div>
                 <div class="ArtistTitle_chartItem" th:text="#{chartItems.page.chartItemsTable.head.artistTitle}">Artist-Title</div>
-                <div class="info_chartItem" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
+                <div class="info_chartItem" style="height: 35px!important;" th:text="#{chartItems.page.chartItemsTable.head.info}">Info</div>
                 <div class="locked_chartItem" th:text="#{chartItems.page.chartItemsTable.head.locked}">Locked</div>
-                <div class="publishDate_chartItem" th:text="#{chartItems.page.mediasTable.head.trackId}">ISRC</div>
-                <div class="iTunesUrl_chartItem" th:text="#{chartItems.page.mediasTable.head.iTunesUrl}">ITunes Url</div>
+                <div class="publishDate_chartItem" style="margin-left: 20px;" th:text="#{chartItems.page.mediasTable.head.trackId}">ISRC</div>
+                <div class="iTunesUrl_chartItem" style="height: 35px!important;" th:text="#{chartItems.page.mediasTable.head.iTunesUrl}">ITunes Url</div>
+                <div  id="lockAllTracks" style="margin-left: 486px;" class="locked_chartItem toggleButton" >
+                    <input type="checkbox"/>
+                </div>
             </li>
         </ul>
         <ul class="table table_up" id="chartItemsSortable" style="min-height: 50px;">
@@ -628,6 +631,8 @@ function onToBasketClick(target, isCopy){
     item.appendTo($("#chartItemsBasketSortable"));
 
     onDropToBasketList(item);
+
+    checkLockAllTracksState();
 }
 
 function onDropToBasketList(item){
@@ -662,6 +667,8 @@ function onDropToBasketList(item){
 
 
     enableChartItemHandlers(item, false);
+
+    checkLockAllTracksState();
 }
 
 function existsChartItem(mediaId, prevPosition){
@@ -747,6 +754,8 @@ function onDropToChartItemList(item, sender){
     if($("#chartItemsBasketSortable").children().size() == 1){
         $("#emptyList").css("display","block");
     }
+
+    checkLockAllTracksState();
 }
 
 function enableChartItemHandlers(item, enable){

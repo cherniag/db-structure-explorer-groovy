@@ -45,5 +45,7 @@ public abstract class SocialInfo {
 
     public abstract String getAvatarUrl();
 
+    public abstract String getSocialId();
+
 }
 

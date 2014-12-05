@@ -53,6 +53,7 @@ public class GetChartController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = {
+            "**/{community}/{apiVersion:6\\.7}/GET_CHART",
             "**/{community}/{apiVersion:6\\.6}/GET_CHART",
             "**/{community}/{apiVersion:6\\.5}/GET_CHART",
             "**/{community}/{apiVersion:6\\.4}/GET_CHART"

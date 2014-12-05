@@ -82,6 +82,11 @@ public class FacebookUserInfo extends SocialInfo {
         return getProfileUrl();
     }
 
+    @Override
+    public String getSocialId() {
+        return getFacebookId();
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }

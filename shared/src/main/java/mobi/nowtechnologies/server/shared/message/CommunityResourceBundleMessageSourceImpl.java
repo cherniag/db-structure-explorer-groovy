@@ -43,12 +43,16 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
 
     @Override
     public int readInt(String code, int defaults) {
+        return readInt(null, code, defaults, null);
+    }
+
+    @Override
+    public int readInt(String community, String code, int defaultValue, Locale locale) {
         try {
-            String pediodString = trim(getMessage(null, code, null, null));
-            int period = Integer.parseInt(pediodString);
-            return period;
+            String periodString = trim(getMessage(community, code, null, locale));
+            return Integer.parseInt(periodString);
         } catch (RuntimeException e) {
-            return defaults;
+            return defaultValue;
         }
     }
 

@@ -244,7 +244,7 @@ public class User implements Serializable {
     private List<Drm> drms;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<SocialInfo> socialInfo;
+    private Set<SocialInfo> socialInfo = new HashSet<SocialInfo>();
 
     private String facebookId;
 
@@ -1500,6 +1500,10 @@ public class User implements Serializable {
 
     public Collection<SocialInfo> getSocialInfo() {
         return socialInfo;
+    }
+
+    public Integer getCommunityId() {
+        return userGroup.getCommunity().getId();
     }
 
     @Override

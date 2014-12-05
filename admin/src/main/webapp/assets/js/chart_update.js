@@ -6,10 +6,58 @@ $(function() {
 	
 	$('#chartUpdateBar.nav-pills li.active').each(showChartUpdateTab);
 	
-	$('#chartUpdateBar li').click(showChartUpdateTab);	
+	$('#chartUpdateBar li').click(showChartUpdateTab);
 
-	$('#chartDetailsForm').each(onCreateChartEditForm);	
-});	
+	$('#chartDetailsForm').each(onCreateChartEditForm);
+
+    // Lock all tracks
+    checkLockAllTracksState();
+    initLockTrackCallBacks();
+
+    $("#lockAllTracks").data('options', {onChange : function(element, active, e){
+            $("#chartItemsSortable").find("> li").each(function (index) {
+                $(this).find("div[class~=locked_chartItem]").toggleButtons('setState', active, false);
+            });
+        }
+    });
+});
+
+function initLockTrackCallBacks(){
+    var $lockAllTracks = $("#lockAllTracks");
+
+    var lockTrackCallBack = function(element, active, e){
+        var lockAllTracksStatus = $lockAllTracks.toggleButtons('status');
+        if(!active && lockAllTracksStatus){
+            $lockAllTracks.toggleButtons('setState', false, true);
+        }
+        if(active && !lockAllTracksStatus){
+            checkLockAllTracksState();
+        }
+    };
+
+    $("#chartItemsSortable").find("> li").each( function (index) {
+        var toggleLocked = $(this).find("div[class~=locked_chartItem]");
+        toggleLocked.data('options', {onChange : lockTrackCallBack});
+    });
+}
+
+function checkLockAllTracksState(){
+    var $lockAllTracks = $("#lockAllTracks");
+    var allTrackAreLocked = true;
+    $("#chartItemsSortable").find("> li").each( function (index) {
+        var toggleLocked = $(this).find("div[class~=locked_chartItem]");
+        allTrackAreLocked = toggleLocked.toggleButtons('status');
+        if(!allTrackAreLocked){
+            return false;
+        }
+
+    });
+    if(allTrackAreLocked) {
+        $lockAllTracks.toggleButtons('setState', true, true);
+    } else if ($lockAllTracks.toggleButtons('status')){
+        $lockAllTracks.toggleButtons('setState', false, true);
+    }
+}
 
 function showChartUpdateTab(i){
 	var tabName = $(this).attr('name');	

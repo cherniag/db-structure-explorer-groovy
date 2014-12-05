@@ -10,10 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 public class PathVariableResolver {
     public static final String PATH_DELIM = "/";
 
-    private final String[] tokens;
+    private String[] tokens;
+
+    public PathVariableResolver() {
+    }
 
     public PathVariableResolver(HttpServletRequest request){
         this.tokens = request.getRequestURI().split(PATH_DELIM);
+    }
+
+    public String resolveCommunityUri(HttpServletRequest request) {
+        String[] tokens = request.getRequestURI().split(PATH_DELIM);
+        return tokens.length >= 3 ? tokens[tokens.length-3] : null;
     }
 
     public String resolveCommunityUri(){

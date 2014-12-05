@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service;
+package mobi.nowtechnologies.server.service.social.core;
 
 
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -9,16 +9,19 @@ import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.BaseSocialRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
+import mobi.nowtechnologies.server.service.ActivationEmailService;
+import mobi.nowtechnologies.server.service.MergeResult;
+import mobi.nowtechnologies.server.service.ReferralService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
-import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 @Transactional
-public class UserPromoServiceImpl implements UserPromoService {
+public class UserPromoService {
 
     @Resource
     private ActivationEmailService activationEmailService;
@@ -34,9 +37,9 @@ public class UserPromoServiceImpl implements UserPromoService {
 
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private ReferralService referralService;
 
-    @Override
-    @Transactional(propagation = REQUIRED)
     public MergeResult applyInitPromoByEmail(User user, Long activationEmailId, String email, String token) {
         activationEmailService.activate(activationEmailId, email, token);
 
@@ -48,11 +51,11 @@ public class UserPromoServiceImpl implements UserPromoService {
         user.setUserName(email);
 
         userService.updateUser(user);
+        referralService.acknowledge(user, email);
 
         return new MergeResult(mergeResult.isMergeDone(), user);
     }
 
-    @Override
     public MergeResult applyInitPromoByGooglePlus(User userAfterSignUp, GooglePlusUserInfo googleUserInfo, boolean disableReactivationForUser) {
         MergeResult userAfterApplyPromo = doApplyPromo(userAfterSignUp, googleUserInfo, googlePlusUserInfoRepository, ProviderType.GOOGLE_PLUS, disableReactivationForUser);
         googlePlusUserInfoRepository.save(googleUserInfo);
@@ -60,7 +63,6 @@ public class UserPromoServiceImpl implements UserPromoService {
         return userAfterApplyPromo;
     }
 
-    @Override
     public MergeResult applyInitPromoByFacebook(User userAfterSignUp, FacebookUserInfo facebookProfile, boolean disableReactivationForUser) {
         MergeResult mergeResult = doApplyPromo(userAfterSignUp, facebookProfile, facebookUserInfoRepository, ProviderType.FACEBOOK, disableReactivationForUser);
         facebookUserInfoRepository.save(facebookProfile);
@@ -80,6 +82,9 @@ public class UserPromoServiceImpl implements UserPromoService {
         userAfterApplyPromo.setProvider(providerType);
 
         userRepository.save(userAfterApplyPromo);
+
+        referralService.acknowledge(userAfterApplyPromo, socialInfo);
+
         return new MergeResult(mergeResult.isMergeDone(), userAfterApplyPromo);
     }
 

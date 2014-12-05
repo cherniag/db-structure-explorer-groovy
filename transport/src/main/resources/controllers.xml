@@ -8,4 +8,8 @@
        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <bean id="factory.ReferralContextDtoFactory"
+          class="mobi.nowtechnologies.server.dto.transport.ReferralContextDtoFactoryImpl">
+        <property name="referralService" ref="service.referralService"/>
+    </bean>
 </beans>

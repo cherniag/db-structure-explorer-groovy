@@ -1686,17 +1686,25 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User checkUser(String community, String userName, String userToken, String timestamp, String deviceUID, boolean checkReactivation, ActivationStatus... activationStatuses){
-        User user;
-        if (isValidDeviceUID(deviceUID)) {
-            user = checkCredentials(userName, userToken, timestamp, community, deviceUID);
-        }else {
-            user = checkCredentials(userName, userToken, timestamp, community);
-        }
+        User user = authenticate(community, userName, userToken, timestamp, deviceUID);
+        user = authorize(user, checkReactivation, activationStatuses);
+        return user;
+    }
+
+    @Transactional
+    public User authorize(User user, boolean checkReactivation, ActivationStatus... activationStatuses) {
         checkActivationStatus(user, activationStatuses);
         if (checkReactivation){
             checkUserReactivation(user);
         }
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public User authenticate(String community, String userName, String userToken, String timestamp, String deviceUID) {
+        return isValidDeviceUID(deviceUID) ?
+                checkCredentials(userName, userToken, timestamp, community, deviceUID) :
+                checkCredentials(userName, userToken, timestamp, community);
     }
 
     private void checkUserReactivation(User user) {

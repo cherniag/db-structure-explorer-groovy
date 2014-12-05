@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.transport.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.service.MergeResult;
-import mobi.nowtechnologies.server.service.UserPromoService;
+import mobi.nowtechnologies.server.service.social.core.UserPromoService;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
@@ -30,6 +30,7 @@ public class SigninGooglePlusController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.7}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.6}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.5}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.4}/SIGN_IN_GOOGLE_PLUS",
