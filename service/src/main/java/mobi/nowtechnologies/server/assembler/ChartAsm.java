@@ -10,8 +10,6 @@ import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepositor
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,30 +19,14 @@ import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
+ *
  */
-public class ChartAsm extends ModelMapper{
+public class ChartAsm{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartAsm.class);
 
     private FilenameAliasRepository filenameAliasRepository;
     private BadgesService badgesService;
 
-	
-	public ChartAsm(){
-		this.addMappings(new PropertyMap<ChartDetail, PlaylistDto>() {
-            @Override
-            protected void configure() {
-                skip().setId(null);
-                skip().setPlaylistTitle(null);
-                skip().setSwitchable(null);
-                skip().setBadgeIcon(null);
-                skip().setLocked(null);
-                map().setImage(source.getImageFileName());
-            }
-        });
-	}
-
-	@SuppressWarnings("unchecked")
 	public List<ChartDto> toChartDtos(List<ChartDetail> chartDetails) {
 		LOGGER.debug("input parameters charts: [{}]", chartDetails);
 
@@ -55,7 +37,7 @@ public class ChartAsm extends ModelMapper{
 			}
             return chartDtos;
 		}
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
 	}
 
 	public ChartDto toChartDto(ChartDetail chartDetail) {
@@ -64,11 +46,11 @@ public class ChartAsm extends ModelMapper{
 		if(chartDetail.isChartItem()) {
             throw new IllegalArgumentException("ChartDetail is chart item(not details of chart)");
         }
-		
+
 		ChartDto chartDto = new ChartDto();
-		
+
 		Chart chart = chartDetail.getChart();
-		
+
 		chartDto.setId(chart.getI());
 		chartDto.setName(chartDetail.getTitle() != null ? chartDetail.getTitle() : chart.getName());
 		chartDto.setChartDetailId(chartDetail.getI());
@@ -80,18 +62,18 @@ public class ChartAsm extends ModelMapper{
 		chartDto.setChartType(chart.getType());
 		chartDto.setDescription(chartDetail.getInfo());
         chartDto.setFileNameAlias(getBadgeFilenameAliasDto(chartDetail.getBadgeId()));
-		
+
 		LOGGER.info("Output parameter chartDto=[{}]", chartDto);
 		return chartDto;
 	}
-	
+
 	public ChartDetail toChart(ChartDto chartDto) {
 		LOGGER.debug("input parameters chart: [{}]", chartDto);
-		
+
 		Chart chart = new Chart();
 		ChartDetail chartDetail = new ChartDetail();
 		chartDetail.setChart(chart);
-		
+
 		chart.setI(chartDto.getId());
 		chartDetail.setI(chartDto.getChartDetailId());
 		chartDetail.setTitle(chartDto.getName());
@@ -108,18 +90,24 @@ public class ChartAsm extends ModelMapper{
 			String imageFileName = "CHART_" + System.currentTimeMillis() + "_" + id;
 			chartDetail.setImageFileName(imageFileName);
 		}
-		
+
 		LOGGER.info("Output parameter chartDetail=[{}]", chartDetail);
 		return chartDetail;
 	}
-	
+
 	public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked) {
 		LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
-		
-		PlaylistDto playlistDto = map(chartDetail, PlaylistDto.class);
-		playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI() : null);
-		playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
-		playlistDto.setSwitchable(switchable);
+
+		PlaylistDto playlistDto = new PlaylistDto();
+        playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI() : null);
+        playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
+        playlistDto.setSubtitle(chartDetail.getSubtitle());
+        playlistDto.setImage(chartDetail.getImageFileName());
+        playlistDto.setImageTitle(chartDetail.getImageTitle());
+        playlistDto.setDescription(chartDetail.getChartDescription());
+        playlistDto.setPosition(chartDetail.getPosition());
+        playlistDto.setSwitchable(switchable);
+        playlistDto.setType(chartDetail.getChartType());
 
 		if(chartDetail.getBadgeId() != null && resolution != null){
             String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
