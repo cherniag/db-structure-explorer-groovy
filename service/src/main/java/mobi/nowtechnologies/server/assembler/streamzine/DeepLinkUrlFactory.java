@@ -4,7 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.net.util.Base64;
-import org.modelmapper.internal.util.Assert;
+import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;

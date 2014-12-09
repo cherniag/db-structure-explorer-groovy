@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
-import org.modelmapper.internal.util.Assert;
+import org.springframework.util.Assert;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;

@@ -97,6 +97,37 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
     }
 
     @Test
+    public void testGetChartPlayListLocked() throws Exception {
+        String userName = "+447111111114";
+        String deviceUID = "b88106713409e92622461a876abcd74b";
+        String apiVersion = "6.7";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String widthHeight = "720x1280";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+
+        // all tracks in FOURTH_CHART are locked
+        generateChartAllTypesForO2();
+
+        mockMvc.perform(
+                get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("DEVICE_UID", deviceUID)
+                        .param("WIDTHXHEIGHT", widthHeight)
+        )            .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'HOT_TRACKS')].locked").value(false))
+        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'OTHER_CHART')].locked").value(false))
+        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FOURTH_CHART')].locked").value(true))
+        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'FIFTH_CHART')].locked").value(false))
+        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'VIDEO_CHART')].locked").value(false))
+        .andExpect(jsonPath("response.data[1].chart.playlists[?(@.type == 'BASIC_CHART')].locked").value(false));
+    }
+
+    @Test
     public void testGetChart_O2_v5d1AndJsonAndAccCheckInfo_Success() throws Exception {
         String userName = "+447111111114";
         String deviceUID = "b88106713409e92622461a876abcd74b";
@@ -535,6 +566,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         hotDetail.setPosition(chartDetail.getPosition());
         hotDetail.setPrevPosition(chartDetail.getPrevPosition());
         hotDetail.setChgPosition(chartDetail.getChgPosition());
+        hotDetail.setLocked(null);
         hotDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
         chartDetailRepository.save(hotDetail);
         chartDetails.add(hotDetail);
@@ -546,6 +578,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         otherDetail.setPosition(chartDetail.getPosition());
         otherDetail.setPrevPosition(chartDetail.getPrevPosition());
         otherDetail.setChgPosition(chartDetail.getChgPosition());
+        otherDetail.setLocked(false);
         otherDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
         chartDetailRepository.save(otherDetail);
         chartDetails.add(otherDetail);
@@ -557,6 +590,7 @@ public class GetChartControllerTestIT extends AbstractControllerTestIT {
         fourthDetail.setPosition(chartDetail.getPosition());
         fourthDetail.setPrevPosition(chartDetail.getPrevPosition());
         fourthDetail.setChgPosition(chartDetail.getChgPosition());
+        fourthDetail.setLocked(true);
         fourthDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
         chartDetailRepository.save(fourthDetail);
         chartDetails.add(fourthDetail);

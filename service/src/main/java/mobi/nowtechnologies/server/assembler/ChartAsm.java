@@ -38,6 +38,7 @@ public class ChartAsm extends ModelMapper{
                 skip().setPlaylistTitle(null);
                 skip().setSwitchable(null);
                 skip().setBadgeIcon(null);
+                skip().setLocked(null);
                 map().setImage(source.getImageFileName());
             }
         });
@@ -112,7 +113,7 @@ public class ChartAsm extends ModelMapper{
 		return chartDetail;
 	}
 	
-	public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable) {
+	public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked) {
 		LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
 		
 		PlaylistDto playlistDto = map(chartDetail, PlaylistDto.class);
@@ -123,6 +124,10 @@ public class ChartAsm extends ModelMapper{
 		if(chartDetail.getBadgeId() != null && resolution != null){
             String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
             playlistDto.setBadgeIcon(badgeFileName);
+        }
+
+        if(isPlayListLockSupported){
+            playlistDto.setLocked(areAllTracksLocked);
         }
 
 		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);

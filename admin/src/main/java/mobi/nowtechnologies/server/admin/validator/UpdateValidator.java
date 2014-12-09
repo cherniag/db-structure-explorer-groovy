@@ -35,10 +35,10 @@ import mobi.nowtechnologies.server.shared.CollectionUtils;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.modelmapper.internal.util.Assert;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
 
 import javax.annotation.Resource;

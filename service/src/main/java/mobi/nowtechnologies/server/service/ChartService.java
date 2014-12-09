@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
@@ -55,7 +54,8 @@ public class ChartService implements ApplicationContextAware {
     private CacheContentService cacheContentService;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ContentDtoResult<ChartDto> processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution, Long lastChartUpdateFromClient) {
+    public ContentDtoResult<ChartDto> processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution,
+                                                             Long lastChartUpdateFromClient, boolean isPlayListLockSupported) {
         LOGGER.debug("input parameters user=[{}], createDrmIfNotExists=[{}], fetchLocked=[{}], resolution=[{}], lastChartUpdateFromClient=[{}]",
                 user, createDrmIfNotExists, fetchLocked, resolution, lastChartUpdateFromClient);
 
@@ -83,8 +83,13 @@ public class ChartService implements ApplicationContextAware {
         for (ChartDetail chart : charts) {
             ChartSupportResult result = supporter.support(user, chartGroups, chart);
             if (result.isSupport()){
-                chartDetails.addAll(chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked));
-                playlistDtos.add(chartAsm.toPlaylistDto(chart, resolution, community, result.isSwitchable()));
+                List<ChartDetail> chartDetailTree = chartDetailService.findChartDetailTree(chart.getChart().getI(), new Date(), fetchLocked);
+                chartDetails.addAll(chartDetailTree);
+
+                boolean areAllTracksLocked = areAllTracksLocked(chartDetailTree);
+                PlaylistDto playlistDto = chartAsm.toPlaylistDto(chart, resolution, community, result.isSwitchable(), isPlayListLockSupported, areAllTracksLocked);
+
+                playlistDtos.add(playlistDto);
             }
         }
         Long lastUpdateTimeForChartDetails = findMaxPublishDate(chartDetails);
@@ -110,6 +115,15 @@ public class ChartService implements ApplicationContextAware {
 
         LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
         return new ContentDtoResult<ChartDto>(lastUpdateTimeForChartDetails, chartDto);
+    }
+
+    private boolean areAllTracksLocked(List<ChartDetail> chartDetailTree) {
+        for (ChartDetail chartDetail : chartDetailTree) {
+            if(chartDetail.getLocked() == null || !chartDetail.getLocked()){
+                return false;
+            }
+        }
+        return true;
     }
 
     private Long findMaxPublishDate(List<ChartDetail> chartDetails) {
