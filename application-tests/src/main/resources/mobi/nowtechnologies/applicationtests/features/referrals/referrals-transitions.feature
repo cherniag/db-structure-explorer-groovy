@@ -1,4 +1,4 @@
-@Ready
+@Ready44
 Feature: Store user's referrals
   Scenario: Activated users flow when older is activated and younger is duplicated
     Given activated user references R0(EMAIL:PENDING), R1(FACEBOOK:PENDING)
@@ -15,4 +15,4 @@ Feature: Store user's referrals
     When referenced user activates via EMAIL with data U1(EMAIL:R0;ID:ANY)
     Then in database R0(EMAIL:ACTIVATED), R1(GOOGLE_PLUS:PENDING)
     When referenced user activates via GOOGLE_PLUS with data U2(EMAIL:R0;ID:R1)
-    Then in database R0(EMAIL:ACTIVATED), R1(GOOGLE_PLUS:DUPLICATED)
+    Then in database R0(EMAIL:ACTIVATED), R1(GOOGLE_PLUS:ACTIVATED)
