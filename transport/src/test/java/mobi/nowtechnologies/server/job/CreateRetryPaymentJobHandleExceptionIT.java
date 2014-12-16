@@ -66,7 +66,7 @@ public class CreateRetryPaymentJobHandleExceptionIT {
     private PaymentPolicyRepository paymentPolicyRepository;
 
     @Resource
-    private SubmitedPaymentRepository submitedPaymentRepository;
+    private SubmittedPaymentRepository submittedPaymentRepository;
 
     @Resource
     private PendingPaymentExecutor pendingPaymentExecutor;
@@ -86,7 +86,7 @@ public class CreateRetryPaymentJobHandleExceptionIT {
 
     @After
     public void tearDown() throws Exception {
-        submitedPaymentRepository.deleteAll();
+        submittedPaymentRepository.deleteAll();
         user.setCurrentPaymentDetails(null);
         user.getPaymentDetailsList().clear();
         userRepository.save(user);
@@ -155,7 +155,7 @@ public class CreateRetryPaymentJobHandleExceptionIT {
     }
 
     private SubmittedPayment getSubmittedPayment(User user1) {
-        return submitedPaymentRepository.findByTypeAndUserIdOrderByTimestampDesc(PaymentDetailsType.FIRST, user1.getId());
+        return submittedPaymentRepository.findByTypeAndUserIdOrderByTimestampDesc(PaymentDetailsType.FIRST, user1.getId());
     }
 
     private void mockPaymentExecutor() {
@@ -170,7 +170,7 @@ public class CreateRetryPaymentJobHandleExceptionIT {
             user.setNextSubPayment(Integer.MAX_VALUE);
             userRepository.save(user);
         }
-        submitedPaymentRepository.deleteAll();
+        submittedPaymentRepository.deleteAll();
     }
 
     private void mockUserNotificationService() throws UnsupportedEncodingException {

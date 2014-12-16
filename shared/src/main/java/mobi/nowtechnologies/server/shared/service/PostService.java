@@ -22,6 +22,10 @@ import java.util.List;
 public class PostService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostService.class);
 
+    public BasicResponse sendHttpPost(String url, String body) {
+        return sendHttpPost(url, null, body);
+    }
+
 	public BasicResponse sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
 		if (url == null)
 			throw new NullPointerException("The parameter url is null");

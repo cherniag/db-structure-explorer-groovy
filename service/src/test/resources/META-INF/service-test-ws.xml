@@ -44,7 +44,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.ITunesService" class="java.lang.Object" />
     <bean id="service.DataToDoRefundService" class="java.lang.Object" />
     <bean id="service.PendingPaymentService" class="java.lang.Object" />
-    <bean id="service.SubmitedPaymentService" class="java.lang.Object" />
+    <bean id="service.SubmittedPaymentService" class="java.lang.Object" />
     <bean id="service.sagePayPaymentService" class="java.lang.Object" />
     <bean id="service.payPalPaymentService" class="java.lang.Object" />
     <bean id="service.migHttpService" class="java.lang.Object" />

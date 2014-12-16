@@ -109,7 +109,7 @@
 		class="mobi.nowtechnologies.server.admin.controller.AccountLogController">
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="pendingPaymentService" ref="service.PendingPaymentService" />
-		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
+		<property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
 		<property name="userService" ref="service.UserService" />
 	</bean>
 	
