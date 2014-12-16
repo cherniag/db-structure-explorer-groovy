@@ -21,6 +21,7 @@ public class PlaylistDto {
     private Byte position;
     private Boolean switchable;
     private ChartType type;
+    private Boolean locked;
 
     @XmlElement(name = "badge_icon")
     @JsonProperty(value = "badge_icon")
@@ -106,6 +107,15 @@ public class PlaylistDto {
         this.badgeIcon = badgeIcon;
     }
 
+    public Boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -118,6 +128,7 @@ public class PlaylistDto {
                 .append("position", position)
                 .append("switchable", switchable)
                 .append("type", type)
+                .append("locked", locked)
                 .append("badgeIcon", badgeIcon)
                 .toString();
     }

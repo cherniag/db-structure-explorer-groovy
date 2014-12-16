@@ -1,25 +1,10 @@
 package mobi.nowtechnologies.server.service.aop;
 
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import mobi.nowtechnologies.server.service.payment.request.MigRequest.MigRequestParam;
 import mobi.nowtechnologies.server.service.payment.request.PayPalRequestParam;
 import mobi.nowtechnologies.server.service.payment.request.SagePayRequest.SageRequestParam;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,6 +14,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.util.MultiValueMap;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -188,8 +186,14 @@ public class ProfileLoggingAspect {
 		try {
 			if (THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
 				String url = (String) args[0];
-				List<NameValuePair> nameValuePairs = (List<NameValuePair>) args[1];
-				String body = (String) args[2];
+                List<NameValuePair> nameValuePairs = null;
+                String body;
+                if(args.length == 2){
+                    body = (String) args[1];
+                } else{
+                    nameValuePairs = (List<NameValuePair>) args[1];
+                    body = (String) args[2];
+                }
 
 				if (body != null) {
 					Matcher matcher = RECEIPT_DATA_PATTERN.matcher(body);

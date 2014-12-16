@@ -1,9 +1,12 @@
 package mobi.nowtechnologies.server.apptests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionRequestDto;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
 import org.apache.http.NameValuePair;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -11,17 +14,31 @@ import java.util.List;
  * Date: 8/15/2014
  */
 public class ITunesPostService extends PostService {
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public BasicResponse sendHttpPost(String url, List<NameValuePair> nameValuePairs, String body) {
+        ITunesInAppSubscriptionRequestDto requestDto;
+        try {
+            requestDto = objectMapper.readValue(body, ITunesInAppSubscriptionRequestDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // receipt-data in format  statusCode:productId:expiresDate
+        String token = requestDto.getReceiptData();
+        String[] parts = token.split(":");
+        String statusCode = parts[0];
+        String productId = parts[1];
+        String expiresDate = parts[2];
+
         BasicResponse basicResponse = new BasicResponse();
-        basicResponse.setStatusCode(200);
-        final String productId = "com.musicqubed.ios.mp.subscription.weekly.1";
+        basicResponse.setStatusCode(Integer.parseInt(statusCode));
 
         basicResponse.setMessage("{ \"receipt\" : " +
                 "{ \"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", " +
                     "\"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", " +
                     "\"original_transaction_id\" : \"123456789\", " +
-                    "\"expires_date\" : \"1423820502000\", " +
+                    "\"expires_date\" : \""+ expiresDate+"\", " +
                     "\"transaction_id\" : \"987654321\", " +
                     "\"quantity\" : \"1\", " +
                     "\"product_id\" : \"" + productId + "\", " +
@@ -40,7 +57,7 @@ public class ITunesPostService extends PostService {
                     "\"original_purchase_date_pst\" : \"2013-02-13 03:41:43 America/Los_Angeles\", " +
                     "\"unique_identifier\" : \"80d70017aae1547196bc92c02c3f83cc5f9e4cc6\", " +
                     "\"original_transaction_id\" : \"123456789\", " +
-                    "\"expires_date\" : \"1423820502000\", " +
+                    "\"expires_date\" : \"" + expiresDate + "\", " +
                     "\"transaction_id\" : \"987654321\", " +
                     "\"quantity\" : \"1\", " +
                     "\"product_id\" : \"" + productId + "\", " +

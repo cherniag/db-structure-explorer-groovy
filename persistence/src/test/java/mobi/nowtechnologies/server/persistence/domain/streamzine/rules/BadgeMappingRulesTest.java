@@ -5,20 +5,21 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkL
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import org.junit.Test;
-import org.modelmapper.internal.util.Assert;
+
+import static org.junit.Assert.assertTrue;
 
 public class BadgeMappingRulesTest {
 
     @Test
     public void testAllowed() throws Exception {
-        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.MUSIC, MusicType.TRACK));
-        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.MUSIC, MusicType.PLAYLIST));
-        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.PROMOTIONAL, LinkLocationType.EXTERNAL_AD));
+        assertTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.MUSIC, MusicType.TRACK));
+        assertTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.MUSIC, MusicType.PLAYLIST));
+        assertTrue(BadgeMappingRules.allowed(ShapeType.WIDE, ContentType.PROMOTIONAL, LinkLocationType.EXTERNAL_AD));
 
-        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.MUSIC, MusicType.TRACK));
-        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.MUSIC, MusicType.PLAYLIST));
+        assertTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.MUSIC, MusicType.TRACK));
+        assertTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.MUSIC, MusicType.PLAYLIST));
 
-        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.PROMOTIONAL, LinkLocationType.INTERNAL_AD));
-        Assert.isTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.PROMOTIONAL, LinkLocationType.EXTERNAL_AD));
+        assertTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.PROMOTIONAL, LinkLocationType.INTERNAL_AD));
+        assertTrue(BadgeMappingRules.allowed(ShapeType.NARROW, ContentType.PROMOTIONAL, LinkLocationType.EXTERNAL_AD));
     }
 }

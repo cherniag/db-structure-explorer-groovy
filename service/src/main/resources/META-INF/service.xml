@@ -454,7 +454,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	</bean>
 
 	<bean id="service.IPaymentService" class="mobi.nowtechnologies.server.service.impl.PaymentServiceImpl">
-		<property name="submitedPaymentRepository" ref="submitedPaymentRepository" />
+		<property name="submittedPaymentRepository" ref="submittedPaymentRepository" />
 	</bean>
 
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
@@ -502,13 +502,17 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		</constructor-arg>
 	</bean> 
 	
-	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.impl.ITunesServiceImpl">
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesServiceImpl">
 		<property name="postService" ref="shared.PostService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
-		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
-		<property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
+		<property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
+		<property name="messageSource" ref="serviceMessageSource"/>
+		<property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
+        <property name="iTunesDtoConverter" ref="iTunesDtoConverter"/>
 	</bean>
+
+    <bean id="iTunesDtoConverter" class="mobi.nowtechnologies.server.service.itunes.ITunesDtoConverter"/>
 	
 	<!-- O2 SOA beans -->
 	<bean id="service.O2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">

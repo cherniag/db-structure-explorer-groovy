@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service;
+package mobi.nowtechnologies.server.service.itunes;
 
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 

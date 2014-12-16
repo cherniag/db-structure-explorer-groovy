@@ -53,7 +53,22 @@ public class GetChartController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.7}/GET_CHART",
+            "**/{community}/{apiVersion:6\\.7}/GET_CHART"
+    })
+    public ModelAndView getChartV67(
+            HttpServletRequest request,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam("WIDTHXHEIGHT") Resolution resolution,
+            @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
+            HttpServletResponse response
+    ) throws Exception {
+        return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, resolution, response, true, ActivationStatus.ACTIVATED);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = {
             "**/{community}/{apiVersion:6\\.6}/GET_CHART",
             "**/{community}/{apiVersion:6\\.5}/GET_CHART",
             "**/{community}/{apiVersion:6\\.4}/GET_CHART"
@@ -68,7 +83,7 @@ public class GetChartController extends CommonController {
             @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
             HttpServletResponse response
     ) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, resolution, response, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, resolution, response, false, ActivationStatus.ACTIVATED);
     }
 
 
@@ -84,7 +99,7 @@ public class GetChartController extends CommonController {
             @IfModifiedSinceHeader(defaultValue = ZERO) Long modifiedSince,
             HttpServletResponse response
     ) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, null, response, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, modifiedSince, null, response, false, ActivationStatus.ACTIVATED);
     }
 
 
@@ -102,7 +117,7 @@ public class GetChartController extends CommonController {
             @RequestParam("TIMESTAMP") String timestamp,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID, null, null, null, ActivationStatus.ACTIVATED);
+        return getChart(request, userName, userToken, timestamp, deviceUID, null, null, null, false, ActivationStatus.ACTIVATED);
     }
 
 
@@ -118,7 +133,7 @@ public class GetChartController extends CommonController {
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
         return getChart(request, userName, userToken, timestamp, deviceUID,
-                null, null, null, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
+                null, null, null, false, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -140,7 +155,7 @@ public class GetChartController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ContentDtoResult<ChartDto> contentDtoResult = chartService.processGetChartCommand(user, false, true, null, null);
+            ContentDtoResult<ChartDto> contentDtoResult = chartService.processGetChartCommand(user, false, true, null, null, false);
             ChartDto chartDto = contentDtoResult.getContent();
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
@@ -176,7 +191,7 @@ public class GetChartController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ContentDtoResult<ChartDto> chartDtoResult = chartService.processGetChartCommand(user, false, false, null, null);
+            ContentDtoResult<ChartDto> chartDtoResult = chartService.processGetChartCommand(user, false, false, null, null, false);
             ChartDto chartDto = chartDtoResult.getContent();
             chartDto = convertToOldVersion(chartDto, apiVersion);
 
@@ -212,7 +227,7 @@ public class GetChartController extends CommonController {
 
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.ACTIVATED);
 
-            ContentDtoResult<ChartDto> chartDtoResult = chartService.processGetChartCommand(user, true, false, null, null);
+            ContentDtoResult<ChartDto> chartDtoResult = chartService.processGetChartCommand(user, true, false, null, null, false);
 
             ChartDto chartDto = chartDtoResult.getContent();
 
@@ -236,7 +251,7 @@ public class GetChartController extends CommonController {
                                   String userToken,
                                   String timestamp,
                                   String deviceUID,
-                                  Long lastDateOfUpdateChartOnClient, Resolution resolution, HttpServletResponse response, ActivationStatus... activationStatuses) throws Exception {
+                                  Long lastDateOfUpdateChartOnClient, Resolution resolution, HttpServletResponse response, boolean isPlayListLockedSupported, ActivationStatus... activationStatuses) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -250,7 +265,7 @@ public class GetChartController extends CommonController {
             if(resolution != null) {
                 resolution.withDeviceType(user.getDeviceType().getName());
             }
-            ContentDtoResult<ChartDto> chartResult = chartService.processGetChartCommand(user, false, true, resolution, lastDateOfUpdateChartOnClient);
+            ContentDtoResult<ChartDto> chartResult = chartService.processGetChartCommand(user, false, true, resolution, lastDateOfUpdateChartOnClient, isPlayListLockedSupported);
 
             if (checkCaching) {
                 Long lastUpdateTime = chartResult.getLastUpdatedTime();
