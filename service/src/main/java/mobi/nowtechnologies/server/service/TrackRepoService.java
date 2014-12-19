@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
@@ -8,15 +5,13 @@ import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 
+import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Mayboroda Dmytro
- *
- */
+// @author Mayboroda Dmytro
 public interface TrackRepoService {
 	
 	/**
@@ -75,4 +70,6 @@ public interface TrackRepoService {
     Boolean commitDrops(IngestWizardDataDto data);
 
     public Map<String, List<TrackDto>> encodeTracks(List<TrackDto> tracks);
+
+    void assignReportingOptions(TrackReportingOptionsDto trackReportingOptionsDto);
 }

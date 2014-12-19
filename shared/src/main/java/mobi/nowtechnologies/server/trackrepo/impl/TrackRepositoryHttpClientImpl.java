@@ -1,16 +1,15 @@
-/**
- * @author Alexander Kolpakov (akolpakov)
- */
 package mobi.nowtechnologies.server.trackrepo.impl;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
+import mobi.nowtechnologies.server.trackrepo.dto.*;
 import mobi.nowtechnologies.server.trackrepo.dto.DropDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.*;
@@ -32,7 +31,10 @@ import org.apache.http.protocol.HTTP;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,17 +46,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpStatus.OK;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static org.springframework.util.StringUtils.hasText;
 
-/**
- * @author Titov Mykhaylo (titov)
- * @author Mayboroda Dmytro
- */
+// @author Alexander Kolpakov (akolpakov)
 public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(TrackRepositoryHttpClientImpl.class);
 	private static final Integer DEFAULT_NUM_QUERY_THREADS = 1;
@@ -86,48 +84,6 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         this.numQuerySchedulerThreads = numQuerySchedulerThreads;
     }
 
-    protected abstract class QueryTask<T> implements Runnable {
-        private T data;
-        private Throwable failure;
-        private ScheduledFuture<?> future;
-        private final Lock lock = new ReentrantLock();
-        private final Condition isProcessing  = lock.newCondition();
-
-        public void setData(T data) {
-            this.data = data;
-        }
-
-        public T getData() {
-            return data;
-        }
-
-        public Throwable getFailure() {
-            return failure;
-        }
-
-        public void setFailure(Throwable failure) {
-            this.failure = failure;
-        }
-
-        public void start(ScheduledFuture<?> future) throws InterruptedException {
-            lock.lock();
-
-            this.future = future;
-            isProcessing.await();
-
-            lock.unlock();
-        }
-
-        public void stop(){
-            lock.lock();
-
-            isProcessing.signal();
-            this.future.cancel(false);
-
-            lock.unlock();
-        }
-    }
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -149,9 +105,6 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		return false;
 	}
 
-	/**
-	 * @return
-	 */
 	protected Header[] getSecuredHeaders() {
 		byte[] secToken = Base64.encode(username.concat(":").concat(password).getBytes());
 		BasicHeader[] headers = { new BasicHeader("Authorization", "Basic ".concat(new String(secToken))) };
@@ -316,34 +269,34 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         return result;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#pullTrack (java.lang.String)
-	 */
-	@Override
+    /*
+     * (non-Javadoc)
+     *
+     * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#pullTrack (java.lang.String)
+     */
+    @Override
     public TrackDto pullTrack(final Long id) throws Exception{
 		return sendPullRequest(id);
     }
 	
 	private TrackDto sendPullRequest(final Long id) throws Exception {
-		LOGGER.info("callPull(id:{})", id);
-		if (id == null)
-			return null;
-		try {
+        LOGGER.info("Sending pull request to track repo, trackId:{}", id);
+        if (id == null)
+            return null;
+        try {
 			HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
 			pull.setHeaders(getSecuredHeaders());
 			HttpResponse response = getHttpClient().execute(pull);
 			if (response.getStatusLine().getStatusCode() != 200) {
-				LOGGER.error("Server responded on Pull request for track with ID {} with error status code: {}", id, response.getStatusLine().getStatusCode());
-				//throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
-				return null;
-			}
-			String resJson = IOUtils.toString(response.getEntity().getContent()); 
-			LOGGER.info("Received json: {}", resJson);
-			TrackDto trackDto = gson.fromJson(resJson, TrackDto.class);
-			return trackDto;
-		} catch (Exception e) {
+                LOGGER.error("Track repo server responded on Pull request for track with ID {} with error status code: {}", id, response.getStatusLine().getStatusCode());
+                //throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
+                return null;
+            }
+            String resJson = IOUtils.toString(response.getEntity().getContent());
+            LOGGER.info("Received json from track repo: {}", resJson);
+            TrackDto trackDto = gson.fromJson(resJson, TrackDto.class);
+            return trackDto;
+        } catch (Exception e) {
 			LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
 			throw e;
 		}
@@ -356,9 +309,9 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	 */
 	@Override
 	public TrackDto encodeTrack(Long id, Boolean isHighRate, Boolean licensed) throws Exception {
-		if (id == null)
-			throw new NullPointerException("The parameter id is null");
-		LOGGER.debug("input parameters id: [{}]", id);
+        LOGGER.debug("input parameters: [{}, {}, {}]", id, isHighRate, licensed);
+        if (id == null)
+            throw new NullPointerException("The parameter id is null");
 
 		final TrackDto trackDto;
 
@@ -380,17 +333,14 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 			} else
 				throw new Exception("Wrong status code [" + statusCode + "] of response: [" + httpResponse + "]");
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw e;
-		}
+            LOGGER.error("encodeTrack exception: {}", e.getMessage(), e);
+            throw e;
+        }
 
 		LOGGER.debug("Output parameter trackDto=[{}]", trackDto);
 		return trackDto;
 	}
 
-	/**
-	 * @return
-	 */
 	public HttpClient getHttpClient() {
 		return HttpClientFactory.getHttpClient();
 	}
@@ -436,6 +386,10 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
                 addQParam(criteria.getAlbum(), "album", queryParams);
                 addQParam(criteria.getGenre(), "genre", queryParams);
                 addQParam(criteria.getTerritory(), "territory", queryParams);
+                ReportingType reportingType = criteria.getReportingType();
+                if (isNotNull(reportingType)) {
+                    addQParam(reportingType.name(), "reportingType", queryParams);
+                }
                 if(!CollectionUtils.isEmpty(criteria.getTrackIds())) {
                     addQParam(criteria.getTrackIds().get(0).toString(), "trackIds[0]", queryParams);
                 }
@@ -469,6 +423,28 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		} 
 		return tracks;
 	}
+
+    @Override
+    public ResponseEntity<String> assignReportingOptions(TrackReportingOptionsDto trackReportingOptionsDto) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        Header[] securedHeaders = getSecuredHeaders();
+        for (Header securedHeader : securedHeaders) {
+            httpHeaders.add(securedHeader.getName(), securedHeader.getValue());
+        }
+
+        org.springframework.http.HttpEntity<TrackReportingOptionsDto> requestEntity = new org.springframework.http.HttpEntity<TrackReportingOptionsDto>(trackReportingOptionsDto, httpHeaders);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(trackRepoUrl + "/reportingOptions", PUT, requestEntity, String.class);
+
+        if (!responseEntity.getStatusCode().equals(OK)) {
+            LOGGER.error("Some unexpected error occurred during track reporting option [{}] assigning. {}", trackReportingOptionsDto, responseEntity.getStatusCode().getReasonPhrase());
+            throw new RuntimeException("Can't assign track reporting options [" + trackReportingOptionsDto + "]");
+        }
+
+        return responseEntity;
+    }
 
     private void addDateQParam(Date param, String key, List<NameValuePair> queryParams) {
         if (param != null)

@@ -1,11 +1,16 @@
 package mobi.nowtechnologies.java.server.uits;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
 public class MP4Manager implements MP4ManagerIntf {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(MP4Manager.class);
 
     static final String uitsUUIDString = "99454E27-963A-4B56-8E76-1DB68C899CD4";
     static final int MP4_HEADER_SIZE = 8;
@@ -33,7 +38,7 @@ public class MP4Manager implements MP4ManagerIntf {
     @Override
     @SuppressWarnings("unused")
     public int process(InputStream audioFile, OutputStream data, OutputStream header, OutputStream encoded, UitsParameters params, String md5, boolean encrypt) {
-
+        LOGGER.info("start process");
         try {
             Atom ah = null;
             Atom ftypAtom = null;
@@ -59,7 +64,7 @@ public class MP4Manager implements MP4ManagerIntf {
                 }
                 if (ah.valid)
                     pos += ah.size;
-                System.out.println("Got atom " + ah.type + " " + ah.size + " " + ah.valid);
+                LOGGER.debug("Got atom " + ah.type + " " + ah.size + " " + ah.valid);
                 ah = new Atom(audioFile);
             }
 
@@ -115,13 +120,13 @@ public class MP4Manager implements MP4ManagerIntf {
 
             encoded.write(headerData.toByteArray());
             encoded.write(Arrays.copyOfRange(mdatAtom.buffer, 2048, (int) mdatAtom.size));
+
+            LOGGER.info("finish process");
             return 1;
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("FileNotFoundException processing file: {}", e.getMessage(), e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("IOException processing file: {}", e.getMessage(), e);
         }
         return 0;
 
@@ -149,7 +154,7 @@ public class MP4Manager implements MP4ManagerIntf {
 
     @Override
     public int processHeader(InputStream header, OutputStream out, UitsParameters params, String md5) {
-
+        LOGGER.info("start processHeader");
         try {
             Atom ftypAtom = null;
             Atom moovAtom = null;
@@ -215,11 +220,9 @@ public class MP4Manager implements MP4ManagerIntf {
 
             return 1;
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("processHeader FileNotFoundException processing file: {}", e.getMessage(), e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("processHeader IOException processing file: {}", e.getMessage(), e);
         }
         return -1;
 
@@ -227,7 +230,7 @@ public class MP4Manager implements MP4ManagerIntf {
 
     @Override
     public String getMediaHash(InputStream audioFile) {
-
+        LOGGER.info("start getMediaHash");
         try {
 
             byte size[] = new byte[4];
@@ -257,7 +260,7 @@ public class MP4Manager implements MP4ManagerIntf {
                             }
                         }
                         if (!found) {
-                            System.err.println("Invalide file type: " + subtype);
+                            LOGGER.warn("Invalid file type: " + subtype);
                             return null;
                         }
 
@@ -270,11 +273,9 @@ public class MP4Manager implements MP4ManagerIntf {
 
             return mediaHash;
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("getMediaHash FileNotFoundException processing file: {}", e.getMessage(), e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("getMediaHash IOException processing file: {}", e.getMessage(), e);
         }
         return null;
 
@@ -376,7 +377,7 @@ public class MP4Manager implements MP4ManagerIntf {
             // // 64 bit size. Read new size from body and store it
             // size = input.readLong();
             // }
-            System.out.println("Reading buffer " + type + " " + (size));
+            // System.out.println("Reading buffer " + type + " " + (size));
             buffer = new byte[(int) size];
             buffer[0] = sizeBuffer[0];
             buffer[1] = sizeBuffer[1];

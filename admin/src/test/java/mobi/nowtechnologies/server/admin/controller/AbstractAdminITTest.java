@@ -33,9 +33,7 @@ import java.io.IOException;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-/**
- * Created by oar on 2/3/14.
- */
+// Created by oar on 2/3/14.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextHierarchy(

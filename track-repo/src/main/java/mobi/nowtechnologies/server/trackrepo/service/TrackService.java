@@ -50,5 +50,5 @@ public interface TrackService {
 	 *
 	 * @return  short data about track including only basic properties.
 	 */
-	Page<Track> find(SearchTrackCriteria searchTrackCreatria, Pageable page);
+	Page<Track> find(SearchTrackCriteria searchTrackCriteria, Pageable page);
 }

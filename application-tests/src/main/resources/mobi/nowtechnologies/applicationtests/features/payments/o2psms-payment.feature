@@ -221,7 +221,7 @@ Feature: Successful o2Psms payment creation/re-creation and execution
     And New submitted payment has payment system as o2Psms, type as REGULAR, status as SUCCESSFUL and amount, currencyISO, duration of correspondent payment policy
     And User's NextSubPayment is prolonged from current date to correspondent duration from submitted payment
   Examples:
-    |tariff| option          |user_status|
+    | tariff | option            | user_status |
     |_3G   |AUDIO-1          |Free Trial|
     |_3G   |AUDIO-2          |Free Trial|
     |_3G   |AUDIO-3          |Free Trial|

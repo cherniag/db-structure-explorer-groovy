@@ -932,6 +932,11 @@ public class User implements Serializable {
         return this;
     }
 
+    public User withFirstDeviceLoginMillis(Long firstDeviceLoginMillis) {
+        setFirstDeviceLoginMillis(firstDeviceLoginMillis);
+        return this;
+    }
+
     public int getPaymentStatus() {
         return paymentStatus;
     }

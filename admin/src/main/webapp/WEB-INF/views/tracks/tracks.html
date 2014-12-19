@@ -67,6 +67,25 @@
                 </div>
 
             </div>
+
+            <div class="rel">
+                <div class="input-prepend">
+                    <span class="add-on" style="vertical-align:top"
+                          th:text="#{tracks.page.reportingType.search.criteria}">Reporting Type</span>
+                    <select name="reportingType" class="selectpicker" data-width="225px">
+                        <option id="none" th:text="#{tracks.page.reportingType.search.criteria.none}" th:value="'none'">
+                            none
+                        </option>
+                        <option th:each="reportingType :${T(mobi.nowtechnologies.server.trackrepo.enums.ReportingType).values()}"
+                                th:value="${reportingType}"
+                                th:selected="${param.reportingType} ? ${param.reportingType[0]==reportingType.name()}"
+                                th:text="#{${'tracks.page.reportingType.search.criteria.' + reportingType}}">
+                            REVIEW
+                        </option>
+                    </select>
+                </div>
+
+            </div>
 		<div class="clear"></div>
 			<div class="form-actions">
                 <div class="span3" style="width:auto; margin-left:0px;">
@@ -203,7 +222,7 @@
                             <a class="details-value" th:href="${trackDto.amazonUrl}" rel="tooltip" th:text="${trackDto.amazonUrl}" target="_blank"></a>
                         </div>
 
-                        <form th:id="${'trackReportingOptionsForm_'+trackDto.id}"  th:action="${trackRepoReportingOptionsUrl}">
+                        <form th:id="${'trackReportingOptionsForm_'+trackDto.id}" th:action="@{/reportingOptions}">
                             <label class="details-label"><strong th:text="#{tracks.page.trackList.head.reportingType}">Reporting Type:</strong></label>
                             <input type="hidden" name="trackId" th:value="${trackDto.id}"/>
                             <select name="reportingType" th:onchange="'onChangeReportingType(\'trackReportingOptionsForm_' + ${trackDto.id} + '\');'">

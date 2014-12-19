@@ -5,10 +5,13 @@ import mobi.nowtechnologies.server.dto.asm.CommunityDtoAsm;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
+import mobi.nowtechnologies.server.admin.util.EnumEditor;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -19,11 +22,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -34,6 +37,10 @@ import java.util.concurrent.Callable;
 import static mobi.nowtechnologies.server.shared.dto.PageListDto.PAGE_LIST_DTO;
 import static mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto.ACTION;
 import static mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto.INGEST_WIZARD_DATA_DTO;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto.SEARCH_TRACK_DTO;
+import static mobi.nowtechnologies.server.trackrepo.dto.TrackDto.TRACK_DTO;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -68,20 +75,16 @@ public class TrackRepoController extends AbstractCommonController{
         this.executorTimeout = executorTimeout;
     }
 
-    @InitBinder({SearchTrackDto.SEARCH_TRACK_DTO, TrackDto.TRACK_DTO})
-	public void initBinder(WebDataBinder binder) {
+    @InitBinder({SEARCH_TRACK_DTO, TRACK_DTO})
+    public void initBinder(WebDataBinder binder) {
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(URL_DATE_FORMAT), true));
-	}
+        binder.registerCustomEditor(ReportingType.class, new EnumEditor(ReportingType.class));
+    }
 
     @InitBinder({INGEST_WIZARD_DATA_DTO})
     public void initBinderForIngestWizardDataDto(WebDataBinder binder) {
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
-    }
-
-    @ModelAttribute("trackRepoReportingOptionsUrl")
-    public String getTrackRepoReportingOptionsUrl() {
-        return UriComponentsBuilder.fromUriString(trackRepoUrl).path("/").path("reportingOptions").build().toUriString();
     }
 
     @ModelAttribute("liveCommunities")
@@ -91,14 +94,14 @@ public class TrackRepoController extends AbstractCommonController{
 
 	@RequestMapping(value = "/tracks/list", method = GET)
 	public ModelAndView findTracks(@RequestParam(value = "query", required = false) String query,
-                                   @ModelAttribute(SearchTrackDto.SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto,
+                                   @ModelAttribute(SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto,
                                    BindingResult bindingResult,
                                    @PageableDefaults(pageNumber = 0, value = 10) Pageable pageable) {
 		LOGGER.debug("input findTracks(query, searchTrackDto): [{}]", new Object[] { searchTrackDto });
 
 		ModelAndView modelAndView = new ModelAndView("tracks/tracks");
 		if (bindingResult.hasErrors()) {
-            modelAndView.getModelMap().put(SearchTrackDto.SEARCH_TRACK_DTO, searchTrackDto);
+            modelAndView.getModelMap().put(SEARCH_TRACK_DTO, searchTrackDto);
         } else {
 			PageListDto<TrackDto> tracks =  query != null ? trackRepoService.find(query, pageable) : trackRepoService.find(searchTrackDto, pageable);
 
@@ -112,12 +115,15 @@ public class TrackRepoController extends AbstractCommonController{
 	}
 	
 	@RequestMapping(value = "/tracks/encode", method = POST)
-	public @ResponseBody WebAsyncTask<TrackDto> encodeTrack(final @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
-		LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[]{track});
+    public
+    @ResponseBody
+    WebAsyncTask<TrackDto> encodeTrack(final @ModelAttribute(TRACK_DTO) TrackDto track) {
+        LOGGER.debug("input encodeTrack(trackId) ('/tracks/encode') request: [{}]", new Object[]{track});
 
         WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
+                LOGGER.warn("On encodeTrack timeout for: {}", track);
                 TrackDto result = trackRepoService.encode(track);
                 return result;
             }
@@ -125,6 +131,7 @@ public class TrackRepoController extends AbstractCommonController{
         encodeTask.onTimeout(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
+                LOGGER.warn("On encodeTrack timeout for: {}", track);
                 SearchTrackDto criteria = new SearchTrackDto();
                 criteria.setTrackIds(Collections.singletonList(track.getId().intValue()));
 
@@ -178,8 +185,10 @@ public class TrackRepoController extends AbstractCommonController{
     }
 	
 	@RequestMapping(value = "/tracks/pull", method = POST)
-	public @ResponseBody WebAsyncTask<TrackDto> pullTrack(final @Valid @ModelAttribute(TrackDto.TRACK_DTO) TrackDto track) {
-		LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[] { track });
+    public
+    @ResponseBody
+    WebAsyncTask<TrackDto> pullTrack(final @Valid @ModelAttribute(TRACK_DTO) TrackDto track) {
+        LOGGER.debug("input pullTrack(trackId) ('/tracks/pull') request", new Object[]{track});
 
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
@@ -198,6 +207,7 @@ public class TrackRepoController extends AbstractCommonController{
         pullTask.onTimeout(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
+                LOGGER.warn("On pullTrack timeout for: {}", track);
                 SearchTrackDto criteria = new SearchTrackDto();
                 criteria.setTrackIds(Collections.singletonList(track.getId().intValue()));
 
@@ -236,7 +246,7 @@ public class TrackRepoController extends AbstractCommonController{
 
     @RequestMapping(value = "/drops/tracks/select", method = POST)
     public ModelAndView selectTrackDrops(@Valid @ModelAttribute(INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
-        LOGGER.debug("input selectDrops(data) request, [{}]", new Object[] { data });
+        LOGGER.debug("input selectDrops(data) request, [{}]", new Object[]{data});
 
         data = trackRepoService.selectTrackDrops(data);
 
@@ -249,13 +259,27 @@ public class TrackRepoController extends AbstractCommonController{
 
     @RequestMapping(value = "/drops/commit", method = POST)
     public ModelAndView commitDrops(@Valid @ModelAttribute(INGEST_WIZARD_DATA_DTO) IngestWizardDataDto data) {
-        LOGGER.debug("input commitDrops(data) request, [{}]", new Object[] { data });
+        LOGGER.debug("input commitDrops(data) request, [{}]", new Object[]{data});
 
         trackRepoService.commitDrops(data);
 
         ModelAndView modelAndView = new ModelAndView("redirect:/tracks/list");
 
         return modelAndView;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ModelAndView handleValidationException(MethodArgumentNotValidException methodArgumentNotValidException) {
+        LOGGER.trace("Bad request", methodArgumentNotValidException);
+        ModelAndView modelAndView = new ModelAndView("");
+        modelAndView.addObject("error", methodArgumentNotValidException.getBindingResult());
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/reportingOptions", method = PUT)
+    public void assignReportingOptions(@Valid @RequestBody TrackReportingOptionsDto trackReportingOptionsDto) {
+        trackRepoService.assignReportingOptions(trackReportingOptionsDto);
     }
 
     private List<TrackDto> mapParamsToTracks(final Map<String, String> map){

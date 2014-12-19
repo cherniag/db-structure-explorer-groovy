@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.trackrepo.repository.impl;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -12,6 +13,8 @@ import org.springframework.util.CollectionUtils;
 import javax.persistence.Query;
 import java.util.Iterator;
 import java.util.List;
+
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -85,7 +88,10 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             setParamLike("ingestor", trackCriteria.getIngestor(), query);
             setParamLike("territory", trackCriteria.getTerritory(), query);
 
-
+            ReportingType reportingType = trackCriteria.getReportingType();
+            if (isNotNull(reportingType)) {
+                setParam("reportingType", reportingType, query);
+            }
             setParam("isrc", trackCriteria.getIsrc(), query);
             setParam("from", trackCriteria.getIngestFrom(), query);
             setParam("to", trackCriteria.getIngestTo(), query);
@@ -142,6 +148,11 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
                 addCriteria(criteria, " lower(t.territoryCodes) like :territory");
             if (trackCriteria.getMediaType() !=null)
                 addCriteria(criteria, " t.mediaType = :mediaType");
+
+            ReportingType reportingType = trackCriteria.getReportingType();
+            if (isNotNull(reportingType)) {
+                addCriteria(criteria, "t.reportingType = :reportingType");
+            }
 
         }
 

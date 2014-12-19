@@ -7,6 +7,7 @@ import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
 import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.*;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
 import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -105,6 +106,7 @@ public class TrackServiceImpl implements TrackService {
 
         Track track = trackRepository.findOneWithCollections(trackId);
 
+        LOGGER.debug("Found track : {}", track);
         if (track == null)
             return null;
 
@@ -127,11 +129,12 @@ public class TrackServiceImpl implements TrackService {
             LOGGER.info("Track {} is encoded", trackId);
             return track;
         } catch (Exception e) {
+            LOGGER.error("Cannot encode track {} files or create zip package: {}", trackId, e.getMessage(), e);
+
             track.setStatus(TrackStatus.NONE);
             track.setResolution(AudioResolution.RATE_ORIGINAL);
             trackRepository.save(track);
 
-            LOGGER.error("Cannot encode track {} files or create zip package: " + e.getMessage(), trackId, e);
             throw new RuntimeException("Cannot encode track files or create zip package: " + e.getMessage(), e);
         }
     }
@@ -141,6 +144,8 @@ public class TrackServiceImpl implements TrackService {
         LOGGER.debug("input pull(trackId): [{}]", new Object[]{trackId});
 
         Track track = trackRepository.findOneWithCollections(trackId);
+
+        LOGGER.debug("Found track in db: {}", track);
 
         if (track == null || (track.getStatus() != TrackStatus.ENCODED && track.getStatus() != TrackStatus.PUBLISHED))
             return track;
@@ -155,31 +160,28 @@ public class TrackServiceImpl implements TrackService {
 
             track.setStatus(TrackStatus.PUBLISHED);
         } catch (Exception e) {
+            LOGGER.error("Exception while pulling track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             track.setStatus(oldStatus);
         }
 
         trackRepository.save(track);
 
-        LOGGER.info("output pull(trackId): [{}]", new Object[]{track});
+        LOGGER.info("output pull track: {}", track);
         return track;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     protected Track pull(Track track) {
-        LOGGER.info("start pull process: [trackId:{}, isrc:{}]", track.getUniqueTrackId(), track.getIsrc());
+        LOGGER.info("start pull process: uniqueTrackId:{}", track.getUniqueTrackId());
 
         try {
 
-            String trackId = track.getUniqueTrackId();
+            List<String> pullFiles = buildListOfSourceFiles(track);
 
-            AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
-            String[] pullFiles = buildListOfSourceFiles(trackId, audioFile);
+            LOGGER.info("files to pull: {}", pullFiles);
 
-            LOGGER.info("files to pull: {}", Arrays.toString(pullFiles));
-
-            for (int i = 0; i < pullFiles.length; i++) {
-                if (pullFiles[i] != null)
-                    cloudFileService.copyFile(pullFiles[i], destPullContainer, track.getId() + "_" + pullFiles[i], srcPullContainer);
+            for (String fileName : pullFiles) {
+                cloudFileService.copyFile(srcPullContainer, track.getId() + "_" + fileName, destPullContainer, fileName);
             }
 
             //upload video on brightcove if it exists
@@ -190,25 +192,30 @@ public class TrackServiceImpl implements TrackService {
             track.setPublishDate(new Date());
             trackRepository.save(track);
         } catch (Exception e) {
-            LOGGER.error("Cannot pull encoded track.", e);
+            LOGGER.error("Cannot pull encoded track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             throw new RuntimeException("Cannot pull encoded track.");
         }
 
-        LOGGER.info("end pull process: [{}]", new Object[]{track.getIsrc()});
+        LOGGER.info("End of pull process: [{}]", new Object[]{track.getUniqueTrackId()});
         return track;
     }
 
-    private String[] buildListOfSourceFiles(String trackId, AssetFile audioFile) {
-        return new String[]{
-                audioFile != null ? trackId + "." + FileType.MOBILE_AUDIO.getExt() : null,
-                audioFile != null ? trackId + "." + FileType.MOBILE_ENCODED.getExt() : null,
-                audioFile != null ? trackId + "_" + BitRate.BITRATE48.getValue()+ "." + FileType.MOBILE_HEADER.getExt() : null,
-                audioFile != null ? trackId + "_" + BitRate.BITRATE48.getValue()+ "." + FileType.MOBILE_AUDIO.getExt() : null,
-                audioFile != null ? trackId + "_" + BitRate.BITRATE96.getValue()+ "." + FileType.MOBILE_HEADER.getExt() : null,
-                audioFile != null ? trackId + "_" + BitRate.BITRATE96.getValue()+ "." + FileType.MOBILE_AUDIO.getExt() : null,
-                trackId + ImageResolution.SIZE_21.getSuffix() + "." + FileType.IMAGE.getExt(),
-                trackId + ImageResolution.SIZE_22.getSuffix() + "." + FileType.IMAGE.getExt()
-        };
+    private List<String> buildListOfSourceFiles(Track track) {
+        String trackId = track.getUniqueTrackId();
+        AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
+
+        List<String> result = Lists.newArrayList();
+        if (audioFile != null) {
+            result.add(trackId + "." + FileType.MOBILE_AUDIO.getExt());
+            result.add(trackId + "." + FileType.MOBILE_ENCODED.getExt());
+            result.add(trackId + "_" + BitRate.BITRATE48.getValue() + "." + FileType.MOBILE_HEADER.getExt());
+            result.add(trackId + "_" + BitRate.BITRATE48.getValue() + "." + FileType.MOBILE_AUDIO.getExt());
+            result.add(trackId + "_" + BitRate.BITRATE96.getValue() + "." + FileType.MOBILE_HEADER.getExt());
+            result.add(trackId + "_" + BitRate.BITRATE96.getValue() + "." + FileType.MOBILE_AUDIO.getExt());
+        }
+        result.add(trackId + ImageResolution.SIZE_21.getSuffix() + "." + FileType.IMAGE.getExt());
+        result.add(trackId + ImageResolution.SIZE_22.getSuffix() + "." + FileType.IMAGE.getExt());
+        return result;
     }
 
     @Override
@@ -250,6 +257,7 @@ public class TrackServiceImpl implements TrackService {
     }
 
     private void moveFiles(File srcDir, File destDir) {
+        LOGGER.info("Start moving files from {} to {}", srcDir, destDir);
         String destPath = destDir.getAbsolutePath();
         Collection<File> moveDirs = FileUtils.listFilesAndDirs(srcDir, new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
         Iterator<File> i = moveDirs.iterator();
@@ -268,9 +276,10 @@ public class TrackServiceImpl implements TrackService {
                 FileUtils.deleteQuietly(destFile);
 
                 try {
+                    LOGGER.debug("Trying to move file {} to {}", file, newDestSubDir);
                     FileUtils.moveFileToDirectory(file, newDestSubDir, true);
                 } catch (IOException e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LOGGER.error("Could not move file {} to {} : {}", file, newDestSubDir, e.getMessage(), e);
                 }
             }
         }
@@ -279,6 +288,8 @@ public class TrackServiceImpl implements TrackService {
 
     protected AssetFile createVideo(Track track) throws BrightcoveException {
         AssetFile videoFile = track.getFile(AssetFile.FileType.VIDEO);
+
+        LOGGER.info("Video file is : {}", videoFile);
 
         if (videoFile == null)
             return null;

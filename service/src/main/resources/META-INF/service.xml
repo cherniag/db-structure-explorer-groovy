@@ -403,6 +403,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="containerName" value="${cloudFile.containerName}" />
 		<property name="filesURL" value="${cloudFile.filesURL}" />
         <property name="httpClient" ref="service.cloudHttpClient"/>
+		<property name="copyFileOnCloudAttemptCount" value="${cloudFile.copyFileOnCloudAttemptCount}"/>
 	</bean>
 
     <bean id="service.cloudHttpConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager">
