@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.trackrepo.utils;
 
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.Map;
 
 public class UploadToCloudFileManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(UploadToCloudFileManager.class);
 	private String dataContainerName;
 	private String privateContainerName;
 	private CloudFileService cloudService;
@@ -16,13 +19,15 @@ public class UploadToCloudFileManager {
 	private String defaultContentType;
 
 	public void uploadFilesToCloud(Track track, List<String> filesToPrivate, List<String> filesToData) {
-		
+		LOGGER.info("Uploading files to private container : [{}], to data container : [{}] for track {}", filesToPrivate, filesToData, track.getUniqueTrackId());
 		for (String fileName : filesToPrivate) {
 			
 			File file = new File(fileName);
 			if (file.exists()) {
 				String contentType = getContentTypeByExtensioin(fileName);
 				cloudService.uploadFile(file, track.getId() + "_" + file.getName(), contentType, privateContainerName);
+			} else {
+				LOGGER.warn("File {} doesn't exist", file);
 			}
 		}
 
@@ -32,8 +37,11 @@ public class UploadToCloudFileManager {
 			if (file.exists()) {
 				String contentType = getContentTypeByExtensioin(fileName);
 				cloudService.uploadFile(file, file.getName(), contentType, dataContainerName);
+			} else {
+				LOGGER.warn("File {} doesn't exist", file);
 			}
 		}
+		LOGGER.info("Uploading done");
 	}
 	
 	private String getContentTypeByExtensioin(String fileName) {

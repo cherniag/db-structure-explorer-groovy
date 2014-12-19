@@ -14,9 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 
-/**
- * Created by zam on 11/21/2014.
- */
+// Created by zam on 11/21/2014.
 @Controller
 public class UserContextController extends CommonController {
 

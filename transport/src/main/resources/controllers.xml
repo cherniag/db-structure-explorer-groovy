@@ -11,5 +11,6 @@
     <bean id="factory.ReferralContextDtoFactory"
           class="mobi.nowtechnologies.server.dto.transport.ReferralContextDtoFactoryImpl">
         <property name="referralService" ref="service.referralService"/>
+        <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
     </bean>
 </beans>

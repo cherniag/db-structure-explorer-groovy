@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.controller;
 
-import java.util.*;
-import java.util.concurrent.Callable;
-
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -11,7 +8,6 @@ import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDtoMapper;
 import mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -19,13 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.concurrent.Callable;
 
 import static mobi.nowtechnologies.server.trackrepo.domain.Territory.GB_TERRITORY;
 import static mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto.SEARCH_TRACK_DTO;
@@ -69,16 +64,20 @@ public class TrackController extends AbstractCommonController{
         WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                return new TrackDtoMapper(trackService.encode(trackId, isHighRate, licensed));
+                LOGGER.info("Start WebAsyncTask: encode track with id {} and executorTimeout {}", trackId, executorTimeout);
+                Track track = trackService.encode(trackId, isHighRate, licensed);
+                LOGGER.info("Finish WebAsyncTask: encode track with id {}", trackId);
+                return new TrackDtoMapper(track);
             }
         });
         encodeTask.onTimeout(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-            SearchTrackDto criteria = new SearchTrackDto();
-            criteria.setTrackIds(Collections.singletonList(trackId.intValue()));
+                LOGGER.warn("On encode timeout, trackId : {}", trackId);
+                SearchTrackDto criteria = new SearchTrackDto();
+                criteria.setTrackIds(Collections.singletonList(trackId.intValue()));
 
-            return new TrackDtoMapper(trackService.find(criteria, null).getContent().get(0));
+                return new TrackDtoMapper(trackService.find(criteria, null).getContent().get(0));
             }
         });
 
@@ -90,18 +89,18 @@ public class TrackController extends AbstractCommonController{
             @RequestParam(value="query", required = false) String query,
             @ModelAttribute(SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto,
             @PageableDefaults(pageNumber = 0, value = 10) Pageable page) {
-
-		return TrackDtoMapper.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
+        LOGGER.info("Start find with query {} and searchTrackDto", query, searchTrackDto);
+        return TrackDtoMapper.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
 	}
 	
 	@RequestMapping(value = "/tracks/{trackId}/pull", method = GET)
 	public @ResponseBody WebAsyncTask<TrackDto> pull(final @PathVariable("trackId")Long trackId) {
-		LOGGER.info("pull(trackId:{})", trackId);
+        LOGGER.info("Start pulling - trackId:{}", trackId);
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
                 try {
-                	LOGGER.info("Start WebAsyncTask: pulling track with id {}", trackId);
+                    LOGGER.info("Start WebAsyncTask: pulling track with id {} and executorTimeout {}", trackId, executorTimeout);
                     Track track = trackService.pull(trackId);
                     TrackDtoMapper trackDto = new TrackDtoMapper(track);
 
@@ -115,11 +114,12 @@ public class TrackController extends AbstractCommonController{
                     }
 
                     trackDto.setPublishDate(fixDateJson(trackDto.getPublishDate()));//TODO: date json serialization hot fix.
-                    
+
+                    LOGGER.debug("Track dto result is : {}", trackDto);
                     LOGGER.info("Finish WebAsyncTask: pulling track with id {}", trackId);
                     return trackDto;
                 } catch (Exception e) {
-                    LOGGER.error("Error while pulling track with ID [{}] : {{}} ", trackId, e.getMessage(), e);
+                    LOGGER.error("Error while pulling track with ID [{}] : {}", trackId, e.getMessage(), e);
                     return null;
                 }
             }
@@ -127,10 +127,11 @@ public class TrackController extends AbstractCommonController{
         pullTask.onTimeout(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-            SearchTrackDto criteria = new SearchTrackDto();
-            criteria.setTrackIds(Collections.singletonList(trackId.intValue()));
+                LOGGER.warn("On pull timeout, trackId : {}", trackId);
+                SearchTrackDto criteria = new SearchTrackDto();
+                criteria.setTrackIds(Collections.singletonList(trackId.intValue()));
 
-            return new TrackDtoMapper(trackService.find(criteria, null).getContent().get(0));
+                return new TrackDtoMapper(trackService.find(criteria, null).getContent().get(0));
             }
         });
 

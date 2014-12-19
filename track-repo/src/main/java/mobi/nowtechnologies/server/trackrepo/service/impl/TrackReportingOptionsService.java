@@ -1,12 +1,9 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import mobi.nowtechnologies.server.trackrepo.domain.NegativeTag;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 // @author Titov Mykhaylo (titov) on 10.11.2014.
 public class TrackReportingOptionsService {

@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.trackrepo;
 
 
+import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
+
 import java.util.Date;
 import java.util.List;
 
@@ -36,4 +38,6 @@ public interface SearchTrackCriteria {
     String getTerritory();
 
     String getMediaType();
+
+	ReportingType getReportingType();
 }

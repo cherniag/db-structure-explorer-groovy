@@ -4,7 +4,9 @@ import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 /**
  * @author Alexander Kolpakov (akolpakov)
@@ -79,4 +81,6 @@ public interface TrackRepositoryClient {
         * @see mobi.nowtechnologies.server.client.trackrepo.TrackRepositoryClient#selectTrackDrops (java.lang.String)
         */
     Boolean commitDrops(IngestWizardDataDto data);
+
+	ResponseEntity<String> assignReportingOptions(TrackReportingOptionsDto trackReportingOptionsDto);
 }

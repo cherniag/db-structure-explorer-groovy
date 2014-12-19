@@ -7,7 +7,9 @@ import mobi.nowtechnologies.server.trackrepo.controller.TrackController;
 import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
     private TrackController trackController;
@@ -78,5 +80,10 @@ public class TrackRepositoryClientAdapter implements TrackRepositoryClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public ResponseEntity<String> assignReportingOptions(TrackReportingOptionsDto trackReportingOptionsDto) {
+        throw new UnsupportedOperationException();
     }
 }

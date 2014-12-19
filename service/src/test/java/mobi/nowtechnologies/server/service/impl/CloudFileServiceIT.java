@@ -47,7 +47,7 @@ public class CloudFileServiceIT {
         cloudFileService.uploadFile(createTestFile(), srcFileName);
 
         // Invocation of test method
-        boolean copied = cloudFileService.copyFile("11122233344455566.jpg", destContainerName, srcFileName, srcContainerName);
+        boolean copied = cloudFileService.copyFile(srcContainerName, srcFileName, destContainerName, "11122233344455566.jpg");
 
         // Asserts
         Assert.assertTrue(copied);
@@ -64,7 +64,7 @@ public class CloudFileServiceIT {
         cloudFileService.uploadFile(createTestFile(), srcFileName);
 
         // Invocation of test method
-        cloudFileService.copyFile(destFileName, destContainerName, srcFileName, srcContainerName);
+        cloudFileService.copyFile(srcContainerName, srcFileName, destContainerName, destFileName);
     }
 
     @Test(expected = ExternalServiceException.class)
@@ -78,7 +78,7 @@ public class CloudFileServiceIT {
         cloudFileService.uploadFile(createTestFile(), "srcFileName");
 
         // Invocation of test method
-        cloudFileService.copyFile(destFileName, destContainerName, srcFileName, srcContainerName);
+        cloudFileService.copyFile(srcContainerName, srcFileName, destContainerName, destFileName);
     }
 
     @Test(expected = ExternalServiceException.class)
@@ -92,7 +92,7 @@ public class CloudFileServiceIT {
         cloudFileService.uploadFile(createTestFile(), srcFileName);
 
         // Invocation of test method
-        cloudFileService.copyFile(destFileName, destContainerName, srcFileName, srcContainerName);
+        cloudFileService.copyFile(srcContainerName, srcFileName, destContainerName, destFileName);
     }
 
     private MultipartFile createTestFile() throws IOException {

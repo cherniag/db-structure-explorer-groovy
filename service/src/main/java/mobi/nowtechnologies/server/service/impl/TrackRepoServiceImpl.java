@@ -7,10 +7,7 @@ import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.TrackRepositoryClient;
-import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
-import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
-import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
-import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.*;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
@@ -145,7 +142,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			}
 
             if (track.getPublishDate() == null) {
-                throw new ServiceException("Pulled track is not published");
+                throw new ServiceException("Pulled track is not published (publish date is null)");
             }
 
             Media media = createOrUpdateMedia(track, config);
@@ -231,6 +228,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
         mediaRepository.save(media);
 
+        LOGGER.debug("Output media is :{}", media);
+
         return media;
     }
 
@@ -310,8 +309,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 			track.setPublishTitle(track.getTitle());
 			track.setInfo(getArtistInfo(track.getArtist()));
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ExternalServiceException("tracks.encode.error", "Couldn't encode track");
+            LOGGER.error("Exception encoding track {}: {}", config, e.getMessage(), e);
+            throw new ExternalServiceException("tracks.encode.error", "Couldn't encode track");
 		}
 
 		LOGGER.info("output encode(id): [{}]", track);
@@ -319,9 +318,9 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public MediaFile createMediaFile(ResourceFileDto fileDto)
-	{
-		if (fileDto == null)
+    public MediaFile createMediaFile(ResourceFileDto fileDto) {
+        LOGGER.info("createMediaFile fileDto is {}", fileDto);
+        if (fileDto == null)
 			return null;
 
 		String fullFileName = fileDto.getFullFilename();
@@ -338,7 +337,8 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 		}
 
 		file.setSize(fileDto.getSize());
-		mediaFileRepository.save(file);
+        LOGGER.debug("save MediaFile {}", file);
+        mediaFileRepository.save(file);
 
 		return file;
 	}
@@ -457,5 +457,10 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         result.put("fail", fails);
 
         return result;
+    }
+
+    @Override
+    public void assignReportingOptions(TrackReportingOptionsDto trackReportingOptionsDto) {
+        client.assignReportingOptions(trackReportingOptionsDto);
     }
 }

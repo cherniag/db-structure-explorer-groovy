@@ -16,8 +16,8 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(ShellImageGeneratorImpl.class);
 	
 	public List<String> generateThumbnails(String sourceFilePath, String trackId, boolean isVideo) throws IOException, InterruptedException {
-		
-		LOGGER.debug("ShellImageGeneratorImpl.generateThumbnails started");
+
+		LOGGER.debug("generateThumbnails started for {} in {}", trackId, sourceFilePath);
 		
 		List<String> result = new ArrayList<String>(thumbnails.size());
 		
@@ -25,14 +25,14 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
 			result.add(generateImage(sourceFilePath, trackId, thumbnailType, isVideo));
 		}
 
-		LOGGER.debug("ShellImageGeneratorImpl.generateThumbnails successfuly finished");
+		LOGGER.debug("generateThumbnails successfully finished");
 		
 		return result;
 	}
 	
 	public List<String> generateThumbnailsWithWatermark(String sourceFilePath, String trackId, boolean isVideo) throws IOException, InterruptedException {
-		
-		LOGGER.debug("ShellImageGeneratorImpl.generateThumbnailsWithWatermark started");
+
+		LOGGER.debug("generate Thumbnails With Watermark started for {} in {}", trackId, sourceFilePath);
 		
 		List<String> result = new ArrayList<String>(thumbnails.size());
 		
@@ -51,6 +51,8 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
 	}
 
 	protected String generateImage(String sourceFilePath, String trackId, ThumbnailType thumbnailType, boolean isVideo) throws IOException, InterruptedException {
+
+		LOGGER.info("Generate image {} for {} in {}, isVideo {}", thumbnailType, trackId, sourceFilePath, isVideo);
 		
 		if (StringUtils.isBlank(sourceFilePath)) {
 			throw new RuntimeException("Image Generation: source file path is null or emmpty");

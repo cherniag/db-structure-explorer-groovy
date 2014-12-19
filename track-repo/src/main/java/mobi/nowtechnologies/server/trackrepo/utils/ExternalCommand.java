@@ -6,12 +6,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ExternalCommand {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ExternalCommand.class);
 
     public String executeCommand(String... params) throws IOException, InterruptedException {
+
+        LOGGER.debug("ExternalCommand.executeCommand start running : {} with params: {}", command.getFilename(), Arrays.toString(params));
 
         ExternalCommandThread thread = new ExternalCommandThread();
         appendCodeDependsFromOS(thread);
@@ -21,7 +24,6 @@ public class ExternalCommand {
 
         thread.run();
 
-        LOGGER.debug("ExternalCommand.executeCommand start runnig: " + command.getFilename());
 
         if (thread.getExitCode() == 0) {
             LOGGER.debug("ExternalCommand.executeCommand successful finihed: " + command.getFilename());
