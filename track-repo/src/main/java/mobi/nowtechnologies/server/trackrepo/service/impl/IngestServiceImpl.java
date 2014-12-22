@@ -167,6 +167,7 @@ public class IngestServiceImpl implements IngestService{
 				track.setInfo(value.info);
 				track.setLicensed(value.licensed);
                 track.setExplicit(value.explicit);
+				track.setReportingType(value.getReportingType());
 
                 if (!addOrUpdateFiles(track, value.files, updateFiles)) {
                     commit(ingestor, parser, drop.getDrop(), list, false, true, "Drop is updating asset files: to be processed manually");

@@ -40,6 +40,7 @@ public class ServiceConfigController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
+                    "**/{community}/{apiVersion:6\\.7}/SERVICE_CONFIG",
                     "**/{community}/{apiVersion:6\\.6}/SERVICE_CONFIG",
                     "**/{community}/{apiVersion:6\\.5}/SERVICE_CONFIG",
                     "**/{community}/{apiVersion:6\\.4}/SERVICE_CONFIG",

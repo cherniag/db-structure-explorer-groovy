@@ -12,10 +12,7 @@ import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
-import mobi.nowtechnologies.server.trackrepo.dto.IngestWizardDataDto;
-import mobi.nowtechnologies.server.trackrepo.dto.ResourceFileDto;
-import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
-import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.*;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
@@ -36,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.*;
@@ -51,34 +49,30 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-/**
- * @author Alexander Kolpakov (akolpakov)
- */
+// @author Alexander Kolpakov (akolpakov)
 @RunWith(MockitoJUnitRunner.class)
 public class TrackRepoServiceImplTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoServiceImplTest.class);
-    private static final String ENCODE_METHOD = "encode";
-    private static final String PULL_METHOD = "pull";
-    private static final String FIND_METHOD = "find";
-    private TestCases<Long, TrackDto> mapTrackById = new TestCases<Long, TrackDto>();
-    private TestCases<String, PageListDto<TrackDto>> mapTrackByQuery = new TestCases<String, PageListDto<TrackDto>>();
-    private TestCases<SearchTrackDto, PageListDto<TrackDto>> mapTrackByProperties = new TestCases<SearchTrackDto, PageListDto<TrackDto>>();
-    private TestCases<String, Media> mapMediaByIsrc = new TestCases<String, Media>();
-    private TestCases<String, MediaFile> mapMediaFileByName = new TestCases<String, MediaFile>();
-    private TestCases<String, Artist> mapArtistByName = new TestCases<String, Artist>();
-    private TestCases<String, Artist> mapArtistByRealName = new TestCases<String, Artist>();
-    private TestCases<String, Genre> mapGenreByName = new TestCases<String, Genre>();
-    @Mock
-    private TrackRepositoryHttpClientImpl client;
-    @Mock
-    private ArtistRepository artistRepository;
-    @Mock
-    private MediaRepository mediaRepository;
-    @Mock
-    private GenreRepository genreRepository;
-    @Mock
-    private MediaFileRepository mediaFileRepository;
-    private TrackRepoServiceImpl fixture;
+    static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoServiceImplTest.class);
+
+    static final String ENCODE_METHOD = "encode";
+    static final String PULL_METHOD = "pull";
+    static final String FIND_METHOD = "find";
+
+    TestCases<Long, TrackDto> mapTrackById = new TestCases<Long, TrackDto>();
+    TestCases<String, PageListDto<TrackDto>> mapTrackByQuery = new TestCases<String, PageListDto<TrackDto>>();
+    TestCases<SearchTrackDto, PageListDto<TrackDto>> mapTrackByProperties = new TestCases<SearchTrackDto, PageListDto<TrackDto>>();
+    TestCases<String, Media> mapMediaByIsrc = new TestCases<String, Media>();
+    TestCases<String, MediaFile> mapMediaFileByName = new TestCases<String, MediaFile>();
+    TestCases<String, Artist> mapArtistByName = new TestCases<String, Artist>();
+    TestCases<String, Artist> mapArtistByRealName = new TestCases<String, Artist>();
+    TestCases<String, Genre> mapGenreByName = new TestCases<String, Genre>();
+
+    @Mock TrackRepositoryHttpClientImpl client;
+    @Mock ArtistRepository artistRepository;
+    @Mock MediaRepository mediaRepository;
+    @Mock GenreRepository genreRepository;
+    @Mock MediaFileRepository mediaFileRepository;
+    TrackRepoServiceImpl fixture;
 
     @Test
     public void checkiTunesURLBeforeCutover() throws Exception {
@@ -173,12 +167,6 @@ public class TrackRepoServiceImplTest {
         verify(client, times(1)).commitDrops(any(IngestWizardDataDto.class));
     }
 
-    /**
-     * Run the TrackDto encode(Long) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 8/13/12 1:26 PM
-     */
     @Test
     public void testEncode() throws Exception {
         int i = 1;
@@ -206,12 +194,6 @@ public class TrackRepoServiceImplTest {
         }
     }
 
-    /**
-     * Run the PageListDto<TrackDto> find(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 8/13/12 1:26 PM
-     */
     @Test
     public void testFindByQuery() throws Exception {
         Pageable page = new PageRequest(0, 30);
@@ -227,12 +209,6 @@ public class TrackRepoServiceImplTest {
         }
     }
 
-    /**
-     * Run the PageListDto<TrackDto> find(String) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 8/13/12 1:26 PM
-     */
     @Test
     public void testFindByProperties() throws Exception {
         Pageable page = new PageRequest(0, 30);
@@ -248,12 +224,6 @@ public class TrackRepoServiceImplTest {
         }
     }
 
-    /**
-     * Run the TrackDto pull(Long) method test.
-     *
-     * @throws Exception
-     * @generatedBy CodePro at 8/13/12 1:26 PM
-     */
     @Test
     public void testPull_Audio_Success() throws Exception {
         int i = 0, j = 0;
@@ -330,12 +300,6 @@ public class TrackRepoServiceImplTest {
 
     }
 
-    /**
-     * Perform pre-test initialization.
-     *
-     * @throws Exception if the initialization fails for some reason
-     * @generatedBy CodePro at 8/13/12 1:26 PM
-     */
     @Before
     public void setUp() throws Exception {
         this.setUpTestData();
@@ -533,12 +497,33 @@ public class TrackRepoServiceImplTest {
         return resourceFileDto;
     }
 
-    /**
-     * Perform post-test clean-up.
-     *
-     * @throws Exception if the clean-up fails for some reason
-     * @generatedBy CodePro at 8/13/12 1:26 PM
-     */
+    @Test
+    public void shouldAssignReportingOptions() {
+        //given
+        TrackReportingOptionsDto trackReportingOptionsDto = new TrackReportingOptionsDto();
+
+        ResponseEntity responseEntity = mock(ResponseEntity.class);
+
+        when(client.assignReportingOptions(trackReportingOptionsDto)).thenReturn(responseEntity);
+
+        //when
+        fixture.assignReportingOptions(trackReportingOptionsDto);
+
+        //then
+        verify(client, times(1)).assignReportingOptions(trackReportingOptionsDto);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowRuntimeExceptionWhenCanNotAssignReportingOptions() {
+        //given
+        TrackReportingOptionsDto trackReportingOptionsDto = new TrackReportingOptionsDto();
+
+        when(client.assignReportingOptions(trackReportingOptionsDto)).thenThrow(new RuntimeException());
+
+        //when
+        fixture.assignReportingOptions(trackReportingOptionsDto);
+    }
+
     @After
     public void tearDown() throws Exception {
         mapTrackById.clear();

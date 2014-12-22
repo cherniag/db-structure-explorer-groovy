@@ -23,6 +23,10 @@
 		<property name="ingestService" ref="trackRepo.IngestService" />
 	</bean>
 
+	<bean name="trackRepo.TrackReportingOptionsController" class="mobi.nowtechnologies.server.trackrepo.controller.TrackReportingOptionsController">
+		<property name="trackReportingOptionsService" ref="trackReportingOptionsService"/>
+ 	</bean>
+
     <bean name="trackRepo.VersionController"
           class="mobi.nowtechnologies.server.controller.VersionController">
     </bean>

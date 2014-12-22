@@ -1,76 +1,67 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.persistence.*;
 import java.util.Date;
 
+import static javax.persistence.InheritanceType.JOINED;
+import static javax.persistence.TemporalType.DATE;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 /**
- * 
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = JOINED)
 public class Territory extends AbstractEntity {
+
 	public static final String WWW_TERRITORY = "worldwide";
 	public static final String GB_TERRITORY = "gb";
 
-	@Basic(optional = false)
-	@Column(name = "Code")
+	@Column(name = "Code", nullable = false)
 	protected String code;
 
-	@Basic(optional = false)
-	@Column(name = "Distributor")
+	@Column(name = "Distributor", nullable = false)
 	protected String distributor;
 
-	@Basic(optional = true)
 	@Column(name = "Currency")
 	protected String currency;
 
-	@Basic(optional = true)
 	@Column(name = "Price")
 	protected Float price;
 
-	@Basic(optional = true)
 	@Column(name = "PriceCode")
 	protected String priceCode;
 
-	@Temporal(TemporalType.DATE)
-	@Basic(optional = true)
+	@Temporal(DATE)
 	@Column(name = "StartDate")
 	protected Date startDate;
 
-	@Basic(optional = true)
 	@Column(name = "ReportingId")
 	protected String reportingId;
 
-	@Basic(optional = true)
 	@Column(name = "DealReference")
 	protected String dealReference;
 
-	@Basic(optional = false)
-	@Column(name = "Label")
+	@Column(name = "Label", nullable = false)
 	protected String label;
 
-	@Basic(optional = false)
-	@Column(name = "Publisher")
+	@Column(name = "Publisher", nullable = false)
 	protected String publisher;
 
-	@Basic(optional = false)
 	@Column(name = "Deleted")
 	protected boolean deleted;
 
-	@Temporal(TemporalType.DATE)
-	@Basic(optional = true)
+	@Temporal(DATE)
 	@Column(name = "DeleteDate")
 	protected Date deleteDate;
 
-	@Temporal(TemporalType.DATE)
-	@Basic(optional = true)
+	@Temporal(DATE)
 	@Column(name = "CreateDate")
 	protected Date createDate;
 
-	@ManyToOne
-	@JoinColumn(name = "TrackId", insertable = false, updatable = false)
 	public String getCode() {
 		return code;
 	}
@@ -177,8 +168,21 @@ public class Territory extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return "Territory [code=" + code + ", ditributor=" + distributor + ", currency=" + currency + ", price=" + price
-				+ ", priceCode=" + priceCode + ", startDate=" + startDate + ", reportingId=" + reportingId + ", dealReference=" + dealReference
-				+ ", label=" + label + super.toString() + "]";
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+				.appendSuper(super.toString())
+				.append("code", code)
+				.append("distributor", distributor)
+				.append("currency", currency)
+				.append("price", price)
+				.append("priceCode", priceCode)
+				.append("startDate", startDate)
+				.append("reportingId", reportingId)
+				.append("dealReference", dealReference)
+				.append("label", label)
+				.append("publisher", publisher)
+				.append("deleted", deleted)
+				.append("deleteDate", deleteDate)
+				.append("createDate", createDate)
+				.toString();
 	}
 }

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>5.11</version>
+    <version>5.12.1</version>
     <packaging>pom</packaging>
     <name>Now Technologies Parent Pom for all application</name>
 
@@ -288,10 +288,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.smslib</groupId>
             <artifactId>smslib</artifactId>
         </dependency>
@@ -453,11 +449,6 @@
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-all</artifactId>
                 <version>2.5.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.modelmapper</groupId>
-                <artifactId>modelmapper</artifactId>
-                <version>0.5.6</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>

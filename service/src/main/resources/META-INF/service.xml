@@ -403,6 +403,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="containerName" value="${cloudFile.containerName}" />
 		<property name="filesURL" value="${cloudFile.filesURL}" />
         <property name="httpClient" ref="service.cloudHttpClient"/>
+		<property name="copyFileOnCloudAttemptCount" value="${cloudFile.copyFileOnCloudAttemptCount}"/>
 	</bean>
 
     <bean id="service.cloudHttpConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager">
@@ -454,7 +455,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	</bean>
 
 	<bean id="service.IPaymentService" class="mobi.nowtechnologies.server.service.impl.PaymentServiceImpl">
-		<property name="submitedPaymentRepository" ref="submitedPaymentRepository" />
+		<property name="submittedPaymentRepository" ref="submittedPaymentRepository" />
 	</bean>
 
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
@@ -502,13 +503,17 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		</constructor-arg>
 	</bean> 
 	
-	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.impl.ITunesServiceImpl">
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesServiceImpl">
 		<property name="postService" ref="shared.PostService" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
-		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
-		<property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
+		<property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
+		<property name="messageSource" ref="serviceMessageSource"/>
+		<property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
+        <property name="iTunesDtoConverter" ref="iTunesDtoConverter"/>
 	</bean>
+
+    <bean id="iTunesDtoConverter" class="mobi.nowtechnologies.server.service.itunes.ITunesDtoConverter"/>
 	
 	<!-- O2 SOA beans -->
 	<bean id="service.O2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
@@ -591,7 +596,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="userService" ref="service.UserService"/>
     </bean>
 
-    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.UserPromoServiceImpl"/>
+    <bean id="service.UserPromoService" class="mobi.nowtechnologies.server.service.social.core.UserPromoService"/>
 
     <bean id="service.AutoOptInRuleService" class="mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService">
         <property name="configuration" ref="configuration.AutoOptIn"/>
@@ -607,6 +612,12 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 
     <bean id="service.checkCacheService" class="mobi.nowtechnologies.server.service.CacheContentService"/>
+
+    <bean id="service.referralService" class="mobi.nowtechnologies.server.service.ReferralService">
+		<property name="requiredPropertyName" value="freemium.user.referrals.required"/>
+    </bean>
+
+    <bean id="referralAsm" class="mobi.nowtechnologies.server.assembler.ReferralAsm"/>
 
 	<import resource="payment.xml" />
 

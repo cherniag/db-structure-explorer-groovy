@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -11,11 +12,20 @@ public class ITunesInAppSubscriptionRequestDto {
 	
 	@Expose
 	@SerializedName("receipt-data")
+    @JsonProperty("receipt-data")
 	private String receiptData;
 	
 	private String password;
 
-	public String getReceiptData() {
+    public ITunesInAppSubscriptionRequestDto() {
+    }
+
+    public ITunesInAppSubscriptionRequestDto(String receiptData, String password) {
+        this.receiptData = receiptData;
+        this.password = password;
+    }
+
+    public String getReceiptData() {
 		return receiptData;
 	}
 

@@ -28,7 +28,7 @@ public class Chart implements Serializable {
 	@XmlTransient
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-    @Column(name="i", columnDefinition="tinyint(4)")
+    @Column(name="i")
 	private Integer i;
 
 	@ManyToOne(fetch = EAGER)

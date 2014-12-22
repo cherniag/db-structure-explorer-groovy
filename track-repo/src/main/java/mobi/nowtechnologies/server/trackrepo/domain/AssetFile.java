@@ -1,24 +1,29 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.persistence.*;
 
+import static javax.persistence.EnumType.ORDINAL;
+import static javax.persistence.InheritanceType.JOINED;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 /**
- * 
  * @author Alexander Kolpakov (akolpakov)
- *
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = JOINED)
 public class AssetFile extends AbstractEntity {
 	 
 	public enum FileType {MOBILE, DOWNLOAD, IMAGE, PREVIEW, VIDEO;}
 
-	@Enumerated(EnumType.ORDINAL) 
+	@Enumerated(ORDINAL)
 	protected FileType type;
-	@Basic(optional=false)
+
+	@Column(nullable = false)
 	protected String path;
 	
-	@Basic(optional=true)
 	@Column(name="MD5")
 	protected String md5;
 
@@ -27,24 +32,26 @@ public class AssetFile extends AbstractEntity {
     @Column(name="external_id")
     protected String externalId;
 
-    @ManyToOne
-    @JoinColumn(name="TrackId", insertable=false, updatable=false)
-
     public String getMd5() {
         return md5;
     }
+
     public FileType getType() {
         return type;
     }
+
     public void setType(FileType type) {
 		this.type = type;
 	}
+
     public String getPath() {
 		return path;
 	}
+
     public void setPath(String path) {
 		this.path = path;
 	}
+
 	public void setMd5(String md5) {
 		this.md5 = md5;
 	}
@@ -67,12 +74,13 @@ public class AssetFile extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "AssetFile{" +
-                "type=" + type +
-                ", path='" + path + '\'' +
-                ", md5='" + md5 + '\'' +
-                ", duration=" + duration +
-                ", externalId='" + externalId + '\'' +
-                "} " + super.toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+                .appendSuper(super.toString())
+                .append("type", type)
+                .append("path", path)
+                .append("md5", md5)
+                .append("duration", duration)
+                .append("externalId", externalId)
+                .toString();
     }
 }

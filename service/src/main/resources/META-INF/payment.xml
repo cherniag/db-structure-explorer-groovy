@@ -18,8 +18,8 @@
         <property name="maxCount" value="${payment.service.max.users.count}"/>
 	</bean>
 	
-	<bean id="service.SubmitedPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SubmitedPaymentServiceImpl">
-		<property name="submitedPaymentRepository" ref="submitedPaymentRepository" />
+	<bean id="service.SubmittedPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.SubmittedPaymentServiceImpl">
+		<property name="submittedPaymentRepository" ref="submittedPaymentRepository" />
 	</bean>
 	
 	<bean id="service.AbstractPaymentSystemService" abstract="true">

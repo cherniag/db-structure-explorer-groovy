@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo.utils.image;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.core.io.Resource;
 
 public class ThumbnailType {
@@ -53,5 +55,18 @@ public class ThumbnailType {
 	public void setImageSize(int imageSize) {
 		setImageSizeForAudio(imageSize);
 		setImageSizeForVideo(imageSize);
+	}
+
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("fileNameTail", fileNameTail)
+				.append("imageSizeForAudio", imageSizeForAudio)
+				.append("imageSizeForVideo", imageSizeForVideo)
+				.append("additionalParams", additionalParams)
+				.append("coverFilePath", coverFilePath)
+				.append("fileExtension", fileExtension)
+				.toString();
 	}
 }

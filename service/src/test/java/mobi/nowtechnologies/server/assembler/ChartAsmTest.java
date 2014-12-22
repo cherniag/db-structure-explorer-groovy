@@ -14,8 +14,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockMultipartFile;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -155,7 +154,7 @@ public class ChartAsmTest {
 		ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
 		Chart chart = chartDetail.getChart();
 
-		PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, true);
+		PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, true, false, false);
 
 		assertNotNull(result);
 		assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -175,7 +174,7 @@ public class ChartAsmTest {
 		chartDetail.setTitle(null);
 		Chart chart = chartDetail.getChart();
 		
-		PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, false);
+		PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, false, false, false);
 		
 		assertNotNull(result);
 		assertEquals(chart.getName(), result.getPlaylistTitle());
@@ -191,7 +190,7 @@ public class ChartAsmTest {
 
         when(badgesService.getBadgeFileName(123L, community, resolution)).thenReturn("badgeIconFileName");
 
-        PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, resolution, community, true);
+        PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, resolution, community, true, false, false);
 
         assertNotNull(result);
         assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
@@ -204,5 +203,32 @@ public class ChartAsmTest {
         assertEquals(true, result.getSwitchable());
         assertEquals(chart.getType(), result.getType());
         assertEquals("badgeIconFileName", result.getBadgeIcon());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithLockNotSupported() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+
+        PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, false, false, false);
+
+        assertNull(result.getLocked());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithLockSupportedAndAllTracksAreNotLocked() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+
+        PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, false, true, false);
+
+        assertFalse(result.getLocked());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithLockSupportedAndAllTracksAreLocked() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+
+        PlaylistDto result = chartAsm.toPlaylistDto(chartDetail, null, null, false, true, true);
+
+        assertTrue(result.getLocked());
     }
 }

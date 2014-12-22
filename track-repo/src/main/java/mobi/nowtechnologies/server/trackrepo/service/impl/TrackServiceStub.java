@@ -8,11 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Alexsandr_Kolpakov
  * Date: 9/17/13
  * Time: 10:40 AM
- * To change this template use File | Settings | File Templates.
  */
 public class TrackServiceStub extends TrackServiceImpl {
 

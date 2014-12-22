@@ -12,15 +12,34 @@
 	<mvc:interceptors>
         <bean class="mobi.nowtechnologies.server.interceptor.RequestInfoInterceptor" />
         <bean class="mobi.nowtechnologies.server.interceptor.LoggerInterceptor" />
+		<mvc:interceptor>
+			<mvc:mapping path="/**/CONTEXT"/>
+			<mvc:mapping path="/**/CONTEXT.json"/>
+			<mvc:mapping path="/**/REFERRALS"/>
+			<mvc:mapping path="/**/REFERRALS.json"/>
+			<bean class="mobi.nowtechnologies.server.security.impl.spring.handler.AuthenticatingInterceptor">
+				<property name="authenticationService">
+					<bean class="mobi.nowtechnologies.server.security.impl.AuthenticationServiceImpl">
+						<property name="userService" ref="service.UserService"/>
+						<property name="pathVariableResolver" ref="pathVariableResolver"/>
+					</bean>
+				</property>
+			</bean>
+		</mvc:interceptor>
 	</mvc:interceptors>
 
 	<mvc:annotation-driven>
        <mvc:argument-resolvers>
            <bean class="mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedSinceArgumentResolver"/>
+		   <bean class="mobi.nowtechnologies.server.security.impl.spring.method.annotation.AuthenticatedUserMethodArgumentResolver">
+			   <property name="parameterType" value="mobi.nowtechnologies.server.persistence.domain.User"/>
+		   </bean>
        </mvc:argument-resolvers>
     </mvc:annotation-driven>
 
     <context:annotation-config/>
+
+	<bean id="pathVariableResolver" class="mobi.nowtechnologies.server.interceptor.PathVariableResolver"/>
 
     <bean class="mobi.nowtechnologies.server.shared.web.mapping.RESTRequestMappingHandlerMapping">
        <property name="order" value="#{ T(org.springframework.core.Ordered).HIGHEST_PRECEDENCE }"/>
@@ -28,8 +47,6 @@
 
 	<!-- Application properties     -->
     <import resource="classpath:META-INF/placeholders.xml"/>
-
-	<!--<bean class="mobi.nowtechnologies.server.config.WebConfigPostProcessor"/>-->
 
 	<bean id="transport.JaxbMarshallingView" class="org.springframework.web.servlet.view.xml.MarshallingView">
 		<constructor-arg ref="transport.JaxbMarshaller" />
@@ -71,6 +88,8 @@
                 <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.VisualBlock</value>
+                <value>mobi.nowtechnologies.server.dto.ReferralDto</value>
+				<value>mobi.nowtechnologies.server.dto.transport.UserContextDto</value>
 			</list>
 		</property>
 	</bean>

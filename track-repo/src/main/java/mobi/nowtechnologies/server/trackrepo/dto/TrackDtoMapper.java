@@ -2,20 +2,21 @@ package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
+import mobi.nowtechnologies.server.trackrepo.domain.NegativeTag;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import org.springframework.data.domain.Page;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- * 
- */
-public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.TrackDto {
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+
+// @author Alexander Kolpakov (akolpakov)
+public class TrackDtoMapper extends TrackDto {
 	
 	public TrackDtoMapper(Track track) {
 		this.setId(track.getId());
@@ -48,6 +49,7 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
         this.setCoverFileName(track.getCoverFileId() != null ? track.getCoverFileId().toString() : "0");
         this.setMediaFileName(track.getMediaFileId() != null ? track.getMediaFileId().toString() : "0");
         this.setMediaType(track.getMediaType() != null ? FileType.valueOf(track.getMediaType().name()) : null);
+        this.setReportingType(track.getReportingType());
 
         if(track.getFiles() != null){
             List<ResourceFileDto> files = new LinkedList<ResourceFileDto>();
@@ -92,6 +94,15 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
 
             this.setTerritories(territories);
         }
+
+        Set<NegativeTag> negativeTags = track.getNegativeTags();
+        if(isNotNull(negativeTags)){
+            Set<String> negativeTagSet = new HashSet<String>(negativeTags.size());
+            for (NegativeTag negativeTag : negativeTags) {
+                negativeTagSet.add(negativeTag.getTag());
+            }
+            this.setNegativeTags(negativeTagSet);
+        }
 	}
 	
 	public static List<TrackDtoMapper> toList(List<Track> tracks) {
@@ -108,6 +119,6 @@ public class TrackDtoMapper extends mobi.nowtechnologies.server.trackrepo.dto.Tr
 		long total = tracks.getTotalElements();
 		total = total % tracks.getSize() == 0 ? total / tracks.getSize() : total / tracks.getSize() + 1;
 
-		return new PageListDto<TrackDtoMapper>(toList(tracks.getContent()), (int)total, tracks.getNumber(), tracks.getSize());
+		return new PageListDto<TrackDtoMapper>(toList(tracks.getContent()), (int) total, tracks.getNumber(), tracks.getSize());
 	}
 }

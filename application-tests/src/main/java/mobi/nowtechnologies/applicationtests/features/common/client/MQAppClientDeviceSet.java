@@ -10,7 +10,9 @@ import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookHttp
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator;
 import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusUserInfoGenerator;
+import mobi.nowtechnologies.applicationtests.services.http.referral.ReferralHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamzineHttpService;
+import mobi.nowtechnologies.server.dto.ReferralDto;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -36,6 +39,8 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
     private EmailHttpService emailHttpService;
     @Resource
     private GetStreamzineHttpService getStreamzineHttpService;
+    @Resource
+    private ReferralHttpService referralHttpService;
     //
     // Flow operations
     //
@@ -92,7 +97,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.facebookUserId = facebookUserId;
         state.email = email;
         state.lastFacebookInfo = facebookHttpService.login(deviceData, state.getDeviceUID(), state.getLastAccountCheckResponse(), deviceData.getFormat(), accessToken, facebookUserId);
-        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.getLastAccountCheckResponse().userToken, deviceData.getFormat());
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastFacebookInfo.getUserName(), state.lastFacebookInfo.getUserToken(), deviceData.getFormat());
     }
 
     public void loginUsingFacebookWithOtherDevice(UserDeviceData userData, UserDeviceData otherDeviceData) {
@@ -145,6 +150,17 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         String googlePlusUserId = System.nanoTime() + "";
         String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
         state.googlePlusUserId = googlePlusUserId;
+        state.googlePlusToken = accessToken;
+        state.lastGooglePlusUserInfo = googlePlusHttpService.login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken).getUser();
+        state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
+    }
+
+    public void loginUsingGooglePlusWithExactEmailAndGooglePlusId(UserDeviceData deviceData, String email, String googlePlusUserId) {
+        final PhoneStateImpl state = states.get(deviceData);
+        state.googlePlusUserId = googlePlusUserId;
+        state.email = email;
+
+        String accessToken = googlePlusUserInfoGenerator.createAccessToken(state.getEmail(), state.getLastAccountCheckResponse().userName, googlePlusUserId);
         state.googlePlusToken = accessToken;
         state.lastGooglePlusUserInfo = googlePlusHttpService.login(deviceData, state.getDeviceUID(), deviceData.getFormat(), accessToken, googlePlusUserId, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken).getUser();
         state.accountCheck = accountCheckHttpService.accountCheck(deviceData, state.lastGooglePlusUserInfo.getUserName(), state.lastGooglePlusUserInfo.getUserToken(), deviceData.getFormat());
@@ -348,6 +364,12 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         state.lastActivationEmailToken = emailHttpService.generateEmail(deviceData.getFormat(), deviceData, email, state.getDeviceUID(), state.getDeviceUID());
     }
 
+    public void registerEmail(UserDeviceData deviceData, String email) {
+        PhoneStateImpl state = states.get(deviceData);
+        state.email = email;
+        state.lastActivationEmailToken = emailHttpService.generateEmail(deviceData.getFormat(), deviceData, email, state.getDeviceUID(), state.getDeviceUID());
+    }
+
     //
     // Sign in (hit the link in email)
     //
@@ -355,6 +377,14 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         PhoneState state = states.get(deviceData);
 
         String email = state.getEmail();
+        String userToken = state.getLastAccountCheckResponse().userToken;
+
+        emailHttpService.signIn(email, userToken, deviceData, state.getDeviceUID(), deviceData.getFormat(), signInEmailId, signInEmailToken);
+    }
+
+    public void signInEmail(UserDeviceData deviceData, String email, String signInEmailId, String signInEmailToken) {
+        PhoneState state = states.get(deviceData);
+
         String userToken = state.getLastAccountCheckResponse().userToken;
 
         emailHttpService.signIn(email, userToken, deviceData, state.getDeviceUID(), deviceData.getFormat(), signInEmailId, signInEmailToken);
@@ -396,5 +426,13 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
     public ResponseEntity<String> getStreamzineAndSendIfModifiedSinceOld(UserDeviceData data) {
         PhoneState state = states.get(data);
         return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, HttpMethod.POST);
+    }
+
+    //
+    // Referrals
+    //
+    public ResponseEntity<String> postReferrals(UserDeviceData data, List<ReferralDto> referrals){
+        PhoneState state = states.get(data);
+        return referralHttpService.postReferrals(data, state, referrals, String.class);
     }
 }

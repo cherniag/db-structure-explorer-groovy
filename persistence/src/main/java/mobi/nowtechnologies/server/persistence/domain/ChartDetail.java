@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 
+import static javax.persistence.EnumType.ORDINAL;
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
 public class ChartDetail {
@@ -17,17 +20,17 @@ public class ChartDetail {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer i;
 
-	@Column(name = "chart", insertable = false, updatable = false, columnDefinition = "tinyint(4)")
+	@Column(name = "chart", insertable = false, updatable = false)
 	private Integer chartId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "chart", columnDefinition = "tinyint(4)")
+	@ManyToOne(fetch = EAGER)
+	@JoinColumn(name = "chart")
 	private Chart chart;
 
 	@Column(name = "media", insertable = false, updatable = false)
 	private Integer mediaId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "media")
 	private Media media;
 
@@ -42,7 +45,7 @@ public class ChartDetail {
 	@Column(name = "chgPosition", insertable = false, updatable = false)
 	private Integer chgPositionId;
 
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(ORDINAL)
 	private ChgPosition chgPosition;
 
 	private String channel;

@@ -1,3 +1,4 @@
-Pos#TITLE#ARTIST#ISRC CODE#Audio File Name#Image File Name#Product Code#Territories#LABEL#Mobile Audio File Name#Video File Name#Video duration#License
-#Dear Mama#2Pac#GBGHC0500038#hits.m4a#2Pac.jpg###Universal
-#Dear Mama#2Pac#GBVDC0500038##2Pac.jpg#0123456789#GB, NZ#Universal##hits.mpg#20000
+Pos#TITLE#ARTIST#ISRC CODE#Audio File Name#Image File Name#Product Code#Territories#LABEL#Reporting Type#Mobile Audio File Name#Video File Name#Video duration#License
+#Dear Mama#2Pac#GBGHC0500038#hits.m4a#2Pac.jpg###Universal#INTERNAL_REPORTED
+#Dear Mama#2Pac#GBVDC0500038##2Pac.jpg#0123456789#GB, NZ#Universal#NOT_REPORTED##hits.mpg#20000
+#Dear Mama#2Pac#GBVDC0500000#hits.m4a#2Pac.jpg###Universal#REPORTED_BY_TAGS

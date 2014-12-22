@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 public interface OfferRepository extends JpaRepository<Offer, Integer> {
 	

@@ -7,12 +7,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
+import static javax.persistence.FetchType.EAGER;
 import static mobi.nowtechnologies.common.util.TrackIdGenerator.buildUniqueTrackId;
 
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 @Entity
 @Table(name = "tb_media")
@@ -23,90 +23,90 @@ public class Media extends Item implements Serializable {
 		isrc, i;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "artist")
 	private Artist artist;
 
 	@Column(name = "artist", insertable = false, updatable = false)
 	private Integer artistId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "audioFile")
 	private MediaFile audioFile;
 
 	@Column(name = "audioFile", insertable = false, updatable = false)
 	private Integer audioFileId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "genre")
 	private Genre genre;
 
 	@Column(name = "genre", insertable = false, updatable = false)
 	private Integer genreId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "headerFile")
 	private MediaFile headerFile;
 
 	@Column(name = "headerFile", insertable = false, updatable = false)
 	private Integer headerFileId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "imageFIleLarge")
 	private MediaFile imageFIleLarge;
 
 	@Column(name = "imageFIleLarge", insertable = false, updatable = false)
 	private Integer imageFIleLargeId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = EAGER)
 	@JoinColumn(name = "imageFileSmall")
 	private MediaFile imageFileSmall;
 
 	@Column(name = "imageFileSmall", insertable = false, updatable = false)
 	private Integer imageFileSmallId;
 
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = Drm.class, mappedBy = "media")
+	@OneToMany(mappedBy = "media")
 	private List<Drm> drms;
 
 	@Column(name = "isrc", columnDefinition = "char(15)")
 	private String isrc;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "label")
     private Label label;
 
 	@Column(name = "price_currency", columnDefinition = "char(4)")
 	private String price_currency;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "imgFileResolution")
 	private MediaFile imgFileResolution;
 
 	@Column(name = "imgFileResolution", insertable = false, updatable = false)
 	private Integer imgFileResolutionId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "purchasedFile")
 	private MediaFile purchasedFile;
 
 	@Column(name = "purchasedFile", insertable = false, updatable = false)
 	private Integer purchasedFileId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "audioPreviewFile")
 	private MediaFile audioPreviewFile;
 
 	@Column(name = "audioPreviewFile", insertable = false, updatable = false)
 	private Integer audioPreviewFileId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "headerPreviewFile")
 	private MediaFile headerPreviewFile;
 
 	@Column(name = "headerPreviewFile", insertable = false, updatable = false)
 	private Integer headerPreviewFileId;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "media")
+	@OneToMany(mappedBy = "media")
 	private List<MediaLog> mediaLogs;
 
 	@Column(name = "info", columnDefinition = "text")
@@ -124,9 +124,6 @@ public class Media extends Item implements Serializable {
     private Long trackId;
 	
 	private boolean areArtistUrls;
-
-	public Media() {
-	}
 
 	public Artist getArtist() {
 		return this.artist;

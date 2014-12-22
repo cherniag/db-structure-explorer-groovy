@@ -21,11 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-/**
- * @author Titov Mykhaylo (titov)
- * 
- */
-
+// @author Titov Mykhaylo (titov)
 @Controller
 public class TracksController extends CommonController {
 

@@ -18,6 +18,7 @@
 		<property name="containerName" value="${cloudFile.containerName}" />
 		<property name="filesURL" value="${cloudFile.filesURL}" />
         <property name="httpClient" ref="trackRepo.cloudHttpClient"/>
+		<property name="copyFileOnCloudAttemptCount" value="${cloudFile.copyFileOnCloudAttemptCount}"/>
 	</bean>
     
     <bean id="trackRepo.TrackService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl">
@@ -213,5 +214,9 @@
     <bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
         <property name="manifest" value="META-INF/MANIFEST.MF" />
     </bean>
+
+	<bean id="trackReportingOptionsService" class="mobi.nowtechnologies.server.trackrepo.service.impl.TrackReportingOptionsService">
+		<property name="trackRepository" ref="trackRepository"/>
+	</bean>
 
 </beans>

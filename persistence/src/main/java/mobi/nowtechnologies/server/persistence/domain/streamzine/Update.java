@@ -4,7 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
-import org.modelmapper.internal.util.Assert;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.util.ArrayList;

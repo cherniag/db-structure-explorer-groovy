@@ -99,6 +99,7 @@ public class ResourceFileDtoBuilder {
             resourceFileDto.setSize(0);
         }
 
+		LOGGER.debug("Output resourceFileDto: {}", resourceFileDto);
 		return resourceFileDto;
 	}
 
@@ -128,6 +129,7 @@ public class ResourceFileDtoBuilder {
 		try {
 			String mediaHash = null;
 			if (fileName.toLowerCase().endsWith("." + FileType.DOWNLOAD.getExt())) {
+				LOGGER.debug("not AAC");
 				mediaHash = mp3Manager.mp3GetMediaHash(fileName);
 			} else { // Assume AAC.....
 				in = new FileInputStream(fileName);
@@ -135,7 +137,7 @@ public class ResourceFileDtoBuilder {
 			}
 			return mediaHash;
 		} catch (Exception e) {
-			LOGGER.error("Cannot get hash", e);
+			LOGGER.error("Cannot get hash for {} : {}", fileName, e.getMessage(), e);
 			return null;
 		} finally {
 			if (in != null) {

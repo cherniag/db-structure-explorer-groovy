@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.persistence.dao;
 
 import mobi.nowtechnologies.server.persistence.domain.Drm;
-import mobi.nowtechnologies.server.persistence.domain.DrmType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
@@ -31,12 +30,6 @@ public class DrmDao extends JpaDaoSupport {
 		LOGGER.debug("input parameters userId", userId);
 		List<Drm> drms = getJpaTemplate().findByNamedQuery("Drm.findDrmAndDrmTypeTree", userId);
 		LOGGER.debug("Output parameter drms=[{}]", drms);
-		return drms;
-	}
-
-	public List<Drm> findByUserAndDrmType(int userId, DrmType drmType) {
-		Object[] argArray = new Object[] { userId, drmType };
-		List<Drm> drms = getJpaTemplate().findByNamedQuery(Drm.NQ_FIND_BY_USER_AND_DRM_TYPE, argArray);
 		return drms;
 	}
 }

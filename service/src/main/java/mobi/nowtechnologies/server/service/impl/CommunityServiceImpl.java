@@ -10,19 +10,21 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.CommunityService;
 
+import javax.annotation.Resource;
+
 public class CommunityServiceImpl implements CommunityService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
 	
 	private CommunityRepository communityRepository;
 
+	public void setCommunityRepository(CommunityRepository communityRepository) {
+		this.communityRepository = communityRepository;
+	}
+
 	@Override
 	public Community getCommunityByUrl(String communityUrl) {
 		return communityRepository.findByRewriteUrlParameter(communityUrl);
 	}
-
-    public void setCommunityRepository(CommunityRepository communityRepository) {
-        this.communityRepository = communityRepository;
-    }
 
 	@Override
 	public Community getCommunityByName(String communityName) {
@@ -36,4 +38,10 @@ public class CommunityServiceImpl implements CommunityService {
 	public List<Community> list() {
 		return communityRepository.findAll();
 	}
+
+	@Override
+	public List<Community> getLiveCommunities() {
+		return communityRepository.findByLive(true);
+	}
+
 }

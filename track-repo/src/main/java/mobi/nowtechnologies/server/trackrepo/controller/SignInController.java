@@ -6,16 +6,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+// @author Alexander Kolpakov (akolpakov)
 @Controller
 public class SignInController extends AbstractCommonController{
 	
 	@RequestMapping(value="/signin")
-	public @ResponseBody Boolean login(HttpServletRequest request) {
+	public @ResponseBody Boolean login() {
 		return true;
 	}
 }

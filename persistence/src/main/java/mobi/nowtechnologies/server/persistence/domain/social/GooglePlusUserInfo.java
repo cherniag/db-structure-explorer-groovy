@@ -82,6 +82,11 @@ public class GooglePlusUserInfo extends SocialInfo{
         return getPicture();
     }
 
+    @Override
+    public String getSocialId() {
+        return getGooglePlusId();
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }

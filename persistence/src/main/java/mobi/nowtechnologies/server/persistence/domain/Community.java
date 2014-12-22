@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Table(name="tb_communities")
 public class Community implements Serializable {
@@ -18,19 +21,19 @@ public class Community implements Serializable {
     public static final String VF_NZ_COMMUNITY_REWRITE_URL = "vf_nz";
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy= IDENTITY)
 	private Integer id;
 
-	@Column(name="appVersion", insertable=false,updatable=false)
+	@Column(name="appVersion", insertable=false, updatable=false)
 	private byte appVersionId;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch= EAGER)
 	@JoinColumn(name="appVersion")
 	private AppVersion appVersion;
 
 	private int communityTypeID;
 
-	@Column(name="name",columnDefinition="char(25)")
+	@Column(name="name", columnDefinition="char(25)")
 	private String name;
 	
 	private String displayName;
@@ -39,26 +42,10 @@ public class Community implements Serializable {
 	@Column(name="rewriteURLParameter")
 	private String rewriteUrlParameter;
 	
-	@ManyToMany(mappedBy = "communities", fetch=FetchType.LAZY)
+	@ManyToMany(mappedBy = "communities")
 	private List<Chart> charts;
 
-    public Community() {
-    }
-
-    public Community withId(Integer id) {
-        setId(id);
-        return  this;
-    }
-
-    public Community withRewriteUrl(String url){
-        setRewriteUrlParameter(url);
-        return  this;
-    }
-
-    public Community withName(String name){
-        setName(name);
-        return  this;
-    }
+    private boolean live;
 
 	public Integer getId() {
 		return this.id;
@@ -75,10 +62,6 @@ public class Community implements Serializable {
 	public void setAppVersion(AppVersion appVersion) {
 		this.appVersion = appVersion;
 		appVersionId = appVersion.getI();
-	}
-
-	public byte getAppVersionId() {
-		return appVersionId;
 	}
 
 	public int getCommunityTypeID() {
@@ -120,25 +103,45 @@ public class Community implements Serializable {
 	public void setRewriteUrlParameter(String rewriteUrlParameter) {
 		this.rewriteUrlParameter = rewriteUrlParameter;
 	}
-	
-	public static Map<String,Community> getMapAsNames() {
-		return CommunityDao.getMapAsNames();
-	}
 
     public List<Chart> getCharts() {
         return charts;
     }
 
-    @Override
+	public boolean isLive() {
+		return live;
+	}
+
+	public void setLive(boolean live) {
+		this.live = live;
+	}
+
+	public Community withRewriteUrl(String url){
+		setRewriteUrlParameter(url);
+		return  this;
+	}
+
+	public Community withName(String name){
+		setName(name);
+		return  this;
+	}
+
+	public Community withLive(boolean live){
+		setLive(live);
+		return  this;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("appVersionId", appVersionId)
-                .append("id", id)
+				.append("id", id)
+				.append("appVersionId", appVersionId)
                 .append("communityTypeID", communityTypeID)
                 .append("name", name)
                 .append("displayName", displayName)
                 .append("assetName", assetName)
                 .append("rewriteUrlParameter", rewriteUrlParameter)
+                .append("live", live)
                 .toString();
     }
 }

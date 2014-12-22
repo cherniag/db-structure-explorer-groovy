@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.trackrepo.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import mobi.nowtechnologies.server.service.CloudFileService;
-import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoITTest;
+import mobi.nowtechnologies.server.trackrepo.controller.AbstractTrackRepoIT;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
@@ -30,35 +30,18 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by Oleg Artomov on 6/25/2014.
- */
-public class TrackServiceIT extends AbstractTrackRepoITTest {
+// Created by Oleg Artomov on 6/25/2014.
+public class TrackServiceIT extends AbstractTrackRepoIT {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Resource
-    private TrackRepository trackRepository;
-
-    @Resource
-    private FileRepository fileRepository;
-
-    @Resource(name = "trackRepo.TrackService")
-    private TrackService trackService;
-
-    @Value("${trackRepo.encode.destination}")
-    private org.springframework.core.io.Resource publishDir;
-
-
-    @Value("${trackRepo.pull.cdn.container.src}")
-    private String privateContainerName;
-
-    @Value("${trackRepo.pull.cdn.container.dest}")
-    private String publicContainerName;
-
-
-    @Resource
-    private CloudFileService cloudFileService;
+    @Resource TrackRepository trackRepository;
+    @Resource FileRepository fileRepository;
+    @Resource(name = "trackRepo.TrackService") TrackService trackService;
+    @Value("${trackRepo.encode.destination}") org.springframework.core.io.Resource publishDir;
+    @Value("${trackRepo.pull.cdn.container.src}") String privateContainerName;
+    @Value("${trackRepo.pull.cdn.container.dest}") String publicContainerName;
+    @Resource CloudFileService cloudFileService;
 
     private boolean isFileInCloudExists(String containerName, String fileName) {
         logger.info("Check file in cloud: {}", fileName);
@@ -66,7 +49,7 @@ public class TrackServiceIT extends AbstractTrackRepoITTest {
     }
 
     private void waitWhileCloudProcessCopying() throws InterruptedException {
-        Thread.sleep(10000);
+        Thread.sleep(5000);
     }
 
 

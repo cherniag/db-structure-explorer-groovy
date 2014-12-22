@@ -1,12 +1,13 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.List;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- *
- */
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
+// @author Alexander Kolpakov (akolpakov)
 public class PageListDto<T> {
 	public static final String PAGE_LIST_DTO = "PAGE_LIST_DTO";
 	
@@ -93,6 +94,11 @@ public class PageListDto<T> {
 
 	@Override
 	public String toString() {
-		return "PageListDto [list=" + list + ", total=" + total + ", page=" + page + ", size=" + size + "]";
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+				.append("list", list)
+				.append("total", total)
+				.append("page", page)
+				.append("size", size)
+				.toString();
 	}
 }

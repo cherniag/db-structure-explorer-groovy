@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
-import mobi.nowtechnologies.server.service.ITunesService;
+import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.service.UserDeviceDetailsService;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.slf4j.Logger;
@@ -40,6 +40,7 @@ public class AccCheckController extends CommonController {
     private ITunesService iTunesService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.7}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.6}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.5}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.4}/ACC_CHECK",

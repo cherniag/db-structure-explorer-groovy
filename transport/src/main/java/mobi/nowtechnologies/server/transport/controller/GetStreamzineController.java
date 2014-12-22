@@ -46,6 +46,7 @@ public class GetStreamzineController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
+                    "**/{community}/{apiVersion:6.7}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.6}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.5}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.4}/GET_STREAMZINE",

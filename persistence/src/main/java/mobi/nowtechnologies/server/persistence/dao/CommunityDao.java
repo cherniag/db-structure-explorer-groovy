@@ -12,7 +12,6 @@ import java.util.Map;
 /**
  * @author Titov Mykhaylo (titov)
  * @author Maksym Chernolevskyi (maksym)
- *
  */
 @Deprecated
 public class CommunityDao {

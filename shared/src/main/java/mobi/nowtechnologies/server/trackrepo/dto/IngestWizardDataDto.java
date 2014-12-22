@@ -1,16 +1,20 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.trackrepo.enums.IngestStatus;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 /**
- * Created with IntelliJ IDEA.
  * User: sanya
  * Date: 7/15/13
  * Time: 2:41 PM
  */
 public class IngestWizardDataDto {
+
     public static final String INGEST_WIZARD_DATA_DTO = "ingestWizardDataDto";
     public static final String ACTION = "action";
 
@@ -47,16 +51,15 @@ public class IngestWizardDataDto {
              if(drop.getSelected() != null && drop.getSelected())
                  return true;
         }
-
         return false;
     }
 
     @Override
     public String toString() {
-        return "IngestWizardDataDto{" +
-                "suid='" + suid + '\'' +
-                ", status=" + status +
-                ", drops=" + drops +
-                "} " + super.toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+                .append("suid", suid)
+                .append("status", status)
+                .append("drops", drops)
+                .toString();
     }
 }

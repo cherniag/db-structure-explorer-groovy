@@ -22,7 +22,7 @@ public interface CloudFileService {
 
     boolean uploadFile(File file, String fileName, String contentType, String destinationContainer);
 
-    boolean copyFile(String destFileName, String destContainerName, String srcFileName, String srcContainerName);
+    boolean copyFile(String srcContainerName, String srcFileName, String targetContainerName, String targetFileName);
 
     void deleteFile(String fileName);
 

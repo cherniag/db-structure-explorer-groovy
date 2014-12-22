@@ -7,6 +7,8 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
@@ -15,7 +17,7 @@ import java.util.*;
 @Table(name = "offers")
 public class Offer {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = IDENTITY)
 	private Integer id;
 
 	@JoinColumn(name = "community_id")

@@ -27,6 +27,7 @@ public class ApplyInitPromoController extends CommonController {
     private UpdateO2UserTask updateO2UserTask;
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.7}/APPLY_INIT_PROMO",
             "**/{community}/{apiVersion:6\\.6}/APPLY_INIT_PROMO",
             "**/{community}/{apiVersion:6\\.5}/APPLY_INIT_PROMO",
             "**/{community}/{apiVersion:6\\.4}/APPLY_INIT_PROMO",

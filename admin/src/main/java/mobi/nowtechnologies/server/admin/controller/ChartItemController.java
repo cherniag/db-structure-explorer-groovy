@@ -107,7 +107,7 @@ public class ChartItemController extends AbstractCommonController {
 
     @RequestMapping(value = "/chartsNEW/{chartId}/{selectedPublishDateTime}", method = POST)
     public ModelAndView updateChartItems(
-                                @RequestBody  List<ChartItemDto> chartItems,
+                                @RequestBody List<ChartItemDto> chartItems,
                                 @PathVariable("selectedPublishDateTime") @DateTimeFormat(pattern = URL_DATE_TIME_FORMAT) Date selectedPublishDateTime, @PathVariable("chartId") Integer chartId) {
 
         LOGGER.debug("input parameters request updateChartItems(chartItemListJSON, selectedPublishDateTime, chartId): [{}], [{}], [{}]", chartItems, selectedPublishDateTime, chartId);

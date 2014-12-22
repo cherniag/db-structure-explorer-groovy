@@ -1,31 +1,29 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.Artist;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 
+import static javax.persistence.InheritanceType.JOINED;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = JOINED)
 public class DropContent extends AbstractEntity {
 
-	@Basic(optional = false)
-    @Column(name="ISRC")
+    @Column(name="ISRC", nullable = false)
 	protected String isrc;
 
-	@Basic(optional = false)
-    @Column(name="Artist")
+    @Column(name="Artist", nullable = false)
     protected String artist;
 
-	@Basic(optional = false)
-    @Column(name="Title")
+    @Column(name="Title", nullable = false)
     protected String title;
 
-	@Basic(optional=false)
     @Column(name="updated")
-    protected Boolean updated;
-	
-	@ManyToOne
-	@JoinColumn(name = "DropId", insertable = false, updatable = false)
+    protected boolean updated;
 
     public String getIsrc() {
         return isrc;
@@ -55,17 +53,18 @@ public class DropContent extends AbstractEntity {
         return updated;
     }
 
-    public void setUpdated(Boolean updated) {
+    public void setUpdated(boolean updated) {
         this.updated = updated;
     }
 
     @Override
     public String toString() {
-        return "DropContent{" +
-                "isrc='" + isrc + '\'' +
-                ", artist='" + artist + '\'' +
-                ", title='" + title + '\'' +
-                ", updated=" + updated +
-                "} " + super.toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
+                .appendSuper(super.toString())
+                .append("isrc", isrc)
+                .append("artist", artist)
+                .append("title", title)
+                .append("updated", updated)
+                .toString();
     }
 }

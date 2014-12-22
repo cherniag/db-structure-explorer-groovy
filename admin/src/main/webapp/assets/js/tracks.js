@@ -67,6 +67,7 @@ function onShownTrackDetails(detailsEl, cb) {
         onFetchTrackFiles(track, track.files, trackFilesTable);
         onFetchTrackTerritories(track.territories, trackTerritoriesTable);
         cb(detailsEl);
+        onChangeReportingType('trackReportingOptionsForm_'+trackId);
     }, true, true);
 };
 
@@ -174,7 +175,7 @@ function onEncode() {
     var encodeForm = $("form#encode-form");
     var resolution = encodeForm.find("input[name='isHighRate']").attr('checked') ? "RATE_96" : "RATE_48";
     var trackId = encodeForm.find("input[name='id']").val();
-    encodeForm.find("input[name='resolution']").val(resolution);
+    encodeForm.find("input[name='resolutionn']").val(resolution);
 
     onEncodeStart(trackId);
 
@@ -189,6 +190,54 @@ function onEncode() {
           onEncodeFail(data, x, e, trackId);
     });
 };
+
+function onChangeReportingType(trackReportingOptionsForm){
+    var form = $($('form#'+trackReportingOptionsForm).get(1));
+    var reportingType = form.find("select[name=reportingType]").val();
+    var negativeTagsCombo = form.find("select[name=negativeTags]");
+
+    negativeTagsCombo.prop("disabled", reportingType!="REPORTED_BY_TAGS");
+}
+
+function onSaveTracksReportingOptions(trackReportingOptionsForm){
+    var form = $($('form#'+trackReportingOptionsForm).get(1));
+    var trackId = form.find("input[name=trackId]").val();
+    var reportingType = form.find('select[name=reportingType]').val();
+    var negativeTags = form.find('select[name=negativeTags]').val() || [];
+
+    $.ajax({
+        type: "put",
+        url: form.attr('action'),
+        data: JSON.stringify(
+            {
+                trackId: trackId,
+                reportingType:reportingType,
+                negativeTags:negativeTags
+            }
+        ),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        'dataType': 'json',
+        success: function (data) {
+            alert("Reporting options has been successfully saved for track with id: " + trackId);
+            var form0 = $($('form#'+trackReportingOptionsForm).get(0));
+
+            form0.find('select[name=reportingType] option:selected').removeAttr("selected");
+            form0.find('select[name=reportingType] option[value=' + reportingType + ']').attr("selected", "selected");
+
+            form0.find('select[name=negativeTags] option:selected').removeAttr("selected");
+            for(var i = 0; i < negativeTags.length; i++ ) {
+                var negativeTag = negativeTags[i];
+                form0.find('select[name=negativeTags] option[value=' + negativeTag + ']').attr("selected", "selected");
+            }
+        },
+        error: function (data, x, e) {
+            alert("Sorry, some error occurred during saving reporting options for track with id: " + trackId);
+        }
+    });
+}
 
 function onEncodeStart(trackId){
     var pulltrackButtonId = "#pulltrackButton_" + trackId;

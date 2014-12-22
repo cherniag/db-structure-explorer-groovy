@@ -1,5 +1,5 @@
 insert into tb_appVersions ( description, name) values( 'Development Environment', 'CBEMA'), ('Commercial Beta', 'CNBETA');
-INSERT INTO `tb_communities` (`id`, `name`, `appVersion`, `communityTypeID`, `displayName`, `assetName`, `rewriteURLParameter`) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment'),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting'),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow'),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer'),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40'),(6,'OCC',1,6,'OCC','occ','occ'),(7,'o2',1,7,'o2','o2','o2'),(8,'vf_nz',1,8,'vf_nz','vf_nz','vf_nz'), (9,'hl_uk',1,8,'hl_uk','hl_uk','hl_uk'), (10,'mtv1',1,8,'mtv1','mtv1','mtv1');
+INSERT INTO tb_communities (id, name, appVersion, communityTypeID, displayName, assetName, rewriteURLParameter, live) VALUES (1,'RBT Development',1,1,'RBT Development','RBTDevelopment','RBTDevelopment', false),(2,'CN QA Testing',1,2,'CN QA Testing','CNQATesting','CNQATesting', false),(3,'CN Commercial Beta',1,3,'Charts Now','Charts Now','ChartsNow', false),(4,'Metal Hammer',1,4,'Metal Hammer','Metal Hammer','MetalHammer', false),(5,'Now Music',1,5,'NOW! Official Top 40 Chart App','Now Music','nowtop40', false),(6,'OCC',1,6,'OCC','occ','occ',false),(7,'o2',1,7,'o2','o2','o2', true),(8,'vf_nz',1,8,'vf_nz','vf_nz','vf_nz', true), (9,'hl_uk',1,8,'hl_uk','hl_uk','hl_uk', true), (10,'mtv1',1,8,'mtv1','mtv1','mtv1', true);
 
 INSERT INTO `tb_deviceTypes` (`i`, `name`)  VALUES (1,'NONE'),(2,'ANDROID'),(3,'J2ME'),(4,'BLACKBERRY'),(5,'IOS'),(6,'SYMBIAN'),(7,'WINDOWS_PHONE');
 
@@ -30,7 +30,7 @@ insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, typ
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (15,'Default Chart',21,1,1321452650,6, 'HL_UK_PLAYLIST_2');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (16,'Default Chart',21,1,1321452650,6, 'OTHER_CHART');
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (17,'Default Chart',21,1,1321452650,6, 'HL_UK_PLAYLIST_2');
-insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (18,'Default Chart',21,1,1321452650,6, 'MTV1_CHART');
+insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (18,'Default Chart',21,1,1321452650,6, 'BASIC_CHART');
 
 insert into community_charts (chart_id, community_id) values (1,1);
 insert into community_charts (chart_id, community_id) values (1,2);
@@ -211,7 +211,7 @@ insert into `tb_drmTypes` (i, name) values (1,'PLAYS'),(2,'TIME'),(3,'PURCHASED'
 
 insert into `tb_drmPolicy` (i, name, drmType, drmValue, community) values (1,'Default Policy',1,100,1),(2,'Default Policy',1,100,2),(3,'Default Policy',1,100,3),(5,'Default Policy',1,100,4),(6,'Default Policy',1,100,5);
 
-insert into tb_userGroups (id, name, community, chart, drmPolicy) values (1,'Default Group',1,1,1),(2,'Default Group',2,2,2),(3,'Default Group',3,3,3),(4,'Default Group',4,4,5),(5,'Default Group',5,5,3),(6,'Default Group',6,5,3),(7,'O2 Group',7,5,3),(8,'VF New Zealand Group',8,5,3), (9,'HeyList UK Group',9,16,3);
+insert into tb_userGroups (id, name, community, chart, drmPolicy) values (1,'Default Group',1,1,1),(2,'Default Group',2,2,2),(3,'Default Group',3,3,3),(4,'Default Group',4,4,5),(5,'Default Group',5,5,3),(6,'Default Group',6,5,3),(7,'O2 Group',7,5,3),(8,'VF New Zealand Group',8,5,3), (9,'HeyList UK Group',9,16,3), (10,'MTV1 UK Group',10,16,3);
 
 INSERT INTO `tb_operators` (`i`,`name`, `migName`) VALUES (1,'Orange UK','MIG01OU'),(2,'Vodafone UK','MIG00VU'),(3,'O2 UK','MIG01XU'),(4,'T-Mobile UK','MIG01TU'),(5,'Three UK','MIG01HU'),(6,'ASDA Mobile','Not Specified'),(7,'BT','Not Specified'),(8,'Giffgaff','Not Specified'),(9,'IDT Mobile','Not Specified'),(10,'Talkmobile','Not Specified'),(11,'TalkTalk','Not Specified'),(12,'Tesco Mobile','Not Specified'),(13,'Truphone','Not Specified'),(14,'Virgin Mobile','Not Specified');
 
@@ -256,6 +256,7 @@ INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, duration, duration_u
 INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, duration, duration_unit, subCost, paymentType, operator, shortCode, availableInStore, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online,provider, contract, segment) VALUES (231,7,'GBP',4,'WEEKS',5,'vfPsms'    ,null,'3313',true , '_3G', 'AUDIO'          , 0, 0, true , true, 'VF'    , null  , null      );
 INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, duration, duration_unit, subCost, paymentType, operator, shortCode, availableInStore, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online,provider, contract, segment) VALUES (232,7,'GBP',4,'WEEKS',5,'o2Psms'    ,null,''    ,true , '_3G', 'AUDIO'          , 0, 0, true , true, 'O2'    , 'PAYM', 'CONSUMER');
 INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, duration, duration_unit, subCost, paymentType, operator, shortCode, availableInStore, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online,provider, contract, segment) VALUES (233,7,'GBP',4,'WEEKS',5,'o2Psms'    ,null,''    ,true , '_4G', 'VIDEO_AND_AUDIO', 0, 0, true , true, 'O2'    , 'PAYM', 'CONSUMER');
+INSERT INTO `tb_paymentPolicy` (i,communityID, currencyISO, duration, duration_unit, subCost, paymentType, operator, shortCode, availableInStore, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online, app_store_product_id) VALUES (234,10,'GBP',1,'MONTHS', '4.99', 'ITUNES_SUBSCRIPTION', NULL, '', TRUE, '_3G'  , 'AUDIO', 0, 0, FALSE, TRUE, 'com.musicqubed.ios.mp.subscription.weekly.1');
 insert into tb_userStatus(i, name) values (4,'EULA'), (10,'SUBSCRIBED'), (11,'LIMITED');
 
 INSERT INTO `tb_paymentDetails` (`paymentType`, `i`, `creationTimestampMillis`, `descriptionError`, `disableTimestampMillis`, `lastPaymentStatus`, made_attempts, `madeRetries`, `VPSTxId`, `released`, `securityKey`, `txAuthNo`, `vendorTxCode`, `paymentPolicyId`, `retriesOnError`, `billingAgreementTxId`, `migPhoneNumber`, `activated`) VALUES ('migSms',1,1327064976924,NULL,0,'NONE',0,0,NULL,NULL,NULL,NULL,NULL,9,3,NULL,'MIG00VU.00447585927650',true);

@@ -4,12 +4,12 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
-import org.junit.Before;
+import mobi.nowtechnologies.server.service.social.core.UserPromoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static org.mockito.Matchers.any;
@@ -21,15 +21,15 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserPromoServiceTest {
-
+    @InjectMocks
     private UserPromoService userPromoService;
 
     @Mock
     private ActivationEmailService activationEmailService;
-
     @Mock
     private UserService userService;
-
+    @Mock
+    private ReferralService referralService;
     @Mock
     private UserRepository userRepository;
 
@@ -58,13 +58,5 @@ public class UserPromoServiceTest {
         doThrow(ValidationException.class).when(activationEmailService).activate(anyLong(), anyString(), anyString());
 
         userPromoService.applyInitPromoByEmail(user, 1l, "a@gmail.com", "ttt");
-    }
-
-    @Before
-    public void setUp() {
-        userPromoService = new UserPromoServiceImpl();
-        ReflectionTestUtils.setField(userPromoService, "activationEmailService", activationEmailService);
-        ReflectionTestUtils.setField(userPromoService, "userService", userService);
-        ReflectionTestUtils.setField(userPromoService, "userRepository", userRepository);
     }
 }

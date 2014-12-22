@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.repository.SubmitedPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.service.IPaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +13,10 @@ public class PaymentServiceImpl implements IPaymentService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
-	private SubmitedPaymentRepository submitedPaymentRepository;
+	private SubmittedPaymentRepository submittedPaymentRepository;
 	
-	public void setSubmitedPaymentRepository(SubmitedPaymentRepository submitedPaymentRepository) {
-		this.submitedPaymentRepository = submitedPaymentRepository;
+	public void setSubmittedPaymentRepository(SubmittedPaymentRepository submittedPaymentRepository) {
+		this.submittedPaymentRepository = submittedPaymentRepository;
 	}
 
 }

@@ -10,17 +10,11 @@ import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * User: Titov Mykhaylo (titov)
- * 17.10.13 10:30
- */
+// @author: Titov Mykhaylo (titov) 17.10.13 10:30
 public class UserGroupRepositoryIT  extends AbstractRepositoryIT{
 
-    @Resource(name = "userGroupRepository")
-    private UserGroupRepository userGroupRepository;
-
-    @Resource(name = "communityRepository")
-    private CommunityRepository communityRepository;
+    @Resource UserGroupRepository userGroupRepository;
+    @Resource CommunityRepository communityRepository;
 
     @Test
     public void shouldFindByCommunityRewriteUrl(){

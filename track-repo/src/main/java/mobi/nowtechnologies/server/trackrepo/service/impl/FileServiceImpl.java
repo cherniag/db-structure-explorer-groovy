@@ -6,11 +6,7 @@ import mobi.nowtechnologies.server.trackrepo.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * 
- * @author Alexander Kolpakov (akolpakov)
- * 
- */
+// @author Alexander Kolpakov (akolpakov)
 public class FileServiceImpl implements FileService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileServiceImpl.class);
 

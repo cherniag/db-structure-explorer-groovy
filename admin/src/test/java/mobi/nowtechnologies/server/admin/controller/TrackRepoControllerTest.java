@@ -10,8 +10,13 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
+import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -23,22 +28,20 @@ import java.util.Map;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * @author Mayboroda Dmytro
- *
- */
+// @author Mayboroda Dmytro
+@RunWith(PowerMockRunner.class)
 public class TrackRepoControllerTest {
-	
-	private TrackRepoController trackRepositoryController;
-	private TrackRepoService trackRepoService;
-	
+
+	@Mock TrackRepoService trackRepoService;
+
+	@InjectMocks TrackRepoController trackRepositoryController;
+
 	@Before
 	public void before() {
-		trackRepoService = mock(TrackRepoService.class);
-		trackRepositoryController = new TrackRepoController();
+		initMocks(this.getClass());
 		trackRepositoryController.setTrackRepoService(trackRepoService);
 		trackRepositoryController.setTrackRepoFilesURL("/track/repo/url");
 	}
@@ -78,7 +81,7 @@ public class TrackRepoControllerTest {
 	}
 	
 	@Test
-	public void testEncodeTrack_Successfull() throws Exception {
+	public void testEncodeTrack_Successful() throws Exception {
 		TrackDto resultTrackDto = TrackDtoFactory.anyTrackDto();
 		TrackDto configTrackDto = new TrackDto(resultTrackDto);
 		
@@ -102,7 +105,7 @@ public class TrackRepoControllerTest {
 	}
 	
 	@Test
-	public void testPullTrack_Successfull() throws Exception {
+	public void testPullTrack_Successful() throws Exception {
 		TrackDto resultTrackDto = TrackDtoFactory.anyTrackDto();
 		TrackDto configTrackDto = new TrackDto(resultTrackDto);
 		
@@ -111,7 +114,7 @@ public class TrackRepoControllerTest {
         WebAsyncTask<TrackDto> task = trackRepositoryController.pullTrack(configTrackDto);
 		
 		assertNotNull(task);
-		assertEquals(resultTrackDto, (TrackDto)task.getCallable().call());
+		assertEquals(resultTrackDto, task.getCallable().call());
 	}
 	
 	@Test(expected=ServiceException.class)
@@ -124,4 +127,28 @@ public class TrackRepoControllerTest {
         WebAsyncTask<TrackDto> task = trackRepositoryController.pullTrack(configTrackDto);
         task.getCallable().call();
 	}
+
+	@Test
+	public void shouldAssignReportingOptions() {
+		//given
+		TrackReportingOptionsDto trackReportingOptionsDto = new TrackReportingOptionsDto();
+
+		//when
+		trackRepositoryController.assignReportingOptions(trackReportingOptionsDto);
+
+		//then
+		verify(trackRepoService, times(1)).assignReportingOptions(trackReportingOptionsDto);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void shouldThrowRuntimeExceptionWhenCanNotAssignReportingOptions() {
+		//given
+		TrackReportingOptionsDto trackReportingOptionsDto = new TrackReportingOptionsDto();
+
+		doThrow(new RuntimeException()).when(trackRepoService).assignReportingOptions(trackReportingOptionsDto);
+
+		//when
+		trackRepositoryController.assignReportingOptions(trackReportingOptionsDto);
+	}
+
 }

@@ -47,6 +47,7 @@ public class EncodeManager {
 	private UploadToCloudFileManager cloudUploadFileManager;
 	
 	public void encode(Track track, Boolean isHighRate, Boolean licensed) throws IOException, InterruptedException {
+		LOGGER.info("Start encoding track : {}", track.getUniqueTrackId());
 		
 		boolean isVideo = track.getFile(AssetFile.FileType.VIDEO) != null;
 		
@@ -56,6 +57,7 @@ public class EncodeManager {
 		//Thumbnails generation
 		try {			
 			if (licensed) {
+				LOGGER.info("encoding licensed");
 				filesToPrivate.addAll(imageGenerator.generateThumbnails(track.getFileName(AssetFile.FileType.IMAGE), 
 												  						track.getUniqueTrackId(),
 												  						isVideo));
@@ -65,14 +67,14 @@ public class EncodeManager {
   																					 isVideo));
 			}
 		} catch (Exception e) {
-			LOGGER.error("Image generating failed", e);
+			LOGGER.error("Image generating failed for track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
 		}
 		
 		if (!isVideo) {
 
 			//Generating download audio
 			String audioFilePath = track.getFileName(AssetFile.FileType.DOWNLOAD);
-			LOGGER.debug("Start encoding for file: " + audioFilePath);
+			LOGGER.debug("Start encoding for DOWNLOAD file: " + audioFilePath);
 
 			String encoding = getEncoding(audioFilePath);
 			LOGGER.debug("Encoding is " + encoding);
@@ -83,8 +85,8 @@ public class EncodeManager {
 			}
 
 			if (UNKNNOWN_ENCODING.equalsIgnoreCase(encoding)) {
-								
-				LOGGER.debug("Tryng to fix unknown audio file: " + audioFilePath);
+
+				LOGGER.debug("Trying to fix unknown audio file: " + audioFilePath);
 				
 				String fixedFileName = getWorkDir() + track.getUniqueTrackId() + "_fix.mp3";
 				commandEncodeUnknown.executeCommand(audioFilePath, fixedFileName);
@@ -108,7 +110,9 @@ public class EncodeManager {
 				
 				commandEncodeWAV.executeCommand(audioFilePath, purchasedFileName);
 			}
-			LOGGER.debug("Purchased file is created: " + new File(purchasedFileName).exists());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Purchased file is created: " + new File(purchasedFileName).exists());
+			}
 			
 			String tempFileName = getWorkDir() + track.getUniqueTrackId() + ".mp3";
 			LOGGER.debug("Temp file is " + tempFileName);
@@ -116,10 +120,12 @@ public class EncodeManager {
 			
 			moveFile(tempFileName, purchasedFileName);
 			filesToPrivate.add(purchasedFileName);
-			LOGGER.debug("Purchased file exists after UITS: " + new File(purchasedFileName).exists());
-			LOGGER.debug("Temp file is removed: " + new File(tempFileName).exists());
-			
-			
+
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Purchased file exists after UITS: " + new File(purchasedFileName).exists());
+				LOGGER.debug("Temp file is removed: " + new File(tempFileName).exists());
+			}
+
 			
 			//Generating Mobile audio
 			LOGGER.debug("Start generating mobile audio: " + audioFilePath);
@@ -136,12 +142,16 @@ public class EncodeManager {
 				encodeInputFile = decodedMP3File;
 				LOGGER.debug("Working file's been changed to " + encodeInputFile);
 			}
-			LOGGER.debug("Working file exists: " + new File(encodeInputFile).exists());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Working file exists: " + new File(encodeInputFile).exists());
+			}
 			
 			//Encoding with 48 and 96 bitrate 
 			
 			String coverImageFileName = getImageDir() + track.getUniqueTrackId() + "_cover.png";
-			LOGGER.debug("Cover file: " + coverImageFileName + " and it exists: " + new File(coverImageFileName).exists()); 
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Cover file: " + coverImageFileName + " and it exists: " + new File(coverImageFileName).exists());
+			}
 
 			for (BitRate currentBitrate : BitRate.values() ) {
                 String bitrate = currentBitrate.getValue();
@@ -149,7 +159,9 @@ public class EncodeManager {
 				
 				String bitrateFileName = getWorkDir() + track.getUniqueTrackId() + "_"+ bitrate + ".m4a";
 				commandEncodeMobileAudio.executeCommand(encodeInputFile, bitrate, bitrateFileName);
-				LOGGER.debug("Encoded file to bitrate " + bitrate + ": " + bitrateFileName + "and it exists: " + new File(bitrateFileName).exists());
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Encoded file to bitrate " + bitrate + ": " + bitrateFileName + "and it exists: " + new File(bitrateFileName).exists());
+				}
 				
 				commandAddTag.executeCommand(neroHome.getFile().getAbsolutePath(),
 											 bitrateFileName, 
@@ -162,18 +174,22 @@ public class EncodeManager {
 											 emptyNull(track.getCopyright()),
 											 emptyNull(track.getUniqueTrackId()),
 											 coverImageFileName);
-				LOGGER.debug("Encoded file to bitrate " + bitrate + " with tag: " + bitrateFileName + "and it exists: " + new File(bitrateFileName).exists());
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Encoded file to bitrate " + bitrate + " with tag: " + bitrateFileName + "and it exists: " + new File(bitrateFileName).exists());
+				}
 				
 				String audFileName = track.getUniqueTrackId() + "_"+ bitrate + ".aud";
 				String hdrFileName = track.getUniqueTrackId() + "_"+ bitrate + ".hdr";
 				String encFileName = track.getUniqueTrackId() + "_"+ bitrate + ".enc";
 				
 				commandUITS.executeMobileFiles(bitrateFileName, getWorkDir() + audFileName, getWorkDir() + hdrFileName, getWorkDir() + encFileName);
-				
-				LOGGER.debug("Audio file is " + getWorkDir() + audFileName + " and exists: " + new File(getWorkDir() + audFileName).exists());
-				LOGGER.debug("Header file is " + getWorkDir() + hdrFileName + " and exists: " + new File(getWorkDir() + hdrFileName).exists());
-				LOGGER.debug("Encoded file is " + getWorkDir() + encFileName + " and exists: " + new File(getWorkDir() + encFileName).exists());
-				
+
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Audio file is " + getWorkDir() + audFileName + " and exists: " + new File(getWorkDir() + audFileName).exists());
+					LOGGER.debug("Header file is " + getWorkDir() + hdrFileName + " and exists: " + new File(getWorkDir() + hdrFileName).exists());
+					LOGGER.debug("Encoded file is " + getWorkDir() + encFileName + " and exists: " + new File(getWorkDir() + encFileName).exists());
+				}
+
 				String targetAudFileName = getAudioDir() + audFileName;
 				String targetHdrFileName = getHeaderDir() + hdrFileName;
 				String targetEncFileName = getEncodedDir() + encFileName;
@@ -186,10 +202,12 @@ public class EncodeManager {
 
 				moveFile(getWorkDir() + encFileName, targetEncFileName);
 				filesToPrivate.add(targetEncFileName);
-				
-				LOGGER.debug("Audio file is moved to " + targetAudFileName + " and exists: " + new File(targetAudFileName).exists());
-				LOGGER.debug("Header file is moved to " + targetHdrFileName + " and exists: " + new File(targetHdrFileName).exists());
-				LOGGER.debug("Encoded file is moved to " + targetEncFileName + " and exists: " + new File(targetEncFileName).exists());
+
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Audio file is moved to " + targetAudFileName + " and exists: " + new File(targetAudFileName).exists());
+					LOGGER.debug("Header file is moved to " + targetHdrFileName + " and exists: " + new File(targetHdrFileName).exists());
+					LOGGER.debug("Encoded file is moved to " + targetEncFileName + " and exists: " + new File(targetEncFileName).exists());
+				}
 
 				if (isHighRate == (currentBitrate.equals(BitRate.BITRATE96))){
 				
@@ -198,10 +216,14 @@ public class EncodeManager {
 					
 					FileUtils.copyFile(new File(targetAudFileName),  new File(targetAudFileNameNoBitrate));
 					filesToPrivate.add(targetAudFileNameNoBitrate);
-					LOGGER.debug("Audio file is copied to " + targetAudFileNameNoBitrate + " and copy exists: " + new File(targetAudFileNameNoBitrate).exists());
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Audio file is copied to " + targetAudFileNameNoBitrate + " and copy exists: " + new File(targetAudFileNameNoBitrate).exists());
+					}
 					
 					FileUtils.copyFile(new File(targetEncFileName),  new File(targetEncFileNameNoBitrate));
-					LOGGER.debug("Encoded file is copied to " + targetEncFileNameNoBitrate + " and copy exists: " + new File(targetEncFileNameNoBitrate).exists());
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Encoded file is copied to " + targetEncFileNameNoBitrate + " and copy exists: " + new File(targetEncFileNameNoBitrate).exists());
+					}
 					filesToPrivate.add(targetEncFileNameNoBitrate);
 				}
 			}
@@ -210,7 +232,9 @@ public class EncodeManager {
 			String previewFileName = getWorkDir() + track.getUniqueTrackId() + "P.m4a";
 			LOGGER.debug("Preview file is " + previewFileName);
 			commandEncodePreviewAudio.executeCommand(encodeInputFile, previewFileName);
-			LOGGER.debug("Preview file is " + previewFileName + " and exists: " + new File(previewFileName).exists());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Preview file is " + previewFileName + " and exists: " + new File(previewFileName).exists());
+			}
 			
 			commandAddTag.executeCommand(neroHome.getFile().getAbsolutePath(),
 										 previewFileName, 
@@ -223,15 +247,20 @@ public class EncodeManager {
 					 					 emptyNull(track.getCopyright()),
 					 					 emptyNull(track.getUniqueTrackId()),
 					 					 coverImageFileName);
-			LOGGER.debug("Preview file with tag is " + previewFileName + " and exists: " + new File(previewFileName).exists());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Preview file with tag is " + previewFileName + " and exists: " + new File(previewFileName).exists());
+			}
 			
 			String resultPreviewFileName = getPreviewDir() + track.getUniqueTrackId() + "P.m4a";
 			moveFile(previewFileName, resultPreviewFileName);
 			filesToData.add(resultPreviewFileName);
-			LOGGER.debug("Preview file moved to " + getPreviewDir() + track.getUniqueTrackId() + "P.m4a" + " and exists: " + new File(getPreviewDir() + track.getUniqueTrackId() + "P.m4a").exists());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Preview file moved to " + getPreviewDir() + track.getUniqueTrackId() + "P.m4a" + " and exists: " + new File(getPreviewDir() + track.getUniqueTrackId() + "P.m4a").exists());
+			}
 		}
 
 		cloudUploadFileManager.uploadFilesToCloud(track, filesToPrivate, filesToData);
+		LOGGER.info("Encoding done");
 	}
 	
 	private String getEncoding(String audioFilePath) throws IOException, InterruptedException {
@@ -252,8 +281,10 @@ public class EncodeManager {
 	}
 	
 	private void moveFile(String source, String target) {
-		new File(target).delete();
-		new File(source).renameTo(new File(target));
+		boolean delete = new File(target).delete();
+		LOGGER.debug("Target {} was deleted : {}", target, delete);
+		boolean renameTo = new File(source).renameTo(new File(target));
+		LOGGER.debug("Source {} was renamed to target {} : {}", source, target, renameTo);
 	}
 	
 	private String emptyNull(Object str) {

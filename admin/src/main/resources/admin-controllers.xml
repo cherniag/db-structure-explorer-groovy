@@ -102,13 +102,14 @@
 		<property name="trackRepoService" ref="service.TrackRepoService" />
 		<property name="executorTimeout" value="${trackRepo.executor.queueCapacity}" />
 		<property name="trackRepoFilesURL" value="${trackRepo.filesURL}" />
+		<property name="trackRepoUrl" value="${trackRepo.baseURL}" />
 	</bean>
 	
 	<bean name="admin.AccountLogController"
 		class="mobi.nowtechnologies.server.admin.controller.AccountLogController">
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="pendingPaymentService" ref="service.PendingPaymentService" />
-		<property name="submitedPaymentService" ref="service.SubmitedPaymentService" />
+		<property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
 		<property name="userService" ref="service.UserService" />
 	</bean>
 	

@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.applicationtests.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
@@ -121,6 +122,11 @@ public class ApplicationConfiguration {
         source.setCacheSeconds(-1);
         source.setDefaultEncoding(Charsets.UTF_8.name());
         return source;
+    }
+
+    @Bean
+    public ObjectMapper jacksonObjectMapper() {
+        return new ObjectMapper();
     }
 
     private DataSource dataSource(String url, String username, String password) {

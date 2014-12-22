@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.trackrepo.service;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
 
 /**
- *
  * @author Alexander Kolpakov (akolpakov)
  * This interface contains all methods to work with Tracks in Track Repository.
  */
