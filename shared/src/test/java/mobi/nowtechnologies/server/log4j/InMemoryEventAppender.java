@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 
 /**

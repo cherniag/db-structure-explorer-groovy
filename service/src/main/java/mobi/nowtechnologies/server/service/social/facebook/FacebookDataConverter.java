@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.server.service.social.facebook;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.shared.CollectionUtils;
 import mobi.nowtechnologies.server.shared.enums.Gender;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.facebook.api.FacebookProfile;
@@ -30,7 +29,7 @@ public class FacebookDataConverter {
         final String usernameOrId = getFacebookUserName(profile);
 
         FacebookUserInfo details = new FacebookUserInfo();
-        details.setEmail(profile.getEmail());
+        details.setEmail(emailOrOtherId(profile));
         details.setFirstName(profile.getFirstName());
         details.setSurname(profile.getLastName());
         details.setFacebookId(profile.getId());
@@ -42,9 +41,21 @@ public class FacebookDataConverter {
         return details;
     }
 
+    private String emailOrOtherId(FacebookProfile profile) {
+        String email = profile.getEmail();
+
+        if (StringUtils.isEmpty(email)) {
+            String facebookUserName = getFacebookUserName(profile);
+            logger.info("Empty or absent email for id [{}]", facebookUserName);
+            return facebookUserName + "@facebook.com";
+        }
+
+        return email;
+    }
+
     private String getFacebookUserName(FacebookProfile profile) {
         // After 30 Apr 2014 username is null
-        boolean beforeVersion2 = profile.getUsername() != null;
+        boolean beforeVersion2 = StringUtils.isNotEmpty(profile.getUsername());
 
         return beforeVersion2 ? profile.getUsername() : profile.getId();
     }
@@ -66,10 +77,14 @@ public class FacebookDataConverter {
         if (loc != null) {
             String cityWithCountry = loc.getName();
             if (!isEmpty(cityWithCountry)) {
-                Iterable<String> resultOfSplit = Splitter.on(',').omitEmptyStrings().trimResults().split(cityWithCountry);
-                List<String> result = Lists.newArrayList(resultOfSplit);
-                details.setCity(CollectionUtils.get(result, 0, null));
-                details.setCountry(CollectionUtils.get(result, 1, null));
+                List<String> result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(cityWithCountry);
+
+                if (result.size() > 0) {
+                    details.setCity(result.get(0));
+                }
+                if (result.size() > 1) {
+                    details.setCountry(result.get(1));
+                }
             }
         }
     }
