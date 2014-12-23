@@ -55,7 +55,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 					<prop key="mail.smtp.password"></prop>
 					<prop key="mail.smtp.host">panda</prop>
 					<prop key="mail.smtp.port">25</prop>
-					<prop key="mail.smtp.from">info@chartsnow.mobi</prop>
+					<prop key="mail.smtp.from">info@musicqubed.com</prop>
 				</props>
 			</list>
 		</property>

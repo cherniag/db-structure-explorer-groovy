@@ -2,7 +2,8 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 
 <div class="header panel">
-	<a href="<s:message code='page.dashboard.link' />" class="logo"><img src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="ChartsNow Logo" /></a>
+	<a href="<s:message code='page.dashboard.link' />" class="logo"><img
+			src="<c:out value='${requestScope.assetsPathAccordingToCommunity}' />imgs/logo.png" alt="MusicQubed Logo"/></a>
 	<s:message code='signin.page.service.link.singup' var="signin_page_service_link_singup" />
 	<c:if test="${not empty signin_page_service_link_singup}">
 		<div class="authorization innerPage">

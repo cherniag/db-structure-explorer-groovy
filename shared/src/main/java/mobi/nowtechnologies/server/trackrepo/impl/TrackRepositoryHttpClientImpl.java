@@ -282,22 +282,22 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	private TrackDto sendPullRequest(final Long id) throws Exception {
         LOGGER.info("Sending pull request to track repo, trackId:{}", id);
         if (id == null)
-			return null;
-		try {
-			HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
+            return null;
+        try {
+            HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
 			pull.setHeaders(getSecuredHeaders());
 			HttpResponse response = getHttpClient().execute(pull);
 			if (response.getStatusLine().getStatusCode() != 200) {
                 LOGGER.error("Track repo server responded on Pull request for track with ID {} with error status code: {}", id, response.getStatusLine().getStatusCode());
                 //throw new RuntimeException("Server responded on Pull request for track with ID " + id + " with error status code: " + response.getStatusLine().getStatusCode());
-				return null;
-			}
-			String resJson = IOUtils.toString(response.getEntity().getContent());
+                return null;
+            }
+            String resJson = IOUtils.toString(response.getEntity().getContent());
             LOGGER.info("Received json from track repo: {}", resJson);
             TrackDto trackDto = gson.fromJson(resJson, TrackDto.class);
-			return trackDto;
-		} catch (Exception e) {
-			LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
+            return trackDto;
+        } catch (Exception e) {
+            LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -311,7 +311,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 	public TrackDto encodeTrack(Long id, Boolean isHighRate, Boolean licensed) throws Exception {
         LOGGER.debug("input parameters: [{}, {}, {}]", id, isHighRate, licensed);
         if (id == null)
-			throw new NullPointerException("The parameter id is null");
+            throw new NullPointerException("The parameter id is null");
 
 		final TrackDto trackDto;
 
@@ -335,7 +335,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 		} catch (Exception e) {
             LOGGER.error("encodeTrack exception: {}", e.getMessage(), e);
             throw e;
-		}
+        }
 
 		LOGGER.debug("Output parameter trackDto=[{}]", trackDto);
 		return trackDto;

@@ -89,12 +89,12 @@ public class TrackController extends AbstractCommonController{
             @RequestParam(value="query", required = false) String query,
             @ModelAttribute(SEARCH_TRACK_DTO) SearchTrackDto searchTrackDto,
             @PageableDefaults(pageNumber = 0, value = 10) Pageable page) {
-        LOGGER.info("Start find with query {} and searchTrackDto", query, searchTrackDto);
+        LOGGER.debug("Start find with query {} and searchTrackDto", query, searchTrackDto);
         return TrackDtoMapper.toPage(query != null ? trackService.find(query, page) : trackService.find(searchTrackDto, page));
-	}
-	
-	@RequestMapping(value = "/tracks/{trackId}/pull", method = GET)
-	public @ResponseBody WebAsyncTask<TrackDto> pull(final @PathVariable("trackId")Long trackId) {
+    }
+
+    @RequestMapping(value = "/tracks/{trackId}/pull", method = GET)
+    public @ResponseBody WebAsyncTask<TrackDto> pull(final @PathVariable("trackId")Long trackId) {
         LOGGER.info("Start pulling - trackId:{}", trackId);
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override

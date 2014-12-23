@@ -311,7 +311,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 		} catch (Exception e) {
             LOGGER.error("Exception encoding track {}: {}", config, e.getMessage(), e);
             throw new ExternalServiceException("tracks.encode.error", "Couldn't encode track");
-		}
+        }
 
 		LOGGER.info("output encode(id): [{}]", track);
 		return track;
@@ -321,7 +321,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     public MediaFile createMediaFile(ResourceFileDto fileDto) {
         LOGGER.info("createMediaFile fileDto is {}", fileDto);
         if (fileDto == null)
-			return null;
+            return null;
 
 		String fullFileName = fileDto.getFullFilename();
 		MediaFile file = mediaFileRepository.getByName(fullFileName);

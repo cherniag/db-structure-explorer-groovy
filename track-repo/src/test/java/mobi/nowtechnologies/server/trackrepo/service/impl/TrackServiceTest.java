@@ -235,9 +235,9 @@ public class TrackServiceTest {
 		when(cloudFileServiceMock.copyFile(anyString(), anyString(), anyString(), eq(track.getIsrc() + "." + FileType.MOBILE_AUDIO.getExt()))).thenReturn(true);
 		when(cloudFileServiceMock.copyFile(anyString(), anyString(), anyString(), eq(track.getIsrc() + "." + FileType.MOBILE_ENCODED.getExt()))).thenReturn(true);
 		doAnswer(new Answer<AssetFile>() {
-            @Override
-            public AssetFile answer(InvocationOnMock invocationOnMock) throws Throwable {
-                videoFile.setExternalId("343434977432");
+			@Override
+			public AssetFile answer(InvocationOnMock invocationOnMock) throws Throwable {
+				videoFile.setExternalId("343434977432");
                 return videoFile;
             }
         }).when(service).createVideo(any(Track.class));

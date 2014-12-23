@@ -110,8 +110,8 @@ public class TrackRepoController extends AbstractCommonController{
 			modelAndView.addObject(TRACK_REPO_FILES_URL, trackRepoFilesURL);
 		}
 
-		LOGGER.info("output findTracks(query, searchTrackDto): [{}]", new Object[] { modelAndView });
-		return modelAndView ;
+        LOGGER.debug("output findTracks(query, searchTrackDto): [{}]", new Object[]{modelAndView});
+        return modelAndView ;
 	}
 	
 	@RequestMapping(value = "/tracks/encode", method = POST)
@@ -123,15 +123,16 @@ public class TrackRepoController extends AbstractCommonController{
         WebAsyncTask<TrackDto> encodeTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                LOGGER.warn("On encodeTrack timeout for: {}", track);
+                LOGGER.info("Start WebAsyncTask: encoding track with id {}", track.getId());
                 TrackDto result = trackRepoService.encode(track);
+                LOGGER.info("Finish WebAsyncTask: encoding track with id {}", track.getId());
                 return result;
             }
         });
         encodeTask.onTimeout(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                LOGGER.warn("On encodeTrack timeout for: {}", track);
+                LOGGER.warn("On encodeTrack timeout for: {}", track.getId());
                 SearchTrackDto criteria = new SearchTrackDto();
                 criteria.setTrackIds(Collections.singletonList(track.getId().intValue()));
 
@@ -150,6 +151,7 @@ public class TrackRepoController extends AbstractCommonController{
         return new Callable<String>() {
             @Override
             public String call() throws Exception {
+                LOGGER.debug("Start encode2 : {}", tracks);
                 Map<String, List<TrackDto>> rez = trackRepoService.encodeTracks(tracks);
 
                 List<TrackDto> fails = rez.get("fail");
@@ -207,7 +209,7 @@ public class TrackRepoController extends AbstractCommonController{
         pullTask.onTimeout(new Callable<TrackDto>() {
             @Override
             public TrackDto call() throws Exception {
-                LOGGER.warn("On pullTrack timeout for: {}", track);
+                LOGGER.warn("On pullTrack timeout for: {}", track.getId());
                 SearchTrackDto criteria = new SearchTrackDto();
                 criteria.setTrackIds(Collections.singletonList(track.getId().intValue()));
 
@@ -227,8 +229,8 @@ public class TrackRepoController extends AbstractCommonController{
 		ModelAndView modelAndView = new ModelAndView("tracks/drops");
 		modelAndView.addObject(INGEST_WIZARD_DATA_DTO, data);
 		modelAndView.addObject(ACTION, "/drops/select");
-
-		return modelAndView;
+        LOGGER.debug("output getDrops({})", data);
+        return modelAndView;
 	}
 
     @RequestMapping(value = "/drops/select", method = POST)
@@ -279,6 +281,7 @@ public class TrackRepoController extends AbstractCommonController{
 
     @RequestMapping(value = "/reportingOptions", method = PUT)
     public void assignReportingOptions(@Valid @RequestBody TrackReportingOptionsDto trackReportingOptionsDto) {
+        LOGGER.debug("assign Reporting Options, [{}]", trackReportingOptionsDto);
         trackRepoService.assignReportingOptions(trackReportingOptionsDto);
     }
 
