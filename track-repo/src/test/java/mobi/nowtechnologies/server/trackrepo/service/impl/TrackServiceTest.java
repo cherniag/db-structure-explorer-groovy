@@ -238,7 +238,7 @@ public class TrackServiceTest {
 			@Override
 			public AssetFile answer(InvocationOnMock invocationOnMock) throws Throwable {
 				videoFile.setExternalId("343434977432");
-                return videoFile;
+				return videoFile;
             }
         }).when(service).createVideo(any(Track.class));
 

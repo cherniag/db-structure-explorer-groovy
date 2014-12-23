@@ -94,7 +94,9 @@ public class TrackController extends AbstractCommonController{
     }
 
     @RequestMapping(value = "/tracks/{trackId}/pull", method = GET)
-    public @ResponseBody WebAsyncTask<TrackDto> pull(final @PathVariable("trackId")Long trackId) {
+    public
+    @ResponseBody
+    WebAsyncTask<TrackDto> pull(final @PathVariable("trackId") Long trackId) {
         LOGGER.info("Start pulling - trackId:{}", trackId);
         WebAsyncTask<TrackDto> pullTask = new WebAsyncTask<TrackDto>(executorTimeout, new Callable<TrackDto>() {
             @Override

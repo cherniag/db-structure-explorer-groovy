@@ -284,7 +284,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
         if (id == null)
             return null;
         try {
-            HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
+			HttpGet pull = new HttpGet(trackRepoUrl.concat("/tracks/").concat(URLEncoder.encode(id.toString(), "utf-8")).concat("/pull.json"));
 			pull.setHeaders(getSecuredHeaders());
 			HttpResponse response = getHttpClient().execute(pull);
 			if (response.getStatusLine().getStatusCode() != 200) {
@@ -297,7 +297,7 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
             TrackDto trackDto = gson.fromJson(resJson, TrackDto.class);
             return trackDto;
         } catch (Exception e) {
-            LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
+			LOGGER.error("Error while sending Pull request for track with ID {}: {}", id, e.getMessage(), e);
 			throw e;
 		}
 	}

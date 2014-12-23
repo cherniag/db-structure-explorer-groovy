@@ -110,8 +110,8 @@ public class TrackRepoController extends AbstractCommonController{
 			modelAndView.addObject(TRACK_REPO_FILES_URL, trackRepoFilesURL);
 		}
 
-        LOGGER.debug("output findTracks(query, searchTrackDto): [{}]", new Object[]{modelAndView});
-        return modelAndView ;
+		LOGGER.debug("output findTracks(query, searchTrackDto): [{}]", new Object[] { modelAndView });
+		return modelAndView ;
 	}
 	
 	@RequestMapping(value = "/tracks/encode", method = POST)
@@ -230,7 +230,7 @@ public class TrackRepoController extends AbstractCommonController{
 		modelAndView.addObject(INGEST_WIZARD_DATA_DTO, data);
 		modelAndView.addObject(ACTION, "/drops/select");
         LOGGER.debug("output getDrops({})", data);
-        return modelAndView;
+		return modelAndView;
 	}
 
     @RequestMapping(value = "/drops/select", method = POST)
