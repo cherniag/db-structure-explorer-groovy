@@ -2,11 +2,11 @@ package mobi.nowtechnologies.server.admin.controller.itunes;
 
 import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
-import mobi.nowtechnologies.server.shared.CollectionUtils;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.util.URLValidation;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -32,7 +32,7 @@ public class ITunesValidator extends BaseValidator {
                 positions.add(item.getPosition());
             }
         }
-        if (!CollectionUtils.isEmpty(positions)) {
+        if (CollectionUtils.isNotEmpty(positions)) {
             errors.reject("chartItems.page.itunesLink.invalidPositions", new Object[]{Joiner.on(",").join(positions)}, null);
         }
         return true;

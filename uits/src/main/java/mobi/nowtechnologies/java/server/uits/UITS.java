@@ -43,7 +43,7 @@ public class UITS {
         params.setDistributor("ChartsNow.mobi");
         params.setIsrc("GB7438783784");
         params.setProductId("hfdjhffdjhfdjdf");
-        params.setUrl("http://chartsnow.mobi");
+        params.setUrl("http://musicqubed.com");
         params.setUser("cntest3@cn.mobi");
         try {
             System.err.println("Loading key " + privKeyFile);

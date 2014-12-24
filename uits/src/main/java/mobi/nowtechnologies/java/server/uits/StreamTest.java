@@ -27,7 +27,7 @@ public class StreamTest {
 		params.setDistributor("ChartsNow.mobi");
 		params.setIsrc("GB7438783784");
 		params.setProductId("hfdjhffdjhfdjdf");
-		params.setUrl("http://chartsnow.mobi");
+		params.setUrl("http://musicqubed.com");
 		params.setUser("64365474365746574643276473267");
 		try {
 			String privKeyFile = args[2];
