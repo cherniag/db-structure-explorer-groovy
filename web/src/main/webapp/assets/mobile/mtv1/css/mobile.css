@@ -542,6 +542,11 @@ body {
     border: 1px solid #bababa;
     overflow: hidden;
 }
+.go-premium-success-avatar-customer-img{
+    display:block;
+    margin-left: -2px;
+    margin-top: -2px;
+}
 .go-premium-success-avatar-border {
     width:270px;
     height: 270px;
@@ -901,6 +906,11 @@ body {
 }
 
 @media all and (max-width: 480px) {
+
+    .go-premium-header {
+        margin-top: 15px;
+    }
+
     .go-premium-button-close-device {
         width: 28px;
         height: 28px;
@@ -948,6 +958,10 @@ body {
 
     .go-premium-body-button-below {
         margin: 20px 20px 0 20px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 35px;
     }
 
     .go-premium-header-hint-device {
@@ -999,7 +1013,7 @@ body {
         font-size: 20px;
     }
     .go-premium-success-ad-container-device {
-        margin-top:140px;
+        margin-top:130px;
     }
     .go-premium-success-close-button-container-device {
         margin-top:10px;
@@ -1033,11 +1047,28 @@ body {
     }
 }
 
+@media all and (max-width: 360px) {
+
+    .go-premium-header {
+        margin-top: 10px;
+    }
+
+    .go-premium-success-ad-container-device {
+        margin-top:125px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 35px;
+    }
+}
+
 @media all and (max-width: 320px) {
     .go-premium-button-close-device {
         width: 22px;
         height: 22px;
         margin: 5px;
+        background: url(../imgs/icon_close_36.png) no-repeat center;
+        background-size: 96%;
     }
 
     .go-premium-container-device {
@@ -1082,6 +1113,10 @@ body {
 
     .go-premium-body-button-below {
         margin: 13px 26px 0 26px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 38px;
     }
 
     .go-premium-header-hint-device {
@@ -1133,11 +1168,37 @@ body {
         padding: 4px;
     }
     .go-premium-success-ad-container-device {
-        margin-top:130px;
+        margin-top:105px;
     }
     .go-premium-success-close-button-container-device {
         margin-top:20px;
         margin-left:20px;
+    }
+    .go-premium-success-avatar-container {
+        width: 100%;
+        height: 160px;
+        margin: -80px auto 0;
+        position: absolute;
+    }
+
+    .go-premium-success-avatar {
+        width: 160px;
+        margin: 0 auto;
+        height: 100%;
+    }
+
+    .go-premium-success-avatar-customer {
+        width: 120px;
+        height: 120px;
+        margin-top: 20px;
+        margin-left: 20px;
+        border-radius: 60px;
+    }
+
+    .go-premium-success-avatar-border {
+        width: 160px;
+        height: 160px;
+        margin-top: -175px;
     }
 }
 
