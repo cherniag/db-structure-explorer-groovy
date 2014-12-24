@@ -23,7 +23,7 @@
         <div class="go-premium-success-avatar">
             <div class="go-premium-success-avatar-customer go-premium-success-avatar-customer-circle" style="margin-top: -1px;"></div>
             <div class="go-premium-success-avatar-customer">
-                <img src="${customerAvatar}" class="go-premium-success-avatar-customer-img" onload="adjustImage(this, this.parentNode.clientWidth)"/>
+                <img src="${customerAvatar}" class="go-premium-success-avatar-customer-img" onload="adjustImage(this, this.parentNode.clientWidth + 2)"/>
             </div>
             <img src="${pageContext.request.contextPath}/assets/mobile/mtv1/imgs/img_stars_no_border.png" class="go-premium-success-avatar-border" />
         </div>

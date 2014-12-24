@@ -552,6 +552,8 @@ body {
 
 .go-premium-success-avatar-customer-img{
     display:block;
+    margin-left: -1px;
+    margin-top: -1px;
 }
 .go-premium-success-avatar-border {
     width:270px;
@@ -1209,6 +1211,7 @@ body {
 
     .go-premium-success-avatar-customer-circle{
         margin-left: 19px;
+        border-radius: 50%;
     }
 
     .go-premium-success-avatar-border {
@@ -1338,6 +1341,7 @@ body {
     }
     .go-premium-success-avatar-customer-circle{
         margin-left: 24px;
+        border-radius: 50%;
     }
     .go-premium-success-avatar-border {
         width:140px;
