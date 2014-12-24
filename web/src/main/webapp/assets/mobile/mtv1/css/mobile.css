@@ -531,6 +531,7 @@ body {
     width:270px;
     margin:0 auto;
     height:100%;
+    position: relative;
 }
 .go-premium-success-avatar-customer {
     width: 200px;
@@ -539,18 +540,24 @@ body {
     margin-left:35px;
     display:block;
     border-radius: 100px;
-    border: 1px solid #bababa;
     overflow: hidden;
 }
+
+.go-premium-success-avatar-customer-circle{
+    position: absolute;
+    border: 1px solid #bababa;
+    border-radius: 50%;
+    margin-left: 34px;
+}
+
 .go-premium-success-avatar-customer-img{
     display:block;
-    margin-left: -2px;
-    margin-top: -2px;
 }
 .go-premium-success-avatar-border {
     width:270px;
     height: 270px;
     margin-top:-235px;
+    position: relative;
 }
 
 .go-premium-success-ad-container {
@@ -1040,6 +1047,11 @@ body {
         border-radius: 75px;
     }
 
+    .go-premium-success-avatar-customer-circle{
+        margin-left: 24px;
+        border-radius:50%;
+    }
+
     .go-premium-success-avatar-border {
         width: 200px;
         height: 200px;
@@ -1195,6 +1207,10 @@ body {
         border-radius: 60px;
     }
 
+    .go-premium-success-avatar-customer-circle{
+        margin-left: 19px;
+    }
+
     .go-premium-success-avatar-border {
         width: 160px;
         height: 160px;
@@ -1318,8 +1334,10 @@ body {
         margin-left:25px;
         display:block;
         border-radius: 45px;
-        border: 1px solid #bababa;
         overflow: hidden;
+    }
+    .go-premium-success-avatar-customer-circle{
+        margin-left: 24px;
     }
     .go-premium-success-avatar-border {
         width:140px;
