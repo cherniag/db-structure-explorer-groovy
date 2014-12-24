@@ -21,8 +21,6 @@ import java.util.List;
  * 
  */
 public class DrmService {
-	private static final String CHARTSNOW = "CHARTSNOW";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(DrmService.class);
 
 	private EntityService entityService;

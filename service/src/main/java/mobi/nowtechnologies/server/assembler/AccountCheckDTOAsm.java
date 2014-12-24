@@ -20,10 +20,10 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
-import static mobi.nowtechnologies.server.shared.CollectionUtils.isEmpty;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class AccountCheckDTOAsm {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckDTOAsm.class);
@@ -114,7 +114,7 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.user = user;
         accountCheckDTO.firstActivation = firstActivation;
 
-        if (!isEmpty(appStoreProductIds)) {
+        if (isNotEmpty(appStoreProductIds)) {
             accountCheckDTO.appStoreProductId = Joiner.on(",").skipNulls().join(appStoreProductIds);
         }
         if (withUserDetails) {
