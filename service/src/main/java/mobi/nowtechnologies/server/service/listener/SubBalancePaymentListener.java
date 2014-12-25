@@ -1,24 +1,23 @@
 package mobi.nowtechnologies.server.service.listener;
 
-import java.util.Collections;
-import java.util.List;
-
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
-import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.PromotionService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.FIRST;
 
@@ -42,28 +41,24 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 	public void onApplicationEvent(PaymentEvent event) {
 		SubmittedPayment payment = (SubmittedPayment) event.getPayment();
 
+		LOGGER.info("handle SubBalance payment event: [{}]", payment);
+
 		if (payment.getType() != PaymentDetailsType.PAYMENT) {
-					
-			LOGGER.info("handle SubBalance payment event: [{}]", payment);
 			User user = payment.getUser();
-			final String appStoreOriginalTransactionId = payment.getAppStoreOriginalTransactionId();
-			final int nextSubPayment = payment.getNextSubPayment();
-		
-			final List<User> users;
-			if (appStoreOriginalTransactionId != null) {
-				users = userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
-			}else{
-				users = Collections.singletonList(user);
-			}
-			
+
+			LOGGER.info("fetching users for user id: {}", user.getId());
+			final List<User> users = fetchUsers(payment, user);
+			LOGGER.info("fetched users count: {}", users.size());
+
 			for (User actualUser : users) {
+				LOGGER.info("starting process for id: {}", actualUser.getId());
+
 				userService.processPaymentSubBalanceCommand(actualUser, payment);
 				if (FIRST.equals(payment.getType())) {
-					LOGGER
-							.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment
-									.getStatus());
+					LOGGER.info("Applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment.getStatus());
 					userService.applyPromotion(actualUser);
 					promotionService.applyPromotion(actualUser);
+					LOGGER.info("Finished applying promotions to user {} after his first successful payment with status {} ", actualUser.getId(), payment.getStatus());
 				}
 	
 				PaymentDetails currentActivePaymentDetails = actualUser.getCurrentPaymentDetails();
@@ -72,8 +67,21 @@ public class SubBalancePaymentListener implements ApplicationListener<PaymentEve
 				}
 	
 				userService.populateAmountOfMoneyToUserNotification(actualUser, payment);
+
+				LOGGER.info("end of processing for id: {}", actualUser.getId());
 			}
 		}
+	}
+
+	private List<User> fetchUsers(SubmittedPayment payment, User user) {
+		final int nextSubPayment = payment.getNextSubPayment();
+		final String appStoreOriginalTransactionId = payment.getAppStoreOriginalTransactionId();
+
+		if (appStoreOriginalTransactionId != null) {
+			return userService.findUsersForItunesInAppSubscription(user, nextSubPayment, appStoreOriginalTransactionId);
+        }else{
+            return Collections.singletonList(user);
+        }
 	}
 
 	public void setUserService(UserService userService) {

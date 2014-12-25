@@ -16,31 +16,19 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static org.apache.commons.lang.Validate.notNull;
-
-/**
- * Created by oar on 2/13/14.
- */
 public class AccCheckService {
-
     @Resource(name = "service.UserService")
     private UserService userService;
-
     @Resource
     private PaymentPolicyRepository paymentPolicyService;
-
     @Resource
     private AccountCheckDTOAsm accountCheckDTOAsm;
-
     @Resource
     private DeviceService deviceService;
-
     @Resource
     private ChartService chartService;
-
     @Resource
     private NowTechTokenBasedRememberMeServices nowTechTokenBasedRememberMeServices;
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
 
@@ -74,29 +62,12 @@ public class AccCheckService {
         AccountCheckDto accountCheck = new AccountCheckDto(accountCheckDTO);
         accountCheck.lockedTracks = LockedTrackDto.fromChartDetailList(chartDetails);
         accountCheck.playlists = SelectedPlaylistDto.fromChartList(user.getSelectedCharts());
+        accountCheck.rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
 
-        return precessRememberMeToken(accountCheck);
+        LOGGER.debug("For user id: {} acc check dto: {}", user.getId(), accountCheck);
+
+        return accountCheck;
     }
-
-    private AccountCheckDto precessRememberMeToken(AccountCheckDto accountCheckDTO) {
-        LOGGER.debug("input parameters: [{}]", new Object[]{accountCheckDTO});
-
-        accountCheckDTO.rememberMeToken = getRememberMeToken(accountCheckDTO.userName, accountCheckDTO.userToken);
-
-        LOGGER.debug("Output parameter [{}]", accountCheckDTO);
-        return accountCheckDTO;
-    }
-
-    private String getRememberMeToken(String userName, String storedToken) {
-        LOGGER.debug("input parameters userName, storedToken: [{}], [{}]", new String[]{userName, storedToken});
-        notNull(userName, "The parameter userName is null");
-        notNull(storedToken, "The parameter storedToken is null");
-
-        String rememberMeToken = nowTechTokenBasedRememberMeServices.getRememberMeToken(userName, storedToken);
-        LOGGER.debug("Output parameter rememberMeToken=[{}]", rememberMeToken);
-        return rememberMeToken;
-    }
-
 }
 
 

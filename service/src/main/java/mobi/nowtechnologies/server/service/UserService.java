@@ -751,7 +751,8 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public void processPaymentSubBalanceCommand(User user, SubmittedPayment payment) {
-        LOGGER.debug("processPaymentSubBalanceCommand input parameters user, payment: [{}], [{}]", user, payment);
+        LOGGER.info("processPaymentSubBalanceCommand input parameters user, payment: [{}], [{}]", user.getId(), payment);
+
         final String paymentSystem = payment.getPaymentSystem();
 
         user.setLastSuccessfulPaymentTimeMillis(getEpochMillis());
@@ -775,11 +776,14 @@ public class UserService {
             taskService.createSendChargeNotificationTask(user);
         }
 
+        LOGGER.info("before save account log entity");
         entityService.saveEntity(new AccountLog(user.getId(), payment, user.getSubBalance(), CARD_TOP_UP));
+        LOGGER.info("after save account log entity");
 
+        LOGGER.info("before update user entity {}", user.getId());
         user.setStatus(UserStatusDao.getSubscribedUserStatus());
-
         entityService.updateEntity(user);
+        LOGGER.info("after update user entity {}", user.getId());
 
         LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
     }

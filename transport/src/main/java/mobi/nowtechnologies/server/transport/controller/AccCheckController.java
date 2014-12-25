@@ -41,7 +41,24 @@ public class AccCheckController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.7}/ACC_CHECK",
-            "**/{community}/{apiVersion:6\\.6}/ACC_CHECK",
+            "**/{community}/{apiVersion:6\\.6}/ACC_CHECK"
+    })
+    public ModelAndView accountCheckWithUUID(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "PUSH_NOTIFICATION_TOKEN") String pushNotificationToken,
+            @RequestParam(required = false, value = "IPHONE_TOKEN") String iphoneToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
+
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, true);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.5}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.4}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.3}/ACC_CHECK",
@@ -61,7 +78,7 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, true, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -88,7 +105,7 @@ public class AccCheckController extends CommonController {
         }
         ///
 
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -106,11 +123,10 @@ public class AccCheckController extends CommonController {
             @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
             @RequestParam(required = false, value = "IDFA") String idfa
     ) throws Exception {
-
-        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false);
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, pushNotificationToken, iphoneToken, xtifyToken, transactionReceipt, idfa, false, false);
     }
 
-    private ModelAndView accCheckImpl(String userName, String userToken, String timestamp, String deviceType, String deviceUID, String pushNotificationToken, String iphoneToken, String xtifyToken, String transactionReceipt, String idfa, boolean checkReactivation) throws Exception {
+    private ModelAndView accCheckImpl(String userName, String userToken, String timestamp, String deviceType, String deviceUID, String pushNotificationToken, String iphoneToken, String xtifyToken, String transactionReceipt, String idfa, boolean checkReactivation, boolean withUuid) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -124,7 +140,7 @@ public class AccCheckController extends CommonController {
             user = checkUser(userName, userToken, timestamp, deviceUID, checkReactivation);
             LOGGER.debug("input parameters userId, pushToken,  deviceType, transactionReceipt: [{}], [{}], [{}], [{}]", new String[]{String.valueOf(user.getId()), pushNotificationToken, deviceType, transactionReceipt});
 
-            logAboutSuccessfullAccountCheck();
+            SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
 
             if(idfa != null){
                 user = userService.updateTokenDetails(user, idfa);
@@ -147,7 +163,7 @@ public class AccCheckController extends CommonController {
                 LOGGER.error(e.getMessage(), e);
             }
 
-            AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, false);
+            AccountCheckDto accountCheck = accCheckService.processAccCheck(user, false, withUuid);
 
             return buildModelAndView(accountCheck);
         } catch (Exception e) {
@@ -160,7 +176,4 @@ public class AccCheckController extends CommonController {
     }
 
 
-    private void logAboutSuccessfullAccountCheck() {
-        SUCCESS_ACC_CHECK_LOGGER.info("The login was successful");
-    }
 }
