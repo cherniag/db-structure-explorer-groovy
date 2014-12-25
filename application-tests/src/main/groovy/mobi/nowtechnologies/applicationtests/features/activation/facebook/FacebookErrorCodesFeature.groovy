@@ -67,12 +67,6 @@ class FacebookErrorCodesFeature {
         currentUserDevices.each { deviceSet.loginUsingFacebook(it) }
     }
 
-    @When('^Registered user enters Facebook credentials and facebook returns empty email$')
-    def "Registered user enters Facebook credentials and facebook returns empty email"() {
-        currentUserDevices.each { deviceSet.loginUsingFacebookWithEmptyEmail(it) }
-    }
-
-
     @Then('^User gets (\\d+) http error code and (\\d+) error code and (.*) message$')
     def "User gets given http error code and given error code and given message"(final int httpErrorCode, final int errorCode, final String errorBody) {
         currentUserDevices.each {

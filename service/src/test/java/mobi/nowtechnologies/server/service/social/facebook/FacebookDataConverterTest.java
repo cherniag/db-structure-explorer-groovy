@@ -67,4 +67,16 @@ public class FacebookDataConverterTest {
         assertThat(convert.getCountry(), is("Ukraine"));
         assertThat(convert.getBirthday(), is(DateUtils.parseDate("24/06/1985","dd/MM/yyyy")));
     }
+
+    @Test
+    public void convertFacebookProfileWithNullEmail() throws Exception {
+        when(facebookProfile.getEmail()).thenReturn("");
+        when(facebookProfile.getUsername()).thenReturn(null);
+        when(facebookProfile.getId()).thenReturn("some.user");
+
+        FacebookUserInfo convert = facebookDataConverter.convert(facebookProfile);
+
+        assertThat(convert.getEmail(), is("some.user@facebook.com"));
+
+    }
 }

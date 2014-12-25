@@ -175,9 +175,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = signUpDevice(deviceUID, deviceType, apiVersion, communityUrl);
         mockMvc.perform(
                 buildApplyFacebookPromoRequest(resultActions, deviceUID, deviceType, apiVersion, communityUrl, timestamp, fbUserId, fbToken, true)
-        ).andExpect(status().isForbidden()).andDo(print())
-                .andExpect(jsonPath("$.response.data[0].errorMessage.errorCode").value(662))
-                .andExpect(jsonPath("$.response.data[0].errorMessage.message").value("email is not specified"));
+        ).andExpect(status().isOk()).andDo(print());
     }
 
     @Test

@@ -11,8 +11,6 @@ import org.springframework.social.facebook.api.impl.FacebookTemplate;
 
 import javax.annotation.Resource;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
 public class FacebookService {
     @Resource
     private FacebookDataConverter facebookDataConverter;
@@ -42,11 +40,5 @@ public class FacebookService {
         if (!facebookProfile.getId().equals(inputFacebookId)) {
             throw OAuth2ForbiddenException.invalidFacebookUserId();
         }
-        if (isEmpty(facebookProfile.getEmail())) {
-            throw OAuth2ForbiddenException.emptyFacebookEmail();
-        }
-
     }
-
-
 }

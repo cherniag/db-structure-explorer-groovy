@@ -237,10 +237,10 @@ public class TrackServiceTest {
 		doAnswer(new Answer<AssetFile>() {
 			@Override
 			public AssetFile answer(InvocationOnMock invocationOnMock) throws Throwable {
-                videoFile.setExternalId("343434977432");
-                return videoFile;
-            }
-        }).when(service).createVideo(any(Track.class));
+				videoFile.setExternalId("343434977432");
+				return videoFile;
+			}
+		}).when(service).createVideo(any(Track.class));
 
         Track track = service.pull(ID_VALUE);
         assertNotNull(track);

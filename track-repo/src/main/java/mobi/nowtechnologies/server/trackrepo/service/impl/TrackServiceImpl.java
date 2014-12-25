@@ -233,7 +233,7 @@ public class TrackServiceImpl implements TrackService {
             throw new RuntimeException("Cannot find tracks.");
         }
 
-        LOGGER.info("output find(query, page): [{}]", new Object[]{pagelist});
+        LOGGER.debug("output find(query, page): [{}]", new Object[]{pagelist});
         return pagelist;
     }
 
@@ -252,7 +252,7 @@ public class TrackServiceImpl implements TrackService {
             throw new RuntimeException("Cannot find tracks.");
         }
 
-        LOGGER.info("output find(searchTrackDto, page): [{}]", new Object[]{page});
+        LOGGER.debug("output find(searchTrackDto, page): [{}]", new Object[]{page});
         return page;
     }
 
