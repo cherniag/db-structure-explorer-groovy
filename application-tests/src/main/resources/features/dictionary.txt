@@ -25,6 +25,7 @@ all formats=JSON, XML
 any format=JSON
 
 all devices=ANDROID, IOS, BLACKBERRY, WINDOWS_PHONE
+any device=ANDROID
 
 partner communities=o2, vf_nz
 all communities=o2, vf_nz, hl_uk

@@ -63,12 +63,6 @@
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>shared-web</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>mobi.nowtechnologies.java.server</groupId>
-            <artifactId>spring-test-mvc-ext</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>shared-web</artifactId>

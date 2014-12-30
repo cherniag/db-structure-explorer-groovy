@@ -6,6 +6,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountCheckHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.chart.ChartHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.chart.ChartResponse;
 import mobi.nowtechnologies.applicationtests.services.http.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
 import mobi.nowtechnologies.applicationtests.services.http.news.NewsHttpService;
@@ -15,6 +16,7 @@ import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActi
 import mobi.nowtechnologies.applicationtests.services.http.signup.SignupHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -97,10 +99,18 @@ public abstract class ClientDevicesSet {
     //
     // Get Chart
     //
-    public String getChart(UserDeviceData deviceData, String userName) {
+    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData) {
+        return getChart(deviceData, HttpMethod.POST, null);
+    }
+
+    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData, HttpMethod httpMethod) {
+        return getChart(deviceData, httpMethod, null);
+    }
+
+    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData, HttpMethod httpMethod, String resolution) {
         final PhoneState state = states.get(deviceData);
 
-        return chartHttpService.getChart(deviceData, userName, state.getLastAccountCheckResponse().userToken, state.getDeviceUID(), deviceData.getFormat());
+        return chartHttpService.getChart(deviceData, state, resolution, httpMethod);
     }
 
     public NewsDetailDto[] getNews(UserDeviceData deviceData, ApiVersions allVersions){

@@ -30,7 +30,6 @@
 
 	<mvc:annotation-driven>
        <mvc:argument-resolvers>
-           <bean class="mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedSinceArgumentResolver"/>
 		   <bean class="mobi.nowtechnologies.server.security.impl.spring.method.annotation.AuthenticatedUserMethodArgumentResolver">
 			   <property name="parameterType" value="mobi.nowtechnologies.server.persistence.domain.User"/>
 		   </bean>

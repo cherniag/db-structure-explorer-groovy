@@ -29,8 +29,8 @@ import static mobi.nowtechnologies.server.transport.controller.AccountCheckRespo
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.springframework.test.web.servlet.request.ExtMockMvcRequestBuilders.extGet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -97,7 +97,7 @@ public class SigninFacebookControllerIT extends AbstractControllerTestIT {
         FacebookUserInfo fbDetails = fbDetailsRepository.findByUser(user);
         assertEquals(fbDetails.getEmail(), fbEmail);
         mockMvc.perform(
-                extGet("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
+                get("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
                         .param("USER_NAME", user.getUserName())
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp)

@@ -30,8 +30,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.Locale;
 
+import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
 import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.http.HttpStatus.*;
 
@@ -339,4 +341,8 @@ public abstract class CommonController extends ProfileController {
         LOGGER.info("No new content. Check time from client: [{}]. Last updated time: [{}]", exception.getCheckForTimeInMillis(), exception.getDateOfLastUpdateInMillis());
     }
 
+    // until cache not implemented
+    protected void setMandatoryLastModifiedHeader(HttpServletResponse response) {
+        response.setDateHeader(LAST_MODIFIED, new Date().getTime());
+    }
 }

@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.ChartService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
 

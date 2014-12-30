@@ -725,35 +725,178 @@ values
 --
 insert into tb_charts (i, name, numTracks, genre, timestamp, numBonusTracks, type) values (1,'Default Chart',20,1,1307035342,0, 'BASIC_CHART');
 
-insert into tb_artist (i, name, info, realName) values (50,'Lmfao/Lauren Bennett/Goonrock','LMFAO is an American electro hop duo that formed in 2006 in Los Angeles, California, consisting of rappers and DJs.','Lmfao/Lauren Bennett/Goonrock');
+-- Tracks:
+INSERT INTO `cn_cms`.`Track`
+(`id`,`Ingestor`,`ISRC`,`Title`,`Artist`,`ProductId`,`ProductCode`,`Genre`,`Copyright`,`Year`,`Album`,`IngestionDate`,`PublishDate`,`Licensed`,`status`,`resolution`,`itunesUrl`,`explicit`,`label`,`releaseDate`,`territoryCodes`,`mediaType`,`amazonUrl`)
+VALUES
+(0,'UNIVERSAL','GB0000000000','Title 0','Artist 0','ID0000000','PC0000000','Pop','(C) 2014 Sony','2014','Album 0','2014-11-00','2014-11-10',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000000?i=0000000000&uo=4',0,'Columbia','2014-10-20','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000000#tGB0000000000?partner=3734'),
+(1,'UNIVERSAL','GB0000000001','Title 1','Artist 1','ID0000001','PC0000001','Pop','(C) 2014 Sony','2014','Album 1','2014-11-01','2014-11-11',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000001?i=0000000001&uo=4',0,'Columbia','2014-10-21','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000001#tGB0000000001?partner=3734'),
+(2,'UNIVERSAL','GB0000000002','Title 2','Artist 2','ID0000002','PC0000002','Pop','(C) 2014 Sony','2014','Album 2','2014-11-02','2014-11-12',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000002?i=0000000002&uo=4',0,'Columbia','2014-10-22','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000002#tGB0000000002?partner=3734'),
+(3,'UNIVERSAL','GB0000000003','Title 3','Artist 3','ID0000003','PC0000003','Pop','(C) 2014 Sony','2014','Album 3','2014-11-03','2014-11-13',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000003?i=0000000003&uo=4',0,'Columbia','2014-10-23','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000003#tGB0000000003?partner=3734'),
+(4,'UNIVERSAL','GB0000000004','Title 4','Artist 4','ID0000004','PC0000004','Pop','(C) 2014 Sony','2014','Album 4','2014-11-04','2014-11-14',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000004?i=0000000004&uo=4',0,'Columbia','2014-10-24','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000004#tGB0000000004?partner=3734'),
+(5,'UNIVERSAL','GB0000000005','Title 5','Artist 5','ID0000005','PC0000005','Pop','(C) 2014 Sony','2014','Album 5','2014-11-05','2014-11-15',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000005?i=0000000005&uo=4',0,'Columbia','2014-10-25','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000005#tGB0000000005?partner=3734'),
+(6,'UNIVERSAL','GB0000000006','Title 6','Artist 6','ID0000006','PC0000006','Pop','(C) 2014 Sony','2014','Album 6','2014-11-06','2014-11-16',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000006?i=0000000006&uo=4',0,'Columbia','2014-10-26','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000006#tGB0000000006?partner=3734'),
+(7,'UNIVERSAL','GB0000000007','Title 7','Artist 7','ID0000007','PC0000007','Pop','(C) 2014 Sony','2014','Album 7','2014-11-07','2014-11-17',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000007?i=0000000007&uo=4',0,'Columbia','2014-10-27','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000007#tGB0000000007?partner=3734'),
+(8,'UNIVERSAL','GB0000000008','Title 8','Artist 8','ID0000008','PC0000008','Pop','(C) 2014 Sony','2014','Album 8','2014-11-08','2014-11-18',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000008?i=0000000008&uo=4',0,'Columbia','2014-10-28','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000008#tGB0000000008?partner=3734'),
+(9,'UNIVERSAL','GB0000000009','Title 9','Artist 9','ID0000009','PC0000009','Pop','(C) 2014 Sony','2014','Album 9','2014-11-09','2014-11-19',1,'PUBLISHED','RATE_48','https://itunes.apple.com/gb/album/album0/GB0000000009?i=0000000009&uo=4',0,'Columbia','2014-10-29','Worldwide','DOWNLOAD','https://m.7digital.com/GB/releases/GB0000000009#tGB0000000009?partner=3734');
 
-insert into tb_labels (i,name) values (9,'INTERSCOPE');
+use `cn_service_at`;
 
-INSERT INTO tb_fileTypes (i, name) VALUES (1, 'Header');
-INSERT INTO tb_fileTypes (i, name) VALUES (2, 'Audio');
-INSERT INTO tb_fileTypes (i, name) VALUES (3, 'Image');
-INSERT INTO tb_fileTypes (i, name) VALUES (4, 'VIDEO');
+-- fileTypes
+INSERT INTO `tb_fileTypes`
+(`i`,`name`)
+VALUES
+(1,'Header'),
+(2,'Audio'),
+(3,'Image'),
+(4,'VIDEO');
 
-insert into tb_files (i, filename, size, fileType, version, duration) values (1894,'US-UM7-11-00061.aud',1464070,2,1, 0);
-insert into tb_files (i, filename, size, fileType, version, duration) values (1893,'US-UM7-11-00061.hdr',162676,1,666, 0);
-insert into tb_files (i, filename, size, fileType, version, duration) values (1891,'US-UM7-11-00061S.jpg',6125,3,3, 0);
-insert into tb_files (i, filename, size, fileType, version, duration) values (1892,'US-UM7-11-00061L.jpg',41581,3,2, 0);
-insert into tb_files (i, filename, size, fileType, version, duration) values (1675,'US-UM7-11-00061.jpg',0,3,4, 0);
-insert into tb_files (i, filename, size, fileType, version, duration) values (1676,'US-UM7-11-00061.mp3',0,1,9999, 0);
+/* FILES */
+-- audioFiles
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(0,'GB0000000000_48.aud','2000000',2,0,0),
+(1,'GB0000000001_48.aud','2000001',2,0,0),
+(2,'GB0000000002_48.aud','2000002',2,0,0),
+(3,'GB0000000003_48.aud','2000003',2,0,0),
+(4,'GB0000000004_48.aud','2000004',2,0,0),
+(5,'GB0000000005_48.aud','2000005',2,0,0),
+(6,'GB0000000006_48.aud','2000006',2,0,0),
+(7,'GB0000000007_48.aud','2000007',2,0,0),
+(8,'GB0000000008_48.aud','2000008',2,0,0),
+(9,'GB0000000009_48.aud','2000009',2,0,0);
+-- headerFiles
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(10,'GB0000000000_48.hdr','1000000',1,0,0),
+(11,'GB0000000001_48.hdr','1000001',1,0,0),
+(12,'GB0000000002_48.hdr','1000002',1,0,0),
+(13,'GB0000000003_48.hdr','1000003',1,0,0),
+(14,'GB0000000004_48.hdr','1000004',1,0,0),
+(15,'GB0000000005_48.hdr','1000005',1,0,0),
+(16,'GB0000000006_48.hdr','1000006',1,0,0),
+(17,'GB0000000007_48.hdr','1000007',1,0,0),
+(18,'GB0000000008_48.hdr','1000008',1,0,0),
+(19,'GB0000000009_48.hdr','1000009',1,0,0);
+-- imageFileSmall
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(20,'GB0000000000S.jpg','3000000',3,0,0),
+(21,'GB0000000001S.jpg','3000001',3,0,0),
+(22,'GB0000000002S.jpg','3000002',3,0,0),
+(23,'GB0000000003S.jpg','3000003',3,0,0),
+(24,'GB0000000004S.jpg','3000004',3,0,0),
+(25,'GB0000000005S.jpg','3000005',3,0,0),
+(26,'GB0000000006S.jpg','3000006',3,0,0),
+(27,'GB0000000007S.jpg','3000007',3,0,0),
+(28,'GB0000000008S.jpg','3000008',3,0,0),
+(29,'GB0000000009S.jpg','3000009',3,0,0);
+-- imageFileLarge
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(30,'GB0000000000L.jpg','3000000',3,0,0),
+(31,'GB0000000001L.jpg','3000001',3,0,0),
+(32,'GB0000000002L.jpg','3000002',3,0,0),
+(33,'GB0000000003L.jpg','3000003',3,0,0),
+(34,'GB0000000004L.jpg','3000004',3,0,0),
+(35,'GB0000000005L.jpg','3000005',3,0,0),
+(36,'GB0000000006L.jpg','3000006',3,0,0),
+(37,'GB0000000007L.jpg','3000007',3,0,0),
+(38,'GB0000000008L.jpg','3000008',3,0,0),
+(39,'GB0000000009L.jpg','3000009',3,0,0);
+-- imgFileResolution
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(40,'GB0000000000.jpg','0',3,0,0),
+(41,'GB0000000001.jpg','0',3,0,0),
+(42,'GB0000000002.jpg','0',3,0,0),
+(43,'GB0000000003.jpg','0',3,0,0),
+(44,'GB0000000004.jpg','0',3,0,0),
+(45,'GB0000000005.jpg','0',3,0,0),
+(46,'GB0000000006.jpg','0',3,0,0),
+(47,'GB0000000007.jpg','0',3,0,0),
+(48,'GB0000000008.jpg','0',3,0,0),
+(49,'GB0000000009.jpg','0',3,0,0);
+-- purchasedFile
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(50,'GB0000000000.mp3','1000000',1,0,0),
+(51,'GB0000000001.mp3','1000001',1,0,0),
+(52,'GB0000000002.mp3','1000002',1,0,0),
+(53,'GB0000000003.mp3','1000003',1,0,0),
+(54,'GB0000000004.mp3','1000004',1,0,0),
+(55,'GB0000000005.mp3','1000005',1,0,0),
+(56,'GB0000000006.mp3','1000006',1,0,0),
+(57,'GB0000000007.mp3','1000007',1,0,0),
+(58,'GB0000000008.mp3','1000008',1,0,0),
+(59,'GB0000000009.mp3','1000009',1,0,0);
+-- audioPreviewFile
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(60,'GB0000000000P.aud','2000000',2,0,0),
+(61,'GB0000000001P.aud','2000001',2,0,0),
+(62,'GB0000000002P.aud','2000002',2,0,0),
+(63,'GB0000000003P.aud','2000003',2,0,0),
+(64,'GB0000000004P.aud','2000004',2,0,0),
+(65,'GB0000000005P.aud','2000005',2,0,0),
+(66,'GB0000000006P.aud','2000006',2,0,0),
+(67,'GB0000000007P.aud','2000007',2,0,0),
+(68,'GB0000000008P.aud','2000008',2,0,0),
+(69,'GB0000000009P.aud','2000009',2,0,0);
+-- headerPreviewFile
+INSERT INTO `tb_files`
+(`i`,`filename`,`size`,`fileType`,`version`,`duration`)
+VALUES
+(70,'GB0000000000P.hdr','1000000',1,0,0),
+(71,'GB0000000001P.hdr','1000001',1,0,0),
+(72,'GB0000000002P.hdr','1000002',1,0,0),
+(73,'GB0000000003P.hdr','1000003',1,0,0),
+(74,'GB0000000004P.hdr','1000004',1,0,0),
+(75,'GB0000000005P.hdr','1000005',1,0,0),
+(76,'GB0000000006P.hdr','1000006',1,0,0),
+(77,'GB0000000007P.hdr','1000007',1,0,0),
+(78,'GB0000000008P.hdr','1000008',1,0,0),
+(79,'GB0000000009P.hdr','1000009',1,0,0);
 
+-- Artist
+INSERT INTO `tb_artist`
+(`i`,`name`,`info`,`realName`)
+VALUES
+(0,'Artist 0','Info about artist 0','Artist 0'),
+(1,'Artist 1','Info about artist 1','Artist 1'),
+(2,'Artist 2','Info about artist 2','Artist 2'),
+(3,'Artist 3','Info about artist 3','Artist 3'),
+(4,'Artist 4','Info about artist 4','Artist 4'),
+(5,'Artist 5','Info about artist 5','Artist 5'),
+(6,'Artist 6','Info about artist 6','Artist 6'),
+(7,'Artist 7','Info about artist 7','Artist 7'),
+(8,'Artist 8','Info about artist 8','Artist 8'),
+(9,'Artist 9','Info about artist 9','Artist 9');
 
-insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
-values (1,0,'SOME_ISRC','Party Rock Anthem-1',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 1);
+-- Labels
+INSERT INTO `tb_labels`
+(`i`,`name`)
+VALUES
+(1001,'Label 1001');
 
-insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
-values (2,0,'SOME_ISRC','Party Rock Anthem-2',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 2);
-
-insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
-values (3,0,'SOME_ISRC','Party Rock Anthem-3',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 3);
-
-insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
-values (4,0,'SOME_ISRC','Party Rock Anthem-4',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 4);
-
-insert into tb_media (i,type,isrc,title,artist,audioFile,headerFile,imageFileSmall,imageFIleLarge,genre,label,price,price_currency,imgFileResolution,purchasedFile,audioPreviewFile,headerPreviewFile,iTunesUrl, amazonUrl, areArtistUrls, publishDate, trackId)
-values (5,0,'SOME_ISRC','Party Rock Anthem-5',50,1894,1893,1891,1892,1,9,1.00,'WEEK',1675,1676,1894,1893,'http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=http://itunes.apple.com/gb/album/party-rock-anthem-feat.-lauren/id449838429?i=449838654%26uo=4%26partnerId=2003', 'http://www.amazon.com/gp/product/030758836X/ref=s9_al_bw_g14_ir03?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-4&pf_rd_r=079680TPPVRZ8J4W5B6Z&pf_rd_t=101&pf_rd_p=1418176682&pf_rd_i=5916596011', false, 1417366688, 5);
-
+-- Media
+INSERT INTO `tb_media`
+(`i`,`isrc`,`title`,`artist`,`audioFile`,`headerFile`,`imageFileSmall`,`imageFIleLarge`,`info`,`genre`,`imgFileResolution`,`purchasedFile`,`audioPreviewFile`,`headerPreviewFile`,`iTunesUrl`,`publishDate`,`trackId`,`amazonUrl`,`areArtistUrls`,`label`)
+VALUES
+(0,'GB0000000000','Title 0',0,0,10,20,30,'Info 0',3,40,50,60,70,'https://itunes.apple.com/gb/album/album0/GB0000000000?i=0000000000&uo=4',1416528000,0,'https://m.7digital.com/GB/releases/GB0000000000#tGB0000000000?partner=3734',0,1001),
+(1,'GB0000000001','Title 1',1,1,11,21,31,'Info 1',3,41,51,61,71,'https://itunes.apple.com/gb/album/album1/GB0000000001?i=0000000001&uo=4',1416528000,1,'https://m.7digital.com/GB/releases/GB0000000001#tGB0000000001?partner=3734',0,1001),
+(2,'GB0000000002','Title 2',2,2,12,22,32,'Info 2',3,42,52,62,72,'https://itunes.apple.com/gb/album/album2/GB0000000002?i=0000000002&uo=4',1416528000,2,'https://m.7digital.com/GB/releases/GB0000000002#tGB0000000002?partner=3734',0,1001),
+(3,'GB0000000003','Title 3',3,3,13,23,33,'Info 3',3,43,53,63,73,'https://itunes.apple.com/gb/album/album3/GB0000000003?i=0000000003&uo=4',1416528000,3,'https://m.7digital.com/GB/releases/GB0000000003#tGB0000000003?partner=3734',0,1001),
+(4,'GB0000000004','Title 4',4,4,14,24,34,'Info 4',3,44,54,64,74,'https://itunes.apple.com/gb/album/album4/GB0000000004?i=0000000004&uo=4',1416528000,4,'https://m.7digital.com/GB/releases/GB0000000004#tGB0000000004?partner=3734',0,1001),
+(5,'GB0000000005','Title 5',5,5,15,25,35,'Info 5',3,45,55,65,75,'https://itunes.apple.com/gb/album/album5/GB0000000005?i=0000000005&uo=4',1416528000,5,'https://m.7digital.com/GB/releases/GB0000000005#tGB0000000005?partner=3734',0,1001),
+(6,'GB0000000006','Title 6',6,6,16,26,36,'Info 6',3,46,56,66,76,'https://itunes.apple.com/gb/album/album6/GB0000000006?i=0000000006&uo=4',1416528000,6,'https://m.7digital.com/GB/releases/GB0000000006#tGB0000000006?partner=3734',0,1001),
+(7,'GB0000000007','Title 7',7,7,17,27,37,'Info 7',3,47,57,67,77,'https://itunes.apple.com/gb/album/album7/GB0000000007?i=0000000007&uo=4',1416528000,7,'https://m.7digital.com/GB/releases/GB0000000007#tGB0000000007?partner=3734',0,1001),
+(8,'GB0000000008','Title 8',8,8,18,28,38,'Info 8',3,48,58,68,78,'https://itunes.apple.com/gb/album/album8/GB0000000008?i=0000000008&uo=4',1416528000,8,'https://m.7digital.com/GB/releases/GB0000000008#tGB0000000008?partner=3734',0,1001),
+(9,'GB0000000009','Title 9',9,9,19,29,39,'Info 9',3,49,59,69,79,'https://itunes.apple.com/gb/album/album9/GB0000000009?i=0000000009&uo=4',1416528000,9,'https://m.7digital.com/GB/releases/GB0000000009#tGB0000000009?partner=3734',0,1001);
