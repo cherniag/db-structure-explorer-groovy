@@ -21,8 +21,9 @@
     </div>
     <div class="go-premium-success-avatar-container">
         <div class="go-premium-success-avatar">
+            <div class="go-premium-success-avatar-customer go-premium-success-avatar-customer-circle" style="margin-top: -1px;"></div>
             <div class="go-premium-success-avatar-customer">
-                <img src="${customerAvatar}" style="display:block;" onload="adjustImage(this, 200)"/>
+                <img src="${customerAvatar}" class="go-premium-success-avatar-customer-img" onload="adjustImage(this, this.parentNode.clientWidth + 2)"/>
             </div>
             <img src="${pageContext.request.contextPath}/assets/mobile/mtv1/imgs/img_stars_no_border.png" class="go-premium-success-avatar-border" />
         </div>
@@ -33,7 +34,7 @@
             <br/>
             <span class="go-premium-success-ad-text-2 go-premium-success-ad-text-2-device"><s:message code="paypal.success.ad.title2" /></span>
         </div>
-        <a class="go-premium-button go-premium-button-device go-premium-body-button-up go-premium-button-target go-premium-body-ok" onclick="returnToApp();">
+        <a class="go-premium-button go-premium-button-device go-premium-body-button-up go-premium-button-target go-premium-body-ok go-premium-success-button-get-listening" onclick="returnToApp();">
             <span><s:message code='button.get.listening.title' /></span>
         </a>
     </div>
