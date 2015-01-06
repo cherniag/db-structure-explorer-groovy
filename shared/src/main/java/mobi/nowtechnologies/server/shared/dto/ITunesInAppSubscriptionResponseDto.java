@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.shared.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -200,10 +201,9 @@ public class ITunesInAppSubscriptionResponseDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("status", status)
                 .append("receipt", receipt)
-                .append("latestReceipt", latestReceipt)
                 .append("latestReceiptInfo", latestReceiptInfo)
                 .toString();
     }

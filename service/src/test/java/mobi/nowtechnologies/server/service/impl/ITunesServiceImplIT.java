@@ -92,7 +92,7 @@ public class ITunesServiceImplIT {
         Assert.assertEquals(0, found.getNextSubPayment());
         Assert.assertTrue(found.isLimited());
         Assert.assertNull(found.getLastSubscribedPaymentSystem());
-        Assert.assertEquals(transactionReceipt, found.getBase64EncodedAppStoreReceipt());
+        Assert.assertNull(found.getBase64EncodedAppStoreReceipt());
 
         List<SubmittedPayment> submittedPayments = submittedPaymentRepository.findByUserIdAndPaymentStatus(Lists.newArrayList(user.getId()), Lists.newArrayList(PaymentDetailsStatus.values()));
         Assert.assertTrue(submittedPayments.isEmpty());

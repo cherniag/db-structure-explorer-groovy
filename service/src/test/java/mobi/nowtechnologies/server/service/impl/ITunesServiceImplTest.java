@@ -395,8 +395,8 @@ public class ITunesServiceImplTest {
 
         verify(mockSubmittedPaymentService, never()).save(any(SubmittedPayment.class));
         verify(mockApplicationEventPublisher, never()).publishEvent(any(ApplicationEvent.class));
-        verify(user).setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-        verify(mockUserService).updateUser(user);
+        verify(user, never()).setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
+        verify(mockUserService, never()).updateUser(user);
     }
 
     @Test
