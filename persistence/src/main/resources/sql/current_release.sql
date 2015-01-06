@@ -29,8 +29,10 @@ WHERE
   AND userGroup = @userGroupId;
 
 UPDATE
-    tb_users u JOIN tb_promotions p
-      ON u.last_promo = p.i
+    tb_users u JOIN tb_promoCode pC
+      ON u.last_promo = pc.i
+      JOIN tb_promotions p
+      ON pc.promotionId = p.i
 SET
   u.nextSubPayment         = p.endDate,
   u.freeTrialExpiredMillis = p.endDate * 1000
