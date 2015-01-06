@@ -19,10 +19,20 @@ WHERE
   AND userGroup = @userGroupId
   AND @startPromoEndDateTime > UNIX_TIMESTAMP();
 
+SET @fourWeeksStartDateTime := UNIX_TIMESTAMP('2015-01-27 00:00:00');
+
 UPDATE
   tb_promotions
 SET
-  startDate = UNIX_TIMESTAMP('2015-01-27 00:00:00'),
+  startDate = @fourWeeksStartDateTime
+WHERE
+  label = 'mtv1.4weeks.promo.audio'
+  AND userGroup = @userGroupId
+  AND @fourWeeksStartDateTime > UNIX_TIMESTAMP();
+
+UPDATE
+  tb_promotions
+SET
   endDate   = UNIX_TIMESTAMP('2020-12-01 02:00:00')
 WHERE
   label = 'mtv1.4weeks.promo.audio'
