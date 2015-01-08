@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentHistoryItemDto;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,13 +190,12 @@ public abstract class AbstractPayment {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
 				.append("i", i)
 				.append("internalTxId", internalTxId)
 				.append("externalTxId", externalTxId)
 				.append("amount", amount)
 				.append("timestamp", timestamp)
-				.append("user", user)
 				.append("userId", userId)
 				.append("period", period)
 				.append("offerId", offerId)
