@@ -40,7 +40,7 @@ WHERE
 
 UPDATE
     tb_users u JOIN tb_promoCode pC
-      ON u.last_promo = pc.i
+      ON u.last_promo = pc.id
       JOIN tb_promotions p
       ON pc.promotionId = p.i
 SET
