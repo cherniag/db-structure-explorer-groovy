@@ -22,3 +22,27 @@ INSERT INTO tb_promoCode
 commit;
 
 SET AUTOCOMMIT = 1;
+
+-- SRV-491 - [SERVER] CR 376: Reduce playlists from 8 to 6 on MTVNZ
+
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+
+SELECT @communityId := c.id
+FROM tb_communities c
+WHERE c.name = 'mtvnz';
+
+DELETE
+  community_charts
+FROM
+  community_charts
+  JOIN tb_charts
+    ON community_charts.chart_id = tb_charts.i
+       AND community_charts.community_id = @communityId
+       AND tb_charts.name IN (
+    'HL_UK_PLAYLIST_5 - MTVNZ'
+  );
+
+COMMIT;
+
+SET AUTOCOMMIT = 1;
