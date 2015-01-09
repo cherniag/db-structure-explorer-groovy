@@ -44,7 +44,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 
     @Override
 	public BasicResponse processInAppSubscription(int userId, String transactionReceipt) {
-		logger.debug("input parameters userId, transactionReceipt: [{}], [{}]", userId, transactionReceipt);
+		logger.info("Start processing ITunes subscription for user [{}], receipt [{}]", userId, transactionReceipt);
 
 		User user = userService.findById(userId);
 
@@ -65,29 +65,29 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
         ITunesInAppSubscriptionResponseDto responseDto = iTunesDtoConverter.convertToResponseDTO(basicResponse);
 
         if (responseDto.isSuccess()) {
-            logger.info("ITunes confirmed that encoded receipt [{}] is valid by basicResponse [{}]", actualReceipt, responseDto);
+            logger.info("ITunes confirmed that encoded receipt is valid by response [{}]", responseDto);
 
             Receipt latestReceiptInfo = responseDto.getLatestReceiptInfo();
             int nextSubPayment = latestReceiptInfo.getExpiresDateSeconds();
+
             try {
                 checkForDuplicates(user.getId(), nextSubPayment);
-
-                SubmittedPayment submittedPayment = createSubmittedPayment(user, actualReceipt, latestReceiptInfo);
-                submittedPaymentService.save(submittedPayment);
-
-                PaymentEvent paymentEvent = new PaymentEvent(submittedPayment);
-                applicationEventPublisher.publishEvent(paymentEvent);
             } catch (DataIntegrityViolationException e) {
-                logger.warn("Record with the same next sub payment [{}] for user [{}] already exists", nextSubPayment, user.getId());
-                user.setBase64EncodedAppStoreReceipt(actualReceipt);
-                userService.updateUser(user);
+                logger.info("Record with the same next sub payment [{}] for user [{}] already exists", nextSubPayment, user.getId());
+                return basicResponse;
             }
+
+            SubmittedPayment submittedPayment = createSubmittedPayment(user, actualReceipt, latestReceiptInfo);
+            submittedPaymentService.save(submittedPayment);
+
+            PaymentEvent paymentEvent = new PaymentEvent(submittedPayment);
+            applicationEventPublisher.publishEvent(paymentEvent);
         } else {
             logger.info("ITunes rejected the encoded receipt [{}] by basicResponse [{}]", actualReceipt, basicResponse);
         }
 
 
-        logger.debug("Output parameter basicResponse=[{}]", basicResponse);
+        logger.info("Finish processing ITunes subscription");
 		return basicResponse;
 	}
 
@@ -97,7 +97,7 @@ public class ITunesServiceImpl implements ITunesService, ApplicationEventPublish
 
         String body = iTunesDtoConverter.convertToRequestBody(appStoreReceipt, password);
 
-        logger.info("Trying to validate in-app subscription with following params [{}]", body);
+        logger.info("Trying to validate in-app subscription using url [{}] with following params [{}]", iTunesUrl, body);
         return postService.sendHttpPost(iTunesUrl, body);
     }
 
