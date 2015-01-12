@@ -60,7 +60,7 @@ public class AccountRegistrationSuccessFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities){
-        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()));
+        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), deviceTypes.set(), formats.set(RequestFormat));
     }
 
     @When('^User registers using device$')
@@ -169,7 +169,7 @@ public class AccountRegistrationSuccessFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             String aboveVersion,
             @Transform(DictionaryTransformer.class) Word communities){
-        userDeviceDatas = userDeviceDataService.table(ApiVersions.from(versions.list()).above(aboveVersion), communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()));
+        userDeviceDatas = userDeviceDataService.table(ApiVersions.from(versions.list()).above(aboveVersion), communities.set(), deviceTypes.set(), formats.set(RequestFormat));
     }
 
     @And('^\'uuid\' field is present in response and has UUID pattern$')
@@ -189,7 +189,7 @@ public class AccountRegistrationSuccessFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
+        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         userDeviceDatas.each {
             partnerDeviceSet.singup(it)
             def phoneState = partnerDeviceSet.getPhoneState(it)

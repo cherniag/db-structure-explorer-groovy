@@ -7,9 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
-import mobi.nowtechnologies.server.shared.dto.web.ContactUsDto;
 import mobi.nowtechnologies.server.shared.enums.*;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1507,8 +1505,11 @@ public class User implements Serializable {
         return socialInfo;
     }
 
+    public Community getCommunity() {
+        return userGroup.getCommunity();
+    }
     public Integer getCommunityId() {
-        return userGroup.getCommunity().getId();
+        return getCommunity().getId();
     }
 
     @Override

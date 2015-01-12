@@ -1,14 +1,10 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import mobi.nowtechnologies.server.persistence.dao.EntityDao;
-import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
+import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import java.util.List;
 
@@ -33,6 +29,7 @@ public class CommunityRepositoryIT extends AbstractRepositoryIT {
     @Resource PromotedDeviceRepository promotedDeviceRepository;
     @Resource DrmPolicyRepository drmPolicyRepository;
     @Resource CommunityRepository communityRepository;
+    @Resource CommunityConfigRepository communityConfigRepository;
 
     @Test
     public void testFindByRewriteUrlParameter() {
@@ -58,6 +55,7 @@ public class CommunityRepositoryIT extends AbstractRepositoryIT {
         chartRepository.deleteAll();
         promotedDeviceRepository.deleteAll();
         drmPolicyRepository.deleteAll();
+        communityConfigRepository.deleteAll();
         communityRepository.deleteAll();
 
         Community community1 = communityRepository.save(new Community().withRewriteUrl("1").withName("1").withLive(true));
@@ -91,6 +89,7 @@ public class CommunityRepositoryIT extends AbstractRepositoryIT {
         chartRepository.deleteAll();
         promotedDeviceRepository.deleteAll();
         drmPolicyRepository.deleteAll();
+        communityConfigRepository.deleteAll();
         communityRepository.deleteAll();
 
         Community community1 = communityRepository.save(new Community().withRewriteUrl("1").withName("1").withLive(false));

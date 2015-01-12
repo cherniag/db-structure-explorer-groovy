@@ -1594,4 +1594,53 @@ block icons and info
     color:green;
 }
 
+.settings-editor {
+    border: 1px solid #CCC;
+    padding: 2px;
+    min-width: 100px;
+    min-height: 80px;
+    border-radius: 4px;
+}
 
+.settings-editor-cancel {
+    text-align: right;
+    display: block;
+}
+
+.settings-editor-cell {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.settings-title {
+    font-weight: bold;
+    padding-left: 4px;
+    padding-right: 2px;
+}
+
+.settings-editor-cell-value {
+}
+
+.editor-dictionary {
+    width: 200px;
+}
+
+.editor-tag {
+    padding: 2px;
+    border: 1px solid #ffad39;
+    background-color: #ffad39;
+    border-radius: 5px;
+    margin: 1px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.editor-tag-selected {
+    padding: 2px;
+    border: 1px solid #e74f18;
+    background-color: #e74f18;
+    border-radius: 5px;
+    margin: 1px;
+    display: inline-block;
+    cursor: pointer;
+}

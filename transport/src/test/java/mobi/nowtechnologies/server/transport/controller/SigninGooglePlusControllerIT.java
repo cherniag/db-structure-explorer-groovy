@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import com.google.common.collect.Iterables;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -10,7 +11,6 @@ import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserI
 import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusService;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.util.DateUtils;
 import mobi.nowtechnologies.server.transport.controller.facebook.FacebookTemplateCustomizerImpl;
 import mobi.nowtechnologies.server.transport.controller.googleplus.GooglePlusTemplateCustomizerImpl;
 import mobi.nowtechnologies.server.transport.controller.googleplus.ProblematicGooglePlusTemplateCustomizer;
@@ -162,7 +162,7 @@ public class SigninGooglePlusControllerIT extends AbstractControllerTestIT {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        assertEquals(DateUtils.getDateInUTC(googlePlusUserInfo.getBirthday()), DateUtils.getDateInUTC(simpleDateFormat.parse(birthday)));
+        assertEquals(DateTimeUtils.getDateInUTC(googlePlusUserInfo.getBirthday()), DateTimeUtils.getDateInUTC(simpleDateFormat.parse(birthday)));
         assertEquals(googlePlusUserInfo.getHomePage(), buildHomepageUrl(googlePlusUserId));
         assertEquals(googlePlusUserInfo.getLocation(), location);
     }

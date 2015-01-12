@@ -15,7 +15,7 @@ import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator
-import mobi.nowtechnologies.server.dto.ReferralDto
+import mobi.nowtechnologies.server.transport.referrals.ReferralDto
 import mobi.nowtechnologies.server.persistence.domain.referral.Referral
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository
@@ -63,7 +63,7 @@ class SendReferralsFeature {
         // cache
         if(userDeviceDatas.isEmpty()) {
             def above = ApiVersions.from(versions.list()).above(aboveVersion)
-            userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()))
+            userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat))
 
             userDeviceDatas.each {
                 firstUserDeviceSet.singup(it)

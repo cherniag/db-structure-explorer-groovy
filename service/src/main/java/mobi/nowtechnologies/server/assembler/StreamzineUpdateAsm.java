@@ -55,13 +55,13 @@ public class StreamzineUpdateAsm {
     }
 
     @Transactional(readOnly = true)
-    public StreamzineUpdateDto convertOne(Update update, String community, Resolution resolution, String apiVersion) {
+    public StreamzineUpdateDto convertOne(Update update, String community, Resolution resolution, boolean includePlayer) {
         StreamzineUpdateDto dto = new StreamzineUpdateDto(update.getDate().getTime());
 
         List<Block> blocks = update.getIncludedBlocks();
         Collections.sort(blocks, getComparator());
         for (Block block : blocks) {
-            BaseContentItemDto contentItemDto = convertToContentItemDto(block, community, resolution, apiVersion);
+            BaseContentItemDto contentItemDto = convertToContentItemDto(block, community, resolution, includePlayer);
 
             dto.addContentItem(contentItemDto);
             dto.addVisualBlock(convertToVisualBlock(block, contentItemDto));
@@ -70,7 +70,7 @@ public class StreamzineUpdateAsm {
         return dto;
     }
 
-    private BaseContentItemDto convertToContentItemDto(Block block, String community, Resolution resolution, String apiVersion) {
+    private BaseContentItemDto convertToContentItemDto(Block block, String community, Resolution resolution, boolean includePlayer) {
         Community c = communityRepository.findByName(community);
 
         DeeplinkInfo deeplinkInfo = block.getDeeplinkInfo();
@@ -85,7 +85,7 @@ public class StreamzineUpdateAsm {
             return dto;
         } else {
             DeeplinkValueItemDto dto = new DeeplinkValueItemDto(generateId(block), deeplinkType);
-            dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo, community, apiVersion));
+            dto.setLinkValue(deepLinkUrlFactory.create(deeplinkInfo, community, includePlayer));
 
             assignValuesToItemDto(dto, block, c, resolution);
 
@@ -133,7 +133,7 @@ public class StreamzineUpdateAsm {
 
     private AccessPolicyDto convertToPolicyDto(AccessPolicy accessPolicy) {
         AccessPolicyDto dto = new AccessPolicyDto(accessPolicy.getPermission());
-        dto.getGrantedTo().addAll(accessPolicy.getUserStatusTypes());
+        dto.getGrantedTo().addAll(accessPolicy.getGrantedToTypes());
         return dto;
     }
 

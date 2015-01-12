@@ -41,6 +41,7 @@ public class GetStreamzineController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
+                    "**/{community}/{apiVersion:6.8}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.7}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.6}/GET_STREAMZINE",
                     "**/{community}/{apiVersion:6.5}/GET_STREAMZINE",
@@ -54,7 +55,7 @@ public class GetStreamzineController extends CommonController {
                                        @RequestParam("WIDTHXHEIGHT") Resolution resolution,
                                        @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
                                        HttpServletResponse response) throws Exception {
-        Response update = getResponse(community, userName, userToken, timestamp, resolution, deviceUID);
+        Response update = getResponse(community, userName, userToken, timestamp, resolution, deviceUID, true);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -73,10 +74,10 @@ public class GetStreamzineController extends CommonController {
                               @RequestParam("TIMESTAMP") String timestamp,
                               @RequestParam("WIDTHXHEIGHT") Resolution resolution,
                               @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
-        return getResponse(community, userName, userToken, timestamp, resolution, deviceUID);
+        return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, false);
     }
 
-    private Response getResponse(String community, String userName, String userToken, String timestamp, Resolution resolution, String deviceUID) throws Exception {
+    private Response getResponse(String community, String userName, String userToken, String timestamp, Resolution resolution, String deviceUID, boolean includePlayer) throws Exception {
         User user = null;
         Exception ex = null;
         try {
@@ -92,7 +93,7 @@ public class GetStreamzineController extends CommonController {
 
             LOGGER.debug("found update {} for {}", update, date);
 
-            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community, resolution.withDeviceType(user.getDeviceType().getName()), getCurrentApiVersion());
+            StreamzineUpdateDto dto = streamzineUpdateAsm.convertOne(update, community, resolution.withDeviceType(user.getDeviceType().getName()), includePlayer);
 
             LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 

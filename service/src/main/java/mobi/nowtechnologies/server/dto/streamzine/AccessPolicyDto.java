@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

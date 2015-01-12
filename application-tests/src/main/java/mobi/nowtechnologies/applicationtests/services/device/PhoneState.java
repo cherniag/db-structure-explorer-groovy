@@ -44,4 +44,6 @@ public interface PhoneState {
     HttpStatus getLastFacebookErrorStatus();
 
     HttpStatus getLastGooglePlusErrorStatus();
+
+    String getLastSocialActivationUserName();
 }

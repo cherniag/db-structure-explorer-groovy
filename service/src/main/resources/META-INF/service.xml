@@ -21,6 +21,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<!-- Application properties -->
     <import resource="placeholders.xml"/>
+    <import resource="streamzine-service.xml"/>
 
 	<bean id="service.DeviceUserDataService" class="mobi.nowtechnologies.server.service.DeviceUserDataService">
 		<property name="deviceUserDataRepository" ref="deviceUserDataRepository" />
@@ -31,6 +32,12 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	<bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
 		<property name="manifest" value="META-INF/MANIFEST.MF" />
 	</bean>
+
+	<bean id="userStatusTypeService" class="mobi.nowtechnologies.server.service.behavior.UserStatusTypeService" />
+    <bean id="behaviorService" class="mobi.nowtechnologies.server.service.behavior.BehaviorService">
+		<property name="activationDatePropertyName" value="referral.logic.activation.date" />
+	</bean>
+    <bean id="behaviorInfoService" class="mobi.nowtechnologies.server.service.behavior.BehaviorInfoService" />
 
     <bean id="timeService" class="mobi.nowtechnologies.server.TimeService"/>
 
@@ -51,44 +58,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     </bean>
 
     <bean id="userDetailsDtoAsm" class="mobi.nowtechnologies.server.assembler.UserDetailsDtoAsm"/>
-
-    <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
-        <property name="mediaRepository" ref="mediaRepository" />
-        <property name="messageRepository" ref="messageRepository"/>
-    </bean>
-
-	<bean name="deepLinkUrlFactory" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory">
-        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
-	</bean>
-
-    <bean name="cloudFileImagesService" class="mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService">
-        <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="imageService" ref="imageService" />
-    </bean>
-
-    <bean name="badgesService" class="mobi.nowtechnologies.server.service.streamzine.BadgesService">
-        <property name="filenameAliasRepository" ref="filenameAliasRepository" />
-        <property name="cloudFileImagesService" ref="cloudFileImagesService" />
-        <property name="resolutionRepository" ref="resolutionRepository" />
-        <property name="badgeMappingRepository" ref="badgeMappingRepository" />
-        <property name="cloudFileService" ref="service.CloudFileService" />
-        <property name="imageService" ref="imageService" />
-    </bean>
-
-    <bean name="streamzineUpdateAsm" class="mobi.nowtechnologies.server.assembler.StreamzineUpdateAsm">
-        <property name="deepLinkUrlFactory" ref="deepLinkUrlFactory" />
-        <property name="deepLinkInfoService" ref="deepLinkInfoService" />
-        <property name="badgeMappingRepository" ref="badgeMappingRepository" />
-        <property name="communityRepository" ref="communityRepository" />
-        <property name="resolutionRepository" ref="resolutionRepository" />
-        <property name="badgesService" ref="badgesService" />
-    </bean>
-
-    <bean name="streamzineUpdateService" class="mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService">
-        <property name="streamzineUpdateRepository" ref="streamzineUpdateRepository" />
-        <property name="availableCommunites" value="${streamzine.available.communities}" />
-        <property name="communityRepository" ref="communityRepository" />
-    </bean>
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
@@ -607,11 +576,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
 
-    <bean id="service.referralService" class="mobi.nowtechnologies.server.service.ReferralService">
-		<property name="requiredPropertyName" value="freemium.user.referrals.required"/>
-    </bean>
-
-    <bean id="referralAsm" class="mobi.nowtechnologies.server.assembler.ReferralAsm"/>
+    <bean id="service.referralService" class="mobi.nowtechnologies.server.service.ReferralService"/>
 
 	<import resource="payment.xml" />
 

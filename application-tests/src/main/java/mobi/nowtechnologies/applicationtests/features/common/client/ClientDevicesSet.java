@@ -19,6 +19,7 @@ import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -293,6 +294,20 @@ public abstract class ClientDevicesSet {
         @Override
         public HttpStatus getLastGooglePlusErrorStatus() {
             return lastGooglePlusErrorStatus;
+        }
+
+        @Override
+        public String getLastSocialActivationUserName() {
+            User lastFacebookInfo = getLastFacebookInfo();
+            if (lastFacebookInfo != null) {
+                return lastFacebookInfo.getUserName();
+            }
+
+            User lastGooglePlusInfo = getLastGooglePlusInfo();
+
+            Assert.notNull(lastGooglePlusInfo, "User did not activated with Facebook or Google Plus");
+
+            return lastGooglePlusInfo.getUserName();
         }
 
         @Override

@@ -13,6 +13,11 @@
         </constructor-arg>
     </bean>
 
+    <bean id="settingsAsm" class="mobi.nowtechnologies.server.admin.settings.asm.SettingsAsm">
+        <property name="messageSource" ref="messageSource" />
+        <property name="settingsService" ref="settingsService" />
+    </bean>
+
     <bean id="badgesDtoConverter" class="mobi.nowtechnologies.server.dto.streamzine.badge.BadgesDtoAsm">
 
     </bean>
@@ -50,6 +55,12 @@
     <bean id="duplicatedMediaAcrossNearestChartsDtoAssembler" class="mobi.nowtechnologies.server.admin.asm.DuplicatedMediaAcrossNearestChartsDtoAssembler" />
 
     <bean id="communityDtoAsm" class="mobi.nowtechnologies.server.dto.asm.CommunityDtoAsm"/>
+    <bean id="settingsService" class="mobi.nowtechnologies.server.admin.settings.service.SettingsService">
+        <property name="communityRepository" ref="communityRepository" />
+        <property name="communityConfigRepository" ref="communityConfigRepository" />
+        <property name="behaviorConfigRepository" ref="behaviorConfigRepository" />
+        <property name="chartUserStatusBehaviorRepository" ref="chartUserStatusBehaviorRepository" />
+    </bean>
 
     <!-- Application Message Bundle -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

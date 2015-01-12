@@ -90,7 +90,7 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
@@ -100,8 +100,8 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
-        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()), "secondary")
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
+        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat), "secondary")
         commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
@@ -251,7 +251,7 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         commonStepsService.registerUsingFacebook(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
@@ -261,8 +261,8 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
-        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()), "secondary")
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
+        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat), "secondary")
         commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
         commonStepsService.registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
         zippedUserDevices = [currentUserDevices, secondUserDevices].transpose()
@@ -274,8 +274,8 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
-        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()), "secondary")
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
+        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat), "secondary")
         commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
         commonStepsService.registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
         zippedUserDevices = [currentUserDevices, secondUserDevices].transpose()

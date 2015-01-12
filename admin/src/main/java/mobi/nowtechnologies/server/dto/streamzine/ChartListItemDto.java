@@ -55,6 +55,33 @@ public class ChartListItemDto implements Comparable<ChartListItemDto> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ChartListItemDto that = (ChartListItemDto) o;
+
+        if (tracksCount != that.tracksCount) return false;
+        if (chartId != null ? !chartId.equals(that.chartId) : that.chartId != null) return false;
+        if (imageFileName != null ? !imageFileName.equals(that.imageFileName) : that.imageFileName != null)
+            return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (subtitle != null ? !subtitle.equals(that.subtitle) : that.subtitle != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (subtitle != null ? subtitle.hashCode() : 0);
+        result = 31 * result + (imageFileName != null ? imageFileName.hashCode() : 0);
+        result = 31 * result + tracksCount;
+        result = 31 * result + (chartId != null ? chartId.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("name", name)

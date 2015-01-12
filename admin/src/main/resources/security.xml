@@ -41,7 +41,7 @@
 
 	<sec:authentication-manager alias="authenticationManager">
 		<sec:authentication-provider user-service-ref="security.nowTechUserDetailsService">
-			<sec:password-encoder ref="adminPasswordEncoder">
+			<sec:password-encoder hash="md5">
 				<sec:salt-source user-property="username" />
 			</sec:password-encoder>
 		</sec:authentication-provider>
@@ -57,8 +57,6 @@
 		<property name="cookieName" value="${rememberMe.cookieName}"/>
 		<property name="alwaysRemember" value="true"/>
 	</bean>
-	
-	<bean id="adminPasswordEncoder" class="mobi.nowtechnologies.server.admin.security.utils.AdminPasswordEncoder" />
 
 	<bean id="security.nowTechUserDetailsService" class="mobi.nowtechnologies.server.admin.security.service.impl.AdminDetailsServiceImpl">
 		<property name="dataSource" ref="securityDataSource" />

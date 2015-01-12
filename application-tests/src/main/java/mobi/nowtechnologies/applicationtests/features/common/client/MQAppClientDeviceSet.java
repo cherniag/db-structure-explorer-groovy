@@ -3,6 +3,7 @@ package mobi.nowtechnologies.applicationtests.features.common.client;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.http.common.standard.StandardResponse;
+import mobi.nowtechnologies.applicationtests.services.http.context.ContextHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
 import mobi.nowtechnologies.applicationtests.services.http.domain.google_plus.GooglePlusResponse;
 import mobi.nowtechnologies.applicationtests.services.http.email.EmailHttpService;
@@ -12,7 +13,7 @@ import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlus
 import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusUserInfoGenerator;
 import mobi.nowtechnologies.applicationtests.services.http.referral.ReferralHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamzineHttpService;
-import mobi.nowtechnologies.server.dto.ReferralDto;
+import mobi.nowtechnologies.server.transport.referrals.ReferralDto;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -28,19 +29,21 @@ import java.util.List;
 public class MQAppClientDeviceSet extends ClientDevicesSet {
 
     @Resource
-    private FacebookUserInfoGenerator facebookUserInfoGenerator;
+    FacebookUserInfoGenerator facebookUserInfoGenerator;
     @Resource
-    private GooglePlusUserInfoGenerator googlePlusUserInfoGenerator;
+    GooglePlusUserInfoGenerator googlePlusUserInfoGenerator;
     @Resource
-    private FacebookHttpService facebookHttpService;
+    FacebookHttpService facebookHttpService;
     @Resource
-    private GooglePlusHttpService googlePlusHttpService;
+    GooglePlusHttpService googlePlusHttpService;
     @Resource
-    private EmailHttpService emailHttpService;
+    EmailHttpService emailHttpService;
     @Resource
-    private GetStreamzineHttpService getStreamzineHttpService;
+    GetStreamzineHttpService getStreamzineHttpService;
     @Resource
-    private ReferralHttpService referralHttpService;
+    ReferralHttpService referralHttpService;
+    @Resource
+    ContextHttpService contextHttpService;
     //
     // Flow operations
     //
@@ -435,4 +438,10 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         PhoneState state = states.get(data);
         return referralHttpService.postReferrals(data, state, referrals, String.class);
     }
+
+    public ResponseEntity<String> context(UserDeviceData data){
+        PhoneState state = states.get(data);
+        return contextHttpService.context(data, state);
+    }
+
 }

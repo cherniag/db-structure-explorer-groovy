@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.streamzine.visual;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -22,7 +23,7 @@ public class AccessPolicy {
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "sz_granted_to_types", joinColumns = @JoinColumn(name = "access_policy_id"))
     @Column(name = "granted_to")
-    private Set<GrantedToType> userStatusTypes = new HashSet<GrantedToType>();
+    private Set<GrantedToType> grantedToTypes = new HashSet<GrantedToType>();
 
     @OneToOne
     @JoinColumn(name = "block_id")
@@ -34,15 +35,15 @@ public class AccessPolicy {
     public static AccessPolicy enabledForVipOnly() {
         AccessPolicy accessPolicy = new AccessPolicy();
         accessPolicy.permission = Permission.RESTRICTED;
-        accessPolicy.userStatusTypes.add(GrantedToType.LIMITED);
-        accessPolicy.userStatusTypes.add(GrantedToType.FREETRIAL);
+        accessPolicy.grantedToTypes.add(GrantedToType.LIMITED);
+        accessPolicy.grantedToTypes.add(GrantedToType.FREETRIAL);
         return accessPolicy;
     }
 
     public static AccessPolicy hiddenForSubscribed() {
         AccessPolicy accessPolicy = new AccessPolicy();
         accessPolicy.permission = Permission.HIDDEN;
-        accessPolicy.userStatusTypes.add(GrantedToType.SUBSCRIBED);
+        accessPolicy.grantedToTypes.add(GrantedToType.SUBSCRIBED);
         return accessPolicy;
     }
 
@@ -50,8 +51,8 @@ public class AccessPolicy {
         return permission;
     }
 
-    public Set<GrantedToType> getUserStatusTypes() {
-        return Collections.unmodifiableSet(userStatusTypes);
+    public Set<GrantedToType> getGrantedToTypes() {
+        return Collections.unmodifiableSet(grantedToTypes);
     }
 
     public long getId() {
@@ -62,7 +63,7 @@ public class AccessPolicy {
         AccessPolicy accessPolicy = new AccessPolicy();
         accessPolicy.permission = permission;
         accessPolicy.block = block;
-        accessPolicy.userStatusTypes.addAll(userStatusTypes);
+        accessPolicy.grantedToTypes.addAll(grantedToTypes);
         return accessPolicy;
     }
 
@@ -78,7 +79,7 @@ public class AccessPolicy {
         AccessPolicy that = (AccessPolicy) o;
 
         if (permission != that.permission) return false;
-        if (!userStatusTypes.equals(that.userStatusTypes)) return false;
+        if (!grantedToTypes.equals(that.grantedToTypes)) return false;
 
         return true;
     }
@@ -86,14 +87,14 @@ public class AccessPolicy {
     @Override
     public int hashCode() {
         int result = permission != null ? permission.hashCode() : 0;
-        result = 31 * result + userStatusTypes.hashCode();
+        result = 31 * result + grantedToTypes.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
         return "AccessPolicy{" +
-                "userStatusTypes=" + userStatusTypes +
+                "grantedToTypes=" + grantedToTypes +
                 ", permission=" + permission +
                 ", id=" + id +
                 '}';

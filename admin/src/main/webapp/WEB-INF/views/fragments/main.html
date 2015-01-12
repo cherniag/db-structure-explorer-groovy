@@ -60,18 +60,16 @@ section {
 				chartList = data.CHART_DTO_LIST;
 				if(chart)
 					onCreateChartEditForm();
-					
-				for (i in data.CHART_DTO_LIST) {
-					$("ul#dropdownCharts").append(
-							'<li><a>' + data.CHART_DTO_LIST[i].name + " : " + data.CHART_DTO_LIST[i].subtitle 
-									+ '</a></li>');
-					var $chartId = data.CHART_DTO_LIST[i].id;
-					var $w = location.protocol + '//' + location.host;
-					var $url = /*[[@{'/charts/'}]]*/'/jadmin/charts/';
-					var $li = $("ul#dropdownCharts li a").attr("href",
-							$w + $url + $chartId);
-					$li.appendTo($("ul#dropdownCharts"))
-				}
+
+                for (i in data.CHART_DTO_LIST) {
+                    var $chartId = data.CHART_DTO_LIST[i].id;
+                    var $w = location.protocol + '//' + location.host;
+                    var $url = /*[[@{'/charts/'}]]*/'/jadmin/charts/';
+
+                    $('<li></li>').append(
+                            $('<a>' + data.CHART_DTO_LIST[i].name + " : " + data.CHART_DTO_LIST[i].subtitle + '</a>').attr("href", $w + $url + $chartId)
+                    ).appendTo($("ul#dropdownCharts"));
+                }
 			}
 		});
 		$('.dropdown-toggle').dropdown()
@@ -84,13 +82,23 @@ section {
 		<div class="navbar-inner">
 			<div class="container">
 				<div class="nav-collapse collapse">
-					<a th:href="@{/}" class="brand">MusicQubed Admin Console</a>
 					<ul class="nav" th:object="${#httpServletRequest}">
 						<li th:class="*{pathInfo}=='/signin'? 'active'" th:if="*{userPrincipal==null}"><a th:href="@{/signin}">Sign In</a></li>
-						<li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
-						<li th:class="*{pathInfo}=='streamzine' or *{pathInfo}=='/streamzine' or *{pathInfo}=='/streamzine/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/streamzine}">Magazine Channel</a></li>
-						<li th:class="*{pathInfo}=='badges' or *{pathInfo}=='/badges' or *{pathInfo}=='/badges/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/badges}">Badges</a></li>
-						<li th:class="*{pathInfo}=='users' or *{pathInfo}=='/users' or *{pathInfo}=='/users/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/users}" ref="#" th:text="#{navbar.users}">Users</a></li>
+                        <li th:class="*{pathInfo}=='/'? 'active'" th:if="*{userPrincipal}"><a th:href="@{/}">Home</a></li>
+                        <li th:class="*{pathInfo}=='settings' or *{pathInfo}=='/settings' or *{pathInfo}=='/settings/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/settings}" ref="#">Settings</a></li>
+                        <li th:if="*{userPrincipal}" class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Magazine Channel<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a th:href="@{/streamzine}">Manage</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a th:href="@{/badges}">Badges</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li th:class="*{pathInfo}=='users' or *{pathInfo}=='/users' or *{pathInfo}=='/users/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/users}" ref="#" th:text="#{navbar.users}">Users</a></li>
 						<li th:class="*{pathInfo}=='news' or *{pathInfo}=='/news/' or *{pathInfo}=='/news/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/news}">News</a></li>
 						<li th:class="*{pathInfo}=='/messages' or *{pathInfo}=='/messages/' or *{pathInfo}=='/messages/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/messages}">Messages</a></li>
 						<li th:class="*{pathInfo}=='/ads' or *{pathInfo}=='/ads/' or *{pathInfo}=='/ads/__' ? 'active'" th:if="*{userPrincipal}"><a th:href="@{/ads}">Ads</a></li>

@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.assembler.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
-import mobi.nowtechnologies.server.shared.Utils;
 import org.apache.commons.net.util.Base64;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,15 +26,26 @@ public class DeepLinkUrlFactory {
     private final static String PLAYER = "player";
     private static final String OPEN_IN = "open";
 
-    private static final String API_VERSION_6_3 = "6.3";
-
     private DeepLinkInfoService deepLinkInfoService;
+
+    public String createForChart(String community, int chartId, String action) {
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
+        uriComponentsBuilder.scheme(createScheme(community));
+        uriComponentsBuilder.host(FeatureValueType.CONTENT.getId());
+        uriComponentsBuilder.pathSegment(ContentSubType.PLAYLIST.getName());
+        uriComponentsBuilder.queryParam(ID, chartId);
+        if(action != null) {
+            uriComponentsBuilder.queryParam(ACTION, action);
+        }
+        return uriComponentsBuilder.build().toUriString();
+    }
+
 
     public List<Integer> create(ManualCompilationDeeplinkInfo deeplinkInfo) {
         return deeplinkInfo.getMediaIds();
     }
 
-    public String create(DeeplinkInfo deeplinkInfo, String community, String apiVersion) {
+    public String create(DeeplinkInfo deeplinkInfo, String community, boolean includePlayer) {
         Assert.isTrue(!(deeplinkInfo instanceof ManualCompilationDeeplinkInfo));
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
@@ -45,7 +55,7 @@ public class DeepLinkUrlFactory {
         uriComponentsBuilder.pathSegment(decideSubValueForPromotional(deeplinkInfo));
         // query params if needed
         putActionOrOpenerQueryParamIfPromotional(deeplinkInfo, uriComponentsBuilder);
-        putPlayerQueryParamForPlayableItemDeepLink(deeplinkInfo, uriComponentsBuilder, apiVersion);
+        putPlayerQueryParamForPlayableItemDeepLink(deeplinkInfo, uriComponentsBuilder, includePlayer);
         putIdQueryParamIfNotPromotional(deeplinkInfo, uriComponentsBuilder);
 
         return uriComponentsBuilder.build().toUriString();
@@ -75,17 +85,12 @@ public class DeepLinkUrlFactory {
         }
     }
 
-    private void putPlayerQueryParamForPlayableItemDeepLink(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder, String apiVersion) {
+    private void putPlayerQueryParamForPlayableItemDeepLink(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder, boolean includePlayer) {
         if (deeplinkInfo instanceof PlayableItemDeepLink) {
-            boolean includeInUrl = isApiVersionMoreThanOrEq6_3(apiVersion);
-            if (includeInUrl) {
+            if (includePlayer) {
                 uriComponentsBuilder.queryParam(PLAYER, ((PlayableItemDeepLink) deeplinkInfo).getPlayerType().getId());
             }
         }
-    }
-
-    private boolean isApiVersionMoreThanOrEq6_3(String apiVersion) {
-        return Utils.compareVersions(apiVersion, API_VERSION_6_3) >= 0;
     }
 
     private void putActionOrOpenerQueryParamIfPromotional(DeeplinkInfo deeplinkInfo, UriComponentsBuilder uriComponentsBuilder) {

@@ -46,7 +46,8 @@ public class ApplicationConfiguration {
     @Bean(name = "mno.RestTemplate")
     public RestTemplate getRestTemplate() {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(60 * 1000);
+        // just let the developer to debug
+        requestFactory.setReadTimeout(120 * 1000);
         DefaultHttpClient client = (DefaultHttpClient) requestFactory.getHttpClient();
         PoolingClientConnectionManager conManager = (PoolingClientConnectionManager) client.getConnectionManager();
         conManager.setDefaultMaxPerRoute(20);

@@ -3,7 +3,9 @@ package mobi.nowtechnologies.server.shared.message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.util.Assert;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -14,19 +16,31 @@ import static org.apache.commons.lang3.StringUtils.trim;
 public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
     private static Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
 
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
     public static final String DEFAULT_COMMUNITY_DELIM = "_";
 
     private String communityDelim = DEFAULT_COMMUNITY_DELIM;
-    private final SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
     public Date readDate(String community, String code, Date defaults) {
         try {
-            String dateString = trim(getMessage(community, code, null, null));
-            Date date = format.parse(dateString);
-            return date;
+            String message = getMessage(community, code, null, null);
+            return doConvertToDate(message);
         } catch (Exception e) {
             return defaults;
+        }
+    }
+
+    @Override
+    public Date readDate(String community, String code) {
+        try {
+            String message = getMessage(community, code, null, null);
+
+            Assert.hasText(message);
+
+            return doConvertToDate(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -112,5 +126,9 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
 
     public void setCommunityDelim(String communityDelim) {
         this.communityDelim = communityDelim != null ? communityDelim : DEFAULT_COMMUNITY_DELIM;
+    }
+
+    private Date doConvertToDate(String message) throws ParseException {
+        return new SimpleDateFormat(DATE_FORMAT).parse(trim(message));
     }
 }

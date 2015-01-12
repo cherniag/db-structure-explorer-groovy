@@ -73,7 +73,7 @@ class FacebookMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         commonStepsService.registerUsingFacebook(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
@@ -83,8 +83,8 @@ class FacebookMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
-        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()), "secondary")
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
+        secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat), "secondary")
         currentUserDevices.each {
             deviceSet.singup(it)
             deviceSet.loginUsingFacebook(it)

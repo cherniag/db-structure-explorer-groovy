@@ -13,6 +13,8 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <bean class="mobi.nowtechnologies.server.admin.settings.SettingsController"/>
+
 	<bean name="admin.VersionController"
 		class="mobi.nowtechnologies.server.controller.VersionController">
 	</bean>

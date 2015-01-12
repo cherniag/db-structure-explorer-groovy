@@ -40,6 +40,7 @@ public class AccCheckController extends CommonController {
     private ITunesService iTunesService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.8}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.7}/ACC_CHECK",
             "**/{community}/{apiVersion:6\\.6}/ACC_CHECK"
     })

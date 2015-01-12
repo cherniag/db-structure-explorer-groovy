@@ -74,7 +74,7 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
-import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
+import static mobi.nowtechnologies.common.util.DateTimeUtils.newDate;
 import static mobi.nowtechnologies.server.shared.util.EmailValidator.isNotEmail;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.EMPTY;
@@ -524,11 +524,6 @@ public class UserService {
         return user;
     }
 
-    @Deprecated
-    public boolean userExists(String userName, String communityName) {
-        return userDao.userExists(userName, communityName);
-    }
-
     public User findByName(String userName) {
         if (userName == null)
             throw new ServiceException("The parameter userName is null");
@@ -573,14 +568,6 @@ public class UserService {
         if (!mobile.startsWith("0044"))
             return mobile.replaceFirst("0", "0044");
         return mobile;
-    }
-
-    // TODO remove this method and it's usage. This is only for GB partners only
-    // for Now Top 40
-    public static String convertPhoneNumberFromInternationalToGreatBritainFormat(String mobile) {
-        if (mobile == null)
-            throw new ServiceException("The parameter mobile is null");
-        return mobile.replaceFirst("0044", "0");
     }
 
     @Transactional(readOnly=true)
@@ -1043,7 +1030,8 @@ public class UserService {
         }
 
         user.setUuid(Utils.getRandomUUID());
-        user = userRepository.save(user);
+
+        user = userRepository.saveAndFlush(user);
 
         if (createPotentialPromo && user.getNextSubPayment() == 0) {
             assignPotentialPromo(user, community);

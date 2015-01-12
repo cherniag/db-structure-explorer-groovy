@@ -50,7 +50,7 @@ class AppsFlyerOnSignUpDeviceFeature {
               String bellowVersion,
               @Transform(DictionaryTransformer.class) Word communities) {
         def bellow = ApiVersions.from(versions.set()).bellow(bellowVersion)
-        userDeviceDatas = userDeviceDataService.table(bellow, communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()));
+        userDeviceDatas = userDeviceDataService.table(bellow, communities.set(), deviceTypes.set(), formats.set(RequestFormat));
     }
 
     @When('^User registers using device with appsflyer uid$')
@@ -89,7 +89,7 @@ class AppsFlyerOnSignUpDeviceFeature {
                String aboveVersion,
                @Transform(DictionaryTransformer.class) Word communities) {
         def above = ApiVersions.from(versions.set()).above(aboveVersion);
-        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()));
+        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat));
     }
 
     @And('^appsflyer data should be created$')
@@ -127,7 +127,7 @@ class AppsFlyerOnSignUpDeviceFeature {
             String aboveVersion,
             @Transform(DictionaryTransformer.class) Word communities) {
         def above = ApiVersions.from(versions.set()).above(aboveVersion)
-        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()));
+        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat));
         userDeviceDatas.each {
             def appsFlyerUid = UUID.randomUUID().toString();
             appsFlyerUids.put(it, appsFlyerUid)

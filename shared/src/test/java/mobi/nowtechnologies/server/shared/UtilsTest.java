@@ -7,9 +7,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,17 +45,6 @@ public class UtilsTest {
         assertEquals("4320fb73e5deb16a98f78bec9e522d36", result);
     }
 
-
-    @Test
-    public void testGetDateFromInt_1() throws Exception {
-        int intDate = 1;
-
-        Date result = getDateFromInt(intDate);
-
-        assertNotNull(result);
-        assertEquals(DateFormat.getInstance().format(new Date(1000L)), DateFormat.getInstance().format(result));
-        assertEquals(1000L, result.getTime());
-    }
 
     @Test
     public void testGetNewNextSubPayment_WhenNextSubPaymentIs0_Success() throws Exception {
@@ -564,17 +551,5 @@ public class UtilsTest {
         }
         // if strings are all the same then hashset will contain only 1 string
         assertTrue("There are the same codes", codes.size() > 1);
-    }
-
-    @Test
-    public void shouldReturnMillisInSeconds() {
-        //given
-        Integer seconds = Integer.MAX_VALUE;
-
-        //when
-        long millis = Utils.secondsToMillis(seconds);
-
-        //then
-        assertThat(millis, is(seconds*1000L));
     }
 }

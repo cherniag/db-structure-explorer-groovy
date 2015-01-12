@@ -1,9 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain.referral;
 
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
-import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -93,19 +89,6 @@ public class Referral {
         return id;
     }
 
-    public long getCreateTimestamp() {
-        return createTimestamp;
-    }
-
-    public static Referral duplicated(User user, SocialInfo socialInfo, String missingContact) {
-        Referral duplicated = new Referral();
-        duplicated.updateInfo(user);
-        duplicated.setState(ReferralState.DUPLICATED);
-        duplicated.setContact(missingContact);
-        duplicated.updateProviderType(socialInfo);
-        return duplicated;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
@@ -118,24 +101,4 @@ public class Referral {
                 .append("createTimestamp", createTimestamp)
                 .toString();
     }
-
-    private void updateProviderType(SocialInfo socialInfo) {
-        if(socialInfo instanceof FacebookUserInfo) {
-            setProviderType(ProviderType.FACEBOOK);
-            return;
-        }
-
-        if(socialInfo instanceof GooglePlusUserInfo) {
-            setProviderType(ProviderType.GOOGLE_PLUS);
-            return;
-        }
-
-        throw new IllegalArgumentException("Not supported type of social info: " + socialInfo.getId());
-    }
-
-    public void updateInfo(User user) {
-        setCommunityId(user.getUserGroup().getCommunity().getId());
-        setUserId(user.getId());
-    }
-
 }

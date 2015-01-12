@@ -33,5 +33,10 @@ if(Template == undefined) {
         }
 
         return rendered.join('');
+    };
+
+    Template.renderDom = function(templateId, model) {
+        var templateString = $('#'+templateId).html();
+        return Template.render(templateString, model);
     }
 }

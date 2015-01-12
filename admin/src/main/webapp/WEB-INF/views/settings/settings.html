@@ -1,0 +1,154 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<head th:include="tpl::head" />
+    <script th:src="@{/assets/js/streamzine/template.js}">
+    </script>
+    <script th:src="@{/assets/js/settings/settings.js}">
+    </script>
+    <script th:src="@{/assets/js/settings/editors.js}">
+    </script>
+    <style>
+        input[type="text"] {
+            width: 50px!important;
+        }
+        h3 {
+            margin-top: 20px;
+        }
+    </style>
+	<body>
+		<div th:substituteby="tpl::navbar"></div>
+        <div class="container">
+            <div style="margin-top: 20px;" id="rootSettingsContentId">
+            </div>
+        </div>
+
+        <!-- Templates -->
+        <div id="rootTemplateId" style="display: none;">
+            <div style="width:60%;">
+                <button class="btn btn-success" type="submit" id="enableOrDisableFreemiumId"></button>
+
+                <div>
+                    <br/><br/>
+                    <h2>Freemium Settings</h2>
+                    <h3>Referrals</h3>
+                    <div>
+                        <div style="display: table">
+                            <div class="settings-editor-cell settings-title">Required number:</div>
+                            <div class="settings-editor-cell" data-editor="digit" data-path="referral.required">{data.referral.required}</div>
+                            <div class="settings-editor-cell settings-title">Period:</div>
+                            <div class="settings-editor-cell" data-editor="duration" data-path="referral.durationInfoDto">{data.referral.durationInfoDto}</div>
+                        </div>
+                    </div>
+
+                    <h3>Ads</h3>
+                    <div>{view.adSettings}</div>
+
+                    <h3>Favourites</h3>
+                    <div>{view.favouriteSettings}</div>
+
+                    <h3>Playlist types</h3>
+                    <div>{view.playlistTypeSettings}</div>
+
+                    <h3>Playlists</h3>
+                    <div>{view.playlistSettings}</div>
+                </div>
+
+                <button class="btn btn-success" type="submit" id="saveId" style="margin-bottom:50px;">Save</button>
+            </div>
+        </div>
+
+        <div id="adSettingsId" style="display: none;">
+            <div class="settings-editor-cell settings-title">{userStatusTitle}:</div>
+            <div class="settings-editor-cell" data-path="ads.{userStatus}" data-editor="boolean">{enabled}</div>
+        </div>
+
+        <div id="favouriteSettingsId" style="display: none;">
+            <div class="settings-editor-cell settings-title">{userStatusTitle}:</div>
+            <div class="settings-editor-cell" data-path="favourites.{userStatus}" data-editor="boolean">{enabled}</div>
+        </div>
+
+        <div id="playlistTypeSettingsId" style="display: none;">
+            <div>
+                <div style="display: block;">{typeTitle}</div>
+                <div style="display: table">
+                    <div class="settings-editor-cell settings-title">Offline:</div>
+                    <div class="settings-editor-cell" data-path="playlistTypeSettings.{type}.offline" data-editor="boolean">{offline}</div>
+                    {playTrackSeconds}
+                </div>
+                <div style="display: table">
+                    <div class="settings-delimiter"></div>
+                    {maxTracks}
+                    {skipTracks}
+                </div>
+            </div>
+        </div>
+
+        <div id="playTrackSecondsId" style="display: none;">
+            <div class="settings-editor-cell settings-title">Play track seconds:</div>
+            <div class="settings-editor-cell" data-path="playlistTypeSettings.{type}.playTrackSeconds" data-editor="digit">{playTrackSeconds}</div>
+        </div>
+
+        <div id="playlistSkipTrackSettingsId" style="display: none;">
+            <div>
+                <div class="settings-editor-cell settings-title">Max Tracks number:</div>
+                <div class="settings-editor-cell" data-path="playlistTypeSettings.{type}.skipTracks.number" data-editor="digit">{number}</div>
+                <div class="settings-editor-cell settings-title">Duration:</div>
+                <div class="settings-editor-cell" data-path="playlistTypeSettings.{type}.skipTracks.durationInfoDto" data-editor="duration">{duration}</div>
+            </div>
+        </div>
+
+        <div id="playlistMaxTrackSettingsId" style="display: none;">
+            <div>
+                <div class="settings-editor-cell settings-title">Skip Tracks number:</div>
+                <div class="settings-editor-cell" data-path="playlistTypeSettings.{type}.maxTracks.number" data-editor="digit">{number}</div>
+                <div class="settings-editor-cell settings-title">Duration:</div>
+                <div class="settings-editor-cell" data-path="playlistTypeSettings.{type}.maxTracks.durationInfoDto" data-editor="duration">{duration}</div>
+            </div>
+        </div>
+
+        <div id="playlistSettingsId" style="display: none;">
+            <div>
+                <img src="{src}" width="50" />
+                <span>{title}</span>
+            </div>:
+            <span>{playlistTypeSettings}</span>
+            <br/>
+        </div>
+
+        <div id="playlistInfoId" style="display: none;">
+            <div style="display: table">
+                <div class="settings-editor-cell settings-title">For </div>
+                <div class="settings-editor-cell settings-editor-cell-value">{statusTitle}</div>
+                <div class="settings-editor-cell settings-title"> status and </div>
+                <div class="settings-editor-cell settings-editor-cell-value" data-editor="dictionary" data-dictionary-path="chartTypes" data-path="playlistSettings.{id}.{status}.chartBehaviorType">{typeTitle}</div>
+                <div class="settings-editor-cell settings-title"> playlist type </div>
+                <div class="settings-editor-cell">{info}</div>
+            </div>
+        </div>
+
+        <div id="playlistInfoValueId" style="display: none;">
+            <div style="display: table">
+                <div class="settings-editor-cell settings-title">Locked:</div>
+                <div class="settings-editor-cell" data-editor="boolean" data-path="playlistSettings.{id}.{status}.locked">{locked}</div>
+                <div class="settings-editor-cell settings-title">Action:</div>
+                <div class="settings-editor-cell" data-editor="dictionary" data-dictionary-path="actions" data-path="playlistSettings.{id}.{status}.action">{action}</div>
+            </div>
+        </div>
+
+        <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+        $(function() {
+            var rootElement = $('#rootSettingsContentId');
+
+            Settings.Controller.init({
+                path: /*[[${#httpServletRequest.getContextPath()}]]*/'',
+                getUrl: /*[[@{__${'/settings/get.json'}__}]]*/ '#',
+                saveUrl: /*[[@{__${'/settings/save.json'}__}]]*/ '#',
+                renderTo: rootElement,
+                imageURL: /*[[${imageURL}]]*/''
+            });
+        });
+        /*]]>*/</script>
+
+	</body>
+</html>
