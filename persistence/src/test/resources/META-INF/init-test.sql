@@ -296,7 +296,7 @@ insert into auto_opt_in_exempt_ph_number values('+447111111111');
 set @communityid = (select id from tb_communities where name='hl_uk');
 set @behaviorconfigid = 1 + (select coalesce(max(id), 0) from behavior_config);
 
-insert into behavior_config (id, community_id, type, required_referrals, referrals_duration, referrals_duration_type) values (@behaviorconfigid, @communityid, 'DEFAULT', -1, -1, 'DAYS');
+insert into behavior_config (id, community_id, type, required_referrals, referrals_duration, referrals_duration_type) values (@behaviorconfigid, @communityid, 'DEFAULT', 5, -1, 'DAYS');
 insert into community_config (community_id, behavior_config_id) values (@communityid, @behaviorconfigid);
 
 insert into content_user_status_behavior (id, behavior_config_id, user_status_type, are_favorites_off, are_ads_off) values (1, @behaviorconfigid, 'FREE_TRIAL', 0, 1);

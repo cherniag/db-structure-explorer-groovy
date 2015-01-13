@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.context;
 
+import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -8,12 +9,15 @@ import mobi.nowtechnologies.server.persistence.domain.behavior.*;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository;
-import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
+import mobi.nowtechnologies.server.service.behavior.BehaviorInfoService;
 import mobi.nowtechnologies.server.service.behavior.UserStatusTypeService;
 import mobi.nowtechnologies.server.transport.context.dto.*;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class ContextDtoAsm {
     @Resource
@@ -25,28 +29,35 @@ public class ContextDtoAsm {
     @Resource
     UserReferralsSnapshotRepository userReferralsSnapshotRepository;
     @Resource
-    CommunityConfigRepository communityConfigRepository;
+    BehaviorInfoService behaviorInfoService;
+    @Resource
+    TimeService timeService;
 
     //
     // API
     //
-    public ContextDto assemble() {
-        return ContextDto.empty();
+    public ContextDto assemble(User user) {
+        Date now = timeService.now();
+        if (behaviorInfoService.isFreemiumActivated(user, now)) {
+            return assemble(user, now);
+        } else {
+            return ContextDto.empty();
+        }
     }
 
-    public ContextDto assemble(User user, UserReferralsSnapshot snapshot, Date serverTime) {
+    //
+    // Internal parts
+    //
+    private ContextDto assemble(User user, Date serverTime) {
         Community community = user.getCommunity();
-
-        CommunityConfig communityConfig = communityConfigRepository.findByCommunity(community);
-        BehaviorConfig behaviorConfig = communityConfig.getBehaviorConfig();
-
         String rewriteUrlParameter = community.getRewriteUrlParameter();
-
+        BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(community);
         Map<UserStatusType, Date> userStatusTypeDateMap = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
+        UserReferralsSnapshot snapshot = behaviorInfoService.getUserReferralsSnapshot(user, behaviorConfig);
 
         ContextDto context = ContextDto.normal(serverTime);
 
-        fillReferralsInfo(context, snapshot);
+        context.getReferralsContextDto().fill(snapshot);
         fillChartsTemplatesInfo(context, behaviorConfig);
 
         context.getFavoritesContextDto().getInstructions().addAll(
@@ -56,21 +67,12 @@ public class ContextDtoAsm {
                 calcAdsInstructions(behaviorConfig, userStatusTypeDateMap)
         );
 
-        ReferralsConditions referralsConditions = getReferralsConditions(snapshot);
+        ReferralsConditions referralsConditions = getReferralsConditions(behaviorConfig, snapshot);
         context.getChartContextDto().getChartBehaviors().addAll(
                 calcChartBehaviors(behaviorConfig, userStatusTypeDateMap, referralsConditions, rewriteUrlParameter)
         );
 
         return context;
-    }
-
-    //
-    // Internal parts
-    //
-    private void fillReferralsInfo(ContextDto context, UserReferralsSnapshot snapshot) {
-        if (snapshot != null) {
-            context.getReferralsContextDto().fill(snapshot);
-        }
     }
 
     private void fillChartsTemplatesInfo(ContextDto context, BehaviorConfig behaviorConfig) {
@@ -166,8 +168,8 @@ public class ContextDtoAsm {
         return chartBehaviorDto;
     }
 
-    private ReferralsConditions getReferralsConditions(UserReferralsSnapshot snapshot) {
-        if (snapshot != null) {
+    private ReferralsConditions getReferralsConditions(BehaviorConfig behaviorConfig, UserReferralsSnapshot snapshot) {
+        if (!behaviorConfig.getType().isDefault()) {
             if (snapshot.isUnlimitedReferralsDuration()) {
                 return new ReferralsUnlimitedConditions();
             } else {

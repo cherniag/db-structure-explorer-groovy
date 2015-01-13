@@ -34,10 +34,9 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	</bean>
 
 	<bean id="userStatusTypeService" class="mobi.nowtechnologies.server.service.behavior.UserStatusTypeService" />
-    <bean id="behaviorService" class="mobi.nowtechnologies.server.service.behavior.BehaviorService">
+    <bean id="behaviorInfoService" class="mobi.nowtechnologies.server.service.behavior.BehaviorInfoService">
 		<property name="activationDatePropertyName" value="referral.logic.activation.date" />
-	</bean>
-    <bean id="behaviorInfoService" class="mobi.nowtechnologies.server.service.behavior.BehaviorInfoService" />
+    </bean>
 
     <bean id="timeService" class="mobi.nowtechnologies.server.TimeService"/>
 

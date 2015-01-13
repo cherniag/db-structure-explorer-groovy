@@ -141,3 +141,7 @@ insert into chart_behavior (id, behavior_config_id, type, is_offline) values (@c
 
 commit;
 set autocommit = 1;
+
+-- http://jira.musicqubed.com/browse/SRV-514
+-- [SERVER] 6.7 CONTEXT returns required referrals -1 after 5.13.0 deploy
+update behavior_config set required_referrals=5 where community_id in (select id from tb_communities where name='mtv1') and type='DEFAULT';

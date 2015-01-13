@@ -9,11 +9,13 @@ import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnap
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
+import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 public class BehaviorInfoService {
 
@@ -25,27 +27,23 @@ public class BehaviorInfoService {
     CommunityConfigRepository communityConfigRepository;
     @Resource
     ReferralRepository referralRepository;
+    @Resource
+    CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+
+    private String activationDatePropertyName;
+
+    public boolean isFreemiumActivated(User user, Date now) {
+        String communityName = user.getCommunityRewriteUrl();
+        return communityResourceBundleMessageSource.readDate(communityName, activationDatePropertyName).before(now);
+    }
 
     @Transactional(readOnly = true)
-    public UserReferralsSnapshot getUserReferralsSnapshot(User user) {
-        BehaviorConfig behaviorConfig = findConfig(user);
-
-        boolean hasNoFreemium = behaviorConfig.getType().isDefault();
-        if (hasNoFreemium) {
-            logger.info("Has no Freemium enabled for user id {}", user.getId());
-            return null;
-        }
-
-        int requiredReferrals = behaviorConfig.getRequiredReferrals();
-        if (requiredReferrals <= 0) {
-            logger.info("Has no positive referrals count for user id {}", user.getId());
-            return null;
-        }
-
+    public UserReferralsSnapshot getUserReferralsSnapshot(User user, BehaviorConfig behaviorConfig) {
         UserReferralsSnapshot existing = userReferralsSnapshotRepository.findOne(user.getId());
         if (existing == null) {
-            UserReferralsSnapshot newOne = new UserReferralsSnapshot(user.getId(), requiredReferrals, behaviorConfig.getReferralsDuration());
-            int referredAndConfirmedCount = referralRepository.getCountByCommunityIdUserIdAndStates(behaviorConfig.getCommunityId(), user.getId(), ReferralState.ACTIVATED);
+            UserReferralsSnapshot newOne = new UserReferralsSnapshot(
+                    user.getId(), behaviorConfig.getRequiredReferrals(), behaviorConfig.getReferralsDuration());
+            int referredAndConfirmedCount = getReferredAndConfirmedCount(user, behaviorConfig);
             newOne.updateMatchesData(referredAndConfirmedCount);
 
             existing = userReferralsSnapshotRepository.saveAndFlush(newOne);
@@ -55,9 +53,18 @@ public class BehaviorInfoService {
         return existing;
     }
 
-    private BehaviorConfig findConfig(User user) {
-        Community community = user.getUserGroup().getCommunity();
+    @Transactional(readOnly = true)
+    public int getReferredAndConfirmedCount(User user, BehaviorConfig behaviorConfig) {
+        return referralRepository.getCountByCommunityIdUserIdAndStates(behaviorConfig.getCommunityId(), user.getId(), ReferralState.ACTIVATED);
+    }
+
+    @Transactional(readOnly = true)
+    public BehaviorConfig getBehaviorConfig(Community community) {
         CommunityConfig communityConfig = communityConfigRepository.findByCommunity(community);
         return communityConfig.getBehaviorConfig();
+    }
+
+    public void setActivationDatePropertyName(String activationDatePropertyName) {
+        this.activationDatePropertyName = activationDatePropertyName;
     }
 }

@@ -35,28 +35,6 @@ public class BehaviorInfoServiceTest {
     }
 
     @Test
-    public void testGetUserReferralsSnapshotWhenNoFreemium() throws Exception {
-        // given
-        final int userId = 1;
-        final int communityId = 2;
-        User user = createUser("user", userId, communityId);
-
-        BehaviorConfig defaultBehaviorConfig = mock(BehaviorConfig.class);
-        when(defaultBehaviorConfig.getType()).thenReturn(BehaviorConfigType.DEFAULT);
-        CommunityConfig communityConfig = mock(CommunityConfig.class);
-        when(communityConfig.getBehaviorConfig()).thenReturn(defaultBehaviorConfig);
-
-        when(communityConfigRepository.findByCommunity(user.getUserGroup().getCommunity())).thenReturn(communityConfig);
-
-
-        // when
-        behaviorInfoService.getUserReferralsSnapshot(user);
-
-        // then
-        verify(defaultBehaviorConfig, never()).getRequiredReferrals();
-    }
-
-    @Test
     public void testGetUserReferralsSnapshotWhenFreemiumButNoRequiredReferralsCount() throws Exception {
         // given
         final int userId = 1;
@@ -76,7 +54,7 @@ public class BehaviorInfoServiceTest {
         when(referralRepository.getCountByCommunityIdUserIdAndStates(communityId, userId, ReferralState.ACTIVATED)).thenReturn(activated);
 
         // when
-        behaviorInfoService.getUserReferralsSnapshot(user);
+        behaviorInfoService.getUserReferralsSnapshot(user, freemiumBehaviorConfig);
 
         // then
         verify(referralRepository, timeout(1)).getCountByCommunityIdUserIdAndStates(communityId, userId, ReferralState.ACTIVATED);
