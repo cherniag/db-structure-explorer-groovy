@@ -23,6 +23,7 @@ public class Runner {
     public void parallel(Invoker<UserDeviceData> toInvoke)  {
         UserDeviceData firstTest = datas.get(0);
         toInvoke.invoke(firstTest);
+        datas.remove(0);
 
         // run others when first is OK
         List<List<UserDeviceData>> partitions = Lists.partition(datas, threads);
