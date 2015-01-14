@@ -1,4 +1,4 @@
-@Ready
+@Ready1
 Feature: Get chart command processing
   Scenario: Get Chart GET success
     Given Activated user with all devices using all formats for all versions above 6.6 and mtv1 community
