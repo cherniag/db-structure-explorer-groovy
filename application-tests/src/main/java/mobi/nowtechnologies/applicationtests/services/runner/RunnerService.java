@@ -25,7 +25,7 @@ public class RunnerService {
     }
 
     public Runner create(Collection<UserDeviceData> datas) {
-        List<UserDeviceData> userDeviceDatas = new ArrayList<>(datas);
+        List<UserDeviceData> userDeviceDatas = new ArrayList<UserDeviceData>(datas);
         Collections.sort(userDeviceDatas);
         return new Runner(service, threadsCount, userDeviceDatas);
     }

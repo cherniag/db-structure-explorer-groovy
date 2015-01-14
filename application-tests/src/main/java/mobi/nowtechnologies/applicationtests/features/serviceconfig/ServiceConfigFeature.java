@@ -64,8 +64,8 @@ public class ServiceConfigFeature {
 
     private List<UserDeviceData> userDeviceDatas;
     private String applicationName;
-    private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new ConcurrentHashMap<>();
-    private Map<UserDeviceData, String> headers = new ConcurrentHashMap<>();
+    private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new ConcurrentHashMap<UserDeviceData, ResponseEntity<String>>();
+    private Map<UserDeviceData, String> headers = new ConcurrentHashMap<UserDeviceData, String>();
 
     private Runner runner;
 
@@ -202,7 +202,7 @@ public class ServiceConfigFeature {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData data) {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = new HashMap<String, Object>();
                 model.put("random", applicationName);
                 model.put("platform", getDeviceType(data).getName());
                 model.put("community", communityRepository.findByRewriteUrlParameter(data.getCommunityUrl()).getName());
