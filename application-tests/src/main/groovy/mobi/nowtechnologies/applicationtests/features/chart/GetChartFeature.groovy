@@ -61,7 +61,7 @@ class GetChartFeature {
             String community
     ){
         def versionsAbove = ApiVersions.from(versions.list()).above(above)
-        userDeviceDatas = userDeviceDataService.table(versionsAbove, community, deviceTypes.list(), RequestFormat.from(formats.set()));
+        userDeviceDatas = userDeviceDataService.table(versionsAbove, community, deviceTypes.list(), formats.set(RequestFormat));
         userDeviceDatas.each {
             deviceSet.singup(it);
             deviceSet.loginUsingFacebook(it);
