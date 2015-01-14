@@ -17,6 +17,9 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
+import mobi.nowtechnologies.applicationtests.services.runner.Runner;
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -29,9 +32,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -58,11 +61,14 @@ public class GetNewsFeature {
 
     private List<UserDeviceData> userDeviceDatas = new ArrayList<UserDeviceData>();
 
-    private Map<UserDeviceData, NewsDetailDto[]> newsResponses = new HashMap<UserDeviceData, NewsDetailDto[]>();
+    private Map<UserDeviceData, NewsDetailDto[]> newsResponses = new ConcurrentHashMap<UserDeviceData, NewsDetailDto[]>();
     private String community;
     private long publishTimeMillis = System.currentTimeMillis();
     private ApiVersions allVersions;
 
+    @Resource
+    private RunnerService runnerService;
+    private Runner runner;
 
     @Given("^Activated via OTAC user with (.+) using (.+) format for (.+) and (\\w+) community$")
     public void given(@Transform(DictionaryTransformer.class) Word deviceTypes,
@@ -77,15 +83,20 @@ public class GetNewsFeature {
         }
 
         this.community = community;
-        this.userDeviceDatas.addAll(userDeviceDataService.table(versions.list(), community, deviceTypes.list(), formats.set(RequestFormat.class)));
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            partnerDeviceSet.signUpAndActivate(userDeviceData);
 
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+        userDeviceDatas.addAll(userDeviceDataService.table(versions.list(), community, deviceTypes.list(), formats.set(RequestFormat.class)));
+        runner = runnerService.create(userDeviceDatas);
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                partnerDeviceSet.signUpAndActivate(userDeviceData);
 
-            User user = findUserInDatabase(userDeviceData, phoneState);
-            assertEquals("User [" + user.getUserName() + "] for device data " + userDeviceData + " should be activated", ActivationStatus.ACTIVATED, user.getActivationStatus());
-        }
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+
+                User user = findUserInDatabase(userDeviceData, phoneState);
+                assertEquals("User [" + user.getUserName() + "] for device data " + userDeviceData + " should be activated", ActivationStatus.ACTIVATED, user.getActivationStatus());
+            }
+        });
     }
 
     @After
@@ -110,11 +121,14 @@ public class GetNewsFeature {
     }
 
     @And("^User invokes get news command$")
-    public void andUserMakesGetNewsCall(){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            NewsDetailDto[] news = partnerDeviceSet.getNews(userDeviceData, allVersions);
-            newsResponses.put(userDeviceData, news);
-        }
+    public void andUserMakesGetNewsCall() {
+        this.runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                NewsDetailDto[] news = partnerDeviceSet.getNews(userDeviceData, allVersions);
+                newsResponses.put(userDeviceData, news);
+            }
+        });
     }
 
     @Then("^response has (\\d+) http response code$")
@@ -123,7 +137,7 @@ public class GetNewsFeature {
     }
 
     @And("^news response should contains (\\d+) news message$")
-    public void andNewsResponseShouldContainsMessages(int messageCount){
+    public void andNewsResponseShouldContainsMessages(int messageCount) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 

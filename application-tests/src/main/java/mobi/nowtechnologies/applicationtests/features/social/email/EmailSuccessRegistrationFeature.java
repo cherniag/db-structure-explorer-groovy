@@ -16,6 +16,9 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.mail.EmailChecker;
+import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
+import mobi.nowtechnologies.applicationtests.services.runner.Runner;
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.server.persistence.apptests.domain.Email;
 import mobi.nowtechnologies.server.persistence.domain.ActivationEmail;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -33,6 +36,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,12 +52,15 @@ public class EmailSuccessRegistrationFeature {
     private ActivationEmailRepository activationEmailRepository;
     @Resource
     private EmailChecker emailChecker;
+    @Resource
+    private RunnerService runnerService;
+    @Resource
+    private MQAppClientDeviceSet deviceSet;
 
     private List<UserDeviceData> currentUserDevices;
-    private Map<UserDeviceData, User> lastRegisteredUsers = new HashMap<UserDeviceData, User>();
 
-    @Resource
-    MQAppClientDeviceSet deviceSet;
+    private Map<UserDeviceData, User> lastRegisteredUsers = new ConcurrentHashMap<UserDeviceData, User>();
+    private Runner runner;
 
     @Given("^First time user with device using (\\w+) format for (.+) and (.+) and (.+) available$")
     public void firstTimeUserUsingJsonAndXmlFormats(RequestFormat format,
@@ -61,121 +68,155 @@ public class EmailSuccessRegistrationFeature {
                                                     @Transform(DictionaryTransformer.class) Word communities,
                                                     @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Sets.newHashSet(format));
+        runner = runnerService.create(currentUserDevices);
     }
 
     @When("^User signs up the device$")
     public void userSignsUpTheDevice() throws Throwable {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            deviceSet.singup(deviceData);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                deviceSet.singup(deviceData);
+            }
+        });
     }
 
     @Then("^Temporary registration info is available and the status is (\\w+) and username is the same as device uid$")
-    public void temporaryRegistrationInfoIsAvailable(UserStatus status) throws Throwable {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            PhoneState phoneState = deviceSet.getPhoneState(deviceData);
-            assertFalse(phoneState.getLastAccountCheckResponse().userToken.isEmpty());
+    public void temporaryRegistrationInfoIsAvailable(final UserStatus status) throws Throwable {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                PhoneState phoneState = deviceSet.getPhoneState(deviceData);
+                assertFalse(phoneState.getLastAccountCheckResponse().userToken.isEmpty());
 
-            User user = userDbService.findUser(phoneState, deviceData);
-            assertEquals(user.getStatus().getName(), status.name());
-            assertEquals(phoneState.getDeviceUID(), user.getDeviceUID());
-        }
+                User user = userDbService.findUser(phoneState, deviceData);
+                assertEquals(user.getStatus().getName(), status.name());
+                assertEquals(phoneState.getDeviceUID(), user.getDeviceUID());
+            }
+        });
     }
 
     @When("^User mobile calls server to generate the email$")
     public void userMobileGenerateEmail() {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            deviceSet.registerEmail(deviceData);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                deviceSet.registerEmail(deviceData);
+            }
+        });
     }
 
     @Then("^registration info is in (\\w+) status$")
-    public void registrationInfoIsInStatus(ActivationStatus activationStatus) {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            PhoneState phoneState = deviceSet.getPhoneState(deviceData);
+    public void registrationInfoIsInStatus(final ActivationStatus activationStatus) {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                PhoneState phoneState = deviceSet.getPhoneState(deviceData);
 
-            User user = userDbService.findUser(phoneState, deviceData);
-            assertEquals(activationStatus, user.getActivationStatus());
+                User user = userDbService.findUser(phoneState, deviceData);
+                assertEquals(activationStatus, user.getActivationStatus());
 
-            lastRegisteredUsers.put(deviceData, user);
-        }
+                lastRegisteredUsers.put(deviceData, user);
+            }
+        });
     }
 
     @And("^email was sent$")
     public void emailWasSent() {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            PhoneState phoneState = deviceSet.getPhoneState(deviceData);
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                PhoneState phoneState = deviceSet.getPhoneState(deviceData);
 
-            // email was sent:
-            ActivationEmail activationEmail = activationEmailRepository.findOne(phoneState.getLastActivationEmailToken());
-            assertFalse(activationEmail.isActivated());
+                // email was sent:
+                ActivationEmail activationEmail = activationEmailRepository.findOne(phoneState.getLastActivationEmailToken());
+                assertFalse(activationEmail.isActivated());
 
-            // email text contains correct parameters to sign in by email: id and token
-            Pair<String, String> idTokenPair = extractIdAndTokenFromTheEmailText(
-                    findSentEmailText(activationEmail)
-            );
+                // email text contains correct parameters to sign in by email: id and token
+                Pair<String, String> idTokenPair = extractIdAndTokenFromTheEmailText(
+                        findSentEmailText(activationEmail)
+                );
 
-            assertEquals(activationEmail.getId().toString(), idTokenPair.getLeft());
-            assertEquals(activationEmail.getToken(), idTokenPair.getRight());
-        }
+                assertEquals(activationEmail.getId().toString(), idTokenPair.getLeft());
+                assertEquals(activationEmail.getToken(), idTokenPair.getRight());
+            }
+        });
     }
 
     @When("^User hits the link in email$")
     public void userHitsTheLinkInEmail() {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            PhoneState phoneState = deviceSet.getPhoneState(deviceData);
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                PhoneState phoneState = deviceSet.getPhoneState(deviceData);
 
-            String emailText = userOpensEmailText(phoneState);
+                String emailText = userOpensEmailText(phoneState);
 
-            Pair<String, String> idTokenPair = extractIdAndTokenFromTheEmailText(emailText);
-            String idFromTheLinkInEmailText = idTokenPair.getLeft();
-            String tokenFromTheLinkInEmailText = idTokenPair.getRight();
+                Pair<String, String> idTokenPair = extractIdAndTokenFromTheEmailText(emailText);
+                String idFromTheLinkInEmailText = idTokenPair.getLeft();
+                String tokenFromTheLinkInEmailText = idTokenPair.getRight();
 
-            deviceSet.signInEmail(deviceData, idFromTheLinkInEmailText, tokenFromTheLinkInEmailText);
-        }
+                deviceSet.signInEmail(deviceData, idFromTheLinkInEmailText, tokenFromTheLinkInEmailText);
+            }
+        });
     }
 
     @Then("^User has (\\w+) status$")
-    public void userHasRegistrationInfoInSubscriberStatus(UserStatus userStatus) {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            PhoneState phoneState = deviceSet.getPhoneState(deviceData);
+    public void userHasRegistrationInfoInSubscriberStatus(final UserStatus userStatus) {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                PhoneState phoneState = deviceSet.getPhoneState(deviceData);
 
-            User user = userDbService.findUser(phoneState, deviceData);
-            assertEquals(userStatus.name(), user.getStatus().getName());
-        }
+                User user = userDbService.findUser(phoneState, deviceData);
+                assertEquals(userStatus.name(), user.getStatus().getName());
+            }
+        });
     }
 
     @And("^device uid of previous user contains (\\w+) value$")
-    public void deviceUidContains(String smth) {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            User prevUser = lastRegisteredUsers.get(deviceData);
+    public void deviceUidContains(final String smth) {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                User prevUser = lastRegisteredUsers.get(deviceData);
 
-            User user = userDbService.getUserByUserNameAndCommunity(prevUser.getUserName(), deviceData.getCommunityUrl());
-            assertTrue(user.getDeviceUID().contains(smth));
-        }
+                User user = userDbService.getUserByUserNameAndCommunity(prevUser.getUserName(), deviceData.getCommunityUrl());
+                assertTrue(user.getDeviceUID().contains(smth));
+            }
+        });
     }
 
     @And("^user changes email$")
     public void whenUserChangesEmail() {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            deviceSet.changeEmail(deviceData);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                deviceSet.changeEmail(deviceData);
+            }
+        });
     }
 
     @And("^user changes device$")
     public void whenUserChangesDevice() {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            deviceSet.changePhone(deviceData);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                deviceSet.changePhone(deviceData);
+            }
+        });
     }
 
     @And("^user has username as new email$")
     public void userChangedUserName() {
-        for (UserDeviceData deviceData : currentUserDevices) {
-            PhoneState phoneState = deviceSet.getPhoneState(deviceData);
-            User user = userDbService.findUser(phoneState, deviceData);
-            assertEquals(phoneState.getEmail(), user.getUserName());
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData deviceData) {
+                PhoneState phoneState = deviceSet.getPhoneState(deviceData);
+                User user = userDbService.findUser(phoneState, deviceData);
+                assertEquals(phoneState.getEmail(), user.getUserName());
+            }
+        });
     }
 
     @After

@@ -6,17 +6,20 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import mobi.nowtechnologies.applicationtests.features.common.client.PartnerDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableString;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableStringTransformer;
 import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.ClientVersionTransformer;
-import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.ServiceConfigHttpService;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
+import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
+import mobi.nowtechnologies.applicationtests.services.runner.Runner;
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -36,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.*;
 
@@ -50,17 +54,20 @@ public class ServiceConfigFeature {
     @Resource
     CommunityRepository communityRepository;
     @Resource
-    ServiceConfigHttpService serviceConfigHttpService;
-    @Resource
     SimpleInterpolator interpolator;
     @Resource
     JsonHelper jsonHelper;
+    @Resource
+    PartnerDeviceSet partnerDeviceSet;
+    @Resource
+    RunnerService runnerService;
 
     private List<UserDeviceData> userDeviceDatas;
     private String applicationName;
-    private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new HashMap<UserDeviceData, ResponseEntity<String>>();
-    private Map<UserDeviceData, String> headers = new HashMap<UserDeviceData, String>();
+    private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new ConcurrentHashMap<>();
+    private Map<UserDeviceData, String> headers = new ConcurrentHashMap<>();
 
+    private Runner runner;
 
     @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) above (.+)$")
     public void givenVersionsAbove(@Transform(DictionaryTransformer.class) Word devices,
@@ -68,7 +75,9 @@ public class ServiceConfigFeature {
                                @Transform(DictionaryTransformer.class) Word versions,
                                String aboveVersion) {
         List<String> above = ApiVersions.from(versions.set()).above(aboveVersion);
-        given(above, communities.set(), devices.set());
+        userDeviceDatas = userDeviceDataService.table(above, communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
+        applicationName = UUID.randomUUID().toString();
+        runner = runnerService.create(userDeviceDatas);
     }
 
     @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) bellow (.+)$")
@@ -77,41 +86,43 @@ public class ServiceConfigFeature {
                       @Transform(DictionaryTransformer.class) Word versions,
                       String bellowVersion) {
         List<String> bellow = ApiVersions.from(versions.set()).bellow(bellowVersion);
-        given(bellow, communities.set(), devices.set());
+        userDeviceDatas = userDeviceDataService.table(bellow, communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
+        applicationName = UUID.randomUUID().toString();
+        runner = runnerService.create(userDeviceDatas);
     }
 
     @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+)$")
     public void given(@Transform(DictionaryTransformer.class) Word devices,
                       @Transform(DictionaryTransformer.class) Word communities,
                       @Transform(DictionaryTransformer.class) Word versions) {
-        given(versions.list(), communities.set(), devices.set());
+        userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
+        applicationName = UUID.randomUUID().toString();
+        runner = runnerService.create(userDeviceDatas);
     }
 
     @When("^client version info exist:$")
     public void tableExist(List<ServiceConfigVersionRow> configVersionRows){
-        for (ServiceConfigVersionRow configVersionRow : configVersionRows) {
-            for (UserDeviceData userDeviceData : userDeviceDatas) {
-                String application = configVersionRow.applicationName;
-                String code = configVersionRow.messageKey;
-                String link = configVersionRow.url;
-                String imageFileName = configVersionRow.image;
-                ClientVersion clientVersion = ClientVersion.from(configVersionRow.appVersion);
-                VersionCheckStatus status = VersionCheckStatus.valueOf(configVersionRow.status);
+        for (final ServiceConfigVersionRow configVersionRow : configVersionRows) {
+            runner.parallel(new Invoker<UserDeviceData>() {
+                @Override
+                public void invoke(UserDeviceData userDeviceData) {
+                    String application = configVersionRow.applicationName;
+                    String code = configVersionRow.messageKey;
+                    String link = configVersionRow.url;
+                    String imageFileName = configVersionRow.image;
+                    ClientVersion clientVersion = ClientVersion.from(configVersionRow.appVersion);
+                    VersionCheckStatus status = VersionCheckStatus.valueOf(configVersionRow.status);
 
-                String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", applicationName));
-                VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
-                Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
-                DeviceType deviceType = getDeviceType(userDeviceData);
-                versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName));
-            }
+                    String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", applicationName));
+                    VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
+                    Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
+                    DeviceType deviceType = getDeviceType(userDeviceData);
+                    versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName));
+                }
+            });
         }
     }
 
-
-    private void given(List<String> versions, Set<String> communities, Set<String> devices) {
-        userDeviceDatas = userDeviceDataService.table(versions, communities, devices, Sets.newHashSet(RequestFormat.JSON));
-        applicationName = UUID.randomUUID().toString();
-    }
 
     @When("^(.+) header is in old format \"(.+)\"$")
     public void whenUserAgent(String headerName, String headerValue) {
@@ -124,73 +135,85 @@ public class ServiceConfigFeature {
     public void thenResponse(final int responseExpected) {
         successfulResponses.clear();
 
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            String header = headers.get(userDeviceData);
-            serviceConfigHttpService.setHeader("User-Agent", header);
-            ResponseEntity<String> stringResponseEntity = serviceConfigHttpService.serviceConfig(userDeviceData);
-            int responseFromServer = stringResponseEntity.getStatusCode().value();
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                String header = headers.get(userDeviceData);
+                ResponseEntity<String> stringResponseEntity = partnerDeviceSet.serviceConfig(userDeviceData, header);
+                int responseFromServer = stringResponseEntity.getStatusCode().value();
 
-            if(responseFromServer == 200) {
-                // check later
-                successfulResponses.put(userDeviceData, stringResponseEntity);
+                if(responseFromServer == 200) {
+                    // check later
+                    successfulResponses.put(userDeviceData, stringResponseEntity);
+                }
+
+                assertEquals(
+                        "Code from server: " + responseFromServer + " differs from expected: " + responseExpected + " for " + userDeviceData,
+                        responseExpected,
+                        responseFromServer
+                );
             }
-
-            assertEquals(
-                    "Code from server: " + responseFromServer + " differs from expected: " + responseExpected + " for " + userDeviceData,
-                    responseExpected,
-                    responseFromServer
-            );
-        }
+        });
 
         headers.clear();
     }
 
     @And("^error message is '(.+)'$")
-    public void errorMessageIs(String message) {
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            ResponseEntity<String> stringResponseEntity = serviceConfigHttpService.serviceConfig(userDeviceData);
-            ErrorMessage errorMessage = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), "$.response.data[0].errorMessage", ErrorMessage.class);
+    public void errorMessageIs(final String message) {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                ResponseEntity<String> stringResponseEntity = partnerDeviceSet.serviceConfig(userDeviceData, null);
+                ErrorMessage errorMessage = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), "$.response.data[0].errorMessage", ErrorMessage.class);
 
-            assertEquals(
-                    "Error message from server: " + message + " differs from expected: " + errorMessage.getMessage() + " for " + userDeviceData,
-                    message,
-                    errorMessage.getMessage()
-            );
-        }
+                assertEquals(
+                        "Error message from server: " + message + " differs from expected: " + errorMessage.getMessage() + " for " + userDeviceData,
+                        message,
+                        errorMessage.getMessage()
+                );
+            }
+        });
     }
 
     @When("^service config data is set to '(.+)' for version '(.+)', '(.+)' application, '(.+)' message, '(.+)' image and '(.+)' link$")
-    public void whenServiceConfig(VersionCheckStatus status,
-                                  @Transform(ClientVersionTransformer.class) ClientVersion clientVersion,
-                                  String application,
-                                  String code,
-                                  String imageFileName,
-                                  String link) {
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
+    public void whenServiceConfig(final VersionCheckStatus status,
+                                  @Transform(ClientVersionTransformer.class) final ClientVersion clientVersion,
+                                  final String application,
+                                  final String code,
+                                  final String imageFileName,
+                                  final String link) {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", applicationName));
 
-            // prepare data in database
-            String newApplicationName = interpolator.interpolate(application, Collections.<String, Object>singletonMap("random", applicationName));
-            VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
-            Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
-            DeviceType deviceType = getDeviceType(userDeviceData);
-            versionCheckRepository.saveAndFlush(new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName));
-        }
+                VersionMessage versionMessage = versionMessageRepository.saveAndFlush(new VersionMessage(code, link));
+
+                Community c = communityRepository.findByRewriteUrlParameter(userDeviceData.getCommunityUrl());
+                DeviceType deviceType = getDeviceType(userDeviceData);
+                VersionCheck versionCheck = new VersionCheck(deviceType, c, versionMessage, status, newApplicationName, clientVersion, imageFileName);
+                versionCheckRepository.saveAndFlush(versionCheck);
+            }
+        });
     }
 
     @And("^(.+) header is in new format \"(.+)\"$")
-    public void whenUserAgentIsNotDefault(String headerName, String headerValue) {
-        for (UserDeviceData data : userDeviceDatas) {
-            Map<String, Object> model = new HashMap<String, Object>();
-            model.put("random", applicationName);
-            model.put("platform", getDeviceType(data).getName());
-            model.put("community", communityRepository.findByRewriteUrlParameter(data.getCommunityUrl()).getName());
+    public void whenUserAgentIsNotDefault(final String headerName, final String headerValue) {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData data) {
+                Map<String, Object> model = new HashMap<>();
+                model.put("random", applicationName);
+                model.put("platform", getDeviceType(data).getName());
+                model.put("community", communityRepository.findByRewriteUrlParameter(data.getCommunityUrl()).getName());
 
-            String interpolatedHeaderValue = interpolator.interpolate(headerValue, model);
+                String interpolatedHeaderValue = interpolator.interpolate(headerValue, model);
 
-            getLogger().info("Sending " + headerName + ":" + interpolatedHeaderValue);
+                getLogger().info("Sending " + headerName + ":" + interpolatedHeaderValue);
 
-            headers.put(data, interpolatedHeaderValue);
-        }
+                headers.put(data, interpolatedHeaderValue);
+            }
+        });
     }
 
     @And("^json data is '(.+)'$")
