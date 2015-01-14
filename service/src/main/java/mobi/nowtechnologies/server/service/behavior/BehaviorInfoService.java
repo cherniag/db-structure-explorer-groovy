@@ -3,11 +3,12 @@ package mobi.nowtechnologies.server.service.behavior;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfig;
-import mobi.nowtechnologies.server.persistence.domain.behavior.CommunityConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
 import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
+import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.slf4j.Logger;
@@ -29,12 +30,14 @@ public class BehaviorInfoService {
     ReferralRepository referralRepository;
     @Resource
     CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    @Resource
+    BehaviorConfigRepository behaviorConfigRepository;
 
     private String activationDatePropertyName;
 
-    public boolean isFreemiumActivated(User user, Date now) {
+    public boolean isFirstDeviceLoginBeforeReferralsActivation(User user) {
         String communityName = user.getCommunityRewriteUrl();
-        return communityResourceBundleMessageSource.readDate(communityName, activationDatePropertyName).before(now);
+        return new Date(user.getFirstDeviceLoginMillis()).before(communityResourceBundleMessageSource.readDate(communityName, activationDatePropertyName));
     }
 
     @Transactional(readOnly = true)
@@ -59,9 +62,10 @@ public class BehaviorInfoService {
     }
 
     @Transactional(readOnly = true)
-    public BehaviorConfig getBehaviorConfig(Community community) {
-        CommunityConfig communityConfig = communityConfigRepository.findByCommunity(community);
-        return communityConfig.getBehaviorConfig();
+    public BehaviorConfig getBehaviorConfig(boolean supportsFreemium, Community community) {
+        return supportsFreemium ?
+                communityConfigRepository.findByCommunity(community).getBehaviorConfig() :
+                behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(community.getId(), BehaviorConfigType.DEFAULT);
     }
 
     public void setActivationDatePropertyName(String activationDatePropertyName) {

@@ -23,16 +23,25 @@ public class ContextController extends CommonController {
 
     @RequestMapping(method = GET,
             value = {
-                    "**/{community}/{apiVersion:6\\.8}/CONTEXT",
-                    "**/{community}/{apiVersion:6\\.7}/CONTEXT"
+                    "**/{community}/{apiVersion:6\\.8}/CONTEXT"
             })
     public ModelAndView getContext(@AuthenticatedUser User user) throws Exception {
+        return getContext(user, true);
+    }
+
+    @RequestMapping(method = GET,
+            value = {"**/{community}/{apiVersion:6\\.7}/CONTEXT"})
+    public ModelAndView getContextNoFreemiumSupport(@AuthenticatedUser User user) throws Exception {
+        return getContext(user, false);
+    }
+
+    public ModelAndView getContext(@AuthenticatedUser User user, boolean supportsFreemium) throws Exception {
         LOGGER.info("command processing started");
         Exception ex = null;
         try {
             userService.authorize(user, false, ActivationStatus.ACTIVATED);
 
-            ContextDto contextDto = contextDtoAsm.assemble(user);
+            ContextDto contextDto = contextDtoAsm.assemble(user, supportsFreemium);
 
             return createModelAndView(contextDto);
         } catch (Exception e) {

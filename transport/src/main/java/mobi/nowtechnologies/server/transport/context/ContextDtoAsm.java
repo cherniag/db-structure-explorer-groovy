@@ -36,27 +36,22 @@ public class ContextDtoAsm {
     //
     // API
     //
-    public ContextDto assemble(User user) {
-        Date now = timeService.now();
-        if (behaviorInfoService.isFreemiumActivated(user, now)) {
-            return assemble(user, now);
-        } else {
+    public ContextDto assemble(User user, boolean supportsFreemium) {
+        if (!supportsFreemium && behaviorInfoService.isFirstDeviceLoginBeforeReferralsActivation(user)) {
+            // we do not create snapshots and thus can't move forward
             return ContextDto.empty();
         }
-    }
 
-    //
-    // Internal parts
-    //
-    private ContextDto assemble(User user, Date serverTime) {
         Community community = user.getCommunity();
         String rewriteUrlParameter = community.getRewriteUrlParameter();
-        BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(community);
-        Map<UserStatusType, Date> userStatusTypeDateMap = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
+
+        BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(supportsFreemium, community);
         UserReferralsSnapshot snapshot = behaviorInfoService.getUserReferralsSnapshot(user, behaviorConfig);
 
-        ContextDto context = ContextDto.normal(serverTime);
+        Date serverTime = timeService.now();
+        Map<UserStatusType, Date> userStatusTypeDateMap = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
 
+        ContextDto context = ContextDto.normal(serverTime);
         context.getReferralsContextDto().fill(snapshot);
         fillChartsTemplatesInfo(context, behaviorConfig);
 
