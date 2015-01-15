@@ -75,6 +75,7 @@ public class GetNewsFeature {
                       @Transform(DictionaryTransformer.class) Word formats,
                       @Transform(DictionaryTransformer.class) Word versions,
                       String community){
+        this.messageRepository.deleteAll();
         this.allVersions = ApiVersions.from(versions.list());
 
         // already activated if not empty

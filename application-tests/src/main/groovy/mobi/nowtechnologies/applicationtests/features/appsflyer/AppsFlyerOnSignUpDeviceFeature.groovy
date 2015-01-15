@@ -14,12 +14,15 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.*
 /**
@@ -39,8 +42,11 @@ class AppsFlyerOnSignUpDeviceFeature {
     AppsFlyerDataRepository appsFlyerDataRepository
 
     List<UserDeviceData> userDeviceDatas
-    def appsFlyerUids = [:]
-    def newAppsFlyerUids = [:]
+    def appsFlyerUids = new ConcurrentHashMap<UserDeviceData, String>()
+
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
 
     @Given('^First time user with (.+) using (.+) formats with (.+) bellow (.+) and (.+)$')
     def "First time user with all devices using JSON and XML formats with all versions bellow 6.6 and all communities"(
@@ -51,11 +57,12 @@ class AppsFlyerOnSignUpDeviceFeature {
               @Transform(DictionaryTransformer.class) Word communities) {
         def bellow = ApiVersions.from(versions.set()).bellow(bellowVersion)
         userDeviceDatas = userDeviceDataService.table(bellow, communities.set(), deviceTypes.set(), formats.set(RequestFormat));
+        runner = runnerService.create(userDeviceDatas)
     }
 
     @When('^User registers using device with appsflyer uid$')
     def "User registers using device with appsflyer uid"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def appsFlyerUid = UUID.randomUUID().toString();
             appsFlyerUids.put(it, appsFlyerUid)
             partnerDeviceSet.singupWithAppsFlyer(it, appsFlyerUid);
@@ -64,7 +71,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @Then('^User should have (.+) activation status in database$')
     def "User should have REGISTERED activation status in database"(ActivationStatus activationStatus) {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             assertEquals("Expected status $activationStatus but was $user.activationStatus for [$it]-[$user.id]", activationStatus, user.activationStatus);
@@ -73,7 +80,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @And('^appsflyer data should not be created$')
     def "appsflyer data should not be created"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -90,11 +97,12 @@ class AppsFlyerOnSignUpDeviceFeature {
                @Transform(DictionaryTransformer.class) Word communities) {
         def above = ApiVersions.from(versions.set()).above(aboveVersion);
         userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat));
+        runner = runnerService.create(userDeviceDatas)
     }
 
     @And('^appsflyer data should be created$')
     def "appsflyer data should be created"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -104,7 +112,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @And('^appsflyer uid in db should be the same as sent during sign up$')
     def "appsflyer uid in db should be the same as sent during sign up"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -114,7 +122,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @When('^User registers using device without appsflyer uid$')
     def "User registers using device without appsflyer uid"() {
-        userDeviceDatas.each {
+        runner.parallel {
             partnerDeviceSet.singupWithAppsFlyer(it, null);
         }
     }
@@ -128,7 +136,8 @@ class AppsFlyerOnSignUpDeviceFeature {
             @Transform(DictionaryTransformer.class) Word communities) {
         def above = ApiVersions.from(versions.set()).above(aboveVersion)
         userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat));
-        userDeviceDatas.each {
+        runner = runnerService.create(userDeviceDatas)
+        runner.parallel {
             def appsFlyerUid = UUID.randomUUID().toString();
             appsFlyerUids.put(it, appsFlyerUid)
             partnerDeviceSet.singupWithAppsFlyer(it, appsFlyerUid);
@@ -137,7 +146,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @When('^User registers again using device with new appsflyer uid$')
     def "User registers again using device with new appsflyer uid"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def appsFlyerUid = UUID.randomUUID().toString();
             appsFlyerUids.put(it, appsFlyerUid)
@@ -147,7 +156,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @And('appsflyer uid in db should be the same as sent during last sign up')
     def "appsflyer uid in db should be the same as sent during last sign up"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -157,7 +166,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @And('^appsflyer data should be re-created$')
     def "appsflyer data should be re-created"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -167,7 +176,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @And('appsflyer uid in db should be as old user\'s appsflyer uid')
     def "appsflyer uid in db should be as old user's appsflyer uid"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -177,7 +186,7 @@ class AppsFlyerOnSignUpDeviceFeature {
 
     @When('^User registers again using device without appsflyer uid$')
     def "User registers again using device without appsflyer uid"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it);
             partnerDeviceSet.singup(it, null, null, false, phoneState.deviceUID);
         }

@@ -19,6 +19,7 @@ import org.unitils.core.util.ObjectFormatter
 import org.unitils.reflectionassert.ReflectionComparatorMode
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
@@ -41,7 +42,7 @@ class FacebookFailureFeature {
 
     List<UserDeviceData> currentUserDevices
 
-    Map<UserDeviceData, User> users = new HashMap<>()
+    Map<UserDeviceData, User> users = new ConcurrentHashMap<>()
 
     @Transactional('applicationTestsTransactionManager')
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')

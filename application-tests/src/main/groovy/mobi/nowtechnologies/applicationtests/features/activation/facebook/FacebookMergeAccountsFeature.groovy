@@ -6,10 +6,10 @@ import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
-import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word
+import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
@@ -21,6 +21,7 @@ import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInf
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Created by kots on 9/23/2014.
@@ -56,11 +57,9 @@ class FacebookMergeAccountsFeature {
     List<UserDeviceData> secondUserDevices
     List<List<UserDeviceData>> zippedUserDevices
 
-    Map<UserDeviceData, Integer> oldUserIdMap = new HashMap<>()
-
-    Map<UserDeviceData, Integer> tempUserIdMap = new HashMap<>()
-
-    Map<UserDeviceData, Integer> secondUserIdMap = new HashMap<>()
+    Map<UserDeviceData, Integer> oldUserIdMap = new ConcurrentHashMap<>()
+    Map<UserDeviceData, Integer> tempUserIdMap = new ConcurrentHashMap<>()
+    Map<UserDeviceData, Integer> secondUserIdMap = new ConcurrentHashMap<>()
 
     @Before
     def cleanupBeforeScenario() {
