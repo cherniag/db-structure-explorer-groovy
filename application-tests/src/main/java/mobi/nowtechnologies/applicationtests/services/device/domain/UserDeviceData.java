@@ -3,7 +3,7 @@ package mobi.nowtechnologies.applicationtests.services.device.domain;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import org.springframework.util.Assert;
 
-public class UserDeviceData {
+public class UserDeviceData implements Comparable<UserDeviceData> {
     private String apiVersion;
     private String community;
     private String deviceType;
@@ -11,7 +11,7 @@ public class UserDeviceData {
     private String qualifier;
 
     public UserDeviceData(String apiVersion, String community, String deviceType, RequestFormat format) {
-        this(apiVersion, community, deviceType, format, null);
+        this(apiVersion, community, deviceType, format, "");
     }
 
     public UserDeviceData(String apiVersion, String community, String deviceType, RequestFormat format, String qualifier) {
@@ -72,5 +72,34 @@ public class UserDeviceData {
         result = 31 * result + format.hashCode();
         result = 31 * result + (qualifier != null ? qualifier.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(UserDeviceData o) {
+        final int apiVersionCompareResult = apiVersion.compareTo(o.apiVersion);
+        if(apiVersionCompareResult != 0) {
+            return apiVersionCompareResult;
+        } else {
+            final int communityCompareResult = community.compareTo(o.community);
+            if(communityCompareResult != 0) {
+                return communityCompareResult;
+            } else {
+                final int deviceTypeCompareResult = deviceType.compareTo(o.deviceType);
+                if(deviceTypeCompareResult != 0) {
+                    return deviceTypeCompareResult;
+                } else {
+                    final int formatCompareResult = format.compareTo(o.format);
+                    if(formatCompareResult != 0) {
+                        return formatCompareResult;
+                    } else {
+                        return maskNull(qualifier).compareTo(maskNull(o.qualifier));
+                    }
+                }
+            }
+        }
+    }
+
+    private String maskNull(String v) {
+        return (v == null) ? "" : v;
     }
 }

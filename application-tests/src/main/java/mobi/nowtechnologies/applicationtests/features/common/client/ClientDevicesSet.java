@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.applicationtests.features.common.client;
 
+import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.ServiceConfigHttpService;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
@@ -38,6 +39,8 @@ public abstract class ClientDevicesSet {
     protected AccountCheckHttpService accountCheckHttpService;
     @Resource
     protected NewsHttpService newsHttpService;
+    @Resource
+    protected ServiceConfigHttpService serviceConfigHttpService;
 
     protected Map<UserDeviceData, PhoneStateImpl> states = new ConcurrentHashMap<UserDeviceData, PhoneStateImpl>();
 
@@ -54,6 +57,10 @@ public abstract class ClientDevicesSet {
         state.accountCheck = accountCheckHttpService.accountCheckFromIOS(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat(), iTunesReceipt);
     }
 
+
+    public ResponseEntity<String> serviceConfig(UserDeviceData userDeviceData, String header) {
+        return serviceConfigHttpService.serviceConfig(userDeviceData, header);
+    }
 
     //
     // Sign up

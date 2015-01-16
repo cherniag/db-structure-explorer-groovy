@@ -12,6 +12,8 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +21,7 @@ import org.unitils.core.util.ObjectFormatter
 import org.unitils.reflectionassert.ReflectionComparatorMode
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.assertEquals
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals
@@ -38,9 +41,12 @@ class GooglePlusErrorCodesFeature {
     @Resource
     UserDbService userDbService
 
-    List<UserDeviceData> currentUserDevices
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
 
-    Map<UserDeviceData, User> users = new HashMap<>();
+    List<UserDeviceData> currentUserDevices
+    Map<UserDeviceData, User> users = new ConcurrentHashMap<>();
 
     @Transactional("applicationTestsTransactionManager")
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')
@@ -50,8 +56,11 @@ class GooglePlusErrorCodesFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        currentUserDevices.each {
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel {
             deviceSet.singup(it)
+        }
+        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 

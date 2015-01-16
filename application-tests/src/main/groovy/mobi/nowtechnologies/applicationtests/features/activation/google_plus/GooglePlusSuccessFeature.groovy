@@ -15,6 +15,8 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository
 import mobi.nowtechnologies.server.shared.enums.ProviderType
@@ -56,6 +58,10 @@ class GooglePlusSuccessFeature {
 
     List<UserDeviceData> currentUserDevices
 
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
+
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')
     def "Registered user with given devices using given format for given versions and given communities"(
             @Transform(DictionaryTransformer.class) Word devices,
@@ -63,7 +69,10 @@ class GooglePlusSuccessFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        currentUserDevices.each { deviceSet.singup(it) }
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel {
+            deviceSet.singup(it)
+        }
     }
 
     @When('^Registered user enters Google Plus credentials$')

@@ -14,6 +14,9 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService;
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
+import mobi.nowtechnologies.applicationtests.services.runner.Runner;
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
@@ -38,6 +41,9 @@ public class XtifyOnSignupFeature {
     private UserDbService userDbService;
     @Resource
     private DeviceUserDataRepository deviceUserDataRepository;
+    @Resource
+    private RunnerService runnerService;
+    private Runner runner;
 
     private List<UserDeviceData> userDeviceDatas;
 
@@ -46,6 +52,7 @@ public class XtifyOnSignupFeature {
                                 @Transform(DictionaryTransformer.class) Word communities,
                                 @Transform(DictionaryTransformer.class) Word devices) {
         userDeviceDatas = userDeviceDataService.table(Arrays.asList(version), communities.set(), devices.set());
+        runner = runnerService.create(userDeviceDatas);
     }
 
     @Given("^First time user with device using JSON and XML formats for (.+) above (.+) and (.+) and for (.+) available$")
@@ -55,54 +62,70 @@ public class XtifyOnSignupFeature {
                               @Transform(DictionaryTransformer.class) Word devices) {
         List<String> above = ApiVersions.from(versions.set()).above(aboveVersion);
         userDeviceDatas = userDeviceDataService.table(above, communities.set(), devices.set());
+        runner = runnerService.create(userDeviceDatas);
     }
 
     @When("^User registers using device with token$")
     public void whenUserRegistersWithToken() {
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            String xtify = UUID.randomUUID().toString();
-            partnerDeviceSet.singup(userDeviceData, xtify);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                String xtify = UUID.randomUUID().toString();
+                partnerDeviceSet.singup(userDeviceData, xtify);
+            }
+        });
     }
 
     @When("^User registers using device sending empty xtify token$")
     public void whenUserRegistersWithNoToken() {
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            String emptyToken = StringUtils.EMPTY;
-            partnerDeviceSet.singup(userDeviceData, emptyToken);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                String emptyToken = StringUtils.EMPTY;
+                partnerDeviceSet.singup(userDeviceData, emptyToken);
+            }
+        });
     }
 
     @Then("^User should have (\\w+) activation status in database")
-    public void thenUserShouldRegistered(ActivationStatus activationStatus) {
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = findUserInDatabase(userDeviceData, phoneState);
-            assertEquals(activationStatus, user.getActivationStatus());
-        }
+    public void thenUserShouldRegistered(final ActivationStatus activationStatus) {
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                User user = findUserInDatabase(userDeviceData, phoneState);
+                assertEquals(activationStatus, user.getActivationStatus());
+            }
+        });
     }
 
     @And("^device user data should not be created$")
     public void deviceDataShouldNotBeCreated() {
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = findUserInDatabase(userDeviceData, phoneState);
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                User user = findUserInDatabase(userDeviceData, phoneState);
 
-            DeviceUserData deviceUserData = deviceUserDataRepository.find(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
-            assertNull(deviceUserData);
-        }
+                DeviceUserData deviceUserData = deviceUserDataRepository.find(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
+                assertNull(deviceUserData);
+            }
+        });
     }
 
     @And("^device user data should be created with xtify user sent$")
     public void deviceDataShouldBeCreatedWithXtifyUserSent() {
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = findUserInDatabase(userDeviceData, phoneState);
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                User user = findUserInDatabase(userDeviceData, phoneState);
 
-            DeviceUserData deviceUserData = deviceUserDataRepository.find(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
-            assertNotNull(deviceUserData);
-            assertEquals(phoneState.getLastSentXTofyToken(), deviceUserData.getXtifyToken());
-        }
+                DeviceUserData deviceUserData = deviceUserDataRepository.find(user.getId(), user.getCommunityRewriteUrl(), user.getDeviceUID());
+                assertNotNull(deviceUserData);
+                assertEquals(phoneState.getLastSentXTofyToken(), deviceUserData.getXtifyToken());
+            }
+        });
     }
 
     @After

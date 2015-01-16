@@ -1,4 +1,4 @@
-@Ready3
+@Ready
 Feature: Activated user successfully gets news
   Scenario Outline: Activated o2 user successfully gets news
     Given Activated via OTAC user with all devices using JSON and XML format for all versions and o2 community
