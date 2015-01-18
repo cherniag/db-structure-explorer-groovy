@@ -60,7 +60,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m</argLine>
+                    <argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=500m -XX:-UseSplitVerifier</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -211,8 +211,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
