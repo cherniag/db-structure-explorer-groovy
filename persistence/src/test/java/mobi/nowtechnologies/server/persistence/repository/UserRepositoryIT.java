@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
@@ -288,9 +289,11 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser);
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> userPage = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
 
-        assertNotNull(actualUsers);
+        assertNotNull(userPage);
+
+        List<User> actualUsers = userPage.getContent();
 
         assertEquals(1, actualUsers.size());
         assertEquals(testUser.getId(), actualUsers.get(0).getId());
@@ -325,7 +328,11 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser);
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> userPage = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+
+        assertNotNull(userPage);
+
+        List<User> actualUsers = userPage.getContent();
 
         assertNotNull(actualUsers);
         assertEquals(0, actualUsers.size());
@@ -365,7 +372,11 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
 
         testUser = userRepository.save(testUser);
 
-        List<User> actualUsers = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> userPage = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount));
+
+        assertNotNull(userPage);
+
+        List<User> actualUsers = userPage.getContent();
 
         assertNotNull(actualUsers);
         assertEquals(1, actualUsers.size());
@@ -428,7 +439,10 @@ public class UserRepositoryIT extends AbstractRepositoryIT{
         testUser = userRepository.save(testUser);
 
         //when
-        List<User> actualUsers = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount));
+
+        //then
+        List<User> actualUsers = usersPage.getContent();
 
         //then
         assertNotNull(actualUsers);

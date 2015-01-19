@@ -1547,7 +1547,6 @@ public class User implements Serializable {
                 .add("conformStoredToken", conformStoredToken)
                 .add("lastDeviceLogin", lastDeviceLogin)
                 .add("lastWebLogin", lastWebLogin)
-                .add("lastWebLogin", lastWebLogin)
                 .add("firstUserLoginMillis", firstUserLoginMillis)
                 .add("firstDeviceLoginMillis", firstDeviceLoginMillis)
                 .add("lastBefore48SmsMillis", lastBefore48SmsMillis)

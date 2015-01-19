@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import com.google.common.collect.Lists;
-import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.dao.*;
 import mobi.nowtechnologies.server.persistence.domain.*;
@@ -15,7 +13,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
@@ -24,6 +21,7 @@ import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
+import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -46,6 +44,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -65,9 +64,9 @@ import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.DIRECT;
 import static mobi.nowtechnologies.server.shared.enums.ContractChannel.INDIRECT;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
@@ -85,6 +84,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -2427,50 +2427,43 @@ public class UserServiceTest {
 
 	@Test
 	public void testFetUsersForRetryPayment() {
-		
+		//given
+		int maxCount = 10;
+
 		final int currentTimeSeconds = Integer.MAX_VALUE;
 		PowerMockito.mockStatic(Utils.class);
 		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 		
-		List<User> expectedUsers = Collections.<User>emptyList();
+		Page usersPageMock = Mockito.mock(Page.class);
+		Mockito.when(userRepositoryMock.getUsersForRetryPayment(currentTimeSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"))).thenReturn(usersPageMock);
 
-        int maxCount = 10;
-        Mockito.when(userRepositoryMock.getUsersForRetryPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount)))).thenReturn(expectedUsers);
+		//when
+		Page usersPage = userServiceSpy.getUsersForRetryPayment(maxCount);
 		
-		ListDataResult<User> users = userServiceSpy.getUsersForRetryPayment(maxCount);
+		//then
+		assertEquals(usersPageMock, usersPage);
 		
-		assertNotNull(users);
-		assertEquals(expectedUsers, users.getData());
+		verify(userRepositoryMock).getUsersForRetryPayment(currentTimeSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
 	}
 
     @Test
     public void testGetUsersForPendingPaymentMoreThanMaxCount() throws Exception {
-        createUserWithO2PaymentDetails();
-        List<User> list = Lists.newArrayList(user, user, user, user);
+		//given
         int maxCount = 4;
-        long total = 7L;
-        when(userRepositoryMock.getUsersForPendingPayment(anyInt(), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")))).thenReturn(list);
-        when(userRepositoryMock.getUsersForPendingPaymentCount(anyInt())).thenReturn(total);
+		Page usersPageMock = Mockito.mock(Page.class);
+		final int currentTimeSeconds = Integer.MAX_VALUE;
+		mockStatic(Utils.class);
+		PowerMockito.when(getEpochSeconds()).thenReturn(currentTimeSeconds);
 
-        ListDataResult<User> dataResult = userServiceSpy.getUsersForPendingPayment(maxCount);
-        assertEquals(maxCount, dataResult.getSize());
-        assertEquals(maxCount, dataResult.getData().size());
-        assertEquals(total, dataResult.getTotal());
-    }
+		when(userRepositoryMock.getUsersForPendingPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")))).thenReturn(usersPageMock);
 
-    @Test
-    public void testGetUsersForRetryPaymentMoreThanMaxCount() throws Exception {
-        createUserWithO2PaymentDetails();
-        List<User> list = Lists.newArrayList(user, user, user, user);
-        int maxCount = 4;
-        long total = 7L;
-        when(userRepositoryMock.getUsersForRetryPayment(anyInt(), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")))).thenReturn(list);
-        when(userRepositoryMock.getUsersForRetryPaymentCount(anyInt())).thenReturn(total);
+		//when
+		Page<User> usersPage = userServiceSpy.getUsersForPendingPayment(maxCount);
 
-        ListDataResult<User> dataResult = userServiceSpy.getUsersForRetryPayment(maxCount);
-        assertEquals(maxCount, dataResult.getSize());
-        assertEquals(maxCount, dataResult.getData().size());
-        assertEquals(total, dataResult.getTotal());
+		//then
+		assertEquals(usersPageMock, usersPage);
+
+		verify(userRepositoryMock).getUsersForPendingPayment(eq(currentTimeSeconds), eq(new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment")));
     }
 
     @Test

@@ -66,7 +66,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 		PayPalResponse response = httpService.makeReferenceTransactionRequest(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount(), communityRewriteUrlParameter);
 		pendingPayment.setExternalTxId(response.getTransactionId());
 		entityService.updateEntity(pendingPayment);
-		LOGGER.info("PayPal responsed {} for pending payment id: {}", response, pendingPayment.getI());
+		LOGGER.info("PayPal responded {} for pending payment id: {}", response, pendingPayment.getI());
 		commitPayment(pendingPayment, response);
 	}
 

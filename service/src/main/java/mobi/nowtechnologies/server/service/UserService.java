@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.util.ServerMessage;
@@ -42,6 +41,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -1459,19 +1459,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public ListDataResult<User> getUsersForPendingPayment(int maxCount) {
+    public Page<User> getUsersForPendingPayment(int maxCount) {
         int epochSeconds = getEpochSeconds();
-
-        List<User> users = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
-
-        ListDataResult<User> result = new ListDataResult<User>(users);
-
-        if (users.size() == maxCount) {
-            long usersForPendingPaymentCount = userRepository.getUsersForPendingPaymentCount(epochSeconds);
-            result.setTotal(usersForPendingPaymentCount);
+        return userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
         }
-        return result;
-    }
 
     @Transactional(readOnly = true)
     public List<User> getListOfUsersForWeeklyUpdate() {
@@ -1502,18 +1493,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public ListDataResult<User> getUsersForRetryPayment(int maxCount) {
+    public Page<User> getUsersForRetryPayment(int maxCount) {
         int epochSeconds = getEpochSeconds();
 
-        List<User> users = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
-
-        ListDataResult<User> result = new ListDataResult<User>(users);
-
-        if(users.size() == maxCount) {
-            long total = userRepository.getUsersForRetryPaymentCount(epochSeconds);
-            result.setTotal(total);
-        }
-        return result;
+        return userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
     }
 
     @Transactional(propagation = REQUIRED)

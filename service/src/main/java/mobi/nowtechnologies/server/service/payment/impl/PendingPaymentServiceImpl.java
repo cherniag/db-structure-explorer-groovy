@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.server.persistence.dao.PaymentDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -16,10 +15,10 @@ import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,56 +45,54 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
     private int maxCount;
 
     @Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public List<PendingPayment> createPendingPayments() {
-		LOGGER.info("Selecting users for pending payments...");
-        final ListDataResult<User> users = userService.getUsersForPendingPayment(maxCount);
+    @Override
+    public List<PendingPayment> createPendingPayments() {
+        LOGGER.info("Selecting users for pending payments...");
+        final Page<User> usersPage = userService.getUsersForPendingPayment(maxCount);
 
-        LOGGER.info("{} users were selected for pending payment", users.getSize());
-        if(users.totalExceedsDataSize()) {
-            LOGGER.warn("Pending Payments throughput is not enough to process this amount: {}, max count: {} ", users.getTotal(), maxCount);
+        LOGGER.info("{} users were selected for pending payment", usersPage.getNumberOfElements());
+        if (usersPage.hasNextPage()) {
+            LOGGER.warn("Pending Payments throughput is not enough to process this amount: {}, max count: {} ", usersPage.getTotalElements(), maxCount);
         }
 
-        // unsubscribing users with invalid payment policy
-        for (User user : collectUsersWithInvalidPaymentPolicy(users)) {
-            LOGGER.info("Creating pending payment was failed for user {}, because current paymentPolicy of this user is invalid user and needs to unsubscribe him", user.getUserName());
-            userService.unsubscribeUser(user.getId(), new UnsubscribeDto().withReason("Payment Policy is invalid for user"));
-        }
-
-        // processing users with valid payment policy
         List<PendingPayment> pendingPayments = new LinkedList<PendingPayment>();
-		for (User user : collectUsersWithValidPaymentPolicy(users)) {
-            LOGGER.info("Creating pending payment for user {} with balance {}", user.getId(), user.getSubBalance());
-            PendingPayment pendingPayment = createPendingPayment(user, REGULAR);
-            pendingPayment = paymentDao.savePendingPayment(pendingPayment);
-            pendingPayments.add(pendingPayment);
+        for (User user : usersPage.getContent()) {
+            if (user.isInvalidPaymentPolicy()) {
+                LOGGER.info("Creating pending payment was failed for user {}, because current paymentPolicy of this user is invalid user and needs to unsubscribe him", user.getUserName());
+                userService.unsubscribeUser(user.getId(), new UnsubscribeDto().withReason("Payment Policy is invalid for user"));
+            } else {
+                LOGGER.info("Creating pending payment for user {} with balance {}", user.getId(), user.getSubBalance());
+                PendingPayment pendingPayment = createPendingPayment(user, REGULAR);
+                pendingPayment = pendingPaymentRepository.save(pendingPayment);
+                pendingPayments.add(pendingPayment);
 
-            PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
-            currentPaymentDetails.setLastPaymentStatus(AWAITING);
-            currentPaymentDetails.resetMadeAttemptsForFirstPayment();
-            user = userService.updateUser(user);
-            LOGGER.info("Pending payment {} was created for user {}", pendingPayment.getInternalTxId(), user.getUserName());
-		}
+                PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
+                currentPaymentDetails.setLastPaymentStatus(AWAITING);
+                currentPaymentDetails.resetMadeAttemptsForFirstPayment();
+                user = userService.updateUser(user);
+                LOGGER.info("Pending payment {} was created for user {}", pendingPayment.getInternalTxId(), user.getUserName());
+            }
+        }
 
-		LOGGER.info("{} pending payments were created", pendingPayments.size());
-		return pendingPayments;
-	}
+        LOGGER.info("{} pending payments were created", pendingPayments.size());
+        return pendingPayments;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public List<PendingPayment> createRetryPayments() {
 		LOGGER.info("Start creating retry payments...");
-        final ListDataResult<User> users = userService.getUsersForRetryPayment(maxCount);
+		final Page<User> usersPage = userService.getUsersForRetryPayment(maxCount);
 
-		LOGGER.info("{} users were selected for retry payment", users.getSize());
-        if(users.totalExceedsDataSize()) {
-            LOGGER.warn("Retry Payments throughput is not enough to process this amount: {}, max count: {} ", users.getTotal(), maxCount);
+		LOGGER.info("{} users were selected for retry payment", usersPage.getNumberOfElements());
+		if (usersPage.hasNextPage()) {
+			LOGGER.warn("Retry Payments throughput is not enough to process this amount: {}, max count: {} ", usersPage.getTotalElements(), maxCount);
         }
 
 		List<PendingPayment> retryPayments = new LinkedList<PendingPayment>();
-		for (User user : users.getData()) {
+		for (User user : usersPage.getContent()) {
 			PendingPayment pendingPayment = createPendingPayment(user, RETRY);
-            pendingPayment = paymentDao.savePendingPayment(pendingPayment);
+			pendingPayment = pendingPaymentRepository.save(pendingPayment);
 			retryPayments.add(pendingPayment);
 			PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 			currentPaymentDetails.setLastPaymentStatus(AWAITING);
@@ -167,25 +164,5 @@ public class PendingPaymentServiceImpl implements PendingPaymentService {
             pendingPayment.setType(type);
         }
         return pendingPayment;
-    }
-
-    private List<User> collectUsersWithValidPaymentPolicy(ListDataResult<User> users) {
-        List<User> result = new ArrayList<User>();
-        for (User user : users.getData()) {
-            if (!user.isInvalidPaymentPolicy()) {
-                result.add(user);
-            }
-        }
-        return result;
-    }
-
-    private List<User> collectUsersWithInvalidPaymentPolicy(ListDataResult<User> users) {
-        List<User> result = new ArrayList<User>();
-        for (User user : users.getData()) {
-            if (user.isInvalidPaymentPolicy()) {
-                result.add(user);
-            }
-        }
-        return result;
     }
 }
