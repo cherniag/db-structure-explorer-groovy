@@ -1,4 +1,4 @@
--- SRV-490 - [SERVER] CR 376: MTVNZ Promotion setup for initial usage
+-- SRV-485 - [SERVER] CR 315: Change Promotions plan for MTV1 community
 
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
