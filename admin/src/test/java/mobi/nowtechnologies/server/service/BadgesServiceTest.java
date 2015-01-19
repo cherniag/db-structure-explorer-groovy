@@ -269,5 +269,4 @@ public class BadgesServiceTest {
         assertEquals("general", entities.getValue().iterator().next().getOriginalFilenameAlias().getFileName());
     }
 
-
 }
