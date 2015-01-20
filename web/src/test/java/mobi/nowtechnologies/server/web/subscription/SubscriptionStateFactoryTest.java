@@ -465,7 +465,7 @@ public class SubscriptionStateFactoryTest {
 	}
 
 	private Date getFutureDate() {
-		Date d = new DateTime().plus(Period.days(DAYS)).plus(Period.hours(1)).toDate();
+		Date d = new DateTime().plus(Period.days(DAYS - 1)).plus(Period.hours(1)).toDate();
 		return new Date((d.getTime() / 1000) * 1000);
 	}
 

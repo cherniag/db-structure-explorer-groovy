@@ -1,16 +1,15 @@
 package mobi.nowtechnologies.server.web.subscription;
 
-import java.util.Date;
-
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 public class SubscriptionStateFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionStateFactory.class);
@@ -75,15 +74,15 @@ public class SubscriptionStateFactory {
 		return state;
 	}
 
-	protected Integer calculateDaysTillNextBilling(Date date) {
+	private Integer calculateDaysTillNextBilling(Date date) {
 		if (date == null) {
 			return null;
 		}
 
-		return Days.daysBetween(new DateTime(getCurrentDate()), new DateTime(date)).getDays();
+		return Days.daysBetween(new DateTime(getCurrentDate()), new DateTime(date)).getDays() + 1;
 	}
 
-	protected Date getCurrentDate() {
+	private Date getCurrentDate() {
 		return new Date();
 	}
 
