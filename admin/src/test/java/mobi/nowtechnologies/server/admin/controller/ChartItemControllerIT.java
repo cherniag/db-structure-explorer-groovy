@@ -42,6 +42,7 @@ public class ChartItemControllerIT extends AbstractAdminITTest{
     @Resource LabelRepository labelRepository;
 
     @Test
+    @Ignore
     public void shouldReturnDuplicatedMediaAcrossNearestChartsDtos() throws Exception {
         //given
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(URL_DATE_TIME_FORMAT);
