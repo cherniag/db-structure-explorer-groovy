@@ -4,20 +4,18 @@ import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.ITunesPaymentLockRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
-import mobi.nowtechnologies.server.service.itunes.ITunesServiceImpl;
+import mobi.nowtechnologies.server.service.itunes.*;
 import mobi.nowtechnologies.server.service.payment.SubmittedPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.ITunesInAppSubscriptionResponseDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import mobi.nowtechnologies.server.service.itunes.ITunesDtoConverter;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +32,7 @@ import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -43,26 +40,27 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({SubmittedPayment.class, Utils.class, PaymentEvent.class, UserStatusDao.class})
-public class ITunesServiceImplTest {
+public class ITunesServiceTest {
 
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSourceMock;
-    private ITunesServiceImpl fixtureITunesServiceImpl;
-    private UserService mockUserService;
+    private ITunesValidator iTunesValidator = mock(ITunesValidator.class);
+    private ITunesService fixtureITunesService;
+    private UserService mockUserService = mock(UserService.class);
     private ApplicationEventPublisher mockApplicationEventPublisher;
     private PaymentPolicyService mockPaymentPolicyService;
     private PostService mockPostService;
     private SubmittedPaymentService mockSubmittedPaymentService;
     private ITunesPaymentLockRepository iTunesPaymentLockRepository;
-    private ITunesDtoConverter iTunesDtoConverter;
+    private PaymentPolicyRepository paymentPolicyRepository;
+    private ITunesReceiptParser iTunesReceiptParser;
 
     final String iTunesUrl = "https://sandbox.itunes.apple.com/verifyReceipt";
     final String password = "564e6871a69b424eb3197750d3a60bf7";
 
     @Before
     public void setUp() throws Exception {
-        fixtureITunesServiceImpl = new ITunesServiceImpl();
+        fixtureITunesService = new ITunesService();
 
-        mockUserService = mock(UserService.class);
         mockApplicationEventPublisher = mock(ApplicationEventPublisher.class);
         mockPaymentPolicyService = mock(PaymentPolicyService.class);
         mockPostService = mock(PostService.class);
@@ -70,16 +68,20 @@ public class ITunesServiceImplTest {
         communityResourceBundleMessageSourceMock = mock(CommunityResourceBundleMessageSource.class);
         iTunesPaymentLockRepository = mock(ITunesPaymentLockRepository.class);
         // temp solution to preserve unit test logic, should be mock!
-        iTunesDtoConverter = new ITunesDtoConverter();
+        paymentPolicyRepository = mock(PaymentPolicyRepository.class);
+        iTunesReceiptParser = mock(ITunesReceiptParser.class);
 
-        fixtureITunesServiceImpl.setUserService(mockUserService);
-        fixtureITunesServiceImpl.setApplicationEventPublisher(mockApplicationEventPublisher);
-        fixtureITunesServiceImpl.setPaymentPolicyService(mockPaymentPolicyService);
-        fixtureITunesServiceImpl.setPostService(mockPostService);
-        fixtureITunesServiceImpl.setSubmittedPaymentService(mockSubmittedPaymentService);
-        fixtureITunesServiceImpl.setMessageSource(communityResourceBundleMessageSourceMock);
-        fixtureITunesServiceImpl.setiTunesPaymentLockRepository(iTunesPaymentLockRepository);
-        fixtureITunesServiceImpl.setiTunesDtoConverter(iTunesDtoConverter);
+        iTunesValidator.setPostService(mockPostService);
+        iTunesValidator.setMessageSource(communityResourceBundleMessageSourceMock);
+
+        fixtureITunesService.setiTunesValidator(iTunesValidator);
+        fixtureITunesService.setUserService(mockUserService);
+        fixtureITunesService.setApplicationEventPublisher(mockApplicationEventPublisher);
+        fixtureITunesService.setPaymentPolicyService(mockPaymentPolicyService);
+        fixtureITunesService.setSubmittedPaymentService(mockSubmittedPaymentService);
+        fixtureITunesService.setiTunesPaymentLockRepository(iTunesPaymentLockRepository);
+        fixtureITunesService.setiTunesReceiptParser(iTunesReceiptParser);
+        fixtureITunesService.setPaymentPolicyRepository(paymentPolicyRepository);
 
         Mockito.doReturn(iTunesUrl).when(communityResourceBundleMessageSourceMock).getMessage("nowtop40", "apple.inApp.iTunesUrl", null, null);
         Mockito.doReturn(password).when(communityResourceBundleMessageSourceMock).getMessage("nowtop40", "apple.inApp.password", null, null);
@@ -129,7 +131,7 @@ public class ITunesServiceImplTest {
         final PaymentDetailsType paymentType = PaymentDetailsType.FIRST;
 
         when(mockUserService.findById(userId)).thenReturn(user);
-        when(mockPostService.sendHttpPost(eq(iTunesUrl), eq(body))).thenReturn(expectedResponse);
+        when(iTunesValidator.validateInITunes(user, base64EncodedAppStoreReceipt)).thenReturn(expectedResponse);
         when(mockPaymentPolicyService.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy);
 
         PowerMockito.mockStatic(Utils.class);
@@ -140,13 +142,16 @@ public class ITunesServiceImplTest {
 
         Mockito.doAnswer(new PaymentEventAnswer(expiresDate, paymentTimestamp, user, base64EncodedAppStoreReceipt, appStoreOriginalTransactionId, currencyISO, originalTransactionId, paymentType, paymentPolicySubCost)).when(mockApplicationEventPublisher).publishEvent(Mockito.any(PaymentEvent.class));
 
-        BasicResponse actualResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+        ITunesParseResult iTunesParseResult = mock(ITunesParseResult.class);
+        when(iTunesParseResult.isSuccessful()).thenReturn(true);
+        when(iTunesParseResult.getProductId()).thenReturn(appStoreProductId);
+        when(iTunesParseResult.getOriginalTransactionId()).thenReturn(originalTransactionId);
+        when(iTunesParseResult.getExpireTime()).thenReturn(expiresDate);
+        when(iTunesReceiptParser.parse(expectedResponse.getMessage())).thenReturn(iTunesParseResult);
 
-        assertNotNull(actualResponse);
-        assertEquals(expectedResponse, actualResponse);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
         Mockito.verify(mockUserService, Mockito.times(1)).findById(userId);
-        Mockito.verify(mockPostService, Mockito.times(1)).sendHttpPost(eq(iTunesUrl), eq(body));
         Mockito.verify(mockPaymentPolicyService, Mockito.times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
         Mockito.verify(mockSubmittedPaymentService, Mockito.times(1)).save(Mockito.any(SubmittedPayment.class));
         Mockito.verify(mockApplicationEventPublisher, Mockito.times(1)).publishEvent(Mockito.any(PaymentEvent.class));
@@ -200,7 +205,7 @@ public class ITunesServiceImplTest {
         PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
 
         when(mockUserService.findById(userId)).thenReturn(user);
-        when(mockPostService.sendHttpPost(eq(iTunesUrl), eq(body))).thenReturn(expectedResponse);
+        when(iTunesValidator.validateInITunes(user, base64EncodedAppStoreReceipt)).thenReturn(expectedResponse);
         when(mockPaymentPolicyService.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy);
 
         PowerMockito.mockStatic(Utils.class);
@@ -211,13 +216,16 @@ public class ITunesServiceImplTest {
 
         Mockito.doAnswer(new PaymentEventAnswer(expiresDate, paymentTimestamp, user, base64EncodedAppStoreReceipt, appStoreOriginalTransactionId, currencyISO, originalTransactionId, paymentType, paymentPolicySubCost)).when(mockApplicationEventPublisher).publishEvent(Mockito.any(PaymentEvent.class));
 
-        BasicResponse actualResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+        ITunesParseResult iTunesParseResult = mock(ITunesParseResult.class);
+        when(iTunesParseResult.isSuccessful()).thenReturn(true);
+        when(iTunesParseResult.getProductId()).thenReturn(appStoreProductId);
+        when(iTunesParseResult.getOriginalTransactionId()).thenReturn(originalTransactionId);
+        when(iTunesParseResult.getExpireTime()).thenReturn(expiresDate);
+        when(iTunesReceiptParser.parse(expectedResponse.getMessage())).thenReturn(iTunesParseResult);
 
-        assertNotNull(actualResponse);
-        assertEquals(expectedResponse, actualResponse);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
         Mockito.verify(mockUserService, Mockito.times(1)).findById(userId);
-        Mockito.verify(mockPostService, Mockito.times(1)).sendHttpPost(eq(iTunesUrl), eq(body));
         Mockito.verify(mockPaymentPolicyService, Mockito.times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
         Mockito.verify(mockSubmittedPaymentService, Mockito.times(1)).save(Mockito.any(SubmittedPayment.class));
         Mockito.verify(mockApplicationEventPublisher, Mockito.times(1)).publishEvent(Mockito.any(PaymentEvent.class));
@@ -251,8 +259,6 @@ public class ITunesServiceImplTest {
         user.setUserGroup(userGroup);
         user.setLastSuccessfulPaymentTimeMillis(0L);
 
-        String body = getBody(transactionReceipt);
-
         final String appStoreProductId = "com.musicqubed.o2.autorenew.test";
 
         BasicResponse expectedResponse = new BasicResponse();
@@ -270,7 +276,7 @@ public class ITunesServiceImplTest {
         final PaymentDetailsType paymentType = PaymentDetailsType.FIRST;
 
         when(mockUserService.findById(userId)).thenReturn(user);
-        when(mockPostService.sendHttpPost(eq(iTunesUrl), eq(body))).thenReturn(expectedResponse);
+        // when(mockPostService.sendHttpPost(eq(iTunesUrl), eq(body))).thenReturn(expectedResponse);
         when(mockPaymentPolicyService.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy);
 
         PowerMockito.mockStatic(Utils.class);
@@ -281,12 +287,10 @@ public class ITunesServiceImplTest {
 
         Mockito.doAnswer(new PaymentEventAnswer(expiresDate, paymentTimestamp, user, base64EncodedAppStoreReceipt, appStoreOriginalTransactionId, currencyISO, originalTransactionId, paymentType, paymentPolicySubCost)).when(mockApplicationEventPublisher).publishEvent(Mockito.any(PaymentEvent.class));
 
-        BasicResponse actualResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
-
-        assertNull(actualResponse);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
         Mockito.verify(mockUserService, Mockito.times(1)).findById(userId);
-        Mockito.verify(mockPostService, Mockito.times(0)).sendHttpPost(eq(iTunesUrl), eq(body));
+        // Mockito.verify(mockPostService, Mockito.times(0)).sendHttpPost(eq(iTunesUrl), eq(body));
         Mockito.verify(mockPaymentPolicyService, Mockito.times(0)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
         Mockito.verify(mockSubmittedPaymentService, Mockito.times(0)).save(Mockito.any(SubmittedPayment.class));
         Mockito.verify(mockApplicationEventPublisher, Mockito.times(0)).publishEvent(Mockito.any(PaymentEvent.class));
@@ -338,7 +342,7 @@ public class ITunesServiceImplTest {
         PowerMockito.mockStatic(UserStatusDao.class);
         PowerMockito.when(UserStatusDao.getLimitedUserStatus()).thenReturn(limitedUserStatus);
         when(mockUserService.findById(userId)).thenReturn(user);
-        when(mockPostService.sendHttpPost(eq(iTunesUrl), eq(body))).thenReturn(expectedResponse);
+        when(iTunesValidator.validateInITunes(user, base64EncodedAppStoreReceipt)).thenReturn(expectedResponse);
         when(mockPaymentPolicyService.findByCommunityAndAppStoreProductId(community, appStoreProductId)).thenReturn(paymentPolicy);
 
         PowerMockito.mockStatic(Utils.class);
@@ -349,13 +353,16 @@ public class ITunesServiceImplTest {
 
         Mockito.doAnswer(new PaymentEventAnswer(expiresDate, paymentTimestamp, user, base64EncodedAppStoreReceipt, appStoreOriginalTransactionId, currencyISO, originalTransactionId, paymentType, paymentPolicySubCost)).when(mockApplicationEventPublisher).publishEvent(Mockito.any(PaymentEvent.class));
 
-        BasicResponse actualResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+        ITunesParseResult iTunesParseResult = mock(ITunesParseResult.class);
+        when(iTunesParseResult.isSuccessful()).thenReturn(true);
+        when(iTunesParseResult.getProductId()).thenReturn(appStoreProductId);
+        when(iTunesParseResult.getOriginalTransactionId()).thenReturn(originalTransactionId);
+        when(iTunesParseResult.getExpireTime()).thenReturn(expiresDate);
+        when(iTunesReceiptParser.parse(expectedResponse.getMessage())).thenReturn(iTunesParseResult);
 
-        assertNotNull(actualResponse);
-        assertEquals(expectedResponse, actualResponse);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
         Mockito.verify(mockUserService, Mockito.times(1)).findById(userId);
-        Mockito.verify(mockPostService, Mockito.times(1)).sendHttpPost(eq(iTunesUrl), eq(body));
         Mockito.verify(mockPaymentPolicyService, Mockito.times(1)).findByCommunityAndAppStoreProductId(community, appStoreProductId);
         Mockito.verify(mockSubmittedPaymentService, Mockito.times(1)).save(Mockito.any(SubmittedPayment.class));
         Mockito.verify(mockApplicationEventPublisher, Mockito.times(1)).publishEvent(Mockito.any(PaymentEvent.class));
@@ -363,35 +370,29 @@ public class ITunesServiceImplTest {
 
     @Test
     public void processInCaseOfDuplicates() throws Exception {
-        ITunesDtoConverter responseConverter = mock(ITunesDtoConverter.class);
-        // temp solution while real converter is used
-        fixtureITunesServiceImpl.setiTunesDtoConverter(responseConverter);
-
         int userId = 100;
         String base64EncodedAppStoreReceipt = "SOME_RECEIPT";
-        String requestBody = "REQUEST_BODY";
+        String body = "REQUEST_BODY";
 
-        User user = getMockForEligibleUser(userId);
+        Community community = mock(Community.class);
+        User user = getMockForEligibleUser(userId, community);
 
         when(mockUserService.findById(userId)).thenReturn(user);
 
         BasicResponse expectedResponse = mock(BasicResponse.class);
         when(expectedResponse.getStatusCode()).thenReturn(HttpStatus.OK.value());
 
-        when(mockPostService.sendHttpPost(eq(iTunesUrl), eq(requestBody))).thenReturn(expectedResponse);
+        when(iTunesValidator.validateInITunes(user, base64EncodedAppStoreReceipt)).thenReturn(expectedResponse);
 
-        ITunesInAppSubscriptionResponseDto.Receipt receipt = mock(ITunesInAppSubscriptionResponseDto.Receipt.class);
-        when(receipt.getExpiresDateSeconds()).thenReturn(123456789);
+        ITunesParseResult iTunesParseResult = mock(ITunesParseResult.class);
+        when(iTunesParseResult.getExpireTime()).thenReturn(123456789000L);
 
-        ITunesInAppSubscriptionResponseDto responseDto = mock(ITunesInAppSubscriptionResponseDto.class);
-        when(responseDto.isSuccess()).thenReturn(true);
-        when(responseDto.getLatestReceiptInfo()).thenReturn(receipt);
-        when(responseConverter.convertToResponseDTO(expectedResponse)).thenReturn(responseDto);
-        when(responseConverter.convertToRequestBody(base64EncodedAppStoreReceipt, password)).thenReturn(requestBody);
+        when(iTunesParseResult.isSuccessful()).thenReturn(true);
+        when(iTunesReceiptParser.parse(expectedResponse.getMessage())).thenReturn(iTunesParseResult);
 
         when(iTunesPaymentLockRepository.saveAndFlush(new ITunesPaymentLock(100, 123456789))).thenThrow(new DataIntegrityViolationException(""));
 
-        fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
         verify(mockSubmittedPaymentService, never()).save(any(SubmittedPayment.class));
         verify(mockApplicationEventPublisher, never()).publishEvent(any(ApplicationEvent.class));
@@ -404,14 +405,14 @@ public class ITunesServiceImplTest {
         int userId = 100;
         String base64EncodedAppStoreReceipt = "SOME_RECEIPT";
 
-        User user = getMockForEligibleUser(userId);
+        Community community = mock(Community.class);
+        User user = getMockForEligibleUser(userId, community);
         when(user.hasActivePaymentDetails()).thenReturn(true);
 
         when(mockUserService.findById(userId)).thenReturn(user);
 
-        BasicResponse basicResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
-        Assert.assertNull(basicResponse);
         verify(mockSubmittedPaymentService, never()).save(any(SubmittedPayment.class));
         verify(mockApplicationEventPublisher, never()).publishEvent(any(ApplicationEvent.class));
         verify(mockPostService, never()).sendHttpPost(anyString(), anyString());
@@ -424,15 +425,15 @@ public class ITunesServiceImplTest {
         int userId = 100;
         String base64EncodedAppStoreReceipt = null;
 
-        User user = getMockForEligibleUser(userId);
+        Community community = mock(Community.class);
+        User user = getMockForEligibleUser(userId, community);
         when(user.getBase64EncodedAppStoreReceipt()).thenReturn("SOME_RECEIPT");
         when(user.hasLimitedStatus()).thenReturn(false);
 
         when(mockUserService.findById(userId)).thenReturn(user);
 
-        BasicResponse basicResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
-        Assert.assertNull(basicResponse);
         verify(mockSubmittedPaymentService, never()).save(any(SubmittedPayment.class));
         verify(mockApplicationEventPublisher, never()).publishEvent(any(ApplicationEvent.class));
         verify(mockPostService, never()).sendHttpPost(anyString(), anyString());
@@ -445,15 +446,15 @@ public class ITunesServiceImplTest {
         int userId = 100;
         String base64EncodedAppStoreReceipt = null;
 
-        User user = getMockForEligibleUser(userId);
+        Community community = mock(Community.class);
+        User user = getMockForEligibleUser(userId, community);
         when(user.hasLimitedStatus()).thenReturn(true);
         when(user.getBase64EncodedAppStoreReceipt()).thenReturn(null);
 
         when(mockUserService.findById(userId)).thenReturn(user);
 
-        BasicResponse basicResponse = fixtureITunesServiceImpl.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
+        fixtureITunesService.processInAppSubscription(userId, base64EncodedAppStoreReceipt);
 
-        Assert.assertNull(basicResponse);
         verify(mockSubmittedPaymentService, never()).save(any(SubmittedPayment.class));
         verify(mockApplicationEventPublisher, never()).publishEvent(any(ApplicationEvent.class));
         verify(mockPostService, never()).sendHttpPost(anyString(), anyString());
@@ -461,20 +462,21 @@ public class ITunesServiceImplTest {
         verify(user, never()).setBase64EncodedAppStoreReceipt(anyString());
     }
 
+    private String getBody(String base64EncodedAppStoreReceipt) {
+        return "{\"receipt-data\":\""+base64EncodedAppStoreReceipt+"\",\"password\":\""+password+"\"}";
+    }
 
-    private User getMockForEligibleUser(int userId) {
+    private User getMockForEligibleUser(int userId, Community community) {
         User user = mock(User.class);
+        UserGroup userGroup = mock(UserGroup.class);
+        when(user.getUserGroup()).thenReturn(userGroup);
+        when(userGroup.getCommunity()).thenReturn(community);
         when(user.getCommunityRewriteUrl()).thenReturn("nowtop40");
         when(user.getId()).thenReturn(userId);
         when(user.hasActivePaymentDetails()).thenReturn(false);
         when(user.getBase64EncodedAppStoreReceipt()).thenReturn(null);
         when(user.hasLimitedStatus()).thenReturn(true);
         return user;
-    }
-
-
-    private String getBody(String base64EncodedAppStoreReceipt) {
-        return "{\"receipt-data\":\""+base64EncodedAppStoreReceipt+"\",\"password\":\""+password+"\"}";
     }
 
     private static void validatePayment(final String base64EncodedAppStoreReceipt, final String originalTransactionId, final long expiresDate, final String appStoreOriginalTransactionId, final User user,

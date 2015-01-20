@@ -449,7 +449,7 @@ public class PromotionService extends ConfigurationAwareService <PromotionServic
 
         boolean isPromotionApplied = applyPromotionByPromoCodeUser.isPromotionApplied();
         if (isPromotionApplied){
-            userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
+            userService.processAccountCheckCommandForAuthorizedUser(user.getId());
         }
     }
 

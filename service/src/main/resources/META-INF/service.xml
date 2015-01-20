@@ -23,6 +23,14 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <import resource="placeholders.xml"/>
     <import resource="streamzine-service.xml"/>
 
+	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="com.jayway.jsonpath.JsonPath" value="mobi.nowtechnologies.server.utils.JsonPathPropertyEditor"/>
+			</map>
+		</property>
+	</bean>
+
 	<bean id="service.DeviceUserDataService" class="mobi.nowtechnologies.server.service.DeviceUserDataService">
 		<property name="deviceUserDataRepository" ref="deviceUserDataRepository" />
 	</bean>
@@ -60,31 +68,22 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<bean id="service.UserService" class="mobi.nowtechnologies.server.service.UserService">
 		<property name="entityService" ref="service.EntityService" />
-		<property name="deviceTypeService" ref="service.DeviceTypeService" />
 		<property name="countryAppVersionService" ref="service.CountryAppVersionService" />
 		<property name="userDao" ref="persistence.UserDao" />
 		<property name="countryService" ref="service.CountryService" />
-		<property name="paymentService" ref="service.PaymentService" />
 		<property name="promotionService" ref="service.PromotionService" />
-		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="paymentDetailsService" ref="service.PaymentDetailsService" />
-		<property name="migPaymentService" ref="service.migPaymentService" />
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="countryByIpService" ref="service.CountryByIpService" />
 		<property name="userDeviceDetailsService" ref="service.UserDeviceDetailsService" />
 		<property name="communityService" ref="service.communityService" />
 		<property name="mailService" ref="service.MailService" />
-		<property name="facebookService" ref="service.FacebookService" />
 		<property name="deviceService" ref="service.DeviceService" />
-		<property name="offerService" ref="service.OfferService" />
-		<property name="drmService" ref="service.DrmService" />
 		<property name="accountLogService" ref="service.AccountLogService" />
 		<property name="userRepository" ref="userRepository" />
 		<property name="o2ClientService" ref="service.O2ClientService" />
-		<property name="iTunesService" ref="service.ITunesService" />
         <property name="refundService" ref="service.RefundService" />
-        <property name="o2Service" ref="service.O2Service"/>
         <property name="userServiceNotification" ref="service.UserServiceNotification"/>
         <property name="o2UserDetailsUpdater" ref="service.O2UserDetailsUpdater" />
 
@@ -466,20 +465,38 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<constructor-arg>
 			<ref bean="security.nowTechUserDetailsService" />
 		</constructor-arg>
-	</bean> 
-	
-	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesServiceImpl">
+	</bean>
+
+	<bean id="service.ITunesValidator" class="mobi.nowtechnologies.server.service.itunes.ITunesValidator">
 		<property name="postService" ref="shared.PostService" />
+		<property name="messageSource" ref="serviceMessageSource"/>
+	</bean>
+
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesService">
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
 		<property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
-		<property name="messageSource" ref="serviceMessageSource"/>
+		<property name="iTunesValidator" ref="service.ITunesValidator"/>
 		<property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
-        <property name="iTunesDtoConverter" ref="iTunesDtoConverter"/>
+		<property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
+        <property name="iTunesReceiptParser" ref="iTunesReceiptParser"/>
 	</bean>
 
-    <bean id="iTunesDtoConverter" class="mobi.nowtechnologies.server.service.itunes.ITunesDtoConverter"/>
-	
+	<bean id="iTunesReceiptParser" class="mobi.nowtechnologies.server.service.itunes.CompositeITunesReceiptParser" />
+
+	<bean id="autoRenewableSubscriptionParser" class="mobi.nowtechnologies.server.service.itunes.impl.JPathReceiptParser">
+		<property name="statusPath" value="${itunes.renewable.response.path.status}"/>
+		<property name="productIdPath" value="${itunes.renewable.response.path.productId}"/>
+		<property name="originalTransactionIdPath" value="${itunes.renewable.response.path.originalTransactionId}"/>
+		<property name="expireTimestampPath" value="${itunes.renewable.response.path.expiresDate}"/>
+	</bean>
+	<bean id="oneTimeSubscriptionParser" class="mobi.nowtechnologies.server.service.itunes.impl.JPathReceiptParser">
+		<property name="statusPath" value="${itunes.onetime.response.path.status}"/>
+		<property name="productIdPath" value="${itunes.onetime.response.path.productId}"/>
+		<property name="originalTransactionIdPath" value="${itunes.onetime.response.path.originalTransactionId}"/>
+		<property name="purchaseTimestampPath" value="${itunes.onetime.response.path.purchaseDate}"/>
+	</bean>
+
 	<!-- O2 SOA beans -->
 	<bean id="service.O2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">

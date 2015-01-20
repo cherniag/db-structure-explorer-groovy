@@ -42,10 +42,8 @@ public class AccCheckService {
     }
 
     private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation, boolean withUuid) {
-        if (firstActivation != null){
-            LOGGER.info("First activation: {}", firstActivation);
-        }
-        user = userService.proceessAccountCheckCommandForAuthorizedUser(user.getId());
+        LOGGER.info("user : {}, withUserDetails : {}, firstActivation : {}, withUuid : {}", user.getId(), withUserDetails, firstActivation, withUuid);
+        user = userService.processAccountCheckCommandForAuthorizedUser(user.getId());
 
         Community community = user.getUserGroup().getCommunity();
 

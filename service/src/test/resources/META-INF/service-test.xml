@@ -99,16 +99,22 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
      	<property name="realObject" ref="service.o2PaymentService"/>
   	</bean>
 
-    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesServiceImpl">
-        <property name="postService" ref="postService" />
+	<bean id="postService" class="mobi.nowtechnologies.server.apptests.ITunesPostService"/>
+
+	<bean id="service.ITunesValidator" class="mobi.nowtechnologies.server.service.itunes.ITunesValidator">
+		<property name="postService" ref="postService" />
+		<property name="messageSource" ref="serviceMessageSource"/>
+	</bean>
+
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesService">
         <property name="userService" ref="service.UserService" />
         <property name="paymentPolicyService" ref="service.PaymentPolicyService" />
         <property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
-        <property name="messageSource" ref="serviceMessageSource"/>
+		<property name="iTunesValidator" ref="service.ITunesValidator"/>
         <property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
-        <property name="iTunesDtoConverter" ref="iTunesDtoConverter"/>
+		<property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
+		<property name="iTunesReceiptParser" ref="iTunesReceiptParser"/>
     </bean>
 
-    <bean id="postService" class="mobi.nowtechnologies.server.apptests.ITunesPostService"/>
 
 </beans>

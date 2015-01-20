@@ -30,15 +30,20 @@
         <property name="request" ref="request.payPalRequest" />
     </bean>
 
-    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesServiceImpl">
+    <bean id="service.ITunesValidator" class="mobi.nowtechnologies.server.service.itunes.ITunesValidator">
         <property name="postService">
             <bean class="mobi.nowtechnologies.server.apptests.ITunesPostService"/>
         </property>
-        <property name="userService" ref="service.UserService" />
+        <property name="messageSource" ref="serviceMessageSource"/>
+     </bean>
+
+    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesService">
+         <property name="userService" ref="service.UserService" />
         <property name="paymentPolicyService" ref="service.PaymentPolicyService" />
         <property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
-        <property name="messageSource" ref="serviceMessageSource"/>
+        <property name="iTunesValidator" ref="service.ITunesValidator"/>
         <property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
-        <property name="iTunesDtoConverter" ref="iTunesDtoConverter"/>
+        <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
+        <property name="iTunesReceiptParser" ref="iTunesReceiptParser"/>
     </bean>
 </beans>

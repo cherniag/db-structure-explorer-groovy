@@ -12,16 +12,12 @@ import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
-import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
-import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.service.payment.response.MigResponseFactory;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -112,10 +108,7 @@ public class UserServiceTest {
 	private CommunityService communityServiceMock;
 	private CountryService countryServiceMock;
 	private O2ProviderService o2ClientServiceMock;
-	private O2Service o2ServiceMock;
 	private DeviceService deviceServiceMock;
-	private FacebookService facebookServiceMock;
-	private ITunesService iTunesServiceMock;
     private RefundService refundServiceMock;
     private User actualUser;
     private User user;
@@ -151,30 +144,21 @@ public class UserServiceTest {
     public void setUp() throws Exception {
         userServiceSpy = Mockito.spy(new UserService());
 
-        PaymentPolicyService paymentPolicyServiceMock = PowerMockito.mock(PaymentPolicyService.class);
         countryServiceMock = PowerMockito.mock(CountryService.class);
         communityResourceBundleMessageSourceMock = PowerMockito.mock(CommunityResourceBundleMessageSource.class);
-        DeviceTypeService deviceTypeServiceMock = PowerMockito.mock(DeviceTypeService.class);
         userRepositoryMock = PowerMockito.mock(UserRepository.class);
         CountryByIpService countryByIpServiceMock = PowerMockito.mock(CountryByIpService.class);
-        OfferService offerServiceMock = PowerMockito.mock(OfferService.class);
         paymentDetailsServiceMock = PowerMockito.mock(PaymentDetailsService.class);
         promotionServiceMock = PowerMockito.mock(PromotionService.class);
         userDaoMock = PowerMockito.mock(UserDao.class);
         CountryAppVersionService countryAppVersionServiceMock = PowerMockito.mock(CountryAppVersionService.class);
         entityServiceMock = PowerMockito.mock(EntityService.class);
-        MigPaymentService migPaymentServiceMock = PowerMockito.mock(MigPaymentService.class);
-        DrmService drmServiceMock = PowerMockito.mock(DrmService.class);
-        facebookServiceMock = PowerMockito.mock(FacebookService.class);
         communityServiceMock = PowerMockito.mock(CommunityService.class);
         deviceServiceMock = PowerMockito.mock(DeviceService.class);
         migHttpServiceMock = PowerMockito.mock(MigHttpService.class);
-        PaymentService paymentServiceMock = PowerMockito.mock(PaymentService.class);
         accountLogServiceMock = PowerMockito.mock(AccountLogService.class);
         o2ClientServiceMock = PowerMockito.mock(O2ProviderService.class);
-        o2ServiceMock = PowerMockito.mock(O2Service.class);
         MailService mailServiceMock = PowerMockito.mock(MailService.class);
-        iTunesServiceMock = PowerMockito.mock(ITunesService.class);
         refundServiceMock = PowerMockito.mock(RefundService.class);
         userServiceNotification = PowerMockito.mock(UserServiceNotification.class);
         otacValidationServiceMock = PowerMockito.mock(OtacValidationService.class);
@@ -185,32 +169,23 @@ public class UserServiceTest {
         deviceUserDataService = PowerMockito.mock(DeviceUserDataService.class);
         taskService = PowerMockito.mock(TaskService.class);
 
-        userServiceSpy.setPaymentPolicyService(paymentPolicyServiceMock);
         userServiceSpy.setCountryService(countryServiceMock);
         userServiceSpy.setMessageSource(communityResourceBundleMessageSourceMock);
-        userServiceSpy.setDeviceTypeService(deviceTypeServiceMock);
         userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setCountryByIpService(countryByIpServiceMock);
-        userServiceSpy.setOfferService(offerServiceMock);
         userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);
         userServiceSpy.setUserDeviceDetailsService(userDeviceDetailsServiceMock);
         userServiceSpy.setPromotionService(promotionServiceMock);
         userServiceSpy.setUserDao(userDaoMock);
         userServiceSpy.setCountryAppVersionService(countryAppVersionServiceMock);
         userServiceSpy.setEntityService(entityServiceMock);
-        userServiceSpy.setMigPaymentService(migPaymentServiceMock);
-        userServiceSpy.setDrmService(drmServiceMock);
-        userServiceSpy.setFacebookService(facebookServiceMock);
         userServiceSpy.setCommunityService(communityServiceMock);
         userServiceSpy.setDeviceService(deviceServiceMock);
         userServiceSpy.setMigHttpService(migHttpServiceMock);
-        userServiceSpy.setPaymentService(paymentServiceMock);
         userServiceSpy.setAccountLogService(accountLogServiceMock);
         userServiceSpy.setMailService(mailServiceMock);
         userServiceSpy.setO2ClientService(o2ClientServiceMock);
-        userServiceSpy.setO2Service(o2ServiceMock);
         userServiceSpy.setUserRepository(userRepositoryMock);
-        userServiceSpy.setiTunesService(iTunesServiceMock);
         userServiceSpy.setRefundService(refundServiceMock);
         userServiceSpy.setUserServiceNotification(userServiceNotification);
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
@@ -1168,7 +1143,7 @@ public class UserServiceTest {
         };
         Mockito.doAnswer(returnFirsParamAnswer).when(entityServiceMock).saveEntity(any(User.class));
         Mockito.doAnswer(returnFirsParamAnswer).when(userRepositoryMock).saveAndFlush(any(User.class));
-        doReturn(expectedUser).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(any(int.class));
+        doReturn(expectedUser).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(any(int.class));
         PowerMockito.mockStatic(Utils.class);
         PowerMockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
         UserGroup userGroup = new UserGroup();
@@ -1214,7 +1189,7 @@ public class UserServiceTest {
 		verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
 		verify(userRepositoryMock, times(1)).saveAndFlush(any(User.class));
-		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(anyInt());
+		verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
 		verifyStatic(times(1));
 		createStoredToken(anyString(), anyString());
 		verifyStatic(times(1));
@@ -1268,7 +1243,7 @@ public class UserServiceTest {
 		verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
 		verify(countryServiceMock, times(0)).findIdByFullName(anyString());
 		verify(entityServiceMock, times(0)).saveEntity(any(User.class));
-		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(anyInt());
+		verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(anyInt());
 		verifyStatic(times(0));
 		createStoredToken(anyString(), anyString());
 		verifyStatic(times(0));
@@ -2481,7 +2456,7 @@ public class UserServiceTest {
         Mockito.when(otacValidationServiceMock.validate(otac, user.getMobile(), community)).thenReturn(providerUserDetails);
         Mockito.when(userRepositoryMock.save(user)).thenReturn(user);
 
-        doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
+        doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
         MergeResult resultOfOperation = userServiceSpy.applyInitPromo(user, otac, false, false, false);
@@ -2499,7 +2474,7 @@ public class UserServiceTest {
         verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
         verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile(), community);
         verify(userRepositoryMock, times(1)).save(user);
-        verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(user.getId());
+        verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(user.getId());
     }
 
     @Test
@@ -2518,7 +2493,7 @@ public class UserServiceTest {
         Mockito.when(userRepositoryMock.save(user)).thenReturn(user);
         Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(userWithPromoAnswer);
 
-        doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
+        doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
 
         //when
         MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, false, false, false);
@@ -2536,7 +2511,7 @@ public class UserServiceTest {
         verify(userServiceSpy, times(0)).mergeUser(mobileUser, user);
         verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile(), community);
         verify(userRepositoryMock, times(1)).save(user);
-        verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(user.getId());
+        verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(user.getId());
     }
 	
 	@Test
@@ -2554,7 +2529,7 @@ public class UserServiceTest {
 		Mockito.when(userRepositoryMock.save(user)).thenReturn(user);
 		Mockito.when(communityServiceMock.getCommunityByName(community.getName())).thenReturn(community);
 		
-		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
+		doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
 		
 		MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
         User result = opResult.getResultOfOperation();
@@ -2590,7 +2565,7 @@ public class UserServiceTest {
 		boolean hasPromo = false;
         Mockito.when(promotionServiceMock.applyPotentialPromo(user)).thenAnswer(userWithoutPromoAnswer);
 
-		doReturn(null).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(user.getId());
+		doReturn(null).when(userServiceSpy).processAccountCheckCommandForAuthorizedUser(user.getId());
 
         MergeResult opResult = userServiceSpy.applyInitPromo(user, otac, true, false, false);
 
@@ -2608,7 +2583,7 @@ public class UserServiceTest {
 		verify(otacValidationServiceMock, times(1)).validate(otac, user.getMobile(), community);
 		verify(userRepositoryMock, times(1)).save(user);
 		verify(promotionServiceMock,times(1) ).applyPotentialPromo(user);
-		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(user.getId());
+		verify(userServiceSpy, times(0)).processAccountCheckCommandForAuthorizedUser(user.getId());
 	}
 
 	private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
