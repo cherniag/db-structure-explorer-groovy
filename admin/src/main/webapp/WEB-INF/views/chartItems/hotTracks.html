@@ -631,8 +631,6 @@ function onToBasketClick(target, isCopy){
     item.appendTo($("#chartItemsBasketSortable"));
 
     onDropToBasketList(item);
-
-    checkLockAllTracksState();
 }
 
 function onDropToBasketList(item){
@@ -755,6 +753,7 @@ function onDropToChartItemList(item, sender){
         $("#emptyList").css("display","block");
     }
 
+    lockIfAllTracksAreLocked(item);
     checkLockAllTracksState();
 }
 

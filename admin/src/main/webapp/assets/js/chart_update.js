@@ -22,23 +22,23 @@ $(function() {
     });
 });
 
+// assign onChange lock switcher handler on every chart item in the list
 function initLockTrackCallBacks(){
-    var $lockAllTracks = $("#lockAllTracks");
-
-    var lockTrackCallBack = function(element, active, e){
-        var lockAllTracksStatus = $lockAllTracks.toggleButtons('status');
-        if(!active && lockAllTracksStatus){
-            $lockAllTracks.toggleButtons('setState', false, true);
-        }
-        if(active && !lockAllTracksStatus){
-            checkLockAllTracksState();
-        }
-    };
-
     $("#chartItemsSortable").find("> li").each( function (index) {
         var toggleLocked = $(this).find("div[class~=locked_chartItem]");
         toggleLocked.data('options', {onChange : lockTrackCallBack});
     });
+}
+
+function lockTrackCallBack(element, active, e){
+    var $lockAllTracks = $("#lockAllTracks");
+    var lockAllTracksStatus = $lockAllTracks.toggleButtons('status');
+    if(!active && lockAllTracksStatus){
+        $lockAllTracks.toggleButtons('setState', false, true);
+    }
+    if(active && !lockAllTracksStatus){
+        checkLockAllTracksState();
+    }
 }
 
 function checkLockAllTracksState(){
@@ -57,6 +57,16 @@ function checkLockAllTracksState(){
     } else if ($lockAllTracks.toggleButtons('status')){
         $lockAllTracks.toggleButtons('setState', false, true);
     }
+}
+
+function lockIfAllTracksAreLocked(item){
+    var areTracksLocked = $("#lockAllTracks").toggleButtons('status');
+    var toggleLocked = $(item).find("div[class~=locked_chartItem]");
+    if(areTracksLocked){
+        toggleLocked.toggleButtons('setState', true, true);
+    }
+    // assign onChange lock switcher handler on just added chart item
+    toggleLocked.data('options', {onChange : lockTrackCallBack});
 }
 
 function showChartUpdateTab(i){
