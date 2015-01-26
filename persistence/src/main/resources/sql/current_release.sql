@@ -7,7 +7,7 @@ SELECT @userGroupId := c.id
 FROM tb_communities c JOIN tb_userGroups ug ON ug.community = c.id
 WHERE c.name = 'mtv1';
 
-SET @startPromoEndDateTime := UNIX_TIMESTAMP('2015-03-23 23:59:59');
+SET @startPromoEndDateTime := UNIX_TIMESTAMP('2015-03-02 23:59:59');
 
 UPDATE
   tb_promotions
@@ -19,7 +19,7 @@ WHERE
   AND userGroup = @userGroupId
   AND @startPromoEndDateTime > UNIX_TIMESTAMP();
 
-SET @fourWeeksStartDateTime := UNIX_TIMESTAMP('2015-01-27 00:00:00');
+SET @fourWeeksStartDateTime := UNIX_TIMESTAMP('2015-02-03 00:00:00');
 
 UPDATE
   tb_promotions
