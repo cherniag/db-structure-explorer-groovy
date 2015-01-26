@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>5.12.4</version>
+    <version>5.13.1</version>
     <packaging>pom</packaging>
     <name>Now Technologies Parent Pom for all application</name>
 
@@ -557,13 +557,6 @@
                 <groupId>mobi.nowtechnologies.java.server</groupId>
                 <artifactId>persistence</artifactId>
                 <type>test-jar</type>
-                <version>${project.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>mobi.nowtechnologies.java.server</groupId>
-                <artifactId>spring-test-mvc-ext</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>

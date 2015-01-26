@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.service.social.googleplus;
 
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.enums.Gender;
-import mobi.nowtechnologies.server.shared.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.google.api.impl.GoogleTemplate;
@@ -65,7 +65,7 @@ public class GooglePlusService {
     }
 
     private Date extractDateInUTC(Person personFromGooglePlus) {
-        return DateUtils.getDateInUTC(personFromGooglePlus.getBirthday());
+        return DateTimeUtils.getDateInUTC(personFromGooglePlus.getBirthday());
     }
 
     private String buildHomepageUrl(Person personFromGooglePlus) {

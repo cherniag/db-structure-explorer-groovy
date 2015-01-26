@@ -64,7 +64,7 @@ class AppsFlyerMergeFeature {
         currentProvider = socialActivationType
 
         def above = ApiVersions.from(versions.list()).above(aboveVersion)
-        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()))
+        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat))
 
         userDeviceDatas.each {
             def appsFlyerUid = UUID.randomUUID().toString();
@@ -149,7 +149,7 @@ class AppsFlyerMergeFeature {
         currentProvider = socialActivationType
 
         def above = ApiVersions.from(versions.list()).above(aboveVersion)
-        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()))
+        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat))
 
         userDeviceDatas.each {
             deviceSet.singupWithAppsFlyer(it, null)
@@ -237,7 +237,7 @@ class AppsFlyerMergeFeature {
         currentProvider = socialActivationType
 
         def above = ApiVersions.from(versions.list()).above(aboveVersion)
-        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), RequestFormat.from(formats.set()))
+        userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat))
         otherUserDeviceDatas = new ArrayList<UserDeviceData>(userDeviceDatas)
 
         // First user

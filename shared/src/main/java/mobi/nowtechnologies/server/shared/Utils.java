@@ -34,12 +34,24 @@ public class Utils {
 
 	private static final long MILLISECONDS_IN_SECOND = 1000L;
 	private static final String charset = "0123456789";
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#WEEK_SECONDS} instead.
+	 */
+	@Deprecated
 	public static final int WEEK_SECONDS = 7 * 86400;
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#DAY_MILLISECONDS} instead.
+	 */
+	@Deprecated
     public static final int DAY_MILLISECONDS = 86400000;
     public static final int PIN_LENGTH = 4;
 
     private static Pattern VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+)\\.((?:\\d+\\.{0,1})+)");
 
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#truncatedToSeconds(java.util.Date)} instead.
+	 */
+	@Deprecated
     public static int truncatedToSeconds(Date date){
         return (int)(date.getTime()/1000);
     }
@@ -78,18 +90,34 @@ public class Utils {
 		return md5(SALT + token + SALT + timestamp + SALT);
 	}
 
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#getEpochSeconds()} instead.
+	 */
+	@Deprecated
 	public static int getEpochSeconds() {
 		return (int) (System.currentTimeMillis() / MILLISECONDS_IN_SECOND);
 	}
-	
+
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#getEpochDays()} instead.
+	 */
+	@Deprecated
 	public static int getEpochDays() {
 		return toEpochDays(System.currentTimeMillis());
 	}
-	
+
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#toEpochDays(long)} instead.
+	 */
+	@Deprecated
 	public static int toEpochDays(long millis) {
 		return (int) (millis / DAY_MILLISECONDS);
 	}
 
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#getEpochMillis()} instead.
+	 */
+	@Deprecated
 	public static long getEpochMillis() {
 		return System.currentTimeMillis();
 	}
@@ -102,10 +130,18 @@ public class Utils {
         return RandomStringUtils.randomNumeric(PIN_LENGTH);
     }
 
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#getDateFromInt(int)} instead.
+	 */
+	@Deprecated
 	public static Date getDateFromInt(int intDate) {
 		return new Date(((long) intDate) * 1000L);
 	}
 
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#secondsToMillis(long)} instead.
+	 */
+	@Deprecated
     public static long secondsToMillis(long seconds){
         return SECONDS.toMillis(seconds);
     }
@@ -114,10 +150,18 @@ public class Utils {
         return UUID.randomUUID().toString();
     }
 
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#millisToSeconds(long)} instead.
+	 */
+	@Deprecated
 	public static long millisToSeconds(long millis){
 		return MILLISECONDS.toSeconds(millis);
 	}
 
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#millisToIntSeconds(long)} instead.
+	 */
+	@Deprecated
 	public static int millisToIntSeconds(long millis){
 		return (int) millisToSeconds(millis);
 	}
@@ -201,6 +245,11 @@ public class Utils {
 		LOGGER.debug("Output parameter monthlyNextSubPayment=[{}]", monthlyNextSubPayment);
 		return monthlyNextSubPayment;
 	}
+
+	/**
+	 * @deprecated Use {@link mobi.nowtechnologies.common.util.DateTimeUtils#datesNotEquals(java.util.Date, java.util.Date)} instead.
+	 */
+	@Deprecated
 	public static boolean datesNotEquals(Date oldTime, Date newTime) {
         return newTime.getTime() != oldTime.getTime();
 	}

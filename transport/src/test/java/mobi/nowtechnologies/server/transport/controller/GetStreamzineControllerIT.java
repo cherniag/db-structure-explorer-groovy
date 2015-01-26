@@ -13,7 +13,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolutio
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.persistence.repository.*;
@@ -29,14 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 
-import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.ExtMockMvcRequestBuilders.extGet;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 public class GetStreamzineControllerIT extends AbstractControllerTestIT {
@@ -339,54 +339,6 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     }
 
     @Test
-    public void testGetStreamzineFor63WithIfModifiedSuccess() throws Exception {
-        Date updateDate = mobi.nowtechnologies.server.shared.util.DateUtils.getDateWithoutMilliseconds(new Date(System.currentTimeMillis() + 2000L));
-
-        // parameters
-        String userName = "test@ukr.net";
-        String deviceUID = "b88106713409e92622461a876abcd74b1111";
-        String apiVersion = "6.3";
-        String communityUrl = "hl_uk";
-        String timestamp = "" + updateDate.getTime();
-        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
-        String userToken = createTimestampToken(storedToken, timestamp);
-        User user = null;
-        //
-        // Expected JSON data
-        //
-        final String externalLink = "http://example.com";
-        final Message newsMessage = createNewsMessage();
-        Date publishDate = DateUtils.setMilliseconds(new Date(), 300);
-        final int chartId = 6;
-        final int existingTrackId = 49;
-        final Media existingMedia = mediaRepository.findOne(existingTrackId);
-
-        FilenameAlias originalUploadedFile = new FilenameAlias("fileName", "fileName", new Dimensions(100, 100)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
-        originalUploadedFile = filenameAliasRepository.saveAndFlush(originalUploadedFile);
-
-        prepareDefaultBadge(communityUrl, originalUploadedFile);
-
-        Community community = communityRepository.findByName(communityUrl);
-        prepareUpdate(updateDate, externalLink, publishDate, newsMessage, chartId, existingMedia, originalUploadedFile, community, user);
-
-        Thread.sleep(2500L);
-
-        // check json format and the correct order of the blocks
-        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", null)
-                .andExpect(status().isOk()).andDo(print())
-                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
-        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", "INVALID DATE")
-                .andExpect(status().isOk()).andDo(print())
-                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
-        Date dateInFuture = DateUtils.addDays(new Date(), 1);
-        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", dateInFuture)
-                .andExpect(status().isOk()).andDo(print())
-                .andExpect(header().longValue(LAST_MODIFIED, updateDate.getTime()));
-        doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", mobi.nowtechnologies.server.shared.util.DateUtils.getTimeWithoutMilliseconds(updateDate.getTime()))
-                .andExpect(status().isNotModified()).andExpect(content().string(""));
-    }
-
-    @Test
     public void testGetStreamzineForSeveralMQUsers_Success() throws Exception {
         final Date updateDatePast = new Date(System.currentTimeMillis() + 1000L);
         final Date updateDateFuture = new Date(System.currentTimeMillis() + 10000L);
@@ -595,7 +547,7 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
     private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, Object modifiedSinceTime) throws Exception {
         final String formatSpecific = (isJson) ? ".json" : "";
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = extGet("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = get("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
                 .param("APP_VERSION", userName)
                 .param("COMMUNITY_NAME", communityUrl)
                 .param("API_VERSION", apiVersion)

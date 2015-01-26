@@ -30,6 +30,7 @@ public class SigninGooglePlusController extends CommonController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.8}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.7}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.6}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.5}/SIGN_IN_GOOGLE_PLUS",

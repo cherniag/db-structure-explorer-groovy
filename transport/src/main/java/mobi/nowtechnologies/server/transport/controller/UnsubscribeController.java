@@ -49,6 +49,7 @@ public class UnsubscribeController extends CommonController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = {
+            "/{community:.+}/{apiVersion:6\\.8}/stop_subscription",
             "/{community:.+}/{apiVersion:6\\.7}/stop_subscription",
             "/{community:.+}/{apiVersion:6\\.6}/stop_subscription",
             "/{community:.+}/{apiVersion:6\\.5}/stop_subscription",

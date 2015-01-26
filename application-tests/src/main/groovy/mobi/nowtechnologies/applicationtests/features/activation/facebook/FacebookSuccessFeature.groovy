@@ -72,7 +72,7 @@ class FacebookSuccessFeature {
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
-        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), RequestFormat.from(formats.set()))
+        currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         currentUserDevices.each { deviceSet.singup(it) }
     }
 

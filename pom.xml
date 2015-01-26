@@ -4,14 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.nowtechnologies.java</groupId>
     <artifactId>server</artifactId>
-    <version>5.12.4</version>
+    <version>5.13.1</version>
     <packaging>pom</packaging>
     <name>Now Technologies Multi-module</name>
 
     <modules>
         <module>mq-parent-pom</module>
         <module>shared</module>
-        <module>spring-test-mvc-ext</module>
         <module>persistence</module>
         <module>service</module>
         <module>transport</module>

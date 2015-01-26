@@ -74,7 +74,7 @@ import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
 import static mobi.nowtechnologies.server.shared.enums.UserStatus.LIMITED;
-import static mobi.nowtechnologies.server.shared.util.DateUtils.newDate;
+import static mobi.nowtechnologies.common.util.DateTimeUtils.newDate;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -1128,7 +1128,7 @@ public class UserServiceTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 return invocation.getArguments()[0];
             }
-        }).when(userRepositoryMock).save(any(User.class));
+        }).when(userRepositoryMock).saveAndFlush(any(User.class));
 
 		return new Object[] { operatorMap, userDeviceRegDetailsDto, user };
 	}
@@ -1167,7 +1167,7 @@ public class UserServiceTest {
             }
         };
         Mockito.doAnswer(returnFirsParamAnswer).when(entityServiceMock).saveEntity(any(User.class));
-        Mockito.doAnswer(returnFirsParamAnswer).when(userRepositoryMock).save(any(User.class));
+        Mockito.doAnswer(returnFirsParamAnswer).when(userRepositoryMock).saveAndFlush(any(User.class));
         doReturn(expectedUser).when(userServiceSpy).proceessAccountCheckCommandForAuthorizedUser(any(int.class));
         PowerMockito.mockStatic(Utils.class);
         PowerMockito.when(Utils.getEpochMillis()).thenReturn(Long.MAX_VALUE);
@@ -1182,7 +1182,7 @@ public class UserServiceTest {
         assertNotNull(actualUser);
         assertThat(actualUser, is(expectedUser));
 
-        verify(userRepositoryMock, times(1)).save(any(User.class));
+        verify(userRepositoryMock, times(1)).saveAndFlush(any(User.class));
         verify(userRepositoryMock, times(1)).detectUserAccountWithSameDeviceAndDisableIt(deviceUID, userGroup);
     }
 
@@ -1213,7 +1213,7 @@ public class UserServiceTest {
 
 		verify(communityServiceMock, times(1)).getCommunityByUrl(anyString());
 		verify(countryServiceMock, times(1)).findIdByFullName(anyString());
-		verify(userRepositoryMock, times(1)).save(any(User.class));
+		verify(userRepositoryMock, times(1)).saveAndFlush(any(User.class));
 		verify(userServiceSpy, times(0)).proceessAccountCheckCommandForAuthorizedUser(anyInt());
 		verifyStatic(times(1));
 		createStoredToken(anyString(), anyString());
@@ -3721,15 +3721,6 @@ public class UserServiceTest {
         setFreeTrialInThePastNextSubPaymentInTheFuture();
 
         createLastSuccessfulPaymentDetailsWithPaymentPolicy();
-        createUserWithO2PaymentDetails();
-    }
-
-    private void create4GVideoAudioAndNoLastSuccessfulPaymentDetails() {
-        lastSuccessfulPaymentPolicyTariff = _4G;
-        lastSuccessfulPaymentPolicyMediaType = VIDEO_AND_AUDIO;
-
-        setFreeTrialAndNextSubPaymentInThePast();
-
         createUserWithO2PaymentDetails();
     }
 

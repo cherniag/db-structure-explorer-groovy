@@ -64,7 +64,7 @@ public class DeepLinkUrlFactoryTest {
         InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.INTERNAL_AD, "about");
 
         //check
-        String o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk", "6.2");
+        String o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk", false);
         assertThat(o, is("hl-uk://page/about"));
     }
 
@@ -75,7 +75,7 @@ public class DeepLinkUrlFactoryTest {
         informationDeeplinkInfo.setAction("subscribe");
 
         //check
-        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk", "6.2");
+        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk", false);
 
         assertThat(o, instanceOf(String.class));
         assertThat((String)o, is("hl-uk://page/account?action=subscribe"));
@@ -87,7 +87,7 @@ public class DeepLinkUrlFactoryTest {
         InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "http://bear.ru", BROWSER);
 
         //check
-        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "o2", "6.2");
+        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "o2", false);
 
         assertThat(o, instanceOf(String.class));
         assertThat((String)o, is("o2://web/aHR0cDovL2JlYXIucnU=?open=externally"));
@@ -102,7 +102,7 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicTrackDeeplinkInfo)).thenReturn((Enum) MusicType.TRACK);
 
         //check
-        Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk", "6.2");
+        Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk", false);
 
         assertThat(o, instanceOf(String.class));
         assertThat((String)o, is("hl-uk://content/track?id=TRACK-10_null"));
@@ -116,7 +116,7 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
-        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk", "6.2");
+        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk", false);
         assertThat(o, is("hl-uk://content/playlist?id=666"));
     }
 
@@ -128,7 +128,7 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
-        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk", "6.3");
+        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk", true);
         assertThat(o, is("hl-uk://content/playlist?player=regular&id=666"));
     }
 
@@ -144,7 +144,7 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(newsStoryDeeplinkInfo)).thenReturn((Enum) NewsType.STORY);
 
         //check
-        String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo, "hl_uk", "6.2");
+        String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo, "hl_uk", false);
         assertThat(o, is("hl-uk://content/story?id=10"));
     }
 
@@ -157,8 +157,20 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(newsListDeeplinkInfo)).thenReturn((Enum) NewsType.LIST);
 
         //check
-        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo, "hl-uk", "6.2");
+        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo, "hl-uk", false);
         assertThat(o, is("hl-uk://content/news?id=1419120000"));
+    }
+
+    @Test
+    public void checkUrlLinkForFreemiumChartWhenActionIsNull() {
+        String link = deepLinkUrlFactory.createForChart("mtv1", 7, null);
+        assertThat(link, is("mtv1://content/playlist?id=7"));
+    }
+
+    @Test
+    public void checkUrlLinkForFreemiumChartWhenActionHasValue() {
+        String link = deepLinkUrlFactory.createForChart("mtv1", 7, "refer_a_friend");
+        assertThat(link, is("mtv1://content/playlist?id=7&action=refer_a_friend"));
     }
 
     private Media getMedia(Integer id, String isrc) {

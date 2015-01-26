@@ -6,8 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
-import mobi.nowtechnologies.server.service.CacheContentService;
-import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -21,8 +19,6 @@ public class StreamzineUpdateService {
     private StreamzineUpdateRepository streamzineUpdateRepository;
     private CommunityRepository communityRepository;
     private List<String> availableCommunites = new ArrayList<String>();
-
-    private CacheContentService cacheContentService;
 
     //
     // API
@@ -131,7 +127,7 @@ public class StreamzineUpdateService {
     }
 
     @Transactional(readOnly = true)
-    public ContentDtoResult<Update> getUpdate(Date date, User user, String community, boolean checkCaching) {
+    public Update getUpdate(Date date, User user, String community) {
         Community c = communityRepository.findByName(community);
 
         Assert.notNull(date);
@@ -139,13 +135,10 @@ public class StreamzineUpdateService {
 
         Date dateOfUpdate = calculateDate(user, c);
         Assert.notNull(dateOfUpdate, "No streamzine updates found for date: " + date);
-        if (checkCaching) {
-            cacheContentService.checkCacheContent(date.getTime(), dateOfUpdate.getTime());
-        }
         Update result = streamzineUpdateRepository.findByPublishDate(dateOfUpdate, c);
         result.getBlocks().size();
         result.getUsers().size();
-        return new ContentDtoResult<Update>(dateOfUpdate.getTime(), result);
+        return result;
     }
 
     private Date calculateDate(User user, Community c) {
@@ -178,11 +171,6 @@ public class StreamzineUpdateService {
 
     public void setCommunityRepository(CommunityRepository communityRepository) {
         this.communityRepository = communityRepository;
-    }
-
-
-    public void setCacheContentService(CacheContentService cacheContentService) {
-        this.cacheContentService = cacheContentService;
     }
 
 }

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.MessageAsm;
 import mobi.nowtechnologies.server.assembler.NewsAsm;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
@@ -11,7 +10,6 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.dto.NewsDto;
 import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
@@ -43,12 +41,6 @@ public class MessageService {
     private CommunityService communityService;
     private CloudFileService cloudFileService;
 
-    private CacheContentService cacheContentService;
-
-    public void setCacheContentService(CacheContentService cacheContentService) {
-        this.cacheContentService = cacheContentService;
-    }
-
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
@@ -70,7 +62,7 @@ public class MessageService {
     }
 
     @Transactional(readOnly = true)
-    public ContentDtoResult<NewsDto> processGetNewsCommand(User user, String communityName, Long lastUpdateNewsTimeMillis, boolean withBanners, boolean checkCaching) {
+    public NewsDto processGetNewsCommand(User user, String communityName, Long lastUpdateNewsTimeMillis, boolean withBanners) {
         if (user == null)
             throw new ServiceException("The parameter user is null");
         if (communityName == null)
@@ -80,12 +72,12 @@ public class MessageService {
 
         Community community = user.getUserGroup().getCommunity();
 
-        ContentDtoResult<NewsDto> newsDtoResult = getNews(user, community, lastUpdateNewsTimeMillis, withBanners, checkCaching);
-        LOGGER.debug("Output parameter newsDtoResult=[{}], [{}]", newsDtoResult.getContent());
+        NewsDto newsDtoResult = getNews(user, community, lastUpdateNewsTimeMillis, withBanners);
+        LOGGER.debug("Output parameter newsDtoResult=[{}], [{}]", newsDtoResult);
         return newsDtoResult;
     }
 
-    private ContentDtoResult<NewsDto> getNews(User user, Community community, Long lastUpdateNewsTimeMillis, boolean withBanners, boolean checkCaching) {
+    private NewsDto getNews(User user, Community community, Long lastUpdateNewsTimeMillis, boolean withBanners) {
         if (user == null)
             throw new ServiceException("The parameter user is null");
         LOGGER.debug("input parameters user, community, lastUpdateNewsTimeMillis, withAds, withBanners: [{}], [{}], [{}], [{}]", new Object[]{user, community, lastUpdateNewsTimeMillis, withBanners});
@@ -96,11 +88,9 @@ public class MessageService {
 
         final long currentTimeMillis = Utils.getEpochSeconds() * 1000L;
 
-        Long nextNewsPublishTimeMillis = findNextNewsPublishDate(lastClientUpdateNewsTimeMillis, community, currentTimeMillis);
-        Long nextPublishTimeMillisForAdditionalContent = findNextPublishDateForAdditionalContent(checkCaching, withBanners,  community);
-        Long lastUpdateTimeFromDateFromClient = Math.max(nextNewsPublishTimeMillis, nextPublishTimeMillisForAdditionalContent);
-        if (checkCaching) {
-            cacheContentService.checkCacheContent(lastClientUpdateNewsTimeMillis, lastUpdateTimeFromDateFromClient);
+        Long nextNewsPublishTimeMillis = messageRepository.findNextNewsPublishDate(lastClientUpdateNewsTimeMillis, community, currentTimeMillis);
+        if (nextNewsPublishTimeMillis == null) {
+            nextNewsPublishTimeMillis = -1L;
         }
         List<Message> messages;
         if (withBanners) {
@@ -114,29 +104,7 @@ public class MessageService {
         NewsDto newsDto = new NewsDto();
         newsDto.setNewsDetailDtos(newsDetailDtos.toArray(new NewsDetailDto[0]));
         LOGGER.debug("Output parameter newsDto=[{}]", newsDto);
-        return new ContentDtoResult<NewsDto>(lastUpdateTimeFromDateFromClient, newsDto);
-    }
-
-
-
-    private Long ifDefValue(Long value){
-        return value != null ? value : 0L;
-    }
-
-    private Long findNextNewsPublishDate(long lastClientUpdateNewsTimeMillis, Community community, long currentTimeMillis) {
-        return ifDefValue(messageRepository.findNextPublishDateForMessageType(lastClientUpdateNewsTimeMillis, community, currentTimeMillis, Lists.newArrayList(MessageType.NEWS)));
-    }
-
-    private Long findNextPublishDateForAdditionalContent(boolean checkCaching, boolean withBanners, Community community) {
-        Long result = null;
-        if (checkCaching) {
-            if (withBanners) {
-                result = messageRepository.findNextPublishDateForContent(community);
-            } else {
-                result = messageRepository.findNextPublishDateForContentWithoutBanners(community, MessageType.getBannerTypes());
-            }
-        }
-        return ifDefValue(result);
+        return newsDto;
     }
 
     @Transactional(readOnly = true)

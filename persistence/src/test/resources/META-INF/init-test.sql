@@ -290,3 +290,46 @@ insert into offer_items ( offer_id, item_id) values (2, 49);
 insert into offer_items ( offer_id, item_id) values (2, 50);
 
 insert into auto_opt_in_exempt_ph_number values('+447111111111');
+
+
+--  create default model for hl_uk community
+set @communityid = (select id from tb_communities where name='hl_uk');
+set @behaviorconfigid = 1 + (select coalesce(max(id), 0) from behavior_config);
+
+insert into behavior_config (id, community_id, type, required_referrals, referrals_duration, referrals_duration_type) values (@behaviorconfigid, @communityid, 'DEFAULT', 5, -1, 'DAYS');
+insert into community_config (community_id, behavior_config_id) values (@communityid, @behaviorconfigid);
+
+insert into content_user_status_behavior (id, behavior_config_id, user_status_type, are_favorites_off, are_ads_off) values (1, @behaviorconfigid, 'FREE_TRIAL', 0, 1);
+insert into content_user_status_behavior (id, behavior_config_id, user_status_type, are_favorites_off, are_ads_off) values (2, @behaviorconfigid, 'SUBSCRIBED', 0, 1);
+insert into content_user_status_behavior (id, behavior_config_id, user_status_type, are_favorites_off, are_ads_off) values (3, @behaviorconfigid, 'LIMITED',    1, 0);
+
+set @chartbehaviorid = 1 + (select coalesce(max(id), 0) from chart_behavior);
+insert into chart_behavior (id, behavior_config_id, type, max_tracks, skip_tracks, play_tracks_seconds, is_offline) values (@chartbehaviorid, @behaviorconfigid, 'NORMAL', -1, -1, -1,  1);
+insert into chart_user_status_behavior (id, chart_id, chart_behavior_id, user_status_type, is_locked) (select (100+chart_id) as id, chart_id, @chartbehaviorid, 'SUBSCRIBED', 0 from community_charts where community_id=@communityid) union (select (200+chart_id) as id, chart_id, @chartbehaviorid, 'FREE_TRIAL', 0 from community_charts where community_id=@communityid);
+
+set @chartbehaviorid = 1 + @chartbehaviorid;
+insert into chart_behavior (id, behavior_config_id, type, max_tracks, skip_tracks, play_tracks_seconds, is_offline) values (@chartbehaviorid, @behaviorconfigid, 'PREVIEW', -1, -1, 30, 1);
+insert into chart_user_status_behavior (id, chart_id, chart_behavior_id, user_status_type, is_locked) (select (300+chart_id) as id, chart_id, @chartbehaviorid, 'LIMITED',    0 from community_charts where community_id=@communityid);
+
+set @chartbehaviorid = 1 + @chartbehaviorid;
+insert into chart_behavior (id, behavior_config_id, type, max_tracks, skip_tracks, play_tracks_seconds, is_offline) values (@chartbehaviorid, @behaviorconfigid, 'SHUFFLED', -1, -1, -1, 0);
+
+--  create freemium model for hl_uk community
+set @behaviorconfigid = 1 + (select coalesce(max(id), 0) from behavior_config);
+
+insert into behavior_config (id, community_id, type, required_referrals, referrals_duration, referrals_duration_type) values (@behaviorconfigid, @communityid, 'FREEMIUM', 1, 1, 'MONTHS');
+
+insert into content_user_status_behavior (id, behavior_config_id, user_status_type, are_favorites_off, are_ads_off) values (4, @behaviorconfigid, 'FREE_TRIAL', 0, 1);
+insert into content_user_status_behavior (id, behavior_config_id, user_status_type, are_favorites_off, are_ads_off) values (5, @behaviorconfigid, 'SUBSCRIBED', 0, 1);
+insert into content_user_status_behavior (id, behavior_config_id, user_status_type, are_favorites_off, are_ads_off) values (6, @behaviorconfigid, 'LIMITED',    1, 0);
+
+set @chartbehaviorid = 1 + (select coalesce(max(id), 0) from chart_behavior);
+insert into chart_behavior (id, behavior_config_id, type, max_tracks, skip_tracks, play_tracks_seconds, is_offline) values (@chartbehaviorid, @behaviorconfigid, 'NORMAL', -1, -1, -1, 1);
+insert into chart_user_status_behavior (id, chart_id, chart_behavior_id, user_status_type, is_locked) (select (400+chart_id) as id, chart_id, @chartbehaviorid, 'SUBSCRIBED', 0 from community_charts where community_id=@communityid) union (select (500+chart_id) as id, chart_id, @chartbehaviorid, 'FREE_TRIAL', 0 from community_charts where community_id=@communityid);
+
+set @chartbehaviorid = 1 + @chartbehaviorid;
+insert into chart_behavior (id, behavior_config_id, type, max_tracks, skip_tracks, play_tracks_seconds, is_offline) values (@chartbehaviorid, @behaviorconfigid, 'PREVIEW', -1, -1, 30, 1);
+insert into chart_user_status_behavior (id, chart_id, chart_behavior_id, user_status_type, is_locked) (select (600+chart_id) as id, chart_id, @chartbehaviorid, 'LIMITED',    0 from community_charts where community_id=@communityid);
+
+set @chartbehaviorid = 1 +  @chartbehaviorid;
+insert into chart_behavior (id, behavior_config_id, type, max_tracks, skip_tracks, play_tracks_seconds, is_offline) values (@chartbehaviorid, @behaviorconfigid, 'SHUFFLED', -1, -1, -1, 0);

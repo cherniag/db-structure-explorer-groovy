@@ -30,7 +30,6 @@
 
 	<mvc:annotation-driven>
        <mvc:argument-resolvers>
-           <bean class="mobi.nowtechnologies.server.shared.web.spring.modifiedsince.IfModifiedSinceArgumentResolver"/>
 		   <bean class="mobi.nowtechnologies.server.security.impl.spring.method.annotation.AuthenticatedUserMethodArgumentResolver">
 			   <property name="parameterType" value="mobi.nowtechnologies.server.persistence.domain.User"/>
 		   </bean>
@@ -88,8 +87,16 @@
                 <value>mobi.nowtechnologies.server.dto.streamzine.IdListItemDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.StreamzineUpdateDto</value>
                 <value>mobi.nowtechnologies.server.dto.streamzine.VisualBlock</value>
-                <value>mobi.nowtechnologies.server.dto.ReferralDto</value>
-				<value>mobi.nowtechnologies.server.dto.transport.UserContextDto</value>
+                <value>mobi.nowtechnologies.server.transport.referrals.ReferralDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.ContextDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.ChartContextDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.ReferralsContextDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.ChartBehaviorDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.ChartBehaviorsDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.DurationDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.BehaviorTemplateDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.InstructionDto</value>
+				<value>mobi.nowtechnologies.server.transport.context.dto.InstructionsDto</value>
 			</list>
 		</property>
 	</bean>

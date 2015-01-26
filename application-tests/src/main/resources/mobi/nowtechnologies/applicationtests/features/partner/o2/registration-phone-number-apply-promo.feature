@@ -1,4 +1,4 @@
-@NotReady
+@NotReady1
 Feature: Registration, phone number and activate
 
   Scenario: Registration, enter phone number and apply init promo

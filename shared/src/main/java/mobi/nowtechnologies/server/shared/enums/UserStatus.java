@@ -1,6 +1,9 @@
 package mobi.nowtechnologies.server.shared.enums;
 
-//TODO remove UserStatus domain and UserStatusDao class
+/**
+ * @deprecated If possible, try to use {@link mobi.nowtechnologies.server.persistence.domain.UserStatusType} instead.
+ */
+@Deprecated
 public enum UserStatus {
 	SUBSCRIBED((byte) 10),
 	EULA((byte) 4),

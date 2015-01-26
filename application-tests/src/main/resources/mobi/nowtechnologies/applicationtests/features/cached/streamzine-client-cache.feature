@@ -1,4 +1,4 @@
-@Ready
+@NotReady
 Feature: Transport API call for the GET_STREAMZINE command sending special client header
   Scenario: device sends GET_STREAMZINE command with correct parameters and gets correct response
     Given First time user with device using JSON and XML formats for all streamzine supported versions starting from 6.3 and streamzine supported communities and for all devices available

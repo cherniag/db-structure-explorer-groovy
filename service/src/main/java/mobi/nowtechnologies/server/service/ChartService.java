@@ -10,7 +10,6 @@ import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.ChartDto;
-import mobi.nowtechnologies.server.shared.dto.ContentDtoResult;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -51,13 +50,11 @@ public class ChartService implements ApplicationContextAware {
     private ApplicationContext applicationContext;
     private ChartAsm chartAsm;
 
-    private CacheContentService cacheContentService;
-
     @Transactional(propagation = Propagation.REQUIRED)
-    public ContentDtoResult<ChartDto> processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution,
-                                                             Long lastChartUpdateFromClient, boolean isPlayListLockSupported) {
-        LOGGER.debug("input parameters user=[{}], createDrmIfNotExists=[{}], fetchLocked=[{}], resolution=[{}], lastChartUpdateFromClient=[{}]",
-                user, createDrmIfNotExists, fetchLocked, resolution, lastChartUpdateFromClient);
+    public ChartDto processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution,
+                                                             boolean isPlayListLockSupported) {
+        LOGGER.debug("input parameters user=[{}], createDrmIfNotExists=[{}], fetchLocked=[{}], resolution=[{}], isPlayListLockSupported=[{}]",
+                user, createDrmIfNotExists, fetchLocked, resolution, isPlayListLockSupported);
 
         user = userService.getUserWithSelectedCharts(user.getId());
         Community community = user.getUserGroup().getCommunity();
@@ -92,10 +89,6 @@ public class ChartService implements ApplicationContextAware {
                 playlistDtos.add(playlistDto);
             }
         }
-        Long lastUpdateTimeForChartDetails = findMaxPublishDate(chartDetails);
-        if (lastChartUpdateFromClient != null && lastChartUpdateFromClient > 0) {
-            cacheContentService.checkCacheContent(lastChartUpdateFromClient, lastUpdateTimeForChartDetails);
-        }
 
         String defaultAmazonUrl = messageSource.getMessage(rewriteUrlParameter, "get.chart.command.default.amazon.url", null, "get.chart.command.default.amazon.url", null);
 
@@ -114,7 +107,7 @@ public class ChartService implements ApplicationContextAware {
         chartDto.setChartDetailDtos(chartDetailDtos.toArray(new ChartDetailDto[0]));
 
         LOGGER.debug("Output parameter chartDto=[{}]", chartDto);
-        return new ContentDtoResult<ChartDto>(lastUpdateTimeForChartDetails, chartDto);
+        return chartDto;
     }
 
     private boolean areAllTracksLocked(List<ChartDetail> chartDetailTree) {
@@ -124,16 +117,6 @@ public class ChartService implements ApplicationContextAware {
             }
         }
         return true;
-    }
-
-    private Long findMaxPublishDate(List<ChartDetail> chartDetails) {
-        Long result = -1l;
-        for (ChartDetail currentDetail : chartDetails) {
-            if (currentDetail.getPublishTimeMillis() > result) {
-                result = currentDetail.getPublishTimeMillis();
-            }
-        }
-        return result;
     }
 
     private GetChartContentManager resolveChartSupporter(String communityName) {
@@ -385,10 +368,6 @@ public class ChartService implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-    }
-
-    public void setCacheContentService(CacheContentService cacheContentService) {
-        this.cacheContentService = cacheContentService;
     }
 
     public void setChartDetailsConverter(ChartDetailsConverter chartDetailsConverter) {

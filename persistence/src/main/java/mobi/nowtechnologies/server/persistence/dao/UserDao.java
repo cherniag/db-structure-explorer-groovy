@@ -76,20 +76,6 @@ public class UserDao extends JpaDaoSupport {
 							size, facebookId, communityName));
 	}
 	
-	public boolean userExists(String userName, String communityName) {
-		Long userCount = (Long) getJpaTemplate()
-				.find(
-						"select count(*) from "
-								+ User.class.getSimpleName()
-								+ " user where user.userName = ?1 and user.userGroupId=(select userGroup.id from "
-								+ UserGroup.class.getSimpleName()
-								+ " userGroup where userGroup.communityId=(select community.id from "
-								+ Community.class.getSimpleName()
-								+ " community where community.name=?2))",
-						userName, communityName).get(0);
-		return userCount != 0;
-	}
-
 	public Promotion getActivePromotion(UserGroup userGroup) {
 		List<?> list = getJpaTemplate().find(
 				"select o from " + Promotion.class.getSimpleName() +

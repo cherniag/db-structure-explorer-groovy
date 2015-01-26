@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class AutoOptInController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{communityUri}/{apiVersion:6\\.8}/AUTO_OPT_IN",
             "**/{communityUri}/{apiVersion:6\\.7}/AUTO_OPT_IN",
             "**/{communityUri}/{apiVersion:6\\.6}/AUTO_OPT_IN",
             "**/{communityUri}/{apiVersion:6\\.5}/AUTO_OPT_IN",

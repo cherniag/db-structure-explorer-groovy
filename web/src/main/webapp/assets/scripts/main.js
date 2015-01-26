@@ -26,8 +26,12 @@ function adjustImage(img, placeholderDim) {
         var scale = calcScaleCoeff(placeholderDim, min);
         if(img.height < img.width) {
             img.height = scale * min;
+            // center image
+            //img.style.marginLeft = (img.height - img.width) / 2 + "px";
         } else {
             img.width = scale * min;
+            // center image
+            //img.style.marginTop = (img.width - img.height) / 2 + "px";
         }
     }
 }

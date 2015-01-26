@@ -12,7 +12,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.Recognize
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
@@ -55,8 +55,8 @@ public class DeepLinkInfoServiceTest {
         AccessPolicy accessPolicy = deepLinkInfoService.tryToHandleSecuredTile(deepLinkInfo);
 
         assertEquals(Permission.HIDDEN, accessPolicy.getPermission());
-        assertEquals(1, accessPolicy.getUserStatusTypes().size());
-        assertTrue(accessPolicy.getUserStatusTypes().contains(GrantedToType.SUBSCRIBED));
+        assertEquals(1, accessPolicy.getGrantedToTypes().size());
+        assertTrue(accessPolicy.getGrantedToTypes().contains(GrantedToType.SUBSCRIBED));
     }
 
     @Test
@@ -70,9 +70,9 @@ public class DeepLinkInfoServiceTest {
         AccessPolicy accessPolicy = deepLinkInfoService.tryToHandleSecuredTile(deepLinkInfo);
 
         assertEquals(Permission.RESTRICTED, accessPolicy.getPermission());
-        assertEquals(2, accessPolicy.getUserStatusTypes().size());
-        assertTrue(accessPolicy.getUserStatusTypes().contains(GrantedToType.LIMITED));
-        assertTrue(accessPolicy.getUserStatusTypes().contains(GrantedToType.FREETRIAL));
+        assertEquals(2, accessPolicy.getGrantedToTypes().size());
+        assertTrue(accessPolicy.getGrantedToTypes().contains(GrantedToType.LIMITED));
+        assertTrue(accessPolicy.getGrantedToTypes().contains(GrantedToType.FREETRIAL));
     }
 
     @Test

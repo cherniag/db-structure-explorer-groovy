@@ -38,7 +38,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkL
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.GrantedToType;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import org.apache.commons.lang.time.DateUtils;

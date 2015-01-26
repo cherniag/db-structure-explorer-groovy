@@ -531,6 +531,7 @@ body {
     width:270px;
     margin:0 auto;
     height:100%;
+    position: relative;
 }
 .go-premium-success-avatar-customer {
     width: 200px;
@@ -539,13 +540,26 @@ body {
     margin-left:35px;
     display:block;
     border-radius: 100px;
-    border: 1px solid #bababa;
     overflow: hidden;
+}
+
+.go-premium-success-avatar-customer-circle{
+    position: absolute;
+    border: 1px solid #bababa;
+    border-radius: 50%;
+    margin-left: 34px;
+}
+
+.go-premium-success-avatar-customer-img{
+    display:block;
+    margin-left: -1px;
+    margin-top: -1px;
 }
 .go-premium-success-avatar-border {
     width:270px;
     height: 270px;
     margin-top:-235px;
+    position: relative;
 }
 
 .go-premium-success-ad-container {
@@ -568,7 +582,7 @@ body {
 }
 
 .go-premium-success-close-button-container {
-     position: absolute;
+    position: absolute;
 }
 
 
@@ -901,10 +915,15 @@ body {
 }
 
 @media all and (max-width: 480px) {
+
+    .go-premium-header {
+        margin-top: 15px;
+    }
+
     .go-premium-button-close-device {
-        width: 36px;
-        height: 36px;
-        margin: 10px;
+        width: 28px;
+        height: 28px;
+        margin: 22px 18px 18px;
     }
 
     .go-premium-container-device {
@@ -912,33 +931,34 @@ body {
     }
 
     .go-premium-text-message-device {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 100%;
     }
 
     .go-premium-body-title-device {
-        font-size: 30px;
-        margin: 10px auto 10px;
+        font-size: 28px;
+        margin: 26px auto 18px;
     }
 
     .go-premium-button-device {
         padding: 14px 60px 14px 60px;
-        font-size: 22px;
+        font-size: 20px;
         border-radius: 40px;
     }
 
     .go-premium-header-delimiter {
         width: 100%;
         height: 9px;
-        background: url(../imgs/dot_1200x3.png) no-repeat;
+        background: url(../imgs/dot_1200x9.png) no-repeat;
+        background-size: 120%;
         margin-top: 30px;
         margin-bottom: 30px;
     }
 
     .go-premium-unsubscribe-banner-device {
         margin-top: 10px;
-        width: 89px;
-        height: 143px;
+        width: 78px;
+        height: 125px;
     }
 
     .go-premium-body-button-up {
@@ -949,9 +969,13 @@ body {
         margin: 20px 20px 0 20px;
     }
 
+    .go-premium-success-button-get-listening{
+        margin-top: 35px;
+    }
+
     .go-premium-header-hint-device {
         font-size: 16px;
-        line-height: 120%;
+        line-height: 200%;
     }
 
     .go-premium-header-price-device {
@@ -970,8 +994,8 @@ body {
     }
 
     .go-premium-text-message-wrapper-device {
-        width: 100%;
-        margin: 0 auto;
+        width: 90%;
+        margin: 0 auto 30px;
     }
 
     .go-premium-success-solutation-container-device {
@@ -979,11 +1003,11 @@ body {
     }
     .go-premium-success-ad-text-1-device {
         padding: 4px;
-        font-size: 30px;
+        font-size: 20px;
     }
     .go-premium-success-ad-text-2-device {
         padding: 4px;
-        font-size: 30px;
+        font-size: 20px;
     }
     .go-premium-success-solutation-device {
         padding: 7px;
@@ -998,19 +1022,67 @@ body {
         font-size: 20px;
     }
     .go-premium-success-ad-container-device {
-        margin-top:140px;
+        margin-top:130px;
     }
     .go-premium-success-close-button-container-device {
         margin-top:10px;
     }
 
+    .go-premium-success-avatar-container {
+        width: 100%;
+        height: 200px;
+        margin: -105px auto 0;
+        position: absolute;
+    }
+
+    .go-premium-success-avatar {
+        width: 200px;
+        margin: 0 auto;
+        height: 100%;
+    }
+
+    .go-premium-success-avatar-customer {
+        width: 150px;
+        height: 150px;
+        margin-top: 25px;
+        margin-left: 25px;
+        border-radius: 75px;
+    }
+
+    .go-premium-success-avatar-customer-circle{
+        margin-left: 24px;
+        border-radius:50%;
+    }
+
+    .go-premium-success-avatar-border {
+        width: 200px;
+        height: 200px;
+        margin-top: -175px;
+    }
+}
+
+@media all and (max-width: 360px) {
+
+    .go-premium-header {
+        margin-top: 10px;
+    }
+
+    .go-premium-success-ad-container-device {
+        margin-top:125px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 35px;
+    }
 }
 
 @media all and (max-width: 320px) {
     .go-premium-button-close-device {
-        width: 24px;
-        height: 24px;
-        margin: 0;
+        width: 22px;
+        height: 22px;
+        margin: 5px;
+        background: url(../imgs/icon_close_36.png) no-repeat center;
+        background-size: 96%;
     }
 
     .go-premium-container-device {
@@ -1024,35 +1096,41 @@ body {
 
     .go-premium-body-title-device {
         font-size: 20px;
-        margin: 8px auto 8px;
+        margin: 24px auto 6px;
     }
 
     .go-premium-button-device {
-        padding: 16px;
-        font-size: 18px;
-        border-radius: 32px;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 24px;
     }
 
     .go-premium-header-delimiter {
         width: 100%;
-        height: 9px;
-        background: url(../imgs/dot_1200x3.png) no-repeat;
+        height: 6px;
+        background: url(../imgs/dot_1200x6.png) no-repeat;
+        background-size: 200%;
         margin-top: 30px;
         margin-bottom: 30px;
     }
 
     .go-premium-unsubscribe-banner-device {
-        margin-top: 0;
-        width: 71px;
-        height: 114px;
+        margin-top: 16px;
+        margin-bottom: 0px;
+        width: 62px;
+        height: 100px;
     }
 
     .go-premium-body-button-up {
-        margin: 12px 26px 0 26px;
+        margin: 13px 26px 0 26px;
     }
 
     .go-premium-body-button-below {
-        margin: 12px 26px 0 26px;
+        margin: 13px 26px 0 26px;
+    }
+
+    .go-premium-success-button-get-listening{
+        margin-top: 38px;
     }
 
     .go-premium-header-hint-device {
@@ -1104,11 +1182,42 @@ body {
         padding: 4px;
     }
     .go-premium-success-ad-container-device {
-        margin-top:130px;
+        margin-top:105px;
     }
     .go-premium-success-close-button-container-device {
         margin-top:20px;
         margin-left:20px;
+    }
+    .go-premium-success-avatar-container {
+        width: 100%;
+        height: 160px;
+        margin: -80px auto 0;
+        position: absolute;
+    }
+
+    .go-premium-success-avatar {
+        width: 160px;
+        margin: 0 auto;
+        height: 100%;
+    }
+
+    .go-premium-success-avatar-customer {
+        width: 120px;
+        height: 120px;
+        margin-top: 20px;
+        margin-left: 20px;
+        border-radius: 60px;
+    }
+
+    .go-premium-success-avatar-customer-circle{
+        margin-left: 19px;
+        border-radius: 50%;
+    }
+
+    .go-premium-success-avatar-border {
+        width: 160px;
+        height: 160px;
+        margin-top: -175px;
     }
 }
 
@@ -1228,8 +1337,11 @@ body {
         margin-left:25px;
         display:block;
         border-radius: 45px;
-        border: 1px solid #bababa;
         overflow: hidden;
+    }
+    .go-premium-success-avatar-customer-circle{
+        margin-left: 24px;
+        border-radius: 50%;
     }
     .go-premium-success-avatar-border {
         width:140px;

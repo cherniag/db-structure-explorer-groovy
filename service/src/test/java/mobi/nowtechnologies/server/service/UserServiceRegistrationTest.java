@@ -8,13 +8,13 @@ import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;
@@ -22,18 +22,13 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class UserServiceRegistrationTest {
-
     @Mock
     private CommunityService communityService;
-
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private UserGroupRepository userGroupRepository;
-
     @Mock
     private CountryService countryService;
 
@@ -64,9 +59,14 @@ public class UserServiceRegistrationTest {
     ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
 
 
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        initMocks("communityUrl", "deviceUID", "DEVICE_TYPE");
+    }
+
     @Test
     public void registerNewUserWithoutPromotion() throws Exception {
-        initMocks("communityUrl", "deviceUID", "DEVICE_TYPE");
         when(userRepository.findUserWithUserNameAsPassedDeviceUID("deviceUID".toLowerCase(), community)).thenReturn(null);
 
         User registerUser = userService.registerUser(userDeviceRegDetailsDto, false, false);
@@ -81,7 +81,7 @@ public class UserServiceRegistrationTest {
 
     @Test
     public void reRegisterExistingUserWithoutPromotion() throws Exception {
-        initMocks("communityUrl", "deviceUID", "DEVICE_TYPE");
+
         User existing = mock(User.class);
         when(userRepository.findUserWithUserNameAsPassedDeviceUID("deviceUID".toLowerCase(), community)).thenReturn(existing);
 
@@ -97,7 +97,7 @@ public class UserServiceRegistrationTest {
         when(userDeviceRegDetailsDto.getDeviceUID()).thenReturn(deviceUID);
         when(userDeviceRegDetailsDto.getDeviceType()).thenReturn(deviceType);
         when(communityService.getCommunityByUrl("communityUrl")).thenReturn(community);
-        when(userRepository.save(userArgumentCaptor.capture())).thenAnswer(new Answer<Object>() {
+        when(userRepository.saveAndFlush(userArgumentCaptor.capture())).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 return userArgumentCaptor.getValue();

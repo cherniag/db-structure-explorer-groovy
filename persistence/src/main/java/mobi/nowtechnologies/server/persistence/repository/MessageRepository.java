@@ -27,24 +27,9 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 
 	@Query("select max(message.publishTimeMillis) from Message message where message.community=:community and message.messageType=:messageType and message.publishTimeMillis<=:choosedPublishTimeMillis")
 	Long findNearestLatestPublishDate(@Param("choosedPublishTimeMillis") long choosedPublishTimeMillis, @Param("community") Community community, @Param("messageType") MessageType messageType);
-	
-    @Query("select max(message.publishTimeMillis) from Message message where message.community=:community and message.activated = true  and message.messageType in (:types) and message.publishTimeMillis>:choosedPublishTimeMillis and message.publishTimeMillis<:currentTimeMillis")
-    Long findNextPublishDateForMessageType(@Param("choosedPublishTimeMillis") long choosedPublishTimeMillis, @Param("community") Community community, @Param("currentTimeMillis") long currentTimeMillis, @Param("types") Collection<MessageType> messageTypes);
 
-
-    @Query("select max(message.publishTimeMillis) from Message message " +
-            "where message.community=?1 " +
-            "and message.activated=true " +
-            "and message.messageType<>'NEWS'")
-    Long findNextPublishDateForContent(Community community);
-
-
-    @Query("select max(message.publishTimeMillis) from Message message " +
-            "where message.community=?1 " +
-            "and message.activated=true " +
-            "and message.messageType<>'NEWS' and message.messageType not in (?2) ")
-    Long findNextPublishDateForContentWithoutBanners(Community community, List<MessageType> banners);
-
+    @Query("select max(message.publishTimeMillis) from Message message where message.community=:community and message.messageType='NEWS' and message.publishTimeMillis>:choosedPublishTimeMillis and message.publishTimeMillis<:currentTimeMillis")
+    Long findNextNewsPublishDate(@Param("choosedPublishTimeMillis") long choosedPublishTimeMillis, @Param("community") Community community, @Param("currentTimeMillis") long currentTimeMillis);
 
     @Query("select distinct message from Message message " +
 			"left join FETCH  message.filterWithCtiteria " +

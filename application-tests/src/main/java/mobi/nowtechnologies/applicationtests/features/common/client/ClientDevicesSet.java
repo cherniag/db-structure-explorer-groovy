@@ -6,6 +6,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.accountcheck.AccountCheckHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.chart.ChartHttpService;
+import mobi.nowtechnologies.applicationtests.services.http.chart.ChartResponse;
 import mobi.nowtechnologies.applicationtests.services.http.common.Error;
 import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
 import mobi.nowtechnologies.applicationtests.services.http.news.NewsHttpService;
@@ -15,8 +16,10 @@ import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActi
 import mobi.nowtechnologies.applicationtests.services.http.signup.SignupHttpService;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -97,10 +100,18 @@ public abstract class ClientDevicesSet {
     //
     // Get Chart
     //
-    public String getChart(UserDeviceData deviceData, String userName) {
+    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData) {
+        return getChart(deviceData, HttpMethod.POST, null);
+    }
+
+    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData, HttpMethod httpMethod) {
+        return getChart(deviceData, httpMethod, null);
+    }
+
+    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData, HttpMethod httpMethod, String resolution) {
         final PhoneState state = states.get(deviceData);
 
-        return chartHttpService.getChart(deviceData, userName, state.getLastAccountCheckResponse().userToken, state.getDeviceUID(), deviceData.getFormat());
+        return chartHttpService.getChart(deviceData, state, resolution, httpMethod);
     }
 
     public NewsDetailDto[] getNews(UserDeviceData deviceData, ApiVersions allVersions){
@@ -283,6 +294,20 @@ public abstract class ClientDevicesSet {
         @Override
         public HttpStatus getLastGooglePlusErrorStatus() {
             return lastGooglePlusErrorStatus;
+        }
+
+        @Override
+        public String getLastSocialActivationUserName() {
+            User lastFacebookInfo = getLastFacebookInfo();
+            if (lastFacebookInfo != null) {
+                return lastFacebookInfo.getUserName();
+            }
+
+            User lastGooglePlusInfo = getLastGooglePlusInfo();
+
+            Assert.notNull(lastGooglePlusInfo, "User did not activated with Facebook or Google Plus");
+
+            return lastGooglePlusInfo.getUserName();
         }
 
         @Override

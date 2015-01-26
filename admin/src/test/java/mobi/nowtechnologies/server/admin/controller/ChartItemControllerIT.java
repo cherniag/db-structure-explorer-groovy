@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.ChartService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -41,6 +42,7 @@ public class ChartItemControllerIT extends AbstractAdminITTest{
     @Resource LabelRepository labelRepository;
 
     @Test
+    @Ignore
     public void shouldReturnDuplicatedMediaAcrossNearestChartsDtos() throws Exception {
         //given
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(URL_DATE_TIME_FORMAT);
