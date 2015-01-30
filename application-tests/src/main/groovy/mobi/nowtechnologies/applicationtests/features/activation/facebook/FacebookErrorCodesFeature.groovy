@@ -81,7 +81,7 @@ class FacebookErrorCodesFeature {
 
     @Then('^User gets (\\d+) http error code and (\\d+) error code and (.*) message$')
     def "User gets given http error code and given error code and given message"(final int httpErrorCode, final int errorCode, final String errorBody) {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def lastFacebookError = phoneState.getLastFacebookErrorResponse()
             def status = phoneState.getLastFacebookErrorStatus()
@@ -95,7 +95,7 @@ class FacebookErrorCodesFeature {
     @Transactional("applicationTestsTransactionManager")
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
@@ -105,14 +105,14 @@ class FacebookErrorCodesFeature {
 
     @When('^Registered user enters Facebook credentials and facebook returns invalid facebook id$')
     def "Registered user enters Facebook credentials and facebook returns invalid facebook id"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookWithInvalidFacebookId(it)
         }
     }
 
     @When('^Registered user enters Facebook credentials and facebook returns invalid access token$')
     def "Registered user enters Facebook credentials and facebook returns invalid access token"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookWithInvalidAccessToken(it)
         }
     }

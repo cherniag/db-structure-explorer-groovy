@@ -32,9 +32,6 @@ import static org.junit.Assert.assertEquals
  */
 @Component
 class GooglePlusSuccessFeature {
-
-    static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy")
-
     @Resource
     UserDeviceDataService userDeviceDataService
 
@@ -82,7 +79,7 @@ class GooglePlusSuccessFeature {
 
     @Then('^Default promo set in services properties is applied$')
     def "Default promo set in services properties is applied"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getLastPromo().getCode(),
@@ -93,7 +90,7 @@ class GooglePlusSuccessFeature {
     @And('^User receives following in the SIGN_IN_GOOGLE_PLUS response:$')
     def "User receives following in the SIGN_IN_GOOGLE_PLUS response"(DataTable userStateTable) {
         def userState = userStateTable.asList(UserState)[0];
-        currentUserDevices.each {
+        runner.parallel {
             def lastGooglePlusInfo = deviceSet.getPhoneState(it).lastGooglePlusInfo
             assertEquals(userState.activation.name(), lastGooglePlusInfo.activation)
             assertEquals(userState.freeTrial, lastGooglePlusInfo.freeTrial)
@@ -127,7 +124,7 @@ class GooglePlusSuccessFeature {
 
     @And('^\'userDetails\' filed contains all specified Google Plus details$')
     def "userDetails filed contains all specified Google Plus details"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def googlePlusInfo = phoneState.lastGooglePlusInfo.userDetails
             def person = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
@@ -144,7 +141,7 @@ class GooglePlusSuccessFeature {
 
     @And('^In database user has username as entered Google Plus email$')
     def "In database user has username as entered Google Plus email"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
 
             def user = userDbService.findUser(phoneState, it)
@@ -181,7 +178,7 @@ class GooglePlusSuccessFeature {
 
     @And('^In database user has Google Plus details the same as specified in Google Plus account$')
     def "In database user has Google Plus details the same as specified in Google Plus account"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
@@ -198,5 +195,9 @@ class GooglePlusSuccessFeature {
     @And('^In database user has last promotion according to promotion settings$')
     def "In database user has last promotion according to promotion settings"() {
         commonAssertionsService.checkLastPromotionDB(currentUserDevices, deviceSet)
+    }
+
+    private SimpleDateFormat getDateFormat() {
+        new SimpleDateFormat("MM/dd/yyyy")
     }
 }
