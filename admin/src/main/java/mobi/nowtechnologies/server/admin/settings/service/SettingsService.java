@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.admin.settings.service;
 
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlist.PlaylistInfo;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.PlaylistTypeInfoDto;
@@ -67,7 +68,7 @@ public class SettingsService {
             dto.getFavourites().put(userStatusType, contentUserStatusBehavior.isFavoritesOff());
         }
 
-        List<ChartUserStatusBehavior> behaviors = chartUserStatusBehaviorRepository.findByBehaviorConfig(freemiumBehaviorConfig);
+        List<ChartUserStatusBehavior> behaviors = chartUserStatusBehaviorRepository.findByBehaviorConfig(freemiumBehaviorConfig, Lists.newArrayList(UserStatusType.values()));
 
         for (ChartUserStatusBehavior behavior : behaviors) {
             final int chartId = behavior.getChartId();

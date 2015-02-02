@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static mobi.nowtechnologies.server.shared.enums.MessageActionType.A_SPECIFIC_TRACK;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.LIMITED_BANNER;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.getBannerTypes;
@@ -29,18 +28,6 @@ public class MessageRepositoryIT extends AbstractRepositoryIT {
 
     @Resource(name = "communityRepository")
     private CommunityRepository communityRepository;
-
-    @Test
-    public void testCount() {
-        long count = messageRepository.count();
-        assertTrue(count > 0);
-    }
-
-    @Test
-    public void testFindOne() {
-        Message message = messageRepository.findOne(1);
-        assertNotNull(message);
-    }
 
     @Test
     public void findMaxPosition() {

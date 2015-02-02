@@ -1,7 +1,7 @@
 @Ready
 Feature: Transport API call for the GET_STREAMZINE command
   Scenario: device sends GET_STREAMZINE command with correct parameters and gets correct response
-    Given First time user with device using JSON format for all streamzine supported versions below 6.3 and streamzine supported communities and for all devices available
+    Given First time user with device using JSON format for all streamzine supported versions and streamzine supported communities and for all devices available
 
     When update is prepared
 
@@ -20,8 +20,8 @@ Feature: Transport API call for the GET_STREAMZINE command
     And block on 2 position is NARROW, DEEPLINK, [hl-uk://web/dXJs?open=internally] with RESTRICTED permission granted to LIMITED, FREETRIAL
     And block on 3 position is WIDE, DEEPLINK, [hl-uk://page/subscription_page0] with HIDDEN permission granted to SUBSCRIBED
     And block on 4 position is SLIM_BANNER, DEEPLINK, [hl-uk://page/subscription_page1?action=subscribe] with no permissions
-    And block on 5 position is WIDE, DEEPLINK, [hl-uk://content/track?id=GB0000000001_1] with no permissions
-    And block on 6 position is WIDE, DEEPLINK, [hl-uk://content/playlist?id=10] with no permissions
+    And block on 5 position is WIDE, DEEPLINK, [hl-uk://content/track?id=GB0000000001_1, hl-uk://content/track?player=mini&id=GB0000000001_1] with no permissions
+    And block on 6 position is WIDE, DEEPLINK, [hl-uk://content/playlist?id=10, hl-uk://content/playlist?player=mini&id=10] with no permissions
     And block on 7 position is WIDE, ID_LIST, [2, 3, 4] with no permissions
 
     And block on 3 has title equal to title-3

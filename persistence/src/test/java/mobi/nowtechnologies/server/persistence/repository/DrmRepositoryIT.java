@@ -6,7 +6,6 @@ import org.junit.Test;
 import javax.annotation.Resource;
 
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -14,27 +13,12 @@ import static org.junit.Assert.assertEquals;
  */
 
 public class DrmRepositoryIT extends AbstractRepositoryIT{
-	
-	@Resource(name = "drmRepository")
-	private DrmRepository drnRepository;
-	
-	@Test
-	public void testCount() {
-		long count = drnRepository.count();
-		
-		assertEquals(1, count);
-	}
-	
-	@Test
-	public void testFindOne() {
-		Drm drm = drnRepository.findOne(1);
-		
-		assertNotNull(drm);
-	}	
-	
+	@Resource
+	private DrmRepository drmRepository;
+
 	@Test
 	public void testFindByUserAndMedia() {
-		Drm drm = drnRepository.findByUserAndMedia(1, 49);
+		Drm drm = drmRepository.findByUserAndMedia(1, 49);
 		
 		assertNotNull(drm);
 	}	

@@ -3,7 +3,7 @@ Feature: Server returns json data about application upgrade 'call-to-action'
 
   Scenario: device sends User-Agent header not according to application upgrade format
     Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions
-    When User-Agent header is in old format "Android Http Client"
+    When header is in old format "Android Http Client"
     Then response has 400 http response code
     And error message is 'A required HTTP header was not specified.'
 
@@ -11,7 +11,7 @@ Feature: Server returns json data about application upgrade 'call-to-action'
   Scenario Outline: device sends User-Agent header according to application upgrade format
     Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions bellow 6.3
     When service config data is set to '<db_status>' for version '<db_app_version>', 'musicqubed-{random}' application, '<db_message_key>' message, '<db_image>' image and '<db_url>' link
-    And User-agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
+    And header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
     And json field has 'status' set to '<response_status>'
@@ -33,11 +33,10 @@ Feature: Server returns json data about application upgrade 'call-to-action'
       | MIGRATED         | 1.3.5          | migrated.jpg | http://e.com | service.config.some.message | 1.4.0           | CURRENT          | <null>                      | <null>        |
 
 
-
   Scenario Outline: device sends User-Agent header according to application upgrade format
     Given Mobile client makes Service Config call using JSON format for all devices and all communities and all versions above 6.3
     When service config data is set to '<db_status>' for version '<db_app_version>', 'musicqubed-{random}' application, '<db_message_key>' message, '<db_image>' image and '<db_url>' link
-    And User-agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
+    And header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
     And json field has 'status' set to '<response_status>'
@@ -74,7 +73,7 @@ Feature: Server returns json data about application upgrade 'call-to-action'
       | SUGGESTED_UPDATE | 4.0        | musicqubed-{random} | suggest_4.jpg | http://4.0 | service.config.some.message |
       | SUGGESTED_UPDATE | 4.2        | musicqubed-{random} | suggest_4.jpg | http://4.0 | service.config.some.message |
 
-    And User-Agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
+    And header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
     And json field has 'status' set to '<response_status>'
@@ -106,7 +105,7 @@ Feature: Server returns json data about application upgrade 'call-to-action'
       | FORCED_UPDATE    | 3.0        | musicqubed-{random} | force_3.jpg   | http://3.0 | service.config.some.message |
       | SUGGESTED_UPDATE | 4.0        | musicqubed-{random} | suggest_4.jpg | http://4.0 | service.config.some.message |
 
-    And User-Agent header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
+    And header is in new format "musicqubed-{random}/<req_app_version> ({platform}; {community})"
     Then response has 200 http response code
     And json data is 'versionCheck'
     And json field has 'status' set to '<response_status>'

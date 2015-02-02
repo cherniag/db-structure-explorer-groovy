@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.applicationtests.features.common.client;
 
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.http.common.standard.StandardResponse;
 import mobi.nowtechnologies.applicationtests.services.http.context.ContextHttpService;
@@ -13,11 +14,10 @@ import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlus
 import mobi.nowtechnologies.applicationtests.services.http.googleplus.GooglePlusUserInfoGenerator;
 import mobi.nowtechnologies.applicationtests.services.http.referral.ReferralHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamzineHttpService;
-import mobi.nowtechnologies.server.transport.referrals.ReferralDto;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.transport.referrals.ReferralDto;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -396,39 +396,26 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
     //
     // Streamzine
     //
-    public <T> ResponseEntity<T> getStreamzine(String community, UserDeviceData deviceData, String timestampToken, String timestamp, String resolution, String userName, Class<T> type) {
+    public <T> ResponseEntity<T> getStreamzine(String community, UserDeviceData deviceData, String timestampToken, String timestamp, String resolution, String userName, Class<T> type, ApiVersions apiVersions) {
         PhoneStateImpl state = states.get(deviceData);
-        return getStreamzineHttpService.getStreamzine(community, deviceData, state, timestampToken, timestamp, resolution, userName, type);
+
+        // get or post?
+        if(apiVersions.bellow("6.3").contains(deviceData.getApiVersion())) {
+            return getStreamzineHttpService.postStreamzine(community, deviceData, state, timestampToken, timestamp, resolution, userName, type);
+        } else {
+            return getStreamzineHttpService.getStreamzine(community, deviceData, state, timestampToken, timestamp, resolution, userName, type);
+        }
     }
 
-    public ResponseEntity<StandardResponse> getStreamzineErrorEntity(UserDeviceData deviceData, String timestampToken, String timestamp, String resolution, String userName) {
+    public ResponseEntity<StandardResponse> getStreamzineErrorEntity(UserDeviceData deviceData, String timestampToken, String timestamp, String resolution, String userName, ApiVersions apiVersions) {
         PhoneStateImpl state = states.get(deviceData);
-        return getStreamzineHttpService.getStreamzineErrorEntity(deviceData, state, timestampToken, timestamp, resolution, userName);
-    }
 
-    public ResponseEntity<String> getStreamzineAndSendIfModifiedSince(UserDeviceData data, long ifModifiedSince) {
-        PhoneState state = states.get(data);
-        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, ifModifiedSince, HttpMethod.GET);
-    }
-
-    public ResponseEntity<String> getStreamzineAndSendIfModifiedSince(UserDeviceData data, String corruptedHeader) {
-        PhoneState state = states.get(data);
-        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, corruptedHeader, HttpMethod.GET);
-    }
-
-    public ResponseEntity<String> getStreamzineAndSendIfModifiedSince(UserDeviceData data) {
-        PhoneState state = states.get(data);
-        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, HttpMethod.GET);
-    }
-
-    public ResponseEntity<String> getStreamzineAndSendIfModifiedSinceOld(UserDeviceData data, long ifModifiedSince) {
-        PhoneState state = states.get(data);
-        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, ifModifiedSince, HttpMethod.POST);
-    }
-
-    public ResponseEntity<String> getStreamzineAndSendIfModifiedSinceOld(UserDeviceData data) {
-        PhoneState state = states.get(data);
-        return getStreamzineHttpService.getStreamzineAnsSendIfModifiedSince(data, state, HttpMethod.POST);
+        // get or post?
+        if(apiVersions.bellow("6.3").contains(deviceData.getApiVersion())) {
+            return getStreamzineHttpService.postStreamzine(deviceData.getCommunityUrl(), deviceData, state, timestampToken, timestamp, resolution, userName, StandardResponse.class);
+        } else {
+            return getStreamzineHttpService.getStreamzine(deviceData.getCommunityUrl(), deviceData, state, timestampToken, timestamp, resolution, userName, StandardResponse.class);
+        }
     }
 
     //

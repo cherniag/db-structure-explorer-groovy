@@ -1,7 +1,9 @@
 package mobi.nowtechnologies.server.persistence.domain.referral;
 
+import com.google.common.base.Preconditions;
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -68,32 +70,32 @@ public class UserReferralsSnapshot {
         return userId;
     }
 
-    public Date getCalculatedExpireDate() {
-        if(isMatched()) {
-            if (!isUnlimitedReferralsDuration()) {
-                return DateTimeUtils.moveDate(
-                        matchedDate, DateTimeUtils.GMT_TIME_ZONE_ID,
-                        referralsDuration.getAmount(), referralsDuration.getUnit());
-            }
-        }
-
-        return null;
-    }
-
     public int getCurrentReferrals() {
         return currentReferrals;
     }
 
-    public boolean isUnlimitedReferralsDuration() {
-        return isMatched() && (referralsDuration == null || !referralsDuration.containsPeriod());
+    public boolean hasNoDuration() {
+        return referralsDuration == null || !referralsDuration.containsPeriod();
     }
 
     public boolean isMatched() {
         return matchedDate != null;
     }
 
-    Date getMatchedDate() {
-        return matchedDate;
+    public boolean isActual(Date time) {
+        Assert.notNull(time);
+
+        return isMatched() && (
+                hasNoDuration() || getReferralsExpiresDate().after(time)
+        );
+    }
+
+    public Date getMatchedDate() {
+        if(matchedDate == null) {
+            return null;
+        } else {
+            return new Date(matchedDate.getTime());
+        }
     }
 
     @Override
@@ -104,5 +106,29 @@ public class UserReferralsSnapshot {
                 ", referralsDuration=" + referralsDuration +
                 ", requiredReferrals=" + requiredReferrals +
                 '}';
+    }
+
+    public Date getReferralsExpiresDate() {
+        Preconditions.checkState(isMatched(), "Referrals was not matched. Check is it before");
+        Preconditions.checkState(!hasNoDuration(), "Referrals has no duration. Check is it before");
+
+        return DateTimeUtils.moveDate(
+                getMatchedDate(), DateTimeUtils.GMT_TIME_ZONE_ID,
+                referralsDuration.getAmount(), referralsDuration.getUnit());
+    }
+
+    public boolean includes(Date start, Date end) {
+        Assert.notNull(start);
+        Preconditions.checkState(isMatched(), "Check if it is already matched");
+
+        if(getMatchedDate().getTime() <= start.getTime()) {
+            if(end == null) {
+                return hasNoDuration();
+            } else {
+                return hasNoDuration() || getReferralsExpiresDate().getTime() >= end.getTime();
+            }
+        }
+
+        return false;
     }
 }

@@ -1078,6 +1078,10 @@ public class User implements Serializable {
         return freeTrialExpiredMillis;
     }
 
+    public Date getFreeTrialExpiredAsDate() {
+        return new Date(freeTrialExpiredMillis);
+    }
+
     public void setFreeTrialExpiredMillis(Long freeTrialExpiredMillis) {
         this.freeTrialExpiredMillis = freeTrialExpiredMillis;
     }

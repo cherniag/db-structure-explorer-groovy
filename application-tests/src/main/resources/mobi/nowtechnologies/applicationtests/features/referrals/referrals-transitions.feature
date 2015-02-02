@@ -1,4 +1,4 @@
-@Ready44
+@NotReady
 Feature: Store user's referrals
   Scenario: Activated users flow when older is activated and younger is duplicated
     Given activated user references R0(EMAIL:PENDING), R1(FACEBOOK:PENDING)

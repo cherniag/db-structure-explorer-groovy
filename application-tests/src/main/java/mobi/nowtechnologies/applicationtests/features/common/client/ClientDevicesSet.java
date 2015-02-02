@@ -58,8 +58,12 @@ public abstract class ClientDevicesSet {
     }
 
 
-    public ResponseEntity<String> serviceConfig(UserDeviceData userDeviceData, String header) {
-        return serviceConfigHttpService.serviceConfig(userDeviceData, header);
+    public ResponseEntity<String> serviceConfig(UserDeviceData userDeviceData, String header, ApiVersions apiVersions) {
+        if(apiVersions.above("6.8").contains(userDeviceData.getApiVersion())) {
+            return serviceConfigHttpService.serviceConfigXUserAgent(userDeviceData, header);
+        } else {
+            return serviceConfigHttpService.serviceConfigUserAgent(userDeviceData, header);
+        }
     }
 
     //

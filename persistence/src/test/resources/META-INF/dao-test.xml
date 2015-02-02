@@ -36,8 +36,6 @@ http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd">
         <property name="packagesToScan" ref="listOfPackagesToScan" />
     </bean>
 
-
-
     <bean id="persistence.EntityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" parent="abstract.EntityManagerFactory">
 	</bean>
@@ -45,6 +43,10 @@ http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd">
     <bean id="persistence.DataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="url" value="jdbc:h2:mem;DB_CLOSE_DELAY=-1;MVCC=true"/>
         <property name="driverClassName" value="org.h2.Driver"/>
+    </bean>
+
+    <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="persistence.DataSource"/>
     </bean>
 
     <bean id="persistence.SQLUtils" class="mobi.nowtechnologies.server.persistence.utils.SQLUtils" />

@@ -45,6 +45,9 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <bean id="behaviorInfoService" class="mobi.nowtechnologies.server.service.behavior.BehaviorInfoService">
 		<property name="activationDatePropertyName" value="referral.logic.activation.date" />
     </bean>
+	<bean class="mobi.nowtechnologies.server.service.behavior.ChartBehaviorService" />
+	<bean class="mobi.nowtechnologies.server.service.behavior.ChartBehaviorReferralsService" />
+	<bean class="mobi.nowtechnologies.server.service.behavior.ChartBehaviorReferralsRulesService" />
 
     <bean id="timeService" class="mobi.nowtechnologies.server.TimeService"/>
 
@@ -278,7 +281,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<bean id="service.PaymentService" class="mobi.nowtechnologies.server.service.PaymentService">
 		<property name="paymentDao" ref="persistence.PaymentDao" />
-		<property name="entityService" ref="service.EntityService" />
 	</bean>
 
     <bean id="service.O2Service" class="mobi.nowtechnologies.server.service.o2.impl.O2ServiceImpl">
@@ -411,10 +413,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<bean id="service.FilterService" class="mobi.nowtechnologies.server.service.FilterService">
 		<property name="filterWithCriteriaRepository" ref="filterWithCriteriaRepository" />
-	</bean>
-
-	<bean id="service.IPaymentService" class="mobi.nowtechnologies.server.service.impl.PaymentServiceImpl">
-		<property name="submittedPaymentRepository" ref="submittedPaymentRepository" />
 	</bean>
 
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">

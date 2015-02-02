@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import java.util.Date;
 
 public class BehaviorInfoService {
-
     private Logger logger = LoggerFactory.getLogger(BehaviorInfoService.class);
 
     @Resource
@@ -37,7 +36,8 @@ public class BehaviorInfoService {
 
     public boolean isFirstDeviceLoginBeforeReferralsActivation(User user) {
         String communityName = user.getCommunityRewriteUrl();
-        return new Date(user.getFirstDeviceLoginMillis()).before(communityResourceBundleMessageSource.readDate(communityName, activationDatePropertyName));
+        Date featureActivation = communityResourceBundleMessageSource.readDate(communityName, activationDatePropertyName);
+        return new Date(user.getFirstDeviceLoginMillis()).before(featureActivation);
     }
 
     @Transactional(readOnly = true)

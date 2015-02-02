@@ -64,18 +64,19 @@ public class ServiceConfigFeature {
 
     private List<UserDeviceData> userDeviceDatas;
     private String applicationName;
-    private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new ConcurrentHashMap<UserDeviceData, ResponseEntity<String>>();
-    private Map<UserDeviceData, String> headers = new ConcurrentHashMap<UserDeviceData, String>();
+    private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new ConcurrentHashMap<>();
+    private Map<UserDeviceData, String> headers = new ConcurrentHashMap<>();
 
     private Runner runner;
+    private ApiVersions apiVersions;
 
     @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) above (.+)$")
     public void givenVersionsAbove(@Transform(DictionaryTransformer.class) Word devices,
                                @Transform(DictionaryTransformer.class) Word communities,
                                @Transform(DictionaryTransformer.class) Word versions,
                                String aboveVersion) {
-        List<String> above = ApiVersions.from(versions.set()).above(aboveVersion);
-        userDeviceDatas = userDeviceDataService.table(above, communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
+        apiVersions = ApiVersions.from(versions.set());
+        userDeviceDatas = userDeviceDataService.table(apiVersions.above(aboveVersion), communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
         applicationName = UUID.randomUUID().toString();
         runner = runnerService.create(userDeviceDatas);
     }
@@ -85,8 +86,8 @@ public class ServiceConfigFeature {
                       @Transform(DictionaryTransformer.class) Word communities,
                       @Transform(DictionaryTransformer.class) Word versions,
                       String bellowVersion) {
-        List<String> bellow = ApiVersions.from(versions.set()).bellow(bellowVersion);
-        userDeviceDatas = userDeviceDataService.table(bellow, communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
+        apiVersions = ApiVersions.from(versions.set());
+        userDeviceDatas = userDeviceDataService.table(apiVersions.bellow(bellowVersion), communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
         applicationName = UUID.randomUUID().toString();
         runner = runnerService.create(userDeviceDatas);
     }
@@ -95,6 +96,7 @@ public class ServiceConfigFeature {
     public void given(@Transform(DictionaryTransformer.class) Word devices,
                       @Transform(DictionaryTransformer.class) Word communities,
                       @Transform(DictionaryTransformer.class) Word versions) {
+        apiVersions = ApiVersions.from(versions.set());
         userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Sets.newHashSet(RequestFormat.JSON));
         applicationName = UUID.randomUUID().toString();
         runner = runnerService.create(userDeviceDatas);
@@ -124,8 +126,8 @@ public class ServiceConfigFeature {
     }
 
 
-    @When("^(.+) header is in old format \"(.+)\"$")
-    public void whenUserAgent(String headerName, String headerValue) {
+    @When("^header is in old format \"(.+)\"$")
+    public void whenUserAgent(String headerValue) {
         for (UserDeviceData data : userDeviceDatas) {
             headers.put(data, headerValue);
         }
@@ -139,7 +141,7 @@ public class ServiceConfigFeature {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
                 String header = headers.get(userDeviceData);
-                ResponseEntity<String> stringResponseEntity = partnerDeviceSet.serviceConfig(userDeviceData, header);
+                ResponseEntity<String> stringResponseEntity = partnerDeviceSet.serviceConfig(userDeviceData, header, apiVersions);
                 int responseFromServer = stringResponseEntity.getStatusCode().value();
 
                 if(responseFromServer == 200) {
@@ -163,7 +165,7 @@ public class ServiceConfigFeature {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
-                ResponseEntity<String> stringResponseEntity = partnerDeviceSet.serviceConfig(userDeviceData, null);
+                ResponseEntity<String> stringResponseEntity = partnerDeviceSet.serviceConfig(userDeviceData, null, apiVersions);
                 ErrorMessage errorMessage = jsonHelper.extractObjectValueByPath(stringResponseEntity.getBody(), "$.response.data[0].errorMessage", ErrorMessage.class);
 
                 assertEquals(
@@ -197,19 +199,19 @@ public class ServiceConfigFeature {
         });
     }
 
-    @And("^(.+) header is in new format \"(.+)\"$")
-    public void whenUserAgentIsNotDefault(final String headerName, final String headerValue) {
+    @And("^header is in new format \"(.+)\"$")
+    public void whenUserAgentIsNotDefault(final String headerValue) {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData data) {
-                Map<String, Object> model = new HashMap<String, Object>();
+                Map<String, Object> model = new HashMap<>();
                 model.put("random", applicationName);
                 model.put("platform", getDeviceType(data).getName());
                 model.put("community", communityRepository.findByRewriteUrlParameter(data.getCommunityUrl()).getName());
 
                 String interpolatedHeaderValue = interpolator.interpolate(headerValue, model);
 
-                getLogger().info("Sending " + headerName + ":" + interpolatedHeaderValue);
+                getLogger().info("Sending User-Agent / X-User-Agent:" + interpolatedHeaderValue);
 
                 headers.put(data, interpolatedHeaderValue);
             }
@@ -220,6 +222,7 @@ public class ServiceConfigFeature {
     public void jsonData(String field) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             ResponseEntity<String> response = successfulResponses.get(userDeviceData);
+            getLogger().info("Response: " + response.getBody());
             Map<String, Object> stringObjectMap = jsonHelper.extractObjectMapByPath(response.getBody(), "$.response.data[0]." + field);
             assertTrue("Empty map for: [" + userDeviceData + "]: " + stringObjectMap, stringObjectMap != null && !stringObjectMap.isEmpty());
         }

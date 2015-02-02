@@ -10,17 +10,22 @@ import java.util.*;
 
 @Component
 public class UserDeviceDataService {
-    public List<UserDeviceData> table(List<String> version,
-                                      Set<String> communities,
-                                      Set<String> deviceTypes) {
+    public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes) {
+        Assert.hasText(community);
+        return table(version, Sets.newHashSet(community), Sets.newHashSet(deviceTypes), Sets.newHashSet(RequestFormat.JSON));
+    }
+
+    public List<UserDeviceData> table(List<String> version, Set<String> communities, Set<String> deviceTypes) {
         return table(version, communities, deviceTypes, Sets.newHashSet(RequestFormat.values()));
     }
 
-    public List<UserDeviceData> table(List<String> versions,
-                                      Set<String> communities,
-                                      Set<String> deviceTypes,
-                                      Set<RequestFormat> formats) {
-        return table(versions, communities, deviceTypes, formats, null);
+    public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes, Set<RequestFormat> formats) {
+        Assert.hasText(community);
+        return table(version, Sets.newHashSet(community), Sets.newHashSet(deviceTypes), formats);
+    }
+
+    public List<UserDeviceData> table(List<String> versions, Set<String> communities, Set<String> deviceTypes, Set<RequestFormat> formats) {
+        return table(versions, communities, deviceTypes, formats, "");
     }
 
     public List<UserDeviceData> table(List<String> versions,
@@ -33,51 +38,20 @@ public class UserDeviceDataService {
         Assert.notEmpty(deviceTypes);
         Assert.notEmpty(formats);
 
-        List<UserDeviceData> userDeviceData = new ArrayList<UserDeviceData>(versions.size() * communities.size());
+        String q = (qualifier == null) ? "" : qualifier;
+
+        List<UserDeviceData> userDeviceData = new ArrayList<>();
 
         for (String version : versions) {
             for (String community : communities) {
                 for (String deviceType : deviceTypes) {
                     for (RequestFormat format : formats) {
-                        userDeviceData.add(new UserDeviceData(version, community, deviceType, format, qualifier));
+                        userDeviceData.add(new UserDeviceData(version, community, deviceType, format, q));
                     }
                 }
             }
         }
 
         return userDeviceData;
-    }
-
-    public List<UserDeviceData> table(List<String> version, List<String> communities, List<String> deviceTypes, RequestFormat format) {
-        return table(version, new HashSet<String>(communities), new HashSet<String>(deviceTypes), Sets.newHashSet(format));
-    }
-
-    public List<UserDeviceData> table(List<String> version, List<String> communities, List<String> deviceTypes) {
-        return table(version, new HashSet<String>(communities), new HashSet<String>(deviceTypes), Sets.newHashSet(RequestFormat.JSON));
-    }
-
-    public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes) {
-        Assert.hasText(community);
-        return table(version, Sets.newHashSet(community), Sets.newHashSet(deviceTypes), Sets.newHashSet(RequestFormat.JSON));
-    }
-
-    public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes, Set<RequestFormat> formats) {
-        Assert.hasText(community);
-        return table(version, Sets.newHashSet(community), Sets.newHashSet(deviceTypes), formats);
-    }
-
-    public List<UserDeviceData> table(List<String> version, String community, List<String> deviceTypes, RequestFormat format) {
-        Assert.hasText(community);
-        return table(version, Sets.newHashSet(community), Sets.newHashSet(deviceTypes), Sets.newHashSet(format));
-    }
-
-    public List<UserDeviceData> table(String version, List<String> communities, List<String> deviceTypes) {
-        Assert.notNull(version);
-        return table(Arrays.asList(version), Sets.newHashSet(communities), Sets.newHashSet(deviceTypes), Sets.newHashSet(RequestFormat.JSON));
-    }
-
-    public List<UserDeviceData> table(String version, List<String> communities, List<String> deviceTypes, RequestFormat format) {
-        Assert.notNull(version);
-        return table(Arrays.asList(version), Sets.newHashSet(communities), Sets.newHashSet(deviceTypes), Sets.newHashSet(format));
     }
 }
