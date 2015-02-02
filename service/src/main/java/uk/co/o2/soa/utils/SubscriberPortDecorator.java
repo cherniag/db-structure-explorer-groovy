@@ -1,7 +1,6 @@
 package uk.co.o2.soa.utils;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Strings;
 
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;

@@ -11,7 +11,7 @@ import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.payment.PaymentSystemService;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

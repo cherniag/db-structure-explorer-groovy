@@ -2,12 +2,8 @@ package mobi.nowtechnologies.server.service;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -22,16 +18,12 @@ import java.util.Map;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class MailServiceIT {
-	
-	private MailService mailService;
-	
-	@Autowired
-	@Qualifier("serviceMessageSource")
-	private MessageSource messageSource;
-	
-	private String templateString = "Dear %username%,\n Welcome to %product_name%. Thank you for registration";
-	
-	@Before
+
+    MailService mailService;
+
+    String templateString = "Dear %username%,\n Welcome to %product_name%. Thank you for registration";
+
+    @Before
 	public void startup() {
 		mailService = new MailService();
 	}

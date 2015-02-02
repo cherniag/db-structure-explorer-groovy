@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.shared.message;
 
+import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -10,16 +11,32 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.Integer.parseInt;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static org.apache.commons.lang3.StringUtils.trim;
+import static org.jasypt.properties.PropertyValueEncryptionUtils.decrypt;
+import static org.jasypt.properties.PropertyValueEncryptionUtils.isEncryptedValue;
 
 
-public class CommunityResourceBundleMessageSourceImpl extends ReloadableResourceBundleMessageSource implements CommunityResourceBundleMessageSource {
-    private static Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
+public class CommunityResourceBundleMessageSourceImpl implements CommunityResourceBundleMessageSource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
 
+    private static final String DEFAULT_COMMUNITY_DELIMITER = "_";
     public static final String DATE_FORMAT = "dd-MM-yyyy";
-    public static final String DEFAULT_COMMUNITY_DELIM = "_";
+    private final Locale DEFAULT_LOCALE = new Locale("");
 
-    private String communityDelim = DEFAULT_COMMUNITY_DELIM;
+    private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
+    private StringEncryptor stringEncryptor;
+
+    public void setReloadableResourceBundleMessageSource(ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource) {
+        this.reloadableResourceBundleMessageSource = reloadableResourceBundleMessageSource;
+    }
+
+    public void setStringEncryptor(StringEncryptor stringEncryptor) {
+        this.stringEncryptor = stringEncryptor;
+    }
 
     @Override
     public Date readDate(String community, String code, Date defaults) {
@@ -47,8 +64,7 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
     @Override
     public boolean readBoolean(String community, String code, boolean defaults) {
         try {
-            String booleanString = trim(getMessage(community, code, null, String.valueOf(defaults), null));
-            return  Boolean.parseBoolean(booleanString);
+            return parseBoolean(trim(getMessage(community, code, null, String.valueOf(defaults), null)));
         } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             return defaults;
@@ -63,72 +79,45 @@ public class CommunityResourceBundleMessageSourceImpl extends ReloadableResource
     @Override
     public int readInt(String community, String code, int defaultValue, Locale locale) {
         try {
-            String periodString = trim(getMessage(community, code, null, locale));
-            return Integer.parseInt(periodString);
+            return parseInt(trim(getMessage(community, code, null, locale)));
         } catch (RuntimeException e) {
             return defaultValue;
         }
     }
 
     @Override
-    public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale) {
-        Locale communityLocale = new Locale(community);
-        if (locale != null)
-            communityLocale = new Locale(community + communityDelim + locale.getLanguage(), locale.getCountry(), locale.getVariant());
-
-        String msg = getMessageInternal(code, args, communityLocale);
-        if (msg != null) {
-            return msg;
-        }
-
-        if (defaultMessage == null) {
-            String fallback = getMessageInternal(code, args, communityLocale);
-            if (fallback != null) {
-                return fallback;
-            }
-
-            fallback = getDefaultMessage(code);
-            if (fallback != null) {
-                return fallback;
-            }
-        }
-
-        return renderDefaultMessage(defaultMessage, args, communityLocale);
+    public String getMessage(String community, String code, Object[] args, Locale locale) {
+        return getMessage(community, code, args, null, locale);
     }
 
     @Override
-    public String getMessage(String community, String code, Object[] args, Locale locale) throws CommunityNoSuchMessageException {
-        Locale communityLocale = (null == community) ? new Locale("") : new Locale(community);
-        if (locale != null)
-            communityLocale = new Locale(community + communityDelim + locale.getLanguage(), locale.getCountry(), locale.getVariant());
+    public String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale) {
+        Locale communityLocale = getCommunityLocale(community, locale);
 
-        String msg = getMessageInternal(code, args, communityLocale);
-        if (msg != null) {
-            return msg;
-        }
-
-        String fallback = getMessageInternal(code, args, communityLocale);
-        if (fallback != null) {
-            return fallback;
-        }
-
-        fallback = getDefaultMessage(code);
-        if (fallback != null) {
-            return fallback;
-        }
-
-        throw new CommunityNoSuchMessageException(community, code, locale);
+        return reloadableResourceBundleMessageSource.getMessage(code, args, defaultMessage, communityLocale);
     }
 
-    public String getCommunityDelim() {
-        return communityDelim;
+    @Override
+    public String getDecryptedMessage(String community, String code, Object[] args, Locale locale) {
+        String message = getMessage(community, code, args, locale);
+        return convertPropertyValue(message);
     }
 
-    public void setCommunityDelim(String communityDelim) {
-        this.communityDelim = communityDelim != null ? communityDelim : DEFAULT_COMMUNITY_DELIM;
+    private Locale getCommunityLocale(String community, Locale locale) {
+        Locale communityLocale = isNull(community) ? DEFAULT_LOCALE : new Locale(community);
+        if (isNotNull(locale))
+            communityLocale = new Locale(community + DEFAULT_COMMUNITY_DELIMITER + locale.getLanguage(), locale.getCountry(), locale.getVariant());
+        return communityLocale;
     }
 
     private Date doConvertToDate(String message) throws ParseException {
         return new SimpleDateFormat(DATE_FORMAT).parse(trim(message));
+    }
+
+    private String convertPropertyValue(final String originalValue) {
+        if (!isEncryptedValue(originalValue)) {
+            return originalValue;
+        }
+        return decrypt(originalValue, stringEncryptor);
     }
 }

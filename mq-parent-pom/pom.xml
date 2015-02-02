@@ -177,9 +177,6 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.16</version>
-                    <configuration>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.gmaven</groupId>
@@ -230,11 +227,6 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
@@ -246,10 +238,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -264,14 +252,6 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
         </dependency>
@@ -280,28 +260,9 @@
             <artifactId>powermock-module-junit4-rule-agent</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dspace.xmlui.concurrent</groupId>
-            <artifactId>concurrent</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.smslib</groupId>
-            <artifactId>smslib</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.smslib</groupId>
-            <artifactId>smsserver</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jsmpp</groupId>
-            <artifactId>jsmpp</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
@@ -310,6 +271,16 @@
     <dependencyManagement>
 
         <dependencies>
+            <dependency>
+                <groupId>uk.co.o2</groupId>
+                <artifactId>o2-soa</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.brightcove.proserve</groupId>
+                <artifactId>musicqubed-mediaapi-wrapper</artifactId>
+                <version>1.0.0</version>
+            </dependency>
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
@@ -320,6 +291,12 @@
                 <artifactId>json-smart</artifactId>
                 <version>1.2</version>
             </dependency>
+            <dependency>
+                <groupId>org.jasypt</groupId>
+                <artifactId>jasypt-spring31</artifactId>
+                <version>1.9.2</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-firefox-driver</artifactId>
@@ -452,7 +429,7 @@
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-all</artifactId>
-                <version>2.5.1</version>
+                <version>2.6.9</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>
@@ -474,6 +451,19 @@
             <dependency>
                 <groupId>mobi.nowtechnologies.java.server</groupId>
                 <artifactId>track-repo</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>env</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>mobi.nowtechnologies.java.server</groupId>
+                <artifactId>env</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
                 <classifier>tests</classifier>
@@ -509,14 +499,15 @@
             </dependency>
             <dependency>
                 <groupId>mobi.nowtechnologies.java.server</groupId>
-                <artifactId>web</artifactId>
+                <artifactId>admin</artifactId>
                 <version>${project.version}</version>
                 <classifier>jar</classifier>
             </dependency>
             <dependency>
                 <groupId>mobi.nowtechnologies.java.server</groupId>
-                <artifactId>dtos</artifactId>
+                <artifactId>web</artifactId>
                 <version>${project.version}</version>
+                <classifier>jar</classifier>
             </dependency>
             <dependency>
                 <groupId>mobi.nowtechnologies.java.server</groupId>
@@ -531,11 +522,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>mobi.nowtechnologies.java.server</groupId>
-                <artifactId>uits</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>mobi.nowtechnologies.java.server</groupId>
                 <artifactId>shared-web</artifactId>
@@ -712,6 +698,11 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${org.springframework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -982,7 +973,7 @@
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>1.4.1</version>
-                <scope>provided</scope>
+                <scope>compile</scope>
             </dependency>
 
             <dependency>

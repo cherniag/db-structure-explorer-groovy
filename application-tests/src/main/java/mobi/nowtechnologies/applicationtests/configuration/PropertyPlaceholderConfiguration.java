@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 @Configuration
 @PropertySource({
@@ -18,10 +19,15 @@ public class PropertyPlaceholderConfiguration {
 
     @Bean
     public static CommunityResourceBundleMessageSource communityResourceBundleMessageSource() {
+
+        ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+
+        reloadableResourceBundleMessageSource.setBasename("classpath:services");
+        reloadableResourceBundleMessageSource.setDefaultEncoding("utf-8");
+        reloadableResourceBundleMessageSource.setUseCodeAsDefaultMessage(true);
+
         CommunityResourceBundleMessageSourceImpl source = new CommunityResourceBundleMessageSourceImpl();
-        source.setBasename("classpath:services");
-        source.setDefaultEncoding("utf-8");
-        source.setUseCodeAsDefaultMessage(true);
+        source.setReloadableResourceBundleMessageSource(reloadableResourceBundleMessageSource);
         return source;
     }
 

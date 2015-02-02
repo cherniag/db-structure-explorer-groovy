@@ -9,13 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import mobi.nowtechnologies.server.persistence.domain.Country;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.CountryService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.CreditCardDto.Action;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;

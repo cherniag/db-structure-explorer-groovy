@@ -1,0 +1,9 @@
+main_content
+settings
+faq
+privacy_policy
+terms_of_service
+about
+account_home
+news
+favourites

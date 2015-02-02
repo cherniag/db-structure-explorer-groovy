@@ -3,7 +3,6 @@ package uk.co.o2.soa.subscriberservice;
 
 import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;

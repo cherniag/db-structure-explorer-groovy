@@ -18,8 +18,8 @@ public class ITunesValidator {
     private CommunityResourceBundleMessageSource messageSource;
 
     public BasicResponse validateInITunes(User user, String appStoreReceipt){
-        String iTunesUrl = messageSource.getMessage(user.getCommunityRewriteUrl(), "apple.inApp.iTunesUrl", null, null);
-        String password = messageSource.getMessage(user.getCommunityRewriteUrl(), "apple.inApp.password", null, null);
+        String iTunesUrl = messageSource.getDecryptedMessage(user.getCommunityRewriteUrl(), "apple.inApp.iTunesUrl", null, null);
+        String password = messageSource.getDecryptedMessage(user.getCommunityRewriteUrl(), "apple.inApp.password", null, null);
 
         ITunesInAppSubscriptionRequestDto requestDto = new ITunesInAppSubscriptionRequestDto(appStoreReceipt, password);
         String body = gson.toJson(requestDto);

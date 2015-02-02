@@ -84,7 +84,7 @@ public class ITunesServiceTest {
         fixtureITunesService.setPaymentPolicyRepository(paymentPolicyRepository);
 
         Mockito.doReturn(iTunesUrl).when(communityResourceBundleMessageSourceMock).getMessage("nowtop40", "apple.inApp.iTunesUrl", null, null);
-        Mockito.doReturn(password).when(communityResourceBundleMessageSourceMock).getMessage("nowtop40", "apple.inApp.password", null, null);
+        Mockito.doReturn(password).when(communityResourceBundleMessageSourceMock).getDecryptedMessage("nowtop40", "apple.inApp.password", null, null);
     }
 
     @Test

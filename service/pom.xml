@@ -14,30 +14,7 @@
     <packaging>jar</packaging>
     <name>Now Technologies Java Server Services</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <configuration>
-                    <schemaDirectory>src/main/resources/META-INF/wsdl</schemaDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
-        <dependency>
-            <groupId>mobi.nowtechnologies.java.server</groupId>
-            <artifactId>dtos</artifactId>
-        </dependency>
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>persistence</artifactId>
@@ -64,10 +41,6 @@
         </dependency>
         <dependency>
             <groupId>org.opensmpp</groupId>
-            <artifactId>opensmpp-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opensmpp</groupId>
             <artifactId>opensmpp-sim</artifactId>
         </dependency>
         <dependency>
@@ -78,18 +51,14 @@
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
         <!-- Aspects -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -98,6 +67,31 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.brightcove.proserve</groupId>
+            <artifactId>musicqubed-mediaapi-wrapper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jsmpp</groupId>
+            <artifactId>jsmpp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.smslib</groupId>
+            <artifactId>smslib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.o2</groupId>
+            <artifactId>o2-soa</artifactId>
         </dependency>
 
         <!-- Social -->
@@ -119,19 +113,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
+
         <!-- END Security -->
         <dependency>
-            <groupId>com.sun.xml.wss</groupId>
-            <artifactId>xws-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.xml.crypto</groupId>
-            <artifactId>jsr105-api</artifactId>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
         </dependency>
 
         <dependency>
@@ -146,6 +132,16 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dspace.dependencies</groupId>
+            <artifactId>dspace-geoip</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.rackspacecloud</groupId>
             <artifactId>java-cloudfiles</artifactId>
         </dependency>
@@ -153,6 +149,11 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
 
         <dependency>
@@ -165,6 +166,10 @@
             <artifactId>json-smart</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt-spring31</artifactId>
+        </dependency>
 
     </dependencies>
 

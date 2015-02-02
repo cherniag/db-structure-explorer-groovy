@@ -19,11 +19,8 @@ import static mobi.nowtechnologies.server.shared.enums.TransactionType.ACCOUNT_M
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
-/**
- * User: Titov Mykhaylo (titov)
- * 04.10.13 16:16
- */
 
+// @author: Titov Mykhaylo (titov) 04.10.13 16:16
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml" })
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)

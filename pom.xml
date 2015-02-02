@@ -9,6 +9,7 @@
     <name>Now Technologies Multi-module</name>
 
     <modules>
+        <module>env</module>
         <module>mq-parent-pom</module>
         <module>shared</module>
         <module>persistence</module>
@@ -18,8 +19,6 @@
         <module>web</module>
         <module>shared-web</module>
         <module>track-repo</module>
-        <module>uits</module>
-        <module>dtos</module>
         <module>application-tests</module>
     </modules>
 

@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
 import org.junit.Test;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;

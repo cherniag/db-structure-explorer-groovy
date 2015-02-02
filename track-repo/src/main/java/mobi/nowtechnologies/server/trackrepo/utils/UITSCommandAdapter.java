@@ -1,32 +1,21 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
-import mobi.nowtechnologies.java.server.uits.UITS;
-import org.springframework.core.io.Resource;
+import mobi.nowtechnologies.server.trackrepo.uits.UITS;
 
 import java.io.IOException;
 
 public class UITSCommandAdapter {
-
-	private Resource privateKey;
-
-
-    private UITS uitc;
-
-    public void setUitc(UITS uitc) {
-        this.uitc = uitc;
-    }
+    private UITS uits;
 
     public void executeDownloadFiles(String sourceFileName, String tempFileName) throws IOException {
-
-        uitc.main(new String [] {privateKey.getFile().getAbsolutePath(), sourceFileName, tempFileName});
+        uits.process(sourceFileName, tempFileName, null, null, true);
 	}
 
 	public void executeMobileFiles(String sourceFileName, String audFileName, String hdrFileName, String encFileName) throws IOException {
-
-        uitc.main(new String [] {privateKey.getFile().getAbsolutePath(), sourceFileName, audFileName, hdrFileName, encFileName});
+        uits.process(sourceFileName, audFileName, hdrFileName, encFileName, true);
 	}
 
-	public void setPrivateKey(Resource privateKey) {
-		this.privateKey = privateKey;
-	}
+    public void setUits(UITS uits) {
+        this.uits = uits;
+    }
 }

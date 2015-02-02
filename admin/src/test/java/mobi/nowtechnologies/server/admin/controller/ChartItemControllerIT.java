@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.admin.controller;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.service.ChartService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -35,7 +34,6 @@ public class ChartItemControllerIT extends AbstractAdminITTest{
     @Resource LabelRepository labelRepository;
 
     @Test
-    @Ignore
     public void shouldReturnDuplicatedMediaAcrossNearestChartsDtos() throws Exception {
         //given
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(URL_DATE_TIME_FORMAT);
@@ -80,6 +78,6 @@ public class ChartItemControllerIT extends AbstractAdminITTest{
 
         //then
         perform.andExpect(status().isOk());
-        perform.andExpect(content().string("{\"chartFilesURL\":\"http://c1129449.r49.cf3.rackcdn.com/\",\"duplicatedMediaAcrossNearestChartsDtos\":[{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":86400000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":432000000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":0,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":518400000,\"position\":1,\"trackId\":\"isrc_666\"}]}"));
+        perform.andExpect(content().string("{\"duplicatedMediaAcrossNearestChartsDtos\":[{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":86400000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":432000000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":0,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":518400000,\"position\":1,\"trackId\":\"isrc_666\"}],\"chartFilesURL\":\"http://c1129449.r49.cf3.rackcdn.com/\"}"));
     }
 }

@@ -39,7 +39,7 @@ public class PayPalRequest extends AbstractPaymentRequest<PayPalRequest> {
 	}
 
     private String getValueOf(String communityRewriteUrlParameter, String code) {
-        return communityResourceBundleMessageSource.getMessage(communityRewriteUrlParameter, code, null, null);
+        return communityResourceBundleMessageSource.getDecryptedMessage(communityRewriteUrlParameter, code, null, null);
     }
 
     public PayPalRequest createBillingAgreementRequest(String token, String communityRewriteUrlParameter) {

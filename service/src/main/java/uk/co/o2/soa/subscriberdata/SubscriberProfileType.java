@@ -6,10 +6,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.common.base.Objects;
-
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import uk.co.o2.soa.coredata.PaymentCategoryType;
 import uk.co.o2.soa.coredata.SegmentType;
 
@@ -107,17 +107,6 @@ public class SubscriberProfileType {
         this.puk = value;
     }
 
-    @Override
-    public String toString(){
-        return Objects.toStringHelper(this)
-                .add("subscriberID", subscriberID)
-                .add("operator", operator)
-                .add("paymentCategory", paymentCategory)
-                .add("segment", segment)
-                .add("channel", channel)
-                .toString();
-    }
-
     public mobi.nowtechnologies.server.shared.enums.SegmentType getSegmentType() {
         return SegmentType.CONSUMER.equals(getSegment()) ?
                 mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER :
@@ -132,5 +121,16 @@ public class SubscriberProfileType {
     public ProviderType getProvider(){
     	return "O2".equals(getOperator()) ?
                 O2 : NON_O2;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("subscriberID", subscriberID)
+                .append("operator", operator)
+                .append("paymentCategory", paymentCategory)
+                .append("segment", segment)
+                .append("channel", channel)
+                .toString();
     }
 }

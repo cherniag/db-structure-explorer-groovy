@@ -1,33 +1,16 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import static mobi.nowtechnologies.server.persistence.domain.Community.*;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
 import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
 import org.junit.Before;
@@ -36,7 +19,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -46,23 +39,27 @@ import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
 public class UserNotificationServiceImplTest2 {
 
-	private CommunityResourceBundleMessageSourceImpl messageSource;
-	private DeviceService deviceService;
-	private UserNotificationServiceImpl userNotificationService;
-	private List<User> audioOnlyUsers;
-	private List<User> videoUsers;
-	private MigHttpService migHttpService;
+	CommunityResourceBundleMessageSourceImpl messageSource;
+	DeviceService deviceService;
+	UserNotificationServiceImpl userNotificationService;
+	List<User> audioOnlyUsers;
+	List<User> videoUsers;
+	MigHttpService migHttpService;
 
     @Mock
     private PaymentDetailsService paymentDetailsServiceMock;
 	
 	@Before
 	public void setUp() {
-		messageSource = new CommunityResourceBundleMessageSourceImpl();
-		messageSource.setBasenames(new String[] { "classpath:services_test" });
-		messageSource.setDefaultEncoding("utf8");
-		messageSource.setCacheSeconds(180);
-		messageSource.setUseCodeAsDefaultMessage(true);
+        ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+
+        reloadableResourceBundleMessageSource.setBasenames("classpath:services_test");
+        reloadableResourceBundleMessageSource.setDefaultEncoding("utf8");
+        reloadableResourceBundleMessageSource.setCacheSeconds(180);
+        reloadableResourceBundleMessageSource.setUseCodeAsDefaultMessage(true);
+
+        messageSource = new CommunityResourceBundleMessageSourceImpl();
+        messageSource.setReloadableResourceBundleMessageSource(reloadableResourceBundleMessageSource);
 
         deviceService = new DeviceService();
         deviceService.setMessageSource(messageSource);

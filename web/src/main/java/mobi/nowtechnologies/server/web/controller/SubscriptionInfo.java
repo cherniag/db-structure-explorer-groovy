@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 
 public class SubscriptionInfo {
     private boolean ios;

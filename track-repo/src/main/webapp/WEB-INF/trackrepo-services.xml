@@ -138,7 +138,7 @@
 		<property name="commandEncodePreviewAudio" ref="service.encode.encodePreviewAudio"/>
 		<property name="commandAddTag" ref="service.encode.addTag"/>
 		<property name="imageGenerator" ref="service.encode.imageGenerator"/>
-		<property name="commandUITS" ref="service.encode.uitsAdapter"></property>
+		<property name="commandUITS" ref="service.encode.uitsAdapter"/>
 		<property name="workDir" value="${trackRepo.encode.workdir}/"/>
 		<property name="purchasedDir" value="${trackRepo.encode.workdir}/files/purchased/"/>
 		<property name="imageDir" value="${trackRepo.encode.workdir}/files/image/"/>
@@ -185,16 +185,18 @@
 	</bean>
 	
 	<bean id="service.encode.uitsAdapter" class="mobi.nowtechnologies.server.trackrepo.utils.UITSCommandAdapter">
-		<property name="privateKey" value="${trackRepo.encode.privkey}"/>
-        <property name="uitc" ref="uits"/>
+        <property name="uits" ref="uits"/>
 	</bean>
 
-
-    <bean id="uits" class="mobi.nowtechnologies.java.server.uits.UITS">
+    <bean id="uits" class="mobi.nowtechnologies.server.trackrepo.uits.UITS">
         <property name="mp4Manager" ref="mp4Manager"/>
+		<property name="mp3Manager" ref="mp3Manager"/>
+		<property name="privateKey" value="${trackRepo.encode.privkey}"/>
     </bean>
 
-    <bean id="mp4Manager" class="mobi.nowtechnologies.java.server.uits.MP4Manager"/>
+    <bean id="mp4Manager" class="mobi.nowtechnologies.server.trackrepo.uits.MP4Manager"/>
+
+    <bean id="mp3Manager" class="mobi.nowtechnologies.server.trackrepo.uits.MP3Manager"/>
 
 	<bean id="service.encode.cloudUploadFileManager" class="mobi.nowtechnologies.server.trackrepo.utils.UploadToCloudFileManager">
 		<property name="dataContainerName" value="${trackRepo.pull.cdn.container.dest}"/>
