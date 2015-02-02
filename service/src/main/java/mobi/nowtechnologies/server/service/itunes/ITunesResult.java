@@ -8,18 +8,18 @@ import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
  * Author: Gennadii Cherniaiev
  * Date: 1/6/2015
  */
-public class ITunesParseResult {
+public class ITunesResult {
     private int result;
     private String productId;
     private String originalTransactionId;
     private Long expireTime;
     private Long purchaseTime;
 
-    public ITunesParseResult(int result) {
+    public ITunesResult(int result) {
         this(result, null, null, null, null);
     }
 
-    public ITunesParseResult(int result, String productId, String originalTransactionId, Long expireTime, Long purchaseTime) {
+    public ITunesResult(int result, String productId, String originalTransactionId, Long expireTime, Long purchaseTime) {
         this.result = result;
         this.productId = productId;
         this.originalTransactionId = originalTransactionId;
@@ -29,10 +29,6 @@ public class ITunesParseResult {
 
     public boolean isSuccessful(){
         return result == 0;
-    }
-
-    public void updateExpireTime(Long expireTime){
-        this.expireTime = expireTime;
     }
 
     public String getProductId() {

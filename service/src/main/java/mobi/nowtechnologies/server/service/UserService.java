@@ -16,15 +16,11 @@ import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.*;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
-import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
-import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -91,8 +87,8 @@ public class UserService {
     private UserGroupRepository userGroupRepository;
     private EntityService entityService;
     private CountryAppVersionService countryAppVersionService;
-
     private CountryService countryService;
+
     private PromotionService promotionService;
     private CommunityResourceBundleMessageSource messageSource;
     private PaymentDetailsService paymentDetailsService;
@@ -100,8 +96,8 @@ public class UserService {
     private CountryByIpService countryByIpService;
     private UserDeviceDetailsService userDeviceDetailsService;
     private CommunityService communityService;
-
     private MailService mailService;
+
     private DeviceService deviceService;
     private AccountLogService accountLogService;
     private UserRepository userRepository;
@@ -514,8 +510,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
-        LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
-        notNull(user, "The parameter user is null");
+        LOGGER.info("Unsubscribe user {} reason : {}", user.shortInfo(), reason);
         user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
         user = entityService.updateEntity(user);
         taskService.cancelSendChargeNotificationTask(user);
@@ -575,7 +570,8 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public void processPaymentSubBalanceCommand(User user, SubmittedPayment payment) {
-        LOGGER.info("processPaymentSubBalanceCommand input parameters user, payment: [{}], [{}]", user.getId(), payment);
+        LOGGER.info("Processing sub balance command for user {} old next sub payment {} with payment {}",
+                user.getId(), user.getNextSubPayment(), payment.getI());
 
         final String paymentSystem = payment.getPaymentSystem();
 
@@ -609,19 +605,20 @@ public class UserService {
         entityService.updateEntity(user);
         LOGGER.info("after update user entity {}", user.getId());
 
-        LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
+        LOGGER.info("Finish processing sub balance command for user {}", user.shortInfo());
     }
 
     @Transactional(propagation = REQUIRED)
     public User processAccountCheckCommandForAuthorizedUser(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", new String[]{String.valueOf(userId)});
+        LOGGER.info("input parameters userId: [{}]", userId);
 
         User user = userDao.findUserById(userId);
 
         user = updateLastDeviceLogin(user);
 
-        if (user.getLastDeviceLogin() == 0)
+        if (user.getLastDeviceLogin() == 0){
             makeUserActive(user);
+        }
 
         user = prepareUserConversionToAccountCheckDto(user);
 
@@ -1057,13 +1054,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User populateAmountOfMoneyToUserNotification(User user, SubmittedPayment payment) {
-        LOGGER.debug("input parameters user, payment: [{}], [{}]", user, payment);
-
-        if (user == null)
-            throw new NullPointerException("The parameter user is null");
-
-        if (payment == null)
-            throw new NullPointerException("The parameter payment is null");
+        LOGGER.info("input parameters user, payment: [{}], [{}]", user.getId(), payment.getI());
 
         BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(
                 payment.getAmount());
@@ -1254,7 +1245,7 @@ public class UserService {
             accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, SUBSCRIPTION_CHARGE, null);
 
             LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]",
-                    new Object[] { user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance() });
+                    user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance());
         }
     }
 
@@ -1278,7 +1269,7 @@ public class UserService {
     public Page<User> getUsersForPendingPayment(int maxCount) {
         int epochSeconds = getEpochSeconds();
         return userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
-        }
+    }
 
     @Transactional(readOnly = true)
     public List<User> getListOfUsersForWeeklyUpdate() {

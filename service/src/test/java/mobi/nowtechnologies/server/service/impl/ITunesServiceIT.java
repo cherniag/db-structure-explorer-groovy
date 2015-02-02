@@ -13,6 +13,7 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = false)
+@TransactionConfiguration(transactionManager = "persistence.TransactionManager")
 public class ITunesServiceIT {
 
     @Resource
@@ -36,12 +37,16 @@ public class ITunesServiceIT {
     UserRepository userRepository;
     @Resource
     ITunesPaymentLockRepository iTunesPaymentLockRepository;
-
     @Resource
     SubmittedPaymentRepository submittedPaymentRepository;
     @Resource
     AccountLogRepository accountLogRepository;
 
+    @After
+    public void tearDown() throws Exception {
+        accountLogRepository.deleteAll();
+        submittedPaymentRepository.deleteAll();
+    }
 
     @Test
     public void processITunesPaymentSuccess() throws Exception {
@@ -54,7 +59,7 @@ public class ITunesServiceIT {
         final String deviceUID = "DEVICE_UID_1";
         User user = createUser(userName, deviceUID, "mtv1");
 
-        iTunesService.processInAppSubscription(user.getId(), transactionReceipt);
+        iTunesService.processInAppSubscription(user, transactionReceipt);
 
         User found = userRepository.findOne(user.getId());
         Assert.assertEquals(nextSubPayment, found.getNextSubPayment());
@@ -87,7 +92,7 @@ public class ITunesServiceIT {
         final String deviceUID = "DEVICE_UID_2";
         User user = createUser(userName, deviceUID, "mtv1");
 
-        iTunesService.processInAppSubscription(user.getId(), transactionReceipt);
+        iTunesService.processInAppSubscription(user, transactionReceipt);
 
         User found = userRepository.findOne(user.getId());
         int expectedNextSubPayment = new Period(DurationUnit.MONTHS, 1).toNextSubPaymentSeconds(purchaseTime);
@@ -123,7 +128,7 @@ public class ITunesServiceIT {
 
         iTunesPaymentLockRepository.saveAndFlush(new ITunesPaymentLock(user.getId(), nextSubPayment));
 
-        iTunesService.processInAppSubscription(user.getId(), transactionReceipt);
+        iTunesService.processInAppSubscription(user, transactionReceipt);
 
         User found = userRepository.findOne(user.getId());
         Assert.assertEquals(0, found.getNextSubPayment());

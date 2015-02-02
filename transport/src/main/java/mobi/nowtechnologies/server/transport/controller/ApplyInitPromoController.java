@@ -97,7 +97,7 @@ public class ApplyInitPromoController extends CommonController {
 
     private AccountCheckDTO getAccountCheckDTOAfterApplyPromo(MergeResult mergeResult) {
         User user = mergeResult.getResultOfOperation();
-        AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false);
+        AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false, false);
         accountCheckDTO.withFullyRegistered(true).withHasPotentialPromoCodePromotion(user.isHasPromo());
         return accountCheckDTO;
     }

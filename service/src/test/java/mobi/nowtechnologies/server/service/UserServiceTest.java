@@ -132,13 +132,11 @@ public class UserServiceTest {
     private UserDeviceDetailsService userDeviceDetailsServiceMock;
     private TaskService taskService;
 
-    @Mock
-    private AutoOptInRuleService autoOptInRuleServiceMock;
-    private Answer userWithPromoAnswer;
-    private Answer userWithoutPromoAnswer;
-    private DeviceUserDataService deviceUserDataService;
-    @Mock
-    private AppsFlyerDataService appsFlyerDataService;
+	@Mock AutoOptInRuleService autoOptInRuleServiceMock;
+	Answer userWithPromoAnswer;
+	Answer userWithoutPromoAnswer;
+	DeviceUserDataService deviceUserDataService;
+	@Mock AppsFlyerDataService appsFlyerDataService;
 
     @Before
     public void setUp() throws Exception {
@@ -937,26 +935,6 @@ public class UserServiceTest {
 
 		verify(entityServiceMock, times(0)).updateEntity(user);
 
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void unsubscribeUser_Failure() {
-		long epochMillis = 12354L;
-		User mockedUser = null;
-		final String reason = null;
-
-		PaymentDetails mockedCurrentPaymentDetails = MigPaymentDetailsFactory.createMigPaymentDetails();
-
-		PowerMockito.mockStatic(Utils.class);
-
-		Mockito.when(getEpochMillis()).thenReturn(epochMillis);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedUser)).thenReturn(mockedUser);
-		PowerMockito.when(entityServiceMock.updateEntity(mockedCurrentPaymentDetails)).thenReturn(mockedCurrentPaymentDetails);
-
-		userServiceSpy.unsubscribeUser(mockedUser, reason);
-
-		verify(entityServiceMock, times(0)).updateEntity(mockedUser);
-		verify(entityServiceMock, times(0)).updateEntity(mockedCurrentPaymentDetails);
 	}
 
 	@Test()

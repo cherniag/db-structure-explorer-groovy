@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
 import com.jayway.jsonpath.JsonPath;
-import mobi.nowtechnologies.server.service.itunes.ITunesParseResult;
-import mobi.nowtechnologies.server.service.itunes.ITunesReceiptParseException;
+import mobi.nowtechnologies.server.service.itunes.ITunesResult;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
 import org.apache.commons.fileupload.util.Streams;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class JPathReceiptParserTest {
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/renewable.json");
         String json = Streams.asString(inputStream);
 
-        ITunesParseResult parseResult = jPathReceiptParser.parse(json);
+        ITunesResult parseResult = jPathReceiptParser.parseVerifyReceipt(json);
 
         Assert.assertTrue(parseResult.isSuccessful());
         Assert.assertEquals("com.musicqubed.o2.autorenew.test", parseResult.getProductId());
@@ -42,7 +42,7 @@ public class JPathReceiptParserTest {
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/onetime.json");
         String json = Streams.asString(inputStream);
 
-        ITunesParseResult parseResult = jPathReceiptParser.parse(json);
+        ITunesResult parseResult = jPathReceiptParser.parseVerifyReceipt(json);
 
         Assert.assertTrue(parseResult.isSuccessful());
         Assert.assertEquals("com.musicqubed.ios.mtv_nz.onetime.0", parseResult.getProductId());
@@ -51,7 +51,7 @@ public class JPathReceiptParserTest {
         Assert.assertEquals(1420206332704L, parseResult.getPurchaseTime().longValue());
     }
 
-    @Test(expected = ITunesReceiptParseException.class)
+    @Test(expected = ITunesResponseParserException.class)
     public void parseOnetimeAsAutoRenewableReceipt() throws Exception {
         JPathReceiptParser jPathReceiptParser = create(
                 JsonPath.compile("$.status"),
@@ -62,7 +62,7 @@ public class JPathReceiptParserTest {
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/onetime.json");
         String json = Streams.asString(inputStream);
 
-        jPathReceiptParser.parse(json);
+        jPathReceiptParser.parseVerifyReceipt(json);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class JPathReceiptParserTest {
         InputStream inputStream = this.getClass().getResourceAsStream("/itunes/expired.json");
         String json = Streams.asString(inputStream);
 
-        ITunesParseResult parseResult = jPathReceiptParser.parse(json);
+        ITunesResult parseResult = jPathReceiptParser.parseVerifyReceipt(json);
 
         Assert.assertFalse(parseResult.isSuccessful());
     }

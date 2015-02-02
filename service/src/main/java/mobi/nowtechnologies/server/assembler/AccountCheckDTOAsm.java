@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
+import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.shared.dto.OAuthProvider;
@@ -34,11 +35,9 @@ public class AccountCheckDTOAsm {
 
     private AutoOptInRuleService autoOptInRuleService;
 
-    public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
-        this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
-    }
+    private ITunesPaymentService iTunesPaymentService;
 
-    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation, boolean withUuid) {
+    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation, boolean withUuid, boolean withOneTimePayment) {
         LOGGER.debug("user=[{}], appStoreProductIds=[{}], canActivateVideoTrial={}, withUserDetails={}, firstActivation={}",
                 user, appStoreProductIds, canActivateVideoTrial, withUserDetails, firstActivation);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
@@ -56,7 +55,7 @@ public class AccountCheckDTOAsm {
 
         boolean hasOtherPaymentDetails = currentPaymentDetails != null && currentPaymentDetails.isActivated()
                 && (currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.NONE || currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.SUCCESSFUL);
-        boolean hasITunesSubscription =  lastSubscribedPaymentSystem != null && lastSubscribedPaymentSystem.equals(ITUNES_SUBSCRIPTION) && status != null
+        boolean hasITunesSubscription =  ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && status != null
                 && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name());
 
         String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem);
@@ -123,6 +122,13 @@ public class AccountCheckDTOAsm {
         }
         if(withUuid){
             accountCheckDTO.uuid = user.getUuid();
+        }
+        if (withOneTimePayment) {
+            if (user.hasActivePaymentDetails()) {
+                accountCheckDTO.oneTimePayment = user.hasOneTimeSubscription();
+            } else if (hasITunesSubscription) {
+                accountCheckDTO.oneTimePayment = iTunesPaymentService.hasOneTimeSubscription(user);
+            }
         }
         LOGGER.debug("Output parameter accountCheckDTO=[{}]", accountCheckDTO);
         return accountCheckDTO;
@@ -195,5 +201,13 @@ public class AccountCheckDTOAsm {
 
     public void setUserDetailsDtoAsm(UserDetailsDtoAsm userDetailsDtoAsm) {
         this.userDetailsDtoAsm = userDetailsDtoAsm;
+    }
+
+    public void setiTunesPaymentService(ITunesPaymentService iTunesPaymentService) {
+        this.iTunesPaymentService = iTunesPaymentService;
+    }
+
+    public void setAutoOptInExemptPhoneNumberRepository(AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository) {
+        this.autoOptInExemptPhoneNumberRepository = autoOptInExemptPhoneNumberRepository;
     }
 }

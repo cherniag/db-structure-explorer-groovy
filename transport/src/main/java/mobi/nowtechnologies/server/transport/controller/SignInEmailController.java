@@ -27,7 +27,23 @@ public class SignInEmailController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_IN_EMAIL"})
+            "**/{community}/{apiVersion:6\\.8}/SIGN_IN_EMAIL"
+    })
+    public ModelAndView applyPromotionByEmailWithOneTimePayment(
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("EMAIL_ID") Long activationEmailId,
+            @RequestParam("EMAIL") String email,
+            @RequestParam("TOKEN") String token,
+            @RequestParam("DEVICE_UID") String deviceUID,
+            @PathVariable String community) {
+        return signInEmail(userToken, timestamp, activationEmailId, email, token, deviceUID, community, true);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.[0-7]}/SIGN_IN_EMAIL",
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_IN_EMAIL"
+    })
     public ModelAndView applyPromotionByEmail(
             @RequestParam("USER_TOKEN") String userToken,
             @RequestParam("TIMESTAMP") String timestamp,
@@ -36,6 +52,10 @@ public class SignInEmailController extends CommonController {
             @RequestParam("TOKEN") String token,
             @RequestParam("DEVICE_UID") String deviceUID,
             @PathVariable String community) {
+        return signInEmail(userToken, timestamp, activationEmailId, email, token, deviceUID, community, false);
+    }
+
+    private ModelAndView signInEmail(String userToken, String timestamp, Long activationEmailId, String email, String token, String deviceUID, String community, boolean withOneTimePayment) {
         Exception ex = null;
         User user = null;
         try {
@@ -45,7 +65,7 @@ public class SignInEmailController extends CommonController {
 
             MergeResult mergeResult = userPromoService.applyInitPromoByEmail(user, activationEmailId, email, token);
 
-            return buildModelAndView(accCheckService.processAccCheck(mergeResult, false));
+            return buildModelAndView(accCheckService.processAccCheck(mergeResult, false, withOneTimePayment));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("SIGN_IN_EMAIL can not find deviceUID: [{}] in community: [{}]", deviceUID, community);

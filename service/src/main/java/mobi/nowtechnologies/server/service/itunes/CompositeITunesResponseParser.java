@@ -8,24 +8,25 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompositeITunesReceiptParser implements ITunesReceiptParser {
+public class CompositeITunesResponseParser implements ITunesResponseParser {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
-    private List<ITunesReceiptParser> parsers = new ArrayList<ITunesReceiptParser>();
+    private List<ITunesResponseParser> parsers = new ArrayList<ITunesResponseParser>();
 
     @Override
-    public ITunesParseResult parse(String response) throws ITunesReceiptParseException {
-        for (ITunesReceiptParser parser : parsers) {
+    public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseParserException {
+        for (ITunesResponseParser parser : parsers) {
             logger.debug("Try to parse iTunes response [{}] with parser [{}]", response, parser);
 
             try {
-                ITunesParseResult parseResult = parser.parse(response);
+                ITunesResult parseResult = parser.parseVerifyReceipt(response);
 
                 logger.debug("Parsed result is {}", parseResult);
 
                 return parseResult;
-            } catch (ITunesReceiptParseException e) {
+            } catch (ITunesResponseParserException e) {
                 logger.debug("Failed to parse with " + parser, e);
             }
         }

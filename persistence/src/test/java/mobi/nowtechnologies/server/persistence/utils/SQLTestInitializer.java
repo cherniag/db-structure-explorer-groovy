@@ -30,6 +30,9 @@ public class SQLTestInitializer {
     private ActivationEmailRepository activationEmailRepository;
 
     @Resource
+    private SubmittedPaymentRepository submittedPaymentRepository;
+
+    @Resource
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
 
     @Resource
@@ -104,6 +107,7 @@ public class SQLTestInitializer {
         streamzineUpdateRepository.deleteAll();
         userRepository.deleteAll();
         activationEmailRepository.deleteAll();
+        submittedPaymentRepository.deleteAll();
         userRepository.flush();
     }
 }

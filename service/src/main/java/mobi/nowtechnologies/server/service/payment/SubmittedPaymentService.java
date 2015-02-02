@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.payment;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
@@ -15,4 +16,5 @@ public interface SubmittedPaymentService {
 	
 	SubmittedPayment save(SubmittedPayment submittedPayment);
 
+	SubmittedPayment getLatest(User user);
 }

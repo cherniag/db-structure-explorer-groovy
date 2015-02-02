@@ -11,7 +11,6 @@
 	
 	<bean id="service.PendingPaymentService" class="mobi.nowtechnologies.server.service.payment.impl.PendingPaymentServiceImpl">
 		<property name="pendingPaymentRepository" ref="pendingPaymentRepository" />
-		<property name="paymentDao" ref="persistence.PaymentDao" />
 		<property name="userService" ref="service.UserService" />
 		<property name="paymentSystems" ref="service.map.paymentSystems" />
 		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />

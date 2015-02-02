@@ -28,7 +28,14 @@ public class ITunesPaymentLock {
     }
 
     protected ITunesPaymentLock() {
+    }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public int getNextSubPayment() {
+        return nextSubPayment;
     }
 
     @Override

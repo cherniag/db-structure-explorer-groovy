@@ -60,6 +60,7 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public void startPayment(PendingPayment pendingPayment) throws ServiceException {
+        LOGGER.info("Start PayPal payment with internal transaction id: {}", pendingPayment.getInternalTxId());
 		PayPalPaymentDetails currentPaymentDetails = (PayPalPaymentDetails) pendingPayment.getUser().getCurrentPaymentDetails();
         PaymentPolicy currentPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
         String communityRewriteUrlParameter = currentPaymentPolicy.getCommunity() != null ? currentPaymentPolicy.getCommunity().getRewriteUrlParameter() : null;

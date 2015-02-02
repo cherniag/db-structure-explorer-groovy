@@ -28,9 +28,9 @@ public class BasicResponse {
     public String toString() {
         return new StringBuilder()
                 .append("BasicResponse [message=")
-                .append(message != null ? message.replaceAll("\r\n", ", ") : null)
+                .append(getMessage() != null ? getMessage().replaceAll("\r\n", ", ") : null)
                 .append(", statusCode=")
-                .append(statusCode)
+                .append(getStatusCode())
                 .append("]").toString();
     }
 }

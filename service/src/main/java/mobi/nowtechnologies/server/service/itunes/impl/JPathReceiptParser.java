@@ -2,9 +2,9 @@ package mobi.nowtechnologies.server.service.itunes.impl;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
-import mobi.nowtechnologies.server.service.itunes.ITunesParseResult;
-import mobi.nowtechnologies.server.service.itunes.ITunesReceiptParseException;
-import mobi.nowtechnologies.server.service.itunes.ITunesReceiptParser;
+import mobi.nowtechnologies.server.service.itunes.ITunesResult;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.util.Assert;
@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
  * Author: Gennadii Cherniaiev
  * Date: 1/6/2015
  */
-public class JPathReceiptParser implements ITunesReceiptParser {
+public class JPathReceiptParser implements ITunesResponseParser {
     private JsonPath statusPath;
     private JsonPath productIdPath;
     private JsonPath originalTransactionIdPath;
@@ -23,12 +23,12 @@ public class JPathReceiptParser implements ITunesReceiptParser {
     private JsonPath purchaseTimestampPath;
 
     @Override
-    public ITunesParseResult parse(String response) throws ITunesReceiptParseException {
+    public ITunesResult parseVerifyReceipt(String response) throws ITunesResponseParserException {
         try {
             int result = statusPath.<Integer>read(response);
 
             if (result != 0) {
-                return new ITunesParseResult(result);
+                return new ITunesResult(result);
             }
 
             String productId = productIdPath.read(response);
@@ -36,9 +36,9 @@ public class JPathReceiptParser implements ITunesReceiptParser {
             Long expireTime = safeReadTime(expireTimestampPath, response);
             Long purchaseTime = safeReadTime(purchaseTimestampPath, response);
 
-            return new ITunesParseResult(result, productId, originalTransactionId, expireTime, purchaseTime);
+            return new ITunesResult(result, productId, originalTransactionId, expireTime, purchaseTime);
         } catch (InvalidPathException e) {
-            throw new ITunesReceiptParseException(e);
+            throw new ITunesResponseParserException(e);
         }
     }
 

@@ -30,20 +30,17 @@
         <property name="request" ref="request.payPalRequest" />
     </bean>
 
-    <bean id="service.ITunesValidator" class="mobi.nowtechnologies.server.service.itunes.ITunesValidator">
+    <bean id="service.ITunesClient" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesClientImpl">
+        <property name="httpOkCode" value="#{T(org.springframework.http.HttpStatus).OK.value()}"/>
         <property name="postService">
             <bean class="mobi.nowtechnologies.server.apptests.ITunesPostService"/>
         </property>
-        <property name="messageSource" ref="serviceMessageSource"/>
+        <property name="iTunesResponseParser" ref="iTunesResponseParser"/>
      </bean>
 
-    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesService">
-         <property name="userService" ref="service.UserService" />
-        <property name="paymentPolicyService" ref="service.PaymentPolicyService" />
-        <property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
-        <property name="iTunesValidator" ref="service.ITunesValidator"/>
-        <property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
-        <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
-        <property name="iTunesReceiptParser" ref="iTunesReceiptParser"/>
+    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesServiceImpl">
+        <property name="iTunesClient" ref="service.ITunesClient"/>
+        <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
+        <property name="messageSource" ref="serviceMessageSource"/>
     </bean>
 </beans>

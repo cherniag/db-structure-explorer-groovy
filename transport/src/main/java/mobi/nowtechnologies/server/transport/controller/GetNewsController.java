@@ -27,9 +27,26 @@ public class GetNewsController extends CommonController {
     @Resource
     private MessageService messageService;
 
+    @RequestMapping(method = RequestMethod.GET, value = {
+            "**/{community}/{apiVersion:6\\.8}/GET_NEWS"
+    })
+    public ModelAndView getNewsWithBannersWithOneTimeSubscription(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            HttpServletResponse response
+    ) throws Exception {
+        ModelAndView modelAndView = getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, true, ACTIVATED);
+
+        setMandatoryLastModifiedHeader(response);
+
+        return modelAndView;
+    }
+
 
     @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.8}/GET_NEWS",
             "**/{community}/{apiVersion:6\\.7}/GET_NEWS",
             "**/{community}/{apiVersion:6\\.6}/GET_NEWS",
             "**/{community}/{apiVersion:6\\.5}/GET_NEWS",
@@ -43,7 +60,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
             HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, ACTIVATED);
+        ModelAndView modelAndView = getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, false, ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
 
@@ -61,7 +78,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, true, false, ACTIVATED);
     }
 
 
@@ -79,7 +96,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, false, ACTIVATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -93,7 +110,7 @@ public class GetNewsController extends CommonController {
             @RequestParam(value = "LAST_UPDATE_NEWS", required = false) Long lastUpdateNewsTimeMillis,
             @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
     ) throws Exception {
-        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, REGISTERED, ACTIVATED);
+        return getNews(userName, userToken, timestamp, lastUpdateNewsTimeMillis, deviceUID, false, false, REGISTERED, ACTIVATED);
     }
 
     private ModelAndView getNews(String userName,
@@ -102,6 +119,7 @@ public class GetNewsController extends CommonController {
                                  Long lastUpdateNewsTimeMillis,
                                  String deviceUID,
                                  boolean withBanners,
+                                 boolean withOneTimePayment,
                                  ActivationStatus... activationStatuses) throws Exception {
         User user = null;
         Exception ex = null;
@@ -113,7 +131,7 @@ public class GetNewsController extends CommonController {
 
             NewsDto newsDto = messageService.processGetNewsCommand(user, community, lastUpdateNewsTimeMillis, withBanners);
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
 
             return buildModelAndView(accountCheck, newsDto);
         } catch (Exception e) {

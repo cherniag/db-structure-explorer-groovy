@@ -333,3 +333,6 @@ insert into chart_user_status_behavior (id, chart_id, chart_behavior_id, user_st
 
 set @chartbehaviorid = 1 +  @chartbehaviorid;
 insert into chart_behavior (id, behavior_config_id, type, max_tracks, skip_tracks, play_tracks_seconds, is_offline) values (@chartbehaviorid, @behaviorconfigid, 'SHUFFLED', -1, -1, -1, 0);
+
+insert into tb_paymentPolicy (communityID, 	subCost, paymentType,          operator, shortCode, currencyIso, availableInStore, app_store_product_id,                contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online, payment_policy_type, duration, duration_unit) values (@communityid,       1.49, 'iTunesSubscription',     NULL,        '',       'GBP',            FALSE, 'com.musicqubed.ios.hl-uk.onetime.0',     NULL,    NULL,             NULL,         NULL,                NULL,            NULL,     null,  '_3G',    'AUDIO',                        0,                              0,      FALSE,   TRUE,           'ONETIME',        7,        'DAYS');
+

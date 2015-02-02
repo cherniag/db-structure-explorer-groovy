@@ -65,6 +65,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="autoOptInExemptPhoneNumberRepository" ref="autoOptInExemptPhoneNumberRepository" />
         <property name="autoOptInRuleService" ref="service.AutoOptInRuleService"/>
         <property name="userDetailsDtoAsm" ref="userDetailsDtoAsm"/>
+		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
     </bean>
 
     <bean id="userDetailsDtoAsm" class="mobi.nowtechnologies.server.assembler.UserDetailsDtoAsm"/>
@@ -504,22 +505,25 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		</constructor-arg>
 	</bean>
 
-	<bean id="service.ITunesValidator" class="mobi.nowtechnologies.server.service.itunes.ITunesValidator">
+	<bean id="service.ITunesClient" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesClientImpl">
+		<property name="httpOkCode" value="#{T(org.springframework.http.HttpStatus).OK.value()}"/>
 		<property name="postService" ref="shared.PostService" />
+		<property name="iTunesResponseParser" ref="iTunesResponseParser"/>
+	</bean>
+
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesServiceImpl">
+		<property name="iTunesClient" ref="service.ITunesClient"/>
+		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
 		<property name="messageSource" ref="serviceMessageSource"/>
 	</bean>
-
-	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesService">
-		<property name="userService" ref="service.UserService" />
-		<property name="paymentPolicyService" ref="service.PaymentPolicyService" />
-		<property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
-		<property name="iTunesValidator" ref="service.ITunesValidator"/>
+	<bean id="service.iTunesPaymentService" class="mobi.nowtechnologies.server.service.itunes.payment.impl.ITunesPaymentServiceImpl">
+		<property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
 		<property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
-		<property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
-        <property name="iTunesReceiptParser" ref="iTunesReceiptParser"/>
+		<property name="timeService" ref="timeService"/>
+		<property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
 	</bean>
 
-	<bean id="iTunesReceiptParser" class="mobi.nowtechnologies.server.service.itunes.CompositeITunesReceiptParser" />
+	<bean id="iTunesResponseParser" class="mobi.nowtechnologies.server.service.itunes.CompositeITunesResponseParser" />
 
 	<bean id="autoRenewableSubscriptionParser" class="mobi.nowtechnologies.server.service.itunes.impl.JPathReceiptParser">
 		<property name="statusPath" value="${itunes.renewable.response.path.status}"/>

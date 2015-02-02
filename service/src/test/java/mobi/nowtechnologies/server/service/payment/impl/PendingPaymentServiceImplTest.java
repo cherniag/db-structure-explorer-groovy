@@ -1,6 +1,8 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
+import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
@@ -29,8 +31,7 @@ import static java.util.Collections.nCopies;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.BUSINESS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -71,7 +72,6 @@ public class PendingPaymentServiceImplTest {
 			}
 		});
 
-
 		when(userServiceMock.updateUser(Mockito.any(User.class))).thenAnswer(new Answer<User>() {
 			@Override
 			public User answer(InvocationOnMock invocation) throws Throwable {
@@ -82,7 +82,7 @@ public class PendingPaymentServiceImplTest {
 		when(paymentPolicyServiceMock.getPaymentPolicy(any(PaymentDetails.class))).thenAnswer(new Answer<PaymentPolicyDto>() {
 			@Override
 			public PaymentPolicyDto answer(InvocationOnMock invocation) throws Throwable {
-				PaymentDetails paymentDetails = (PaymentDetails)invocation.getArguments()[0];
+				PaymentDetails paymentDetails = (PaymentDetails) invocation.getArguments()[0];
 				PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
 				PaymentPolicyDto paymentPolicyDto = new PaymentPolicyDto();
 				paymentPolicyDto.setSubcost(paymentPolicy.getSubcost());
@@ -90,7 +90,7 @@ public class PendingPaymentServiceImplTest {
 				paymentPolicyDto.setDuration(period.getDuration());
 				paymentPolicyDto.setDurationUnit(period.getDurationUnit());
 				paymentPolicyDto.setCurrencyISO(paymentPolicy.getCurrencyISO());
-				
+
 				return paymentPolicyDto;
 			}
 		});
@@ -104,7 +104,7 @@ public class PendingPaymentServiceImplTest {
 				generateUserWithSagePayPaymentDetails(0, PaymentDetailsStatus.SUCCESSFUL),
 				generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus.SUCCESSFUL, false),
 				generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus.SUCCESSFUL, true)
-				);
+		);
 
 		when(page.getContent()).thenReturn(users);
 
@@ -123,7 +123,7 @@ public class PendingPaymentServiceImplTest {
 		List<User> users = asList(
 				generateUserWithSagePayPaymentDetails(0, PaymentDetailsStatus.NONE),
 				generateUserWithSagePayPaymentDetails(0, PaymentDetailsStatus.SUCCESSFUL)
-				);
+		);
 
 		when(page.getContent()).thenReturn(users);
 
@@ -138,7 +138,35 @@ public class PendingPaymentServiceImplTest {
 		}
 	}
 
-    @Test
+	@Test
+	public void createPendingPaymentsForOneTimePaymentPolicyFirstTime() {
+		List<User> users = Lists.newArrayList();
+		User userWithOneTimePayment = createUserForPendingPayment(PaymentPolicyType.ONETIME, PaymentDetailsStatus.NONE);
+		users.add(userWithOneTimePayment);
+
+		when(page.getContent()).thenReturn(users);
+
+		List<PendingPayment> pendingPayments = pendingPaymentService.createPendingPayments();
+
+		assertFalse(pendingPayments.isEmpty());
+		assertEquals(userWithOneTimePayment, pendingPayments.get(0).getUser());
+		verify(userServiceMock, never()).unsubscribeUser(userWithOneTimePayment, "One time payment policy");
+	}
+
+	@Test
+	public void createPendingPaymentsForOneTimePaymentPolicySecondTime() {
+		List<User> users = Lists.newArrayList();
+		User userWithOneTimePayment = createUserForPendingPayment(PaymentPolicyType.ONETIME, PaymentDetailsStatus.SUCCESSFUL);
+		users.add(userWithOneTimePayment);
+
+		when(page.getContent()).thenReturn(users);
+		List<PendingPayment> pendingPayments = pendingPaymentService.createPendingPayments();
+
+		assertTrue(pendingPayments.isEmpty());
+		verify(userServiceMock).unsubscribeUser(userWithOneTimePayment, "One time payment policy");
+	}
+
+	@Test
     public void createPendingPaymentsForUserCountGreaterThanAllowed() {
 		//given
 		int maxCount = 5;
@@ -161,7 +189,7 @@ public class PendingPaymentServiceImplTest {
     @Test
     public void createRetryPaymentsForUserCountGreaterThanAllowed() {
 		//given
-        int maxCount = 5;
+		int maxCount = 5;
 		List<User> users = nCopies(5, generateUserWithO2PsmsPaymentDetails(PaymentDetailsStatus.SUCCESSFUL, true));
 
 		when(page.getContent()).thenReturn(users);
@@ -174,7 +202,22 @@ public class PendingPaymentServiceImplTest {
 
 		assertNotNull(createRetryPayments);
 		assertEquals(maxCount, createRetryPayments.size());
-    }
+	}
+
+	private User createUserForPendingPayment(PaymentPolicyType paymentPolicyType, PaymentDetailsStatus paymentDetailsStatus) {
+		PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
+		when(paymentPolicy.getPaymentPolicyType()).thenReturn(paymentPolicyType);
+		when(paymentPolicy.getPeriod()).thenReturn(new Period(WEEKS, 1));
+
+		PaymentDetails paymentDetails = mock(PaymentDetails.class);
+		when(paymentDetails.getPaymentPolicy()).thenReturn(paymentPolicy);
+		when(paymentDetails.getLastPaymentStatus()).thenReturn(paymentDetailsStatus);
+
+		User userWithOneTimePaymentPolicy = mock(User.class);
+		when(userWithOneTimePaymentPolicy.getCurrentPaymentDetails()).thenReturn(paymentDetails);
+		return userWithOneTimePaymentPolicy;
+	}
+
 
     private User generateUserWithSagePayPaymentDetails(int subBalance, PaymentDetailsStatus status) {
 		User user = new User();

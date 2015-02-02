@@ -102,6 +102,7 @@ public class PaymentDetailsServiceTest {
 
         doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
+        when(userService.updateUser(user)).thenReturn(user);
 
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 

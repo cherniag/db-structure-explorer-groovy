@@ -33,23 +33,25 @@ public class AccCheckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccCheckService.class);
 
 
-    public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails) {
-        return processAccCheck(mergeResult.getResultOfOperation(), withUserDetails, !mergeResult.isMergeDone(), false);
+    public AccountCheckDto processAccCheck(MergeResult mergeResult, boolean withUserDetails, boolean withOneTimePayment) {
+        return processAccCheck(mergeResult.getResultOfOperation(), withUserDetails, !mergeResult.isMergeDone(), false, withOneTimePayment);
     }
 
-    public AccountCheckDto processAccCheck(User user, boolean withUserDetails, boolean withUuid) {
-        return processAccCheck(user, withUserDetails, null, withUuid);
+    public AccountCheckDto processAccCheck(User user, boolean withUserDetails, boolean withUuid, boolean withOneTimePayment) {
+        return processAccCheck(user, withUserDetails, null, withUuid, withOneTimePayment);
     }
 
-    private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation, boolean withUuid) {
-        LOGGER.info("user : {}, withUserDetails : {}, firstActivation : {}, withUuid : {}", user.getId(), withUserDetails, firstActivation, withUuid);
+    private AccountCheckDto processAccCheck(User user, boolean withUserDetails, Boolean firstActivation, boolean withUuid, boolean withOneTimePayment) {
+        if (firstActivation != null){
+            LOGGER.info("First activation: {}", firstActivation);
+        }
         user = userService.processAccountCheckCommandForAuthorizedUser(user.getId());
 
         Community community = user.getUserGroup().getCommunity();
 
         List<String> appStoreProductIds = paymentPolicyService.findAppStoreProductIdsByCommunityAndAppStoreProductIdIsNotNull(community);
         Boolean canActivateVideoTrial = userService.canActivateVideoTrial(user);
-        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial, withUserDetails, firstActivation, withUuid);
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, null, appStoreProductIds, canActivateVideoTrial, withUserDetails, firstActivation, withUuid, withOneTimePayment);
 
         accountCheckDTO.promotedDevice = deviceService.existsInPromotedList(community, user.getDeviceUID());
         accountCheckDTO.promotedWeeks = (int) Math.floor((user.getNextSubPayment() * 1000L - System.currentTimeMillis()) / 1000 / 60 / 60 / 24 / 7) + 1;
