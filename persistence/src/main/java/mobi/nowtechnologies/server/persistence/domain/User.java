@@ -1516,7 +1516,7 @@ public class User implements Serializable {
         this.uuid = uuid;
     }
 
-    public Collection<SocialInfo> getSocialInfo() {
+    public Set<SocialInfo> getSocialInfo() {
         return socialInfo;
     }
 

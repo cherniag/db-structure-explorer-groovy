@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.itunes.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 
 /**
@@ -10,4 +11,5 @@ public interface ITunesPaymentService {
     void createSubmittedPayment(User user, String appStoreReceipt, ITunesResult result, ITunesPaymentService iTunesPaymentService);
     void checkForDuplicates(int userId, long nextSubPaymentTimestamp);
     boolean hasOneTimeSubscription(User user);
+    PaymentPolicy getCurrentSubscribedPaymentPolicy(User user);
 }

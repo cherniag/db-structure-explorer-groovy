@@ -24,8 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.Locale;
+import java.util.*;
 
 import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
@@ -66,6 +65,8 @@ public class PaymentsPayPalController extends CommonController {
                 paymentDetailsService.commitPayPalPaymentDetails(token, paymentPolicyId, communityUrl.getValue(), getSecurityContextDetails().getUserId());
             }
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
+            PaymentPolicyDto dto = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
+            modelAndModel.addObject("currentPaymentPolicyType", dto.getPaymentPolicyType());
         }else{
             PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
             modelAndModel.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
@@ -81,8 +82,17 @@ public class PaymentsPayPalController extends CommonController {
 
         if(paymentEnabled) {
             User user = userService.getWithSocial(getSecurityContextDetails().getUserId());
-            Collection<SocialInfo> socialInfo = user.getSocialInfo();
+            List<SocialInfo> socialInfo = new ArrayList<SocialInfo>(user.getSocialInfo());
             Assert.isTrue(!socialInfo.isEmpty(), "No social info for " + user.getId());
+
+            //to get predictable socialInfo from set
+            Collections.sort(socialInfo, new Comparator<SocialInfo>() {
+                @Override
+                public int compare(SocialInfo o1, SocialInfo o2) {
+                    return o2.getSocialId().compareTo(o1.getSocialId());
+                }
+            });
+
             SocialInfo first = socialInfo.iterator().next();
             modelAndModel.addObject("customerName", getFormattedName(first));
             modelAndModel.addObject("customerAvatar", first.getAvatarUrl());

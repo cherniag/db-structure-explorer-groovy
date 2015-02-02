@@ -13,7 +13,7 @@
     </span>
     <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device">
         <span class="go-premium-text-message go-premium-text-message-device">
-            <s:message code='message.unsubscribe' />
+            <s:message code='message.unsubscribe.premium' />
         </span>
         <br/>
     </div>

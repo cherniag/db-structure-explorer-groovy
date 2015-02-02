@@ -55,8 +55,9 @@ public class AccountCheckDTOAsm {
 
         boolean hasOtherPaymentDetails = currentPaymentDetails != null && currentPaymentDetails.isActivated()
                 && (currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.NONE || currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.SUCCESSFUL);
-        boolean hasITunesSubscription =  ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && status != null
-                && status.getName().equals(mobi.nowtechnologies.server.shared.enums.UserStatus.SUBSCRIBED.name());
+        boolean hasITunesSubscription =  ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && user.isSubscribedStatus();
+        boolean hasPaidByPaymentDetails =  !user.isOnFreeTrial() && user.isSubscribedStatus()
+                && user.getCurrentPaymentDetails() != null && user.isNextSubPaymentInTheFuture();
 
         String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
@@ -124,7 +125,7 @@ public class AccountCheckDTOAsm {
             accountCheckDTO.uuid = user.getUuid();
         }
         if (withOneTimePayment) {
-            if (user.hasActivePaymentDetails()) {
+            if (hasPaidByPaymentDetails) {
                 accountCheckDTO.oneTimePayment = user.hasOneTimeSubscription();
             } else if (hasITunesSubscription) {
                 accountCheckDTO.oneTimePayment = iTunesPaymentService.hasOneTimeSubscription(user);

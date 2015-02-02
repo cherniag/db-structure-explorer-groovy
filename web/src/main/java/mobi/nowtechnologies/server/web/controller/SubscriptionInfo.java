@@ -2,11 +2,17 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SubscriptionInfo {
     private boolean ios;
     private boolean premium;
-    private PaymentPolicyDto paymentPolicyDto;
-    private String paymentPolicyMessage;
+    private PaymentPolicyDto currentPaymentPolicy;
+    private boolean freeTrial;
+    private boolean isOnPaidPeriod;
+
+    private List<PaymentPolicyDto> paymentPolicyDTOs = new ArrayList<>();
 
     public boolean isIos() {
         return ios;
@@ -24,19 +30,35 @@ public class SubscriptionInfo {
         this.premium = premium;
     }
 
-    public PaymentPolicyDto getPaymentPolicyDto() {
-        return paymentPolicyDto;
+    public List<PaymentPolicyDto> getPaymentPolicyDTOs() {
+        return paymentPolicyDTOs;
     }
 
-    public void setPaymentPolicyDto(PaymentPolicyDto paymentPolicyDto) {
-        this.paymentPolicyDto = paymentPolicyDto;
+    public void addPaymentPolicyDto(List<PaymentPolicyDto> paymentPolicyDTOs){
+        this.paymentPolicyDTOs.addAll(paymentPolicyDTOs);
     }
 
-    public String getPaymentPolicyMessage() {
-        return paymentPolicyMessage;
+    public PaymentPolicyDto getCurrentPaymentPolicy() {
+        return currentPaymentPolicy;
     }
 
-    public void setPaymentPolicyMessage(String paymentPolicyMessage) {
-        this.paymentPolicyMessage = paymentPolicyMessage;
+    public void setCurrentPaymentPolicy(PaymentPolicyDto currentPaymentPolicy) {
+        this.currentPaymentPolicy = currentPaymentPolicy;
+    }
+
+    public boolean isFreeTrial() {
+        return freeTrial;
+    }
+
+    public void setFreeTrial(boolean freeTrial) {
+        this.freeTrial = freeTrial;
+    }
+
+    public boolean isOnPaidPeriod() {
+        return isOnPaidPeriod;
+    }
+
+    public void setOnPaidPeriod(boolean isOnPaidPeriod) {
+        this.isOnPaidPeriod = isOnPaidPeriod;
     }
 }

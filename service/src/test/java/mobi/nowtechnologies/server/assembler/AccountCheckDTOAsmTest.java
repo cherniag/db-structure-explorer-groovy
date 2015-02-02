@@ -154,19 +154,6 @@ public class AccountCheckDTOAsmTest {
         verify(user, times(0)).hasOneTimeSubscription();
     }
 
-    @Test
-    public void testToAccCheckDTOWithOneTimePayment() throws Exception {
-        userIsNotEligibleForPromo();
-
-        when(user.hasActivePaymentDetails()).thenReturn(Boolean.TRUE);
-        when(user.hasOneTimeSubscription()).thenReturn(Boolean.TRUE);
-        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, true);
-
-        assertTrue(accountCheckDTO.oneTimePayment);
-        verify(user).hasActivePaymentDetails();
-        verify(user).hasOneTimeSubscription();
-    }
-
     private void userIsNotEligibleForPromo() {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(null);
         when(ruleServiceSupport.fireRules(eq(ALL), any(User.class))).thenReturn(RuleResult.FAIL_RESULT);

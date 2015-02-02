@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.payment.UnsubscribeDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+import mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm;
 import mobi.nowtechnologies.server.web.validator.UnsubscribeValidator;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -32,6 +33,8 @@ public class UnsubscribeController extends CommonController {
 
     @Resource
     private PaymentPolicyService paymentPolicyService;
+    @Resource
+    private SubscriptionInfoAsm subscriptionInfoAsm;
 
     @InitBinder(UnsubscribeDto.NAME)
     public void initBinder(HttpServletRequest request, WebDataBinder binder) {
@@ -41,6 +44,9 @@ public class UnsubscribeController extends CommonController {
     @RequestMapping(value = SCOPE_PREFIX + "/unsubscribe.html", method = RequestMethod.GET)
     public ModelAndView getUnsubscribePage(@PathVariable("scopePrefix") String scopePrefix) {
         ModelAndView modelAndView = new ModelAndView(scopePrefix + "/unsubscribe");
+        User user = userService.findById(getSecurityContextDetails().getUserId());
+        PaymentPolicyDto currentPaymentPolicy = subscriptionInfoAsm.getCurrentPaymentPolicy(user);
+        modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
         modelAndView.addObject(UnsubscribeDto.NAME, new UnsubscribeDto());
         return modelAndView;
     }
@@ -81,13 +87,18 @@ public class UnsubscribeController extends CommonController {
     public ModelAndView unsubscribeAndRedirect(@PathVariable("scopePrefix") String scopePrefix,
                                                @Valid @ModelAttribute(UnsubscribeDto.NAME) UnsubscribeDto dto,
                                                BindingResult result) {
+        User user = userService.findById(getSecurityContextDetails().getUserId());
+        PaymentPolicyDto currentPaymentPolicy = subscriptionInfoAsm.getCurrentPaymentPolicy(user);
         if (result.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView(scopePrefix + "/unsubscribe");
             modelAndView.addObject("result", "fail");
+            modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
             return modelAndView;
         } else {
             userService.unsubscribeUser(getSecurityContextDetails().getUserId(), dto);
-            return new ModelAndView(scopePrefix + "/redirectAfterUnsubscribe");
+            ModelAndView modelAndView = new ModelAndView(scopePrefix + "/redirectAfterUnsubscribe");
+            modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
+            return modelAndView;
         }
     }
 

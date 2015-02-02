@@ -9,11 +9,11 @@
     <div class="go-premium-unsubscribe-3-banner go-premium-unsubscribe-banner go-premium-unsubscribe-banner-device">
     </div>
     <span class="go-premium-body-title go-premium-body-title-device">
-        <s:message code='head.unsubscribed' />
+        <s:message code='head.unsubscribed.premium' />
     </span>
     <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device">
         <span class="go-premium-text-message go-premium-text-message-device">
-            <s:message code='message.unsubscribed' />
+            <s:message code='message.unsubscribed.premium' />
         </span>
         <br/>
     </div>

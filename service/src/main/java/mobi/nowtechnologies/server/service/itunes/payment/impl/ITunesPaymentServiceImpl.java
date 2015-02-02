@@ -60,6 +60,15 @@ public class ITunesPaymentServiceImpl implements ApplicationEventPublisherAware,
         return false;
     }
 
+    @Override
+    public PaymentPolicy getCurrentSubscribedPaymentPolicy(User user){
+        SubmittedPayment latest = submittedPaymentService.getLatest(user);
+        if(latest != null && latest.getNextSubPayment() > timeService.nowSeconds()){
+            return latest.getPaymentPolicy();
+        }
+        return null;
+    }
+
     @Transactional
     @Override
     public void createSubmittedPayment(User user, String appStoreReceipt, ITunesResult result, ITunesPaymentService iTunesPaymentService) {

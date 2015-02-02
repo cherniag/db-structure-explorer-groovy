@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -167,6 +168,42 @@ public class ITunesPaymentServiceImplTest {
                 timeService,
                 submittedPaymentService,
                 applicationEventPublisher);
+    }
+
+    @Test
+    public void testGetCurrentSubscribedPaymentPolicy() throws Exception {
+        Community community = mock(Community.class);
+        when(community.getId()).thenReturn(10);
+        final User user = getMockForEligibleUser(100, community);
+        SubmittedPayment submittedPayment = mock(SubmittedPayment.class);
+
+        PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
+        when(submittedPayment.getNextSubPayment()).thenReturn((int)(new Date().getTime() / 1000 + 10000));
+        when(submittedPayment.getPaymentPolicy()).thenReturn(paymentPolicy);
+        when(submittedPaymentService.getLatest(user)).thenReturn(submittedPayment);
+        when(timeService.now()).thenReturn(new Date());
+
+        PaymentPolicy actual = iTunesPaymentService.getCurrentSubscribedPaymentPolicy(user);
+
+        assertEquals(paymentPolicy, actual);
+    }
+
+    @Test
+    public void testGetCurrentSubscribedPaymentPolicyForOldPayment() throws Exception {
+        Community community = mock(Community.class);
+        when(community.getId()).thenReturn(10);
+        final User user = getMockForEligibleUser(100, community);
+        SubmittedPayment submittedPayment = mock(SubmittedPayment.class);
+
+        PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
+        when(submittedPayment.getNextSubPayment()).thenReturn((int)(new Date().getTime() / 1000 - 10000));
+        when(submittedPayment.getPaymentPolicy()).thenReturn(paymentPolicy);
+        when(submittedPaymentService.getLatest(user)).thenReturn(submittedPayment);
+        when(timeService.nowSeconds()).thenReturn((int) (new Date().getTime()/1000) );
+
+        PaymentPolicy actual = iTunesPaymentService.getCurrentSubscribedPaymentPolicy(user);
+
+        assertNull(actual);
     }
 
     private User getMockForEligibleUser(int userId, Community community) {

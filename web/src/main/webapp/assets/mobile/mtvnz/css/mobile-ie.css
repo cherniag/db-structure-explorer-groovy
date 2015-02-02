@@ -463,7 +463,7 @@ body {
     margin-left: 20px;
 }
 
-.go-premium-unsubscribe-1-banner {
+.go-premium-unsubscribe-premium-banner {
     background: url(../imgs/img_phone_unsubscribe_1.png) no-repeat center;
 }
 
@@ -497,23 +497,23 @@ body {
     height: 100%;
 }
 
-.go-premium-success-solutation-container {
+.go-premium-success-salutation-container {
     width: 100%;
     position: absolute;
 }
 
-.go-premium-success-solutation-container-text {
+.go-premium-success-salutation-container-text {
     margin: 0 auto;
     width:90%;
     text-align: center;
 }
-.go-premium-success-solutation {
+.go-premium-success-salutation {
     background-color: #000;
     color:#FFF;
     font-family: 'FuturaSB-BoldItalic';
     line-height: 120%;
 }
-.go-premium-success-solutation-title {
+.go-premium-success-salutation-title {
     background-color: #000;
     color:#FFF;
     font-family: 'FuturaSB-BoldItalic';
@@ -628,10 +628,10 @@ body {
         margin: 0 auto 20px;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-400px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 80px;
         padding: 10px;
     }
@@ -643,11 +643,11 @@ body {
         padding: 8px;
         font-size: 60px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 60px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 60px;
         padding: 8px;
     }
@@ -710,10 +710,10 @@ body {
         height: 268px;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-360px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 70px;
         padding: 10px;
     }
@@ -725,11 +725,11 @@ body {
         padding: 8px;
         font-size: 50px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 50px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 50px;
         padding: 8px;
     }
@@ -789,7 +789,7 @@ body {
         height: 228px;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-360px;
     }
     .go-premium-success-ad-text-1-device {
@@ -800,15 +800,15 @@ body {
         padding: 8px;
         font-size: 50px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 70px;
         padding: 10px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 50px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 50px;
         padding: 8px;
     }
@@ -872,7 +872,7 @@ body {
         height: 160px;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-360px;
     }
     .go-premium-success-ad-text-1-device {
@@ -883,15 +883,15 @@ body {
         padding: 8px;
         font-size: 50px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 70px;
         padding: 10px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 50px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 50px;
         padding: 8px;
     }
@@ -974,7 +974,7 @@ body {
         margin: 0 auto;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-230px;
     }
     .go-premium-success-ad-text-1-device {
@@ -985,15 +985,15 @@ body {
         padding: 4px;
         font-size: 30px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         padding: 7px;
         font-size: 28px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         padding: 5px;
         font-size: 20px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         padding: 5px;
         font-size: 20px;
     }
@@ -1080,7 +1080,7 @@ body {
         margin: 0 auto;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-180px;
     }
     .go-premium-success-ad-text-1-device {
@@ -1091,15 +1091,15 @@ body {
         font-size: 16px;
         padding: 2px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 20px;
         padding: 6px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 16px;
         padding: 4px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 16px;
         padding: 4px;
     }
@@ -1179,7 +1179,7 @@ body {
     }
 
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-125px;
     }
     .go-premium-success-ad-text-1-device {
@@ -1190,15 +1190,15 @@ body {
         font-size: 10px;
         padding: 2px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 14px;
         padding: 2px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 12px;
         padding: 2px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 12px;
         padding: 2px;
     }

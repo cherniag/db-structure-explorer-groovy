@@ -6,12 +6,12 @@
 <div class="go-premium-container go-premium-container-device">
     <div class="go-premium-button-target go-premium-button-close go-premium-button-close-device" onclick="returnToApp();">
     </div>
-    <div class="go-premium-unsubscribe-2-banner go-premium-unsubscribe-banner go-premium-unsubscribe-banner-device">
+    <div class="go-premium-unsubscribe-banner go-premium-unsubscribe-banner-device error-banner">
     </div>
-    <span class="go-premium-body-title go-premium-body-title-device">
+    <span class="go-premium-body-title go-premium-body-title-device error-title">
         <s:message code="errors.500.title" />
     </span>
-    <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device">
+    <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device error-description">
         <span class="go-premium-text-message go-premium-text-message-device">
             <s:message code="errors.500.description" />
         </span>

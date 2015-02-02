@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.dto.payment;
 
+import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
@@ -37,6 +38,8 @@ public class PaymentPolicyDto {
     private boolean fourG;
     private boolean threeG;
     private MediaType paymentPolicyMediaType;
+    private PaymentPolicyType paymentPolicyType;
+    private String appStoreProductId;
 
     public PaymentPolicyDto() { }
 
@@ -70,6 +73,8 @@ public class PaymentPolicyDto {
         setPaymentPolicyMediaType(policy.getMediaType());
         setFourG( Tariff._4G == policy.getTariff() );
         setThreeG( Tariff._3G == policy.getTariff() );
+        setPaymentPolicyType(policy.getPaymentPolicyType());
+        setAppStoreProductId(policy.getAppStoreProductId());
     }
     
 	public boolean isMonthly() {
@@ -205,6 +210,22 @@ public class PaymentPolicyDto {
         this.durationUnit = durationUnit;
     }
 
+    public PaymentPolicyType getPaymentPolicyType() {
+        return paymentPolicyType;
+    }
+
+    public void setPaymentPolicyType(PaymentPolicyType paymentPolicyType) {
+        this.paymentPolicyType = paymentPolicyType;
+    }
+
+    public String getAppStoreProductId() {
+        return appStoreProductId;
+    }
+
+    public void setAppStoreProductId(String appStoreProductId) {
+        this.appStoreProductId = appStoreProductId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -224,6 +245,8 @@ public class PaymentPolicyDto {
                 .append("fourG", fourG)
                 .append("threeG", threeG)
                 .append("paymentPolicyMediaType", paymentPolicyMediaType)
+                .append("paymentPolicyType", paymentPolicyType)
+                .append("appStoreProductId", appStoreProductId)
                 .toString();
     }
 }
