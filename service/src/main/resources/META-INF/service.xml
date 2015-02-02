@@ -206,9 +206,10 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="communityService" ref="service.communityService"/>
     </bean>
 
-    <bean id="service.ChartDetailsConverter" class="mobi.nowtechnologies.server.utils.ChartDetailsConverter">
+    <bean id="service.ChartDetailsConverter" class="mobi.nowtechnologies.server.service.chart.ChartDetailsConverter">
         <property name="messageSource" ref="serviceMessageSource"/>
         <property name="iTunesLinkFormatCutoverTimeMillis" value="${transport.itunes.affiliate.link.format.cutover.time.millis}"/>
+		<property name="badgesService" ref="badgesService"/>
     </bean>
 
 	<bean id="service.ChartService" class="mobi.nowtechnologies.server.service.ChartService">
@@ -220,12 +221,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="cloudFileService" ref="service.CloudFileService" />
         <property name="chartDetailsConverter" ref="service.ChartDetailsConverter"/>
-        <property name="chartAsm" ref="service.ChartAsm"/>
-    </bean>
-
-    <bean id="service.ChartAsm" class="mobi.nowtechnologies.server.assembler.ChartAsm">
-        <property name="filenameAliasRepository" ref="filenameAliasRepository"/>
-        <property name="badgesService" ref="badgesService"/>
     </bean>
 
 	<bean id="service.ChartDetailService" class="mobi.nowtechnologies.server.service.ChartDetailService">

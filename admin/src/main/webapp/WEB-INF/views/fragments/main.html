@@ -180,11 +180,11 @@ section {
                             fileName:$('#chart-edit-form').find('img.badgeImage').attr('title')
                         }
                      )"/>
-				<label style="margin-top: 20px;"><strong th:text="#{chartItems.page.chart.edit.dialog.item.title}">Title:</strong></label> <input type="text" maxlength="50" name="name" style="width: 98%;" />
+				<label style="margin-top: 20px;"><strong th:text="#{chartItems.page.chart.edit.dialog.item.title}">Title:</strong></label> <input type="text" maxlength="255" name="name" style="width: 98%;" />
 				<p class="hasError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
 						Wrong title value
 				</p>
-				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.subtitle}">Subtitle:</strong></label> <input type="text" maxlength="50" name="subtitle" style="width: 98%;" />
+				<label><strong th:text="#{chartItems.page.chart.edit.dialog.item.subtitle}">Subtitle:</strong></label> <input type="text" maxlength="255" name="subtitle" style="width: 98%;" />
 				<p class="hasError" th:if="${#fields.hasErrors('subtitle')}" th:errors="*{subtitle}">
 						Wrong subtitle value
 				</p>

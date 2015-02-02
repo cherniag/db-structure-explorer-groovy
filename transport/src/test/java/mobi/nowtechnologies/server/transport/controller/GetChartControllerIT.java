@@ -4,7 +4,7 @@ import mobi.nowtechnologies.server.log4j.InMemoryEventAppender;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
+import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;

@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.admin.controller;
 
 
 import mobi.nowtechnologies.server.admin.asm.DuplicatedMediaAcrossNearestChartsDtoAssembler;
-import mobi.nowtechnologies.server.assembler.ChartAsm;
+import mobi.nowtechnologies.server.admin.asm.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
@@ -13,7 +13,7 @@ import mobi.nowtechnologies.server.service.MediaService;
 import mobi.nowtechnologies.server.service.TrackRepoService;
 import mobi.nowtechnologies.server.service.exception.ServiceCheckedException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
+import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.trackrepo.dto.SearchTrackDto;

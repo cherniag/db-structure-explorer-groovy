@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.admin.validator;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
 import mobi.nowtechnologies.server.service.ChartService;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
+import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.web.utils.RequestUtils;
 import org.junit.Before;

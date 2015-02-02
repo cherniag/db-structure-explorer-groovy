@@ -1,15 +1,11 @@
-package mobi.nowtechnologies.server.assembler;
+package mobi.nowtechnologies.server.admin.asm;
 
+import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
-import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
-import mobi.nowtechnologies.server.service.streamzine.BadgesService;
-import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +21,6 @@ public class ChartAsm{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartAsm.class);
 
     private FilenameAliasRepository filenameAliasRepository;
-    private BadgesService badgesService;
 
 	public List<ChartDto> toChartDtos(List<ChartDetail> chartDetails) {
 		LOGGER.debug("input parameters charts: [{}]", chartDetails);
@@ -95,33 +90,6 @@ public class ChartAsm{
 		return chartDetail;
 	}
 
-	public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked) {
-		LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
-
-		PlaylistDto playlistDto = new PlaylistDto();
-        playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI() : null);
-        playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
-        playlistDto.setSubtitle(chartDetail.getSubtitle());
-        playlistDto.setImage(chartDetail.getImageFileName());
-        playlistDto.setImageTitle(chartDetail.getImageTitle());
-        playlistDto.setDescription(chartDetail.getChartDescription());
-        playlistDto.setPosition(chartDetail.getPosition());
-        playlistDto.setSwitchable(switchable);
-        playlistDto.setType(chartDetail.getChartType());
-
-		if(chartDetail.getBadgeId() != null && resolution != null){
-            String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
-            playlistDto.setBadgeIcon(badgeFileName);
-        }
-
-        if(isPlayListLockSupported){
-            playlistDto.setLocked(areAllTracksLocked);
-        }
-
-		LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
-		return playlistDto;
-	}
-
     private FileNameAliasDto getBadgeFilenameAliasDto(Long badgeId) {
         if(badgeId == null) {
             return null;
@@ -143,9 +111,5 @@ public class ChartAsm{
 
     public void setFilenameAliasRepository(FilenameAliasRepository filenameAliasRepository) {
         this.filenameAliasRepository = filenameAliasRepository;
-    }
-
-    public void setBadgesService(BadgesService badgesService) {
-        this.badgesService = badgesService;
     }
 }

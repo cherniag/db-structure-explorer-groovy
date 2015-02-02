@@ -15,6 +15,8 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
 public class ChartDetail {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetail.class);
+	public static final int TITLE_LENGTH = 255;
+	public static final int SUBTITLE_LENGTH = 255;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,10 +58,10 @@ public class ChartDetail {
 	@Column(name = "image_title")
 	private String imageTitle;
 
-	@Column(name = "title", columnDefinition = "char(50)", nullable = true)
+	@Column(name = "title", length = TITLE_LENGTH, nullable = true)
 	private String title;
 
-	@Column(name = "subtitle", columnDefinition = "char(50)", nullable = true)
+	@Column(name = "subtitle", length = SUBTITLE_LENGTH, nullable = true)
 	private String subtitle;
 
 	private long publishTimeMillis;

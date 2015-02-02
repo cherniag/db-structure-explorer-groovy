@@ -15,110 +15,99 @@
 
     <bean class="mobi.nowtechnologies.server.admin.settings.SettingsController"/>
 
-	<bean name="admin.VersionController"
-		class="mobi.nowtechnologies.server.controller.VersionController">
-	</bean>
+    <bean class="mobi.nowtechnologies.server.controller.VersionController"/>
 
-	<bean name="admin.HomeController"
-		class="mobi.nowtechnologies.server.admin.controller.HomeController">
-		<property name="adminUserService" ref="adminUserService" />
-	</bean>
+    <bean class="mobi.nowtechnologies.server.admin.controller.HomeController">
+        <property name="adminUserService" ref="adminUserService"/>
+    </bean>
 
-	<bean name="admin.SignInController"
-		class="mobi.nowtechnologies.server.admin.controller.SignInController" />
+    <bean class="mobi.nowtechnologies.server.admin.controller.SignInController"/>
 
-	<bean name="admin.MessageController"
-		class="mobi.nowtechnologies.server.admin.controller.MessageController">
-		<property name="messageService" ref="service.MessageService" />
-		<property name="filterService" ref="service.FilterService" />
-	</bean>
+    <bean class="mobi.nowtechnologies.server.admin.controller.MessageController">
+        <property name="messageService" ref="service.MessageService"/>
+        <property name="filterService" ref="service.FilterService"/>
+    </bean>
 
-	<bean name="admin.NewsController"
-		class="mobi.nowtechnologies.server.admin.controller.NewsController">
-		<property name="messageService" ref="service.MessageService" />
-		<property name="filterService" ref="service.FilterService" />
-		<property name="cloudFileService" ref="service.CloudFileService" />
-	</bean>
+    <bean class="mobi.nowtechnologies.server.admin.controller.NewsController">
+        <property name="messageService" ref="service.MessageService"/>
+        <property name="filterService" ref="service.FilterService"/>
+        <property name="cloudFileService" ref="service.CloudFileService"/>
+    </bean>
 
-	<bean
-		class="mobi.nowtechnologies.server.admin.controller.ErrorController" />
-	<bean name="admin.OfferController" class="mobi.nowtechnologies.server.admin.controller.OfferController">
-		<property name="offerService" ref="service.OfferService" />
-		<property name="filterService" ref="service.FilterService" />
-		<property name="cloudFileService" ref="service.CloudFileService" />
-	</bean>
-	
-	<bean id="admin.CommonChartController" abstract="true">
-		<property name="chartService" ref="service.ChartService" />
-		<property name="filesURL" value="${cloudFile.mediaCoverFileURL}" />
-		<property name="chartFilesURL" value="${cloudFile.filesURL}" />
-	</bean>
-	
+    <bean class="mobi.nowtechnologies.server.admin.controller.ErrorController"/>
+
+    <bean class="mobi.nowtechnologies.server.admin.controller.OfferController">
+        <property name="offerService" ref="service.OfferService"/>
+        <property name="filterService" ref="service.FilterService"/>
+        <property name="cloudFileService" ref="service.CloudFileService"/>
+    </bean>
+
+    <bean id="admin.CommonChartController" abstract="true">
+        <property name="chartService" ref="service.ChartService"/>
+        <property name="filesURL" value="${cloudFile.mediaCoverFileURL}"/>
+        <property name="chartFilesURL" value="${cloudFile.filesURL}"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
+        <property name="chartItemController" ref="admin.ChartItemController"/>
+        <property name="viewByChartType" ref="chartViewByChartType"/>
+        <property name="communityRepository" ref="communityRepository"/>
+        <property name="chartAsm" ref="admin.ChartAsm"/>
+    </bean>
+
+    <bean id="admin.ChartItemController" class="mobi.nowtechnologies.server.admin.controller.ChartItemController"
+          parent="admin.CommonChartController">
+        <property name="chartDetailService" ref="service.ChartDetailService"/>
+        <property name="mediaService" ref="service.MediaService"/>
+        <property name="viewByChartType" ref="chartItemsViewByChartType"/>
+        <property name="trackRepoService" ref="service.TrackRepoService"/>
+        <property name="chartAsm" ref="admin.ChartAsm"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.admin.controller.UserController">
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.admin.controller.TrackRepoController">
+        <property name="trackRepoService" ref="service.TrackRepoService"/>
+        <property name="executorTimeout" value="${trackRepo.executor.queueCapacity}"/>
+        <property name="trackRepoFilesURL" value="${trackRepo.filesURL}"/>
+        <property name="trackRepoUrl" value="${trackRepo.baseURL}"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.admin.controller.AccountLogController">
+        <property name="accountLogService" ref="service.AccountLogService"/>
+        <property name="pendingPaymentService" ref="service.PendingPaymentService"/>
+        <property name="submittedPaymentService" ref="service.SubmittedPaymentService"/>
+        <property name="userService" ref="service.UserService"/>
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.admin.controller.AdController">
+        <property name="messageService" ref="service.MessageService"/>
+        <property name="cloudFileService" ref="service.CloudFileService"/>
+        <property name="filterService" ref="service.FilterService"/>
+    </bean>
+
     <utils:map id="chartViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
         <entry key="BASIC_CHART" value="chartItems/chartItemsCalendar"/>
-        <entry key ="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
-        <entry key ="OTHER_CHART" value="chartItems/hotTracksCalendar"/>
-        <entry key ="FOURTH_CHART" value="chartItems/hotTracksCalendar"/>
-        <entry key ="FIFTH_CHART" value="chartItems/hotTracksCalendar"/>
-        <entry key ="VIDEO_CHART" value="chartItems/hotTracksCalendar"/>
-        <entry key ="HL_UK_PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
-        <entry key ="HL_UK_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
+        <entry key="HOT_TRACKS" value="chartItems/hotTracksCalendar"/>
+        <entry key="OTHER_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key="FOURTH_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key="FIFTH_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key="VIDEO_CHART" value="chartItems/hotTracksCalendar"/>
+        <entry key="HL_UK_PLAYLIST_1" value="chartItems/hotTracksCalendar"/>
+        <entry key="HL_UK_PLAYLIST_2" value="chartItems/hotTracksCalendar"/>
     </utils:map>
 
     <utils:map id="chartItemsViewByChartType" key-type="mobi.nowtechnologies.server.shared.enums.ChartType">
         <entry key="BASIC_CHART" value="chartItems/chartItems"/>
-        <entry key ="HOT_TRACKS" value="chartItems/hotTracks"/>
-        <entry key ="OTHER_CHART" value="chartItems/hotTracks"/>
-        <entry key ="FOURTH_CHART" value="chartItems/hotTracks"/>
-        <entry key ="FIFTH_CHART" value="chartItems/hotTracks"/>
-        <entry key ="VIDEO_CHART" value="chartItems/hotTracks"/>
-        <entry key ="HL_UK_PLAYLIST_1" value="chartItems/hotTracks"/>
-        <entry key ="HL_UK_PLAYLIST_2" value="chartItems/hotTracks"/>
+        <entry key="HOT_TRACKS" value="chartItems/hotTracks"/>
+        <entry key="OTHER_CHART" value="chartItems/hotTracks"/>
+        <entry key="FOURTH_CHART" value="chartItems/hotTracks"/>
+        <entry key="FIFTH_CHART" value="chartItems/hotTracks"/>
+        <entry key="VIDEO_CHART" value="chartItems/hotTracks"/>
+        <entry key="HL_UK_PLAYLIST_1" value="chartItems/hotTracks"/>
+        <entry key="HL_UK_PLAYLIST_2" value="chartItems/hotTracks"/>
     </utils:map>
 
-
-    <bean name="admin.ChartController"
-		class="mobi.nowtechnologies.server.admin.controller.ChartController" parent="admin.CommonChartController">
-		<property name="chartItemController" ref="admin.ChartItemController" />
-		<property name="viewByChartType" ref="chartViewByChartType"/>
-		<property name="communityRepository" ref="communityRepository"/>
-        <property name="chartAsm" ref="service.ChartAsm"/>
-    </bean>
-	
-	<bean name="admin.ChartItemController"
-		class="mobi.nowtechnologies.server.admin.controller.ChartItemController" parent="admin.CommonChartController">
-		<property name="chartDetailService" ref="service.ChartDetailService" />
-		<property name="mediaService" ref="service.MediaService" />
-		<property name="viewByChartType" ref="chartItemsViewByChartType"/>
-        <property name="trackRepoService" ref="service.TrackRepoService" />
-        <property name="chartAsm" ref="service.ChartAsm"/>
-	</bean>
-	
-	<bean name="admin.UserController"
-		class="mobi.nowtechnologies.server.admin.controller.UserController">
-		<property name="userService" ref="service.UserService" />
-	</bean>
-	
-	<bean name="admin.TrackRepoController"
-		class="mobi.nowtechnologies.server.admin.controller.TrackRepoController">
-		<property name="trackRepoService" ref="service.TrackRepoService" />
-		<property name="executorTimeout" value="${trackRepo.executor.queueCapacity}" />
-		<property name="trackRepoFilesURL" value="${trackRepo.filesURL}" />
-		<property name="trackRepoUrl" value="${trackRepo.baseURL}" />
-	</bean>
-	
-	<bean name="admin.AccountLogController"
-		class="mobi.nowtechnologies.server.admin.controller.AccountLogController">
-		<property name="accountLogService" ref="service.AccountLogService" />
-		<property name="pendingPaymentService" ref="service.PendingPaymentService" />
-		<property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
-		<property name="userService" ref="service.UserService" />
-	</bean>
-	
-	<bean name="admin.AdController"
-		class="mobi.nowtechnologies.server.admin.controller.AdController">
-		<property name="messageService" ref="service.MessageService" />
-		<property name="cloudFileService" ref="service.CloudFileService" />
-		<property name="filterService" ref="service.FilterService" />
-	</bean>
 </beans>

@@ -1,6 +1,7 @@
-package mobi.nowtechnologies.server.shared.dto.admin;
+package mobi.nowtechnologies.server.dto;
 
 import mobi.nowtechnologies.server.dto.streamzine.FileNameAliasDto;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
@@ -25,11 +26,11 @@ public class ChartDto {
 	private Byte position = 0;
 
 	@NotNull
-	@Length(min = 1, max = 25)
+	@Length(min = 1, max = ChartDetail.TITLE_LENGTH)
 	private String name;
 
 	@NotNull
-	@Length(min = 1, max = 50)
+	@Length(min = 1, max = ChartDetail.SUBTITLE_LENGTH)
 	private String subtitle;
 
 	private MultipartFile file;
