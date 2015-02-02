@@ -1,10 +1,13 @@
-package mobi.nowtechnologies.server.utils;
+package mobi.nowtechnologies.server.service.chart;
 
 import mobi.nowtechnologies.server.persistence.dao.PersistenceException;
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
+import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
+import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +31,7 @@ public class ChartDetailsConverter {
     private static final String URL_PARAMETER = "&url=";
     private CommunityResourceBundleMessageSource messageSource;
     private long iTunesLinkFormatCutoverTimeMillis;
+    private BadgesService badgesService;
 
     public List<ChartDetailDto> toChartDetailDtoList(List<ChartDetail> chartDetails, Community community, String defaultAmazonUrl) {
 		if (chartDetails == null)
@@ -90,6 +94,33 @@ public class ChartDetailsConverter {
 
         LOGGER.debug("Output parameter chartDetailDto=[{}]", chartDetailDto);
         return chartDetailDto;
+    }
+
+    public PlaylistDto toPlaylistDto(ChartDetail chartDetail, Resolution resolution, Community community, final boolean switchable, boolean isPlayListLockSupported, boolean areAllTracksLocked) {
+        LOGGER.debug("input parameters chart: [{}], switchable: [{}]", chartDetail, switchable);
+
+        PlaylistDto playlistDto = new PlaylistDto();
+        playlistDto.setId(chartDetail.getChart().getI() != null ? chartDetail.getChart().getI() : null);
+        playlistDto.setPlaylistTitle(chartDetail.getTitle() != null ? chartDetail.getTitle() : chartDetail.getChart().getName());
+        playlistDto.setSubtitle(chartDetail.getSubtitle());
+        playlistDto.setImage(chartDetail.getImageFileName());
+        playlistDto.setImageTitle(chartDetail.getImageTitle());
+        playlistDto.setDescription(chartDetail.getChartDescription());
+        playlistDto.setPosition(chartDetail.getPosition());
+        playlistDto.setSwitchable(switchable);
+        playlistDto.setType(chartDetail.getChartType());
+
+        if(chartDetail.getBadgeId() != null && resolution != null){
+            String badgeFileName = badgesService.getBadgeFileName(chartDetail.getBadgeId(), community, resolution);
+            playlistDto.setBadgeIcon(badgeFileName);
+        }
+
+        if(isPlayListLockSupported){
+            playlistDto.setLocked(areAllTracksLocked);
+        }
+
+        LOGGER.info("Output parameter playlistDto=[{}]", playlistDto);
+        return playlistDto;
     }
 
     private byte getPosition(ChartDetail chartDetail, Chart chart) {
@@ -211,4 +242,7 @@ public class ChartDetailsConverter {
         this.iTunesLinkFormatCutoverTimeMillis = iTunesLinkFormatCutoverTimeMillis;
     }
 
+    public void setBadgesService(BadgesService badgesService) {
+        this.badgesService = badgesService;
+    }
 }

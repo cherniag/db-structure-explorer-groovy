@@ -21,7 +21,7 @@ import mobi.nowtechnologies.server.service.streamzine.asm.RulesInfoAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
 import mobi.nowtechnologies.server.service.streamzine.asm.TypesMappingAsm;
-import mobi.nowtechnologies.server.shared.dto.admin.ChartDto;
+import mobi.nowtechnologies.server.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;

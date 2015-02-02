@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
@@ -13,7 +12,7 @@ import mobi.nowtechnologies.server.shared.dto.ChartDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
+import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,6 @@ public class ChartService implements ApplicationContextAware {
     private CloudFileService cloudFileService;
     private ChartDetailsConverter chartDetailsConverter;
     private ApplicationContext applicationContext;
-    private ChartAsm chartAsm;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public ChartDto processGetChartCommand(User user, boolean createDrmIfNotExists, boolean fetchLocked, Resolution resolution,
@@ -84,7 +82,7 @@ public class ChartService implements ApplicationContextAware {
                 chartDetails.addAll(chartDetailTree);
 
                 boolean areAllTracksLocked = areAllTracksLocked(chartDetailTree);
-                PlaylistDto playlistDto = chartAsm.toPlaylistDto(chart, resolution, community, result.isSwitchable(), isPlayListLockSupported, areAllTracksLocked);
+                PlaylistDto playlistDto = chartDetailsConverter.toPlaylistDto(chart, resolution, community, result.isSwitchable(), isPlayListLockSupported, areAllTracksLocked);
 
                 playlistDtos.add(playlistDto);
             }
@@ -402,7 +400,4 @@ public class ChartService implements ApplicationContextAware {
         this.messageSource = messageSource;
     }
 
-    public void setChartAsm(ChartAsm chartAsm) {
-        this.chartAsm = chartAsm;
-    }
 }

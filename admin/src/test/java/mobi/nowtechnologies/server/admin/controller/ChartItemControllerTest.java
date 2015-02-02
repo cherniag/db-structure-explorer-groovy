@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import mobi.nowtechnologies.server.assembler.ChartAsm;
+import mobi.nowtechnologies.server.admin.asm.ChartAsm;
 import mobi.nowtechnologies.server.assembler.ChartDetailsAsm;
 import mobi.nowtechnologies.server.factory.admin.ChartItemFactory;
 import mobi.nowtechnologies.server.persistence.domain.Chart;

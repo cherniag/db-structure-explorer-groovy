@@ -62,6 +62,10 @@
         <property name="chartUserStatusBehaviorRepository" ref="chartUserStatusBehaviorRepository" />
     </bean>
 
+    <bean id="admin.ChartAsm" class="mobi.nowtechnologies.server.admin.asm.ChartAsm">
+        <property name="filenameAliasRepository" ref="filenameAliasRepository"/>
+    </bean>
+
     <!-- Application Message Bundle -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames" ref="messagesBaseName" />

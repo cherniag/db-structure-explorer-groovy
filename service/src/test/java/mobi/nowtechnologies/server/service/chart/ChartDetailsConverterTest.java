@@ -1,7 +1,10 @@
-package mobi.nowtechnologies.server.utils;
+package mobi.nowtechnologies.server.service.chart;
 
 import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
+import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
+import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import org.hamcrest.MatcherAssert;
@@ -22,9 +25,12 @@ import static mobi.nowtechnologies.server.shared.enums.ChgPosition.UNCHANGED;
 import static mobi.nowtechnologies.common.util.TrackIdGenerator.ISRC_TRACK_ID_DELIMITER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -39,6 +45,8 @@ public class ChartDetailsConverterTest {
     private static final String CAMPAIGN_TOKEN_HL_UK = "ct_hl";
     @Mock
     private CommunityResourceBundleMessageSource messageSource;
+    @Mock
+    private BadgesService badgesService;
     @InjectMocks
     private ChartDetailsConverter chartDetailsConverter;
     private ChartDetail chartDetail;
@@ -147,6 +155,89 @@ public class ChartDetailsConverterTest {
 
         //then
         shouldConvertToChartDetailDtoSuccessfully();
+    }
+
+    @Test
+    public void testToPlaylistDto_Success() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+        Chart chart = chartDetail.getChart();
+
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, true, false, false);
+
+        assertNotNull(result);
+        assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
+        assertEquals(chart.getI().byteValue(), result.getId().byteValue());
+        assertEquals(chartDetail.getImageFileName(), result.getImage());
+        assertEquals(chartDetail.getSubtitle(), result.getSubtitle());
+        assertEquals(chartDetail.getPosition(), result.getPosition().byteValue());
+        assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
+        assertEquals(chartDetail.getInfo(), result.getDescription());
+        assertEquals(true, result.getSwitchable());
+        assertEquals(chart.getType(), result.getType());
+    }
+
+    @Test
+    public void testToPlaylistDto_NullTitle_Success() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+        chartDetail.setTitle(null);
+        Chart chart = chartDetail.getChart();
+
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false);
+
+        assertNotNull(result);
+        assertEquals(chart.getName(), result.getPlaylistTitle());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithBadge() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+        chartDetail.setBadgeId(123L);
+        Chart chart = chartDetail.getChart();
+        Community community = mock(Community.class);
+        Resolution resolution = mock(Resolution.class);
+
+        when(badgesService.getBadgeFileName(123L, community, resolution)).thenReturn("badgeIconFileName");
+
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, resolution, community, true, false, false);
+
+        assertNotNull(result);
+        assertEquals(chartDetail.getTitle(), result.getPlaylistTitle());
+        assertEquals(chart.getI().byteValue(), result.getId().byteValue());
+        assertEquals(chartDetail.getImageFileName(), result.getImage());
+        assertEquals(chartDetail.getSubtitle(), result.getSubtitle());
+        assertEquals(chartDetail.getPosition(), result.getPosition().byteValue());
+        assertEquals(chartDetail.getImageTitle(), result.getImageTitle());
+        assertEquals(chartDetail.getInfo(), result.getDescription());
+        assertEquals(true, result.getSwitchable());
+        assertEquals(chart.getType(), result.getType());
+        assertEquals("badgeIconFileName", result.getBadgeIcon());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithLockNotSupported() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, false, false);
+
+        assertNull(result.getLocked());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithLockSupportedAndAllTracksAreNotLocked() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, false);
+
+        assertFalse(result.getLocked());
+    }
+
+    @Test
+    public void testToPlaylistDtoWithLockSupportedAndAllTracksAreLocked() throws Exception {
+        ChartDetail chartDetail = ChartDetailFactory.createChartDetail();
+
+        PlaylistDto result = chartDetailsConverter.toPlaylistDto(chartDetail, null, null, false, true, true);
+
+        assertTrue(result.getLocked());
     }
 
     private void shouldConvertToChartDetailDtoSuccessfully() {

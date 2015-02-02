@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.assembler.ChartAsm;
 import mobi.nowtechnologies.server.assembler.UserAsm;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
@@ -20,7 +19,7 @@ import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.utils.ChartDetailsConverter;
+import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +67,7 @@ public class ChartServiceTest {
     @Mock ApplicationContext mockApplicationContext;
     @Mock BadgesService badgesService;
 
+
     User testUser;
     CommunityGetChartContentManager getChartContentManager = new CommunityGetChartContentManager();
 
@@ -97,13 +97,11 @@ public class ChartServiceTest {
         chartServiceFixture.setDrmService(mockDrmService);
         chartServiceFixture.setApplicationContext(mockApplicationContext);
 
-        ChartAsm chartAsm = new ChartAsm();
-        chartAsm.setBadgesService(badgesService);
-        chartServiceFixture.setChartAsm(chartAsm);
 
         ChartDetailsConverter chartDetailsConverter = new ChartDetailsConverter();
+        chartDetailsConverter.setBadgesService(badgesService);
         chartDetailsConverter.setMessageSource(mockMessageSource);
-        when(mockMessageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn( "GB");
+        when(mockMessageSource.getMessage(Community.O2_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn("GB");
         when(mockMessageSource.getMessage(Community.VF_NZ_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn("NZ");
         when(mockMessageSource.getMessage(Community.HL_COMMUNITY_REWRITE_URL, "itunes.urlCountryCode", null, null)).thenReturn("GB");
         chartServiceFixture.setChartDetailsConverter(spy(chartDetailsConverter));
