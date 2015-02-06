@@ -60,7 +60,7 @@ public class SupportController extends CommonController{
 	@RequestMapping(value = "contact_us.html", method = RequestMethod.POST)
 	public ModelAndView sendEmailToSupport(HttpServletRequest request, HttpServletResponse response,
 			@Valid @ModelAttribute(ContactUsDto.NAME) ContactUsDto dto, BindingResult result) {
-		LOGGER.debug("input parameters request, response, dto, result: [{}], [{}], [{}], [{}]", new Object[]{request, response, dto, result});
+		LOGGER.debug("input parameters request, response, dto, result: [{}], [{}], [{}], [{}]", request, response, dto, result);
 		boolean sentStatus = false;
 		if (!result.hasErrors()) {
 			userService.contactWithUser(dto.getEmail(), dto.getName(), dto.getSubject());

@@ -1,8 +1,9 @@
-@NotReady1
+@Ready
 Feature: Registration, phone number and activate
 
+
   Scenario: Registration, enter phone number and apply init promo
-    Given First time user with device using JSON and XML formats for all versions and o2 community and all devices available
+    Given First time user with device using JSON and XML formats for all versions to signup and o2 community and all devices available
     When User registers using device
     Then User should be registered in system
 
@@ -17,7 +18,7 @@ Feature: Registration, phone number and activate
 
 
   Scenario: Registration, enter phone number and auto opt in for 3G
-    Given First time user with device using JSON and XML formats for all versions and o2 community and all devices available
+    Given First time user with device using JSON and XML formats for all versions to signup and o2 community and all devices available
     When User registers using device
     Then User should be registered in system
 
@@ -33,7 +34,7 @@ Feature: Registration, phone number and activate
 
 
   Scenario: Registration, enter phone number and auto opt in for 4G
-    Given First time user with device using JSON and XML formats for all versions and o2 community and all devices available
+    Given First time user with device using JSON and XML formats for all versions to signup and o2 community and all devices available
     When User registers using device
     Then User should be registered in system
 

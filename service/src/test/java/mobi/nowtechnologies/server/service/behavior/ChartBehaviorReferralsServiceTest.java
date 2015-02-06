@@ -9,14 +9,11 @@ import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 
 /**
@@ -55,8 +52,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, twoWeeksPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = freeTrialCase(serverTime, inTheFuture, ADMIN_CHART_TYPE_1, ADMIN_CHART_TYPE_2, true, true);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);
@@ -98,8 +94,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, twoWeeksPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = freeTrialCase(serverTime, inTheFuture, ADMIN_CHART_TYPE_1, ADMIN_CHART_TYPE_2, true, false);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);
@@ -142,8 +137,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, noPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = freeTrialCase(serverTime, inTheFuture, ADMIN_CHART_TYPE_1, ADMIN_CHART_TYPE_2, true, true);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);
@@ -181,8 +175,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, twoDaysPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = freeTrialCase(serverTime, inTheFarFuture, ADMIN_CHART_TYPE_1, ADMIN_CHART_TYPE_2, true, true);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);
@@ -223,8 +216,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, noPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = freeTrialCase(serverTime, inTheFuture, ADMIN_CHART_TYPE_1, ADMIN_CHART_TYPE_2, false, true);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);
@@ -261,8 +253,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, noPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = limitedCase(serverTime, ADMIN_CHART_TYPE_1, true);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);
@@ -296,8 +287,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, twoWeeksPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = limitedCase(serverTime, ADMIN_CHART_TYPE_1, true);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);
@@ -335,8 +325,7 @@ public class ChartBehaviorReferralsServiceTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(1, requiredCount, twoWeeksPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
-        ReflectionTestUtils.setField(userReferralsSnapshot, "matchedDate", inThePast);
+        userReferralsSnapshot.updateMatchesData(biggerCount, inThePast);
 
         TreeSet<ChartBehaviorInfo> infos = subscribedCase(serverTime, inTheFuture, ADMIN_CHART_TYPE_1, ADMIN_CHART_TYPE_2, true);
         chartBehaviorReferralsService.apply(infos, userReferralsSnapshot, serverTime);

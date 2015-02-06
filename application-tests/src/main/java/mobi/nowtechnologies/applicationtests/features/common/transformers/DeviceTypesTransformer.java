@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.applicationtests.features.verification.phone_number;
+package mobi.nowtechnologies.applicationtests.features.common.transformers;
 
 import cucumber.api.Transformer;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;

@@ -73,7 +73,7 @@ class FacebookMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        commonStepsService.registerUsingFacebook(currentUserDevices, deviceSet, oldUserIdMap)
+        registerUsingFacebook(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
     @Given('^Activated via Facebook user with (.+) using (.+) format for (.+) and (.+) with a second activated user$')
@@ -94,7 +94,7 @@ class FacebookMergeAccountsFeature {
 
     @When('^User registers using same device$')
     def "User registers using same device"() {
-        commonStepsService.registerWithSameDevice(currentUserDevices, deviceSet)
+        currentUserDevices.each { deviceSet.singup(it) }
     }
 
     @Then('^Temporary account is created$')
@@ -131,7 +131,9 @@ class FacebookMergeAccountsFeature {
 
     @When('^User registers using new device$')
     def "User registers using new device"() {
-        commonStepsService.registerWithNewDevice(currentUserDevices, deviceSet)
+        currentUserDevices.each {
+            deviceSet.singupWithNewDevice(it)
+        }
     }
 
     @And('^First account remains active$')
@@ -182,7 +184,7 @@ class FacebookMergeAccountsFeature {
 
     @When('^User registers using second activated device$')
     def "User registers using second activated device"() {
-        commonStepsService.registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
+        registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
         zippedUserDevices = [currentUserDevices, secondUserDevices].transpose()
         zippedUserDevices.each {
             deviceSet.singupWithOtherDevice(it[0], it[1])
@@ -202,5 +204,14 @@ class FacebookMergeAccountsFeature {
     @And('^First account is updated with second device uid$')
     def "First account is updated with second device uid"() {
         commonStepsService.assertFirstAccountIsUpdatedWithSecondDeviceUID(zippedUserDevices, deviceSet, oldUserIdMap)
+    }
+
+    def registerUsingFacebook(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet, Map<UserDeviceData, Integer> userIdMap) {
+        devices.each {
+            deviceSet.singup(it)
+            deviceSet.loginUsingFacebook(it)
+            def phoneState = deviceSet.getPhoneState(it)
+            userIdMap.put(it, userDbService.findUser(phoneState, it).id)
+        }
     }
 }

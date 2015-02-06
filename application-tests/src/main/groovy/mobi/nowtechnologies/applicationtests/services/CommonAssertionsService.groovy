@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.applicationtests.services
-
 import mobi.nowtechnologies.applicationtests.features.activation.common.UserState
 import mobi.nowtechnologies.applicationtests.features.common.client.ClientDevicesSet
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.domain.User
@@ -31,7 +32,6 @@ import static org.junit.Assert.*
 class CommonAssertionsService {
 
     static final String DEFAULT_PROMOTION_CODE_KEY = "defaultPromotionCode"
-    static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy")
 
     @Resource
     UserDbService userDbService
@@ -51,6 +51,10 @@ class CommonAssertionsService {
     AppTestGooglePlusTokenService appTestGooglePlusTokenService
     @Resource
     GooglePlusUserInfoRepository googlePlusUserInfoRepository
+
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
 
     def forceGetFieldsToCheck(User which) {
         which.userName
@@ -122,7 +126,7 @@ class CommonAssertionsService {
     }
 
     def checkUserState(UserState userState, List<UserDeviceData> devices, ClientDevicesSet deviceSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def accountCheckResponse = deviceSet.getPhoneState(it).lastAccountCheckResponse
             assertEquals(userState.activation, accountCheckResponse.activation)
             assertEquals(userState.freeTrial, accountCheckResponse.freeTrial)
@@ -134,15 +138,13 @@ class CommonAssertionsService {
         }
     }
 
-    def checkDeviceTypeField(List<UserDeviceData> devices, ClientDevicesSet devicesSet) {
-        devices.each {
-            def accountCheckResponse = devicesSet.getPhoneState(it).lastAccountCheckResponse
-            assertEquals(accountCheckResponse.deviceType, it.deviceType)
-        }
+    def checkDeviceTypeField(UserDeviceData device, ClientDevicesSet devicesSet) {
+        def accountCheckResponse = devicesSet.getPhoneState(device).lastAccountCheckResponse
+        assertEquals(accountCheckResponse.deviceType, device.deviceType)
     }
 
     def checkDeviceUIDField(List<UserDeviceData> devices, ClientDevicesSet devicesSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def accountCheckResponse = devicesSet.getPhoneState(it).lastAccountCheckResponse
             def phoneState = devicesSet.getPhoneState(it)
             assertEquals(accountCheckResponse.deviceUID, phoneState.deviceUID)
@@ -150,7 +152,7 @@ class CommonAssertionsService {
     }
 
     def checkUsernameField(List<UserDeviceData> devices, ClientDevicesSet devicesSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def accountCheckResponse = devicesSet.getPhoneState(it).lastAccountCheckResponse
             def phoneState = devicesSet.getPhoneState(it)
             assertEquals(accountCheckResponse.userName, phoneState.email)
@@ -158,7 +160,7 @@ class CommonAssertionsService {
     }
 
     def checkStatusAndSubPaymentTimes(List<UserDeviceData> devices, ClientDevicesSet deviceSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def accountCheckResponse = deviceSet.getPhoneState(it).lastAccountCheckResponse
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
@@ -172,7 +174,7 @@ class CommonAssertionsService {
     }
 
     def checkDeviceTypeDB(List<UserDeviceData> devices, ClientDevicesSet deviceSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getDeviceModel(), it.deviceType)
@@ -180,7 +182,7 @@ class CommonAssertionsService {
     }
 
     def checkActivatedDB(List<UserDeviceData> devices, ClientDevicesSet deviceSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getActivationStatus(), ActivationStatus.ACTIVATED)
@@ -188,7 +190,7 @@ class CommonAssertionsService {
     }
 
     def checkProviderDB(List<UserDeviceData> devices, ClientDevicesSet deviceSet, ProviderType providerType) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getProvider(), providerType)
@@ -196,7 +198,7 @@ class CommonAssertionsService {
     }
 
     def checkNoPaymentDetailsDB(List<UserDeviceData> devices, ClientDevicesSet deviceSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertTrue(user.getPaymentDetailsList() == null || user.getPaymentDetailsList().isEmpty())
@@ -204,7 +206,7 @@ class CommonAssertionsService {
     }
 
     def checkAppliedForPromotionDB(List<UserDeviceData> devices, ClientDevicesSet deviceSet) {
-        devices.each { device ->
+        runnerService.create(devices).parallel { device ->
             def phoneState = deviceSet.getPhoneState(device)
             def user = userDbService.findUser(phoneState, device)
             def logs = accountLogRepository.findByUserId(user.id)
@@ -215,7 +217,7 @@ class CommonAssertionsService {
     }
 
     def checkLastPromotionDB(List<UserDeviceData> devices, ClientDevicesSet deviceSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getLastPromo().getCode(),
@@ -223,33 +225,11 @@ class CommonAssertionsService {
         }
     }
 
-    def registerUsingFacebook(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet, Map<UserDeviceData, Integer> userIdMap) {
-        devices.each {
-            deviceSet.singup(it)
-            deviceSet.loginUsingFacebook(it)
-            def phoneState = deviceSet.getPhoneState(it)
-            userIdMap.put(it, userDbService.findUser(phoneState, it).id)
-        }
-    }
-
-    def registerUsingGooglePlus(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet, Map<UserDeviceData, Integer> userIdMap) {
-        devices.each {
-            deviceSet.singup(it)
-            deviceSet.loginUsingGooglePlus(it)
-            def phoneState = deviceSet.getPhoneState(it)
-            userIdMap.put(it, userDbService.findUser(phoneState, it).id)
-        }
-    }
-
-    def registerWithSameDevice(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet) {
-        devices.each { deviceSet.singup(it) }
-    }
-
     def assertTempAccountCreated(List<UserDeviceData> devices,
                                  MQAppClientDeviceSet deviceSet,
                                  Map<UserDeviceData, Integer> oldUserIdMap,
                                  Map<UserDeviceData, Integer> tempUserIdMap) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             tempUserIdMap.put(it, user.id)
@@ -259,28 +239,28 @@ class CommonAssertionsService {
 
     def assertAccountDeactivated(List<UserDeviceData> devices,
                                       Map<UserDeviceData, Integer> userIdMap) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def oldUser = userRepository.findOne(userIdMap.get(it))
             assertTrue(oldUser.deviceUID.contains("_disabled_at_"))
         }
     }
 
     def assertTemporaryAccountRemoved(List<UserDeviceData> devices, Map<UserDeviceData, Integer> tempUserIdMap) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def tempUser = userRepository.findOne(tempUserIdMap.get(it))
             assertNull(tempUser)
         }
     }
 
     def assertFirstAccountReactivated(List<UserDeviceData> devices, Map<UserDeviceData, Integer> userIdMap) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def oldUser = userRepository.findOne(userIdMap.get(it))
             assertFalse(oldUser.deviceUID.contains("_disabled_at_"))
         }
     }
 
     def checkFacebookUserDetails(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def facebookUserInfo = fbDetailsRepository.findByUser(user)
@@ -295,28 +275,22 @@ class CommonAssertionsService {
         }
     }
 
-    def registerWithNewDevice(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet) {
-        devices.each {
-            deviceSet.singupWithNewDevice(it)
-        }
-    }
-
     def assertFirstAccountActive(List<UserDeviceData> devices, Map<UserDeviceData, Integer> userIdMap) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def oldUser = userRepository.findOne(userIdMap.get(it))
             assertFalse(oldUser.deviceUID.contains("_disabled_at_"))
         }
     }
 
     def assertFirstAccountIsUpdated(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet, Map<UserDeviceData, Integer> userIdMap) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def oldUser = userRepository.findOne(userIdMap.get(it))
             assertEquals(oldUser.deviceUID, deviceSet.getPhoneState(it).deviceUID)
         }
     }
 
     def assertNewUserActivated(List<UserDeviceData> devices, Map<UserDeviceData, Integer> newUserIdMap) {
-        devices.each {
+        runnerService.create(devices).parallel {
             def tempUser = userRepository.findOne(newUserIdMap.get(it))
             assertEquals(ActivationStatus.ACTIVATED, tempUser.activationStatus)
         }
@@ -332,8 +306,8 @@ class CommonAssertionsService {
         }
     }
 
-    def checkGooglePlusUserDetails(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet) {
-        devices.each {
+    def assertGooglePlusUserDetails(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet) {
+        runnerService.create(devices).parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
@@ -345,5 +319,9 @@ class CommonAssertionsService {
             assertEquals(googlePlusUserInfo.getGooglePlusId(), googlePlusProfile.getId())
             assertEquals(googlePlusUserInfo.getLocation(), googlePlusProfile.getPlacesLived().keySet().iterator().next())
         }
+    }
+
+    def getDateFormat() {
+        new SimpleDateFormat("MM/dd/yyyy")
     }
 }

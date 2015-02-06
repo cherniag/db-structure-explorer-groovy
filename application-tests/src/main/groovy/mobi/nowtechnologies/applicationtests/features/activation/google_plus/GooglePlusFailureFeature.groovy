@@ -81,7 +81,7 @@ class GooglePlusFailureFeature {
 
     @Then('^User gets (\\d+) http error code with message regarding missing parameter$')
     def "User gets http error code with message regarding missing parameter"(int httpCode) {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             assertEquals(httpCode, phoneState.lastGooglePlusErrorStatus.value())
         }
@@ -90,7 +90,7 @@ class GooglePlusFailureFeature {
     @Transactional("applicationTestsTransactionManager")
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
@@ -107,7 +107,7 @@ class GooglePlusFailureFeature {
 
     @Then('^User gets (\\d+) http error code with message login/pass check failed$')
     def "User gets http error code with message login pass check failed"(int httpCode) {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             assertEquals(httpCode, phoneState.lastGooglePlusErrorStatus.value())
         }
