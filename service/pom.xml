@@ -93,6 +93,11 @@
             <groupId>uk.co.o2</groupId>
             <artifactId>o2-soa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>nz.co.vodafone</groupId>
+            <artifactId>nz-soa</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
         <!-- Social -->
         <dependency>

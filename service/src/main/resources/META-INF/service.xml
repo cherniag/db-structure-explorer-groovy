@@ -630,6 +630,22 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="promotionProvider" ref="provider.Promotion"/>
     </bean>
 
+	<bean id="jaxb.NZUserMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="contextPaths">
+			<list>
+				<value>nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1</value>
+				<value>nz.co.vodafone.ws.fault</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="service.NZSubscriberInfoService" class="mobi.nowtechnologies.server.service.nz.impl.ContentProviderAccountServiceGateway">
+		<property name="defaultUri" value="${vf.nz.subscriber.service.url}"/>
+		<property name="marshaller" ref="jaxb.NZUserMarshaller"/>
+		<property name="unmarshaller" ref="jaxb.NZUserMarshaller"/>
+		<property name="nzUserId" value="${vf.nz.subscriber.service.user.id}"/>
+	</bean>
+
 
     <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
 
