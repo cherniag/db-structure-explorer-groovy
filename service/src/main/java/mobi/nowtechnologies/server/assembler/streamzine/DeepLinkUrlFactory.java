@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import org.apache.commons.net.util.Base64;
@@ -28,7 +29,7 @@ public class DeepLinkUrlFactory {
 
     private DeepLinkInfoService deepLinkInfoService;
 
-    public String createForChart(String community, int chartId, String action) {
+    public String createForChart(Community community, int chartId, String action) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
         uriComponentsBuilder.scheme(createScheme(community));
         uriComponentsBuilder.host(FeatureValueType.CONTENT.getId());
@@ -45,7 +46,7 @@ public class DeepLinkUrlFactory {
         return deeplinkInfo.getMediaIds();
     }
 
-    public String create(DeeplinkInfo deeplinkInfo, String community, boolean includePlayer) {
+    public String create(DeeplinkInfo deeplinkInfo, Community community, boolean includePlayer) {
         Assert.isTrue(!(deeplinkInfo instanceof ManualCompilationDeeplinkInfo));
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
@@ -61,8 +62,8 @@ public class DeepLinkUrlFactory {
         return uriComponentsBuilder.build().toUriString();
     }
 
-    private String createScheme(String community) {
-        return community.replace('_', '-');
+    private String createScheme(Community community) {
+        return community.getRewriteUrlParameter().replace('_', '-');
     }
 
     private String decideSubValueForPromotional(DeeplinkInfo deeplinkInfo) {

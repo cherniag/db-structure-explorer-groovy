@@ -18,6 +18,7 @@ import mobi.nowtechnologies.applicationtests.features.streamzine.transform.Acces
 import mobi.nowtechnologies.applicationtests.features.streamzine.transform.IncludedTransformer;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.json.ContentItemDto;
@@ -52,6 +53,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @Component
 public class GetStreamzineFeature extends AbstractStreamzineFeature {
@@ -61,6 +63,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     private PositionGenerator positionGenerator = new PositionGenerator();
 
     private String validResolution = "400x400";
+    private ApiVersions apiVersions;
 
     //
     // Given and After
@@ -70,6 +73,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
                                          @Transform(DictionaryTransformer.class) Word versions,
                                          @Transform(DictionaryTransformer.class) Word communities,
                                          @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
+        apiVersions = ApiVersions.from(versions.list());
         currentUserDevices = super.initUserData(Sets.newHashSet(requestFormat), versions, communities, devices);
         positionGenerator.init(currentUserDevices);
     }
@@ -234,7 +238,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
                         token.getTimestamp(),
                         validResolution,
                         state.getLastFacebookInfo().getUserName(),
-                        StreamzimeResponse.class);
+                        StreamzimeResponse.class, apiVersions);
 
                 okResponses.put(data, response.getBody().getResponse().get().getValue());
             } else {
@@ -246,7 +250,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
                         token.getTimestamp(),
                         validResolution,
                         state.getLastFacebookInfo().getUserName(),
-                        mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.xml.StreamzimeResponse.class);
+                        mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.xml.StreamzimeResponse.class, apiVersions);
 
                 okResponses.put(data, response.getBody().getValue());
             }
@@ -311,7 +315,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             assertEquals(getErrorMessage(data), deeplinkType, pair.getValue().getLinkType());
             // deep link value(s):
             if(deeplinkType == DeeplinkType.DEEPLINK) {
-                assertEquals(getErrorMessage(data), deeplinkValue.firstString(), pair.getValue().getLinkValue().getValue());
+                assertTrue(getErrorMessage(data) + ", values: " + deeplinkValue.strings() + ", value: " + pair.getValue().getLinkValue().getValue(), deeplinkValue.strings().contains(pair.getValue().getLinkValue().getValue()));
             } else {
                 assertEquals(getErrorMessage(data), deeplinkValue.ints(), pair.getValue().getLinkValue().getValues());
             }

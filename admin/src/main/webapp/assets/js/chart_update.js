@@ -43,7 +43,7 @@ function lockTrackCallBack(element, active, e){
 
 function checkLockAllTracksState(){
     var $lockAllTracks = $("#lockAllTracks");
-    var allTrackAreLocked = true;
+    var allTrackAreLocked = false;
     $("#chartItemsSortable").find("> li").each( function (index) {
         var toggleLocked = $(this).find("div[class~=locked_chartItem]");
         allTrackAreLocked = toggleLocked.toggleButtons('status');

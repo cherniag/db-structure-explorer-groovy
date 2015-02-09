@@ -30,7 +30,19 @@ public class SigninFacebookController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.8}/SIGN_IN_FACEBOOK",
+            "**/{community}/{apiVersion:6\\.8}/SIGN_IN_FACEBOOK"
+    })
+    public ModelAndView applyPromotionByFacebookWithOneTimePayment(
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("ACCESS_TOKEN") String facebookAccessToken,
+            @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, true, true);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.7}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.6}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.5}/SIGN_IN_FACEBOOK",
@@ -47,7 +59,7 @@ public class SigninFacebookController extends CommonController {
             @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("DEVICE_UID") String deviceUID) {
-        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, true);
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, true, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
@@ -59,10 +71,10 @@ public class SigninFacebookController extends CommonController {
             @RequestParam("FACEBOOK_USER_ID") String facebookUserId,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("DEVICE_UID") String deviceUID) {
-        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, false);
+        return signInFacebookImpl(userToken, timestamp, facebookAccessToken, facebookUserId, userName, deviceUID, false, false);
     }
 
-    private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean disableReactivation) {
+    private ModelAndView signInFacebookImpl(String userToken, String timestamp, String facebookAccessToken, String facebookUserId, String userName, String deviceUID, boolean disableReactivation, boolean withOneTimeSubscriptionFlag) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
@@ -71,7 +83,7 @@ public class SigninFacebookController extends CommonController {
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             FacebookUserInfo userInfo = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
-            return buildModelAndView(accCheckService.processAccCheck(mergeResult, true));
+            return buildModelAndView(accCheckService.processAccCheck(mergeResult, true, withOneTimeSubscriptionFlag));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK can not find deviceUID[{}] in community[{}]", deviceUID, community);

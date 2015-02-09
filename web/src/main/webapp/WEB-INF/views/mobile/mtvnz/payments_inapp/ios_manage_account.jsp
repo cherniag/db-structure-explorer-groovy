@@ -6,14 +6,14 @@
 <div class="go-premium-container go-premium-container-device">
     <div class="go-premium-button-target go-premium-button-close go-premium-button-close-device" onclick="returnToApp();">
     </div>
-    <div class="go-premium-unsubscribe-1-banner go-premium-unsubscribe-banner go-premium-unsubscribe-banner-device">
+    <div class="go-premium-unsubscribe-premium-banner go-premium-unsubscribe-banner go-premium-unsubscribe-banner-device">
     </div>
     <span class="go-premium-body-title go-premium-body-title-device">
-        <s:message code="head.manage.account" />
+        <s:message code="head.manage.account.premium" />
     </span>
     <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device">
         <span class="go-premium-text-message go-premium-text-message-device">
-            <s:message code='message.manage.account.ios' />
+            <s:message code='message.manage.account.ios.premium' />
         </span>
         <br/>
     </div>

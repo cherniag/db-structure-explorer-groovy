@@ -6,8 +6,6 @@ import mobi.nowtechnologies.server.service.exception.ServiceException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,14 +48,8 @@ public class EntityService {
 			throw new PersistenceException("The parameter entityClass or entityId is null");
 		entityDao.removeEntity(entityClass, entityId);
 	}
-	
-	public void removeEntity(Object entity) {
-		if (entity == null)
-			throw new PersistenceException("The parameter entity is null");
-		entityDao.removeEntity(entity);
-	}
 
-	public <T> T findByProperties(Class<T> entityClass, Map<String, Object> fieldNameValueMap) {
+    public <T> T findByProperties(Class<T> entityClass, Map<String, Object> fieldNameValueMap) {
 		if (entityClass == null)
 			throw new ServiceException("The parameter entityClass is null");
 		if (fieldNameValueMap == null)
@@ -65,40 +57,7 @@ public class EntityService {
 		return entityDao.findByProperties(entityClass, fieldNameValueMap);
 	}
 
-	public <T> List<T> findListByProperties(Class<T> entityClass, Map<String, Object> fieldNameValueMap) {
-		if (entityClass == null)
-			throw new ServiceException("The parameter entityClass is null");
-		if (fieldNameValueMap == null)
-			throw new ServiceException("The parameter fieldNameValueMap is null");
-		return entityDao.findListByProperties(entityClass, fieldNameValueMap);
-	}
-
-	public <T> List<T> findListByProperty(Class<T> entityClass, String fieldName, Object fieldValue) {
-		if (entityClass == null)
-			throw new ServiceException("The parameter entityClass is null");
-		if (fieldName == null)
-			throw new ServiceException("The parameter fieldName is null");
-		if (fieldName.isEmpty())
-			throw new ServiceException("The parameter fieldName is empty");
-
-		return entityDao.findListByProperty(entityClass, fieldName, fieldValue);
-	}
-
-	public <T> List<T> findListByProperty(Class<T> entityClass, String fieldName, Object[] values) {
-		if (entityClass == null)
-			throw new ServiceException("The parameter entityClass is null");
-		if (fieldName == null)
-			throw new ServiceException("The parameter fieldName is null");
-		if (fieldName.isEmpty())
-			throw new ServiceException("The parameter fieldName is empty");
-		if (values == null)
-			throw new ServiceException("The parameter values is null");
-		if (values.length == 0)
-			return new ArrayList<T>();
-		return entityDao.findListByProperty(entityClass, fieldName, values);
-	}
-
-	public <T> T findByProperty(Class<T> entityClass, String fieldName, Object fieldValue) {
+    public <T> T findByProperty(Class<T> entityClass, String fieldName, Object fieldValue) {
 		if (fieldName == null)
 			throw new ServiceException("The parameter fieldName is null");
 		if (fieldName.isEmpty())

@@ -1,19 +1,14 @@
 package mobi.nowtechnologies.server.web.subscription;
 
-import java.io.File;
-import java.util.Date;
-import java.util.Locale;
-
-import junit.framework.Assert;
-
-import mobi.nowtechnologies.server.web.subscription.SubscriptionState;
-import mobi.nowtechnologies.server.web.subscription.SubscriptionTexts;
-import mobi.nowtechnologies.server.web.subscription.SubscriptionTextsGenerator;
-
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+
+import java.io.File;
+import java.util.Date;
+import java.util.Locale;
 
 // TODO should be marked as integration test
 public class SubscriptionTextsGeneratorTest {
@@ -60,7 +55,7 @@ public class SubscriptionTextsGeneratorTest {
 		s.setDaysToNextBillingDate(DAYS);
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("<br />You have " + DAYS + " days left on your free trial", r.getNextBillingText());
+		Assert.assertEquals("<br />You have " + DAYS + " days of your free trial left", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 
 	}
@@ -77,7 +72,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("<br />You have 10 days left on your free trial", r.getNextBillingText());
+		Assert.assertEquals("<br />You have 10 days of your free trial left", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -92,8 +87,19 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("<br />You have 10 days left on your free trial", r.getNextBillingText());
+		Assert.assertEquals("<br />You have 10 days of your free trial left", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
+	}
+
+	@Test
+	public void testFreeTrialLastDay() {
+		SubscriptionState s = new SubscriptionState();
+		s.setFreeTrial(true);
+		s.setDaysToNextBillingDate(1);
+
+		SubscriptionTexts r = generator.generate(s);
+		Assert.assertEquals("Free Trial", r.getStatusText());
+		Assert.assertEquals("<br />Today is the last day of your free trial", r.getNextBillingText());
 	}
 
 	@Test

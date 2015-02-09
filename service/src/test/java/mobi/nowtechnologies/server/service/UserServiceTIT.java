@@ -106,7 +106,7 @@ public class UserServiceTIT {
 	@Test
 	public void testProceessAccountCheckCommand() {
 		int userId=1;
-		User user = userService.proceessAccountCheckCommandForAuthorizedUser(userId);
+		User user = userService.processAccountCheckCommandForAuthorizedUser(userId);
 		assertNotNull(user);
 	}
 	

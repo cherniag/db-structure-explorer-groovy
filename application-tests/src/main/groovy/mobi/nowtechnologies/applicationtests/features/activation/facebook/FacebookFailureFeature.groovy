@@ -12,6 +12,8 @@ import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +21,7 @@ import org.unitils.core.util.ObjectFormatter
 import org.unitils.reflectionassert.ReflectionComparatorMode
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
@@ -41,7 +44,11 @@ class FacebookFailureFeature {
 
     List<UserDeviceData> currentUserDevices
 
-    Map<UserDeviceData, User> users = new HashMap<>()
+    Map<UserDeviceData, User> users = new ConcurrentHashMap<>()
+
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
 
     @Transactional('applicationTestsTransactionManager')
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')
@@ -51,8 +58,12 @@ class FacebookFailureFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        currentUserDevices.each {
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel {
             deviceSet.singup(it)
+        }
+
+        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 
@@ -79,7 +90,7 @@ class FacebookFailureFeature {
                                                                                                                                             String versionAbove) {
         List<String> versions2 = ApiVersions.from(versions.set()).above(versionAbove);
 
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             if (version.equals(it.apiVersion)) {
                 assertEquals(phoneState.lastFacebookErrorStatus.value(), httpErrorCode1)
@@ -92,7 +103,7 @@ class FacebookFailureFeature {
     @Transactional('applicationTestsTransactionManager')
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() throws Throwable {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
@@ -116,7 +127,7 @@ class FacebookFailureFeature {
                                                                                                                                                   String versionAbove) {
         List<String> versions2 = ApiVersions.from(versions.set()).above(versionAbove);
 
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             assertEquals(httpErrorCode, phoneState.lastFacebookErrorStatus.value())
             if (version.equals(it.apiVersion)) {

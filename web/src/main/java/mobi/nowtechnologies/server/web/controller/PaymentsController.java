@@ -5,7 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.service.*;
-import mobi.nowtechnologies.server.shared.dto.PaymentPolicyDto;
+import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -116,7 +116,7 @@ public class PaymentsController extends CommonController {
         paymentsPage.setUserIsOptedInToVideo(user.is4G() && user.isVideoFreeTrialHasBeenActivated());
         paymentsPage.setAppleIOSAndNotBusiness(user.isIOSDevice() && !(isBusinessUser(user)));
         paymentsPage.setFreeTrialPeriod(user.isOnFreeTrial());
-        paymentsPage.setSubscriptionInfo(subscriptionInfoAsm.createSubscriptionInfo(locale, user, paymentPolicyDtos));
+        paymentsPage.setSubscriptionInfo(subscriptionInfoAsm.createSubscriptionInfo(user, paymentPolicyDtos));
         SubscriptionState subscriptionState = new SubscriptionStateFactory().getInstance(user);
         SubscriptionTexts subscriptionTexts = new SubscriptionTextsGenerator(messageSource, locale).generate(subscriptionState);
         PaymentPageData paymentPageData = new PaymentPageData(subscriptionState, subscriptionTexts);

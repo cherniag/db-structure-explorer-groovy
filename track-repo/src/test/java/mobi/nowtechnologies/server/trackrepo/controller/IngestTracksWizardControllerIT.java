@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // @author Alexander Kolpakov (akolpakov)
+@Ignore
 public class IngestTracksWizardControllerIT extends AbstractTrackRepoIT {
 
     @Resource

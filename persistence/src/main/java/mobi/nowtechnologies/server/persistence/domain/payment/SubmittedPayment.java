@@ -1,12 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Lob;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 
@@ -33,7 +27,27 @@ public class SubmittedPayment extends AbstractPayment {
 	private String appStoreOriginalTransactionId;
 	
 	@Column(name="next_sub_payment")
-	private int nextSubPayment; 
+	private int nextSubPayment;
+
+	@ManyToOne
+	@JoinColumn(name = "payment_policy_id")
+	private PaymentPolicy paymentPolicy;
+
+	@Override
+	public void setPaymentDetails(PaymentDetails paymentDetails) {
+		if (paymentDetails != null) {
+			setPaymentPolicy(paymentDetails.getPaymentPolicy());
+		}
+		super.setPaymentDetails(paymentDetails);
+	}
+
+	public void setPaymentPolicy(PaymentPolicy paymentPolicy) {
+		this.paymentPolicy = paymentPolicy;
+	}
+
+	public PaymentPolicy getPaymentPolicy() {
+		return paymentPolicy;
+	}
 
 	public String getDescriptionError() {
 		return descriptionError;
@@ -91,6 +105,7 @@ public class SubmittedPayment extends AbstractPayment {
                 .append("descriptionError", descriptionError)
                 .append("nextSubPayment", nextSubPayment)
                 .append("status", status)
+				.append("paymentPolicy", paymentPolicy)
                 .toString();
     }
 }

@@ -9,6 +9,7 @@ import mobi.nowtechnologies.applicationtests.features.common.transformers.dictio
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.common.standard.StandardResponse;
@@ -32,6 +33,7 @@ public class GetStreamzineNotSupportedCommunityFeature extends AbstractStreamzin
     private Map<UserDeviceData, Update> updates = new HashMap<UserDeviceData, Update>();
 
     private String validResolution = "400x400";
+    private ApiVersions apiVersions;
 
     //
     // Given and After
@@ -41,6 +43,7 @@ public class GetStreamzineNotSupportedCommunityFeature extends AbstractStreamzin
                                          @Transform(DictionaryTransformer.class) Word versions,
                                          @Transform(DictionaryTransformer.class) Word communities,
                                          @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
+        apiVersions = ApiVersions.from(versions.list());
         currentUserDevices = super.initUserData(requestFormats.set(RequestFormat.class), versions, communities, devices);
     }
 
@@ -77,7 +80,7 @@ public class GetStreamzineNotSupportedCommunityFeature extends AbstractStreamzin
                     token.getTimestamp(),
                     validResolution,
                     state.getLastFacebookInfo().getUserName(),
-                    StandardResponse.class);
+                    StandardResponse.class, apiVersions);
 
             errorResponses.put(data, response);
         }

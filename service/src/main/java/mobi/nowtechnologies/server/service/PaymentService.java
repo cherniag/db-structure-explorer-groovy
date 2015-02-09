@@ -13,19 +13,13 @@ import java.util.List;
 /**
  * @author Titov Mykhaylo (titov)
  *
- * @deprecated  As of release 3.5, replaced by {@link mobi.nowtechnologies.server.service.IPaymentService}
  */
 @Deprecated
 public class PaymentService {
 private static final Logger LOGGER = LoggerFactory
 		.getLogger(PaymentService.class.getName());
-	private EntityService entityService;
 	private PaymentDao paymentDao;
 
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-	
 	public void setPaymentDao(PaymentDao paymentDao) {
 		this.paymentDao = paymentDao;
 	}

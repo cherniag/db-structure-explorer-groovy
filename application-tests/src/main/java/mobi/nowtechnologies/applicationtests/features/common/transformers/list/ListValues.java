@@ -3,6 +3,7 @@ package mobi.nowtechnologies.applicationtests.features.common.transformers.list;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import cucumber.api.Transformer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +20,7 @@ public class ListValues {
 
     public static ListValues from(Collection<String> values) {
         ListValues listValues = new ListValues();
-        listValues.values = new ArrayList<String>(values);
+        listValues.values = new ArrayList<>(values);
         return listValues;
     }
 
@@ -27,7 +28,7 @@ public class ListValues {
     // List value methods
     //
     public List<Long> longs() {
-        return new ArrayList<Long>(Lists.transform(values, new Function<String, Long>() {
+        return new ArrayList<>(Lists.transform(values, new Function<String, Long>() {
             @Override
             public Long apply(String input) {
                 return Long.valueOf(input);
@@ -35,12 +36,20 @@ public class ListValues {
         }));
     }
 
+    public <T> List<T> values(Transformer<T> transformer) {
+        List<T> transformed = new ArrayList<>();
+        for (final String value : values) {
+            transformed.add(transformer.transform(value));
+        }
+        return transformed;
+    }
+
     public List<String> strings() {
-        return new ArrayList<String>(values);
+        return new ArrayList<>(values);
     }
 
     public List<Integer> ints() {
-        return new ArrayList<Integer>(Lists.transform(values, new Function<String, Integer>() {
+        return new ArrayList<>(Lists.transform(values, new Function<String, Integer>() {
             @Override
             public Integer apply(String input) {
                 return Integer.valueOf(input);
@@ -49,7 +58,7 @@ public class ListValues {
     }
 
     public <T extends Enum<T>> List<T> enums(final Class<T> type) {
-        return new ArrayList<T>(Lists.transform(values, new Function<String, T>() {
+        return new ArrayList<>(Lists.transform(values, new Function<String, T>() {
             @Override
             public T apply(String input) {
                 return Enum.valueOf(type, input);

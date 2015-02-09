@@ -1,0 +1,20 @@
+{
+  "receipt": {
+    "bid": "com.musicqubed.ios.mtv-nz",
+    "bvrs": "1.0",
+    "item_id": "955132922",
+    "original_purchase_date": "2015-01-02 13:45:32 Etc/GMT",
+    "original_purchase_date_ms": "1420206332704",
+    "original_purchase_date_pst": "2015-01-02 05:45:32 America/Los_Angeles",
+    "original_transaction_id": "1000000137405768",
+    "product_id": "com.musicqubed.ios.mtv_nz.onetime.0",
+    "purchase_date": "2015-01-02 13:45:32 Etc/GMT",
+    "purchase_date_ms": "1420206332704",
+    "purchase_date_pst": "2015-01-02 05:45:32 America/Los_Angeles",
+    "quantity": 1,
+    "transaction_id": "1000000137405769",
+    "unique_identifier": "ee04c152d11f0f6b47ac7f77ec7340e423731efb",
+    "unique_vendor_identifier": "75F921D3-8FB4-40D5-9D98-DCF195DC723A"
+  },
+  "status": 0
+}

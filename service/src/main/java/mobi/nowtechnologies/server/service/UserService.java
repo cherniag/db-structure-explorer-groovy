@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.common.ListDataResult;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.common.util.ServerMessage;
@@ -17,15 +16,11 @@ import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.data.SubscriberData;
 import mobi.nowtechnologies.server.service.data.UserDetailsUpdater;
 import mobi.nowtechnologies.server.service.exception.*;
-import mobi.nowtechnologies.server.service.itunes.ITunesService;
-import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
 import mobi.nowtechnologies.server.service.o2.impl.O2UserDetailsUpdater;
-import mobi.nowtechnologies.server.service.payment.MigPaymentService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
-import mobi.nowtechnologies.server.service.social.facebook.FacebookService;
 import mobi.nowtechnologies.server.shared.AppConstants;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.UserDto;
@@ -42,6 +37,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -83,43 +79,33 @@ import static org.apache.commons.lang.Validate.notNull;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 public class UserService {
+    private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
     public static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public static final String MULTIPLE_FREE_TRIAL_STOP_DATE = "multiple.free.trial.stop.date";
 
     private UserDao userDao;
     private UserGroupRepository userGroupRepository;
-
     private EntityService entityService;
     private CountryAppVersionService countryAppVersionService;
-    private DeviceTypeService deviceTypeService;
     private CountryService countryService;
-    private PaymentService paymentService;
 
     private PromotionService promotionService;
     private CommunityResourceBundleMessageSource messageSource;
-    private PaymentPolicyService paymentPolicyService;
     private PaymentDetailsService paymentDetailsService;
-    private MigPaymentService migPaymentService;
     private MigHttpService migHttpService;
     private CountryByIpService countryByIpService;
     private UserDeviceDetailsService userDeviceDetailsService;
     private CommunityService communityService;
     private MailService mailService;
-    private FacebookService facebookService;
 
     private DeviceService deviceService;
-    private OfferService offerService;
-    private DrmService drmService;
     private AccountLogService accountLogService;
     private UserRepository userRepository;
     private OtacValidationService otacValidationService;
-    private ITunesService iTunesService;
     private RefundService refundService;
     private UserServiceNotification userServiceNotification;
-    private static final Pageable PAGEABLE_FOR_WEEKLY_UPDATE = new PageRequest(0, 1000);
 
     private O2ProviderService o2ClientService;
-    private O2Service o2Service;
     private O2UserDetailsUpdater o2UserDetailsUpdater;
 
     private UserDetailsUpdater userDetailsUpdater;
@@ -134,14 +120,6 @@ public class UserService {
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
     private DeviceUserDataService deviceUserDataService;
     private AppsFlyerDataService appsFlyerDataService;
-
-    public void setReactivationUserInfoRepository(ReactivationUserInfoRepository reactivationUserInfoRepository) {
-        this.reactivationUserInfoRepository = reactivationUserInfoRepository;
-    }
-
-    public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {
-        this.autoOptInRuleService = autoOptInRuleService;
-    }
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -241,149 +219,6 @@ public class UserService {
             LOGGER.info("Update user contract and provider procedure is skipped");
         }
         return user;
-    }
-
-    public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
-        this.userDetailsUpdater = userDetailsUpdater;
-    }
-
-    public void setMobileProviderService(MobileProviderService mobileProviderService) {
-        this.mobileProviderService = mobileProviderService;
-    }
-
-    public void setO2ClientService(O2ProviderService o2ClientService) {
-        this.o2ClientService = o2ClientService;
-    }
-
-    public void setOtacValidationService(OtacValidationService otacValidationService) {
-        this.otacValidationService = otacValidationService;
-    }
-
-    public void setO2Service(O2Service o2Service) {
-        this.o2Service = o2Service;
-    }
-
-    public void setDrmService(DrmService drmService) {
-        this.drmService = drmService;
-    }
-
-    public void setDeviceService(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
-
-    public void setOfferService(OfferService offerService) {
-        this.offerService = offerService;
-    }
-
-    public void setUserDeviceDetailsService(UserDeviceDetailsService userDeviceDetailsService) {
-        this.userDeviceDetailsService = userDeviceDetailsService;
-    }
-
-    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-        this.paymentDetailsService = paymentDetailsService;
-    }
-
-    public void setPaymentService(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
-
-    public void setCountryService(CountryService countryService) {
-        this.countryService = countryService;
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
-    public void setEntityService(EntityService entityService) {
-        this.entityService = entityService;
-    }
-
-    public void setDeviceTypeService(DeviceTypeService aDeviceTypeService) {
-        this.deviceTypeService = aDeviceTypeService;
-    }
-
-    public void setCountryAppVersionService(
-            CountryAppVersionService countryAppVersionService) {
-        this.countryAppVersionService = countryAppVersionService;
-    }
-
-    public void setPromotionService(PromotionService promotionService) {
-        this.promotionService = promotionService;
-    }
-
-    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
-    public void setPaymentPolicyService(
-            PaymentPolicyService paymentPolicyService) {
-        this.paymentPolicyService = paymentPolicyService;
-    }
-
-    public void setMigPaymentService(MigPaymentService migPaymentService) {
-        this.migPaymentService = migPaymentService;
-    }
-
-    public void setMigHttpService(MigHttpService migHttpService) {
-        this.migHttpService = migHttpService;
-    }
-
-    public void setCountryByIpService(CountryByIpService countryByIpService) {
-        this.countryByIpService = countryByIpService;
-    }
-
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
-    }
-
-    public void setFacebookService(FacebookService facebookService) {
-        this.facebookService = facebookService;
-    }
-
-    public void setAccountLogService(AccountLogService accountLogService) {
-        this.accountLogService = accountLogService;
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public void setiTunesService(ITunesService iTunesService) {
-        this.iTunesService = iTunesService;
-    }
-
-    public void setRefundService(RefundService refundService) {
-        this.refundService = refundService;
-    }
-
-    public void setUserServiceNotification(
-            UserServiceNotification userServiceNotification) {
-        this.userServiceNotification = userServiceNotification;
-    }
-
-    public void setCommunityService(CommunityService communityService) {
-        this.communityService = communityService;
-    }
-
-    public void setO2UserDetailsUpdater(O2UserDetailsUpdater o2UserDetailsUpdater) {
-        this.o2UserDetailsUpdater = o2UserDetailsUpdater;
-    }
-
-    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
-        this.userGroupRepository = userGroupRepository;
-    }
-
-    public void setUserNotificationService(UserNotificationService userNotificationService) {
-        this.userNotificationService = userNotificationService;
-    }
-
-    public void setSendActivationSMS(boolean sendActivationSMS) {
-        this.sendActivationSMS = sendActivationSMS;
-    }
-
-    public void setTaskService(TaskService taskService) {
-        this.taskService = taskService;
     }
 
     public Boolean canActivateVideoTrial(User u) {
@@ -669,16 +504,13 @@ public class UserService {
         return user;
     }
 
-
     public boolean isUnsubscribedUser(User user){
         return user != null && user.getCurrentPaymentDetails() != null && !user.getCurrentPaymentDetails().isActivated();
     }
 
-
     @Transactional(propagation = REQUIRED)
     public User unsubscribeUser(User user, final String reason) {
-        LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
-        notNull(user, "The parameter user is null");
+        LOGGER.info("Unsubscribe user {} reason : {}", user.shortInfo(), reason);
         user = paymentDetailsService.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
         user = entityService.updateEntity(user);
         taskService.cancelSendChargeNotificationTask(user);
@@ -738,7 +570,8 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public void processPaymentSubBalanceCommand(User user, SubmittedPayment payment) {
-        LOGGER.info("processPaymentSubBalanceCommand input parameters user, payment: [{}], [{}]", user.getId(), payment);
+        LOGGER.info("Processing sub balance command for user {} old next sub payment {} with payment {}",
+                user.getId(), user.getNextSubPayment(), payment.getI());
 
         final String paymentSystem = payment.getPaymentSystem();
 
@@ -772,19 +605,20 @@ public class UserService {
         entityService.updateEntity(user);
         LOGGER.info("after update user entity {}", user.getId());
 
-        LOGGER.info("User {} with balance {}", user.getId(), user.getSubBalance());
+        LOGGER.info("Finish processing sub balance command for user {}", user.shortInfo());
     }
 
     @Transactional(propagation = REQUIRED)
-    public User proceessAccountCheckCommandForAuthorizedUser(int userId) {
-        LOGGER.debug("input parameters userId: [{}]", new String[]{String.valueOf(userId)});
+    public User processAccountCheckCommandForAuthorizedUser(int userId) {
+        LOGGER.info("input parameters userId: [{}]", userId);
 
         User user = userDao.findUserById(userId);
 
         user = updateLastDeviceLogin(user);
 
-        if (user.getLastDeviceLogin() == 0)
+        if (user.getLastDeviceLogin() == 0){
             makeUserActive(user);
+        }
 
         user = prepareUserConversionToAccountCheckDto(user);
 
@@ -1060,7 +894,6 @@ public class UserService {
         promotionService.setPotentialPromoByPromoCode(user, promotionCode);
     }
 
-
     private User createUser(UserDeviceRegDetailsDto userDeviceRegDetailsDto, String deviceUID, Community community) {
         User user = new User();
         user.setUserName(deviceUID);
@@ -1080,26 +913,6 @@ public class UserService {
         user.setActivationStatus(REGISTERED);
 
         return user;
-    }
-
-    protected Integer getOperator(){
-        Iterator<Entry<Integer, Operator>> iterator = OperatorDao.getMapAsIds().entrySet().iterator();
-        if (iterator.hasNext()){
-            return iterator.next().getKey();
-        }
-        throw new ServiceException("Couldn't find any operators in cache");
-    }
-
-    protected UserGroup getUserGroup(Community community) {
-        return UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId());
-    }
-
-    protected DeviceType getDeviceType(String device){
-        DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(device);
-        if (deviceType == null) {
-            return DeviceTypeDao.getNoneDeviceType();
-        }
-        return deviceType;
     }
 
     // TODO: PERFORMANCE: could be improved by avoiding unneeded queries basing on the condition
@@ -1241,13 +1054,7 @@ public class UserService {
 
     @Transactional(propagation = REQUIRED)
     public User populateAmountOfMoneyToUserNotification(User user, SubmittedPayment payment) {
-        LOGGER.debug("input parameters user, payment: [{}], [{}]", user, payment);
-
-        if (user == null)
-            throw new NullPointerException("The parameter user is null");
-
-        if (payment == null)
-            throw new NullPointerException("The parameter payment is null");
+        LOGGER.info("input parameters user, payment: [{}], [{}]", user.getId(), payment.getI());
 
         BigDecimal newAmountOfMoneyToUserNotification = user.getAmountOfMoneyToUserNotification().add(
                 payment.getAmount());
@@ -1438,7 +1245,7 @@ public class UserService {
             accountLogService.logAccountEvent(user.getId(), user.getSubBalance(), null, null, SUBSCRIPTION_CHARGE, null);
 
             LOGGER.info("weekly updated user id [{}], status OK, next payment [{}], subBalance [{}]",
-                    new Object[] { user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance() });
+                    user.getId(), Utils.getDateFromInt(user.getNextSubPayment()), user.getSubBalance());
         }
     }
 
@@ -1459,18 +1266,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public ListDataResult<User> getUsersForPendingPayment(int maxCount) {
+    public Page<User> getUsersForPendingPayment(int maxCount) {
         int epochSeconds = getEpochSeconds();
-
-        List<User> users = userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
-
-        ListDataResult<User> result = new ListDataResult<User>(users);
-
-        if (users.size() == maxCount) {
-            long usersForPendingPaymentCount = userRepository.getUsersForPendingPaymentCount(epochSeconds);
-            result.setTotal(usersForPendingPaymentCount);
-        }
-        return result;
+        return userRepository.getUsersForPendingPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
     }
 
     @Transactional(readOnly = true)
@@ -1502,18 +1300,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public ListDataResult<User> getUsersForRetryPayment(int maxCount) {
+    public Page<User> getUsersForRetryPayment(int maxCount) {
         int epochSeconds = getEpochSeconds();
 
-        List<User> users = userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
-
-        ListDataResult<User> result = new ListDataResult<User>(users);
-
-        if(users.size() == maxCount) {
-            long total = userRepository.getUsersForRetryPaymentCount(epochSeconds);
-            result.setTotal(total);
-        }
-        return result;
+        return userRepository.getUsersForRetryPayment(epochSeconds, new PageRequest(0, maxCount, Sort.Direction.ASC, "nextSubPayment"));
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1622,7 +1412,7 @@ public class UserService {
     }
 
     public boolean isVFNZOtacValid(String otac, String phoneNumber, Community community) {
-        return userRepository.findByOtacMobileAndCommunity(otac, phoneNumber, community)==0L ? false: true;
+        return userRepository.findByOtacMobileAndCommunity(otac, phoneNumber, community) != 0L;
     }
 
     @Transactional(propagation = REQUIRED)
@@ -1705,11 +1495,143 @@ public class UserService {
              throw new ReactivateUserException();
     }
 
+    public void setUserDetailsUpdater(UserDetailsUpdater userDetailsUpdater) {
+        this.userDetailsUpdater = userDetailsUpdater;
+    }
+
+    public void setMobileProviderService(MobileProviderService mobileProviderService) {
+        this.mobileProviderService = mobileProviderService;
+    }
+
+    public void setO2ClientService(O2ProviderService o2ClientService) {
+        this.o2ClientService = o2ClientService;
+    }
+
+    public void setOtacValidationService(OtacValidationService otacValidationService) {
+        this.otacValidationService = otacValidationService;
+    }
+
+    public void setDeviceService(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
+
+    public void setUserDeviceDetailsService(UserDeviceDetailsService userDeviceDetailsService) {
+        this.userDeviceDetailsService = userDeviceDetailsService;
+    }
+
+    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
+        this.paymentDetailsService = paymentDetailsService;
+    }
+
+    public void setCountryService(CountryService countryService) {
+        this.countryService = countryService;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void setEntityService(EntityService entityService) {
+        this.entityService = entityService;
+    }
+
+    public void setCountryAppVersionService(CountryAppVersionService countryAppVersionService) {
+        this.countryAppVersionService = countryAppVersionService;
+    }
+
+    public void setPromotionService(PromotionService promotionService) {
+        this.promotionService = promotionService;
+    }
+
+    public void setMessageSource(CommunityResourceBundleMessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
+    public void setMigHttpService(MigHttpService migHttpService) {
+        this.migHttpService = migHttpService;
+    }
+
+    public void setCountryByIpService(CountryByIpService countryByIpService) {
+        this.countryByIpService = countryByIpService;
+    }
+
+    public void setMailService(MailService mailService) {
+        this.mailService = mailService;
+    }
+
+    public void setAccountLogService(AccountLogService accountLogService) {
+        this.accountLogService = accountLogService;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void setRefundService(RefundService refundService) {
+        this.refundService = refundService;
+    }
+
+    public void setUserServiceNotification(UserServiceNotification userServiceNotification) {
+        this.userServiceNotification = userServiceNotification;
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
+    }
+
+    public void setO2UserDetailsUpdater(O2UserDetailsUpdater o2UserDetailsUpdater) {
+        this.o2UserDetailsUpdater = o2UserDetailsUpdater;
+    }
+
+    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+        this.userGroupRepository = userGroupRepository;
+    }
+
+    public void setUserNotificationService(UserNotificationService userNotificationService) {
+        this.userNotificationService = userNotificationService;
+    }
+
+    public void setSendActivationSMS(boolean sendActivationSMS) {
+        this.sendActivationSMS = sendActivationSMS;
+    }
+
+    public void setTaskService(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    public void setReactivationUserInfoRepository(ReactivationUserInfoRepository reactivationUserInfoRepository) {
+        this.reactivationUserInfoRepository = reactivationUserInfoRepository;
+    }
+
+    public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {
+        this.autoOptInRuleService = autoOptInRuleService;
+    }
+
     public void setDeviceUserDataService(DeviceUserDataService deviceUserDataService) {
         this.deviceUserDataService = deviceUserDataService;
     }
 
     public void setAppsFlyerDataService(AppsFlyerDataService appsFlyerDataService) {
         this.appsFlyerDataService = appsFlyerDataService;
+    }
+
+    protected Integer getOperator(){
+        Iterator<Entry<Integer, Operator>> iterator = OperatorDao.getMapAsIds().entrySet().iterator();
+        if (iterator.hasNext()){
+            return iterator.next().getKey();
+        }
+        throw new ServiceException("Couldn't find any operators in cache");
+    }
+
+    protected UserGroup getUserGroup(Community community) {
+        return UserGroupDao.getUSER_GROUP_MAP_COMMUNITY_ID_AS_KEY().get(community.getId());
+    }
+
+    protected DeviceType getDeviceType(String device){
+        DeviceType deviceType = DeviceTypeDao.getDeviceTypeMapNameAsKeyAndDeviceTypeValue().get(device);
+        if (deviceType == null) {
+            return DeviceTypeDao.getNoneDeviceType();
+        }
+        return deviceType;
     }
 }

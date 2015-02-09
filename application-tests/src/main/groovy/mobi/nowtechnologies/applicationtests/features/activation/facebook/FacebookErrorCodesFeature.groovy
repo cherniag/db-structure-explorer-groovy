@@ -11,6 +11,8 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +20,7 @@ import org.unitils.core.util.ObjectFormatter
 import org.unitils.reflectionassert.ReflectionComparatorMode
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.assertEquals
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals
@@ -39,7 +42,11 @@ class FacebookErrorCodesFeature {
 
     List<UserDeviceData> currentUserDevices
 
-    Map<UserDeviceData, User> users = new HashMap<>();
+    Map<UserDeviceData, User> users = new ConcurrentHashMap<>();
+
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
 
     @Transactional("applicationTestsTransactionManager")
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')
@@ -49,8 +56,13 @@ class FacebookErrorCodesFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        currentUserDevices.each {
+        runner = runnerService.create(currentUserDevices)
+
+        runner.parallel {
             deviceSet.singup(it)
+
+        }
+        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 
@@ -69,7 +81,7 @@ class FacebookErrorCodesFeature {
 
     @Then('^User gets (\\d+) http error code and (\\d+) error code and (.*) message$')
     def "User gets given http error code and given error code and given message"(final int httpErrorCode, final int errorCode, final String errorBody) {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def lastFacebookError = phoneState.getLastFacebookErrorResponse()
             def status = phoneState.getLastFacebookErrorStatus()
@@ -83,7 +95,7 @@ class FacebookErrorCodesFeature {
     @Transactional("applicationTestsTransactionManager")
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
@@ -93,14 +105,14 @@ class FacebookErrorCodesFeature {
 
     @When('^Registered user enters Facebook credentials and facebook returns invalid facebook id$')
     def "Registered user enters Facebook credentials and facebook returns invalid facebook id"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookWithInvalidFacebookId(it)
         }
     }
 
     @When('^Registered user enters Facebook credentials and facebook returns invalid access token$')
     def "Registered user enters Facebook credentials and facebook returns invalid access token"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookWithInvalidAccessToken(it)
         }
     }

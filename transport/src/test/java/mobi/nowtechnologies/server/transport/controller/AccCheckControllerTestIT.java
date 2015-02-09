@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static mobi.nowtechnologies.server.transport.controller.core.CommonController.OAUTH_REALM_USERS;
 import static mobi.nowtechnologies.server.transport.controller.core.CommonController.WWW_AUTHENTICATE_HEADER;
@@ -41,7 +43,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Test
     public void testAccCheck_LatestVersion() throws Exception {
-        String userName = "+447111111114";
+        String userName = "+447111111110";
         String apiVersion = LATEST_SERVER_API_VERSION;
         String communityUrl = "o2";
         String timestamp = "2011_12_26_07_04_23";
@@ -58,11 +60,11 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                         .param("USER_TOKEN", userToken)
                         .param("TIMESTAMP", timestamp))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.response.data[0].user.userName").value("+447111111114"))
+                .andExpect(jsonPath("$.response.data[0].user.userName").value("+447111111110"))
                 .andExpect(jsonPath("$.response.data[0].user.status").value("SUBSCRIBED"))
                 .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
-                .andExpect(jsonPath("$.response.data[0].user.deviceUID").value("b88106713409e92622461a876abcd74b"))
-                .andExpect(jsonPath("$.response.data[0].user.phoneNumber").value("+447111111114"))
+                .andExpect(jsonPath("$.response.data[0].user.deviceUID").value("11111111111111111111111111111111111"))
+                .andExpect(jsonPath("$.response.data[0].user.phoneNumber").value("+447111111110"))
                 .andExpect(jsonPath("$.response.data[0].user.userToken").value("f701af8d07e5c95d3f5cf3bd9a62344d"))
                 .andExpect(jsonPath("$.response.data[0].user.nextSubPaymentSeconds").value(1988143200))
                 .andExpect(jsonPath("$.response.data[0].user.activation").value("ACTIVATED"))
@@ -71,7 +73,32 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 .andExpect(jsonPath("$.response.data[0].user.segment").value("CONSUMER"))
                 .andExpect(jsonPath("$.response.data[0].user.tariff").value("_3G"))
                 .andExpect(jsonPath("$.response.data[0].user.hasAllDetails").value(true))
+                .andExpect(jsonPath("$.response.data[0].user.oneTimePayment").value(false))
                 .andExpect(jsonPath("$.response.data[0].user.playlists[0].id").value(5));
+    }
+
+    @Test
+    public void testAccCheck_OnetimePayment() throws Exception {
+        String apiVersion = LATEST_SERVER_API_VERSION;
+
+        String communityUrl = "hl_uk";
+        String userName = "zam1@ukr.net";
+        String timestamp = "" + new Date().getTime();
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = createTimestampToken(storedToken, timestamp);
+        long purchase_date_ms = DateTimeUtils.moveDate(new Date(), DateTimeUtils.GMT_TIME_ZONE_ID, -1, DurationUnit.DAYS).getTime();
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("TRANSACTION_RECEIPT", String.format("onetime:200:0:com.musicqubed.ios.hl-uk.onetime.0:1000000137405769:%s", purchase_date_ms)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
+                .andExpect(jsonPath("$.response.data[0].user.oneTimePayment").value(true));
+
     }
 
     @Test

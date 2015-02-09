@@ -1,27 +1,14 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.repository.PromotionRepository;
-import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
 import mobi.nowtechnologies.server.service.configuration.Configuration;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
-import mobi.nowtechnologies.server.user.criteria.IsInCampaignTableUserMatcher;
 import mobi.nowtechnologies.server.user.rules.Rule;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.SortedSet;
 
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
-import static org.apache.commons.lang.Validate.notNull;
 
 public class PromotionConfiguration extends Configuration<PromotionService.PromotionTriggerType,PromotionProvider.PromotionProxy, PromotionRuleBuilder> {
 
@@ -29,7 +16,7 @@ public class PromotionConfiguration extends Configuration<PromotionService.Promo
 
     @Override
     protected RuleServiceSupport<PromotionService.PromotionTriggerType> createRuleServiceSupport(Map<PromotionService.PromotionTriggerType, SortedSet<Rule>> actionRules) {
-        return  new RuleServiceSupport<PromotionService.PromotionTriggerType>(actionRules);
+        return  new RuleServiceSupport<>(actionRules);
     }
 
     @Override

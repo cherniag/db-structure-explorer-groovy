@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.web.subscription;
 
+import org.springframework.context.MessageSource;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import org.springframework.context.MessageSource;
 
 public class SubscriptionTextsGenerator {
 
@@ -45,7 +45,9 @@ public class SubscriptionTextsGenerator {
 					return data;
 				}
 				data.setStatusText(getMessage("subscription.text.freeTrial"));
-				data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.leftDays", state.getDaysToNextBillingDate()));
+				data.setNextBillingText(
+						decideLeftDaysMessage("subscription.text.freeTrial_next_bill.leftDays", "subscription.text.freeTrial_next_bill.leftDays.lastDay", state.getDaysToNextBillingDate())
+				);
 				data.setFutureText(null);
 			} else {
 
@@ -62,7 +64,9 @@ public class SubscriptionTextsGenerator {
 					data.setStatusText(getMessage("subscription.text.freeTrial_Video"));
 				}
 				
-				data.setNextBillingText(getMessage("subscription.text.freeTrial_next_bill.leftDays", state.getDaysToNextBillingDate()));
+				data.setNextBillingText(
+						decideLeftDaysMessage("subscription.text.freeTrial_next_bill.leftDays", "subscription.text.freeTrial_next_bill.leftDays.lastDay", state.getDaysToNextBillingDate())
+				);
 				
 				data.setFutureText(null);
 			}
@@ -109,6 +113,13 @@ public class SubscriptionTextsGenerator {
 			data.setFutureText(getMessage("subscription.text.subscription_future.ongoing"));
 		}
 		return data;
+	}
+
+	private String decideLeftDaysMessage(String moreThanOneDayMessageKey, String oneDayMessageKey, Integer daysLeft) {
+		if(daysLeft != null && daysLeft == 1) {
+			return getMessage(oneDayMessageKey);
+		}
+		return getMessage(moreThanOneDayMessageKey, daysLeft);
 	}
 
 	private String getLongDate(Date date) {

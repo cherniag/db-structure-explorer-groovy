@@ -12,12 +12,13 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertThat;
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class TaskServiceTestIT extends AbstractTransactionalJUnit4SpringContextTests{
+public class TaskServiceTestIT {
     private static final String TASK_COUNT_QUERY = "select count(*) from tb_tasks t join tb_users u on t.user_id=u.i where u.i=%s and t.taskType='%s'";
     @Autowired
     private TaskService taskService;
@@ -51,6 +52,9 @@ public class TaskServiceTestIT extends AbstractTransactionalJUnit4SpringContextT
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     public void testCreateSendChargeNotificationWithExistingCommunity() {
@@ -71,7 +75,7 @@ public class TaskServiceTestIT extends AbstractTransactionalJUnit4SpringContextT
         UserGroup userGroup = createAndSaveUserGroup(community);
         User user = createAndSaveUser(userGroup);
         taskService.createSendChargeNotificationTask(user);
-        int count = simpleJdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
+        int count = jdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
         assertThat(count, is(0));
     }
 
@@ -105,10 +109,10 @@ public class TaskServiceTestIT extends AbstractTransactionalJUnit4SpringContextT
         SendChargeNotificationTask sendChargeNotificationTask = TaskFactory.createSendChargeNotificationTask();
         sendChargeNotificationTask.setUser(user);
         taskRepository.save(sendChargeNotificationTask);
-        int count = simpleJdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
+        int count = jdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
         assertThat(count, is(1));
         taskService.cancelSendChargeNotificationTask(user);
-        count = simpleJdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
+        count = jdbcTemplate.queryForInt(format(TASK_COUNT_QUERY, user.getId(), SendChargeNotificationTask.TASK_TYPE));
         assertThat(count, is(0));
     }
 

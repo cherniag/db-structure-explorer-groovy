@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.dto.builder;
 
-import mobi.nowtechnologies.java.server.uits.MP3Manager;
-import mobi.nowtechnologies.java.server.uits.MP4Manager;
-import mobi.nowtechnologies.java.server.uits.MP4ManagerIntf;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -12,12 +9,15 @@ import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.VideoResolution;
 import mobi.nowtechnologies.server.trackrepo.service.impl.TrackServiceImpl;
+import mobi.nowtechnologies.server.trackrepo.uits.IMP4Manager;
+import mobi.nowtechnologies.server.trackrepo.uits.MP3Manager;
+import mobi.nowtechnologies.server.trackrepo.uits.MP4Manager;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class ResourceFileDtoBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
 	
 	private MP3Manager mp3Manager = new MP3Manager();
-	private MP4ManagerIntf mp4manager = new MP4Manager();
+	private IMP4Manager mp4manager = new MP4Manager();
 
 	private Resource publishDir;
 	private Resource workDir;
@@ -48,12 +48,13 @@ public class ResourceFileDtoBuilder {
 	}
 	
 	public List<ResourceFileDto> build(Track track) throws IOException{
+		LOGGER.debug("Build track {}", track);
         String uniqueTrackId = track.getUniqueTrackId();
 
 		String workDirPath = workDir.getFile().getAbsolutePath();
 		String distDirPath = publishDir.getFile().getAbsolutePath();
 
-		List<ResourceFileDto> files = new ArrayList<ResourceFileDto>(15);
+		List<ResourceFileDto> files = new ArrayList<ResourceFileDto>(16);
 
         AssetFile audioFile = track.getFile(AssetFile.FileType.DOWNLOAD);
 		if(audioFile != null){
@@ -85,7 +86,8 @@ public class ResourceFileDtoBuilder {
 		files.add(build(FileType.IMAGE, ImageResolution.SIZE_11, distDirPath, uniqueTrackId, null));
 		files.add(build(FileType.IMAGE, ImageResolution.SIZE_6, distDirPath, uniqueTrackId, null));
 		files.add(build(FileType.IMAGE, ImageResolution.SIZE_3, distDirPath, uniqueTrackId, null));
-		
+
+		LOGGER.debug("Output files : {}", files);
 		return files;
 	}
 	
@@ -112,41 +114,26 @@ public class ResourceFileDtoBuilder {
 				return stream.available();
 			}
 		} finally {
-			if (stream != null)
-				stream.close();
+			IOUtils.closeQuietly(stream);
 		}
-
 		return 0;
 	}
 
 	private String getFilePath(FileType type, Resolution resolution, String dir, String isrc) {
 		String subdir = type.getPack() == null || type.getPack().isEmpty() ? "" : type.getPack() + "/";
-		return dir + "/" + subdir + isrc + resolution.getSuffix() + "." + type.getExt();
+		return String.format("%s/%s%s%s.%s", dir, subdir, isrc, resolution.getSuffix(), type.getExt());
 	}
 	
 	private String getMediaHash(String fileName) {
-		InputStream in = null;
 		try {
-			String mediaHash = null;
 			if (fileName.toLowerCase().endsWith("." + FileType.DOWNLOAD.getExt())) {
-				LOGGER.debug("not AAC");
-				mediaHash = mp3Manager.mp3GetMediaHash(fileName);
+				return mp3Manager.getMP3MediaHash(fileName);
 			} else { // Assume AAC.....
-				in = new FileInputStream(fileName);
-				mediaHash = mp4manager.getMediaHash(in);
+				return mp4manager.getMediaHash(fileName);
 			}
-			return mediaHash;
 		} catch (Exception e) {
 			LOGGER.error("Cannot get hash for {} : {}", fileName, e.getMessage(), e);
 			return null;
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					LOGGER.error("Cannot get hash", e);
-				}
-			}
 		}
 	}
 }

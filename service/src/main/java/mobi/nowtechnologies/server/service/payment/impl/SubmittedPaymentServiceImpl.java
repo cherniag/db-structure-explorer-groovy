@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
 import mobi.nowtechnologies.server.service.payment.SubmittedPaymentService;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,8 @@ import java.util.List;
  * 
  */
 public class SubmittedPaymentServiceImpl implements SubmittedPaymentService {
+
+	static final PageRequest ONE = new PageRequest(0, 1);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SubmittedPaymentServiceImpl.class);
 
@@ -46,4 +50,14 @@ public class SubmittedPaymentServiceImpl implements SubmittedPaymentService {
 		return submittedPayment;
 	}
 
+
+	@Transactional(readOnly = true)
+	@Override
+	public SubmittedPayment getLatest(User user) {
+		List<SubmittedPayment> topByUser = submittedPaymentRepository.findTopByUser(user, ONE);
+		if (topByUser != null && topByUser.size() == 1) {
+			return topByUser.get(0);
+		}
+		return null;
+	}
 }

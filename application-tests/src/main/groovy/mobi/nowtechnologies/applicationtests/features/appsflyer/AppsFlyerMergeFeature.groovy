@@ -15,11 +15,14 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 
 import static mobi.nowtechnologies.applicationtests.features.common.social.SocialActivationType.Facebook
 import static mobi.nowtechnologies.applicationtests.features.common.social.SocialActivationType.GooglePlus
@@ -46,10 +49,14 @@ class AppsFlyerMergeFeature {
 
 
     public List<UserDeviceData> userDeviceDatas
-    def newAppsFlyerUids = [:]
-    def oldAppsFlyerUids = [:]
-    def newUsers = [:]
+    def newAppsFlyerUids = new ConcurrentHashMap<UserDeviceData, String>()
+    def oldAppsFlyerUids = new ConcurrentHashMap<UserDeviceData, String>()
+    def newUsers = new ConcurrentHashMap<UserDeviceData, User>()
     def currentProvider
+
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
 
     public List<UserDeviceData> otherUserDeviceDatas
 
@@ -66,7 +73,9 @@ class AppsFlyerMergeFeature {
         def above = ApiVersions.from(versions.list()).above(aboveVersion)
         userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat))
 
-        userDeviceDatas.each {
+        runner = runnerService.create(userDeviceDatas)
+
+        runner.parallel {
             def appsFlyerUid = UUID.randomUUID().toString();
             deviceSet.singupWithAppsFlyer(it, appsFlyerUid)
 
@@ -92,7 +101,7 @@ class AppsFlyerMergeFeature {
 
     @When('^User activates on same device with the same provider profile which has own appsflyer data$')
     def "User activates on same device with the same provider profile which has own appsflyer data"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
 
             def appsFlyerUid = UUID.randomUUID().toString();
@@ -110,7 +119,7 @@ class AppsFlyerMergeFeature {
 
     @Then('^Temporary user\'s appsflyer data should be removed$')
     def "Temporary user's appsflyer data should be removed"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def user = newUsers[it]
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
             assertNull("For [$it]-[$user.id] no appsflyer data expected but was [$found]", found);
@@ -119,7 +128,7 @@ class AppsFlyerMergeFeature {
 
     @And('^Preserved appsflyer data in db should point to old user$')
     def "Preserved appsflyer data in db should point to old user"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -129,7 +138,7 @@ class AppsFlyerMergeFeature {
 
     @And('^Preserved appsflyer data in db should have new user\'s appsflyer uid$')
     def "Preserved appsflyer data in db should have new user's appsflyer uid"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -150,8 +159,9 @@ class AppsFlyerMergeFeature {
 
         def above = ApiVersions.from(versions.list()).above(aboveVersion)
         userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat))
+        runner = runnerService.create(userDeviceDatas)
 
-        userDeviceDatas.each {
+        runner.parallel {
             deviceSet.singupWithAppsFlyer(it, null)
             activate(it, currentProvider)
         }
@@ -159,7 +169,7 @@ class AppsFlyerMergeFeature {
 
     @When('^User activates on same device with the same provider profile which doesn\'t have appsflyer data$')
     def "User activates on same device with the same provider profile which doesn't have appsflyer data"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
 
             deviceSet.singup(it, null, null, false, phoneState.deviceUID);
@@ -174,7 +184,7 @@ class AppsFlyerMergeFeature {
 
     @Then('Old user\'s appsflyer data should exist')
     def "Old user's appsflyer data should exist"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -184,7 +194,7 @@ class AppsFlyerMergeFeature {
 
     @And('Appsflyer data in db should have old user\'s appsflyer uid')
     def "Appsflyer data in db should have old user's appsflyer uid"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -195,7 +205,7 @@ class AppsFlyerMergeFeature {
 
     @Then('No appsflyer data should exist in db for both users')
     def "No appsflyer data should exist in db for both users"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it);
             def oldUser =  findUserInDatabase(it, phoneState);
             def oldData = appsFlyerDataRepository.findDataByUserId(oldUser.id)
@@ -209,7 +219,7 @@ class AppsFlyerMergeFeature {
 
     @When('^User activates on another device with the same provider profile which has own appsflyer data$')
     def "User activates on another device with the same provider profile which has own appsflyer data"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
 
             def appsFlyerUid = UUID.randomUUID().toString();
@@ -239,9 +249,10 @@ class AppsFlyerMergeFeature {
         def above = ApiVersions.from(versions.list()).above(aboveVersion)
         userDeviceDatas = userDeviceDataService.table(above, communities.set(), deviceTypes.set(), formats.set(RequestFormat))
         otherUserDeviceDatas = new ArrayList<UserDeviceData>(userDeviceDatas)
+        runner = runnerService.create(userDeviceDatas)
 
         // First user
-        userDeviceDatas.each {
+        runner.parallel {
             def appsFlyerUid = UUID.randomUUID().toString();
             deviceSet.singupWithAppsFlyer(it, appsFlyerUid)
 
@@ -253,7 +264,7 @@ class AppsFlyerMergeFeature {
         }
 
         // Second user
-        otherUserDeviceDatas.each {
+        runner.parallel {
             def appsFlyerUid = UUID.randomUUID().toString();
             otherDeviceSet.singupWithAppsFlyer(it, appsFlyerUid)
 
@@ -275,7 +286,7 @@ class AppsFlyerMergeFeature {
 
     @When('^First user activates on same device that has appsflyer data with provider profile of second user which has own appsflyer data$')
     def "First user activates on same device that has appsflyer data with provider profile of second user which has own appsflyer data"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
 
             def appsFlyerUid = UUID.randomUUID().toString();
@@ -300,7 +311,7 @@ class AppsFlyerMergeFeature {
 
     @And('^Second user\'s appsflyer data in db should point to second user$')
     def "Second user's appsflyer data in db should point to second user"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)
@@ -311,7 +322,7 @@ class AppsFlyerMergeFeature {
 
     @And('^Second user\'s appsflyer data in db should have new user\'s appsflyer uid$')
     def "Second user's appsflyer data in db should have new user's appsflyer uid"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it);
             def user = findUserInDatabase(it, phoneState);
             def found = appsFlyerDataRepository.findDataByUserId(user.id)

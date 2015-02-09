@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
@@ -77,7 +78,7 @@ public class AccountCheckDTOAsmTest {
     public void testToAccountCheckDTOWhenUserIsInDatabase() throws Exception {
         when(autoOptInExemptPhoneNumberRepository.findOne(mobile)).thenReturn(autoOptInExemptPhoneNumber);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false, false);
 
         assertFalse(dto.subjectToAutoOptIn);
         verify(ruleServiceSupport, times(0)).fireRules(eq(ALL), any(User.class));
@@ -90,7 +91,7 @@ public class AccountCheckDTOAsmTest {
         final boolean isSubjectToAutoOptIn = true;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false, false);
 
         assertEquals(isSubjectToAutoOptIn, dto.subjectToAutoOptIn);
         verify(user, times(1)).isSubjectToAutoOptIn();
@@ -105,7 +106,7 @@ public class AccountCheckDTOAsmTest {
         final boolean isSubjectToAutoOptIn = false;
         when(user.isSubjectToAutoOptIn()).thenReturn(isSubjectToAutoOptIn);
 
-        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false);
+        AccountCheckDTO dto = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, false, false, false, false);
 
         assertEquals(true, dto.subjectToAutoOptIn);
         verify(user, times(0)).isSubjectToAutoOptIn();
@@ -116,7 +117,7 @@ public class AccountCheckDTOAsmTest {
     public void testToAccCheckDTOWithDetails() throws Exception {
         userIsNotEligibleForPromo();
 
-        accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false);
+        accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
 
         verify(userDetailsDtoAsm, times(1)).toUserDetailsDto(user);
     }
@@ -126,7 +127,7 @@ public class AccountCheckDTOAsmTest {
         userIsNotEligibleForPromo();
 
         final boolean withUuid = true;
-        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, withUuid);
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, withUuid, false);
 
         assertEquals(uuid, accountCheckDTO.uuid);
         verify(user, times(1)).getUuid();
@@ -137,10 +138,20 @@ public class AccountCheckDTOAsmTest {
         userIsNotEligibleForPromo();
 
         final boolean withUuid = false;
-        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, withUuid);
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, withUuid, false);
 
         assertNull(accountCheckDTO.uuid);
         verify(user, never()).getUuid();
+    }
+
+    @Test
+    public void testToAccCheckDTOWithoutOneTimePayment() throws Exception {
+        userIsNotEligibleForPromo();
+
+        AccountCheckDTO accountCheckDTO = accountCheckDTOAsm.toAccountCheckDTO(user, "any-remember-me-token", null, false, true, false, false, false);
+
+        assertNull(accountCheckDTO.oneTimePayment);
+        verify(user, times(0)).hasOneTimeSubscription();
     }
 
     private void userIsNotEligibleForPromo() {

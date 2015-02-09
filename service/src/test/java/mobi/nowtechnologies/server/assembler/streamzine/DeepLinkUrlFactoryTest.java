@@ -2,6 +2,7 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
 import com.google.common.collect.Lists;
+import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
@@ -24,6 +25,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -64,7 +66,7 @@ public class DeepLinkUrlFactoryTest {
         InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.INTERNAL_AD, "about");
 
         //check
-        String o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk", false);
+        String o = deepLinkUrlFactory.create(informationDeeplinkInfo, createCommunity("hl_uk"), false);
         assertThat(o, is("hl-uk://page/about"));
     }
 
@@ -75,7 +77,7 @@ public class DeepLinkUrlFactoryTest {
         informationDeeplinkInfo.setAction("subscribe");
 
         //check
-        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "hl_uk", false);
+        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, createCommunity("hl_uk"), false);
 
         assertThat(o, instanceOf(String.class));
         assertThat((String)o, is("hl-uk://page/account?action=subscribe"));
@@ -87,7 +89,7 @@ public class DeepLinkUrlFactoryTest {
         InformationDeeplinkInfo informationDeeplinkInfo = new NotificationDeeplinkInfo(LinkLocationType.EXTERNAL_AD, "http://bear.ru", BROWSER);
 
         //check
-        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, "o2", false);
+        Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, createCommunity("o2"), false);
 
         assertThat(o, instanceOf(String.class));
         assertThat((String)o, is("o2://web/aHR0cDovL2JlYXIucnU=?open=externally"));
@@ -102,7 +104,7 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicTrackDeeplinkInfo)).thenReturn((Enum) MusicType.TRACK);
 
         //check
-        Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, "hl_uk", false);
+        Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, createCommunity("hl_uk"), false);
 
         assertThat(o, instanceOf(String.class));
         assertThat((String)o, is("hl-uk://content/track?id=TRACK-10_null"));
@@ -116,7 +118,7 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
-        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk", false);
+        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, createCommunity("hl_uk"), false);
         assertThat(o, is("hl-uk://content/playlist?id=666"));
     }
 
@@ -128,10 +130,9 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
         //check
-        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, "hl_uk", true);
+        String o = deepLinkUrlFactory.create(musicPlayListDeeplinkInfo, createCommunity("hl_uk"), true);
         assertThat(o, is("hl-uk://content/playlist?player=regular&id=666"));
     }
-
 
     @Test
     public void checkCreateLinkValueForNewsStory() throws Exception {
@@ -144,9 +145,10 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(newsStoryDeeplinkInfo)).thenReturn((Enum) NewsType.STORY);
 
         //check
-        String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo, "hl_uk", false);
+        String o = deepLinkUrlFactory.create(newsStoryDeeplinkInfo, createCommunity("hl_uk"), false);
         assertThat(o, is("hl-uk://content/story?id=10"));
     }
+
 
     @Test
     public void checkCreateLinkValueForNewsList() throws Exception {
@@ -157,20 +159,26 @@ public class DeepLinkUrlFactoryTest {
         when(deepLinkInfoService.getSubType(newsListDeeplinkInfo)).thenReturn((Enum) NewsType.LIST);
 
         //check
-        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo, "hl-uk", false);
+        String o = deepLinkUrlFactory.create(newsListDeeplinkInfo, createCommunity("hl_uk"), false);
         assertThat(o, is("hl-uk://content/news?id=1419120000"));
     }
 
     @Test
     public void checkUrlLinkForFreemiumChartWhenActionIsNull() {
-        String link = deepLinkUrlFactory.createForChart("mtv1", 7, null);
+        String link = deepLinkUrlFactory.createForChart(createCommunity("mtv1"), 7, null);
         assertThat(link, is("mtv1://content/playlist?id=7"));
     }
 
     @Test
     public void checkUrlLinkForFreemiumChartWhenActionHasValue() {
-        String link = deepLinkUrlFactory.createForChart("mtv1", 7, "refer_a_friend");
+        String link = deepLinkUrlFactory.createForChart(createCommunity("mtv1"), 7, "refer_a_friend");
         assertThat(link, is("mtv1://content/playlist?id=7&action=refer_a_friend"));
+    }
+
+    private Community createCommunity(String url) {
+        Community c = mock(Community.class);
+        when(c.getRewriteUrlParameter()).thenReturn(url);
+        return c;
     }
 
     private Media getMedia(Integer id, String isrc) {

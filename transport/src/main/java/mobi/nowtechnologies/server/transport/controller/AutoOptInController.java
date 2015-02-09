@@ -60,7 +60,7 @@ public class AutoOptInController extends CommonController {
 
             MergeResult mergeResult = userService.autoOptIn(communityUri, userName, userToken, timestamp, deviceUID, otac, checkReactivation);
             user = mergeResult.getResultOfOperation();
-            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false).withHasPotentialPromoCodePromotion(true);
+            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(mergeResult, false, false).withHasPotentialPromoCodePromotion(true);
 
             return buildModelAndView(accountCheckDTO);
         } catch (Exception e) {

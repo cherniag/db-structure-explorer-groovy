@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import static java.util.Locale.ENGLISH;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
 
 /**
  * @author Maksym Chernolevskyi (maksym)
@@ -31,6 +30,7 @@ import static mobi.nowtechnologies.common.util.UserCredentialsUtils.SALT;
  */
 public class Utils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+	private static final String SALT = "8z54YKmns9Qz";
 
 	private static final long MILLISECONDS_IN_SECOND = 1000L;
 	private static final String charset = "0123456789";

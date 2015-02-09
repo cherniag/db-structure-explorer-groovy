@@ -87,6 +87,8 @@ public class AccountCheckDTO {
 
     public String uuid;
 
+    public Boolean oneTimePayment;
+
     public AccountCheckDTO(){
 		
 	}
@@ -147,6 +149,7 @@ public class AccountCheckDTO {
         accountCheckDTO.fullyRegistred = EmailValidator.isEmail(userName);
         this.firstActivation = accountCheckDTO.firstActivation;
         this.uuid = accountCheckDTO.uuid;
+        this.oneTimePayment = accountCheckDTO.oneTimePayment;
 	}
 
     public AccountCheckDTO withFullyRegistered(boolean isFullyRegistered){
@@ -221,6 +224,7 @@ public class AccountCheckDTO {
                 .append("userDetails", userDetails)
                 .append("firstActivation", firstActivation)
                 .append("uuid", uuid)
+                .append("oneTimePayment", oneTimePayment)
                 .toString();
     }
 }

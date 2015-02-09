@@ -60,13 +60,14 @@ public class PayPalPaymentServiceImpl extends AbstractPaymentSystemService imple
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public void startPayment(PendingPayment pendingPayment) throws ServiceException {
+        LOGGER.info("Start PayPal payment with internal transaction id: {}", pendingPayment.getInternalTxId());
 		PayPalPaymentDetails currentPaymentDetails = (PayPalPaymentDetails) pendingPayment.getUser().getCurrentPaymentDetails();
         PaymentPolicy currentPaymentPolicy = currentPaymentDetails.getPaymentPolicy();
         String communityRewriteUrlParameter = currentPaymentPolicy.getCommunity() != null ? currentPaymentPolicy.getCommunity().getRewriteUrlParameter() : null;
 		PayPalResponse response = httpService.makeReferenceTransactionRequest(currentPaymentDetails.getBillingAgreementTxId(), pendingPayment.getCurrencyISO(), pendingPayment.getAmount(), communityRewriteUrlParameter);
 		pendingPayment.setExternalTxId(response.getTransactionId());
 		entityService.updateEntity(pendingPayment);
-		LOGGER.info("PayPal responsed {} for pending payment id: {}", response, pendingPayment.getI());
+		LOGGER.info("PayPal responded {} for pending payment id: {}", response, pendingPayment.getI());
 		commitPayment(pendingPayment, response);
 	}
 

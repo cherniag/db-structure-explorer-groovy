@@ -14,7 +14,6 @@ import mobi.nowtechnologies.server.trackrepo.repository.FileRepository;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
 import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,15 +138,8 @@ public class TrackServiceIT extends AbstractTrackRepoIT {
         }
     }
 
-
     @Test
-    public void testEncode() throws Exception {
-        encode();
-    }
-
-
-    @Test
-    public void testPull() throws Exception {
+    public void testEncodeAndPull() throws Exception {
         Track resultEncoding = encode();
         checkFilesNotExistsInCloudBeforePull(resultEncoding);
         trackService.pull(resultEncoding.getId());
@@ -163,7 +155,7 @@ public class TrackServiceIT extends AbstractTrackRepoIT {
 
     @Test
     public void testSearchByTrackId() throws Exception {
-        Track prepared = prepareTrackForSearch();
+        Track prepared = trackRepository.save(TrackFactory.anyTrack());
         SearchTrackDto criteria = new SearchTrackDto();
         criteria.setTrackIds(Lists.newArrayList(prepared.getId().intValue()));
         PageRequest request = new PageRequest(0, 1);
@@ -172,12 +164,6 @@ public class TrackServiceIT extends AbstractTrackRepoIT {
         Track track = trackRepository.findOne(prepared.getId());
         assertEquals(result.getContent().get(0), track);
     }
-
-    private Track prepareTrackForSearch() {
-        Track track = TrackFactory.anyTrack();
-        return trackRepository.save(track);
-    }
-
 
     @Before
     public void beforeEachTest(){

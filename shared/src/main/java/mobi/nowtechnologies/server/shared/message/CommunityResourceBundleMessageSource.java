@@ -7,7 +7,7 @@ public interface CommunityResourceBundleMessageSource {
 	
 	String getMessage(String community, String code, Object[] args, String defaultMessage, Locale locale);
 
-	String getMessage(String community, String code, Object[] args, Locale locale) throws CommunityNoSuchMessageException;
+    String getMessage(String community, String code, Object[] args, Locale locale);
 
     int readInt(String code, int defaults);
 
@@ -18,4 +18,6 @@ public interface CommunityResourceBundleMessageSource {
     Date readDate(String community, String code);
 
     boolean readBoolean(String community, String code, boolean defaults);
+
+    String getDecryptedMessage(String community, String code, Object[] args, Locale locale);
 }

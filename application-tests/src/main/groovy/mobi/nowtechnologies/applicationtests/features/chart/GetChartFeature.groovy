@@ -15,6 +15,8 @@ import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataServi
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.http.chart.Response
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.Chart
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail
 import mobi.nowtechnologies.server.persistence.domain.Media
@@ -23,11 +25,15 @@ import mobi.nowtechnologies.server.persistence.repository.ChartRepository
 import mobi.nowtechnologies.server.shared.dto.ChartDto
 import mobi.nowtechnologies.server.shared.enums.ChgPosition
 import org.junit.Assert
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
+
 /**
  * Author: Gennadii Cherniaiev
  * Date: 12/4/2014
@@ -42,15 +48,18 @@ class GetChartFeature {
     ChartRepository chartRepository
     @Resource
     ChartDetailRepository chartDetailRepository
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     def userDeviceDatas = [] as ArrayList<UserDeviceData>
 
-    def chartByName = [:] as HashMap<String, Chart>
-
-    HashMap<UserDeviceData, ResponseEntity<Response>> responses = [:]
+    ConcurrentHashMap<String, Chart> chartByName = [:];
+    ConcurrentHashMap<UserDeviceData, ResponseEntity<Response>> responses = [:];
 
     def currentChartPosition
-
 
     @Given('Activated user with (.+) using (.+) for (.+) above (.+) and (.+) community')
     def given0(
@@ -61,15 +70,18 @@ class GetChartFeature {
             String community
     ){
         def versionsAbove = ApiVersions.from(versions.list()).above(above)
-        userDeviceDatas = userDeviceDataService.table(versionsAbove, community, deviceTypes.list(), RequestFormat.from(formats.set()));
-        userDeviceDatas.each {
-            deviceSet.singup(it);
-            deviceSet.loginUsingFacebook(it);
+        userDeviceDatas = userDeviceDataService.table(versionsAbove, community, deviceTypes.list(), formats.set(RequestFormat));
+
+        runner = runnerService.create(userDeviceDatas)
+
+        runner.parallel {
+            deviceSet.singup(it)
+            deviceSet.loginUsingFacebook(it)
         }
 
         def charts = chartRepository.getByCommunityName(community)
         charts.each {
-            chartByName << [(it.name) : (it)]
+            chartByName[it.name] = it
         }
         currentChartPosition = 0
     }
@@ -103,17 +115,32 @@ class GetChartFeature {
 
     @When('the client requests (.+) /GET_CHART with resolution \'(.+)\'')
     def when0(HttpMethod httpMethod, String resolution){
-        userDeviceDatas.each {
+        runner.parallel {
+            if(it.format == RequestFormat.XML) {
+                // FIXME: we have no support for XML
+                return;
+            }
+
             def chartResponse = deviceSet.getChart(it, httpMethod, resolution)
             responses << [(it) : chartResponse]
-            Assert.assertNotNull(chartResponse.getBody().response.data[1].value)
+
+            def body = chartResponse.getBody()
+
+            logger.info("Response for \n{} is \n{}", it, body);
+
+            Assert.assertNotNull(body.response.data[1].value)
         }
 
     }
 
     @Then('the response code should be (.+)')
     def then0(int code){
-        userDeviceDatas.each {
+        runner.parallel {
+            if(it.format == RequestFormat.XML) {
+                // FIXME: we have no support for XML
+                return;
+            }
+
             Assert.assertEquals(code, responses[it].statusCode.value())
         }
 
@@ -121,7 +148,12 @@ class GetChartFeature {
 
     @And('count of playlist and tracks returned should be as in the database')
     def and1(){
-        userDeviceDatas.each {
+        runner.parallel{
+            if(it.format == RequestFormat.XML) {
+                // FIXME: we have no support for XML
+                return;
+            }
+
             def chartDto = responses[it].getBody().response.data[1].value as ChartDto
             def charts = chartRepository.getByCommunityURL(it.communityUrl)
             def trackCount = 0
@@ -135,14 +167,19 @@ class GetChartFeature {
 
     @And('playlist content should be as in the database')
     def and2(){
-        userDeviceDatas.each {
+        runner.parallel {
+            if(it.format == RequestFormat.XML) {
+                // FIXME: we have no support for XML
+                return;
+            }
+
             def chartDto = responses[it].getBody().response.data[1].value as ChartDto
 
             def charts = chartRepository.getByCommunityURL(it.communityUrl)
             def playListById = [:] as Map<Integer, ChartDetail>
             charts.each { chart ->
                 def playList = getPlayList(chart)
-                playListById << [(playList.chart.i) : (playList)]
+                playListById[playList.chart.i] = playList
             }
 
             chartDto.playlistDtos.each { responsePlayList ->
@@ -160,7 +197,12 @@ class GetChartFeature {
 
     @And('tracks content should be as in the database')
     def and3(){
-        userDeviceDatas.each {
+        runner.parallel {
+            if(it.format == RequestFormat.XML) {
+                // FIXME: we have no support for XML
+                return;
+            }
+
             def chartDto = responses[it].getBody().response.data[1].value as ChartDto
 
             def charts = chartRepository.getByCommunityURL(it.communityUrl) as List<Chart>
@@ -168,8 +210,9 @@ class GetChartFeature {
             charts.each { chart ->
                 getTracks(chart).each { track ->
                     // composed key - "chart id-isrc_track id"
-                    String composedKey = "${track.chartId}-${track.media.isrc}_${track.media.trackId}"
-                    trackByKey << [ (composedKey) : (track) ]
+                    String composedKey = "${track.chartId}-${track.media.isrc}_${track.media.trackId}".toString()
+                    // trackByKey << [ (composedKey) : (track) ]
+                    trackByKey[composedKey] = track
                 }
             }
 
@@ -197,14 +240,12 @@ class GetChartFeature {
 
     private List<ChartDetail> getTracks(Chart chart) {
         Long latestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(new Date().time, chart.i)
-        def chartItems = chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chart.i, latestPublishTimeMillis)
-        chartItems
+        chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chart.i, latestPublishTimeMillis)
     }
 
     private ChartDetail getPlayList(Chart chart) {
         long lastPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(new Date().time, chart.i)
-        def chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.i, lastPublishTimeMillis)
-        chartDetail
+        chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.i, lastPublishTimeMillis)
     }
 
 }

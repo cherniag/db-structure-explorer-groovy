@@ -1,46 +1,47 @@
 package mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers;
 
-import com.google.common.collect.Lists;
-import mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers.HeaderClientHttpRequestInterceptor;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
-import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 @Service
-public class ServiceConfigHttpService {
-    @Value("${environment.url}")
-    String environmentUrl;
-
-    private HeaderClientHttpRequestInterceptor interceptor = new HeaderClientHttpRequestInterceptor();
-    private RestTemplate restTemplate = new RestTemplate();
-
-    @PostConstruct
-    void initIntercepter() {
-        List<ClientHttpRequestInterceptor> intercepters = Lists.<ClientHttpRequestInterceptor>newArrayList(interceptor);
-        restTemplate.setInterceptors(intercepters);
-        restTemplate.setErrorHandler(new LoggingResponseErrorHandler());
+public class ServiceConfigHttpService extends AbstractHttpService {
+    public ResponseEntity<String> serviceConfigUserAgent(UserDeviceData deviceData, String header) {
+        return doSend(deviceData, "User-Agent", header);
     }
 
-    public void setHeader(String headerName, String headerValue) {
-        interceptor.setHeader(headerName, headerValue);
+    public ResponseEntity<String> serviceConfigXUserAgent(UserDeviceData deviceData, String header) {
+        return doSend(deviceData, "X-User-Agent", header);
     }
 
-    public ResponseEntity<String> serviceConfig(UserDeviceData deviceData) {
-        UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(environmentUrl);
-        b.pathSegment("transport");
-        b.pathSegment("service");
-        b.pathSegment(deviceData.getCommunityUrl());
-        b.pathSegment(deviceData.getApiVersion());
-        b.pathSegment("SERVICE_CONFIG.json");
-        return restTemplate.getForEntity(b.build().toUriString(), String.class, Collections.emptyMap());
+    private ResponseEntity<String> doSend(UserDeviceData deviceData, String headerName, String headerValue) {
+        String url = getUri(deviceData, "SERVICE_CONFIG", deviceData.getFormat());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+
+        HttpEntity<MultiValueMap> httpEntity = createHttpEntity(headerName, headerValue);
+
+        String uri = builder.build().toUriString();
+        logger.info("Sending for [{}] to [{}] parameters: [{}], headers: [{}]", deviceData, uri, httpEntity.getBody(), httpEntity.getHeaders());
+        ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
+        logger.info("Response body [{}]", responseEntity);
+        return responseEntity;
     }
+
+    private HttpEntity<MultiValueMap> createHttpEntity(String headerName, String headerValue) {
+        HttpHeaders headers = new HttpHeaders();
+
+        if(headerValue != null) {
+            headers.add(headerName, headerValue);
+        }
+
+        //need to overwrite default accept headers
+        headers.setAccept(Arrays.asList(MediaType.ALL));
+        return new HttpEntity<>(headers);
+    }
+
 }

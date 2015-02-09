@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 import com.google.common.io.Files;
-import mobi.nowtechnologies.java.server.uits.MP4ManagerIntf;
-import mobi.nowtechnologies.java.server.uits.UitsParameters;
+import mobi.nowtechnologies.server.trackrepo.uits.IMP4Manager;
+import mobi.nowtechnologies.server.trackrepo.uits.UitsParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ import java.io.*;
 /**
  * Created by Oleg Artomov on 7/1/2014.
  */
-public class MP4ManagerMock implements MP4ManagerIntf {
+public class MP4ManagerMock implements IMP4Manager {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -39,7 +39,7 @@ public class MP4ManagerMock implements MP4ManagerIntf {
     }
 
     @Override
-    public String getMediaHash(InputStream audioFile) {
+    public String getMediaHash(String audioFile) {
         return null;
     }
 }

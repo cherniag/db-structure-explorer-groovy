@@ -10,13 +10,13 @@
         </div>
     </div>
     <div class="go-premium-first-half"></div>
-    <div class="go-premium-success-solutation-container go-premium-success-solutation-container-device">
-        <div class="go-premium-success-solutation-container-text">
-            <span class="go-premium-success-solutation go-premium-success-solutation-device"><s:message code="paypal.success.salutation.head" /> ${customerName}</span>
+    <div class="go-premium-success-salutation-container go-premium-success-salutation-container-device">
+        <div class="go-premium-success-salutation-container-text">
+            <span class="go-premium-success-salutation go-premium-success-salutation-device"><s:message code="paypal.success.salutation.head" /> ${customerName}</span>
             <br/>
-            <span class="go-premium-success-solutation-title go-premium-success-solutation-title-1-device"><s:message code="paypal.success.salutation.title1" /></span>
+            <span class="go-premium-success-salutation-title go-premium-success-salutation-title-1-device"><s:message code="paypal.success.salutation.title1" /></span>
             <br/>
-            <span class="go-premium-success-solutation-title go-premium-success-solutation-title-2-device"><s:message code="paypal.success.salutation.title2" /></span>
+            <span class="go-premium-success-salutation-title go-premium-success-salutation-title-2-device"><s:message code="paypal.success.salutation.title2" /></span>
         </div>
     </div>
     <div class="go-premium-success-avatar-container">

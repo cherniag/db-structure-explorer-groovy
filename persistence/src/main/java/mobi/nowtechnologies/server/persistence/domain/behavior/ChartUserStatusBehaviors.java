@@ -21,26 +21,18 @@ public class ChartUserStatusBehaviors {
 
 
     public Map<Integer, Map<UserStatusType, ChartUserStatusBehavior>> order() {
-        Map<Integer, Map<UserStatusType, ChartUserStatusBehavior>> ordered = new HashMap<Integer, Map<UserStatusType, ChartUserStatusBehavior>>();
+        Map<Integer, Map<UserStatusType, ChartUserStatusBehavior>> ordered = new HashMap<>();
 
         for (ChartUserStatusBehavior chartUserStatusBehavior : chartUserStatusBehaviors) {
             final int chartId = chartUserStatusBehavior.getChartId();
 
             if(!ordered.containsKey(chartId)) {
-                ordered.put(chartId, createEmptyForTypes());
+                ordered.put(chartId, new HashMap<UserStatusType, ChartUserStatusBehavior>());
             }
 
             ordered.get(chartId).put(chartUserStatusBehavior.getUserStatusType(), chartUserStatusBehavior);
         }
 
         return ordered;
-    }
-
-    private HashMap<UserStatusType, ChartUserStatusBehavior> createEmptyForTypes() {
-        HashMap<UserStatusType, ChartUserStatusBehavior> map = new HashMap<UserStatusType, ChartUserStatusBehavior>();
-        for (UserStatusType userStatusType : UserStatusType.values()) {
-            map.put(userStatusType, null);
-        }
-        return map;
     }
 }

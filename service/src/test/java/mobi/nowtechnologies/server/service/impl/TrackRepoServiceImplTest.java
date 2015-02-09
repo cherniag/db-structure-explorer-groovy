@@ -12,12 +12,12 @@ import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.Resolution;
+import mobi.nowtechnologies.server.trackrepo.TrackRepositoryHttpClientImpl;
 import mobi.nowtechnologies.server.trackrepo.dto.*;
 import mobi.nowtechnologies.server.trackrepo.enums.AudioResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.enums.ImageResolution;
 import mobi.nowtechnologies.server.trackrepo.enums.TrackStatus;
-import mobi.nowtechnologies.server.trackrepo.impl.TrackRepositoryHttpClientImpl;
 import mobi.nowtechnologies.shared.testcases.TestCase;
 import mobi.nowtechnologies.shared.testcases.TestCases;
 import org.junit.After;
@@ -67,7 +67,8 @@ public class TrackRepoServiceImplTest {
     TestCases<String, Artist> mapArtistByRealName = new TestCases<String, Artist>();
     TestCases<String, Genre> mapGenreByName = new TestCases<String, Genre>();
 
-    @Mock TrackRepositoryHttpClientImpl client;
+    @Mock
+    TrackRepositoryHttpClientImpl client;
     @Mock ArtistRepository artistRepository;
     @Mock MediaRepository mediaRepository;
     @Mock GenreRepository genreRepository;

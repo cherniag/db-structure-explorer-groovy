@@ -1,13 +1,14 @@
+/*
+ * Copyright 2015 Musicqubed.com. All Rights Reserved.
+ */
+
 package mobi.nowtechnologies.server.service.itunes;
 
-import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import mobi.nowtechnologies.server.persistence.domain.User;
 
 /**
- * @author Titov Mykhaylo (titov)
- *
+ * Created by zam on 1/15/2015.
  */
 public interface ITunesService {
-	
-	BasicResponse processInAppSubscription(int userId, String transactionReceipt);
-
+    void processInAppSubscription(User user, String transactionReceipt);
 }

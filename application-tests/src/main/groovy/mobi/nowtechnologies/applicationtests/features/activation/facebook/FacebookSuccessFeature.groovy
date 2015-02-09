@@ -15,6 +15,8 @@ import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
@@ -34,9 +36,6 @@ import static org.junit.Assert.assertEquals
  */
 @Component
 class FacebookSuccessFeature {
-
-    static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy")
-
     @Resource
     UserDbService userDbService
 
@@ -66,6 +65,10 @@ class FacebookSuccessFeature {
 
     List<UserDeviceData> currentUserDevices
 
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
+
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')
     def "Registered user with given devices using given format for given versions and given communities"(
             @Transform(DictionaryTransformer.class) Word devices,
@@ -73,7 +76,8 @@ class FacebookSuccessFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        currentUserDevices.each { deviceSet.singup(it) }
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel { deviceSet.singup(it) }
     }
 
     @When('^Registered user enters Facebook credentials$')
@@ -83,7 +87,7 @@ class FacebookSuccessFeature {
 
     @Then('^Default promo set in services properties is applied$')
     def "Default_promo_set_in_services_properties_is_applied"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
 
             def user = userDbService.findUser(phoneState, it)
@@ -98,7 +102,7 @@ class FacebookSuccessFeature {
     @And('^User receives following in the SIGN_IN_FACEBOOK response:$')
     def "User receives following in the SIGN_IN_FACEBOOK_response"(DataTable userStateTable) {
         def userState = userStateTable.asList(UserState)[0];
-        currentUserDevices.each {
+        runner.parallel {
             def lastFacebookInfo = deviceSet.getPhoneState(it).lastFacebookInfo
             assertEquals(userState.activation.name(), lastFacebookInfo.activation)
             assertEquals(userState.freeTrial, lastFacebookInfo.freeTrial)
@@ -112,7 +116,9 @@ class FacebookSuccessFeature {
 
     @And('^\'deviceType\' field is the same as sent during registration$')
     def "deviceType field is the same as sent during registration"() {
-        commonAssertionsService.checkDeviceTypeField(currentUserDevices, deviceSet)
+        runner.parallel {
+            commonAssertionsService.checkDeviceTypeField(it, deviceSet)
+        }
     }
 
     @And('^\'deviceUID\' field is the same as sent during registration$')
@@ -132,7 +138,7 @@ class FacebookSuccessFeature {
 
     @And('^\'userDetails\' filed contains correct facebook details$')
     def "userDetails filed contains correct facebook details"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def facebookInfo = phoneState.lastFacebookInfo.userDetails
             def facebookProfile = composer.parseToken(phoneState.facebookAccessToken)
@@ -149,7 +155,7 @@ class FacebookSuccessFeature {
 
     @And('^In database user has username as entered Facebook email$')
     def "In database user has username as entered Facebook email"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getUserName(), phoneState.email)
@@ -189,7 +195,7 @@ class FacebookSuccessFeature {
 
     @And('^In database user has facebook details the same as specified in facebook account$')
     def "In database user has facebook details the same as specified in facebook account"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def facebookUserInfo = fbDetailsRepository.findByUser(user)
@@ -203,5 +209,9 @@ class FacebookSuccessFeature {
             assertEquals(facebookUserInfo.getFacebookId(), phoneState.getFacebookUserId())
             assertEquals(facebookUserInfo.getUserName(), phoneState.getEmail())
         }
+    }
+
+    private SimpleDateFormat getDateFormat() {
+        new SimpleDateFormat("MM/dd/yyyy")
     }
 }

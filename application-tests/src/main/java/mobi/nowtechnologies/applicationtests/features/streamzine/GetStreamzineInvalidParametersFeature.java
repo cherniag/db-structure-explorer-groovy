@@ -12,6 +12,7 @@ import mobi.nowtechnologies.applicationtests.features.common.transformers.util.N
 import mobi.nowtechnologies.applicationtests.features.common.transformers.util.NullableStringTransformer;
 import mobi.nowtechnologies.applicationtests.services.RequestFormat;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
+import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.common.standard.StandardResponse;
@@ -28,6 +29,7 @@ public class GetStreamzineInvalidParametersFeature extends AbstractStreamzineFea
     private Map<UserDeviceData, ResponseEntity<StandardResponse>> errorResponses = new HashMap<UserDeviceData, ResponseEntity<StandardResponse>>();
     private Map<UserDeviceData, String> spoiledOrNotUserNames = new HashMap<UserDeviceData, String>();
 
+    private ApiVersions apiVersions;
     //
     // Given and After
     //
@@ -38,6 +40,7 @@ public class GetStreamzineInvalidParametersFeature extends AbstractStreamzineFea
                                         @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         // init once for examples table
         if(currentUserDevices.isEmpty()) {
+            apiVersions = ApiVersions.from(versions.set());
             currentUserDevices = super.initUserData(requestFormats.set(RequestFormat.class), versions, communities, devices);
         }
     }
@@ -64,7 +67,7 @@ public class GetStreamzineInvalidParametersFeature extends AbstractStreamzineFea
                     userToken.decide(token.getTimestampToken()),
                     timestamp.decide(token.getTimestamp()),
                     nullable.value(),
-                    userNameWrongOrCorrect);
+                    userNameWrongOrCorrect, apiVersions);
 
             errorResponses.put(data, response);
         }

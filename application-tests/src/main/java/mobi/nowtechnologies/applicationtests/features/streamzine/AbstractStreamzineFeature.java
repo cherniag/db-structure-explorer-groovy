@@ -8,6 +8,9 @@ import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataServi
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.streamzine.GetStreamzineHttpService;
+import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
+import mobi.nowtechnologies.applicationtests.services.runner.Runner;
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.applicationtests.services.streamzine.StreamzineUpdateCreator;
 import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
@@ -40,15 +43,23 @@ public abstract class AbstractStreamzineFeature {
 
     @Resource
     MQAppClientDeviceSet deviceSet;
+    @Resource
+    RunnerService runnerService;
+
+    private Runner runner;
 
     protected List<UserDeviceData> currentUserDevices = new ArrayList<UserDeviceData>();
 
     protected List<UserDeviceData> initUserData(Set<RequestFormat> requestFormats, Word versions, Word communities, Word devices) {
         List<UserDeviceData> datas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), requestFormats);
-        for (UserDeviceData data : datas) {
-            deviceSet.singup(data);
-            deviceSet.loginUsingFacebook(data);
-        }
+        runner = runnerService.create(datas);
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData data) {
+                deviceSet.singup(data);
+                deviceSet.loginUsingFacebook(data);
+            }
+        });
         return datas;
     }
 

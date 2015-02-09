@@ -8,17 +8,14 @@ html {
 .page {
     height: 100%;
 }
-
 @font-face {
     font-family: 'FuturaSB-BoldItalic';
     src: url('../fonts/FuturaSB-BoldItalic.ttf');
 }
-
 @font-face {
     font-family: 'NimbusSanTOTLig';
     src: url('../fonts/NimbusSanTOT-Lig.otf');
 }
-
 body {
     font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif;
     margin: 0;
@@ -26,9 +23,6 @@ body {
     -webkit-user-select: none;
     -webkit-text-size-adjust: none;
 }
-
-
-/*Cookie Container*/
 .cookie_conteiner {
     position: absolute;
     margin: 0;
@@ -37,6 +31,9 @@ body {
     display: none;
 }
 
+/**
+** HOLDING PAGE SECTION
+**/
 .holding_page_main_container {
     background: url(../imgs/bgs/coming_soon.png) no-repeat;
     background-size: cover;
@@ -186,7 +183,6 @@ body {
         margin: 30% 9% 1%;
     }
 }
-
 
 @media all and (max-width: 580px) {
     .holding_page_relax {
@@ -357,9 +353,7 @@ body {
 
 
 /**
-**
-** GO PREMIUM SECTION
-**
+** GO PREMIUM SECTION - OLD
 **/
 .go-premium-container {
     padding: 30px;
@@ -369,14 +363,6 @@ body {
 
 .go-premium-header {
     display: table;
-}
-
-.go-premium-header-delimiter {
-    width: 100%;
-    height: 9px;
-    background: url(../imgs/dot.png) repeat left;
-    margin-top: 30px;
-    margin-bottom: 30px;
 }
 
 .go-premium-header-logo {
@@ -391,23 +377,9 @@ body {
     vertical-align: middle;
 }
 
-
 .go-premium-header-title {
     font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
 }
-
-.go-premium-header-title-color {
-    color: #0c9f86;
-}
-
-.go-premium-header-price {
-    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
-}
-
-.go-premium-header-hint {
-    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
-}
-
 
 .go-premium-body-title {
     font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
@@ -421,6 +393,7 @@ body {
     text-align: center;
     vertical-align: middle;
 }
+
 .go-premium-text-message {
     font-family: 'NimbusSanTOTLig', Arial, sans-serif;
     line-height: 150%;
@@ -463,16 +436,30 @@ body {
     margin-left: 20px;
 }
 
-.go-premium-unsubscribe-1-banner {
-    background: url(../imgs/img_phone_unsubscribe_1.png) no-repeat center;
+.error-title p{
+    margin: 0px;
+    font-size: 150%;
 }
 
-.go-premium-unsubscribe-2-banner {
-    background: url(../imgs/img_phone_unsubscribe_2.png) no-repeat center;
+.error-title span{
+    color: #FFF;
+    background-color: #000;
+    padding: 5px 10px 3px 10px;
+    display: inline-block;
 }
 
-.go-premium-unsubscribe-3-banner {
-    background: url(../imgs/img_phone_unsubscribe_3.png) no-repeat center;
+.error-description {
+    margin: 30px auto 30px auto;
+}
+
+.go-premium-unsubscribe-premium-banner {
+    background: url(../imgs/img_notification_premium.png) no-repeat center;
+    width: 90%;
+}
+
+.go-premium-unsubscribe-pass-banner {
+    background: url(../imgs/img_notification_pass.png) no-repeat center;
+    width: 90%;
 }
 
 .go-premium-unsubscribe-banner {
@@ -481,85 +468,66 @@ body {
     margin: 10px auto;
 }
 
-
-
 .go-premium-first-half {
     width: 100%;
     height: 50%;
     background-color: #19f3cd;
 }
+
 .go-premium-second-half {
     width: 100%;
     height: 50%;
 }
+
 .go-premium-success {
     padding: 0 !important;
     height: 100%;
 }
 
-.go-premium-success-solutation-container {
+.go-premium-success-salutation-container {
     width: 100%;
     position: absolute;
 }
 
-.go-premium-success-solutation-container-text {
+.go-premium-success-salutation-container-text {
     margin: 0 auto;
     width:90%;
     text-align: center;
 }
-.go-premium-success-solutation {
-    background-color: #000;
-    color:#FFF;
-    font-family: 'FuturaSB-BoldItalic';
-    line-height: 120%;
-}
-.go-premium-success-solutation-title {
+
+.go-premium-success-salutation {
     background-color: #000;
     color:#FFF;
     font-family: 'FuturaSB-BoldItalic';
     line-height: 120%;
 }
 
+.go-premium-success-salutation-title {
+    background-color: #000;
+    color:#FFF;
+    font-family: 'FuturaSB-BoldItalic';
+    line-height: 120%;
+}
 
-.go-premium-success-avatar-container {
+.go-premium-success-notification-container {
+    position: absolute;
     width: 100%;
-    height:270px;
-    margin:-140px auto 0;
-    position: absolute;
-}
-.go-premium-success-avatar {
-    width:270px;
-    margin:0 auto;
-    height:100%;
-    position: relative;
-}
-.go-premium-success-avatar-customer {
-    width: 200px;
-    height:200px;
-    margin-top:35px;
-    margin-left:35px;
-    display:block;
-    border-radius: 100px;
-    overflow: hidden;
+    height: 180px;
+    margin-top: -110px;
 }
 
-.go-premium-success-avatar-customer-circle{
+.go-premium-success-notification{
     position: absolute;
-    border: 1px solid #bababa;
-    border-radius: 50%;
-    margin-left: 34px;
+    top: 0px;
+    bottom: 0px;
+    left: 5%;
+    right: 5%;
 }
 
-.go-premium-success-avatar-customer-img{
-    display:block;
-    margin-left: -1px;
-    margin-top: -1px;
-}
-.go-premium-success-avatar-border {
-    width:270px;
-    height: 270px;
-    margin-top:-235px;
-    position: relative;
+.go-premium-success-notification-img{
+    display: block;
+    height: 100%;
+    margin: auto;
 }
 
 .go-premium-success-ad-container {
@@ -572,10 +540,12 @@ body {
     width:90%;
     text-align: center;
 }
+
 .go-premium-success-ad-text-1 {
     font-family: 'FuturaSB-BoldItalic';
     line-height: 120%;
 }
+
 .go-premium-success-ad-text-2 {
     font-family: 'FuturaSB-BoldItalic';
     line-height: 120%;
@@ -585,6 +555,75 @@ body {
     position: absolute;
 }
 
+/**
+** GO PREMIUM SECTION - NEW
+**/
+.subscription_root_container {
+    background: url(../imgs/bgs/bg.png) no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.subscription_header_block {
+    background-color: #FFFFFF;
+}
+
+.go-premium-header-title-options{
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+}
+
+.subscription_option_container{
+    background-color: #FFFFFF;
+}
+
+.subscription_premium_logo{
+    background: url(../imgs/label_premium.png) no-repeat;
+    background-size: 100%;
+    margin: 0 auto 0;
+    width: 58%;
+}
+
+.subscription_pass_logo{
+    background: url(../imgs/label_pass.png) no-repeat;
+    background-size: 100%;
+    margin: 0 auto 0;
+    width: 64%;
+}
+
+.subscription_option_price_message{
+    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+    text-align: center;
+}
+
+.go-premium-unsubscribe-title{
+    color: #ffffff;
+    background-color: #000000;
+    padding: 4px 8px;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+.go-premium-unsubscribe-title-ios{
+    padding-top: 7px;
+}
+
+.go-premium-unsubscribe-title-bottom{
+    padding-top: 2px;
+}
+
+.go-premium-success-salutation-device {
+    white-space: nowrap;
+}
+
+.error-banner {
+    width: 30%;
+    background: url(../imgs/icon_error.png) no-repeat center;
+    background-size: 100% auto;
+}
 
 @media all and (max-width: 3000px) {
     .go-premium-button-close-device {
@@ -605,6 +644,11 @@ body {
         margin: 80px auto 50px;
     }
 
+    .go-premium-unsubscribe-title-device{
+        font-size: 80px;
+        margin: 80px auto 80px;
+    }
+
     .go-premium-button-device {
         padding: 40px;
         font-size: 54px;
@@ -617,14 +661,8 @@ body {
         height: 380px;
     }
 
-    .go-premium-header-hint-device {
-        font-size: 50px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-price-device {
-        font-size: 60px;
-        line-height: 120%;
+    .go-premium-unsubscribe-logo-device{
+        height: 400px;
     }
 
     .go-premium-header-title-device {
@@ -642,10 +680,10 @@ body {
         margin: 0 auto 20px;
     }
 
-    .go-premium-success-solutation-container-device {
-        margin-top:-400px;
+    .go-premium-success-salutation-container-device {
+        margin-top:-500px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 80px;
         padding: 10px;
     }
@@ -657,11 +695,11 @@ body {
         padding: 8px;
         font-size: 60px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 60px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 60px;
         padding: 8px;
     }
@@ -670,6 +708,69 @@ body {
     }
     .go-premium-success-close-button-container-device {
         margin-top:20px;
+    }
+
+    .subscription_header_block_device {
+        margin: 20px 20px 0;
+        padding: 10px;
+
+    }
+
+    .go-premium-header-logo-device {
+        width: 146px;
+        height: 146px;
+    }
+
+    .go-premium-header-ad {
+        padding-left: 40px;
+    }
+
+    .go-premium-header-title-device {
+        font-size: 40px;
+    }
+
+    .go-premium-header-title-options-device {
+        font-size: 36px;
+    }
+
+    .subscription_option_container_device {
+        margin: 20px 20px 0;
+        padding-top: 36px;
+        padding-bottom: 36px;
+    }
+
+    .subscription_premium_logo_device {
+        height: 86px;
+    }
+
+    .subscription_option_price_message_device {
+        font-size: 28px;
+        margin: 30px auto 30px;
+        width: 80%;
+    }
+
+    .subscribe-button-device {
+        margin: 0 60px 0;
+        padding: 20px 0 20px 0;
+        border-radius: 60px;
+        font-size: 28px;
+    }
+
+    .subscription_pass_logo_device {
+        height: 80px;
+    }
+
+    .error-title {
+        font-size: 70px;
+    }
+
+    .error-description {
+        margin: 60px auto 60px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 320px;
+        margin-top: -190px;
     }
 }
 
@@ -704,16 +805,6 @@ body {
         height: 380px;
     }
 
-    .go-premium-header-hint-device {
-        font-size: 50px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-price-device {
-        font-size: 60px;
-        line-height: 120%;
-    }
-
     .go-premium-header-title-device {
         font-size: 60px;
         line-height: 120%;
@@ -724,10 +815,10 @@ body {
         height: 268px;
     }
 
-    .go-premium-success-solutation-container-device {
-        margin-top:-360px;
+    .go-premium-success-salutation-container-device {
+        margin-top:-420px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 70px;
         padding: 10px;
     }
@@ -739,16 +830,20 @@ body {
         padding: 8px;
         font-size: 50px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 50px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 50px;
         padding: 8px;
     }
     .go-premium-success-close-button-container-device {
         margin-top:20px;
+    }
+
+    .error-title {
+        font-size: 70px;
     }
 }
 
@@ -783,28 +878,18 @@ body {
         height: 322px;
     }
 
-    .go-premium-header-hint-device {
-        font-size: 35px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-price-device {
-        font-size: 45px;
-        line-height: 120%;
-    }
-
     .go-premium-header-title-device {
         font-size: 45px;
         line-height: 120%;
     }
 
     .go-premium-header-logo-device {
-        width: 228px;
-        height: 228px;
+        width: 156px;
+        height: 156px;
     }
 
-    .go-premium-success-solutation-container-device {
-        margin-top:-360px;
+    .go-premium-success-salutation-container-device {
+        margin-top:-400px;
     }
     .go-premium-success-ad-text-1-device {
         padding: 12px;
@@ -814,20 +899,40 @@ body {
         padding: 8px;
         font-size: 50px;
     }
-    .go-premium-success-solutation-device {
-        font-size: 70px;
+    .go-premium-success-salutation-device {
+        font-size: 60px;
         padding: 10px;
     }
-    .go-premium-success-solutation-title-1-device {
-        font-size: 50px;
+    .go-premium-success-salutation-title-1-device {
+        font-size: 45px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
-        font-size: 50px;
+    .go-premium-success-salutation-title-2-device {
+        font-size: 45px;
         padding: 8px;
     }
     .go-premium-success-close-button-container-device {
         margin-top:20px;
+    }
+    .go-premium-unsubscribe-title-device{
+        font-size: 38px;
+        margin: 60px auto 60px;
+    }
+    .go-premium-unsubscribe-logo-device{
+        height: 390px;
+    }
+
+    .go-premium-header-title-options-device {
+        font-size: 32px;
+    }
+
+    .error-title {
+        font-size: 35px;
+    }
+
+    .go-premium-success-notification-container {
+        height: 320px;
+        margin-top: -190px;
     }
 }
 
@@ -866,27 +971,17 @@ body {
         margin: 30px 50px 0 50px;
     }
 
-    .go-premium-header-hint-device {
-        font-size: 30px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-price-device {
-        font-size: 34px;
-        line-height: 120%;
-    }
-
     .go-premium-header-title-device {
         font-size: 34px;
         line-height: 120%;
     }
 
     .go-premium-header-logo-device {
-        width: 160px;
-        height: 160px;
+        width: 140px;
+        height: 140px;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-360px;
     }
     .go-premium-success-ad-text-1-device {
@@ -897,20 +992,67 @@ body {
         padding: 8px;
         font-size: 50px;
     }
-    .go-premium-success-solutation-device {
-        font-size: 70px;
+    .go-premium-success-salutation-device {
+        font-size: 50px;
         padding: 10px;
     }
-    .go-premium-success-solutation-title-1-device {
-        font-size: 50px;
+    .go-premium-success-salutation-title-1-device {
+        font-size: 40px;
         padding: 12px;
     }
-    .go-premium-success-solutation-title-2-device {
-        font-size: 50px;
+    .go-premium-success-salutation-title-2-device {
+        font-size: 40px;
         padding: 8px;
     }
     .go-premium-success-close-button-container-device {
         margin-top:20px;
+    }
+    .go-premium-unsubscribe-title-device{
+        font-size: 32px;
+        margin: 30px auto 30px;
+    }
+    .go-premium-unsubscribe-logo-device{
+        height: 310px;
+    }
+
+    .subscription_header_block_device{
+        margin: 18px 18px 0;
+        padding: 10px;
+    }
+
+    .subscription_premium_logo_device{
+        height: 70px;
+    }
+
+    .subscription_pass_logo_device{
+        height: 64px;
+    }
+
+    .subscription_option_container_device{
+        margin: 18px 18px 0;
+        padding-top: 32px;
+        padding-bottom: 32px;
+    }
+
+    .subscription_option_price_message_device{
+        font-size: 22px;
+        margin: 28px auto 28px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 40px 0;
+        padding: 18px 0 18px 0;
+        border-radius: 50px;
+        font-size: 22px;
+    }
+
+    .error-title {
+        font-size:35px;
+    }
+
+    .go-premium-success-notification-container {
+        height: 300px;
+        margin-top: -180px;
     }
 }
 
@@ -940,25 +1082,25 @@ body {
         margin: 26px auto 18px;
     }
 
+    .go-premium-unsubscribe-title-device{
+        font-size: 24px;
+        margin: 26px auto 26px;
+    }
+
     .go-premium-button-device {
         padding: 14px 60px 14px 60px;
         font-size: 20px;
         border-radius: 40px;
     }
 
-    .go-premium-header-delimiter {
-        width: 100%;
-        height: 9px;
-        background: url(../imgs/dot_1200x9.png) no-repeat;
-        background-size: 120%;
-        margin-top: 30px;
-        margin-bottom: 30px;
-    }
-
     .go-premium-unsubscribe-banner-device {
         margin-top: 10px;
         width: 78px;
         height: 125px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 240px;
     }
 
     .go-premium-body-button-up {
@@ -971,16 +1113,6 @@ body {
 
     .go-premium-success-button-get-listening{
         margin-top: 35px;
-    }
-
-    .go-premium-header-hint-device {
-        font-size: 16px;
-        line-height: 200%;
-    }
-
-    .go-premium-header-price-device {
-        font-size: 22px;
-        line-height: 110%;
     }
 
     .go-premium-header-title-device {
@@ -998,7 +1130,7 @@ body {
         margin: 0 auto 30px;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-230px;
     }
     .go-premium-success-ad-text-1-device {
@@ -1009,15 +1141,15 @@ body {
         padding: 4px;
         font-size: 20px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         padding: 7px;
         font-size: 28px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         padding: 5px;
         font-size: 20px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         padding: 5px;
         font-size: 20px;
     }
@@ -1028,40 +1160,148 @@ body {
         margin-top:10px;
     }
 
-    .go-premium-success-avatar-container {
-        width: 100%;
-        height: 200px;
-        margin: -105px auto 0;
-        position: absolute;
+    .subscription_header_block_device{
+        margin: 13px 13px 0;
+        padding: 8px;
     }
 
-    .go-premium-success-avatar {
-        width: 200px;
-        margin: 0 auto;
-        height: 100%;
+    .go-premium-header-logo-device{
+        width: 97px;
+        height: 97px;
     }
 
-    .go-premium-success-avatar-customer {
-        width: 150px;
-        height: 150px;
-        margin-top: 25px;
-        margin-left: 25px;
-        border-radius: 75px;
+    .go-premium-header-ad{
+        padding-left: 26px;
     }
 
-    .go-premium-success-avatar-customer-circle{
-        margin-left: 24px;
-        border-radius:50%;
+    .go-premium-header-title-device {
+        font-size: 26px;
+        line-height: 120%;
     }
 
-    .go-premium-success-avatar-border {
-        width: 200px;
-        height: 200px;
-        margin-top: -175px;
+    .go-premium-header-title-options-device {
+        font-size: 23px;
+        line-height: 120%;
+    }
+
+    .subscription_option_container_device{
+        margin: 13px 13px 0;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .subscription_premium_logo_device{
+        height: 56px;
+    }
+
+    .subscription_option_price_message_device{
+        font-size: 17px;
+        margin: 20px auto 20px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 40px 0;
+        padding: 15px 0 15px 0;
+        border-radius: 40px;
+        font-size: 20px;
+    }
+
+    .subscription_pass_logo_device{
+        height: 52px;
+    }
+
+    .error-title {
+        font-size: 18px;
+    }
+
+    .error-description {
+        margin: 30px auto 30px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 240px;
+        margin-top: -145px;
+    }
+}
+
+@media all and (max-width: 400px){
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 20px;
+        margin: 24px auto 24px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 210px;
+    }
+
+    .subscription_header_block_device{
+        margin: 11px 11px 0;
+        padding: 5px;
+    }
+
+    .go-premium-header-logo-device{
+        width: 80px;
+        height: 80px;
+    }
+
+    .go-premium-header-ad{
+        padding-left: 22px;
+    }
+
+    .go-premium-header-title-device {
+        font-size: 22px;
+        line-height: 120%;
+    }
+
+    .go-premium-header-title-options-device {
+        font-size: 20px;
+        line-height: 120%;
+    }
+
+    .subscription_option_container_device{
+        margin: 11px 11px 0;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .subscription_premium_logo_device{
+        /*width: 210px;*/
+        height: 46px;
+    }
+
+    .subscription_option_price_message_device{
+        font-size: 15px;
+        margin: 16px auto 16px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 33px 0;
+        padding: 13px 0 13px 0;
+        border-radius: 36px;
+        font-size: 19px;
+    }
+
+    .subscription_pass_logo_device{
+        height: 42px;
+    }
+
+    .go-premium-success-notification-container {
+        height: 193px;
+        margin-top: -118px;
     }
 }
 
 @media all and (max-width: 360px) {
+
+    .go-premium-unsubscribe-logo-device{
+        height: 175px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 18px;
+        margin: 22px auto 22px;
+    }
 
     .go-premium-header {
         margin-top: 10px;
@@ -1073,6 +1313,53 @@ body {
 
     .go-premium-success-button-get-listening{
         margin-top: 35px;
+    }
+
+    .subscription_header_block_device{
+        margin: 10px 10px 0;
+    }
+
+    .go-premium-header-logo-device{
+        width: 73px;
+        height: 73px;
+    }
+
+    .go-premium-header-ad{
+        padding-left: 20px;
+    }
+
+    .go-premium-header-title-device {
+        font-size: 20px;
+    }
+
+    .go-premium-header-title-options-device {
+        font-size: 18px;
+    }
+
+    .subscription_option_container_device{
+        margin: 10px 10px 0;
+        padding-top: 18px;
+        padding-bottom: 18px;
+    }
+
+    .subscription_premium_logo_device{
+        height: 42px;
+    }
+
+    .subscription_option_price_message_device{
+        font-size: 14px;
+        margin: 15px auto 15px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 30px 0;
+        padding: 12px 0 12px 0;
+        border-radius: 30px;
+        font-size: 17px;
+    }
+
+    .subscription_pass_logo_device{
+        height: 38px;
     }
 }
 
@@ -1105,20 +1392,20 @@ body {
         border-radius: 24px;
     }
 
-    .go-premium-header-delimiter {
-        width: 100%;
-        height: 6px;
-        background: url(../imgs/dot_1200x6.png) no-repeat;
-        background-size: 200%;
-        margin-top: 30px;
-        margin-bottom: 30px;
-    }
-
     .go-premium-unsubscribe-banner-device {
         margin-top: 16px;
         margin-bottom: 0px;
         width: 62px;
         height: 100px;
+    }
+
+    .go-premium-unsubscribe-logo-device{
+        height: 160px;
+    }
+
+    .go-premium-unsubscribe-title-device{
+        font-size: 17px;
+        margin: 20px auto 20px;
     }
 
     .go-premium-body-button-up {
@@ -1131,16 +1418,6 @@ body {
 
     .go-premium-success-button-get-listening{
         margin-top: 38px;
-    }
-
-    .go-premium-header-hint-device {
-        font-size: 14px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-price-device {
-        font-size: 20px;
-        line-height: 120%;
     }
 
     .go-premium-header-title-device {
@@ -1158,7 +1435,7 @@ body {
         margin: 0 auto;
     }
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-180px;
     }
     .go-premium-success-ad-text-1-device {
@@ -1169,15 +1446,15 @@ body {
         font-size: 16px;
         padding: 2px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 20px;
         padding: 6px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 16px;
         padding: 4px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 16px;
         padding: 4px;
     }
@@ -1188,36 +1465,60 @@ body {
         margin-top:20px;
         margin-left:20px;
     }
-    .go-premium-success-avatar-container {
-        width: 100%;
-        height: 160px;
-        margin: -80px auto 0;
-        position: absolute;
+
+    .subscription_header_block_device{
+        padding: 2px;
     }
 
-    .go-premium-success-avatar {
-        width: 160px;
-        margin: 0 auto;
-        height: 100%;
+    .go-premium-header-logo-device{
+        width: 68px;
+        height: 68px;
     }
 
-    .go-premium-success-avatar-customer {
-        width: 120px;
-        height: 120px;
-        margin-top: 20px;
-        margin-left: 20px;
-        border-radius: 60px;
+    .go-premium-header-title-device {
+        font-size: 19px;
     }
 
-    .go-premium-success-avatar-customer-circle{
-        margin-left: 19px;
-        border-radius: 50%;
+    .go-premium-header-title-options-device {
+        font-size: 17px;
     }
 
-    .go-premium-success-avatar-border {
-        width: 160px;
-        height: 160px;
-        margin-top: -175px;
+    .subscription_option_container_device{
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+
+    .subscription_option_price_message_device{
+        font-size: 13px;
+        margin: 14px auto 14px;
+    }
+
+    .subscription_premium_logo_device{
+        height: 36px;
+    }
+
+    .subscription_pass_logo_device{
+        height: 35px;
+    }
+
+    .subscribe-button-device{
+        margin: 0 28px 0;
+        padding: 8px 0 8px 0;
+        border-radius: 24px;
+        font-size: 15px;
+    }
+
+    .error-title {
+        font-size: 15px;
+    }
+
+    .error-description {
+        margin: 25px auto 25px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 165px;
+        margin-top: -100px;
     }
 }
 
@@ -1262,16 +1563,6 @@ body {
         margin: 8px 50px 0 50px;
     }
 
-    .go-premium-header-hint-device {
-        font-size: 12px;
-        line-height: 120%;
-    }
-
-    .go-premium-header-price-device {
-        font-size: 16px;
-        line-height: 120%;
-    }
-
     .go-premium-header-title-device {
         font-size: 16px;
         line-height: 120%;
@@ -1288,7 +1579,7 @@ body {
     }
 
 
-    .go-premium-success-solutation-container-device {
+    .go-premium-success-salutation-container-device {
         margin-top:-125px;
     }
     .go-premium-success-ad-text-1-device {
@@ -1299,15 +1590,15 @@ body {
         font-size: 10px;
         padding: 2px;
     }
-    .go-premium-success-solutation-device {
+    .go-premium-success-salutation-device {
         font-size: 14px;
         padding: 2px;
     }
-    .go-premium-success-solutation-title-1-device {
+    .go-premium-success-salutation-title-1-device {
         font-size: 12px;
         padding: 2px;
     }
-    .go-premium-success-solutation-title-2-device {
+    .go-premium-success-salutation-title-2-device {
         font-size: 12px;
         padding: 2px;
     }
@@ -1319,33 +1610,73 @@ body {
         margin-left:10px;
         width: 60%;
     }
-    .go-premium-success-avatar-container {
-        width: 100%;
-        height:140px;
-        margin:-80px auto 0;
-        position: absolute;
+
+    .subscription_header_block_device {
+        margin: 8px 8px 0;
+        padding: 4px;
+
     }
-    .go-premium-success-avatar {
-        width:140px;
-        margin:0 auto;
-        height:100%;
+
+    .go-premium-header-logo-device {
+        width: 50px;
+        height: 50px;
     }
-    .go-premium-success-avatar-customer {
-        width: 90px;
-        height:90px;
-        margin-top:25px;
-        margin-left:25px;
-        display:block;
-        border-radius: 45px;
-        overflow: hidden;
+
+    .go-premium-header-ad {
+        padding-left: 13px;
     }
-    .go-premium-success-avatar-customer-circle{
-        margin-left: 24px;
-        border-radius: 50%;
+
+    .go-premium-header-title-device {
+        font-size: 13px;
     }
-    .go-premium-success-avatar-border {
-        width:140px;
-        height:140px;
-        margin-top:-115px;
+
+    .go-premium-header-title-options-device {
+        font-size: 12px;
+    }
+
+    .subscription_option_container_device {
+        margin: 8px 8px 0;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    .subscription_premium_logo_device {
+        height: 30px;
+    }
+
+    .subscription_option_price_message_device {
+        font-size: 9px;
+        margin: 10px auto 10px;
+    }
+
+    .subscribe-button-device {
+        margin: 0 20px 0;
+        padding: 8px 0 8px 0;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .subscription_pass_logo_device {
+        height: 27px;
+    }
+    .go-premium-unsubscribe-title-device{
+        font-size: 12px;
+        margin: 8px auto 8px;
+    }
+    .go-premium-unsubscribe-logo-device{
+        height: 120px;
+    }
+
+    .error-title {
+        font-size: 12px;
+    }
+
+    .error-description {
+        margin: 20px auto 20px auto;
+    }
+
+    .go-premium-success-notification-container {
+        height: 120px;
+        margin-top: -72px;
     }
 }

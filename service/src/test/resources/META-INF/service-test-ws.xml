@@ -38,7 +38,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.OfferService" class="java.lang.Object" />
     <bean id="service.TrackRepoService" class="java.lang.Object" />
     <bean id="service.FilterService" class="java.lang.Object" />
-    <bean id="service.IPaymentService" class="java.lang.Object" />
     <bean id="service.UserNotificationService" class="java.lang.Object" />
     <bean id="service.O2ClientService" class="java.lang.Object" />
     <bean id="service.ITunesService" class="java.lang.Object" />

@@ -40,7 +40,7 @@ public class ActivateVideoAudioFreeTrialController extends CommonController {
 
             user = promotionService.activateVideoAudioFreeTrial(user);
 
-            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false, false);
+            AccountCheckDTO accountCheckDTO = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheckDTO);
         } catch (Exception e) {

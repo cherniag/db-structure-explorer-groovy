@@ -1,14 +1,12 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.List;
-
-import mobi.nowtechnologies.server.persistence.dao.UserDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * WeeklyUpdateService

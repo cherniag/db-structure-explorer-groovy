@@ -4,9 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" profile="application-tests">
 
-    <!-- Application properties -->
-    <bean id="serviceMessageSource"
-          class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
+    <bean id="serviceReloadableResourceBundleMessageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
             <list>
                 <value>file:#{systemProperties['catalina.base']}/conf/services</value>

@@ -3,11 +3,14 @@ package mobi.nowtechnologies.server.persistence.domain;
 import com.google.common.base.Objects;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
 import mobi.nowtechnologies.server.shared.enums.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1078,6 +1081,10 @@ public class User implements Serializable {
         return freeTrialExpiredMillis;
     }
 
+    public Date getFreeTrialExpiredAsDate() {
+        return new Date(freeTrialExpiredMillis);
+    }
+
     public void setFreeTrialExpiredMillis(Long freeTrialExpiredMillis) {
         this.freeTrialExpiredMillis = freeTrialExpiredMillis;
     }
@@ -1420,6 +1427,14 @@ public class User implements Serializable {
         return status.getName().equals(LIMITED);
     }
 
+    public boolean hasOneTimeSubscription() {
+        return currentPaymentDetails.getPaymentPolicy().getPaymentPolicyType() == PaymentPolicyType.ONETIME;
+    }
+
+    public boolean hasAppReceiptInLimitedState() {
+        return getBase64EncodedAppStoreReceipt() != null && hasLimitedStatus();
+    }
+
     public User withOldUser(User oldUser) {
         this.oldUser = oldUser;
         return this;
@@ -1501,7 +1516,7 @@ public class User implements Serializable {
         this.uuid = uuid;
     }
 
-    public Collection<SocialInfo> getSocialInfo() {
+    public Set<SocialInfo> getSocialInfo() {
         return socialInfo;
     }
 
@@ -1510,6 +1525,33 @@ public class User implements Serializable {
     }
     public Integer getCommunityId() {
         return getCommunity().getId();
+    }
+
+    public String shortInfo(){
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("userName", userName)
+                .append("deviceUID", deviceUID)
+                .append("mobile", mobile)
+                .append("uuid", uuid)
+                .append("deviceTypeId", deviceTypeId)
+                .append("activationStatus", activationStatus)
+                .append("userGroupId", userGroupId)
+                .append("userStatusId", userStatusId)
+                .append("nextSubPayment", nextSubPayment)
+                .append("currentPaymentDetailsId", currentPaymentDetailsId)
+                .append("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
+                .append("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
+                .append("lastDeviceLogin", lastDeviceLogin)
+                .append("lastPromoId", getLastPromoId())
+                .append("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                .append("freeTrialExpiredMillis", freeTrialExpiredMillis)
+                .append("segment", segment)
+                .append("provider", provider)
+                .append("tariff", tariff)
+                .append("contractChannel", contractChannel)
+                .append("contract", contract)
+                .toString();
     }
 
     @Override
@@ -1546,7 +1588,6 @@ public class User implements Serializable {
                 .add("mobile", mobile)
                 .add("conformStoredToken", conformStoredToken)
                 .add("lastDeviceLogin", lastDeviceLogin)
-                .add("lastWebLogin", lastWebLogin)
                 .add("lastWebLogin", lastWebLogin)
                 .add("firstUserLoginMillis", firstUserLoginMillis)
                 .add("firstDeviceLoginMillis", firstDeviceLoginMillis)

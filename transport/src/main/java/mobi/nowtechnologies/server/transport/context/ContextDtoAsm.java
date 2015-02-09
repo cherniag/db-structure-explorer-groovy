@@ -5,19 +5,21 @@ import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import mobi.nowtechnologies.server.persistence.domain.behavior.*;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository;
 import mobi.nowtechnologies.server.service.behavior.BehaviorInfoService;
+import mobi.nowtechnologies.server.service.behavior.ChartBehaviorInfo;
+import mobi.nowtechnologies.server.service.behavior.ChartBehaviorService;
 import mobi.nowtechnologies.server.service.behavior.UserStatusTypeService;
 import mobi.nowtechnologies.server.transport.context.dto.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ContextDtoAsm {
     @Resource
@@ -32,24 +34,25 @@ public class ContextDtoAsm {
     BehaviorInfoService behaviorInfoService;
     @Resource
     TimeService timeService;
+    @Resource
+    ChartBehaviorService chartBehaviorService;
 
     //
     // API
     //
-    public ContextDto assemble(User user, boolean supportsFreemium) {
-        if (!supportsFreemium && behaviorInfoService.isFirstDeviceLoginBeforeReferralsActivation(user)) {
+    public ContextDto assemble(User user, boolean needToLookAtActivationDate) {
+        if (!needToLookAtActivationDate && behaviorInfoService.isFirstDeviceLoginBeforeReferralsActivation(user)) {
             // we do not create snapshots and thus can't move forward
             return ContextDto.empty();
         }
 
         Community community = user.getCommunity();
-        String rewriteUrlParameter = community.getRewriteUrlParameter();
 
-        BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(supportsFreemium, community);
+        BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(needToLookAtActivationDate, community);
         UserReferralsSnapshot snapshot = behaviorInfoService.getUserReferralsSnapshot(user, behaviorConfig);
 
         Date serverTime = timeService.now();
-        Map<UserStatusType, Date> userStatusTypeDateMap = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
+        List<Pair<UserStatusType, Date>> userStatusTypeDateMap = userStatusTypeService.userStatusesToSinceMapping(user, serverTime);
 
         ContextDto context = ContextDto.normal(serverTime);
         context.getReferralsContextDto().fill(snapshot);
@@ -61,10 +64,8 @@ public class ContextDtoAsm {
         context.getAdsContextDto().getInstructions().addAll(
                 calcAdsInstructions(behaviorConfig, userStatusTypeDateMap)
         );
-
-        ReferralsConditions referralsConditions = getReferralsConditions(behaviorConfig, snapshot);
         context.getChartContextDto().getChartBehaviors().addAll(
-                calcChartBehaviors(behaviorConfig, userStatusTypeDateMap, referralsConditions, rewriteUrlParameter)
+                calcChartBehaviors(chartBehaviorService.info(behaviorConfig, userStatusTypeDateMap, snapshot, user, serverTime))
         );
 
         return context;
@@ -79,10 +80,10 @@ public class ContextDtoAsm {
         }
     }
 
-    private List<InstructionDto> calcFavouritesInstructions(BehaviorConfig behaviorConfig, Map<UserStatusType, Date> userStatusTypeDateMap) {
-        List<InstructionDto> instructions = new ArrayList<InstructionDto>(2);
+    private List<InstructionDto> calcFavouritesInstructions(BehaviorConfig behaviorConfig, List<Pair<UserStatusType, Date>> userStatusTypeDatePairs) {
+        List<InstructionDto> instructions = new ArrayList<>(2);
 
-        for (Map.Entry<UserStatusType, Date> statusTypeDateEntry : userStatusTypeDateMap.entrySet()) {
+        for (Map.Entry<UserStatusType, Date> statusTypeDateEntry : userStatusTypeDatePairs) {
             UserStatusType statusType = statusTypeDateEntry.getKey();
             Date since = statusTypeDateEntry.getValue();
 
@@ -93,10 +94,10 @@ public class ContextDtoAsm {
         return instructions;
     }
 
-    private List<InstructionDto> calcAdsInstructions(BehaviorConfig behaviorConfig, Map<UserStatusType, Date> userStatusTypeDateMap) {
-        List<InstructionDto> instructions = new ArrayList<InstructionDto>(2);
+    private List<InstructionDto> calcAdsInstructions(BehaviorConfig behaviorConfig, List<Pair<UserStatusType, Date>> userStatusTypeDatePairs) {
+        List<InstructionDto> instructions = new ArrayList<>(2);
 
-        for (Map.Entry<UserStatusType, Date> statusTypeDateEntry : userStatusTypeDateMap.entrySet()) {
+        for (Map.Entry<UserStatusType, Date> statusTypeDateEntry : userStatusTypeDatePairs) {
             UserStatusType statusType = statusTypeDateEntry.getKey();
             boolean addsOff = behaviorConfig.getContentUserStatusBehavior(statusType).isAddsOff();
             instructions.add(new InstructionDto(addsOff, statusTypeDateEntry.getValue()));
@@ -105,76 +106,18 @@ public class ContextDtoAsm {
         return instructions;
     }
 
-    private List<ChartBehaviorsDto> calcChartBehaviors(BehaviorConfig behaviorConfig, Map<UserStatusType, Date> userStatusTypeDateMap, ReferralsConditions conditions, String community) {
-        Map<Integer, Map<UserStatusType, ChartUserStatusBehavior>> orderedByChartIdAndUserStatusType = chartToStatusMapping(behaviorConfig);
+    private List<ChartBehaviorsDto> calcChartBehaviors(Map<Integer, Collection<ChartBehaviorInfo>> infos) {
+        List<ChartBehaviorsDto> chartBehaviors = new ArrayList<>();
 
-        List<ChartBehaviorsDto> chartBehaviors = new ArrayList<ChartBehaviorsDto>(orderedByChartIdAndUserStatusType.size());
+        for (Map.Entry<Integer, Collection<ChartBehaviorInfo>> info : infos.entrySet()) {
+            ChartBehaviorsDto chartBehaviorsDto = new ChartBehaviorsDto(info.getKey());
+            for (ChartBehaviorInfo chartBehaviorInfo : info.getValue()) {
+                chartBehaviorsDto.getBehavior().add(new ChartBehaviorDto(chartBehaviorInfo));
+            }
 
-        for (Map.Entry<Integer, Map<UserStatusType, ChartUserStatusBehavior>> chartToStatusesEntry : orderedByChartIdAndUserStatusType.entrySet()) {
-            ChartBehaviorsDto chartBehaviorsDto = createChartBehaviorsDto(userStatusTypeDateMap, community, chartToStatusesEntry);
-            conditions.unlockChartBehaviors(chartBehaviorsDto.getBehavior());
-
-            chartBehaviors.add(
-                    chartBehaviorsDto
-            );
+            chartBehaviors.add(chartBehaviorsDto);
         }
 
         return chartBehaviors;
-    }
-
-    //
-    // Helpers
-    //
-    private ChartBehaviorsDto createChartBehaviorsDto(Map<UserStatusType, Date> userStatusTypeDateMap, String community,
-                                                      Map.Entry<Integer, Map<UserStatusType, ChartUserStatusBehavior>> chartToStatusesEntry) {
-        int chartId = chartToStatusesEntry.getKey();
-        Map<UserStatusType, ChartUserStatusBehavior> userStatusToChartTypeMapping = chartToStatusesEntry.getValue();
-
-        ChartBehaviorsDto result = new ChartBehaviorsDto(chartId);
-        for (Map.Entry<UserStatusType, Date> userStatusTypeDateEntry : userStatusTypeDateMap.entrySet()) {
-            UserStatusType userStatus = userStatusTypeDateEntry.getKey();
-            Date validFrom = userStatusTypeDateEntry.getValue();
-            result.getBehavior().add(
-                    createChartBehaviorDto(community, chartId, validFrom, userStatusToChartTypeMapping.get(userStatus))
-            );
-        }
-
-        return result;
-    }
-
-    private Map<Integer, Map<UserStatusType, ChartUserStatusBehavior>> chartToStatusMapping(BehaviorConfig behaviorConfig) {
-        ChartUserStatusBehaviors chartUserStatusBehaviors = ChartUserStatusBehaviors.from(
-                chartUserStatusBehaviorRepository.findByBehaviorConfig(behaviorConfig)
-        );
-
-        return chartUserStatusBehaviors.order();
-    }
-
-    private ChartBehaviorDto createChartBehaviorDto(String community, int chartId, Date since, ChartUserStatusBehavior chartUserStatusBehavior) {
-        ChartBehaviorType chartBehaviorType = chartUserStatusBehavior.getChartBehavior().getType();
-        String action = chartUserStatusBehavior.getAction();
-
-        ChartBehaviorDto chartBehaviorDto = new ChartBehaviorDto(since, chartBehaviorType);
-        if (chartUserStatusBehavior.isLocked()) {
-            String actionUrl = deepLinkUrlFactory.createForChart(community, chartId, action);
-            chartBehaviorDto.setLockedAction(actionUrl);
-        }
-
-        return chartBehaviorDto;
-    }
-
-    private ReferralsConditions getReferralsConditions(BehaviorConfig behaviorConfig, UserReferralsSnapshot snapshot) {
-        if (!behaviorConfig.getType().isDefault()) {
-            if (snapshot.isUnlimitedReferralsDuration()) {
-                return new ReferralsUnlimitedConditions();
-            } else {
-                Date calculatedExpireDate = snapshot.getCalculatedExpireDate();
-                if (calculatedExpireDate != null) {
-                    return new ReferralsLimitedConditions(calculatedExpireDate);
-                }
-            }
-        }
-
-        return new ReferralsConditions();
     }
 }

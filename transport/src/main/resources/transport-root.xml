@@ -11,6 +11,7 @@
     <import resource="classpath:META-INF/soap.xml"/>
     <import resource="classpath:META-INF/smpp.xml"/>
     <import resource="task-processors.xml"/>
+    <import resource="hazelcast.xml"/>
 
     <context:annotation-config/>
 </beans>

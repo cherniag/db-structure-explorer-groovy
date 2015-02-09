@@ -27,7 +27,7 @@ public class NewsHttpService extends AbstractHttpService {
             builder.queryParam(entry.getKey(), entry.getValue().get(0));
         }
 
-        HttpEntity<MultiValueMap> httpEntity = getRequest(state);
+        HttpEntity<MultiValueMap> httpEntity = createHttpEntity(state);
 
         String uri = builder.build().toUriString();
         logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, httpEntity.getBody());
@@ -39,7 +39,7 @@ public class NewsHttpService extends AbstractHttpService {
 
     public <T> ResponseEntity<T> postNews(UserDeviceData deviceData, PhoneState state, Class<T> responseType){
         String uri = getUri(deviceData, "GET_NEWS", deviceData.getFormat());
-        HttpEntity<MultiValueMap> httpEntity = getRequest(state);
+        HttpEntity<MultiValueMap> httpEntity = createHttpEntity(state);
 
         logger.info("Sending for [{}] to [{}] parameters: [{}]", deviceData, uri, httpEntity.getBody());
         ResponseEntity<T> body = restTemplate.postForEntity(uri, httpEntity, responseType);
@@ -48,7 +48,7 @@ public class NewsHttpService extends AbstractHttpService {
         return body;
     }
 
-    private HttpEntity<MultiValueMap> getRequest(PhoneState state) {
+    private HttpEntity<MultiValueMap> createHttpEntity(PhoneState state) {
         MultiValueMap<String, String> parameters = getParametersMultiValueMap(state);
 
         HttpHeaders headers = new HttpHeaders();

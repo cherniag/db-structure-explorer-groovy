@@ -364,7 +364,7 @@ public class PaymentDetailsService {
 	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = CanNotDeactivatePaymentDetailsException.class)
 	public User deactivateCurrentPaymentDetailsIfOneExist(User user, String reason) {
-		LOGGER.debug("input parameters user, reason: [{}], [{}]", user, reason);
+		LOGGER.info("Deactivate current payment details for user {} reason {}", user.shortInfo(), reason);
 
 
         notNull(user, "The parameter user is null");
@@ -381,7 +381,7 @@ public class PaymentDetailsService {
 			user = userService.updateUser(user);
 		}
 		
-		LOGGER.info("Output parameter user=[{}]", user);
+		LOGGER.info("Current payment details were deactivated for user {}", user.shortInfo());
 		return user;
 	}
 	
@@ -399,6 +399,7 @@ public class PaymentDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public PaymentDetails disablePaymentDetails(PaymentDetails paymentDetail, String reason) {
+        LOGGER.debug("Disable payment details {}", paymentDetail);
         return update(paymentDetail.withActivated(false).withDisableTimestampMillis(Utils.getEpochMillis()).withDescriptionError(reason));
 	}
 

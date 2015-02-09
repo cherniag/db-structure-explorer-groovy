@@ -16,12 +16,15 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
+import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 
 import static org.junit.Assert.*
@@ -34,19 +37,19 @@ import static org.junit.Assert.*
 public class AccountRegistrationSuccessFeature {
     @Resource
     private PartnerDeviceSet partnerDeviceSet
-
     @Resource
     private UserDeviceDataService userDeviceDataService
-
     @Resource
     private UserDbService userDbService
-
     @Resource
     private CommonAssertionsService commonAssertionsService
+    @Resource
+    private RunnerService runnerService;
+    private Runner runner;
 
     private List<UserDeviceData> userDeviceDatas
 
-    private Map<UserDeviceData, User> inDbUsers = [:]
+    private Map<UserDeviceData, User> inDbUsers = new ConcurrentHashMap<UserDeviceData, User>()
 
     def userFields = ['userName', 'deviceUID','userGroupId','nextSubPayment','currentPaymentDetailsId',
                       'facebookId','token','paymentStatus','paymentType','potentialPromoCodePromotionId','potentialPromotionId','operator','mobile',
@@ -59,20 +62,21 @@ public class AccountRegistrationSuccessFeature {
             @Transform(DictionaryTransformer.class) Word deviceTypes,
             @Transform(DictionaryTransformer.class) Word formats,
             @Transform(DictionaryTransformer.class) Word versions,
-            @Transform(DictionaryTransformer.class) Word communities){
+            @Transform(DictionaryTransformer.class) Word communities) {
         userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), deviceTypes.set(), formats.set(RequestFormat));
+        runner = runnerService.create(userDeviceDatas);
     }
 
     @When('^User registers using device$')
     public void whenUserRegisters(){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            partnerDeviceSet.singup(userDeviceData);
+        runner.parallel {
+            partnerDeviceSet.singup(it);
         }
     }
 
     @Then('^Temporary account is created$')
     public void tempAccountIsCreated() {
-        userDeviceDatas.each {
+        runner.parallel {
             PhoneState phoneState = partnerDeviceSet.getPhoneState(it);
             User user = userDbService.getUserByUserNameAndCommunity(phoneState.lastAccountCheckResponse.userName, it.communityUrl)
             assertEquals(user.getDeviceUID(), user.getUserName());
@@ -82,7 +86,7 @@ public class AccountRegistrationSuccessFeature {
     @And('^User receives following in SIGN_UP_DEVICE response:$')
     def "User receives following in SIGN_UP_DEVICE response:"(DataTable userStateTable) {
         def userState = userStateTable.asList(AccountCheckDTO)[0];
-        userDeviceDatas.each {
+        runner.parallel {
             def signUpResponse = partnerDeviceSet.getPhoneState(it).lastAccountCheckResponse
             assertEquals(userState.activation, signUpResponse.activation)
             assertEquals(userState.freeTrial, signUpResponse.freeTrial)
@@ -96,7 +100,9 @@ public class AccountRegistrationSuccessFeature {
 
     @And('^\'deviceType\' field is the same as sent during registration$')
     def "deviceType field is the same as sent during registration"() {
-        commonAssertionsService.checkDeviceTypeField(userDeviceDatas, partnerDeviceSet)
+        runner.parallel {
+            commonAssertionsService.checkDeviceTypeField(it, partnerDeviceSet)
+        }
     }
 
     @And('^\'deviceUID\' field is the same as sent during registration$')
@@ -106,7 +112,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('^\'username\' field is the same as \'deviceUID\' sent during registration$')
     def "username field is the same as deviceUID sent during registration"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             assertEquals(phoneState.getDeviceUID(), phoneState.lastAccountCheckResponse.userName)
         }
@@ -114,7 +120,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('In database user has username and deviceUID as deviceUID sent during registration')
     def "In database user has username and deviceUID as deviceUID sent during registration"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getDeviceUID(), phoneState.deviceUID)
@@ -128,7 +134,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('In database user has (\\w+) activation status')
     def "In database user has REGISTERED activation status"(ActivationStatus activationStatus){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(activationStatus, user.activationStatus)
@@ -137,7 +143,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('In database user does not have provider')
     def "In database user does not have provider"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertNull(user.provider)
@@ -146,7 +152,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('In database user does not have last promotions')
     def "In database user does not have last promotions"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertNull(user.lastPromo)
@@ -155,7 +161,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('In database user does not have payment details')
     def "In database user does not have payment details"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertNull(user.currentPaymentDetails)
@@ -170,11 +176,12 @@ public class AccountRegistrationSuccessFeature {
             String aboveVersion,
             @Transform(DictionaryTransformer.class) Word communities){
         userDeviceDatas = userDeviceDataService.table(ApiVersions.from(versions.list()).above(aboveVersion), communities.set(), deviceTypes.set(), formats.set(RequestFormat));
+        runner = runnerService.create(userDeviceDatas);
     }
 
     @And('^\'uuid\' field is present in response and has UUID pattern$')
     def "'uuid' field is present in response and has UUID pattern"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             assertNotNull(phoneState.lastAccountCheckResponse.uuid)
             def pattern = Pattern.compile('\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}')
@@ -190,17 +197,19 @@ public class AccountRegistrationSuccessFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         userDeviceDatas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        userDeviceDatas.each {
+        runner = runnerService.create(userDeviceDatas);
+        runner.parallel {
             partnerDeviceSet.singup(it)
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             inDbUsers.put(it, user);
         }
+
     }
 
     @When('^User registers using same device$')
     def "User registers using same device"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             partnerDeviceSet.singup(it, null, null, true, phoneState.deviceUID);
         }
@@ -208,7 +217,7 @@ public class AccountRegistrationSuccessFeature {
 
     @When('^In database new temporary account does not appear$')
     def "In database new temporary account does not appear"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(inDbUsers[it].id, user.id)
@@ -217,7 +226,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() throws Throwable {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = inDbUsers[it]

@@ -27,7 +27,7 @@ public class WSTestIT {
         System.setProperty("javax.net.ssl.keyStorePassword", "Fb320p007++");
         //System.setProperty("javax.net.debug", "ssl");
 
-        SubscriberService service = new SubscriberService(loader.getResource("META-INF/wsdl/subscriberservice_2_0.xml"));
+        SubscriberService service = new SubscriberService(loader.getResource("subscriberservice_2_0.xml"));
         SubscriberPortDecorator port = new SubscriberPortDecorator(service.getSubscriberPort());
 
         port.setEndpoint("https://sdpapi.ref.o2.co.uk/services/Subscriber_2_0");

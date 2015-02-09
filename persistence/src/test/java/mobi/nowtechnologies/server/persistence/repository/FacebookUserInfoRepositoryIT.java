@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -26,8 +25,8 @@ public class FacebookUserInfoRepositoryIT extends AbstractRepositoryIT {
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
 
-    @Resource(name = "persistence.DataSource")
-    private DataSource dataSource;
+    @Resource
+    private JdbcTemplate jdbcTemplate;
 
     @Resource
     private CommunityRepository communityRepository;
@@ -41,9 +40,8 @@ public class FacebookUserInfoRepositoryIT extends AbstractRepositoryIT {
         fbUserInfo.setUserName("userName");
         fbUserInfo.setEmail("AA@ukr.net");
         facebookUserInfoRepository.saveAndFlush(fbUserInfo);
-        JdbcTemplate template = new JdbcTemplate(dataSource);
-        assertEquals(1, template.queryForInt("select count(*) from social_info"));
-        assertEquals(1, template.queryForInt("select count(*) from facebook_user_info"));
+        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from social_info"));
+        assertEquals(1, jdbcTemplate.queryForInt("select count(*) from facebook_user_info"));
     }
 
     @Test

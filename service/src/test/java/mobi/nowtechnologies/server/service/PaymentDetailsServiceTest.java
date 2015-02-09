@@ -60,8 +60,6 @@ public class PaymentDetailsServiceTest {
     public void setUp() {
         user = new User().withUserGroup(new UserGroup().withCommunity(new Community()));
 
-        userService.setPaymentPolicyService(paymentPolicyServiceMock);
-
         paymentDetailsServiceSpy = PowerMockito.spy(new PaymentDetailsService());
         paymentDetailsServiceSpy.setPaymentDetailsRepository(paymentDetailsRepositoryMock);
         paymentDetailsServiceSpy.setUserService(userService);
@@ -104,6 +102,7 @@ public class PaymentDetailsServiceTest {
 
         doReturn(paymentDetails).when(paymentDetailsServiceSpy).disablePaymentDetails(paymentDetails, reason);
         when(userService.setToZeroSmsAccordingToLawAttributes(user)).thenReturn(user);
+        when(userService.updateUser(user)).thenReturn(user);
 
         paymentDetailsServiceSpy.deactivateCurrentPaymentDetailsIfOneExist(user, reason);
 

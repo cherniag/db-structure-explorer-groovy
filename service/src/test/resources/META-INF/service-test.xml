@@ -21,7 +21,8 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 		<property name="ignoreResourceNotFound" value="true" />
 	</bean>
 
-    <bean id="serviceMessageSource" class="mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl">
+    <bean id="serviceReloadableResourceBundleMessageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
             <list>
                 <value>classpath:services_test</value>
@@ -99,16 +100,27 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
      	<property name="realObject" ref="service.o2PaymentService"/>
   	</bean>
 
-    <bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.ITunesServiceImpl">
-        <property name="postService" ref="postService" />
-        <property name="userService" ref="service.UserService" />
-        <property name="paymentPolicyService" ref="service.PaymentPolicyService" />
-        <property name="submittedPaymentService" ref="service.SubmittedPaymentService" />
-        <property name="messageSource" ref="serviceMessageSource"/>
-        <property name="iTunesPaymentLockRepository" ref="ITunesPaymentLockRepository"/>
-        <property name="iTunesDtoConverter" ref="iTunesDtoConverter"/>
+	<bean id="postService" class="mobi.nowtechnologies.server.apptests.ITunesPostService"/>
+	
+	<bean id="service.ITunesClient" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesClientImpl">
+		<property name="httpOkCode" value="#{T(org.springframework.http.HttpStatus).OK.value()}"/>
+		<property name="postService" ref="postService"/>
+		<property name="iTunesResponseParser" ref="iTunesResponseParser"/>
+	</bean>
+
+	<bean id="service.ITunesService" class="mobi.nowtechnologies.server.service.itunes.impl.ITunesServiceImpl">
+		<property name="iTunesClient" ref="service.ITunesClient"/>
+		<property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>
+		<property name="messageSource" ref="serviceMessageSource"/>
     </bean>
 
-    <bean id="postService" class="mobi.nowtechnologies.server.apptests.ITunesPostService"/>
+
+	<bean id="service.PayPalHttpService" class="mobi.nowtechnologies.server.service.payment.http.PayPalHttpService">
+		<property name="apiUrl" value="${paypal.apiUrl}" />
+		<property name="postService" ref="payPalPostService" />
+		<property name="request" ref="request.payPalRequest" />
+	</bean>
+
+	<bean id="payPalPostService" class="mobi.nowtechnologies.server.apptests.paypal.PayPalPostService"/>
 
 </beans>

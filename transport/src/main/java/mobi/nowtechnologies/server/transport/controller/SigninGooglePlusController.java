@@ -28,9 +28,21 @@ public class SigninGooglePlusController extends CommonController {
     @Resource
     private UserPromoService userPromoService;
 
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.8}/SIGN_IN_GOOGLE_PLUS"
+    })
+    public ModelAndView applyPromotionBySignInGooglePlusWithOneTimeSubscription(
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam("ACCESS_TOKEN") String accessToken,
+            @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("DEVICE_UID") String deviceUID) {
+        return signInGooglePlus(userToken, timestamp, accessToken, googlePlusUserId, userName, deviceUID, true, true);
+    }
+
 
     @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.8}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.7}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.6}/SIGN_IN_GOOGLE_PLUS",
             "**/{community}/{apiVersion:6\\.5}/SIGN_IN_GOOGLE_PLUS",
@@ -47,10 +59,10 @@ public class SigninGooglePlusController extends CommonController {
             @RequestParam("GOOGLE_PLUS_USER_ID") String googlePlusUserId,
             @RequestParam("USER_NAME") String userName,
             @RequestParam("DEVICE_UID") String deviceUID) {
-        return signInGooglePlus(userToken, timestamp, accessToken, googlePlusUserId, userName, deviceUID, true);
+        return signInGooglePlus(userToken, timestamp, accessToken, googlePlusUserId, userName, deviceUID, true, false);
     }
 
-    private ModelAndView signInGooglePlus(String userToken, String timestamp, String accessToken, String googlePlusUserId, String userName, String deviceUID,  boolean disableReactivation) {
+    private ModelAndView signInGooglePlus(String userToken, String timestamp, String accessToken, String googlePlusUserId, String userName, String deviceUID,  boolean disableReactivation, boolean withOneTimePayment) {
         Exception ex = null;
         User user = null;
         String community = getCurrentCommunityUri();
@@ -59,7 +71,7 @@ public class SigninGooglePlusController extends CommonController {
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
             GooglePlusUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, disableReactivation);
-            return buildModelAndView(accCheckService.processAccCheck(mergeResult, true));
+            return buildModelAndView(accCheckService.processAccCheck(mergeResult, true, withOneTimePayment));
         } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_GOOGLE_PLUS can not find deviceUID[{}] in community[{}]", deviceUID, community);

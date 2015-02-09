@@ -106,7 +106,7 @@ public class SagePayPaymentServiceImpl extends AbstractPaymentSystemService impl
 
 		pendingPayment.setExternalTxId(response.getVPSTxId());
 
-		LOGGER.info("SagePay responsed {} for pending payment {}.", response, pendingPayment.getI());
+		LOGGER.info("SagePay responded {} for pending payment {}.", response, pendingPayment.getI());
 		commitPayment(pendingPayment, response);
 	}
 

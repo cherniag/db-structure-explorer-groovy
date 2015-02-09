@@ -2,8 +2,6 @@ package mobi.nowtechnologies.server.admin.controller.streamzine;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import mobi.nowtechnologies.server.admin.validator.BadgeValidator;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
-import mobi.nowtechnologies.server.service.streamzine.ImageDTO;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeResolutionDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgesDtoAsm;
@@ -12,14 +10,16 @@ import mobi.nowtechnologies.server.dto.streamzine.error.ErrorDto;
 import mobi.nowtechnologies.server.dto.streamzine.error.ErrorDtoAsm;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
 import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
-import mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
+import mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService;
+import mobi.nowtechnologies.server.service.streamzine.ImageDTO;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,8 +164,13 @@ public class BadgeController {
     }
 
     @RequestMapping(value = "/badges/image/preview", method = RequestMethod.POST)
-    public ModelAndView uploadImage(MultipartFile file) throws IOException {
-        String fileNameInCloud = "badge_" + file.getOriginalFilename();
+    public ModelAndView uploadImage(MultipartFile file,
+                                    @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
+        Community community = communityRepository.findByName(communityRewriteUrl);
+
+        Assert.notNull(community);
+
+        final String fileNameInCloud = community.getRewriteUrlParameter() + "_badge_" + file.getOriginalFilename();
 
         logger().info("Upload file: {} with name: {}", file, fileNameInCloud);
 

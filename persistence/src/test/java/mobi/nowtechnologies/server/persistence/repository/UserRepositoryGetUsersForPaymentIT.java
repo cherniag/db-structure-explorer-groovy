@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import org.junit.Test;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,36 +13,28 @@ import org.springframework.data.domain.Sort;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetailsFactory.paymentDetailsWithActivatedTrueAndLastPaymentStatusErrorAndRetriesOnError3;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentDetailsFactory.paymentDetailsWithActivatedTrueAndLastPaymentStatusSuccessful;
 import static mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory.paymentPolicyWithDefaultNotNullFields;
 import static mobi.nowtechnologies.server.persistence.domain.UserFactory.userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author Titov Mykhaylo (titov)
- *         07.03.14 20:50
- */
+//  @author Titov Mykhaylo (titov) 07.03.14 20:50
 public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
 
-    @Resource(name = "userRepository")
-    private UserRepository userRepository;
-
-    @Resource(name = "paymentDetailsRepository")
-    private PaymentDetailsRepository paymentDetailsRepository;
-
-    @Resource(name = "paymentPolicyRepository")
-    private PaymentPolicyRepository paymentPolicyRepository;
-
-    @Resource(name = "communityRepository")
-    private CommunityRepository communityRepository;
+    @Resource UserRepository userRepository;
+    @Resource PaymentDetailsRepository paymentDetailsRepository;
+    @Resource PaymentPolicyRepository paymentPolicyRepository;
+    @Resource CommunityRepository communityRepository;
 
     private Pageable pageable = new PageRequest(0, 35, Sort.Direction.ASC, "nextSubPayment");
 
     @Test
-    public void shouldNotFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentPlusAdvancedPaymentSecondsIsInTheFuture(){
+    public void shouldNotFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentMinusAdvancedPaymentSecondsIsInTheFuture(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5));
         User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
@@ -49,40 +42,97 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(4, pageable);
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(4, pageable);
 
         //then
-        assertThat(users.size(), is(0));
+        List<User> users = usersPage.getContent();
+        assertThat(users, is(empty()));
     }
 
     @Test
-    public void shouldFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentPlusAdvancedPaymentSecondsIsNow(){
+    public void shouldNotFindFreeTrialUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentMinusAdvancedPaymentSecondsIsNow(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5));
-        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
+        int nextSubPayment = 10;
+        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(nextSubPayment).withFreeTrialExpiredMillis(SECONDS.toMillis(nextSubPayment)));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusSuccessful().withPaymentPolicy(paymentPolicy).withOwner(user));
-        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
+        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(5, pageable);
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(5, pageable);
 
         //then
+        List<User> users = usersPage.getContent();
+        assertThat(users, is(empty()));
+    }
+
+    @Test
+    public void shouldNotFindFreeTrialUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentMinusAdvancedPaymentSecondsInThePastButNextSubPaymentInTheFuture(){
+        //given
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5));
+        int nextSubPayment = 10;
+        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(nextSubPayment).withFreeTrialExpiredMillis(SECONDS.toMillis(nextSubPayment)));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusSuccessful().withPaymentPolicy(paymentPolicy).withOwner(user));
+        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
+
+        //when
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(6, pageable);
+
+        //then
+        List<User> users = usersPage.getContent();
+        assertThat(users, is(empty()));
+    }
+
+    @Test
+    public void shouldNotFindFreeTrialUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentIsNow(){
+        //given
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5));
+        int nextSubPayment = 10;
+        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(nextSubPayment).withFreeTrialExpiredMillis(SECONDS.toMillis(nextSubPayment)));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusSuccessful().withPaymentPolicy(paymentPolicy).withOwner(user));
+        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
+
+        //when
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(10, pageable);
+
+        //then
+        List<User> users = usersPage.getContent();
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
 
     @Test
-    public void shouldFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentPlusAdvancedPaymentSecondsIsInThePast(){
+    public void shouldFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentMinusAdvancedPaymentSecondsIsNow(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5));
-        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10).withTariff(_3G));
+        int nextSubPayment = 10;
+        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(nextSubPayment).withFreeTrialExpiredMillis(SECONDS.toMillis(nextSubPayment-1)));
         PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusSuccessful().withPaymentPolicy(paymentPolicy).withOwner(user));
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(9, pageable);
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(6, pageable);
 
         //then
+        List<User> users = usersPage.getContent();
+        assertThat(users.size(), is(1));
+        assertThat(users.get(0).getId(), is(user.getId()));
+    }
+
+    @Test
+    public void shouldFindUserWhenAdvancedPaymentSecondsMoreThen0AndNextSubPaymentMinusAdvancedPaymentSecondsIsInThePast(){
+        //given
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5));
+        User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10).withFreeTrialExpiredMillis(5000L).withTariff(_3G));
+        PaymentDetails paymentDetails = paymentDetailsRepository.save(paymentDetailsWithActivatedTrueAndLastPaymentStatusSuccessful().withPaymentPolicy(paymentPolicy).withOwner(user));
+        user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
+
+        //when
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(9, pageable);
+
+        //then
+        List<User> users = usersPage.getContent();
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
@@ -96,10 +146,12 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(9, pageable);
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(9, pageable);
 
         //then
-        assertThat(users.size(), is(0));
+        List<User> users = usersPage.getContent();
+
+        assertThat(users, is(empty()));
     }
 
     @Test
@@ -111,9 +163,11 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForPendingPayment(11, pageable);
+        Page<User> usersPage = userRepository.getUsersForPendingPayment(11, pageable);
 
         //then
+        List<User> users = usersPage.getContent();
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
@@ -127,9 +181,11 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(6, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(6, pageable);
 
         //then
+        List<User> users = usersForRetryPaymentPage.getContent();
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
@@ -143,10 +199,12 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(9, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(9, pageable);
 
         //then
-        assertThat(users.size(), is(0));
+        List<User> users = usersForRetryPaymentPage.getContent();
+
+        assertThat(users, is(empty()));
     }
 
     @Test
@@ -158,9 +216,11 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(11, pageable);
 
         //then
+        List<User> users = usersForRetryPaymentPage.getContent();
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
@@ -175,15 +235,17 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(11, pageable);
 
         //then
+        List<User> users = usersForRetryPaymentPage.getContent();
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
 
     @Test
-    public void shouldNotFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndNextSubPaymentIsInThePastButNextSubPaymentPlusAfterNextSubPaymentSecondsIsInTheFuture(){
+    public void shouldNotFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndNextSubPaymentIsInThePastButNextSubPaymentMinusAfterNextSubPaymentSecondsIsInTheFuture(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5).withAfterNextSubPaymentSeconds(5));
         User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
@@ -191,14 +253,16 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(11, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(11, pageable);
 
         //then
-        assertThat(users.size(), is(0));
+        List<User> users = usersForRetryPaymentPage.getContent();
+
+        assertThat(users, is(empty()));
     }
 
     @Test
-    public void shouldFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndCurrentTimePlusAfterNextSubPaymentSecondsIsInPast(){
+    public void shouldFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndCurrentTimeMinusAfterNextSubPaymentSecondsIsInPast(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5).withAfterNextSubPaymentSeconds(5));
         User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
@@ -206,15 +270,17 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(16, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(16, pageable);
 
         //then
+        List<User> users = usersForRetryPaymentPage.getContent();
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }
 
     @Test
-    public void shouldNotFindUserWhenAdvancedPaymentSecondsIs0AndMadeAttemptsIs1AndCurrentTimePlusAfterNextSubPaymentSecondsIsInTheFuture(){
+    public void shouldNotFindUserWhenAdvancedPaymentSecondsIs0AndMadeAttemptsIs1AndCurrentTimeMinusAfterNextSubPaymentSecondsIsInTheFuture(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(0).withAfterNextSubPaymentSeconds(5));
         User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
@@ -222,14 +288,16 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(paymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(14, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(14, pageable);
 
         //then
-        assertThat(users.size(), is(0));
+        List<User> users = usersForRetryPaymentPage.getContent();
+
+        assertThat(users, is(empty()));
     }
 
     @Test
-     public void shouldFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndCurrentTimePlusAfterNextSubPaymentSecondsIsInPastAndLastSuccessfulPaymentDetailsIsNull(){
+     public void shouldFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndCurrentTimeMinusAfterNextSubPaymentSecondsIsInPastAndLastSuccessfulPaymentDetailsIsNull(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5).withAfterNextSubPaymentSeconds(5));
         User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
@@ -239,16 +307,18 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user2 = userRepository.save(user2.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(null));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(16, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(16, pageable);
 
         //then
+        List<User> users = usersForRetryPaymentPage.getContent();
+
         assertThat(users.size(), is(2));
         assertThat(users.get(0).getId(), is(user2.getId()));
         assertThat(users.get(1).getId(), is(user.getId()));
     }
 
     @Test
-    public void shouldFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndCurrentTimePlusAfterNextSubPaymentSecondsIsInPastAndLastSuccessfulPaymentDetailsAndCurrentAreNotTheSame(){
+    public void shouldFindUserWhenAdvancedPaymentSecondsIsNot0AndMadeAttemptsIs2AndCurrentTimeMinusAfterNextSubPaymentSecondsIsInPastAndLastSuccessfulPaymentDetailsAndCurrentAreNotTheSame(){
         //given
         PaymentPolicy paymentPolicy = paymentPolicyRepository.save(paymentPolicyWithDefaultNotNullFieldsAndO2Community().withAdvancedPaymentSeconds(5).withAfterNextSubPaymentSeconds(5));
         User user = userRepository.save(userWithDefaultNotNullFieldsAndSubBalance0AndLastDeviceLogin1AndActivationStatusACTIVATED().withNextSubPayment(10));
@@ -257,9 +327,11 @@ public class UserRepositoryGetUsersForPaymentIT extends AbstractRepositoryIT{
         user = userRepository.save(user.withCurrentPaymentDetails(paymentDetails).withLastSuccessfulPaymentDetails(lastSuccessfulPaymentDetails));
 
         //when
-        List<User> users = userRepository.getUsersForRetryPayment(16, pageable);
+        Page<User> usersForRetryPaymentPage = userRepository.getUsersForRetryPayment(16, pageable);
 
         //then
+        List<User> users = usersForRetryPaymentPage.getContent();
+
         assertThat(users.size(), is(1));
         assertThat(users.get(0).getId(), is(user.getId()));
     }

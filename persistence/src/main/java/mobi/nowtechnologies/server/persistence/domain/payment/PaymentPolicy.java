@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Operator;
+import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.shared.dto.web.OfferPaymentPolicyDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.web.PaymentDetailsByPaymentDto.PaymentPolicyDto;
@@ -117,6 +118,10 @@ public class PaymentPolicy {
 
     private boolean online;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_policy_type")
+    private PaymentPolicyType paymentPolicyType;
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -203,6 +208,14 @@ public class PaymentPolicy {
 
     public void setAppStoreProductId(String appStoreProductId) {
         this.appStoreProductId = appStoreProductId;
+    }
+
+    public PaymentPolicyType getPaymentPolicyType() {
+        return paymentPolicyType;
+    }
+
+    public void setPaymentPolicyType(PaymentPolicyType paymentPolicyType) {
+        this.paymentPolicyType = paymentPolicyType;
     }
 
     public OfferPaymentPolicyDto toOfferPaymentPolicyDto() {
@@ -475,6 +488,7 @@ public class PaymentPolicy {
                 .append("period", period)
                 .append("operatorId", operatorId)
                 .append("paymentType", paymentType)
+                .append("paymentPolicyType", paymentPolicyType)
                 .append("operatorName", operatorName)
                 .append("shortCode", shortCode)
                 .append("currencyISO", currencyISO)

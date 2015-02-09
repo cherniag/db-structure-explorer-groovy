@@ -23,6 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -130,7 +131,7 @@ public class ReferralServiceTest {
         verify(userReferralsSnapshotRepository).findAll(referralUserIds);
 
         verify(referralRepository).getCountByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
-        snapshot1.updateMatchesData(anyInt());
+        snapshot1.updateMatchesData(anyInt(), any(Date.class));
     }
 
     @Test
@@ -176,7 +177,7 @@ public class ReferralServiceTest {
         verify(userReferralsSnapshotRepository).findAll(referralUserIds);
 
         verify(referralRepository).getCountByCommunityIdUserIdAndStates(communityId, snapshot1.getUserId(), ReferralState.ACTIVATED);
-        snapshot1.updateMatchesData(anyInt());
+        snapshot1.updateMatchesData(anyInt(), any(Date.class));
     }
 
     private UserReferralsSnapshot createSnapshot(int userId, boolean isMatched) {

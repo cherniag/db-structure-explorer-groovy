@@ -9,6 +9,7 @@ import java.util.Date;
 
 import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ContextControllerIT extends AbstractControllerTestIT {
@@ -29,6 +30,7 @@ public class ContextControllerIT extends AbstractControllerTestIT {
                         param(AuthenticatedUser.USER_NAME, userName).
                         param(AuthenticatedUser.USER_TOKEN, userToken).
                         param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                andDo(print()).
                 andExpect(status().isOk()).
                 andExpect(content().contentType(MediaType.APPLICATION_JSON)).
                 andExpect(jsonPath("$.context").exists()).
@@ -55,6 +57,7 @@ public class ContextControllerIT extends AbstractControllerTestIT {
                         param(AuthenticatedUser.USER_NAME, userName).
                         param(AuthenticatedUser.USER_TOKEN, userToken).
                         param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                andDo(print()).
                 andExpect(status().isOk()).
                 andExpect(content().contentType(MediaType.APPLICATION_JSON)).
                 andExpect(jsonPath("$.context").exists()).
@@ -80,6 +83,7 @@ public class ContextControllerIT extends AbstractControllerTestIT {
                         param(AuthenticatedUser.USER_NAME, userName).
                         param(AuthenticatedUser.USER_TOKEN, userToken).
                         param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                andDo(print()).
                 andExpect(status().isOk()).
                 andExpect(content().contentType(MediaType.APPLICATION_JSON)).
                 andExpect(jsonPath("$.context").exists()).
@@ -111,6 +115,7 @@ public class ContextControllerIT extends AbstractControllerTestIT {
                         param(AuthenticatedUser.USER_NAME, "").
                         param(AuthenticatedUser.USER_TOKEN, userToken).
                         param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                andDo(print()).
                 andExpect(status().isBadRequest());
     }
 

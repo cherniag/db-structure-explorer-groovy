@@ -98,7 +98,7 @@ public class SignUpDeviceController extends CommonController {
                 appsFlyerDataService.saveAppsFlyerData(user, userDeviceDetailsDto.getAppsFlyerUid());
             }
 
-            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, withUuid);
+            AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, withUuid, false);
 
             return buildModelAndView(accountCheck);
         } catch (ValidationException ve) {

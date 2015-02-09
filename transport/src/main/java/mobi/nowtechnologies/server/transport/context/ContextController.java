@@ -35,13 +35,13 @@ public class ContextController extends CommonController {
         return getContext(user, false);
     }
 
-    public ModelAndView getContext(@AuthenticatedUser User user, boolean supportsFreemium) throws Exception {
+    public ModelAndView getContext(@AuthenticatedUser User user, boolean needToLookAtActivationDate) throws Exception {
         LOGGER.info("command processing started");
         Exception ex = null;
         try {
             userService.authorize(user, false, ActivationStatus.ACTIVATED);
 
-            ContextDto contextDto = contextDtoAsm.assemble(user, supportsFreemium);
+            ContextDto contextDto = contextDtoAsm.assemble(user, needToLookAtActivationDate);
 
             return createModelAndView(contextDto);
         } catch (Exception e) {

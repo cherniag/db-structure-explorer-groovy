@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.web.security.facebook;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+
+import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -58,8 +59,8 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 			ServletException {
 		LOGGER.debug("input parameters request, response: [{}], [{}]", request, response);
 		
-		String clientId = messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppId", null, "", null);
-		String clientSecret = messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppSecret", null, "", null);
+		String clientId = messageSource.getDecryptedMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppId", null, null);
+		String clientSecret = messageSource.getDecryptedMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbAppSecret", null, null);
 		FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(clientId, clientSecret);
 		OAuth2Operations oAuthOperations = connectionFactory.getOAuthOperations();
 
@@ -132,13 +133,13 @@ public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessi
 	}
 
 	private String getRedirectUri(HttpServletRequest request) {
-		redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
+		redirectUrl = messageSource.getMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortal", null, "", null);
 		
 		String registrationValue=request.getParameter(REGISTRATION);
 		
 		String redirectUri = redirectUrl;
 		if(registrationValue!=null) {
-			redirectUri =messageSource.getMessage(WebUtils.getCookie(request, CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortalPlusRegistration", null, "", null);;
+			redirectUri =messageSource.getMessage(WebUtils.getCookie(request, DEFAULT_COMMUNITY_COOKIE_NAME).getValue(), "facebook.connect.fbRedirectUrlOnWebPortalPlusRegistration", null, "", null);;
 		}
 		return redirectUri;
 	}

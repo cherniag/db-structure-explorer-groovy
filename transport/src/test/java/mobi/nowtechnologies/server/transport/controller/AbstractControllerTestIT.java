@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.job.UpdateO2UserTask;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Message;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.persistence.utils.SQLTestInitializer;
 import mobi.nowtechnologies.server.service.UserService;
@@ -30,12 +33,10 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.net.HttpHeaders.IF_MODIFIED_SINCE;
-import static mobi.nowtechnologies.server.persistence.domain.Promotion.ADD_FREE_WEEKS_PROMOTION;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
 import static mobi.nowtechnologies.server.shared.enums.MessageType.NEWS;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -52,7 +53,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 public abstract class AbstractControllerTestIT {
 
-    public static final String LATEST_SERVER_API_VERSION = "6.7";
+    public static final String LATEST_SERVER_API_VERSION = "6.8";
 
     protected MockMvc mockMvc;
 
@@ -89,12 +90,6 @@ public abstract class AbstractControllerTestIT {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Resource(name = "promotionRepository")
-    private PromotionRepository promotionRepository;
-
-    @Resource(name = "promoCodeRepository")
-    private PromoCodeRepository promoCodeRepository;
-
     @Resource(name = "userGroupRepository")
     private UserGroupRepository userGroupRepository;
 
@@ -110,10 +105,7 @@ public abstract class AbstractControllerTestIT {
     @Resource
     private O2ProviderDetailsExtractor o2ProviderDetailsExtractor;
 
-    private static int position = 0;
-    private static Promotion promotion;
-    private static Message message;
-    private static ChartDetail chartDetail;
+    private static AtomicInteger position = new AtomicInteger(0);
 
     @Before
     public void setUp() throws Exception {
@@ -134,18 +126,13 @@ public abstract class AbstractControllerTestIT {
 
         UserGroup userGroup = userGroupRepository.findOne(9);
 
-        if (isNull(promotion)) {
-            promotion = promotionRepository.save(new Promotion().withUserGroup(userGroup).withDescription("").withEndDate(Integer.MAX_VALUE).withIsActive(true).withFreeWeeks((byte) 8).withType(ADD_FREE_WEEKS_PROMOTION));
-
-            promoCodeRepository.save(new PromoCode().withPromotion(promotion).withCode("promo8").withMediaType(AUDIO));
-        }
         Community community = userGroup.getCommunity();
 
-        chartDetail = chartDetailRepository.save(new ChartDetail().withChart(userGroup.getChart()).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1)
+        chartDetailRepository.save(new ChartDetail().withChart(userGroup.getChart()).withMedia(mediaRepository.findOne(50)).withPrevPosition((byte) 1)
                 .withChgPosition(DOWN)
                 .withChannel("HEATSEEKER").withPublishTime(new Date().getTime()));
 
-        message = messageRepository.save(new Message().withMessageType(NEWS).withPosition(position++).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
+        messageRepository.save(new Message().withMessageType(NEWS).withPosition(position.getAndIncrement()).withCommunity(community).withBody("").withPublishTimeMillis(1).withTitle("").withActivated(true));
     }
 
     @After

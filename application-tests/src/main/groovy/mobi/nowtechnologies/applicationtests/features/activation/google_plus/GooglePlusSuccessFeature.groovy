@@ -15,6 +15,8 @@ import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository
 import mobi.nowtechnologies.server.shared.enums.ProviderType
@@ -30,9 +32,6 @@ import static org.junit.Assert.assertEquals
  */
 @Component
 class GooglePlusSuccessFeature {
-
-    static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy")
-
     @Resource
     UserDeviceDataService userDeviceDataService
 
@@ -56,6 +55,10 @@ class GooglePlusSuccessFeature {
 
     List<UserDeviceData> currentUserDevices
 
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
+
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')
     def "Registered user with given devices using given format for given versions and given communities"(
             @Transform(DictionaryTransformer.class) Word devices,
@@ -63,7 +66,10 @@ class GooglePlusSuccessFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        currentUserDevices.each { deviceSet.singup(it) }
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel {
+            deviceSet.singup(it)
+        }
     }
 
     @When('^Registered user enters Google Plus credentials$')
@@ -73,7 +79,7 @@ class GooglePlusSuccessFeature {
 
     @Then('^Default promo set in services properties is applied$')
     def "Default promo set in services properties is applied"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             assertEquals(user.getLastPromo().getCode(),
@@ -84,7 +90,7 @@ class GooglePlusSuccessFeature {
     @And('^User receives following in the SIGN_IN_GOOGLE_PLUS response:$')
     def "User receives following in the SIGN_IN_GOOGLE_PLUS response"(DataTable userStateTable) {
         def userState = userStateTable.asList(UserState)[0];
-        currentUserDevices.each {
+        runner.parallel {
             def lastGooglePlusInfo = deviceSet.getPhoneState(it).lastGooglePlusInfo
             assertEquals(userState.activation.name(), lastGooglePlusInfo.activation)
             assertEquals(userState.freeTrial, lastGooglePlusInfo.freeTrial)
@@ -98,7 +104,9 @@ class GooglePlusSuccessFeature {
 
     @And('^\'deviceType\' field is the same as sent during registration$')
     def "deviceType field is the same as sent during registration"() {
-        commonAssertionsService.checkDeviceTypeField(currentUserDevices, deviceSet)
+        runner.parallel {
+            commonAssertionsService.checkDeviceTypeField(it, deviceSet)
+        }
     }
 
     @And('^\'deviceUID\' field is the same as sent during registration$')
@@ -118,7 +126,7 @@ class GooglePlusSuccessFeature {
 
     @And('^\'userDetails\' filed contains all specified Google Plus details$')
     def "userDetails filed contains all specified Google Plus details"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def googlePlusInfo = phoneState.lastGooglePlusInfo.userDetails
             def person = appTestGooglePlusTokenService.parse(phoneState.googlePlusToken)
@@ -135,7 +143,7 @@ class GooglePlusSuccessFeature {
 
     @And('^In database user has username as entered Google Plus email$')
     def "In database user has username as entered Google Plus email"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
 
             def user = userDbService.findUser(phoneState, it)
@@ -172,7 +180,7 @@ class GooglePlusSuccessFeature {
 
     @And('^In database user has Google Plus details the same as specified in Google Plus account$')
     def "In database user has Google Plus details the same as specified in Google Plus account"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def googlePlusUserInfo = googlePlusUserInfoRepository.findByUser(user)
@@ -189,5 +197,9 @@ class GooglePlusSuccessFeature {
     @And('^In database user has last promotion according to promotion settings$')
     def "In database user has last promotion according to promotion settings"() {
         commonAssertionsService.checkLastPromotionDB(currentUserDevices, deviceSet)
+    }
+
+    private SimpleDateFormat getDateFormat() {
+        new SimpleDateFormat("MM/dd/yyyy")
     }
 }
