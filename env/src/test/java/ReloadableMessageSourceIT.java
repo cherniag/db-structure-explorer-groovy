@@ -80,6 +80,7 @@ public class ReloadableMessageSourceIT {
     }
 
     @Theory
+    //To run this test in idea IDE please run following command: maven -Dtest=ReloadableMessageSourceIT test -DfailIfNoTests=false
     public void shouldConfirmNoDiffAsIs(String[] baseNames, String community, Locale locale) throws Exception {
         //given
         CustomReloadableResourceBundleMessageSource oldCustomReloadableResourceBundleMessageSource = new CustomReloadableResourceBundleMessageSource();
