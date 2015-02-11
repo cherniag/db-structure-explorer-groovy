@@ -36,7 +36,7 @@ public class ChartBehaviorReferralsServiceTest {
 
     /**
      *                        FT
-     * ------*-------[]------->---*--------------------------->
+     * -----*--------[]-------|---*--------------------------->
      *      Rm       NOW          Re
      */
     @Test
@@ -78,7 +78,7 @@ public class ChartBehaviorReferralsServiceTest {
 
     /**
      *                        FT
-     * ------*-------[]------->---*--------------------------->
+     * -----*--------[]-------|---*--------------------------->
      *      Rm       NOW          Re
      */
     @Test
@@ -121,7 +121,7 @@ public class ChartBehaviorReferralsServiceTest {
 
     /**
      *                        FT
-     * ------*-------[]------->------------------------------->
+     * -----*--------[]-------|------------------------------->
      *      Rm       NOW
      */
     @Test
@@ -160,7 +160,7 @@ public class ChartBehaviorReferralsServiceTest {
 
     /**
      *                     FT
-     * ------*---[]--*----->------------------------------->
+     * -----*---[]---*-----|------------------------------->
      *      Rm  NOW  Re
      */
     @Test
@@ -201,7 +201,7 @@ public class ChartBehaviorReferralsServiceTest {
 
     /**
      *                        FT
-     * ------*-------[]------->------------------------------->
+     * -----*--------[]-------|------------------------------->
      *      Rm       NOW
      */
     @Test
@@ -239,7 +239,7 @@ public class ChartBehaviorReferralsServiceTest {
 
     /**
      *    Lim
-     * --->---*-------[]-------------------------------------->
+     * ---|--*--------[]-------------------------------------->
      *       Rm       NOW
      */
     @Test
@@ -273,7 +273,7 @@ public class ChartBehaviorReferralsServiceTest {
 
     /**
      *    Lim
-     * --->---*-------[]------*-------------------------------->
+     * ---|--*--------[]-----*-------------------------------->
      *       Rm       NOW    Re
      */
     @Test
@@ -375,7 +375,7 @@ public class ChartBehaviorReferralsServiceTest {
         info.validFrom = validFrom;
         info.chartBehaviorType = type;
         info.lockedAction = (locked) ? "lock action" : null;
-        info.lockedActionHistory = (locked) ? "lock action" : null;
+        info.canBeUnlocked = locked;
         return info;
     }
 
