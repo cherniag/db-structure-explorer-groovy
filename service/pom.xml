@@ -16,6 +16,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+        </dependency>
+        <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>persistence</artifactId>
         </dependency>
