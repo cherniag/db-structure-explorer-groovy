@@ -1,4 +1,4 @@
-@Ready77
+@Ready
 Feature: AppsFlyer uid update during user merge
 
   Scenario Outline: Merge registered user with appsflyer uid to existing record with own appsflyer uid

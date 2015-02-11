@@ -74,7 +74,7 @@ class GooglePlusSuccessFeature {
 
     @When('^Registered user enters Google Plus credentials$')
     def "Registered user enters Google Plus credentials"() {
-        currentUserDevices.each {deviceSet.loginUsingGooglePlus(it)}
+        runner.parallel {deviceSet.loginUsingGooglePlus(it)}
     }
 
     @Then('^Default promo set in services properties is applied$')
