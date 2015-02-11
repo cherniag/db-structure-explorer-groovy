@@ -82,7 +82,7 @@ class FacebookSuccessFeature {
 
     @When('^Registered user enters Facebook credentials$')
     def "Registered_user_enters_Facebook_credentials"() {
-        currentUserDevices.each { deviceSet.loginUsingFacebook(it) }
+        runner.parallel { deviceSet.loginUsingFacebook(it) }
     }
 
     @Then('^Default promo set in services properties is applied$')

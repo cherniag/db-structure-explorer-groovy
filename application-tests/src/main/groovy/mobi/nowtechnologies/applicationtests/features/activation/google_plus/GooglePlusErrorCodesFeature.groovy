@@ -1,5 +1,4 @@
 package mobi.nowtechnologies.applicationtests.features.activation.google_plus
-
 import cucumber.api.Transform
 import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
@@ -25,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.assertEquals
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals
-
 /**
  * Created by kots on 9/15/2014.
  */
@@ -59,8 +57,6 @@ class GooglePlusErrorCodesFeature {
         runner = runnerService.create(currentUserDevices)
         runner.parallel {
             deviceSet.singup(it)
-        }
-        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 
@@ -74,14 +70,14 @@ class GooglePlusErrorCodesFeature {
 
     @When('^Registered user enters Google Plus credentials and Google Plus returns empty email$')
     def "Registered user enters Google Plus credentials and Google Plus returns empty email"() {
-        currentUserDevices.each { deviceSet.loginUsingGooglePlusWithEmptyEmail(it)}
+        runner.parallel { deviceSet.loginUsingGooglePlusWithEmptyEmail(it)}
     }
 
     @Then('^User gets (\\d+) http error code and (\\d+) error code and (.*) message$')
     def "User gets given http error code and given error code and given message"(final int httpErrorCode,
                                                                                  final int errorCode,
                                                                                  final String errorBody) {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def lastGooglePlusError = phoneState.getLastGooglePlusError();
             def status = phoneState.getLastGooglePlusErrorStatus()
@@ -95,7 +91,7 @@ class GooglePlusErrorCodesFeature {
     @Transactional('applicationTestsTransactionManager')
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
@@ -105,11 +101,11 @@ class GooglePlusErrorCodesFeature {
 
     @When('^Registered user enters Google Plus credentials and Google Plus returns invalid Google Plus user id$')
     def "Registered user enters Google Plus credentials and Google Plus returns invalid Google Plus user id"() {
-        currentUserDevices.each { deviceSet.loginUsingGooglePlusWithInvalidGooglePlusId(it)}
+        runner.parallel { deviceSet.loginUsingGooglePlusWithInvalidGooglePlusId(it)}
     }
 
     @When('^Registered user enters Google Plus credentials and Google Plus returns invalid access token$')
     def "Registered user enters Google Plus credentials and Google Plus returns invalid access token"() {
-        currentUserDevices.each { deviceSet.loginUsingGooglePlusWithInvalidAuthToken(it)}
+        runner.parallel { deviceSet.loginUsingGooglePlusWithInvalidAuthToken(it)}
     }
 }

@@ -59,8 +59,6 @@ class GooglePlusFailureFeature {
         runner = runnerService.create(currentUserDevices)
         runner.parallel {
             deviceSet.singup(it)
-        }
-        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 
@@ -74,7 +72,7 @@ class GooglePlusFailureFeature {
 
     @When('^Registered user enters Google Plus credentials and client does not pass required parameter$')
     def "Registered user enters Google Plus credentials and client does not pass required parameter"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingGooglePlusWithoutAccessToken(it)
         }
     }
@@ -100,7 +98,7 @@ class GooglePlusFailureFeature {
 
     @When('^Registered user enters Google Plus credentials and client passes wrong authentication parameter$')
     def "Registered user enters Google Plus credentials and client passes wrong authentication parameter"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingGooglePlusBadAuth(it)
         }
     }

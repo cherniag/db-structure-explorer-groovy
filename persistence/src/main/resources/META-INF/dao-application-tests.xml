@@ -15,6 +15,11 @@ http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
         <value>mobi.nowtechnologies.server.persistence.domain</value>
         <value>mobi.nowtechnologies.server.persistence.apptests.domain</value>
     </utils:list>
+
+    <utils:properties id="jpaProperties">
+        <prop key="hibernate.show_sql">false</prop>
+    </utils:properties>
+
     <jpa:repositories base-package="mobi.nowtechnologies.server.persistence.apptests.repository"
                       entity-manager-factory-ref="persistence.EntityManagerFactory"
                       transaction-manager-ref="persistence.TransactionManager">

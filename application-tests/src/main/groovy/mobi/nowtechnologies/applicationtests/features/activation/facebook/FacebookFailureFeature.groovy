@@ -61,9 +61,6 @@ class FacebookFailureFeature {
         runner = runnerService.create(currentUserDevices)
         runner.parallel {
             deviceSet.singup(it)
-        }
-
-        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 
@@ -77,7 +74,7 @@ class FacebookFailureFeature {
 
     @When('^Registered user enters Facebook credentials and client does not pass required parameter$')
     def "Registered user enters Facebook credentials and client does not pass required parameter"() throws Throwable {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookWithoutAccessToken(it)
         }
     }
@@ -113,7 +110,7 @@ class FacebookFailureFeature {
 
     @When('^Registered user enters Facebook credentials and client passes wrong authentication parameter$')
     def "Registered user enters Facebook credentials and client passes wrong authentication parameter"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookBadUserName(it)
         }
     }
