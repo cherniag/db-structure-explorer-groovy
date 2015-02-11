@@ -62,6 +62,12 @@
         <property name="subscriptionInfoAsm" ref="subscriptionInfoAsm"/>
     </bean>
 
+    <bean class="mobi.nowtechnologies.server.web.controller.EnterPhoneNumberController">
+    </bean>
+
+    <bean class="mobi.nowtechnologies.server.web.controller.PinController">
+    </bean>
+
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
         <property name="countryService" ref="service.CountryService"/>
         <property name="paymentDetailsService" ref="service.PaymentDetailsService"/>
