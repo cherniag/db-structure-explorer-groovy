@@ -10,4 +10,6 @@
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
     </bean>
 
+    <alias name="service.vfPaymentService" alias="mtvnz.PSMSPaymentService" />
+
 </beans>

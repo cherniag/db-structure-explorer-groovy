@@ -58,6 +58,15 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
     List<PaymentPolicy> getPaymentPolicies(Community community, ProviderType provider, SegmentType segment, Contract contract, Tariff tariff,
                                            List<MediaType> mediaTypes);
 
+    @Query(value="select paymentPolicy " +
+            "from PaymentPolicy paymentPolicy "+
+            "where " +
+            "paymentPolicy.community=?1 " +
+            "and paymentPolicy.provider=?2 " +
+            "and paymentPolicy.mediaType in ?3 " +
+            "and paymentPolicy.online is true ")
+    List<PaymentPolicy> findPaymentPolicies(Community community, ProviderType provider, List<MediaType> mediaTypes);
+
 
     @Query(value="select paymentPolicy " +
             "from PaymentPolicy paymentPolicy "+

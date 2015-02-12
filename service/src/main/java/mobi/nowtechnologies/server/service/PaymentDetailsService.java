@@ -119,19 +119,6 @@ public class PaymentDetailsService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void createPaymentDetailsForO2Payment(int userId, PaymentPolicy policy, String communityUrl) {
-    	User user = userService.findById(userId);
-    	
-    	Community community = communityService.getCommunityByUrl(communityUrl);
-    	applyPromoToLimitedUsers(user, community);
-    	
-    	O2PSMSPaymentDetails details = o2PaymentService.commitPaymentDetails(user, policy);
-        user.setCurrentPaymentDetails(details);
-        update(details);
-        userRepository.save(user);
-    }
-    
-	@Transactional(propagation = Propagation.REQUIRED)
 	public PaymentDetails createPaymentDetails(PaymentDetailsDto dto, User user, Community community) throws ServiceException {
 
 		PaymentPolicy paymentPolicy = paymentPolicyService.getPaymentPolicy(dto.getPaymentPolicyId());

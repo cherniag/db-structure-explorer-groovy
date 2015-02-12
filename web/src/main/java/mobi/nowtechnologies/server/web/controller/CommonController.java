@@ -27,7 +27,7 @@ public abstract class CommonController implements MessageSourceAware {
 	public static final String PAGE_EXT = ".html";
 	public static final String PAGE_VERIFY = PATH_DELIM+"verify.html";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected MessageSource messageSource;
 
@@ -40,7 +40,7 @@ public abstract class CommonController implements MessageSourceAware {
 	protected int getUserId() {
 		SecurityContextDetails securityContextDetails = getSecurityContextDetails();
 		int userId = securityContextDetails.getUserId();
-		LOGGER.debug("Output parameter userId=[{}]", userId);
+		logger.debug("Output parameter userId=[{}]", userId);
 		return userId;
 	}
 

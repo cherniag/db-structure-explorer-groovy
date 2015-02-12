@@ -67,6 +67,12 @@
     <bean class="mobi.nowtechnologies.server.web.controller.EnterPhoneNumberController">
     </bean>
 
+    <bean class="mobi.nowtechnologies.server.web.controller.SmsPaymentController">
+        <property name="communityServiceFactory" ref="communityServiceFactory" />
+        <property name="userRepository" ref="userRepository" />
+        <property name="paymentPolicyRepository" ref="paymentPolicyRepository" />
+    </bean>
+
     <bean class="mobi.nowtechnologies.server.web.controller.PinController">
         <property name="communityServiceFactory" ref="communityServiceFactory" />
         <property name="userRepository" ref="userRepository" />

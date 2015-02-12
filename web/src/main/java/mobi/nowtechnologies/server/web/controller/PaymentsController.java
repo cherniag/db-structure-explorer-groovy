@@ -242,7 +242,7 @@ public class PaymentsController extends CommonController {
     			}
     		}
 
-            paymentsNoteMsg = getFirstSutableMessage(locale, codes);
+            paymentsNoteMsg = getFirstSuitableMessage(locale, codes);
         } else {
             if (user.isIOsNonO2ITunesSubscribedUser())
                 paymentsNoteMsg = message(msgCodeBase+".not.o2.inapp.subs", null, locale);
@@ -252,7 +252,7 @@ public class PaymentsController extends CommonController {
         return paymentsNoteMsg;
     }
 
-    private String getFirstSutableMessage(Locale locale, String... codes) {
+    private String getFirstSuitableMessage(Locale locale, String... codes) {
         for (String code : codes) {
         	if(code != null){        		
         		String msg = messageSource.getMessage(code, null, "", locale);

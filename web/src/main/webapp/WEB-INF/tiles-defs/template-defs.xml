@@ -311,5 +311,12 @@
         <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
         <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/pin/stub.jsp"/>
     </definition>
+    <definition name="smspayment/result" extends="inappTemplate" preparer="web.CommunityViewPreparer">
+        <put-attribute name="content" expression="${requestScope.viewPathAccordingToDevice}/smspayment/result/content.jsp"/>
+        <put-attribute name="headSection" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+        <put-attribute name="header" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+        <put-attribute name="footer" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+        <put-attribute name="footSection" expression="${requestScope.viewPathAccordingToDevice}/smspayment/stub.jsp"/>
+    </definition>
 
 </tiles-definitions>

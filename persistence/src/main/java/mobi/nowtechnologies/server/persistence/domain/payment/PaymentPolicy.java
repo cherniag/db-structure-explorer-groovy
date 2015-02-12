@@ -25,16 +25,8 @@ import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO
         @NamedQuery(name = PaymentPolicy.GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE, query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
-
     public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
-
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
-
-    public static enum Fields {
-        communityId
-    }
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -223,19 +215,14 @@ public class PaymentPolicy {
 
         offerPaymentPolicyDto.setPaymentType(paymentType);
 
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDto);
         return offerPaymentPolicyDto;
     }
 
     public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
-        LOGGER.debug("input parameters paymentPolicies: [{}]", paymentPolicies);
-
         List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
         for (PaymentPolicy paymentPolicy : paymentPolicies) {
             offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
         }
-
-        LOGGER.debug("Output parameter [{}]", offerPaymentPolicyDtos);
         return offerPaymentPolicyDtos;
     }
 
