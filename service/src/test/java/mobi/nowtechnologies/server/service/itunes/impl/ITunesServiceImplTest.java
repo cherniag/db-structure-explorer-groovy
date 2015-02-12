@@ -50,7 +50,7 @@ public class ITunesServiceImplTest {
         user.setUserGroup(userGroup);
 
         when(messageSource.getMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL);
-        when(messageSource.getMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD);
+        when(messageSource.getDecryptedMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD);
 
         ITunesResult iTunesResult = mock(ITunesResult.class);
         when(iTunesResult.isSuccessful()).thenReturn(true);
@@ -68,7 +68,8 @@ public class ITunesServiceImplTest {
         ITunesConnectionConfig config = configArgumentCaptor.getValue();
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, config.getUrl());
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, config.getPassword());
-        verify(messageSource, times(2)).getMessage(eq(user.getCommunityRewriteUrl()), anyString(), isNull(Object[].class), isNull(Locale.class));
+        verify(messageSource, times(1)).getMessage(eq(user.getCommunityRewriteUrl()), anyString(), isNull(Object[].class), isNull(Locale.class));
+        verify(messageSource, times(1)).getDecryptedMessage(eq(user.getCommunityRewriteUrl()), anyString(), isNull(Object[].class), isNull(Locale.class));
 
         verifyNoMoreInteractions(iTunesClient, iTunesPaymentService, messageSource);
     }
@@ -86,7 +87,7 @@ public class ITunesServiceImplTest {
         user.setUserGroup(userGroup);
 
         when(messageSource.getMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL);
-        when(messageSource.getMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD);
+        when(messageSource.getDecryptedMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD);
 
         ITunesResult iTunesResult = mock(ITunesResult.class);
         when(iTunesResult.isSuccessful()).thenReturn(true);
@@ -104,7 +105,8 @@ public class ITunesServiceImplTest {
         ITunesConnectionConfig config = configArgumentCaptor.getValue();
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, config.getUrl());
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, config.getPassword());
-        verify(messageSource, times(2)).getMessage(eq(user.getCommunityRewriteUrl()), anyString(),  isNull(Object[].class), isNull(Locale.class));
+        verify(messageSource, times(1)).getMessage(eq(user.getCommunityRewriteUrl()), anyString(),  isNull(Object[].class), isNull(Locale.class));
+        verify(messageSource, times(1)).getDecryptedMessage(eq(user.getCommunityRewriteUrl()), anyString(), isNull(Object[].class), isNull(Locale.class));
 
         verifyNoMoreInteractions(iTunesClient, iTunesPaymentService, messageSource);
     }
@@ -120,7 +122,7 @@ public class ITunesServiceImplTest {
         user.setUserGroup(userGroup);
 
         when(messageSource.getMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL);
-        when(messageSource.getMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD);
+        when(messageSource.getDecryptedMessage(user.getCommunityRewriteUrl(), ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, null, null)).thenReturn(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD);
 
         ITunesResult iTunesResult = mock(ITunesResult.class);
         when(iTunesResult.isSuccessful()).thenReturn(false);
@@ -137,7 +139,8 @@ public class ITunesServiceImplTest {
         ITunesConnectionConfig config = configArgumentCaptor.getValue();
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_I_TUNES_URL, config.getUrl());
         assertSame(ITunesConnectionConfig.APPLE_IN_APP_PASSWORD, config.getPassword());
-        verify(messageSource, times(2)).getMessage(eq(user.getCommunityRewriteUrl()), anyString(),  isNull(Object[].class), isNull(Locale.class));
+        verify(messageSource, times(1)).getMessage(eq(user.getCommunityRewriteUrl()), anyString(),  isNull(Object[].class), isNull(Locale.class));
+        verify(messageSource, times(1)).getDecryptedMessage(eq(user.getCommunityRewriteUrl()), anyString(),  isNull(Object[].class), isNull(Locale.class));
 
         verifyNoMoreInteractions(iTunesClient, iTunesPaymentService, messageSource);
     }
