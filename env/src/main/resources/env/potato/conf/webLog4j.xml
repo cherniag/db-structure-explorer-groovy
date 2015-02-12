@@ -5,6 +5,7 @@
 <!--Web log config file-->
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
     <appender name="web-profile-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/web-profile.csv"/>
         <param name="encoding" value="UTF-8"/>
@@ -22,6 +23,7 @@
         </filter>
     </appender>
 
+
     <appender name="thridPartyRequestsProfileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/profile-web-3rdPartyRequests.csv"/>
         <param name="encoding" value="UTF-8"/>
@@ -33,6 +35,7 @@
                    value="time=[%-24d{ISO8601}]; tPRExecutionDurationMillis=[%X{tPRExecutionDurationMillis}]; tPRUrl=[%X{tPRUrl}]; tPRUserId=[%X{tPRUserId}]; tPRUserName=[%X{tPRUserName}]; tPRUserMobile=[%X{tPRUserMobile}]; tPRBody=[%X{tPRBody}]; tPRNameValuePairs=[%X{tPRNameValuePairs}]; tPRResponse=[%X{tPRResponse}]; tPRResult=[%X{tPRResult}]; tPRErrorMessage=[%X{tPRErrorMessage}]%n"/>
         </layout>
     </appender>
+
     <appender name="web-RollingFileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/web.log"/>
         <param name="encoding" value="UTF-8"/>
@@ -118,21 +121,36 @@
         </filter>
     </appender>
 
-    <appender name="slow-requests" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/slow-requests.log"/>
+    <appender name="detailedAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/detailed_web.log"/>
         <param name="encoding" value="UTF-8"/>
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/slow-requests_%d{yyyy-ww}.gz"/>
+            <param name="fileNamePattern" value="${catalina.base}/logs/detailed_web_%d{yyyy-ww-dd}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}: ut [%15.15t] %-5p %30.30c - %m%n"/>
+                   value="%-24d{ISO8601}:  [%15.15t] userid=%X{userId} %X{userName} from %X{community}] %-5p %30.30c.%M() - %m%n"/>
         </layout>
     </appender>
 
-    <logger name="mobi.nowtechnologies.server.shared.web.filter.SlowRequestFilter">
-        <level value="WARN"></level>
-        <appender-ref ref="slow-requests"/>
+    <logger name="org.springframework.security">
+        <level value="TRACE"/>
+        <appender-ref ref="detailedAppender"/>
+    </logger>
+
+    <logger name="org.springframework.mobile">
+        <level value="TRACE"/>
+        <appender-ref ref="detailedAppender"/>
+    </logger>
+
+    <logger name="javax.servlet">
+        <level value="TRACE"/>
+        <appender-ref ref="detailedAppender"/>
+    </logger>
+
+    <logger name="org.springframework.web">
+        <level value="TRACE"/>
+        <appender-ref ref="detailedAppender"/>
     </logger>
 
     <logger name="org.springframework">
@@ -180,7 +198,7 @@
          -->
     </logger>
     <logger name="mobi.nowtechnologies.server.persistence">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="persistence-web-RollingFileAppender"/>
         <!--
                 <appender-ref ref="stdout"/>
@@ -215,7 +233,6 @@
     </logger>
 
     <root>
-        <level value="DEBUG"></level>
         <appender-ref ref="errors-web-RollingFileAppender"/>
     </root>
 

@@ -25,10 +25,22 @@ Feature: get context
     And chart 84 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action1
     When referral data matches current case
     When user invokes get context command
-    Then chart 84 contains [{now};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id=84&action=action1]
+    Then chart 84 contains [{now};PREVIEW;{community}://content/playlist?id=84&action=action1, {exp};PREVIEW;{community}://content/playlist?id=84&action=action1]
+
+    And the case is the following [----(Rm)--------(NOW)-----(Re)-------]
+    And chart 84 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
+    When referral data matches current case
+    When user invokes get context command
+    Then chart 84 contains [{now};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id=84&action=refer_a_friend]
 
     And the case is the following [----(Rm)--------(NOW)----------------]
     And chart 85 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action2
+    When referral data matches current case
+    When user invokes get context command
+    Then chart 85 contains [{now};PREVIEW;{community}://content/playlist?id=85&action=action2]
+
+    And the case is the following [----(Rm)--------(NOW)----------------]
+    And chart 85 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
     When referral data matches current case
     When user invokes get context command
     Then chart 85 contains [{now};SHUFFLED;null]
@@ -44,10 +56,22 @@ Feature: get context
     And chart 86 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action3
     When referral data matches current case
     When user invokes get context command
-    Then chart 86 contains [{now};NORMAL;null, {free_trial_exp};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id=86&action=action3]
+    Then chart 86 contains [{now};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id=86&action=action3, {exp};PREVIEW;{community}://content/playlist?id=86&action=action3]
+
+    And the case is the following [----(Rm)-----(NOW)-------(FT)--(Re)--]
+    And chart 86 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
+    When referral data matches current case
+    When user invokes get context command
+    Then chart 86 contains [{now};NORMAL;null, {free_trial_exp};SHUFFLED;null, {exp};PREVIEW;{community}://content/playlist?id=86&action=refer_a_friend]
 
     And the case is the following [----(Rm)-----(NOW)-------(FT)--------]
     And chart 87 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:action4
+    When referral data matches current case
+    When user invokes get context command
+    Then chart 87 contains [{now};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id=87&action=action4]
+
+    And the case is the following [----(Rm)-----(NOW)-------(FT)--------]
+    And chart 87 configured FREE_TRIAL:NORMAL,locked:<NULL> and LIMITED:PREVIEW,locked:refer_a_friend
     When referral data matches current case
     When user invokes get context command
     Then chart 87 contains [{now};NORMAL;null, {free_trial_exp};SHUFFLED;null]
@@ -57,4 +81,3 @@ Feature: get context
     When referral data matches current case
     When user invokes get context command
     Then chart 87 contains [{now};NORMAL;null, {exp};NORMAL;null, {free_trial_exp};PREVIEW;{community}://content/playlist?id=87&action=action5]
-

@@ -3,7 +3,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div class="go-premium-container go-premium-container-device">
+<div class="go-premium-container-ios go-premium-container-device">
     <div class="go-premium-button-target go-premium-button-close go-premium-button-close-device" onclick="returnToApp();">
     </div>
     <div class="go-premium-unsubscribe-premium-banner go-premium-unsubscribe-banner go-premium-unsubscribe-logo-device">

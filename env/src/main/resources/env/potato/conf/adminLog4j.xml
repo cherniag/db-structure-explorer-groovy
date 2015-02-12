@@ -65,50 +65,34 @@
     <logger name="org.springframework">
         <level value="INFO"></level>
         <appender-ref ref="business-logic-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
     </logger>
     <logger name="org.apache.commons">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="business-logic-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
     </logger>
     <logger name="net.sf.hibernate.cfg">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
     </logger>
     <logger name="org.hibernate.SQL">
         <level value="INFO"></level>
         <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
     </logger>
     <logger name="org.hibernate.type">
-        <level value="INFO"></level>
+        <level value="TRACE"></level>
         <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
     </logger>
     <logger name="org.hibernate.annotations.common.Version">
-        <level value="INFO"></level>
+        <level value="TRACE"></level>
         <appender-ref ref="business-logic-admin-RollingFileAppender"/>
-        <!--		<appender-ref ref="stdout"/>-->
-        <!--		<appender-ref ref="stderr"/>-->
     </logger>
     <logger name="mobi.nowtechnologies.server.service">
         <level value="DEBUG"></level>
         <appender-ref ref="business-logic-admin-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.persistence">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="persistence-admin-RollingFileAppender"/>
-        <!--
-                <appender-ref ref="stdout"/>
-                <appender-ref ref="stderr"/>
-         -->
     </logger>
     <logger name="mobi.nowtechnologies.server.admin">
         <level value="DEBUG"></level>
@@ -116,11 +100,10 @@
     </logger>
 
     <logger name="org.apache.tiles">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
     </logger>
 
     <root>
-        <level value="DEBUG"></level>
         <appender-ref ref="errors-admin-RollingFileAppender"/>
     </root>
 

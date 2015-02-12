@@ -36,7 +36,7 @@ if(Settings == undefined) {
                     // rendering
                     render(options.renderTo);
 
-                    $('#enableOrDisableFreemiumId').text((model.enabled)?'Disabled Freemium':'Enable Freemium').click(enableOrDisableFreemium);
+                    $('#enableOrDisableFreemiumId').text((model.enabled)?'Disable Freemium':'Enable Freemium').click(enableOrDisableFreemium);
                     $('#saveId').click(save);
 
                     // editing

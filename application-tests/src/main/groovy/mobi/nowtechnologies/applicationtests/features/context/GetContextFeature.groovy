@@ -197,14 +197,12 @@ public class GetContextFeature {
         allCommunities.each {
             ChartUserStatusBehavior b1 = find(it, chartId, status1);
             b1.@chartBehavior.@type=type1
-            b1.@locked=action1.isNull()
             b1.@action=action1.value()
 
             chartUserStatusBehaviorRepository.saveAndFlush(b1)
 
             ChartUserStatusBehavior b2 = find(it, chartId, status2);
             b2.@chartBehavior.@type=type2
-            b2.@locked=action1.isNull()
             b2.@action=action2.value()
 
             chartUserStatusBehaviorRepository.saveAndFlush(b2)

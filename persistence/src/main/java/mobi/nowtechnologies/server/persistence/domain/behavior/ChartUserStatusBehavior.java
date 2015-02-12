@@ -29,9 +29,6 @@ public class ChartUserStatusBehavior implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserStatusType userStatusType;
 
-    @Column(name = "is_locked")
-    private boolean locked;
-
     @Column(name = "action")
     private String action;
 
@@ -40,14 +37,6 @@ public class ChartUserStatusBehavior implements Serializable {
 
     public int getChartId() {
         return chartId;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
     }
 
     public String getAction() {
@@ -76,7 +65,6 @@ public class ChartUserStatusBehavior implements Serializable {
                 "  chart id=" + chartId +
                 ", action=" + action +
                 ", userStatusType=" + userStatusType +
-                ", locked=" + locked +
                 ", chartBehavior='" + chartBehavior + '\'' +
                 '}';
     }
