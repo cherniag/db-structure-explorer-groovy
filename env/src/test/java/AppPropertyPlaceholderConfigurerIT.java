@@ -73,7 +73,9 @@ public class AppPropertyPlaceholderConfigurerIT {
         assertThat(newProperties.size(), is(oldProperties.size()));
 
         for (String oldPropertyKey : oldProperties.stringPropertyNames()) {
-            assertThat(newProperties.getProperty(oldPropertyKey).trim(), is(oldProperties.getProperty(oldPropertyKey).trim()));
+            String newTrimmedProp = newProperties.getProperty(oldPropertyKey).trim();
+            String oldTrimmedProp = oldProperties.getProperty(oldPropertyKey).trim();
+            assertThat("The values for key [" + oldPropertyKey +"] newTrimmedProp: [" + newTrimmedProp + "] oldTrimmedProp: [" + oldTrimmedProp + "] are different in new " + filePaths[2] + " and old " + filePaths[1] + "( uses " + filePaths[0] + " file as general)  files" , newTrimmedProp, is(oldTrimmedProp));
         }
     }
 }

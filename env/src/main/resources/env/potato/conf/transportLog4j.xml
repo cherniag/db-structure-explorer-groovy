@@ -2,6 +2,7 @@
 <!DOCTYPE log4j:configuration SYSTEM
         "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 
+<!--rage-->
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
     <appender name="transportProfileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
@@ -10,7 +11,7 @@
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
             <param name="fileNamePattern" value="${catalina.base}/logs/profile-transport_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+        <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
                    value="time=[%-24d{ISO8601}]; commandName=[%X{command}]; USER_NAMEfromRequest=[%X{userName}]; communityName=[%X{community}]; remoteAddr=[%X{remoteAddr}]; %m%n"/>
         </layout>
@@ -23,11 +24,29 @@
             <param name="fileNamePattern"
                    value="${catalina.base}/logs/profile-transport-3rdPartyRequests_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
-        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+        <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
                    value="time=[%-24d{ISO8601}]; tPRExecutionDurationMillis=[%X{tPRExecutionDurationMillis}]; tPRUrl=[%X{tPRUrl}]; tPRUserId=[%X{tPRUserId}]; tPRUserName=[%X{tPRUserName}]; tPRUserMobile=[%X{tPRUserMobile}]; tPRBody=[%X{tPRBody}]; tPRNameValuePairs=[%X{tPRNameValuePairs}]; tPRResponse=[%X{tPRResponse}]; tPRResult=[%X{tPRResult}]; tPRErrorMessage=[%X{tPRErrorMessage}]%n"/>
         </layout>
     </appender>
+
+    <!-- Warning Transport Logs -->
+    <appender name="transportWarningAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/warning-transport.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/errors-transport_%d{yyyy-MM-dd}.gz"/>
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <param name="ConversionPattern"
+                   value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="WARN"/>
+            <param name="AcceptOnMatch" value="true"/>
+        </filter>
+    </appender>
+
     <!-- Errors Transport Logs -->
     <appender name="transportErrorsAppender" class="org.apache.log4j.rolling.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/errors-transport.log"/>
@@ -37,14 +56,15 @@
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %30.30c.%M() - %m%n"/>
+                   value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n"/>
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="LevelMin" value="WARN"/>
+            <param name="LevelMin" value="ERROR"/>
             <param name="LevelMax" value="FATAL"/>
-            <param name="AcceptOnMatch" value="FALSE"/>
+            <param name="AcceptOnMatch" value="true"/>
         </filter>
     </appender>
+
 
     <!-- Transport Controller Logs -->
     <appender name="transportControllerAppender" class="org.apache.log4j.rolling.RollingFileAppender">
@@ -59,12 +79,12 @@
         </layout>
         <filter class="org.apache.log4j.filter.ExpressionFilter">
             <param name="AcceptOnMatch" value="FALSE"/>
-            <param name="expression" value="PROP.userName == '+447453314683'"/>
+            <param name="expression" value="PROP.userName == '+447744444444'"/>
         </filter>
         <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
             <param name="contextKey" value="class"/>
             <param name="classNames"
-                   value="mobi.nowtechnologies.server.transport.controller.AccCheckController, mobi.nowtechnologies.server.transport.controller.AutoOptInController, mobi.nowtechnologies.server.transport.controller.EntityController, mobi.nowtechnologies.server.controller.VersionController, mobi.nowtechnologies.server.transport.controller.FileController, mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController, mobi.nowtechnologies.server.transport.controller.GetChartController, mobi.nowtechnologies.server.transport.controller.GetNewsController, mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController, mobi.nowtechnologies.server.transport.controller.SingUpDeviceController, mobi.nowtechnologies.server.transport.controller.PhoneNumberController, mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController, mobi.nowtechnologies.server.transport.controller.GetStreamzineController"/>
+                   value="mobi.nowtechnologies.server.transport.controller.EntityController, mobi.nowtechnologies.server.controller.VersionController, mobi.nowtechnologies.server.transport.controller.FileController, mobi.nowtechnologies.server.transport.controller.ApplyInitPromoController, mobi.nowtechnologies.server.transport.controller.GetChartController, mobi.nowtechnologies.server.transport.controller.GetNewsController, mobi.nowtechnologies.server.transport.controller.GetPurchasedContentInfoController, mobi.nowtechnologies.server.transport.controller.SignUpDeviceController, mobi.nowtechnologies.server.transport.controller.PhoneNumberController, mobi.nowtechnologies.server.transport.controller.ActivateVideoAudioFreeTrialController, mobi.nowtechnologies.server.transport.controller.AutoOptInController, mobi.nowtechnologies.server.transport.controller.AccCheckController, mobi.nowtechnologies.server.transport.controller.SigninFacebookController, mobi.nowtechnologies.server.transport.controller.GetStreamzineController, mobi.nowtechnologies.server.transport.controller.ServiceConfigController, mobi.nowtechnologies.server.transport.controller.ReferralController"/>
             <param name="acceptOnMatch" value="true"/>
         </filter>
     </appender>
@@ -241,6 +261,10 @@
             <param name="ConversionPattern"
                    value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c.%M() - %m%n"/>
         </layout>
+        <filter class="mobi.nowtechnologies.server.shared.log.ContextFilter">
+            <param name="contextKey" value="ACC_CHECK"/>
+            <param name="acceptOnMatch" value="true"/>
+        </filter>
     </appender>
 
     <appender name="weeklyUpdateServiceFile" class="org.apache.log4j.rolling.RollingFileAppender">
@@ -262,23 +286,22 @@
         </filter>
     </appender>
 
-    <appender name="throttlingService" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/throttlingService.log"/>
+    <!-- Business Task Job -->
+    <appender name="businessTaskJobAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/jobs-businessTask.log"/>
         <param name="encoding" value="UTF-8"/>
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/throttlingService_%d{yyyy-MM-dd}.gz"/>
+            <param name="fileNamePattern" value="${catalina.base}/logs/jobs-businessTask_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
-            <param name="ConversionPattern"
-                   value="%-24d{ISO8601},%t,%X{command},%X{userName},%X{device},%X{community},%m%n"/>
+            <param name="ConversionPattern" value="%-24d{ISO8601}:  [%15.15t] %-5p %30.30c - %m%n"/>
         </layout>
         <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
             <param name="contextKey" value="class"/>
-            <param name="classNames" value="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl"/>
+            <param name="classNames" value="mobi.nowtechnologies.server.job.BusinessTaskJob"/>
             <param name="acceptOnMatch" value="true"/>
         </filter>
     </appender>
-
 
     <!-- Transport User SMS Notification Logs -->
     <appender name="userSMSNotificationAppender" class="org.apache.log4j.rolling.RollingFileAppender">
@@ -300,16 +323,23 @@
         </filter>
     </appender>
 
-    <appender name="transportProfileAppender" class="org.apache.log4j.rolling.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/profile-transport.csv"/>
+    <appender name="throttlingAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/throttlingService.log"/>
         <param name="encoding" value="UTF-8"/>
         <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-            <param name="fileNamePattern" value="${catalina.base}/logs/profile-transport_%d{yyyy-MM-dd}.gz"/>
+            <param name="fileNamePattern" value="${catalina.base}/logs/throttlingService_%d{yyyy-MM-dd}.gz"/>
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="time=[%-24d{ISO8601}]; commandName=[%X{command}]; USER_NAMEfromRequest=[%X{userName}]; communityName=[%X{community}]; remoteAddr=[%X{remoteAddr}]; %m%n"/>
+                   value="%-24d{ISO8601},%t,%X{command},%X{userName},%X{device},%X{community},%m%n"/>
         </layout>
+        <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
+            <param name="contextKey" value="class"/>
+            <param name="classNames"
+                   value="mobi.nowtechnologies.server.transport.controller.GetChartController"/>
+            <param name="acceptOnMatch" value="true"/>
+        </filter>
     </appender>
 
     <appender name="updateO2UserTaskAppender" class="org.apache.log4j.rolling.RollingFileAppender">
@@ -320,7 +350,7 @@
         </rollingPolicy>
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}:  [%15.15t] userid=%X{userId} %X{userName} from %X{community}] %-5p %30.30c - %m%n"/>
+                   value="%-24d{ISO8601}:  [%15.15t] userid=%X{userId} %X{userName} from %X{community}] %-5p %30.30c.%M() - %m%n"/>
         </layout>
         <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
             <param name="contextKey" value="class"/>
@@ -329,18 +359,38 @@
         </filter>
     </appender>
 
+    <appender name="sendSmsAppender" class="org.apache.log4j.rolling.RollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/sendSms.log"/>
+        <param name="encoding" value="UTF-8"/>
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="${catalina.base}/logs/sendSms_%d{yyyy-MM-dd}.gz"/>
+        </rollingPolicy>
+        <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
+            <param name="ConversionPattern"
+                   value="%-24d{ISO8601}:  [%15.15t] [%.20X{command} %X{userName} from %X{community}] %-5p %30.30c - %m%n"/>
+        </layout>
+        <filter class="mobi.nowtechnologies.server.shared.log.ClassContextFilter">
+            <param name="contextKey" value="class"/>
+            <param name="classNames" value="mobi.nowtechnologies.server.job.SendSMSQuartzJobBean"/>
+            <param name="acceptOnMatch" value="true"/>
+        </filter>
+    </appender>
+
+
     <logger name="org.springframework.orm.jpa">
-        <level value="TRACE"/>
+        <level value="INFO"/>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
     </logger>
     <logger name="org.springframework.transaction">
-        <level value="TRACE"/>
+        <level value="INFO"/>
         <appender-ref ref="paymentExecutionAppender"/>
+        <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
+        <appender-ref ref="userNotificationAppender"/>
     </logger>
 
     <logger name="org.springframework.ws.client.MessageTracing.sent">
@@ -356,36 +406,44 @@
     </logger>
 
     <logger name="org.hibernate.SQL">
-        <level value="DEBUG"></level>
+        <level value="INFO"></level>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
-        <!-- <appender-ref ref="transportControllerAppender" /> -->
+        <appender-ref ref="paymentRetryJobAppender"/>
+        <!--<appender-ref ref="transportControllerAppender" />-->
     </logger>
     <logger name="org.hibernate.type">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
-        <!-- <appender-ref ref="transportControllerAppender" /> -->
+        <appender-ref ref="paymentRetryJobAppender"/>
+        <!--<appender-ref ref="transportControllerAppender" />-->
     </logger>
     <logger name="org.hibernate.cache">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
     </logger>
 
+    <logger name="smslib">
+        <level value="DEBUG"/>
+        <appender-ref ref="userNotificationAppender"/>
+    </logger>
+
     <!-- MIG Logger -->
     <logger name="mobi.nowtechnologies">
         <level value="DEBUG"/>
+        <appender-ref ref="accCheckAppender"/>
         <appender-ref ref="migControllerAppender"/>
         <appender-ref ref="transportControllerAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
@@ -398,8 +456,14 @@
         <appender-ref ref="notificationJobAppender"/>
         <appender-ref ref="paymentRetryJobAppender"/>
         <appender-ref ref="cleanExpiredPaymentJobAppender"/>
-        <appender-ref ref="throttlingService"/>
         <appender-ref ref="updateO2UserTaskAppender"/>
+        <appender-ref ref="sendSmsAppender"/>
+        <appender-ref ref="businessTaskJobAppender"/>
+    </logger>
+
+    <logger name="org.springframework.web.client">
+        <level value="DEBUG"/>
+        <appender-ref ref="transportControllerAppender"/>
     </logger>
 
     <logger name="PROFILE_LOGGER">
@@ -412,20 +476,13 @@
         <appender-ref ref="thridPartyRequestsProfileAppender"/>
     </logger>
 
-    <!-- END MIG Logger -->
-
-    <logger name="org.springframework.web.client">
-        <level value="DEBUG"/>
-        <appender-ref ref="transportControllerAppender"/>
-    </logger>
-
-    <logger name="SUCCESS_ACC_CHECK_LOGGER">
-        <level value="INFO"/>
-        <appender-ref ref="accCheckAppender"/>
+    <logger name="mobi.nowtechnologies.server.service.impl.ThrottlingServiceImpl">
+        <appender-ref ref="throttlingAppender"/>
     </logger>
 
     <root>
         <appender-ref ref="transportErrorsAppender"/>
+        <appender-ref ref="transportWarningAppender"/>
     </root>
 
 </log4j:configuration>

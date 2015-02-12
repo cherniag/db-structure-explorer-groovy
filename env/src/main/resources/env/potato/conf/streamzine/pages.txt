@@ -5,3 +5,5 @@ privacy_policy
 terms_of_service
 about
 account_home
+news
+favourites

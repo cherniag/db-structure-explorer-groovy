@@ -34,6 +34,7 @@ public class ReloadableMessageSourceIT {
             {"classpath:services", "classpath:props/orange/conf/services", "classpath:env/orange/conf/services"},
             {"classpath:services", "classpath:props/rage/conf/services", "classpath:env/rage/conf/services"},
             {"classpath:services", "classpath:props/staging/conf/services", "classpath:env/staging/conf/services"},
+            {"classpath:services", "classpath:props/potato/conf/services", "classpath:env/potato/conf/services"},
 
             {"classpath:services", "classpath:props/prod_db1/conf/services", "classpath:env/prod_db1/conf/services"},
             {"classpath:services", "classpath:props/prod_db2/conf/services", "classpath:env/prod_db2/conf/services"},
@@ -49,6 +50,7 @@ public class ReloadableMessageSourceIT {
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/orange/conf/i18n/admin/messages", "classpath:env/orange/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/rage/conf/i18n/admin/messages", "classpath:env/rage/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/staging/conf/i18n/admin/messages", "classpath:env/staging/conf/i18n/admin/messages"},
+            {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/potato/conf/i18n/admin/messages", "classpath:env/potato/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/prod_db1/conf/i18n/admin/messages", "classpath:env/prod_db1/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/prod_db2/conf/i18n/admin/messages", "classpath:env/prod_db2/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/prod_jadmin/conf/i18n/admin/messages", "classpath:env/prod_jadmin/conf/i18n/admin/messages"},
@@ -63,6 +65,7 @@ public class ReloadableMessageSourceIT {
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/orange/conf/i18n/web/messages", "classpath:env/orange/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/rage/conf/i18n/web/messages", "classpath:env/rage/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/staging/conf/i18n/web/messages", "classpath:env/staging/conf/i18n/web/messages"},
+            {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/potato/conf/i18n/web/messages", "classpath:env/potato/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_db1/conf/i18n/web/messages", "classpath:env/prod_db1/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_db2/conf/i18n/web/messages", "classpath:env/prod_db2/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_jadmin/conf/i18n/web/messages", "classpath:env/prod_jadmin/conf/i18n/web/messages"},
@@ -80,6 +83,7 @@ public class ReloadableMessageSourceIT {
     }
 
     @Theory
+    //To run this test in idea IDE please run following command: maven -Dtest=ReloadableMessageSourceIT test -DfailIfNoTests=false
     public void shouldConfirmNoDiffAsIs(String[] baseNames, String community, Locale locale) throws Exception {
         //given
         CustomReloadableResourceBundleMessageSource oldCustomReloadableResourceBundleMessageSource = new CustomReloadableResourceBundleMessageSource();
