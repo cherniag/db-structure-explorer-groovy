@@ -13,6 +13,8 @@ import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm;
+import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
+import mobi.nowtechnologies.server.web.model.PaymentModelService;
 import mobi.nowtechnologies.server.web.subscription.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,7 @@ public class PaymentsController extends CommonController {
     private UserService userService;
     private CommunityService communityService;
     private PromotionService promotionService;
+    private CommunityServiceFactory communityServiceFactory;
 
     private CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
@@ -85,6 +88,10 @@ public class PaymentsController extends CommonController {
 
     public void setSubscriptionInfoAsm(SubscriptionInfoAsm subscriptionInfoAsm) {
         this.subscriptionInfoAsm = subscriptionInfoAsm;
+    }
+
+    public void setCommunityServiceFactory(CommunityServiceFactory communityServiceFactory) {
+        this.communityServiceFactory = communityServiceFactory;
     }
 
     protected ModelAndView getManagePaymentsPage(String viewName, String communityUrl, Locale locale, String scopePrefix) {
@@ -129,6 +136,11 @@ public class PaymentsController extends CommonController {
         mav.addObject(PaymentDetailsByPaymentDto.NAME, paymentDetailsByPaymentDto);
         mav.addObject("showTwoWeeksPromotion", userIsLimitedAndPromotionIsActive(user, community));
         mav.addObject("paymentsPage", paymentsPage);
+
+        PaymentModelService paymentModelService = communityServiceFactory.find(community, PaymentModelService.class);
+        if(paymentModelService != null) {
+            mav.addObject("paymentData", paymentModelService.getModel(user));
+        }
 
         return mav;
     }

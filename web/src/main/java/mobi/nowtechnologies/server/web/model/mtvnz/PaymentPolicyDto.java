@@ -4,6 +4,8 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class PaymentPolicyDto implements Comparable<PaymentPolicyDto> {
     private int id;
@@ -51,5 +53,13 @@ public class PaymentPolicyDto implements Comparable<PaymentPolicyDto> {
         int thisPeriodWeight = durationUnit.getPeriodWeight();
         int thatPeriodWeight = paymentPolicyDto.durationUnit.getPeriodWeight();
         return Integer.valueOf(thisPeriodWeight).compareTo(thatPeriodWeight);
+    }
+
+    public static Collection<PaymentPolicyDto> convert(Collection<PaymentPolicy> paymentPolicies) {
+        Collection<PaymentPolicyDto> dtos = new ArrayList<>();
+        for (PaymentPolicy paymentPolicy : paymentPolicies) {
+            dtos.add(new PaymentPolicyDto(paymentPolicy));
+        }
+        return dtos;
     }
 }

@@ -20,8 +20,8 @@
         <span>Vodafone</span>
     </a>
     <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-ok"
-       onclick="goTo('${pageContext.request.contextPath}/payments/iTunesSubscription.html?productId=${paymentPolicyDto.appStoreProductId}');">
-        <span><s:message code='subscribe.button.pass.${paymentPolicyDto.durationUnit}' arguments="${paymentPolicyDto.duration},${paymentPolicyDto.subcost}"/> </span>
+       onclick="goTo('${pageContext.request.contextPath}/payments/iTunesSubscription.html?productId=${paymentData.iTunesPaymentPolicy.appStoreProductId}');">
+        <span>IOS</span>
     </a>
 
     <div class="subscription_option_container subscription_option_container_device">

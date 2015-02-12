@@ -395,8 +395,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="communityRepository" ref="communityRepository" />
 	</bean>
 
-	<bean id="service.operatorService" class="mobi.nowtechnologies.server.service.impl.OperatorServiceImpl" />
-
 	<bean id="service.userDetailsServiceWrapper" class="org.springframework.security.access.hierarchicalroles.UserDetailsServiceWrapper"></bean>
 
 	<bean id="service.CloudFileService" class="mobi.nowtechnologies.server.service.impl.CloudFileServiceImpl" init-method="init">

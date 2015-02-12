@@ -6,7 +6,11 @@
 
     <bean name="communityServiceFactory" class="mobi.nowtechnologies.server.web.model.CommunityServiceFactory" />
 
-    <bean id="mtvnz.ModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PinModelService">
+    <bean id="mtvnz.PinModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PinPinModelServiceImpl">
+        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
+    </bean>
+
+    <bean id="mtvnz.PaymentModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PaymentModelServiceImpl">
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
     </bean>
 

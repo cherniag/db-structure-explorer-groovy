@@ -3,18 +3,22 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-Please confirm for ${phone}.
+<div class="subscription_root_container">
+    Please confirm for ${phone}.
 
-Enter
-<input type="text" id="pin" />
+    Enter
+    <input type="text" id="pin" />
 
-<script>
-    var enterPin = function() {
-        window.location = "pin/result?pin=" + $('#pin').val();
-    }
-</script>
+    <script>
+        var enterPin = function() {
+            window.location = "pin/result?pin=" + $('#pin').val();
+        }
+    </script>
 
-<a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-ok" onclick="enterPin()">
-    <span>Go</span>
-</a>
+    <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-ok" onclick="enterPin()">
+        <span>Go</span>
+    </a>
+</div>
+
+
 

@@ -62,6 +62,7 @@
         <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
         <property name="communityResourceBundleMessageSource" ref="serviceMessageSource"/>
         <property name="subscriptionInfoAsm" ref="subscriptionInfoAsm"/>
+        <property name="communityServiceFactory" ref="communityServiceFactory"/>
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.EnterPhoneNumberController">

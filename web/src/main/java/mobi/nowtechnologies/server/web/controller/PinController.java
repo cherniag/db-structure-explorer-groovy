@@ -3,7 +3,7 @@ package mobi.nowtechnologies.server.web.controller;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
-import mobi.nowtechnologies.server.web.model.ModelService;
+import mobi.nowtechnologies.server.web.model.PinModelService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,11 +29,11 @@ public class PinController extends CommonController {
     @RequestMapping(value = {"pin/result"}, method = RequestMethod.GET)
     public ModelAndView result() {
         User user = currentUser();
-        ModelService modelService = getModelService(user);
+        PinModelService pinModelService = getModelService(user);
 
         ModelAndView modelAndView = new ModelAndView("pin/result");
-        if(modelService != null) {
-            modelAndView.addAllObjects(modelService.getModel(user));
+        if(pinModelService != null) {
+            modelAndView.addAllObjects(pinModelService.getModel(user));
         }
         return modelAndView;
     }
@@ -45,8 +45,8 @@ public class PinController extends CommonController {
         this.userRepository = userRepository;
     }
 
-    private ModelService getModelService(User user) {
-        return communityServiceFactory.find(user.getCommunity(), ModelService.class);
+    private PinModelService getModelService(User user) {
+        return communityServiceFactory.find(user.getCommunity(), PinModelService.class);
     }
 
     private User currentUser() {

@@ -62,7 +62,7 @@ public interface PaymentPolicyRepository extends JpaRepository<PaymentPolicy, In
             "from PaymentPolicy paymentPolicy "+
             "where " +
             "paymentPolicy.community=?1 " +
-            "and paymentPolicy.provider=?2 " +
+            "and (paymentPolicy.provider=?2 or paymentPolicy.provider is null) " +
             "and paymentPolicy.mediaType in ?3 " +
             "and paymentPolicy.online is true ")
     List<PaymentPolicy> findPaymentPolicies(Community community, ProviderType provider, List<MediaType> mediaTypes);
