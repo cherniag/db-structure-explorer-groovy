@@ -22,10 +22,8 @@ public class SmsPaymentController extends CommonController {
     public ModelAndView commit(@RequestParam("id") int policyId) {
         User user = userRepository.findOne(getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
-
         PSMSPaymentService psmsPaymentService = communityServiceFactory.find(user.getCommunity(), PSMSPaymentService.class);
         psmsPaymentService.commitPaymentDetails(user, policy);
-
         ModelAndView modelAndView = new ModelAndView("smspayment/result");
         return modelAndView;
     }

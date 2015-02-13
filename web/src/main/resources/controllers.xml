@@ -66,6 +66,7 @@
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.EnterPhoneNumberController">
+        <property name="userRepository" ref="userRepository" />
     </bean>
 
     <bean class="mobi.nowtechnologies.server.web.controller.SmsPaymentController">
