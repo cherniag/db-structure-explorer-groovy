@@ -258,12 +258,12 @@ public class BadgesServiceTest {
         Resolution resolution = ResolutionFactory.create("deviceType", 1, 1);
 
         // when
-        when(badgeMappingRepository.findAllDefault(community)).thenReturn(mappings);
-        badgesService.createResolution(community, resolution);
+        when(badgeMappingRepository.findAllDefault()).thenReturn(mappings);
+        badgesService.createResolution(resolution);
 
         // then
         verify(resolutionRepository).saveAndFlush(resolution);
-        verify(badgeMappingRepository).findAllDefault(community);
+        verify(badgeMappingRepository).findAllDefault();
         verify(badgeMappingRepository).save(entities.capture());
 
         assertEquals("general", entities.getValue().iterator().next().getOriginalFilenameAlias().getFileName());

@@ -53,11 +53,11 @@ public class UserReferralsSnapshotTest {
 
         // when-then
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(userId, positiveRequiredCount, Duration.noPeriod());
-        userReferralsSnapshot.updateMatchesData(lessCount);
+        userReferralsSnapshot.updateMatchesData(lessCount, new Date());
         assertFalse(userReferralsSnapshot.isMatched());
         assertEquals(lessCount, userReferralsSnapshot.getCurrentReferrals());
 
-        userReferralsSnapshot.updateMatchesData(positiveRequiredCount);
+        userReferralsSnapshot.updateMatchesData(positiveRequiredCount, new Date());
         assertTrue(userReferralsSnapshot.isMatched());
         assertEquals(positiveRequiredCount, userReferralsSnapshot.getCurrentReferrals());
     }
@@ -72,12 +72,12 @@ public class UserReferralsSnapshotTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(userId, positiveRequiredCount, Duration.noPeriod());
-        userReferralsSnapshot.updateMatchesData(biggerCount);
+        userReferralsSnapshot.updateMatchesData(biggerCount, new Date());
         assertEquals(biggerCount, userReferralsSnapshot.getCurrentReferrals());
 
         Date matchedDateBefore = userReferralsSnapshot.getMatchedDate();
 
-        userReferralsSnapshot.updateMatchesData(againBiggerCount);
+        userReferralsSnapshot.updateMatchesData(againBiggerCount, new Date());
         assertEquals(againBiggerCount, userReferralsSnapshot.getCurrentReferrals());
         Date matchedDateAfter = userReferralsSnapshot.getMatchedDate();
 
@@ -94,7 +94,7 @@ public class UserReferralsSnapshotTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(userId, positiveRequiredCount, oneDayPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
+        userReferralsSnapshot.updateMatchesData(biggerCount, new Date());
 
         final Date now = new Date();
         final Date plusHalfDay = DateUtils.addHours(now, 12);
@@ -123,7 +123,7 @@ public class UserReferralsSnapshotTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(userId, positiveRequiredCount, noPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
+        userReferralsSnapshot.updateMatchesData(biggerCount, new Date());
 
         final Date now = new Date();
         final Date plusHalfDay = DateUtils.addHours(now, 12);
@@ -152,7 +152,7 @@ public class UserReferralsSnapshotTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(userId, positiveRequiredCount, oneDayPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
+        userReferralsSnapshot.updateMatchesData(biggerCount, new Date());
 
         final Date now = new Date();
         final Date plusHalfDay = DateUtils.addHours(now, 12);
@@ -172,7 +172,7 @@ public class UserReferralsSnapshotTest {
 
         // when
         UserReferralsSnapshot userReferralsSnapshot = new UserReferralsSnapshot(userId, positiveRequiredCount, oneDayPeriod);
-        userReferralsSnapshot.updateMatchesData(biggerCount);
+        userReferralsSnapshot.updateMatchesData(biggerCount, new Date());
 
         final Date now = new Date();
         final Date plusHalfDay = DateUtils.addHours(now, 12);

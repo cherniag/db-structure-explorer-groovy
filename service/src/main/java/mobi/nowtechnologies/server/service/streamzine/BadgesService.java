@@ -151,11 +151,11 @@ public class BadgesService {
     }
 
     @Transactional
-    public void createResolution(Community community, Resolution resolution) {
+    public void createResolution(Resolution resolution) {
         resolutionRepository.saveAndFlush(resolution);
 
-        List<BadgeMapping> allDefault = badgeMappingRepository.findAllDefault(community);
-        badgeMappingRepository.save(collectMappings(resolution, community, allDefault));
+        List<BadgeMapping> allDefault = badgeMappingRepository.findAllDefault();
+        badgeMappingRepository.save(collectMappings(resolution, allDefault));
     }
 
     @Transactional
@@ -207,11 +207,11 @@ public class BadgesService {
         return aliases;
     }
 
-    private List<BadgeMapping> collectMappings(Resolution resolution, Community community, List<BadgeMapping> allDefault) {
+    private List<BadgeMapping> collectMappings(Resolution resolution, List<BadgeMapping> allDefault) {
         List<BadgeMapping> placeholders = new ArrayList<BadgeMapping>();
 
         for (BadgeMapping mapping : allDefault) {
-            placeholders.add(BadgeMapping.specific(resolution, community, mapping.getOriginalFilenameAlias()));
+            placeholders.add(BadgeMapping.specific(resolution, mapping.getCommunity(), mapping.getOriginalFilenameAlias()));
         }
 
         return placeholders;

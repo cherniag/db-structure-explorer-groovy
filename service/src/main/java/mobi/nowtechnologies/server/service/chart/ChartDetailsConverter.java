@@ -5,7 +5,6 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.shared.AppConstants;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
 import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
@@ -152,11 +151,23 @@ public class ChartDetailsConverter {
         }
 
         try {
-            return getEncodedUTF8Text(Utils.replacePathSegmentInUrl(mediaAmazonUrl, 0, newCountryCode));
+            return getEncodedUTF8Text(replacePathSegmentInUrl(mediaAmazonUrl, 0, newCountryCode));
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             return getEncodedUTF8Text(mediaAmazonUrl);
         }
+    }
+
+    static String replacePathSegmentInUrl(String url, int index, String newValue) {
+        LOGGER.debug("url=[{}], index=[{}], newValue=[{}]", url, index, newValue);
+        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
+
+        ArrayList<String> pathSegments = new ArrayList<>(original.build().getPathSegments());
+        pathSegments.set(index, newValue);
+
+        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
+
+        return original.build().toString();
     }
 
     private String getCountryCode(String communityRewriteUrlParameter) {
@@ -176,7 +187,7 @@ public class ChartDetailsConverter {
                     decodedITunesUrl = getUrlParameterValue(decodedITunesUrl);
                 }
                 String newUrlValue = enrichWithAffiliateCampaignParameters(decodedITunesUrl, communityRewriteUrl);
-                String withCountryCode = Utils.replacePathSegmentInUrl(newUrlValue, 0, countryCode);
+                String withCountryCode = replacePathSegmentInUrl(newUrlValue, 0, countryCode);
                 return getEncodedUTF8Text(withCountryCode);
             }else{
                 return replaceCountryPathToUrlParameter(countryCode, decodedITunesUrl);
@@ -190,7 +201,7 @@ public class ChartDetailsConverter {
 
     private String replaceCountryPathToUrlParameter(String countryCode, String decodedITunesUrl) {
         String urlParameterValue = getUrlParameterValue(decodedITunesUrl);
-        String newUrlParameterValue = Utils.replacePathSegmentInUrl(urlParameterValue, 0, countryCode);
+        String newUrlParameterValue = replacePathSegmentInUrl(urlParameterValue, 0, countryCode);
         int urlParameterStartIndex = decodedITunesUrl.indexOf(URL_PARAMETER);
         return getEncodedUTF8Text(decodedITunesUrl.substring(0, urlParameterStartIndex) + URL_PARAMETER + newUrlParameterValue);
     }

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.dto.ProviderUserDetails;
-
 /**
  * User: Titov Mykhaylo (titov)
  * 30.09.13 11:40

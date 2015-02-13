@@ -38,6 +38,7 @@ import java.util.Properties;
 @Import(PropertyPlaceholderConfiguration.class)
 @ImportResource({
         "classpath:META-INF/dao.xml",
+        "classpath:context/services.xml",
         "classpath:META-INF/service-application-tests.xml"
 })
 @EnableTransactionManagement(proxyTargetClass = true)

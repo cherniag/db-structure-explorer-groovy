@@ -75,13 +75,13 @@ class GetChartFeature {
         runner = runnerService.create(userDeviceDatas)
 
         runner.parallel {
-            deviceSet.singup(it);
-            deviceSet.loginUsingFacebook(it);
+            deviceSet.singup(it)
+            deviceSet.loginUsingFacebook(it)
         }
 
         def charts = chartRepository.getByCommunityName(community)
         charts.each {
-            chartByName << [(it.name) : (it)]
+            chartByName[it.name] = it
         }
         currentChartPosition = 0
     }
@@ -179,7 +179,7 @@ class GetChartFeature {
             def playListById = [:] as Map<Integer, ChartDetail>
             charts.each { chart ->
                 def playList = getPlayList(chart)
-                playListById << [(playList.chart.i) : (playList)]
+                playListById[playList.chart.i] = playList
             }
 
             chartDto.playlistDtos.each { responsePlayList ->
@@ -210,8 +210,9 @@ class GetChartFeature {
             charts.each { chart ->
                 getTracks(chart).each { track ->
                     // composed key - "chart id-isrc_track id"
-                    String composedKey = "${track.chartId}-${track.media.isrc}_${track.media.trackId}"
-                    trackByKey << [ (composedKey) : (track) ]
+                    String composedKey = "${track.chartId}-${track.media.isrc}_${track.media.trackId}".toString()
+                    // trackByKey << [ (composedKey) : (track) ]
+                    trackByKey[composedKey] = track
                 }
             }
 
@@ -239,14 +240,12 @@ class GetChartFeature {
 
     private List<ChartDetail> getTracks(Chart chart) {
         Long latestPublishTimeMillis = chartDetailRepository.findNearestLatestPublishDate(new Date().time, chart.i)
-        def chartItems = chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chart.i, latestPublishTimeMillis)
-        chartItems
+        chartDetailRepository.findChartDetailTreeForDrmUpdateByChartAndPublishTimeMillis(chart.i, latestPublishTimeMillis)
     }
 
     private ChartDetail getPlayList(Chart chart) {
         long lastPublishTimeMillis = chartDetailRepository.findNearestLatestChartPublishDate(new Date().time, chart.i)
-        def chartDetail = chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.i, lastPublishTimeMillis)
-        chartDetail
+        chartDetailRepository.findChartWithDetailsByChartAndPublishTimeMillis(chart.i, lastPublishTimeMillis)
     }
 
 }

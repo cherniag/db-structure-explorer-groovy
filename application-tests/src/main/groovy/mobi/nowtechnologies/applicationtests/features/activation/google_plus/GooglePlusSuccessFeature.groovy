@@ -104,7 +104,9 @@ class GooglePlusSuccessFeature {
 
     @And('^\'deviceType\' field is the same as sent during registration$')
     def "deviceType field is the same as sent during registration"() {
-        commonAssertionsService.checkDeviceTypeField(currentUserDevices, deviceSet)
+        runner.parallel {
+            commonAssertionsService.checkDeviceTypeField(it, deviceSet)
+        }
     }
 
     @And('^\'deviceUID\' field is the same as sent during registration$')

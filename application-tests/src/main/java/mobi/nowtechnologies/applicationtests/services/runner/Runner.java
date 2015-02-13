@@ -22,6 +22,12 @@ public class Runner {
         service = executorService;
     }
 
+    public void sequence(Closure<UserDeviceData> closure)  {
+        for (UserDeviceData data : datas) {
+            closure.call(data);
+        }
+    }
+
     public void parallel(Closure<UserDeviceData> closure)  {
         UserDeviceData firstTest = datas.get(0);
         closure.call(firstTest);
