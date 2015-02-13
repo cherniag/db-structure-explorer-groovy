@@ -133,9 +133,7 @@ public class PinCodeServiceIT {
 
 
     private PinCode createPinCode(User user, int codeLength, Date creationTime, boolean isEntered){
-        PinCode pinCode = new PinCode();
-        pinCode.setUserId(user.getId());
-        pinCode.setCode(RandomStringUtils.random(codeLength, false, true));
+        PinCode pinCode = new PinCode(user.getId(), RandomStringUtils.random(codeLength, false, true));
         pinCode.setCreationTime(creationTime);
         pinCode.setEntered(isEntered);
         return pinCodeRepository.save(pinCode);

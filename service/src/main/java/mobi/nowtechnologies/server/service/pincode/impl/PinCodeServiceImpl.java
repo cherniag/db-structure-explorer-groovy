@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Date;
 
@@ -20,7 +21,7 @@ import java.util.Date;
  * @author Anton Zemliankin
  */
 
-public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
+public class PinCodeServiceImpl implements PinCodeService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Resource
@@ -42,9 +43,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
             throw new PinCodeException.MaxPinCodesReached(String.format("Max count(%s) of pin codes for user per period(%s seconds) has been reached.", limitCount, limitSeconds));
         }
 
-        PinCode pinCode = new PinCode();
-        pinCode.setUserId(user.getId());
-        pinCode.setCode(generateValue(digitsCount));
+        PinCode pinCode = new PinCode(user.getId(), generateValue(digitsCount));
 
         log.debug("Generated pin code {} for user {}", pinCode.getCode(), user.getId());
         return pinCodeRepository.save(pinCode);
@@ -78,8 +77,8 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
         return RandomStringUtils.random(digitsCount, false, true);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @PostConstruct
+    public void checkConfiguration(){
         Assert.notNull(maxAttempts, "maxAttempts should not be null");
         Assert.notNull(expirationSeconds, "expirationSeconds should not be null");
         Assert.notNull(limitSeconds, "limitSeconds should not be null");

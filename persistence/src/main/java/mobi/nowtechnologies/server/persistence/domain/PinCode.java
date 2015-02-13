@@ -11,6 +11,13 @@ import java.util.Date;
 @Table(name = "pin_code")
 public class PinCode {
 
+    protected PinCode(){}
+
+    public PinCode(Integer userId, String code){
+        this.userId = userId;
+        this.code = code;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -44,16 +51,8 @@ public class PinCode {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
     public String getCode() {
         return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public int getAttempts() {
