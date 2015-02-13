@@ -2,8 +2,7 @@ package mobi.nowtechnologies.server.service.nz.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
-import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
-import mobi.nowtechnologies.server.service.exception.ServiceNotAvailableException;
+import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService {
     NZSubscriberInfoGateway subscriberInfoGateway;
 
     @Override
-    public boolean belongs(String msisdn) throws ServiceNotAvailableException {
+    public boolean belongs(String msisdn) throws SubscriberServiceException.ServiceNotAvailable, SubscriberServiceException.MsisdnNotFound {
         log.debug("Checking if {} is Vodafone msisdn.", msisdn);
         NZSubscriberInfo nzSubscriberInfo = refreshSubscriberInfo(msisdn);
         boolean isVodafone = "Vodafone".equals(nzSubscriberInfo.getProviderName());
@@ -39,23 +38,28 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService {
         return subscriberInfoRepository.save(nzSubscriberInfo);
     }
 
-    private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws ServiceNotAvailableException {
+    private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws SubscriberServiceException.MsisdnNotFound, SubscriberServiceException.ServiceNotAvailable {
         try {
             NZSubscriberResult subscriberResult = subscriberInfoGateway.getSubscriberResult(msisdn);
 
             NZSubscriberInfo nzSubscriberInfo = findOrCreate(msisdn, subscriberResult);
 
             return subscriberInfoRepository.save(nzSubscriberInfo);
-        }catch(WebServiceFaultException e){
-            log.debug("Failed to connect to NZ subscribers service: " + e.getWebServiceMessage().getFaultReason(), e);
-            throw new ServiceNotAvailableException(e.getWebServiceMessage().getFaultReason(), e);
+        } catch (WebServiceFaultException e) {
+            if ("MSISDN NOT FOUND IN INFRANET".equals(e.getMessage())) {
+                log.debug("Msisdn not found", e);
+                throw new SubscriberServiceException.MsisdnNotFound(e.getMessage(), e);
+            } else {
+                log.debug("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
+                throw new SubscriberServiceException.ServiceNotAvailable(e.getMessage(), e);
+            }
         }
     }
 
     private NZSubscriberInfo findOrCreate(String msisdn, NZSubscriberResult subscriberResult) {
         NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
 
-        if(nzSubscriberInfo == null){
+        if (nzSubscriberInfo == null) {
             nzSubscriberInfo = new NZSubscriberInfo(msisdn);
         }
 

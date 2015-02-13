@@ -2,7 +2,7 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
-import mobi.nowtechnologies.server.service.exception.ServiceNotAvailableException;
+import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import org.junit.After;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class NZSubscriberInfoServiceIT {
         assertEquals("Simplepostpay_CCRoam", savedSubscriberInfo.getBillingAccountName());
     }
 
-    @Test(expected = ServiceNotAvailableException.class)
+    @Test(expected = SubscriberServiceException.ServiceNotAvailable.class)
     public void testNZServiceFault() throws Exception {
         boolean isVodafone = nzService.belongs(NZSubscriberInfoGatewayMock.FAULT_DATA);
     }
