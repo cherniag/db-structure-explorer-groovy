@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.persistence.*;
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "new_zealand_subscriber_info")
+@Table(name = "nz_subscriber_info")
 public class NZSubscriberInfo {
 
     @Id
@@ -17,10 +18,10 @@ public class NZSubscriberInfo {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "msisdn", nullable = false)
+    @Column(name = "msisdn", nullable = false, unique = true)
     private String msisdn;
 
     @Column(name = "pay_indicator", nullable = false)
@@ -39,14 +40,18 @@ public class NZSubscriberInfo {
     private boolean active;
 
     @Column(name = "create_timestamp")
-    private Date createTimestamp;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createTimestamp = new Date();
+
+    protected NZSubscriberInfo() {
+    }
+
+    public NZSubscriberInfo(String msisdn) {
+        this.msisdn = Preconditions.checkNotNull(msisdn);
+    }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getUserId() {
@@ -59,10 +64,6 @@ public class NZSubscriberInfo {
 
     public String getMsisdn() {
         return msisdn;
-    }
-
-    public void setMsisdn(String msisdn) {
-        this.msisdn = msisdn;
     }
 
     public String getPayIndicator() {
@@ -101,16 +102,8 @@ public class NZSubscriberInfo {
         return active;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreateTimestamp() {
-        return createTimestamp;
-    }
-
-    public void setCreateTimestamp(Date createTimestamp) {
-        this.createTimestamp = createTimestamp;
+    public void activate() {
+        this.active = true;
     }
 
     @Override

@@ -7,6 +7,8 @@ import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
  */
 public interface NZSubscriberInfoService {
 
-    NZSubscriberInfo getSubscriberInfo(int userId, String msisdn);
+    boolean belongs(String msisdn);
+
+    NZSubscriberInfo confirm(int userId, String msisdn);
 
 }
