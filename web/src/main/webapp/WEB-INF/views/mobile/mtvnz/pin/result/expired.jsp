@@ -3,7 +3,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-Please confirm for ${phone}.
+Expired ...
 
 Enter
 <input type="text" id="pin" />
@@ -22,4 +22,6 @@ Enter
 <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-ok" onclick="enterPin()">
     <span>Go</span>
 </a>
+
+
 

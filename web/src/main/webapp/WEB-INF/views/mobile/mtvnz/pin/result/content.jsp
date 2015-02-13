@@ -3,11 +3,20 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<c:forEach var="paymentPolicyDto" items="${paymentPolicyDtos}">
-    <a class="go-premium-button go-premium-button-device go-premium-body-button-below go-premium-button-target go-premium-body-cancel" href="smspayment/result.html?id=${paymentPolicyDto.id}">
-        <span>
-            <s:message code='payment.per.${paymentPolicyDto.durationUnit}' arguments="${paymentPolicyDto.subCost}"/>
-        </span>
-    </a>
-</c:forEach>
-
+<c:choose>
+    <c:when test="${result.ok}">
+        <jsp:include page="result.jsp">
+            <jsp:param name="callingPage" value="check_phone" />
+        </jsp:include>
+    </c:when>
+    <c:when test="${result.error}">
+        <jsp:include page="result.jsp">
+            <jsp:param name="callingPage" value="check_phone" />
+        </jsp:include>
+    </c:when>
+    <c:otherwise>
+        <jsp:include page="result.jsp">
+            <jsp:param name="callingPage" value="check_phone" />
+        </jsp:include>
+    </c:otherwise>
+</c:choose>

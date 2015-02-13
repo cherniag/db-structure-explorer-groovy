@@ -23,7 +23,7 @@ class PinPinModelServiceImpl implements PinModelService {
         List<PaymentPolicy> filtered = filterWithOneDurationLength(all);
         Collection<PaymentPolicy> vfPsms = Collections2.filter(filtered, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));
         Collection<PaymentPolicyDto> converted = PaymentPolicyDto.convert(vfPsms);
-        Object policies = new TreeSet<>(converted);
+        Object policies = new ArrayList<>(new TreeSet<>(converted));
         return Collections.singletonMap("paymentPolicyDtos", policies);
     }
 

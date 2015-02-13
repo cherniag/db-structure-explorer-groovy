@@ -33,7 +33,7 @@ public class EnterPhoneNumberController extends CommonController {
     }
 
     private CheckResult doCheck(String phone) {
-        CheckResult result = CheckResult.NO;
+        CheckResult result = CheckResult.YES;
         // change here to debug/test
         return result;
     }
