@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import com.sun.xml.internal.messaging.saaj.soap.ver1_2.Message1_2Impl;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoGateway;
 import org.springframework.core.io.InputStreamSource;
@@ -8,11 +7,9 @@ import org.springframework.ws.mime.Attachment;
 import org.springframework.ws.mime.AttachmentException;
 import org.springframework.ws.soap.*;
 import org.springframework.ws.soap.client.SoapFaultClientException;
-import org.springframework.ws.soap.saaj.SaajSoapMessage;
 import org.w3c.dom.Document;
 
 import javax.activation.DataHandler;
-import javax.xml.soap.*;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import java.io.File;
