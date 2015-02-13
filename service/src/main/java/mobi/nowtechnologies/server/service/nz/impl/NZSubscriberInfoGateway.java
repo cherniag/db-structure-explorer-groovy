@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.service.nz.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
-import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
+import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
  * @author Anton Zemliankin
  */
 
-public class ContentProviderAccountServiceGateway extends WebServiceGatewaySupport implements NZSubscriberInfoService {
+public class NZSubscriberInfoGateway extends WebServiceGatewaySupport {
 
     private static final String CHANNEL_TYPE = "WEB";
 
@@ -21,23 +20,13 @@ public class ContentProviderAccountServiceGateway extends WebServiceGatewaySuppo
 
     private String nzUserId;
 
-    public NZSubscriberInfo getSubscriberInfo(int userId, String msisdn) {
+    public NZSubscriberResult getSubscriberResult(String msisdn) {
         TConnectionResponse connectionDetails = getConnectionDetails(msisdn);
-        TConnectionResponseInfo connectionResponseInfo = connectionDetails.getConnectionResponseInfo();
-
-        NZSubscriberInfo nzSubscriberInfo = new NZSubscriberInfo();
-        nzSubscriberInfo.setUserId(userId);
-        nzSubscriberInfo.setMsisdn(msisdn);
-        nzSubscriberInfo.setPayIndicator(connectionResponseInfo.getPayIndicator());
-        nzSubscriberInfo.setProviderName(connectionResponseInfo.getProviderName());
-        nzSubscriberInfo.setBillingAccountName(connectionResponseInfo.getBillingAccountName());
-        nzSubscriberInfo.setBillingAccountNumber(connectionResponseInfo.getBillingAccountNumber());
-        nzSubscriberInfo.setActive(false); // set to TRUE after pin verification
-
-        return nzSubscriberInfo;
+        TConnectionResponseInfo ci = connectionDetails.getConnectionResponseInfo();
+        return new NZSubscriberResult(ci.getPayIndicator(), ci.getProviderName(), ci.getBillingAccountNumber(), ci.getBillingAccountName());
     }
 
-    TConnectionResponse getConnectionDetails(String msisdn) {
+    private TConnectionResponse getConnectionDetails(String msisdn) {
         log.debug(String.format("Getting nz user info for %s", msisdn));
 
         TChannel channel = new TChannel();

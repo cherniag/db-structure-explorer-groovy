@@ -1,0 +1,18 @@
+-- Initial Size: 0
+-- Growth Rate: per /day/month/year
+-- Retention Policy: weekly
+-- Affects BI: no
+
+use cn_service;
+
+CREATE TABLE pin_code (
+  id int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id int(10) UNSIGNED NOT NULL,
+  qualifier varchar(50) NOT NULL,
+  code varchar(50) NOT NULL,
+  attempts smallint NOT NULL,
+  creation_time int(11) NOT NULL,
+  entered bit NOT NULL DEFAULT 0
+);
+
+ALTER TABLE pin_code ADD CONSTRAINT fk_pin_code_users FOREIGN KEY (user_id) REFERENCES tb_users(i);

@@ -2,9 +2,10 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
+import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import org.junit.After;
-import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,25 +24,38 @@ import javax.annotation.Resource;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager")
 public class NZSubscriberInfoServiceIT {
 
-    @Autowired
+    @Resource
     private NZSubscriberInfoService nzService;
 
     @Resource
     NZSubscriberInfoRepository subscriberInfoRepository;
 
-    @After
-    public void tearDown() throws Exception {
-        subscriberInfoRepository.deleteAll();
-    }
 
     @Test
     public void testNZService() throws Exception {
-        NZSubscriberInfo si = nzService.getSubscriberInfo(777, "6412121212");
-        subscriberInfoRepository.saveAndFlush(si);
+        boolean isVodafone = nzService.checkVodafone(777, "642101838801");
 
-        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findOne(si.getId());
+        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(777, "642101838801");
 
-        Assert.assertNotNull(savedSubscriberInfo);
+        assertTrue(isVodafone);
+        assertNotNull(savedSubscriberInfo);
+        assertEquals(777, savedSubscriberInfo.getUserId());
+        assertEquals("642101838801", savedSubscriberInfo.getMsisdn());
+        assertEquals("Prepay", savedSubscriberInfo.getPayIndicator());
+        assertEquals("Vodafone", savedSubscriberInfo.getProviderName());
+        assertEquals("300001121", savedSubscriberInfo.getBillingAccountNumber());
+        assertEquals("Simplepostpay_CCRoam", savedSubscriberInfo.getBillingAccountName());
+        assertFalse(savedSubscriberInfo.isActive());
+    }
+
+    @Test(expected = ExternalServiceException.class)
+    public void testNZServiceFault() throws Exception {
+        boolean isVodafone = nzService.checkVodafone(777, NZSubscriberInfoGatewayMock.FAULT_DATA);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        subscriberInfoRepository.deleteAll();
     }
 
 }
