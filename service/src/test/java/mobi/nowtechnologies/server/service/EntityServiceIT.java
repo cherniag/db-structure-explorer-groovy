@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.Country;
 import mobi.nowtechnologies.server.persistence.domain.Genre;
-import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,11 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -87,153 +80,6 @@ public class EntityServiceIT {
 
         assertNotNull(result);
     }
-
-    /**
-     * Run the List<Object> findListByProperties(Class<T>,Map<String,Object>)
-     * method test.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testFindListByProperties_Success() throws Exception {
-        Class<Genre> entityClass = Genre.class;
-        Map<String, Object> fieldNameValueMap = new HashMap();
-        fieldNameValueMap.put("name", "Default");
-
-        List<Genre> result = entityService.findListByProperties(entityClass,
-                fieldNameValueMap);
-        assertNotNull(result);
-    }
-
-    /**
-     * Run the List<Object> findListByProperties(Class<T>,Map<String,Object>)
-     * method test.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testFindListByProperties_SuccessAndCondtions() throws Exception {
-        Class<Country> entityClass = Country.class;
-        Map<String, Object> fieldNameValueMap = new HashMap();
-        fieldNameValueMap.put(Country.Fields.fullName.toString(),
-                "Great Britain");
-        fieldNameValueMap.put(Country.Fields.name.toString(), "GB");
-
-        List<Country> result = entityService.findListByProperties(entityClass,
-                fieldNameValueMap);
-        assertNotNull(result);
-    }
-
-    /**
-     * Run the List<Object> findListByProperties(Class<T>,Map<String,Object>)
-     * method test.
-     *
-     * @throws Exception
-     */
-    @Test(expected = ServiceException.class)
-    public void testFindListByProperties_fieldNameValueMapIsNull()
-            throws Exception {
-        Class<Object> entityClass = Object.class;
-        Map<String, Object> fieldNameValueMap = null;
-
-        List<Object> result = entityService.findListByProperties(entityClass,
-                fieldNameValueMap);
-
-        assertNotNull(result);
-    }
-
-    /**
-     * Run the List<Object> findListByProperty(Class<T>,String,Object[]) method
-     * test.
-     *
-     * @throws Exception
-     */
-    @Test(expected = ServiceException.class)
-    public void testFindListByProperty_fieldNameIsEmpty() throws Exception {
-        Class<Object> entityClass = Object.class;
-        String fieldName = "";
-        Object[] values = new Object[]{};
-
-        List<Object> result = entityService.findListByProperty(entityClass,
-                fieldName, values);
-
-        assertNotNull(result);
-        assertEquals(0, result.size());
-    }
-
-    /**
-     * Run the List<Object> findListByProperty(Class<T>,String,Object[]) method
-     * test.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testFindListByProperty_valuesIsEmpty() throws Exception {
-        Class<Country> entityClass = Country.class;
-        String fieldName = Country.Fields.fullName.toString();
-        Object[] values = new Object[]{};
-
-        List<Country> result = entityService.findListByProperty(entityClass,
-                fieldName, values);
-
-        assertNotNull(result);
-        assertEquals(0, result.size());
-    }
-
-    /**
-     * Run the List<Object> findListByProperty(Class<T>,String,Object[]) method
-     * test.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testFindListByProperty_SuccessOrConditions() throws Exception {
-        Class<Media> entityClass = Media.class;
-        String fieldName = Media.Fields.i.toString();
-        Object[] values = new Object[]{49, 50, 51};
-
-        List<Media> result = entityService.findListByProperty(entityClass,
-                fieldName, values);
-
-        assertNotNull(result);
-        assertEquals(values.length, result.size());
-    }
-
-    /**
-     * Run the List<Object> findListByProperty(Class<T>,String,Object[]) method
-     * test.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testFindListByProperty_valuesContainsNull() throws Exception {
-        Class<Media> entityClass = Media.class;
-        String fieldName = Media.Fields.i.toString();
-        Object[] values = new Object[]{47, null};
-
-        List<Media> result = entityService.findListByProperty(entityClass,
-                fieldName, values);
-        assertNotNull(result);
-    }
-
-    /**
-     * Run the List<Object> findListByProperty(Class<T>,String,Object[]) method
-     * test.
-     *
-     * @throws Exception
-     */
-    @Test(expected = ServiceException.class)
-    public void testFindListByProperty_fieldNameIsNull() throws Exception {
-        Class<Object> entityClass = Object.class;
-        String fieldName = null;
-        Object[] values = new Object[]{};
-
-        List<Object> result = entityService.findListByProperty(entityClass,
-                fieldName, values);
-
-        assertNotNull(result);
-    }
-
 
     @Test
     public void testSaveEntity_Success() throws Exception {

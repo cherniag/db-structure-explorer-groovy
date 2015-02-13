@@ -12,6 +12,8 @@ import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
 import mobi.nowtechnologies.applicationtests.services.device.domain.ApiVersions
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData
+import mobi.nowtechnologies.applicationtests.services.runner.Runner
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
 import mobi.nowtechnologies.server.persistence.domain.User
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -44,6 +46,10 @@ class FacebookFailureFeature {
 
     Map<UserDeviceData, User> users = new ConcurrentHashMap<>()
 
+    @Resource
+    RunnerService runnerService;
+    Runner runner;
+
     @Transactional('applicationTestsTransactionManager')
     @Given('^Registered user with (.+) using (.+) format for (.+) and (.+)$')
     def 'Registered user with given devices using given format for given versions and given communities'(
@@ -52,7 +58,8 @@ class FacebookFailureFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        currentUserDevices.each {
+        runner = runnerService.create(currentUserDevices)
+        runner.parallel {
             deviceSet.singup(it)
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
@@ -67,7 +74,7 @@ class FacebookFailureFeature {
 
     @When('^Registered user enters Facebook credentials and client does not pass required parameter$')
     def "Registered user enters Facebook credentials and client does not pass required parameter"() throws Throwable {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookWithoutAccessToken(it)
         }
     }
@@ -80,7 +87,7 @@ class FacebookFailureFeature {
                                                                                                                                             String versionAbove) {
         List<String> versions2 = ApiVersions.from(versions.set()).above(versionAbove);
 
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             if (version.equals(it.apiVersion)) {
                 assertEquals(phoneState.lastFacebookErrorStatus.value(), httpErrorCode1)
@@ -93,7 +100,7 @@ class FacebookFailureFeature {
     @Transactional('applicationTestsTransactionManager')
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() throws Throwable {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
@@ -103,7 +110,7 @@ class FacebookFailureFeature {
 
     @When('^Registered user enters Facebook credentials and client passes wrong authentication parameter$')
     def "Registered user enters Facebook credentials and client passes wrong authentication parameter"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingFacebookBadUserName(it)
         }
     }
@@ -117,7 +124,7 @@ class FacebookFailureFeature {
                                                                                                                                                   String versionAbove) {
         List<String> versions2 = ApiVersions.from(versions.set()).above(versionAbove);
 
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             assertEquals(httpErrorCode, phoneState.lastFacebookErrorStatus.value())
             if (version.equals(it.apiVersion)) {

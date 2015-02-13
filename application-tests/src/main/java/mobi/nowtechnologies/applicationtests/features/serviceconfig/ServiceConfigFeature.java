@@ -61,13 +61,13 @@ public class ServiceConfigFeature {
     PartnerDeviceSet partnerDeviceSet;
     @Resource
     RunnerService runnerService;
+    private Runner runner;
 
     private List<UserDeviceData> userDeviceDatas;
     private String applicationName;
     private Map<UserDeviceData, ResponseEntity<String>> successfulResponses = new ConcurrentHashMap<>();
     private Map<UserDeviceData, String> headers = new ConcurrentHashMap<>();
 
-    private Runner runner;
     private ApiVersions apiVersions;
 
     @Given("^Mobile client makes Service Config call using JSON format for (.+) and (.+) and (\\w+\\s\\w+) above (.+)$")

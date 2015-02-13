@@ -6,7 +6,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -302,17 +301,7 @@ public class Utils {
         return getVersionNumber(version1).compareTo(getVersionNumber(version2));
     }
 
-    public static String replacePathSegmentInUrl(String url, int index, String newValue) {
-        LOGGER.debug("url=[{}], index=[{}], newValue=[{}]", url, index, newValue);
-        final UriComponentsBuilder original = UriComponentsBuilder.fromUriString(url);
 
-        ArrayList<String> pathSegments = new ArrayList<String>(original.build().getPathSegments());
-        pathSegments.set(index, newValue);
-
-        original.replacePath("").pathSegment(pathSegments.toArray(new String[0]));
-
-        return original.build().toString();
-    }
 
     public static String preFormatCurrency(BigDecimal amount) {
         String moneyString = formatCurrencyWithoutCurrencySymbol(amount);

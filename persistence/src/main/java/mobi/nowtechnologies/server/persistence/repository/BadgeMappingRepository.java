@@ -16,6 +16,9 @@ public interface BadgeMappingRepository extends JpaRepository<BadgeMapping, Long
     @Query(value="select b from BadgeMapping b where b.community=:community and b.resolution is null and b.hidden is null order by b.uploaded desc")
     List<BadgeMapping> findAllDefault(@Param("community") Community community);
 
+    @Query(value="select b from BadgeMapping b where b.resolution is null and b.hidden is null")
+    List<BadgeMapping> findAllDefault();
+
     @Query(value="select b from BadgeMapping b where b.community=:community and b.resolution=:resolution and b.originalFilenameAlias=:original")
     BadgeMapping findByCommunityResolutionAndOriginalAlias(@Param("community") Community community, @Param("resolution") Resolution resolution, @Param("original") FilenameAlias original);
 

@@ -22,15 +22,24 @@ public class Runner {
         service = executorService;
     }
 
-    public void parallel(Closure<UserDeviceData> closure)  {
-        UserDeviceData firstTest = datas.get(0);
-        closure.call(firstTest);
+    public void sequence(Closure<UserDeviceData> closure)  {
+        for (UserDeviceData data : datas) {
+            closure.call(data);
+        }
+    }
+
+    public void parallel(Closure<UserDeviceData> toInvoke)  {
+        List<UserDeviceData> copy = new ArrayList<>(datas);
+
+        UserDeviceData firstTest = copy.get(0);
+        toInvoke.call(firstTest);
+        copy.remove(0);
 
         // run others when first is OK
-        List<List<UserDeviceData>> partitions = Lists.partition(datas, threads);
+        List<List<UserDeviceData>> partitions = Lists.partition(copy, threads);
         for(List<UserDeviceData> p : partitions) {
             try {
-                service.invokeAll(createTasks(p, closure));
+                service.invokeAll(createTasks(p, toInvoke));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -38,7 +47,7 @@ public class Runner {
     }
 
     public void parallel(Invoker<UserDeviceData> toInvoke)  {
-        List<UserDeviceData> copy = new ArrayList<UserDeviceData>(datas);
+        List<UserDeviceData> copy = new ArrayList<>(datas);
 
         UserDeviceData firstTest = copy.get(0);
         toInvoke.invoke(firstTest);

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.apptests.googleplus;
 
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 import org.springframework.social.google.api.plus.Person;
 

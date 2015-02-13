@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -83,7 +84,7 @@ public class ReferralService {
             logger.info("trying to update matchesData in snapshotId={} for communityId={}, userId={} with currentReferrals={}",
                     snapshot.getUserId(), communityId, snapshot.getUserId(), referredAndConfirmedCount);
 
-            snapshot.updateMatchesData(referredAndConfirmedCount);
+            snapshot.updateMatchesData(referredAndConfirmedCount, new Date());
         }
     }
 

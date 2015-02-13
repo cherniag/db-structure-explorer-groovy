@@ -9,28 +9,32 @@ public class ChartBehaviorInfo implements Comparable<ChartBehaviorInfo> {
     Date validFrom;
     ChartBehaviorType chartBehaviorType;
     String lockedAction;
-    String lockedActionHistory;
+    boolean canBeUnlocked;
     UserStatusType userStatusType;
+    private boolean wasUnLocked = false;
 
     ChartBehaviorInfo() {
     }
 
     void unlock() {
         lockedAction = null;
+        canBeUnlocked = false;
+        wasUnLocked = true;
     }
 
-    boolean isLocked() {
-        return lockedAction != null;
+    boolean canBeUnlocked() {
+        return canBeUnlocked;
     }
 
     boolean wasUnlocked() {
-        return lockedActionHistory != null && !isLocked();
+        return wasUnLocked;
     }
 
     void borrow(ChartBehaviorInfo other) {
         chartBehaviorType = other.chartBehaviorType;
         lockedAction = other.lockedAction;
-        lockedActionHistory = other.lockedActionHistory;
+        canBeUnlocked = other.canBeUnlocked;
+        wasUnLocked = other.wasUnLocked;
         userStatusType = other.userStatusType;
     }
 

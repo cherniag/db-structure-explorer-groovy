@@ -45,7 +45,6 @@ public class AccountRegistrationSuccessFeature {
     private CommonAssertionsService commonAssertionsService
     @Resource
     private RunnerService runnerService;
-
     private Runner runner;
 
     private List<UserDeviceData> userDeviceDatas
@@ -87,7 +86,7 @@ public class AccountRegistrationSuccessFeature {
     @And('^User receives following in SIGN_UP_DEVICE response:$')
     def "User receives following in SIGN_UP_DEVICE response:"(DataTable userStateTable) {
         def userState = userStateTable.asList(AccountCheckDTO)[0];
-        userDeviceDatas.each {
+        runner.parallel {
             def signUpResponse = partnerDeviceSet.getPhoneState(it).lastAccountCheckResponse
             assertEquals(userState.activation, signUpResponse.activation)
             assertEquals(userState.freeTrial, signUpResponse.freeTrial)
@@ -101,7 +100,9 @@ public class AccountRegistrationSuccessFeature {
 
     @And('^\'deviceType\' field is the same as sent during registration$')
     def "deviceType field is the same as sent during registration"() {
-        commonAssertionsService.checkDeviceTypeField(userDeviceDatas, partnerDeviceSet)
+        runner.parallel {
+            commonAssertionsService.checkDeviceTypeField(it, partnerDeviceSet)
+        }
     }
 
     @And('^\'deviceUID\' field is the same as sent during registration$')
@@ -111,7 +112,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('^\'username\' field is the same as \'deviceUID\' sent during registration$')
     def "username field is the same as deviceUID sent during registration"() {
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             assertEquals(phoneState.getDeviceUID(), phoneState.lastAccountCheckResponse.userName)
         }
@@ -180,7 +181,7 @@ public class AccountRegistrationSuccessFeature {
 
     @And('^\'uuid\' field is present in response and has UUID pattern$')
     def "'uuid' field is present in response and has UUID pattern"(){
-        userDeviceDatas.each {
+        runner.parallel {
             def phoneState = partnerDeviceSet.getPhoneState(it)
             assertNotNull(phoneState.lastAccountCheckResponse.uuid)
             def pattern = Pattern.compile('\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}')

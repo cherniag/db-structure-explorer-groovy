@@ -1,12 +1,9 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
-import mobi.nowtechnologies.server.shared.enums.FileType;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import java.util.Date;
 import java.util.List;

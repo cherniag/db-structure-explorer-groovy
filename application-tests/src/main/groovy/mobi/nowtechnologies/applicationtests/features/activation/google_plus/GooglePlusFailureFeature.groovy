@@ -59,8 +59,6 @@ class GooglePlusFailureFeature {
         runner = runnerService.create(currentUserDevices)
         runner.parallel {
             deviceSet.singup(it)
-        }
-        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 
@@ -74,14 +72,14 @@ class GooglePlusFailureFeature {
 
     @When('^Registered user enters Google Plus credentials and client does not pass required parameter$')
     def "Registered user enters Google Plus credentials and client does not pass required parameter"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingGooglePlusWithoutAccessToken(it)
         }
     }
 
     @Then('^User gets (\\d+) http error code with message regarding missing parameter$')
     def "User gets http error code with message regarding missing parameter"(int httpCode) {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             assertEquals(httpCode, phoneState.lastGooglePlusErrorStatus.value())
         }
@@ -90,7 +88,7 @@ class GooglePlusFailureFeature {
     @Transactional("applicationTestsTransactionManager")
     @And('^In database user account remains unchanged$')
     def "In database user account remains unchanged"() {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
@@ -100,14 +98,14 @@ class GooglePlusFailureFeature {
 
     @When('^Registered user enters Google Plus credentials and client passes wrong authentication parameter$')
     def "Registered user enters Google Plus credentials and client passes wrong authentication parameter"() {
-        currentUserDevices.each {
+        runner.parallel {
             deviceSet.loginUsingGooglePlusBadAuth(it)
         }
     }
 
     @Then('^User gets (\\d+) http error code with message login/pass check failed$')
     def "User gets http error code with message login pass check failed"(int httpCode) {
-        currentUserDevices.each {
+        runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
             assertEquals(httpCode, phoneState.lastGooglePlusErrorStatus.value())
         }

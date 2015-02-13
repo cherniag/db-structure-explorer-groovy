@@ -31,12 +31,4 @@ public class EmailChecker {
             return (Email) query.getResultList().get(0);
         }
     }
-
-    @Transactional(value = "applicationTestsTransactionManager", readOnly = true)
-    public Email findByTo(String tos, String from) {
-        return (Email) applicationTestsEntityManager.createQuery("select e from Email e where e.tos=:tos and e.from=:from")
-                .setParameter("tos", tos)
-                .setParameter("from", from)
-                .getSingleResult();
-    }
 }

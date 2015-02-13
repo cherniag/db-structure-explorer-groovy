@@ -1,18 +1,22 @@
--- SRV-425
-use cn_service;
+-- SRV-552
+alter table `chart_user_status_behavior` drop COLUMN `is_locked`;
+-- END OF SRV-552-- SRV-489 - [SERVER] Set default promotion to mtv1.2weeks.promo.audio
 
-alter table tb_paymentPolicy add column payment_policy_type varchar(255) not null default 'RECURRENT' comment 'enum values are RECURRENT and ONETIME' after paymentType;
-alter table tb_submittedPayments add column payment_policy_id int(11) comment 'reference to payment policy being used' after paymentDetailsId;
--- end of SRV-425
+set AUTOCOMMIT=0;
+START TRANSACTION;
 
--- START OF COMMENTED CODE: FOR FUTURE RELEASES (OR THIS RELEASE AS SEPARATE TASK TO ADD NEW PAYMENT POLICY
--- set autocommit = 0;
--- start transaction;
+select @userGroupId:= c.id from tb_communities c join tb_userGroups ug on ug.community = c.id where c.name = 'mtv1';
 
--- set @community_id = (select id from tb_communities where rewriteurlparameter = 'mtv1');
--- insert into tb_paymentPolicy (communityID, 	subWeeks, subCost, paymentType,          operator, shortCode, currencyIso, availableInStore, app_store_product_id,                contract, segment, content_category, content_type, content_description, sub_merchant_id, provider, tariff, media_type, advanced_payment_seconds, after_next_sub_payment_seconds, is_default, online, payment_policy_type, duration, duration_unit)
---                      values (@community_id,       0,    1.49, 'iTunesSubscription',     NULL,        '',       'GBP',            FALSE, 'com.musicqubed.ios.mtv1.onetime.0',     NULL,    NULL,             NULL,         NULL,                NULL,            NULL,     null,  '_3G',    'AUDIO',                        0,                              0,      FALSE,   TRUE,           'ONETIME',        7,        'DAYS');
+update tb_promotions p join tb_promoCode pC on p.i=pC.promotionId set isActive=false where userGroup=@userGroupId and pC.code='mtv1.4weeks.promo.audio';
 
--- commit;
--- set autocommit = 1;
--- END OF COMMENTED CODE
+INSERT INTO tb_promotions
+(description              , numUsers, maxUsers, startDate                            , endDate                              , isActive, freeWeeks, subWeeks, userGroup   , type       , showPromotion, label                    , is_white_listed) VALUES
+('mtv1.2weeks.promo.audio', 0       , 0       , UNIX_TIMESTAMP('2015-02-17 00:00:00'), UNIX_TIMESTAMP('2020-12-01 02:00:00'), TRUE    , 2        , 0       , @userGroupId, 'PromoCode', 0            , 'mtv1.2weeks.promo.audio', FALSE);
+
+INSERT INTO tb_promoCode
+(code         , promotionId, media_type)
+select p.label, i          , 'AUDIO' from tb_promotions p where p.userGroup=@userGroupId and p.label in ('mtv1.2weeks.promo.audio');
+
+commit;
+
+SET AUTOCOMMIT = 1;

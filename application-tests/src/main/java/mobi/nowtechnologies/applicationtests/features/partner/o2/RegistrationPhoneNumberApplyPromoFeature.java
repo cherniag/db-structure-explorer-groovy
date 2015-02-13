@@ -14,6 +14,9 @@ import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataServi
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.OtacCodeCreator;
 import mobi.nowtechnologies.applicationtests.services.helper.PhoneNumberCreator;
+import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
+import mobi.nowtechnologies.applicationtests.services.runner.Runner;
+import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.springframework.stereotype.Component;
@@ -29,23 +32,23 @@ import static org.junit.Assert.*;
  */
 @Component
 public class RegistrationPhoneNumberApplyPromoFeature {
+    @Resource
+    PartnerDeviceSet partnerDeviceSet;
+    @Resource
+    UserDeviceDataService userDeviceDataService;
+    @Resource
+    PhoneNumberCreator phoneNumberCreator;
+    @Resource
+    OtacCodeCreator otacCodeCreator;
+    @Resource
+    UserDbService userDbService;
+
+    List<UserDeviceData> userDeviceDatas;
 
     @Resource
-    private PartnerDeviceSet partnerDeviceSet;
+    RunnerService runnerService;
+    Runner runner;
 
-    @Resource
-    private UserDeviceDataService userDeviceDataService;
-
-    @Resource
-    private PhoneNumberCreator phoneNumberCreator;
-
-    @Resource
-    private OtacCodeCreator otacCodeCreator;
-
-    @Resource
-    private UserDbService userDbService;
-
-    private List<UserDeviceData> userDeviceDatas;
 
     @Given("^First time user with device using JSON and XML formats for (.+) and (\\w+) community and (.+) available$")
     public void given(
@@ -57,87 +60,117 @@ public class RegistrationPhoneNumberApplyPromoFeature {
 
     @When("^User registers using device$")
     public void whenUserRegisters(){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            partnerDeviceSet.singup(userDeviceData);
-        }
+        runner = runnerService.create(userDeviceDatas);
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                partnerDeviceSet.singup(userDeviceData);
+            }
+        });
     }
 
     @Then("^User should be registered in system$")
     public void thenUserShouldRegistered(){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            assertFalse(phoneState.getLastAccountCheckResponse().userName.isEmpty());
-        }
-
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                assertFalse(phoneState.getLastAccountCheckResponse().userName.isEmpty());
+            }
+        });
     }
 
     @When("^User sends o2 valid phone number$")
     public void whenUserSendsPhoneNumber(){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            String phoneNumber = phoneNumberCreator.createValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);
-            partnerDeviceSet.enterPhoneNumber(userDeviceData, phoneNumber);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                String phoneNumber = phoneNumberCreator.createValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);
+                partnerDeviceSet.enterPhoneNumber(userDeviceData, phoneNumber);
+            }
+        });
     }
 
     @Then("^User should receive (\\w+) activation status in phone number response$")
-    public void thenUserShouldReceiveStateInResponse(ActivationStatus activationStatus){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            assertEquals(activationStatus, phoneState.getPhoneActivationResponse().getActivation());
-        }
+    public void thenUserShouldReceiveStateInResponse(final ActivationStatus activationStatus){
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                assertEquals(activationStatus, phoneState.getPhoneActivationResponse().getActivation());
+            }
+        });
     }
 
     @And("^User should have (\\w+) activation status in database")
-    public void thenUserShouldReceiveStateInDatabase(ActivationStatus activationStatus){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = userDbService.findUser(phoneState, userDeviceData);
-            assertEquals(activationStatus, user.getActivationStatus());
-        }
+    public void thenUserShouldReceiveStateInDatabase(final ActivationStatus activationStatus){
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                User user = userDbService.findUser(phoneState, userDeviceData);
+                assertEquals(activationStatus, user.getActivationStatus());
+            }
+        });
     }
 
     @When("^User sends valid OTAC for applying promo$")
     public void whenUserSendsValidOTAC(){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            String otac = otacCodeCreator.generateValidOtac(phoneState.getLastAccountCheckResponse());
-            partnerDeviceSet.activate(userDeviceData, otac);
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                String otac = otacCodeCreator.generateValidOtac(phoneState.getLastAccountCheckResponse());
+                partnerDeviceSet.activate(userDeviceData, otac);
+            }
+        });
     }
 
     @Then("^User should receive (\\w+) activation status in activation response$")
-    public void thenUserShouldHaveStatusInResponse(ActivationStatus activationStatus){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            assertEquals(activationStatus, phoneState.getActivationResponse().activation);
-        }
+    public void thenUserShouldHaveStatusInResponse(final ActivationStatus activationStatus){
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                assertEquals(activationStatus, phoneState.getActivationResponse().activation);
+            }
+        });
     }
 
     @And("^promo should be applied$")
     public void thenUserShouldBeActivatedAndPromoShouldBeApplied(){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = userDbService.findUser(phoneState, userDeviceData);
-            assertNotNull(user.getLastPromo());
-        }
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                User user = userDbService.findUser(phoneState, userDeviceData);
+                assertNotNull(user.getLastPromo());
+            }
+        });
     }
 
     @And("^promo should have (\\w+) media type$")
-    public void andPromoShouldHaveMediaType(MediaType mediaType){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
-            User user = userDbService.findUser(phoneState, userDeviceData);
-            assertEquals(mediaType, user.getLastPromo().getMediaType());
-        }
+    public void andPromoShouldHaveMediaType(final MediaType mediaType){
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                PhoneState phoneState = partnerDeviceSet.getPhoneState(userDeviceData);
+                User user = userDbService.findUser(phoneState, userDeviceData);
+                assertEquals(mediaType, user.getLastPromo().getMediaType());
+            }
+        });
     }
 
     @When("^User sends o2 valid phone number with provider (\\w+) and segment (\\w+) and tariff (\\w+)$")
-    public void whenUserSendsPhoneNumberConsumer(ProviderType providerType, SegmentType consumer, Tariff tariff){
-        for (UserDeviceData userDeviceData : userDeviceDatas) {
-            final Contract anyContract = Contract.PAYG;
-            final ContractChannel anyContractChannel = ContractChannel.DIRECT;
-            String phoneNumber = phoneNumberCreator.createValidPhoneNumber(providerType, consumer, anyContract, tariff, anyContractChannel);
-            partnerDeviceSet.enterPhoneNumber(userDeviceData, phoneNumber);
-        }
+    public void whenUserSendsPhoneNumberConsumer(final ProviderType providerType, final SegmentType consumer, final Tariff tariff){
+        runner.parallel(new Invoker<UserDeviceData>() {
+            @Override
+            public void invoke(UserDeviceData userDeviceData) {
+                final Contract anyContract = Contract.PAYG;
+                final ContractChannel anyContractChannel = ContractChannel.DIRECT;
+                String phoneNumber = phoneNumberCreator.createValidPhoneNumber(providerType, consumer, anyContract, tariff, anyContractChannel);
+                partnerDeviceSet.enterPhoneNumber(userDeviceData, phoneNumber);
+            }
+        });
     }
 }

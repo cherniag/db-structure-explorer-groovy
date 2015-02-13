@@ -91,7 +91,7 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
+        registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
     @Given('^Activated via Google Plus user with (.+) using (.+) format for (.+) and (.+) and a second activated user$')
@@ -102,12 +102,12 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat), "secondary")
-        commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
+        registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
     @When('^User registers using same device$')
     def "User registers using same device"() {
-        commonStepsService.registerWithSameDevice(currentUserDevices, deviceSet)
+        currentUserDevices.each { deviceSet.singup(it) }
     }
 
     @Then('^Temporary account is created$')
@@ -139,12 +139,14 @@ class GooglePlusMergeAccountsFeature {
 
     @And('^In database user has updated Google Plus details the same as specified in Google Plus account$')
     def "In database user has updated Google Plus details the same as specified in Google Plus account"() {
-        commonStepsService.checkGooglePlusUserDetails(currentUserDevices, deviceSet)
+        commonStepsService.assertGooglePlusUserDetails(currentUserDevices, deviceSet)
     }
 
     @When('^User registers using new device$')
     def "User registers using new device"() {
-        commonStepsService.registerWithNewDevice(currentUserDevices, deviceSet)
+        currentUserDevices.each {
+            deviceSet.singupWithNewDevice(it)
+        }
     }
 
     @And('^First account remains active$')
@@ -193,12 +195,12 @@ class GooglePlusMergeAccountsFeature {
 
     @And('^In database new user has Google Plus details the same as specified in new Google Plus account$')
     def "In database new user has Google Plus details the same as specified in new Google Plus account"() {
-        commonStepsService.checkGooglePlusUserDetails(currentUserDevices, deviceSet)
+        commonStepsService.assertGooglePlusUserDetails(currentUserDevices, deviceSet)
     }
 
     @When('^User registers using second activated device$')
     def "User registers using second activated device"() {
-        commonStepsService.registerUsingGooglePlus(secondUserDevices, deviceSet, secondUserIdMap)
+        registerUsingGooglePlus(secondUserDevices, deviceSet, secondUserIdMap)
         zippedUserDevices = [currentUserDevices, secondUserDevices].transpose()
         zippedUserDevices.each {
             deviceSet.singupWithOtherDevice(it[0], it[1])
@@ -252,7 +254,7 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word versions,
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
-        commonStepsService.registerUsingFacebook(currentUserDevices, deviceSet, oldUserIdMap)
+        registerUsingFacebook(currentUserDevices, deviceSet, oldUserIdMap)
     }
 
     @Given('^Activated via Facebook user with (.+) using (.+) format for (.+) and (.+) with a second user activated via Google Plus$')
@@ -263,8 +265,8 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat), "secondary")
-        commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
-        commonStepsService.registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
+        registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
+        registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
         zippedUserDevices = [currentUserDevices, secondUserDevices].transpose()
     }
 
@@ -276,14 +278,14 @@ class GooglePlusMergeAccountsFeature {
             @Transform(DictionaryTransformer.class) Word communities) {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat))
         secondUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), formats.set(RequestFormat), "secondary")
-        commonStepsService.registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
-        commonStepsService.registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
+        registerUsingGooglePlus(currentUserDevices, deviceSet, oldUserIdMap)
+        registerUsingFacebook(secondUserDevices, deviceSet, secondUserIdMap)
         zippedUserDevices = [currentUserDevices, secondUserDevices].transpose()
     }
 
     @And('^In database new user has Google Plus details the same as specified in Google Plus account$')
     def "In database new user has Google Plus details the same as specified in Google Plus account"() {
-        commonStepsService.checkGooglePlusUserDetails(currentUserDevices, deviceSet)
+        commonStepsService.assertGooglePlusUserDetails(currentUserDevices, deviceSet)
     }
 
     @When('^Registered user enters Google Plus credentials with different email$')
@@ -317,7 +319,7 @@ class GooglePlusMergeAccountsFeature {
 
     @And('^In database first user has details the same as specified in Google Plus account$')
     def "In database first user has details the same as specified in Google Plus account"() {
-        commonStepsService.checkGooglePlusUserDetails(currentUserDevices, deviceSet)
+        commonStepsService.assertGooglePlusUserDetails(currentUserDevices, deviceSet)
     }
 
     @And('^First account is updated with provider Facebook$')
@@ -361,6 +363,24 @@ class GooglePlusMergeAccountsFeature {
             def phoneState = deviceSet.getPhoneState(it[0])
             def user = userRepository.findOne(secondUserIdMap[it[1]])
             assertEquals(phoneState.deviceUID, user.deviceUID)
+        }
+    }
+
+    def registerUsingFacebook(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet, Map<UserDeviceData, Integer> userIdMap) {
+        devices.each {
+            deviceSet.singup(it)
+            deviceSet.loginUsingFacebook(it)
+            def phoneState = deviceSet.getPhoneState(it)
+            userIdMap.put(it, userDbService.findUser(phoneState, it).id)
+        }
+    }
+
+    def registerUsingGooglePlus(List<UserDeviceData> devices, MQAppClientDeviceSet deviceSet, Map<UserDeviceData, Integer> userIdMap) {
+        devices.each {
+            deviceSet.singup(it)
+            deviceSet.loginUsingGooglePlus(it)
+            def phoneState = deviceSet.getPhoneState(it)
+            userIdMap.put(it, userDbService.findUser(phoneState, it).id)
         }
     }
 }

@@ -5,7 +5,9 @@ import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import mobi.nowtechnologies.server.persistence.domain.behavior.*;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository;
@@ -38,15 +40,15 @@ public class ContextDtoAsm {
     //
     // API
     //
-    public ContextDto assemble(User user, boolean supportsFreemium) {
-        if (!supportsFreemium && behaviorInfoService.isFirstDeviceLoginBeforeReferralsActivation(user)) {
+    public ContextDto assemble(User user, boolean needToLookAtActivationDate) {
+        if (!needToLookAtActivationDate && behaviorInfoService.isFirstDeviceLoginBeforeReferralsActivation(user)) {
             // we do not create snapshots and thus can't move forward
             return ContextDto.empty();
         }
 
         Community community = user.getCommunity();
 
-        BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(supportsFreemium, community);
+        BehaviorConfig behaviorConfig = behaviorInfoService.getBehaviorConfig(needToLookAtActivationDate, community);
         UserReferralsSnapshot snapshot = behaviorInfoService.getUserReferralsSnapshot(user, behaviorConfig);
 
         Date serverTime = timeService.now();

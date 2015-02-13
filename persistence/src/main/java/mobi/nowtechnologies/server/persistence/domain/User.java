@@ -1,6 +1,6 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
@@ -1556,7 +1556,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("old_user_id", getOldUserId())
                 .add("userName", userName)
