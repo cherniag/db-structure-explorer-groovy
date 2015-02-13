@@ -2,17 +2,26 @@ package mobi.nowtechnologies.server.service.pincode.impl;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.PinCode;
+import mobi.nowtechnologies.server.persistence.domain.SystemLog;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
 import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import org.apache.commons.lang.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
+
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * @author Anton Zemliankin
  */
 
-public class PinCodeServiceImpl implements PinCodeService {
+public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Resource
     PinCodeRepository pinCodeRepository;
@@ -23,28 +32,30 @@ public class PinCodeServiceImpl implements PinCodeService {
     private int limitCount;
 
     @Override
-    public PinCode generatePinCode(int userId, int digitsCount) throws PinCodeException.MaxPinCodesReached {
-        int selectFromTime = DateTimeUtils.getEpochSeconds() - limitSeconds;
-        Integer allUserPinCodesCount = pinCodeRepository.countByUserIdAndCreationTimeGreaterThan(userId, selectFromTime);
+    public PinCode generate(User user, int digitsCount) throws PinCodeException.MaxPinCodesReached {
+        log.debug("Generating new {}-digit pin code for user {}", digitsCount, user.getId());
 
-        if(allUserPinCodesCount != null && allUserPinCodesCount >= limitCount){
+        Date selectFromDate = new Date(System.currentTimeMillis() - limitSeconds*1000);
+        int allUserPinCodesCount = pinCodeRepository.countByUserIdAndCreationTimeGreaterThan(user.getId(), selectFromDate);
+
+        if(allUserPinCodesCount >= limitCount){
             throw new PinCodeException.MaxPinCodesReached(String.format("Max count(%s) of pin codes for user per period(%s seconds) has been reached.", limitCount, limitSeconds));
         }
 
         PinCode pinCode = new PinCode();
-        pinCode.setUserId(userId);
-        pinCode.setCode(RandomStringUtils.random(digitsCount, false, true));
-        pinCode.setAttempts(0);
-        pinCode.setCreationTime(DateTimeUtils.getEpochSeconds());
-        pinCode.setEntered(false);
+        pinCode.setUserId(user.getId());
+        pinCode.setCode(generateValue(digitsCount));
 
+        log.debug("Generated pin code {} for user {}", pinCode.getCode(), user.getId());
         return pinCodeRepository.save(pinCode);
     }
 
     @Override
-    public boolean checkPinCode(int userId, String pinCodeStr) throws PinCodeException.NotFound, PinCodeException.MaxAttemptsReached {
-        int selectFromTime = DateTimeUtils.getEpochSeconds() - expirationSeconds;
-        PinCode userLatestPinCode = pinCodeRepository.findTopByUserIdAndEnteredFalseAndCreationTimeGreaterThanOrderByCreationTimeDesc(userId, selectFromTime);
+    public boolean check(User user, String pinCodeStr) throws PinCodeException.NotFound, PinCodeException.MaxAttemptsReached {
+        log.debug("Checking pin code {} for user {}", pinCodeStr, user.getId());
+
+        Date selectFromTime = new Date(System.currentTimeMillis() - expirationSeconds*1000);
+        PinCode userLatestPinCode = pinCodeRepository.findTopByUserIdAndEnteredFalseAndCreationTimeGreaterThanOrderByCreationTimeDesc(user.getId(), selectFromTime);
 
         if(userLatestPinCode == null){
             throw new PinCodeException.NotFound("Pin code not found or has been expired.");
@@ -55,13 +66,25 @@ public class PinCodeServiceImpl implements PinCodeService {
         }
 
         boolean checkResult = userLatestPinCode.getCode().equals(pinCodeStr);
-        userLatestPinCode.setAttempts(userLatestPinCode.getAttempts() + 1);
+        userLatestPinCode.incAttempts();
         userLatestPinCode.setEntered(checkResult);
         pinCodeRepository.save(userLatestPinCode);
 
+        log.debug("Pin code {} for user {} is {}", pinCodeStr, user.getId(), checkResult ? "valid" : "not valid");
         return checkResult;
     }
 
+    private String generateValue(int digitsCount) {
+        return RandomStringUtils.random(digitsCount, false, true);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(maxAttempts, "maxAttempts should not be null");
+        Assert.notNull(expirationSeconds, "expirationSeconds should not be null");
+        Assert.notNull(limitSeconds, "limitSeconds should not be null");
+        Assert.notNull(limitCount, "limitCount should not be null");
+    }
 
     public void setMaxAttempts(int maxAttempts) {
         this.maxAttempts = maxAttempts;

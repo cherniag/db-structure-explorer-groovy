@@ -11,8 +11,8 @@ CREATE TABLE pin_code (
   qualifier varchar(50) NOT NULL,
   code varchar(50) NOT NULL,
   attempts smallint NOT NULL,
-  creation_time int(11) NOT NULL,
-  entered bit NOT NULL DEFAULT 0
+  entered bit NOT NULL DEFAULT 0,
+  creation_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE pin_code ADD CONSTRAINT fk_pin_code_users FOREIGN KEY (user_id) REFERENCES tb_users(i);

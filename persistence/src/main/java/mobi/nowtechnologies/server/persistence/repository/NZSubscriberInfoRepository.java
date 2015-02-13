@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface NZSubscriberInfoRepository extends JpaRepository<NZSubscriberInfo, Integer> {
 
-    NZSubscriberInfo findTopByUserIdAndMsisdn(String msisdn);
+    NZSubscriberInfo findTopByMsisdn(String msisdn);
 
 }

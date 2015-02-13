@@ -34,11 +34,10 @@ public class NZSubscriberInfoServiceIT {
     public void testNZService() throws Exception {
         boolean isVodafone = nzService.belongs("642101838801");
 
-        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn("642101838801");
+        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findTopByMsisdn("642101838801");
 
         assertTrue(isVodafone);
         assertNotNull(savedSubscriberInfo);
-        assertEquals(777, savedSubscriberInfo.getUserId());
         assertEquals("642101838801", savedSubscriberInfo.getMsisdn());
         assertEquals("Prepay", savedSubscriberInfo.getPayIndicator());
         assertEquals("Vodafone", savedSubscriberInfo.getProviderName());

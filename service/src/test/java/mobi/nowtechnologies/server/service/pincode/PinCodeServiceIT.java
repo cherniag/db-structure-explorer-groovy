@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.server.service.pincode;
 
-import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.PinCode;
+import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
 import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import org.apache.commons.lang.RandomStringUtils;
@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import javax.annotation.Resource;
+import java.util.Date;
+
 import static org.junit.Assert.*;
 
 /**
@@ -24,7 +26,10 @@ import static org.junit.Assert.*;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager")
 public class PinCodeServiceIT {
 
-    private static final Integer DEFAULT_USER_ID = 1;
+    private static final User DEFAULT_USER = new User(){{
+        setId(1);
+    }};
+
     private static final int DEFAULT_CODE_LENGTH = 4;
 
     @Resource
@@ -47,73 +52,77 @@ public class PinCodeServiceIT {
     @Test(expected = PinCodeException.MaxPinCodesReached.class)
     public void testPinCodeServiceMaxPinCodesReached() throws Exception {
         for (int i = 0; i <= limitCount; i++) {
-            pinCodeService.generatePinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH);
+            pinCodeService.generate(DEFAULT_USER, DEFAULT_CODE_LENGTH);
         }
     }
 
     @Test
     public void testPinCodeServiceGenerate() throws Exception {
-        PinCode pinCode = pinCodeService.generatePinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH);
+        PinCode pinCode = pinCodeService.generate(DEFAULT_USER, DEFAULT_CODE_LENGTH);
 
-        assertEquals(DEFAULT_USER_ID, pinCode.getUserId());
-        assertEquals(new Integer(0), pinCode.getAttempts());
+        assertEquals(new Integer(DEFAULT_USER.getId()), pinCode.getUserId());
+        assertEquals(0, pinCode.getAttempts());
         assertEquals(DEFAULT_CODE_LENGTH, pinCode.getCode().length());
         assertFalse(pinCode.isEntered());
-        assertTrue(pinCode.getCreationTime() <= DateTimeUtils.getEpochSeconds() && pinCode.getCreationTime() > DateTimeUtils.getEpochSeconds() - 5);
+
+        Date now = new Date();
+        assertTrue(pinCode.getCreationTime().getTime() <= now.getTime() && pinCode.getCreationTime().getTime() > now.getTime() - 5000);
     }
 
     @Test(expected = PinCodeException.NotFound.class)
     public void testPinCodeServiceCheckNotFound() throws Exception {
-        PinCode pinCode = createPinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH, DateTimeUtils.getEpochSeconds(), false);
-        pinCodeService.checkPinCode(DEFAULT_USER_ID + 1, pinCode.getCode());
+        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
+        User user = new User();
+        user.setId(DEFAULT_USER.getId() + 1);
+        pinCodeService.check(user, pinCode.getCode());
     }
 
     @Test(expected = PinCodeException.NotFound.class)
     public void testPinCodeServiceCheckAlreadyEntered() throws Exception {
-        PinCode pinCode = createPinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH, DateTimeUtils.getEpochSeconds(), true);
-        pinCodeService.checkPinCode(DEFAULT_USER_ID, pinCode.getCode());
+        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), true);
+        pinCodeService.check(DEFAULT_USER, pinCode.getCode());
     }
 
     @Test(expected = PinCodeException.NotFound.class)
     public void testPinCodeServiceCheckExpired() throws Exception {
-        PinCode pinCode = createPinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH, DateTimeUtils.getEpochSeconds() - (expirationSeconds + 1), false);
-        pinCodeService.checkPinCode(DEFAULT_USER_ID, pinCode.getCode());
+        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(System.currentTimeMillis() - (expirationSeconds*1000 + 1)), false);
+        pinCodeService.check(DEFAULT_USER, pinCode.getCode());
     }
 
     @Test(expected = PinCodeException.MaxAttemptsReached.class)
     public void testPinCodeServiceCheckMaxAttemptsReached() throws Exception {
-        PinCode pinCode = createPinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH, DateTimeUtils.getEpochSeconds(), false);
+        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
         for (int i = 0; i <= maxAttempts; i++) {
-            pinCodeService.checkPinCode(DEFAULT_USER_ID, pinCode.getCode() + "5");
+            pinCodeService.check(DEFAULT_USER, pinCode.getCode() + "5");
         }
     }
 
     @Test
     public void testPinCodeServiceCheckTrue() throws Exception {
-        PinCode pinCode = createPinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH, DateTimeUtils.getEpochSeconds(), false);
+        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
 
-        boolean check = pinCodeService.checkPinCode(DEFAULT_USER_ID, pinCode.getCode());
+        boolean check = pinCodeService.check(DEFAULT_USER, pinCode.getCode());
         PinCode updatedPinCode = pinCodeRepository.findOne(pinCode.getId());
 
         assertTrue(check);
         assertFalse(pinCode.isEntered());
         assertTrue(updatedPinCode.isEntered());
-        assertEquals(new Integer(0), pinCode.getAttempts());
-        assertEquals(new Integer(1), updatedPinCode.getAttempts());
+        assertEquals(0, pinCode.getAttempts());
+        assertEquals(1, updatedPinCode.getAttempts());
     }
 
     @Test
     public void testPinCodeServiceCheckFalse() throws Exception {
-        PinCode pinCode = createPinCode(DEFAULT_USER_ID, DEFAULT_CODE_LENGTH, DateTimeUtils.getEpochSeconds(), false);
+        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
 
-        boolean check = pinCodeService.checkPinCode(DEFAULT_USER_ID, pinCode.getCode()+"5");
+        boolean check = pinCodeService.check(DEFAULT_USER, pinCode.getCode() + "5");
         PinCode updatedPinCode = pinCodeRepository.findOne(pinCode.getId());
 
         assertFalse(check);
         assertFalse(pinCode.isEntered());
         assertFalse(updatedPinCode.isEntered());
-        assertEquals(new Integer(0), pinCode.getAttempts());
-        assertEquals(new Integer(1), updatedPinCode.getAttempts());
+        assertEquals(0, pinCode.getAttempts());
+        assertEquals(1, updatedPinCode.getAttempts());
     }
 
 
@@ -123,11 +132,10 @@ public class PinCodeServiceIT {
     }
 
 
-    private PinCode createPinCode(Integer userId, int codeLength, Integer creationTime, boolean isEntered){
+    private PinCode createPinCode(User user, int codeLength, Date creationTime, boolean isEntered){
         PinCode pinCode = new PinCode();
-        pinCode.setUserId(userId);
+        pinCode.setUserId(user.getId());
         pinCode.setCode(RandomStringUtils.random(codeLength, false, true));
-        pinCode.setAttempts(0);
         pinCode.setCreationTime(creationTime);
         pinCode.setEntered(isEntered);
         return pinCodeRepository.save(pinCode);

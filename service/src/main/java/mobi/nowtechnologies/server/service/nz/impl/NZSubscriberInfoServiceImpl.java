@@ -26,7 +26,7 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService {
 
     @Override
     public NZSubscriberInfo confirm(int userId, String msisdn) {
-        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(msisdn);
+        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByMsisdn(msisdn);
         nzSubscriberInfo.activate();
         return subscriberInfoRepository.save(nzSubscriberInfo);
     }
@@ -44,7 +44,7 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService {
     }
 
     private NZSubscriberInfo findOrCreate(String msisdn, NZSubscriberResult subscriberResult) {
-        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(msisdn);
+        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByMsisdn(msisdn);
 
         if(nzSubscriberInfo == null){
             nzSubscriberInfo = new NZSubscriberInfo(msisdn);

@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author Anton Zemliankin
@@ -22,10 +23,11 @@ public class PinCode {
     private String code;
 
     @Column(name = "attempts", nullable = false)
-    private Integer attempts;
+    private int attempts;
 
     @Column(name = "creation_time", nullable = false)
-    private Integer creationTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationTime = new Date();
 
     @Column(name = "entered", nullable = false)
     private boolean entered;
@@ -54,19 +56,19 @@ public class PinCode {
         this.code = code;
     }
 
-    public Integer getAttempts() {
+    public int getAttempts() {
         return attempts;
     }
 
-    public void setAttempts(Integer attempts) {
-        this.attempts = attempts;
+    public void incAttempts() {
+        attempts++;
     }
 
-    public Integer getCreationTime() {
+    public Date getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(Integer creationTime) {
+    public void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
     }
 

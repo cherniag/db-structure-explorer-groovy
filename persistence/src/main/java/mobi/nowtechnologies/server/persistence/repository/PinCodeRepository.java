@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.persistence.repository;
 import mobi.nowtechnologies.server.persistence.domain.PinCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public interface PinCodeRepository extends JpaRepository<PinCode, Integer> {
      * @param creationTime
      * @return
      */
-    PinCode findTopByUserIdAndEnteredFalseAndCreationTimeGreaterThanOrderByCreationTimeDesc(Integer userId, Integer creationTime);
+    PinCode findTopByUserIdAndEnteredFalseAndCreationTimeGreaterThanOrderByCreationTimeDesc(Integer userId, Date creationTime);
 
 
     /**
@@ -25,5 +26,5 @@ public interface PinCodeRepository extends JpaRepository<PinCode, Integer> {
      * @param creationTime
      * @return
      */
-    Integer countByUserIdAndCreationTimeGreaterThan(Integer userId, Integer creationTime);
+    Integer countByUserIdAndCreationTimeGreaterThan(Integer userId, Date creationTime);
 }

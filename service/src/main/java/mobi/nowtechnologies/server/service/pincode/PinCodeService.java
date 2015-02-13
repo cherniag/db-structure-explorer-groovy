@@ -9,7 +9,7 @@ import mobi.nowtechnologies.server.service.exception.PinCodeException;
  */
 public interface PinCodeService {
 
-    PinCode generatePinCode(int userId, int digits) throws PinCodeException.MaxPinCodesReached;
+    PinCode generate(User user, int digits) throws PinCodeException.MaxPinCodesReached;
 
-    boolean checkPinCode(int userId, String pinCode) throws PinCodeException.NotFound, PinCodeException.MaxAttemptsReached;
+    boolean check(User user, String pinCode) throws PinCodeException.NotFound, PinCodeException.MaxAttemptsReached;
 }
