@@ -18,7 +18,7 @@ public class SmsPaymentController extends CommonController {
     private PaymentPolicyRepository paymentPolicyRepository;
     private CommunityServiceFactory communityServiceFactory;
 
-    @RequestMapping(value = {"smspayment/result"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"smspayment/result"}, method = RequestMethod.GET)
     public ModelAndView commit(@RequestParam("id") int policyId) {
         User user = userRepository.findOne(getUserId());
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
