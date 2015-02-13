@@ -8,7 +8,6 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -33,9 +32,9 @@ public class NZSubscriberInfoServiceIT {
 
     @Test
     public void testNZService() throws Exception {
-        boolean isVodafone = nzService.checkVodafone(777, "642101838801");
+        boolean isVodafone = nzService.belongs("642101838801");
 
-        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(777, "642101838801");
+        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn("642101838801");
 
         assertTrue(isVodafone);
         assertNotNull(savedSubscriberInfo);
@@ -50,7 +49,7 @@ public class NZSubscriberInfoServiceIT {
 
     @Test(expected = ExternalServiceException.class)
     public void testNZServiceFault() throws Exception {
-        boolean isVodafone = nzService.checkVodafone(777, NZSubscriberInfoGatewayMock.FAULT_DATA);
+        boolean isVodafone = nzService.belongs(NZSubscriberInfoGatewayMock.FAULT_DATA);
     }
 
     @After

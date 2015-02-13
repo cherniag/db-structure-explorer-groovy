@@ -1,19 +1,19 @@
 package mobi.nowtechnologies.server.service.nz.impl;
 
+import com.google.common.base.Preconditions;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
+import javax.xml.bind.JAXBElement;
+
 /**
  * @author Anton Zemliankin
  */
 
 public class NZSubscriberInfoGateway extends WebServiceGatewaySupport {
-
-    private static final String CHANNEL_TYPE = "WEB";
-
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private ObjectFactory objectFactory = new ObjectFactory();
@@ -21,26 +21,28 @@ public class NZSubscriberInfoGateway extends WebServiceGatewaySupport {
     private String nzUserId;
 
     public NZSubscriberResult getSubscriberResult(String msisdn) {
-        TConnectionResponse connectionDetails = getConnectionDetails(msisdn);
+        log.debug("Getting nz user info for {}", msisdn);
+
+        TConnectionResponse connectionDetails = createConnectionDetails(Preconditions.checkNotNull(msisdn));
+
         TConnectionResponseInfo ci = connectionDetails.getConnectionResponseInfo();
+
+        log.debug("Provider name for {} is {}", msisdn, ci.getProviderName());
+
         return new NZSubscriberResult(ci.getPayIndicator(), ci.getProviderName(), ci.getBillingAccountNumber(), ci.getBillingAccountName());
     }
 
-    private TConnectionResponse getConnectionDetails(String msisdn) {
-        log.debug(String.format("Getting nz user info for %s", msisdn));
-
+    private TConnectionResponse createConnectionDetails(String msisdn) {
         TChannel channel = new TChannel();
-        channel.setChannelType(CHANNEL_TYPE);
+        channel.setChannelType("WEB");
 
         TConnectionRequest request = new TConnectionRequest();
         request.setUserId(nzUserId);
         request.setMSISDN(msisdn);
         request.setChannel(channel);
 
-        TConnectionResponse response = (TConnectionResponse) getWebServiceTemplate().marshalSendAndReceive(objectFactory.createConnectionRequest(request));
-
-        log.debug(String.format("Provider name for %s is %s", msisdn, response.getConnectionResponseInfo().getProviderName()));
-        return response;
+        JAXBElement<TConnectionRequest> connectionRequest = objectFactory.createConnectionRequest(request);
+        return (TConnectionResponse) getWebServiceTemplate().marshalSendAndReceive(connectionRequest);
     }
 
     public void setNzUserId(String nzUserId) {

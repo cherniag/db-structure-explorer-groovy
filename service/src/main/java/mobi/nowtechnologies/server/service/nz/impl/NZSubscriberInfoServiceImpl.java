@@ -5,11 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoReposi
 import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
-import org.springframework.ws.WebServiceException;
-import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.WebServiceFaultException;
-import org.springframework.ws.client.WebServiceIOException;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import javax.annotation.Resource;
 
@@ -17,49 +13,48 @@ import javax.annotation.Resource;
  * @author Anton Zemliankin
  */
 public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService {
-
-    private final static String VODAFONE_PROVIDER_NAME = "Vodafone";
-
     @Resource
-    private NZSubscriberInfoRepository subscriberInfoRepository;
-
+    NZSubscriberInfoRepository subscriberInfoRepository;
     @Resource
-    private NZSubscriberInfoGateway subscriberInfoGateway;
-
+    NZSubscriberInfoGateway subscriberInfoGateway;
 
     @Override
-    public boolean checkVodafone(int userId, String msisdn) {
-        NZSubscriberInfo nzSubscriberInfo = refreshSubscriberInfo(userId, msisdn);
-        return VODAFONE_PROVIDER_NAME.equals(nzSubscriberInfo.getProviderName());
+    public boolean belongs(String msisdn) {
+        NZSubscriberInfo nzSubscriberInfo = refreshSubscriberInfo(msisdn);
+        return "Vodafone".equals(nzSubscriberInfo.getProviderName());
     }
 
     @Override
-    public NZSubscriberInfo confirmSubscriber(int userId, String msisdn) {
-        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(userId, msisdn);
-        nzSubscriberInfo.setActive(true);
+    public NZSubscriberInfo confirm(int userId, String msisdn) {
+        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(msisdn);
+        nzSubscriberInfo.activate();
         return subscriberInfoRepository.save(nzSubscriberInfo);
     }
 
-    private NZSubscriberInfo refreshSubscriberInfo(int userId, String msisdn) {
+    private NZSubscriberInfo refreshSubscriberInfo(String msisdn) {
         try {
             NZSubscriberResult subscriberResult = subscriberInfoGateway.getSubscriberResult(msisdn);
-            NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(userId, msisdn);
 
-            if(nzSubscriberInfo == null){
-                nzSubscriberInfo = new NZSubscriberInfo();
-                nzSubscriberInfo.setUserId(userId);
-                nzSubscriberInfo.setMsisdn(msisdn);
-                nzSubscriberInfo.setActive(false);
-            }
+            NZSubscriberInfo nzSubscriberInfo = findOrCreate(msisdn, subscriberResult);
 
-            nzSubscriberInfo.setPayIndicator(subscriberResult.getPayIndicator());
-            nzSubscriberInfo.setProviderName(subscriberResult.getProviderName());
-            nzSubscriberInfo.setBillingAccountName(subscriberResult.getBillingAccountName());
-            nzSubscriberInfo.setBillingAccountNumber(subscriberResult.getBillingAccountNumber());
             return subscriberInfoRepository.save(nzSubscriberInfo);
         }catch(WebServiceFaultException e){ //Thrown when the response message has a fault.
             throw new ExternalServiceException(e.getWebServiceMessage().getFaultReason(), e);
         }
+    }
+
+    private NZSubscriberInfo findOrCreate(String msisdn, NZSubscriberResult subscriberResult) {
+        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findTopByUserIdAndMsisdn(msisdn);
+
+        if(nzSubscriberInfo == null){
+            nzSubscriberInfo = new NZSubscriberInfo(msisdn);
+        }
+
+        nzSubscriberInfo.setPayIndicator(subscriberResult.getPayIndicator());
+        nzSubscriberInfo.setProviderName(subscriberResult.getProviderName());
+        nzSubscriberInfo.setBillingAccountName(subscriberResult.getBillingAccountName());
+        nzSubscriberInfo.setBillingAccountNumber(subscriberResult.getBillingAccountNumber());
+        return nzSubscriberInfo;
     }
 
 }
