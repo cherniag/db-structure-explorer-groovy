@@ -2,10 +2,9 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
-import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
+import mobi.nowtechnologies.server.service.exception.ServiceNotAvailableException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Anton Zemliankin
@@ -34,7 +35,7 @@ public class NZSubscriberInfoServiceIT {
     public void testNZService() throws Exception {
         boolean isVodafone = nzService.belongs("642101838801");
 
-        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findTopByMsisdn("642101838801");
+        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn("642101838801");
 
         assertTrue(isVodafone);
         assertNotNull(savedSubscriberInfo);
@@ -43,10 +44,9 @@ public class NZSubscriberInfoServiceIT {
         assertEquals("Vodafone", savedSubscriberInfo.getProviderName());
         assertEquals("300001121", savedSubscriberInfo.getBillingAccountNumber());
         assertEquals("Simplepostpay_CCRoam", savedSubscriberInfo.getBillingAccountName());
-        assertFalse(savedSubscriberInfo.isActive());
     }
 
-    @Test(expected = ExternalServiceException.class)
+    @Test(expected = ServiceNotAvailableException.class)
     public void testNZServiceFault() throws Exception {
         boolean isVodafone = nzService.belongs(NZSubscriberInfoGatewayMock.FAULT_DATA);
     }

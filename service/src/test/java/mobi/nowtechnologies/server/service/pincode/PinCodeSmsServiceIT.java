@@ -16,7 +16,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import javax.annotation.Resource;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Anton Zemliankin
@@ -68,7 +69,7 @@ public class PinCodeSmsServiceIT {
         lastSmsMessage = null;
     }
 
-    private SMSGatewayService getMockSmsGateway(final String providerName){
+    private SMSGatewayService getMockSmsGateway(final String providerName) {
         return new SMSGatewayService() {
             @Override
             public SMSResponse send(String numbers, String message, String title) {

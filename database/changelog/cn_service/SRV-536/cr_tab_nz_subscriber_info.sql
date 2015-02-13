@@ -13,7 +13,6 @@ CREATE TABLE nz_subscriber_info (
   provider_name varchar(60) CHARACTER SET utf8 NOT NULL,
   billing_account_number varchar(60) NOT NULL,
   billing_account_name varchar(255) CHARACTER SET utf8,
-  active bit NOT NULL DEFAULT 0,
   create_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

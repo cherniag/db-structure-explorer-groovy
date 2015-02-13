@@ -11,7 +11,7 @@ public class NZSubscriberResult {
     private String billingAccountNumber;
     private String billingAccountName;
 
-    public NZSubscriberResult(String payIndicator, String providerName, String billingAccountNumber, String billingAccountName){
+    public NZSubscriberResult(String payIndicator, String providerName, String billingAccountNumber, String billingAccountName) {
         this.payIndicator = payIndicator;
         this.providerName = providerName;
         this.billingAccountNumber = billingAccountNumber;

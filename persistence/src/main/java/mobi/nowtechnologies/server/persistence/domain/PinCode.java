@@ -11,13 +11,6 @@ import java.util.Date;
 @Table(name = "pin_code")
 public class PinCode {
 
-    protected PinCode(){}
-
-    public PinCode(Integer userId, String code){
-        this.userId = userId;
-        this.code = code;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -39,12 +32,16 @@ public class PinCode {
     @Column(name = "entered", nullable = false)
     private boolean entered;
 
-    public int getId() {
-        return id;
+    protected PinCode() {
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public PinCode(Integer userId, String code) {
+        this.userId = userId;
+        this.code = code;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Integer getUserId() {
@@ -65,10 +62,6 @@ public class PinCode {
 
     public Date getCreationTime() {
         return creationTime;
-    }
-
-    public void setCreationTime(Date creationTime) {
-        this.creationTime = creationTime;
     }
 
     public boolean isEntered() {

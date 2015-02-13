@@ -32,8 +32,8 @@ public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
 
     public static final String FAULT_DATA = "6420000000";
 
-    private static final Map<String, Map<String, String>> testData = new HashMap<String, Map<String, String>>(){{
-        put(DEFAULT_DATA, new HashMap<String, String>(){{
+    private static final Map<String, Map<String, String>> testData = new HashMap<String, Map<String, String>>() {{
+        put(DEFAULT_DATA, new HashMap<String, String>() {{
             put(PAY_INDICATOR, "Prepay");
             put(PROVIDER_NAME, "Vodafone");
             put(BILLING_ACCOUNT_NAME, "Simplepostpay_CCRoam");
@@ -43,7 +43,7 @@ public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
 
     @Override
     public NZSubscriberResult getSubscriberResult(String msisdn) {
-        if(FAULT_DATA.equals(msisdn)){
+        if (FAULT_DATA.equals(msisdn)) {
             throw new SoapFaultClientException(getSoapFaultMessage());
         }
 
@@ -51,28 +51,84 @@ public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
         return new NZSubscriberResult(data.get(PAY_INDICATOR), data.get(PROVIDER_NAME), data.get(BILLING_ACCOUNT_NUMBER), data.get(BILLING_ACCOUNT_NAME));
     }
 
-    private SoapMessage getSoapFaultMessage(){
+    private SoapMessage getSoapFaultMessage() {
         return new SoapMessage() {
-            public SoapEnvelope getEnvelope() throws SoapEnvelopeException {return null;}
-            public String getSoapAction() {return null;}
-            public void setSoapAction(String soapAction) {}
-            public SoapBody getSoapBody() throws SoapBodyException {return null;}
-            public SoapHeader getSoapHeader() throws SoapHeaderException {return null;}
-            public SoapVersion getVersion() {return null;}
-            public Document getDocument() {return null;}
-            public void setDocument(Document document) {}
-            public boolean hasFault() {return false;}
-            public String getFaultReason() {return "Test reason.";}
-            public boolean isXopPackage() {return false;}
-            public boolean convertToXopPackage() {return false;}
-            public Attachment getAttachment(String contentId) throws AttachmentException {return null;}
-            public Iterator<Attachment> getAttachments() throws AttachmentException {return null;}
-            public Attachment addAttachment(String contentId, File file) throws AttachmentException {return null;}
-            public Attachment addAttachment(String contentId, InputStreamSource inputStreamSource, String contentType) {return null;}
-            public Attachment addAttachment(String contentId, DataHandler dataHandler) {return null;}
-            public Source getPayloadSource() {return null;}
-            public Result getPayloadResult() {return null;}
-            public void writeTo(OutputStream outputStream) throws IOException {}
+            public SoapEnvelope getEnvelope() throws SoapEnvelopeException {
+                return null;
+            }
+
+            public String getSoapAction() {
+                return null;
+            }
+
+            public void setSoapAction(String soapAction) {
+            }
+
+            public SoapBody getSoapBody() throws SoapBodyException {
+                return null;
+            }
+
+            public SoapHeader getSoapHeader() throws SoapHeaderException {
+                return null;
+            }
+
+            public SoapVersion getVersion() {
+                return null;
+            }
+
+            public Document getDocument() {
+                return null;
+            }
+
+            public void setDocument(Document document) {
+            }
+
+            public boolean hasFault() {
+                return false;
+            }
+
+            public String getFaultReason() {
+                return "Test reason.";
+            }
+
+            public boolean isXopPackage() {
+                return false;
+            }
+
+            public boolean convertToXopPackage() {
+                return false;
+            }
+
+            public Attachment getAttachment(String contentId) throws AttachmentException {
+                return null;
+            }
+
+            public Iterator<Attachment> getAttachments() throws AttachmentException {
+                return null;
+            }
+
+            public Attachment addAttachment(String contentId, File file) throws AttachmentException {
+                return null;
+            }
+
+            public Attachment addAttachment(String contentId, InputStreamSource inputStreamSource, String contentType) {
+                return null;
+            }
+
+            public Attachment addAttachment(String contentId, DataHandler dataHandler) {
+                return null;
+            }
+
+            public Source getPayloadSource() {
+                return null;
+            }
+
+            public Result getPayloadResult() {
+                return null;
+            }
+
+            public void writeTo(OutputStream outputStream) throws IOException {
+            }
         };
     }
 }

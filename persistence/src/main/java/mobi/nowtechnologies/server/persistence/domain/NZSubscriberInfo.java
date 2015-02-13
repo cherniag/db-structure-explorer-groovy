@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -35,9 +36,6 @@ public class NZSubscriberInfo {
 
     @Column(name = "billing_account_name")
     private String billingAccountName;
-
-    @Column(name = "active")
-    private boolean active;
 
     @Column(name = "create_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
@@ -98,14 +96,6 @@ public class NZSubscriberInfo {
         this.billingAccountName = billingAccountName;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void activate() {
-        this.active = true;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -116,7 +106,6 @@ public class NZSubscriberInfo {
                 .append("providerName", providerName)
                 .append("billingAccountNumber", billingAccountNumber)
                 .append("billingAccountName", billingAccountName)
-                .append("active", active)
                 .append("createTimestamp", createTimestamp)
                 .toString();
     }

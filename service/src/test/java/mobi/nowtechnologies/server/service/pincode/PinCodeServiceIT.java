@@ -5,13 +5,15 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
 import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import javax.annotation.Resource;
 import java.util.Date;
 
@@ -26,7 +28,7 @@ import static org.junit.Assert.*;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager")
 public class PinCodeServiceIT {
 
-    private static final User DEFAULT_USER = new User(){{
+    private static final User DEFAULT_USER = new User() {{
         setId(1);
     }};
 
@@ -46,7 +48,6 @@ public class PinCodeServiceIT {
 
     @Value("${pin.code.expiration.seconds}")
     private int expirationSeconds;
-
 
 
     @Test(expected = PinCodeException.MaxPinCodesReached.class)
@@ -85,7 +86,7 @@ public class PinCodeServiceIT {
 
     @Test(expected = PinCodeException.NotFound.class)
     public void testPinCodeServiceCheckExpired() throws Exception {
-        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(System.currentTimeMillis() - (expirationSeconds*1000 + 1)), false);
+        PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(System.currentTimeMillis() - (expirationSeconds * 1000 + 1)), false);
         pinCodeService.check(DEFAULT_USER, pinCode.getCode());
     }
 
@@ -132,9 +133,9 @@ public class PinCodeServiceIT {
     }
 
 
-    private PinCode createPinCode(User user, int codeLength, Date creationTime, boolean isEntered){
+    private PinCode createPinCode(User user, int codeLength, Date creationTime, boolean isEntered) {
         PinCode pinCode = new PinCode(user.getId(), RandomStringUtils.random(codeLength, false, true));
-        pinCode.setCreationTime(creationTime);
+        ReflectionTestUtils.setField(pinCode, "creationTime", creationTime);
         pinCode.setEntered(isEntered);
         return pinCodeRepository.save(pinCode);
     }

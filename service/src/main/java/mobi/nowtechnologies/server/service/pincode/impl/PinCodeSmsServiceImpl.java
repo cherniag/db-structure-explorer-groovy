@@ -23,7 +23,7 @@ public class PinCodeSmsServiceImpl implements PinCodeSmsService {
     CommunityResourceBundleMessageSource messageSource;
 
     @Override
-    public boolean sendPinCode(User user, String msisdn, String pinCode){
+    public boolean sendPinCode(User user, String msisdn, String pinCode) {
         String community = user.getUserGroup().getCommunity().getRewriteUrlParameter();
 
         String message = messageSource.getMessage(community, "pin.code.sms.confirm.message", new Object[]{pinCode}, null);
@@ -34,9 +34,9 @@ public class PinCodeSmsServiceImpl implements PinCodeSmsService {
     }
 
     private SMSGatewayService getSMSProvider(String community) {
-        if(smsProviders.containsKey(community)){
+        if (smsProviders.containsKey(community)) {
             return smsProviders.get(community);
-        }else{
+        } else {
             return smsProviders.get(DEFAULT_SMS_PROVIDER_KEY);
         }
     }
