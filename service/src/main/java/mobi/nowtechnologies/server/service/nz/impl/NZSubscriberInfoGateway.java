@@ -44,7 +44,8 @@ public class NZSubscriberInfoGateway extends WebServiceGatewaySupport {
         request.setChannel(channel);
 
         JAXBElement<TConnectionRequest> connectionRequest = objectFactory.createConnectionRequest(request);
-        return (TConnectionResponse) getWebServiceTemplate().marshalSendAndReceive(connectionRequest);
+        JAXBElement<TConnectionResponse> response = (JAXBElement<TConnectionResponse>) getWebServiceTemplate().marshalSendAndReceive(connectionRequest);
+        return response.getValue();
     }
 
     @PostConstruct
