@@ -474,6 +474,11 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     <alias name="service.migHttpService" alias="o2.service.SmsProvider"/>
     <alias name="vf_nz.service.VFNZSMSGatewayService" alias="vf_nz.service.SmsProvider"/>
 
+	<util:map id="smsProviders" value-type="mobi.nowtechnologies.server.service.sms.SMSGatewayService">
+		<entry key="vf_nz" value-ref="vf_nz.service.VFNZSMSGatewayService"/>
+		<entry key="DEFAULT" value-ref="service.migHttpService"/>
+	</util:map>
+
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />
 		<property name="promotedServerO2Url" value="${o2.server.promoted.url}" />
@@ -628,6 +633,34 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="promotionProvider" ref="provider.Promotion"/>
     </bean>
 
+	<bean id="jaxb.NZUserMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="contextPaths">
+			<list>
+				<value>nz.co.vodafone.ws.customer.com.service.onlineaccountservice._1</value>
+				<value>nz.co.vodafone.ws.fault</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="service.NZSubscriberInfoGateway" class="mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoGateway">
+		<property name="defaultUri" value="${vf.nz.subscriber.service.url}"/>
+		<property name="marshaller" ref="jaxb.NZUserMarshaller"/>
+		<property name="unmarshaller" ref="jaxb.NZUserMarshaller"/>
+		<property name="nzUserId" value="${vf.nz.subscriber.service.user.id}"/>
+	</bean>
+
+	<bean id="service.NZSubscriberInfoService" class="mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoServiceImpl"/>
+
+	<bean id="service.PinCodeService" class="mobi.nowtechnologies.server.service.pincode.impl.PinCodeServiceImpl">
+		<property name="expirationSeconds" value="${pin.code.expiration.seconds}"/>
+		<property name="maxAttempts" value="${pin.code.max.attempts}"/>
+		<property name="limitSeconds" value="${pin.code.limit.seconds}"/>
+		<property name="limitCount" value="${pin.code.limit.count}"/>
+	</bean>
+
+	<bean id="service.PinCodeSmsService" class="mobi.nowtechnologies.server.service.pincode.impl.PinCodeSmsServiceImpl">
+		<property name="messageSource" ref="serviceMessageSource"/>
+	</bean>
 
     <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
 
