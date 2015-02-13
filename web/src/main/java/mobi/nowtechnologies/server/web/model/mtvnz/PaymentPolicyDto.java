@@ -12,11 +12,13 @@ public class PaymentPolicyDto implements Comparable<PaymentPolicyDto> {
     private BigDecimal subCost;
     // duration is always is one
     private DurationUnit durationUnit;
+    private String appStoreProductId;
 
     public PaymentPolicyDto(PaymentPolicy paymentPolicy) {
         this.id = paymentPolicy.getId();
         this.subCost = paymentPolicy.getSubcost();
         this.durationUnit = paymentPolicy.getPeriod().getDurationUnit();
+        this.appStoreProductId = paymentPolicy.getAppStoreProductId();
     }
 
     public int getId() {
@@ -29,6 +31,10 @@ public class PaymentPolicyDto implements Comparable<PaymentPolicyDto> {
 
     public DurationUnit getDurationUnit() {
         return durationUnit;
+    }
+
+    public String getAppStoreProductId() {
+        return appStoreProductId;
     }
 
     @Override

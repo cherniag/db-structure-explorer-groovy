@@ -17,11 +17,15 @@
     </div>
 
     <a class="go-premium-button go-premium-button-device go-premium-body-button-below go-premium-button-target go-premium-body-cancel" href="phone/check.html">
-        <span>Vodafone</span>
+        <span>
+            <s:message code='payment.per.${paymentData.smsPaymentPolicy.durationUnit}' arguments="${paymentData.smsPaymentPolicy.subCost}"/>
+        </span>
     </a>
     <a class="go-premium-button subscribe-button-device go-premium-button-target go-premium-body-ok"
        onclick="goTo('${pageContext.request.contextPath}/payments/iTunesSubscription.html?productId=${paymentData.iTunesPaymentPolicy.appStoreProductId}');">
-        <span>IOS</span>
+        <span>
+            <s:message code='payment.per.${paymentData.iTunesPaymentPolicy.durationUnit}' arguments="${paymentData.iTunesPaymentPolicy.subCost}"/>
+        </span>
     </a>
 
     <div class="subscription_option_container subscription_option_container_device">

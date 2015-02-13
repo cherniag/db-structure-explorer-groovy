@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.web.model.mtvnz;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -19,10 +19,10 @@ class PinPinModelServiceImpl implements PinModelService {
 
     @Override
     public Map<String, Object> getModel(User user) {
-        List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user, ProviderType.VF);
+        List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user);
         List<PaymentPolicy> filtered = filterWithOneDurationLength(all);
-        Collection<PaymentPolicy> notForITunes = Collections2.filter(filtered, Predicates.not(new ITunesPredicate()));
-        Collection<PaymentPolicyDto> converted = PaymentPolicyDto.convert(notForITunes);
+        Collection<PaymentPolicy> vfPsms = Collections2.filter(filtered, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));
+        Collection<PaymentPolicyDto> converted = PaymentPolicyDto.convert(vfPsms);
         Object policies = new TreeSet<>(converted);
         return Collections.singletonMap("paymentPolicyDtos", policies);
     }
