@@ -660,10 +660,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="limitCount" value="${pin.code.limit.count}"/>
 	</bean>
 
-	<bean id="service.PinCodeSmsService" class="mobi.nowtechnologies.server.service.pincode.impl.PinCodeSmsServiceImpl">
-		<property name="messageSource" ref="serviceMessageSource"/>
-	</bean>
-
     <bean id="configuration.VersionCheckService" class="mobi.nowtechnologies.server.service.versioncheck.VersionCheckService"/>
 
     <bean id="service.referralService" class="mobi.nowtechnologies.server.service.ReferralService"/>

@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
 import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Anton Zemliankin
@@ -51,12 +53,13 @@ public class PinCodeServiceImpl implements PinCodeService {
         log.debug("Checking pin code {} for user {}", pinCodeStr, user.getId());
 
         Date selectFromTime = new Date(System.currentTimeMillis() - expirationSeconds * 1000);
-        PinCode userLatestPinCode = pinCodeRepository.findPinCodeByUserAndCreationTime(user.getId(), selectFromTime);
+        List<PinCode> userLatestPinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(user.getId(), selectFromTime);
 
-        if (userLatestPinCode == null) {
+        if (CollectionUtils.isEmpty(userLatestPinCodes)) {
             throw new PinCodeException.NotFound("Pin code not found or has been expired.");
         }
 
+        PinCode userLatestPinCode = userLatestPinCodes.get(0);
         if (userLatestPinCode.getAttempts() >= maxAttempts) {
             throw new PinCodeException.MaxAttemptsReached(String.format("Max count(%s) of attempts has been reached.", maxAttempts));
         }

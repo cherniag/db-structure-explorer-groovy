@@ -9,7 +9,7 @@ CREATE TABLE pin_code (
   id int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   user_id int(10) UNSIGNED NOT NULL,
   code varchar(50) NOT NULL,
-  attempts smallint NOT NULL,
+  attempts int NOT NULL,
   entered bit NOT NULL DEFAULT 0,
   creation_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

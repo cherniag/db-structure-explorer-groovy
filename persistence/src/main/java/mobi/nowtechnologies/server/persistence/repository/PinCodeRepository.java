@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Anton Zemliankin
@@ -16,7 +17,7 @@ public interface PinCodeRepository extends JpaRepository<PinCode, Integer> {
             " and p.entered = 0 " +
             " and p.creationTime > ?2 " +
             " order by p.creationTime desc")
-    PinCode findPinCodeByUserAndCreationTime(Integer userId, Date creationTime);
+    List<PinCode> findPinCodesByUserAndCreationTime(Integer userId, Date creationTime);
 
     @Query(value="select count(p) from PinCode p " +
             " where p.userId = ?1" +
