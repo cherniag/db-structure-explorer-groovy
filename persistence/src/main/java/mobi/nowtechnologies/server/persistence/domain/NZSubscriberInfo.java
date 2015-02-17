@@ -20,7 +20,7 @@ public class NZSubscriberInfo {
     private int id;
 
     @Column(name = "user_id")
-    private int userId;
+    private Integer userId;
 
     @Column(name = "msisdn", nullable = false, unique = true)
     private String msisdn;
@@ -52,11 +52,11 @@ public class NZSubscriberInfo {
         return id;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

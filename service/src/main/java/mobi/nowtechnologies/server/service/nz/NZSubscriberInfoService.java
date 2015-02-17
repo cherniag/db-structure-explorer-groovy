@@ -8,7 +8,7 @@ import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
  */
 public interface NZSubscriberInfoService {
 
-    boolean belongs(String msisdn) throws SubscriberServiceException.ServiceNotAvailable, SubscriberServiceException.MsisdnNotFound;
+    boolean belongs(String msisdn) throws SubscriberServiceException.ServiceNotAvailable, SubscriberServiceException.MSISDNNotFound;
 
     NZSubscriberInfo confirm(int userId, String msisdn);
 

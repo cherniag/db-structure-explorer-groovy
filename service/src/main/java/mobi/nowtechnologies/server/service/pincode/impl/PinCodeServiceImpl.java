@@ -9,10 +9,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -20,10 +19,9 @@ import java.util.List;
  * @author Anton Zemliankin
  */
 
-public class PinCodeServiceImpl implements PinCodeService {
+public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Resource
     PinCodeRepository pinCodeRepository;
 
     private int maxAttempts;
@@ -77,12 +75,17 @@ public class PinCodeServiceImpl implements PinCodeService {
         return RandomStringUtils.random(digitsCount, false, true);
     }
 
-    @PostConstruct
-    public void checkConfiguration() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(pinCodeRepository, "pinCodeRepository should not be null");
         Assert.notNull(maxAttempts, "maxAttempts should not be null");
         Assert.notNull(expirationSeconds, "expirationSeconds should not be null");
         Assert.notNull(limitSeconds, "limitSeconds should not be null");
         Assert.notNull(limitCount, "limitCount should not be null");
+    }
+
+    public void setPinCodeRepository(PinCodeRepository pinCodeRepository) {
+        this.pinCodeRepository = pinCodeRepository;
     }
 
     public void setMaxAttempts(int maxAttempts) {

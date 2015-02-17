@@ -2,6 +2,8 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
+import mobi.nowtechnologies.server.service.exception.PinCodeException;
+import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
 import mobi.nowtechnologies.server.web.model.PinModelService;
 import org.springframework.stereotype.Controller;
@@ -10,10 +12,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+
 @Controller
 public class PinController extends CommonController {
     private CommunityServiceFactory communityServiceFactory;
     private UserRepository userRepository;
+
+    @Resource
+    PinCodeService pinCodeService;
 
     @RequestMapping(value = {"pin/check"}, method = RequestMethod.GET)
     public ModelAndView enter() {
@@ -33,7 +40,7 @@ public class PinController extends CommonController {
 
         ModelAndView modelAndView = new ModelAndView("pin/result");
 
-        final CheckResult result = doCheck(pin);
+        final CheckResult result = doCheck(user, pin);
         if(result.isOk()) {
             PinModelService pinModelService = getModelService(user);
             if(pinModelService != null) {
@@ -59,10 +66,18 @@ public class PinController extends CommonController {
         return communityServiceFactory.find(user.getCommunity(), PinModelService.class);
     }
 
-    private CheckResult doCheck(String pin) {
-        CheckResult result = CheckResult.OK;
-        // point to debug as for now
-        return result;
+    private CheckResult doCheck(User user, String pin) {
+        try {
+            if(pinCodeService.check(user, pin)){
+                return CheckResult.OK;
+            } else {
+                return CheckResult.ERROR;
+            }
+        } catch (PinCodeException.NotFound notFound) {
+            return CheckResult.ERROR;
+        } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
+            return CheckResult.EXPIRED;
+        }
     }
 
     private User currentUser() {

@@ -1,15 +1,13 @@
 package mobi.nowtechnologies.server.service.exception;
 
-import org.springframework.ws.client.WebServiceFaultException;
-
 /**
  * @author Anton Zemliankin
  */
 public class SubscriberServiceException{
 
     //Msisdn not found in subscriber service
-    public static class MsisdnNotFound extends Exception {
-        public MsisdnNotFound(String msg, Throwable cause) {
+    public static class MSISDNNotFound extends Exception {
+        public MSISDNNotFound(String msg, Throwable cause) {
             super(msg, cause);
         }
     }
