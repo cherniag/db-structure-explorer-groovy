@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.normalizer.test;
 import mobi.nowtechnologies.server.normalizer.PropertiesNormalizer;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Anton Zemliankin
  */
+@Ignore
 public class PropertiesNormalizerTest {
 
     private static final String ROOT = PropertiesNormalizerTest.class.getClassLoader().getResource(".").getFile();
