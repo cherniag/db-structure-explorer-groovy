@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import com.google.common.collect.ComparisonChain;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -37,10 +38,12 @@ import org.springframework.web.client.RestTemplate;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
@@ -607,7 +610,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
         String msg = null;
 
-        String[] codes = new String[25];
+        String[] codes = new String[27];
 
         final String providerKey = isNull(user.getProvider()) ? null : user.getProvider().getKey();
         final SegmentType segment = user.getSegment();
@@ -644,6 +647,17 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
                     codes[2*6+i] = getCode(codes, i, segmentSuffix, false);
                 if(contract != preContract)
                     codes[3*6+i] = getCode(codes, i, contractSuffix, false);
+            }
+            PaymentDetails previousPaymentDetails = user.getPreviousPaymentDetails();
+            if(isNotNull(previousPaymentDetails)) {
+                if(previousPaymentDetails.getPaymentPolicy().getId().equals(paymentPolicy.getId())){
+                    codes[25] = getCode(codes, 6, "prevPaymentPolicyIsTheSame", true);
+                }else {
+                    codes[25] = getCode(codes, 6, "prevPaymentPolicyIsDiffer", true);
+                }
+            }
+            if(user.isOnFreeTrial()) {
+                codes[26] = getCode(codes, 6, "onFreeTrial", true);
             }
         }
 

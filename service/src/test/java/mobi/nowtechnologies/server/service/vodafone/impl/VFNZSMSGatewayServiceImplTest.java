@@ -34,7 +34,6 @@ public class VFNZSMSGatewayServiceImplTest {
     public void setUp(){
         fixture = new VFNZSMSGatewayServiceImpl();
         fixture.setSmppService(smppServiceMock);
-        fixture.setSmppMessageProcessorContainer(smsMessageProcessorContainerMock);
     }
 
     @Test

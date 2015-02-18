@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
@@ -1433,6 +1434,19 @@ public class User implements Serializable {
 
     public boolean hasAppReceiptInLimitedState() {
         return getBase64EncodedAppStoreReceipt() != null && hasLimitedStatus();
+    }
+
+    public PaymentDetails getPreviousPaymentDetails() {
+        if(paymentDetailsList.size() > 1){
+            Collections.sort(paymentDetailsList, new Comparator<PaymentDetails>() {
+                @Override
+                public int compare(PaymentDetails pd1, PaymentDetails pd2) {
+                    return ComparisonChain.start().compare(pd2.getCreationTimestampMillis(), pd1.getCreationTimestampMillis()).result();
+                }
+            });
+            return paymentDetailsList.get(paymentDetailsList.size() - 2);
+        }
+        return null;
     }
 
     public User withOldUser(User oldUser) {

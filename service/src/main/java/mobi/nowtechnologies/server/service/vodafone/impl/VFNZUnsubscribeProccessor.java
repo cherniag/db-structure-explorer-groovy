@@ -31,11 +31,11 @@ public class VFNZUnsubscribeProccessor extends BasicSMSMessageProcessor<MOMessag
         String text = message.getText();
         String phoneNumber = message.getOriginator();
         if (text.toLowerCase().contains(stopText)) {
-            LOGGER.debug("Start proccess stop sms [{}]", message);
+            LOGGER.debug("Start precessing stop sms [{}]", message);
 
             userService.unsubscribeUser(phoneNumber, operatorName);
 
-            LOGGER.debug("Finish proccess stop sms [{}]", message);
+            LOGGER.debug("Finish processing stop sms [{}]", message);
         }
     }
 
