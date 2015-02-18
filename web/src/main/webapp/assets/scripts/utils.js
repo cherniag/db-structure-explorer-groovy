@@ -64,6 +64,64 @@ var Templates = {
     }
 }
 
+PinCodeControl = {
+    init: function(){
+        $(".pin-code").each(function(){
+            PinCodeControl.render(this);
+            PinCodeControl.initControl(this);
+        });
+    },
+
+    render: function(rootDom) {
+        var digitsCount = $(rootDom).attr('digitsCount'),
+            name = $(rootDom).attr('name'),
+            value = $(rootDom).attr('value'),
+            error = $(rootDom).attr('error');
+
+        if(!digitsCount) throw "Pin control should have valid 'digitsCount' attribute";
+        if(!name) throw "Pin control should have valid 'name' attribute";
+
+        $(rootDom).append('<div class="pin-digits-holder" style="width:'+$(rootDom).width()+'px; height:'+$(rootDom).height()+'px;"></div>');
+        $(rootDom).append('<input type="hidden" id="'+name+'" name="'+name+'" value="'+(value || "")+'" />');
+
+        var width = 100/digitsCount;
+
+        for(var i=0; i<digitsCount; i++){
+            var left = width*i;
+            var val = value && value.length > i ? value[i] : "";
+            $(rootDom).find('.pin-digits-holder').append('<input type="text" class="pin-code-digit'+(error ? " pin-error" : "")+'" maxlength="1" style="left:'+left+'%; width:'+width+'%;" value="'+val+'"/>');
+        }
+
+        if(error){
+            $(rootDom).height('auto');
+            $(rootDom).append('<div class="pin-error-msg">'+error+'</div>');
+        }
+    },
+
+    initControl: function(rootDom) {
+        $(rootDom).find('.pin-code-digit').each(function(){
+            $(this)
+                .on('focus', function(){
+                    var previous = $(this).prev();
+                    if(previous && previous.length && !previous.val()){
+                        previous[0].focus();
+                    }
+                })
+                .on('keyup', function(e){
+                    var next = $(this).next();
+                    if($(this).val() && next && next.length){
+                        next[0].focus();
+                    }
+                    var val = "";
+                    $(rootDom).find('.pin-code-digit').each(function(){
+                        val += $(this).val();
+                    });
+                    $(rootDom).find('input[type=hidden]').val(val);
+                });
+        });
+    }
+};
+
 function createCookie(name, value, days) {
 	var expires = "";
 	if (days) {
