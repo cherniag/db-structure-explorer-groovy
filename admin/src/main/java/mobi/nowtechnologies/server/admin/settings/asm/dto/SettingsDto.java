@@ -2,12 +2,15 @@ package mobi.nowtechnologies.server.admin.settings.asm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import mobi.nowtechnologies.server.admin.settings.asm.BehaviorConfigTypeRules;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlist.PlaylistInfo;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.MetaInfo;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.PlaylistTypeInfoDto;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.referral.ReferralDto;
+import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
 import mobi.nowtechnologies.server.dto.streamzine.ChartListItemDto;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 
@@ -42,24 +45,35 @@ public class SettingsDto {
     @JsonProperty(value = "actions")
     private Set<String> actions = new HashSet<String>();
 
+    @JsonProperty(value = "contentBehaviorTypes")
+    private List<ContentBehaviorType> contentBehaviorTypes = new ArrayList<>();
+
     @JsonProperty(value = "chartTypes")
     private Set<ChartBehaviorType> chartBehaviorTypes = new HashSet<ChartBehaviorType>();
 
     @JsonProperty(value = "favourites")
-    private Map<UserStatusType, Boolean> favourites = new HashMap<UserStatusType, Boolean>();
+    private Map<UserStatusType, ContentBehaviorType> favourites = new HashMap<>();
 
     @JsonProperty(value = "ads")
-    private Map<UserStatusType, Boolean> ads = new HashMap<UserStatusType, Boolean>();
+    private Map<UserStatusType, ContentBehaviorType> ads = new HashMap<>();
 
     @JsonProperty(value = "i18n")
-    private Map<String, String> i18n = new HashMap<String, String>();
+    private Map<String, String> i18n = new HashMap<>();
 
-    public SettingsDto() {
+    private transient BehaviorConfigType behaviorConfigType;
+
+    public SettingsDto(BehaviorConfigType behaviorConfigType) {
+        this.behaviorConfigType = behaviorConfigType;
         playlistTypeSettings.putAll(initPlaylistTypeMappings());
         favourites.putAll(initStatuses());
         ads.putAll(initStatuses());
         periods.addAll(getRequiredPeriodValues());
-        chartBehaviorTypes.addAll(Arrays.asList(ChartBehaviorType.values()));
+        chartBehaviorTypes.addAll(BehaviorConfigTypeRules.allowedChartBehaviorTypes(behaviorConfigType));
+    }
+
+    // for JSON
+    public SettingsDto() {
+
     }
 
     public boolean isEnabled() {
@@ -99,15 +113,19 @@ public class SettingsDto {
         this.actions.addAll(actions);
     }
 
+    public void setContentBehaviorTypes(List<ContentBehaviorType> contentBehaviorTypes) {
+        this.contentBehaviorTypes.addAll(contentBehaviorTypes);
+    }
+
     public ReferralDto getReferralDto() {
         return referralDto;
     }
 
-    public Map<UserStatusType, Boolean> getFavourites() {
+    public Map<UserStatusType, ContentBehaviorType> getFavourites() {
         return favourites;
     }
 
-    public Map<UserStatusType, Boolean> getAds() {
+    public Map<UserStatusType, ContentBehaviorType> getAds() {
         return ads;
     }
 
@@ -136,7 +154,7 @@ public class SettingsDto {
 
     private HashMap<UserStatusType, PlaylistInfo> createUserStatusTypePlaylistInfo() {
         HashMap<UserStatusType, PlaylistInfo> mapping = new HashMap<UserStatusType, PlaylistInfo>();
-        for (UserStatusType userStatusType : UserStatusType.values()) {
+        for (UserStatusType userStatusType : BehaviorConfigTypeRules.allowedUserStatusTypes(behaviorConfigType)) {
             mapping.put(userStatusType, new PlaylistInfo());
         }
         return mapping;
@@ -144,16 +162,16 @@ public class SettingsDto {
 
     private Map<ChartBehaviorType, PlaylistTypeInfoDto> initPlaylistTypeMappings() {
         Map<ChartBehaviorType, PlaylistTypeInfoDto> playlistType = new HashMap<ChartBehaviorType, PlaylistTypeInfoDto>();
-        for (ChartBehaviorType type : ChartBehaviorType.values()) {
+        for (ChartBehaviorType type : BehaviorConfigTypeRules.allowedChartBehaviorTypes(behaviorConfigType)) {
             playlistType.put(type, new PlaylistTypeInfoDto());
         }
         return playlistType;
     }
 
-    private Map<UserStatusType, Boolean> initStatuses() {
-        Map<UserStatusType, Boolean> statuses = new HashMap<UserStatusType, Boolean>();
+    private Map<UserStatusType, ContentBehaviorType> initStatuses() {
+        Map<UserStatusType, ContentBehaviorType> statuses = new HashMap<>();
         for (UserStatusType userStatusType : UserStatusType.values()) {
-            statuses.put(userStatusType, Boolean.FALSE);
+            statuses.put(userStatusType, ContentBehaviorType.DISABLED);
         }
         return statuses;
     }

@@ -65,6 +65,13 @@ public class SettingsController {
         settingsService.makeImport(communityRewriteUrl, toSave);
     }
 
+    @RequestMapping(value = "/settings/switch", method = RequestMethod.POST)
+    public @ResponseBody void switchConfigType(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl, @RequestBody boolean isFreemiumEnabled) {
+        logger().info("Saving {} for community id {}", isFreemiumEnabled, communityRewriteUrl);
+
+        settingsService.switchConfigType(communityRewriteUrl, isFreemiumEnabled);
+    }
+
     private Logger logger() {
         return LoggerFactory.getLogger(getClass());
     }

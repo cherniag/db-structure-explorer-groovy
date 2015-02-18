@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.settings.service;
 
 import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
+import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
@@ -19,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static mobi.nowtechnologies.server.dto.context.ContentBehaviorType.DISABLED;
+import static mobi.nowtechnologies.server.dto.context.ContentBehaviorType.ENABLED;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -86,7 +89,7 @@ public class SettingsServiceTest {
         //
         // when
         //
-        SettingsDto dto = new SettingsDto();
+        SettingsDto dto = new SettingsDto(BehaviorConfigType.FREEMIUM);
         // enabled
         dto.setEnabled(false);
         // referrals
@@ -112,12 +115,12 @@ public class SettingsServiceTest {
         dto.getPlaylistTypeSettings().get(ChartBehaviorType.SHUFFLED).getMaxTracks().setNumber(16);
         dto.getPlaylistTypeSettings().get(ChartBehaviorType.SHUFFLED).getMaxTracks().getDurationInfoDto().fromDuration(Duration.forPeriod(17, DurationUnit.MONTHS));
 
-        dto.getFavourites().put(UserStatusType.FREE_TRIAL, true);
-        dto.getFavourites().put(UserStatusType.LIMITED, true);
-        dto.getFavourites().put(UserStatusType.SUBSCRIBED, true);
-        dto.getAds().put(UserStatusType.FREE_TRIAL, false);
-        dto.getAds().put(UserStatusType.LIMITED, false);
-        dto.getAds().put(UserStatusType.SUBSCRIBED, false);
+        dto.getFavourites().put(UserStatusType.FREE_TRIAL, DISABLED);
+        dto.getFavourites().put(UserStatusType.LIMITED, DISABLED);
+        dto.getFavourites().put(UserStatusType.SUBSCRIBED, DISABLED);
+        dto.getAds().put(UserStatusType.FREE_TRIAL, ENABLED);
+        dto.getAds().put(UserStatusType.LIMITED, ENABLED);
+        dto.getAds().put(UserStatusType.SUBSCRIBED, ENABLED);
 
         createEmptyPlaceholdersForChartId(90, dto);
         for (UserStatusType userStatusType : UserStatusType.values()) {

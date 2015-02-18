@@ -2,6 +2,7 @@ package mobi.nowtechnologies.server.transport.context.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

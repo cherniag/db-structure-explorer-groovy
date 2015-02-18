@@ -15,6 +15,13 @@
         h3 {
             margin-top: 20px;
         }
+        .behavior-config-type-label{
+            font-size: 16px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 5px;
+            margin-right: 10px;
+        }
     </style>
 	<body>
 		<div th:substituteby="tpl::navbar"></div>
@@ -26,11 +33,15 @@
         <!-- Templates -->
         <div id="rootTemplateId" style="display: none;">
             <div style="width:60%;">
-                <button class="btn btn-success" type="submit" id="enableOrDisableFreemiumId"></button>
-
+                <div>
+                    <div style="display: inline-block;vertical-align: middle;padding-top: 2px;">
+                        Current model: <span id="currentBehaviorConfigType" class="behavior-config-type-label"></span>
+                    </div>
+                    <button class="btn btn-success" type="submit" id="enableOrDisableFreemiumId"></button>
+                </div>
                 <div>
                     <br/><br/>
-                    <h2>Freemium Settings</h2>
+                    <h2>Model settings</h2>
                     <h3>Referrals</h3>
                     <div>
                         <div style="display: table">
@@ -41,10 +52,10 @@
                         </div>
                     </div>
 
-                    <h3>Disable Ads</h3>
+                    <h3>Ads</h3>
                     <div>{view.adSettings}</div>
 
-                    <h3>Disable Favourites</h3>
+                    <h3>Favourites</h3>
                     <div>{view.favouriteSettings}</div>
 
                     <h3>Playlist types</h3>
@@ -60,12 +71,12 @@
 
         <div id="adSettingsId" style="display: none;">
             <div class="settings-editor-cell settings-title">{userStatusTitle}:</div>
-            <div class="settings-editor-cell" data-path="ads.{userStatus}" data-editor="boolean">{enabled}</div>
+            <div class="settings-editor-cell" data-path="ads.{userStatus}" data-editor="dictionaryStrict" data-dictionary-path="contentBehaviorTypes">{contentBehaviorType}</div>
         </div>
 
         <div id="favouriteSettingsId" style="display: none;">
             <div class="settings-editor-cell settings-title">{userStatusTitle}:</div>
-            <div class="settings-editor-cell" data-path="favourites.{userStatus}" data-editor="boolean">{enabled}</div>
+            <div class="settings-editor-cell" data-path="favourites.{userStatus}" data-editor="dictionaryStrict" data-dictionary-path="contentBehaviorTypes">{contentBehaviorType}</div>
         </div>
 
         <div id="playlistTypeSettingsId" style="display: none;">
@@ -142,6 +153,7 @@
                 path: /*[[${#httpServletRequest.getContextPath()}]]*/'',
                 getUrl: /*[[@{__${'/settings/get.json'}__}]]*/ '#',
                 saveUrl: /*[[@{__${'/settings/save.json'}__}]]*/ '#',
+                switchUrl: /*[[@{__${'/settings/switch.json'}__}]]*/ '#',
                 renderTo: rootElement,
                 imageURL: /*[[${imageURL}]]*/''
             });

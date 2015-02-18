@@ -36,7 +36,8 @@ if(Settings == undefined) {
                     // rendering
                     render(options.renderTo);
 
-                    $('#enableOrDisableFreemiumId').text((model.enabled)?'Disable Freemium':'Enable Freemium').click(enableOrDisableFreemium);
+                    $('#enableOrDisableFreemiumId').text('Switch').click(enableOrDisableFreemium);
+                    $('#currentBehaviorConfigType').text((model.enabled)?'FREEMIUM':'DEFAULT');
                     $('#saveId').click(save);
 
                     // editing
@@ -62,9 +63,28 @@ if(Settings == undefined) {
         //
 
         function enableOrDisableFreemium() {
-            model.enabled = !model.enabled;
-            $('#enableOrDisableFreemiumId').text('Please wait...')
-            save();
+            $('#enableOrDisableFreemiumId').text('Please wait...');
+
+            if(progress) return;
+            progress = true;
+
+            $.ajax({
+                url : opts.switchUrl,
+                dataType: 'json',
+                data: JSON.stringify(!model.enabled),
+                contentType: 'application/json',
+                type: "POST",
+                success : function(data, textStatus, status) {
+                    alert('Switched successfully. Page will be reloaded');
+                    progress = false;
+                    location.reload(true)
+                },
+                error: function(qXHR) {
+                    progress = false;
+                    alert('Failed to switch: please refresh the page and try again');
+                }
+            });
+
         }
 
         function save() {
@@ -120,7 +140,7 @@ if(Settings == undefined) {
                         {
                             userStatusTitle: model.i18n[favourite],
                             userStatus: favourite,
-                            enabled: favourites.favourite
+                            contentBehaviorType: favourites.favourite
                         }
                     );
                 }
@@ -138,7 +158,7 @@ if(Settings == undefined) {
                         {
                             userStatusTitle: model.i18n[ad],
                             userStatus: ad,
-                            enabled: ads.ad
+                            contentBehaviorType: ads.ad
                         }
                     );
                 }
