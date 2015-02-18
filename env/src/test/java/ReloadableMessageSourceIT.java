@@ -73,12 +73,12 @@ public class ReloadableMessageSourceIT {
     };
 
     @DataPoints public static String[] communities = {"o2", "vf_nz", "demo", "mtvnz", "hl_uk", "mtv1", "demo", "demo2", "demo3", "demo4", "demo5", "demo6"};
-    @DataPoints public static Locale[] locales = {ENGLISH};
+    @DataPoints public static Locale[] locales = {null, ENGLISH};
     ResourceLoader resourceLoader = new DefaultResourceLoader();
 
     class CustomReloadableResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
         Properties getAllProperties(Locale locale) {
-            return getMergedProperties(locale).getProperties();
+            return getMergedProperties(locale == null ? Locale.getDefault() : locale).getProperties();
         }
     }
 
