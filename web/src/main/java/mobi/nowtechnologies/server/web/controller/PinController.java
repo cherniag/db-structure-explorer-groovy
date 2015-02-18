@@ -67,8 +67,6 @@ public class PinController extends CommonController {
     }
 
     private CheckResult doCheck(User user, String pin) {
-
-        //need separate states for incorrect pincode and MaxAttemptsReached
         try {
             if(pinCodeService.check(user, pin)){
                 return CheckResult.OK;
@@ -78,7 +76,7 @@ public class PinController extends CommonController {
         } catch (PinCodeException.NotFound notFound) {
             return CheckResult.EXPIRED;
         } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
-            return CheckResult.ERROR;
+            return CheckResult.MAX_ATTEMTS;
         }
     }
 
@@ -88,7 +86,7 @@ public class PinController extends CommonController {
     }
 
     public static enum CheckResult {
-        OK, ERROR, EXPIRED;
+        OK, ERROR, EXPIRED, MAX_ATTEMTS;
 
         public boolean isOk() {
             return this == OK;
@@ -96,6 +94,10 @@ public class PinController extends CommonController {
 
         public boolean isError() {
             return this == ERROR;
+        }
+
+        public boolean isMaxAttempts() {
+            return this == MAX_ATTEMTS;
         }
     }
 }

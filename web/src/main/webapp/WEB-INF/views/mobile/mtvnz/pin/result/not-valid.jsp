@@ -3,15 +3,22 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
+<script src="${requestScope.assetsPathWithoutCommunity}scripts/utils.js"></script>
+
 Not valid, try again
 
 Enter
-<input type="text" id="pin" />
+<div class="pin-code"
+     digitsCount="4"
+     name="pin"
+     error="Invalid code. Please try again."
+></div>
 
 <script>
     var enterPin = function() {
         window.location = "pin/result?pin=" + $('#pin').val();
-    }
+    };
+    $(document).ready(PinCodeControl.init);
 </script>
 
 <c:if test="${not empty error}">
