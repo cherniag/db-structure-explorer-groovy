@@ -67,6 +67,8 @@ public class PinController extends CommonController {
     }
 
     private CheckResult doCheck(User user, String pin) {
+
+        //need separate states for incorrect pincode and MaxAttemptsReached
         try {
             if(pinCodeService.check(user, pin)){
                 return CheckResult.OK;
@@ -74,9 +76,9 @@ public class PinController extends CommonController {
                 return CheckResult.ERROR;
             }
         } catch (PinCodeException.NotFound notFound) {
-            return CheckResult.ERROR;
-        } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
             return CheckResult.EXPIRED;
+        } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
+            return CheckResult.ERROR;
         }
     }
 

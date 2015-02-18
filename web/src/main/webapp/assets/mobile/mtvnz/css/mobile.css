@@ -128,6 +128,23 @@ body {
     width: 100%;
 }
 
+.pin-code {
+    width: 200px;
+    height:50px;
+    margin: 20px auto;
+    position: relative;
+}
+
+.pin-code .pin-code-digit {
+    position:absolute;
+    top:0;
+    bottom:0;
+    text-align: center;
+    outline: none;
+    border: #000 1px solid;
+    font-size: 30px;
+}
+
 @media all and (min-width: 1000px) {
     .holding_page_content_container {
         top: 32px;
