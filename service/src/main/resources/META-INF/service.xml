@@ -473,6 +473,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <alias name="service.migHttpService" alias="o2.service.SmsProvider"/>
     <alias name="vf_nz.service.VFNZSMSGatewayService" alias="vf_nz.service.SmsProvider"/>
+    <alias name="vf_nz.service.VFNZSMSGatewayService" alias="mtvnz.service.SmsProvider"/>
 
 	<bean id="service.O2ClientService" class="mobi.nowtechnologies.server.service.o2.impl.O2ProviderServiceImpl">
 		<property name="serverO2Url" value="${o2.server.url}" />

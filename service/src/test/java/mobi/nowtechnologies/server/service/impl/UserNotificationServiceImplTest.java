@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -18,10 +19,10 @@ import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -32,6 +33,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -47,6 +49,7 @@ import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
+import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -80,7 +83,7 @@ public class UserNotificationServiceImplTest {
 	}
 
 	@Test
-	public void testNotifyUserAboutSuccesfulPayment_Success()
+	public void testNotifyUserAboutSuccessfulPayment_Success()
 			throws Exception {
 
 		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
@@ -103,7 +106,7 @@ public class UserNotificationServiceImplTest {
 	}
 
 	@Test(expected = java.lang.NullPointerException.class)
-	public void testNotifyUserAboutSuccesfullPayment_UserIsNull_Failure()
+	public void testNotifyUserAboutSuccessfullPayment_UserIsNull_Failure()
 			throws Exception {
 		User user = null;
 
@@ -249,7 +252,7 @@ public class UserNotificationServiceImplTest {
 		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.unsubscribed.not.for.device.type");
 		verify(userNotificationImplSpy, times(1)).sendSMSWithUrl(eq(user),
 				eq("sms.unsubscribe.after.text"), argThat(matcher));
-	}
+    }
 	
 	@Test
 	public void testSendUnsubscribeAfterSMS_wasSmsSentSuccessfullyIsFalse_Failure() throws Exception {
@@ -1781,7 +1784,7 @@ public class UserNotificationServiceImplTest {
 		final String expectedMsgCode = msgCodeBase;
 		String expectedMsg = "";
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -1789,7 +1792,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 
@@ -1869,6 +1872,308 @@ public class UserNotificationServiceImplTest {
         userNotificationImplSpy.sendActivationPinSMS(user);
     }
 
+    @Test
+    public void shouldReturnUnsubscriptionMessageForFreeTrialMtvnzUserWithVFCurrentPaymentDetailsWhenUserUnsubscribeManuallyViaWebOrStopSms() throws Exception {
+        //given
+        final String rewriteUrlParameter = "mtvnz";
+
+        Community mtvnzCommunity = CommunityFactory.createCommunity();
+        mtvnzCommunity.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup mtvnzUserGroup = UserGroupFactory.createUserGroup(mtvnzCommunity);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(mtvnzUserGroup);
+        user.setProvider(ProviderType.FACEBOOK);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setDeviceType(DeviceTypeFactory.createDeviceType("ANDROID"));
+        user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+
+        PaymentPolicy paymentPolicy = new PaymentPolicy();
+
+        PaymentDetails vfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        vfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        user.setCurrentPaymentDetails(vfPsmsPaymentDetails);
+
+        String msgCodeBase = "sms.unsubscribe.after.text";
+
+        String expectedMsg = "You have successfully unsubscribed from MTV Trax. If you change your mind, subscribe again via the account page in the app.";
+        final String expectedMsgCode = "sms.unsubscribe.after.text.for.fb.ANDROID.vfPsms.onFreeTrial";
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        //when
+        String result = userNotificationImplSpy.getMessage(user, mtvnzCommunity, msgCodeBase,new String[]{"http://short.link", "0"});
+
+        //then
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void shouldReturnUnsubscriptionMessageForPayedMtvnzUserWithVFCurrentPaymentDetailsWhenUserUnsubscribeManuallyViaWebOrStopSms() throws Exception {
+        //given
+        final String rewriteUrlParameter = "mtvnz";
+
+        Community mtvnzCommunity = CommunityFactory.createCommunity();
+        mtvnzCommunity.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup mtvnzUserGroup = UserGroupFactory.createUserGroup(mtvnzCommunity);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(mtvnzUserGroup);
+        user.setProvider(ProviderType.FACEBOOK);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setDeviceType(DeviceTypeFactory.createDeviceType("ANDROID"));
+        user.setFreeTrialExpiredMillis(0L);
+        user.setNextSubPayment((int) new DateTime().plusDays(1).getMillis());
+
+        PaymentPolicy paymentPolicy = new PaymentPolicy();
+
+        PaymentDetails vfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        vfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        user.setCurrentPaymentDetails(vfPsmsPaymentDetails);
+
+        String msgCodeBase = "sms.unsubscribe.after.text";
+
+        String expectedMsg = "You have successfully unsubscribed from MTV Trax and have 1 days left of full access. If you change your mind, subscribe again via the account page in the app.";
+        final String expectedMsgCode = "sms.unsubscribe.after.text.for.fb.ANDROID.vfPsms";
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.after.text.for.fb.ANDROID.vfPsms.before.null"), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.after.text.for.fb.ANDROID.before.null"), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.after.text.for.fb.before.null"), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.after.text.for.fb.ANDROID.vfPsms.onFreeTrial"), any(Object[].class), eq(""), eq((Locale) null))).thenReturn("You have successfully unsubscribed from MTV Trax. If you change your mind, subscribe again via the account page in the app.");
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        //when
+        String result = userNotificationImplSpy.getMessage(user, mtvnzCommunity, msgCodeBase, new String[]{"http://short.link", "1"});
+
+        //then
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.after.text.for.fb.ANDROID.vfPsms.before.null"), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.after.text.for.fb.ANDROID.before.null"), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.after.text.for.fb.before.null"), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void shouldReturnPaymentDetailsChangingMessageForFreeTrialMtvnzUserWithVFCurrentPaymentDetailsWhenUserChangesPaymentPolicy() throws Exception {
+        //given
+        final String rewriteUrlParameter = "mtvnz";
+
+        Community mtvnzCommunity = CommunityFactory.createCommunity();
+        mtvnzCommunity.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup mtvnzUserGroup = UserGroupFactory.createUserGroup(mtvnzCommunity);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(mtvnzUserGroup);
+        user.setProvider(ProviderType.FACEBOOK);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setDeviceType(DeviceTypeFactory.createDeviceType("ANDROID"));
+        user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+
+        PaymentPolicy newPaymentPolicy = new PaymentPolicy();
+        newPaymentPolicy.setId(1);
+
+        PaymentPolicy prevPaymentPolicy = new PaymentPolicy();
+        prevPaymentPolicy.setId(2);
+
+        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        newVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
+
+        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        prevVfPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
+
+        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+
+        String msgCodeBase = "sms.unsubscribe.potential.text";
+
+        String expectedMsg = "Your MTV Trax subscription has changed to $1 per week. Full tracks, unlimited plays, overnight updates and no ads. To unsubscribe text STOP to 3140";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.prevPaymentPolicyIsDiffer";
+        String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        //when
+        String result = userNotificationImplSpy.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+
+        //then
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void shouldReturnPaymentDetailsChangingMessageForPayedMtvnzUserWithVFCurrentPaymentDetailsWhenUserChangesPaymentPolicy() throws Exception {
+        //given
+        final String rewriteUrlParameter = "mtvnz";
+
+        Community mtvnzCommunity = CommunityFactory.createCommunity();
+        mtvnzCommunity.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup mtvnzUserGroup = UserGroupFactory.createUserGroup(mtvnzCommunity);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(mtvnzUserGroup);
+        user.setProvider(ProviderType.FACEBOOK);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setDeviceType(DeviceTypeFactory.createDeviceType("ANDROID"));
+        user.setFreeTrialExpiredMillis(0L);
+        user.setNextSubPayment((int) new DateTime().plusDays(1).getMillis());
+
+        PaymentPolicy newPaymentPolicy = new PaymentPolicy();
+        newPaymentPolicy.setId(1);
+
+        PaymentPolicy prevPaymentPolicy = new PaymentPolicy();
+        prevPaymentPolicy.setId(2);
+
+        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        newVfPsmsPaymentDetails.setPaymentPolicy(newPaymentPolicy);
+
+        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        prevVfPsmsPaymentDetails.setPaymentPolicy(prevPaymentPolicy);
+
+        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+
+        String msgCodeBase = "sms.unsubscribe.potential.text";
+
+        String expectedMsg = "Your MTV Trax subscription has changed to $1 per week. Full tracks, unlimited plays, overnight updates and no ads. To unsubscribe text STOP to 3140";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.prevPaymentPolicyIsDiffer";
+        String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        //when
+        String result = userNotificationImplSpy.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+
+        //then
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void shouldReturnPaymentDetailsChangingMessageForFreeTrialMtvnzUserWithVFCurrentPaymentDetailsWhenUserChangePaymentDetailsButNotPaymentPolicy() throws Exception {
+        //given
+        final String rewriteUrlParameter = "mtvnz";
+
+        Community mtvnzCommunity = CommunityFactory.createCommunity();
+        mtvnzCommunity.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup mtvnzUserGroup = UserGroupFactory.createUserGroup(mtvnzCommunity);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(mtvnzUserGroup);
+        user.setProvider(ProviderType.FACEBOOK);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setDeviceType(DeviceTypeFactory.createDeviceType("ANDROID"));
+        user.setFreeTrialExpiredMillis(Long.MAX_VALUE);
+
+        PaymentPolicy paymentPolicy = new PaymentPolicy();
+        paymentPolicy.setId(1);
+
+        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        newVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        prevVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+
+        String msgCodeBase = "sms.unsubscribe.potential.text";
+
+        String expectedMsg = "The mobile number linked to your MTV Trax subscription has successfully been changed. To unsubscribe, text STOP to 3140";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.prevPaymentPolicyIsTheSame";
+        String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        //when
+        String result = userNotificationImplSpy.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+
+        //then
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null));
+    }
+
+    @Test
+    public void shouldReturnPaymentDetailsChangingMessageForPayedMtvnzUserWithVFCurrentPaymentDetailsWhenUserChangePaymentDetailsButNotPaymentPolicy() throws Exception {
+        //given
+        final String rewriteUrlParameter = "mtvnz";
+
+        Community mtvnzCommunity = CommunityFactory.createCommunity();
+        mtvnzCommunity.setRewriteUrlParameter(rewriteUrlParameter);
+
+        UserGroup mtvnzUserGroup = UserGroupFactory.createUserGroup(mtvnzCommunity);
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(mtvnzUserGroup);
+        user.setProvider(ProviderType.FACEBOOK);
+        user.setSegment(null);
+        user.setContract(null);
+        user.setDeviceType(DeviceTypeFactory.createDeviceType("ANDROID"));
+        user.setFreeTrialExpiredMillis(0L);
+        user.setNextSubPayment((int) new DateTime().plusDays(1).getMillis());
+
+        PaymentPolicy paymentPolicy = new PaymentPolicy();
+        paymentPolicy.setId(1);
+
+        PaymentDetails newVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        newVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        PaymentDetails prevVfPsmsPaymentDetails = new VFPSMSPaymentDetails();
+        prevVfPsmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+
+        user.setPaymentDetailsList(Arrays.asList(prevVfPsmsPaymentDetails, newVfPsmsPaymentDetails));
+        user.setCurrentPaymentDetails(newVfPsmsPaymentDetails);
+
+        String msgCodeBase = "sms.unsubscribe.potential.text";
+
+        String expectedMsg = "The mobile number linked to your MTV Trax subscription has successfully been changed. To unsubscribe, text STOP to 3140";
+        final String expectedMsgCode = "sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.prevPaymentPolicyIsTheSame";
+        String[] msgArgs = {"http://short.link", "$", "1", "per week", "3140"};
+
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
+
+        //when
+        String result = userNotificationImplSpy.getMessage(user, mtvnzCommunity, msgCodeBase, msgArgs);
+
+        //then
+        assertNotNull(result);
+        assertEquals(expectedMsg, result);
+
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), eq("sms.unsubscribe.potential.text.for.fb.ANDROID.vfPsms.onFreeTrial"), eq(msgArgs), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), eq(msgArgs), eq(""), eq((Locale) null));
+    }
+
 	@Test
 	public void testGetMessageCode_ProviderIsNotNullSegmentContractDeviceTypeAreNull_Success()
 			throws Exception {
@@ -1891,7 +2196,7 @@ public class UserNotificationServiceImplTest {
 		String expectedMsg = "expectedMsg";
 		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey();
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -1899,7 +2204,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 
@@ -1925,7 +2230,7 @@ public class UserNotificationServiceImplTest {
 		String expectedMsg = "expectedMsg";
 		final String expectedMsgCode = msgCodeBase  + ".for." + user.getContract();
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -1933,7 +2238,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 	
@@ -1959,7 +2264,7 @@ public class UserNotificationServiceImplTest {
 		String expectedMsg = "expectedMsg";
 		final String expectedMsgCode = msgCodeBase  + ".for." + user.getSegment();
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -1967,7 +2272,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 	
@@ -1995,7 +2300,7 @@ public class UserNotificationServiceImplTest {
 		String expectedMsg = "expectedMsg";
 		final String expectedMsgCode = msgCodeBase + ".for."+ deviceType.getName();
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2003,7 +2308,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 	
@@ -2031,7 +2336,7 @@ public class UserNotificationServiceImplTest {
 		String expectedMsg = "expectedMsg";
 		final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2039,7 +2344,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 	
@@ -2067,7 +2372,7 @@ public class UserNotificationServiceImplTest {
 		String expectedMsg = "expectedMsg";
 		final String expectedMsgCode = msgCodeBase + ".for." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName();
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2075,7 +2380,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 	
@@ -2103,7 +2408,7 @@ public class UserNotificationServiceImplTest {
 		String expectedMsg = "expectedMsg";
 		final String expectedMsgCode = msgCodeBase + ".for." + user.getSegment() + "." + deviceType.getName();
 		
-		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
 		when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
 		String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2111,7 +2416,7 @@ public class UserNotificationServiceImplTest {
 		assertNotNull(result);
 		assertEquals(expectedMsg, result);
 
-		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+		verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
 		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
 	}
 
@@ -2148,7 +2453,7 @@ public class UserNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2156,7 +2461,7 @@ public class UserNotificationServiceImplTest {
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
@@ -2194,7 +2499,7 @@ public class UserNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2202,7 +2507,7 @@ public class UserNotificationServiceImplTest {
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
@@ -2241,7 +2546,7 @@ public class UserNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2249,7 +2554,7 @@ public class UserNotificationServiceImplTest {
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 
@@ -2289,7 +2594,7 @@ public class UserNotificationServiceImplTest {
         String expectedMsg = "expectedMsg";
         final String expectedMsgCode = msgCodeBase + ".for." + user.getProvider().getKey() + "." + user.getSegment() + "." + user.getContract() + "." + deviceType.getName() + "." + user.getCurrentPaymentDetails().getPaymentType() + ".before." + paymentPolicy.getProvider().getKey() +"."+ paymentPolicy.getSegment()+"."+ paymentPolicy.getContract();
 
-        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
+        when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(null);
         when(communityResourceBundleMessageSourceMock.getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null))).thenReturn(expectedMsg);
 
         String result = userNotificationImplSpy.getMessage(user, o2Community, msgCodeBase, new String[0]);
@@ -2297,7 +2602,7 @@ public class UserNotificationServiceImplTest {
         assertNotNull(result);
         assertEquals(expectedMsg, result);
 
-        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), AdditionalMatchers.not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
+        verify(communityResourceBundleMessageSourceMock, times(0)).getMessage(eq(rewriteUrlParameter), not(eq(expectedMsgCode)), any(Object[].class), eq(""), eq((Locale) null));
         verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(eq(rewriteUrlParameter), eq(expectedMsgCode), any(Object[].class), eq(""), eq((Locale) null));
     }
 	
@@ -2307,81 +2612,81 @@ public class UserNotificationServiceImplTest {
 		String msgCode = "msgCode";
 		final String baseUrl = null;
 		String[] msgArgs = {baseUrl};
-		
-		
-		final String rewriteUrlParameter = "o2";
-		final String rememberMeTokenCookieName = "rememberMeTokenCookieName";
 
-		userNotificationImplSpy.setAvailableCommunities(new String[]{rewriteUrlParameter});
-		userNotificationImplSpy.setRememberMeTokenCookieName(rememberMeTokenCookieName);
-		
-		Community o2Community = CommunityFactory.createCommunity();
-		o2Community.setRewriteUrlParameter(rewriteUrlParameter);
-		
-		UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
-		
-		DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
-		
-		User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-		user.setUserGroup(o2UserGroup);
-		user.setProvider(null);
-		user.setSegment(BUSINESS);
-		user.setContract(null);
-		user.setDeviceType(deviceType);
-		
-		String message = "message";
-		String title = "title";
-		final String rememberMeToken = "rememberMeToken";
-		String url = "url";
-		
-		String tinyUrlService ="tinyUrlService";
-		userNotificationImplSpy.setTinyUrlService(tinyUrlService );
 
-		doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.not.for.device.type");
-		doReturn(rememberMeToken).when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(user.getUserName(), user.getToken());
-		
-		ResponseEntity responseEntiytMock = mock(ResponseEntity.class);
-		doReturn(url).when(responseEntiytMock).getBody();
-		
-		final ArgumentMatcher<MultiValueMap<String, Object>> matcher = new ArgumentMatcher<MultiValueMap<String, Object>>() {
+        final String rewriteUrlParameter = "o2";
+        final String rememberMeTokenCookieName = "rememberMeTokenCookieName";
 
-			@Override
-			public boolean matches(Object argument) {
-				MultiValueMap<String, Object> request = (MultiValueMap<String, Object>) argument;
+        userNotificationImplSpy.setAvailableCommunities(new String[]{rewriteUrlParameter});
+        userNotificationImplSpy.setRememberMeTokenCookieName(rememberMeTokenCookieName);
 
-				assertNotNull(request);
-				String expectedUrl = baseUrl + "?community=" + rewriteUrlParameter + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
-				LinkedList<String> expectedLinkedList = new LinkedList<String>();
-				expectedLinkedList.add(expectedUrl);
-				
-				assertEquals(expectedLinkedList, request.get("url"));
+        Community o2Community = CommunityFactory.createCommunity();
+        o2Community.setRewriteUrlParameter(rewriteUrlParameter);
 
-				return true;
-			}
-		};
-		
-		doReturn(responseEntiytMock).when(restTemplateMock).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
-		
-		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
-		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
+        UserGroup o2UserGroup = UserGroupFactory.createUserGroup(o2Community);
+
+        DeviceType deviceType = DeviceTypeFactory.createDeviceType("deviceTypeName");
+
+        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user.setUserGroup(o2UserGroup);
+        user.setProvider(null);
+        user.setSegment(BUSINESS);
+        user.setContract(null);
+        user.setDeviceType(deviceType);
+
+        String message = "message";
+        String title = "title";
+        final String rememberMeToken = "rememberMeToken";
+        String url = "url";
+
+        String tinyUrlService ="tinyUrlService";
+        userNotificationImplSpy.setTinyUrlService(tinyUrlService );
+
+        doReturn(false).when(userNotificationImplSpy).rejectDevice(user, "sms.notification.not.for.device.type");
+        doReturn(rememberMeToken).when(nowTechTokenBasedRememberMeServicesMock).getRememberMeToken(user.getUserName(), user.getToken());
+
+        ResponseEntity responseEntiytMock = mock(ResponseEntity.class);
+        doReturn(url).when(responseEntiytMock).getBody();
+
+        final ArgumentMatcher<MultiValueMap<String, Object>> matcher = new ArgumentMatcher<MultiValueMap<String, Object>>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                MultiValueMap<String, Object> request = (MultiValueMap<String, Object>) argument;
+
+                assertNotNull(request);
+                String expectedUrl = baseUrl + "?community=" + rewriteUrlParameter + "&" + rememberMeTokenCookieName + "=" + rememberMeToken;
+                LinkedList<String> expectedLinkedList = new LinkedList<String>();
+                expectedLinkedList.add(expectedUrl);
+
+                assertEquals(expectedLinkedList, request.get("url"));
+
+                return true;
+            }
+        };
+
+        doReturn(responseEntiytMock).when(restTemplateMock).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
+
+        doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
+        doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 
         doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
 
-		MigResponse migResponse = MigResponse.successfulMigResponse();
-		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
-		
-		boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
-		
-		assertTrue(wasSmsSentSuccessfully);
-		
-		verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
-		verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(user.getUserName(), user.getToken());
-		verify(responseEntiytMock, times(0)).getBody();
-		verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
-		verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
-		verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(rewriteUrlParameter, "sms.title", null, null);
-		verify(migHttpServiceMock, times(1)).send(user.getMobile(), message, title);
-	}
+        MigResponse migResponse = MigResponse.successfulMigResponse();
+        doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
+
+        boolean wasSmsSentSuccessfully = userNotificationImplSpy.sendSMSWithUrl(user, msgCode, msgArgs);
+
+        assertTrue(wasSmsSentSuccessfully);
+
+        verify(userNotificationImplSpy, times(1)).rejectDevice(user, "sms.notification.not.for.device.type");
+        verify(nowTechTokenBasedRememberMeServicesMock, times(0)).getRememberMeToken(user.getUserName(), user.getToken());
+        verify(responseEntiytMock, times(0)).getBody();
+        verify(restTemplateMock, times(0)).postForEntity(eq(tinyUrlService), argThat(matcher), eq(String.class));
+        verify(userNotificationImplSpy, times(1)).getMessage(user, o2Community, msgCode, msgArgs);
+        verify(communityResourceBundleMessageSourceMock, times(1)).getMessage(rewriteUrlParameter, "sms.title", null, null);
+        verify(migHttpServiceMock, times(1)).send(user.getMobile(), message, title);
+    }
 	
 	@Test
 	public void testSendSMSWithUrl_MsgArgsIsNull_Success() throws UnsupportedEncodingException {
