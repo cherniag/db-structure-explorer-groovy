@@ -47,6 +47,7 @@ public class SettingsAsmTest {
 
 
         SettingsDto dto = mock(SettingsDto.class);
+        when(dto.isEnabled()).thenReturn(true);
         when(settingsService.export(url)).thenReturn(dto);
 
         // when
