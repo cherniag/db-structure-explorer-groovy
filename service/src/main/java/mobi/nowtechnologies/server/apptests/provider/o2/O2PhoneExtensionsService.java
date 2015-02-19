@@ -12,7 +12,7 @@ import java.util.Map;
  * Author: Gennadii Cherniaiev
  * Date: 7/3/2014
  */
-public class PhoneExtensionsService implements InitializingBean {
+public class O2PhoneExtensionsService implements InitializingBean {
 
     private Map<PhoneDataKey, Integer> phoneExtensions = new HashMap<PhoneDataKey, Integer>();
 

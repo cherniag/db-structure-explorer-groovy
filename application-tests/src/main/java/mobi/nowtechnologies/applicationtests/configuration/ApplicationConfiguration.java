@@ -6,7 +6,7 @@ import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorH
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
 import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
-import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
+import mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -80,8 +80,8 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public PhoneExtensionsService getPhoneExtensionsService() {
-        return new PhoneExtensionsService();
+    public O2PhoneExtensionsService getPhoneExtensionsService() {
+        return new O2PhoneExtensionsService();
     }
 
     @Bean(name = "applicationTestsEntityManager")
