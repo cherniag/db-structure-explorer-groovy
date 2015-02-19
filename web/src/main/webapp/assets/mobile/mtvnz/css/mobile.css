@@ -132,9 +132,6 @@ body {
     width: 200px;
     height: 50px;
     margin: 20px auto;
-}
-
-.pin-digits-holder {
     position: relative;
 }
 
@@ -146,6 +143,7 @@ body {
     outline: none;
     border: #000 1px solid;
     font-size: 30px;
+    width: 25%;
 }
 
 .pin-error {
@@ -157,9 +155,7 @@ body {
     color: #DE3D16;
     font-size: 13px;
     text-align: center;
-    width: 150%;
-    margin-left: -25%;
-    margin-top: 5px;
+    margin: auto;
 }
 
 @media all and (min-width: 1000px) {
