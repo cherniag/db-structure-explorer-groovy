@@ -17,7 +17,7 @@ public class SmsServiceFacade implements ApplicationContextAware {
 
     public SMSGatewayService getSMSProvider(String communityUrl) {
         String smsProviderBeanName = messageSource.getMessage(communityUrl, "service.bean.smsProvider", null, null);
-        return (SMSGatewayService) applicationContext.getBean(smsProviderBeanName);
+        return applicationContext.getBean(smsProviderBeanName, SMSGatewayService.class);
     }
 
     @Override
