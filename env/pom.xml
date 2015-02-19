@@ -50,7 +50,7 @@
                             <overwrite>false</overwrite>
                             <resources>
                                 <resource>
-                                    <directory>../admin/src/main/webapp/i18n</directory>
+                                    <directory>../web/src/main/webapp/i18n</directory>
                                 </resource>
                             </resources>
                         </configuration>
