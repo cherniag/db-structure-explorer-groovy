@@ -64,62 +64,44 @@ var Templates = {
     }
 }
 
-PinCodeControl = {
-    init: function(){
-        $(".pin-code").each(function(){
-            PinCodeControl.render(this);
-            PinCodeControl.initControl(this);
-        });
-    },
+function PinCodeControl(controlId){
+    this.controlId = controlId;
 
-    render: function(rootDom) {
-        var digitsCount = $(rootDom).attr('digitsCount'),
-            name = $(rootDom).attr('name'),
-            value = $(rootDom).attr('value'),
-            error = $(rootDom).attr('error');
+    $('#'+this.controlId).find('input[type=text]').each(function(){
+        $(this)
+            .on('focus', function(){
+                var prev = $(this).prev('input[type=text]');
+                if(prev && prev.length && !prev.val() && !$(this).val()){
+                    prev[0].focus();
+                }
+            })
+            .on('keyup', function(e){
+                var next = $(this).next('input[type=text]');
+                var prev = $(this).prev('input[type=text]');
 
-        if(!digitsCount) throw "Pin control should have valid 'digitsCount' attribute";
-        if(!name) throw "Pin control should have valid 'name' attribute";
+                if(e.keyCode==46 && next.length && !(prev.length && prev.val())) {
+                    next[0].focus();
+                    if(next.val().length) next[0].setSelectionRange(0, 0);
+                    return;
+                }
 
-        $(rootDom).append('<div class="pin-digits-holder" style="width:'+$(rootDom).width()+'px; height:'+$(rootDom).height()+'px;"></div>');
-        $(rootDom).append('<input type="hidden" id="'+name+'" name="'+name+'" value="'+(value || "")+'" />');
+                if($(this).val() && next.length && !next.val()){
+                    next[0].focus();
+                    if(next.val().length) next[0].setSelectionRange(1, 1);
+                } else if (!$(this).val() && !next.val() && prev.length) {
+                    prev[0].focus();
+                    if(prev.val().length) prev[0].setSelectionRange(1, 1);
+                }
+            });
+    });
+}
 
-        var width = 100/digitsCount;
-
-        for(var i=0; i<digitsCount; i++){
-            var left = width*i;
-            var val = value && value.length > i ? value[i] : "";
-            $(rootDom).find('.pin-digits-holder').append('<input type="text" class="pin-code-digit'+(error ? " pin-error" : "")+'" maxlength="1" style="left:'+left+'%; width:'+width+'%;" value="'+val+'"/>');
-        }
-
-        if(error){
-            $(rootDom).height('auto');
-            $(rootDom).append('<div class="pin-error-msg">'+error+'</div>');
-        }
-    },
-
-    initControl: function(rootDom) {
-        $(rootDom).find('.pin-code-digit').each(function(){
-            $(this)
-                .on('focus', function(){
-                    var previous = $(this).prev();
-                    if(previous && previous.length && !previous.val()){
-                        previous[0].focus();
-                    }
-                })
-                .on('keyup', function(e){
-                    var next = $(this).next();
-                    if($(this).val() && next && next.length){
-                        next[0].focus();
-                    }
-                    var val = "";
-                    $(rootDom).find('.pin-code-digit').each(function(){
-                        val += $(this).val();
-                    });
-                    $(rootDom).find('input[type=hidden]').val(val);
-                });
-        });
-    }
+PinCodeControl.prototype.getValue = function() {
+    var val = "";
+    $('#'+this.controlId).find('input[type=text]').each(function(){
+        val += $(this).val();
+    });
+    return val;
 };
 
 function createCookie(name, value, days) {
