@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.apptests;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoGateway;
 import mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoServiceImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.ws.mime.Attachment;
 import org.springframework.ws.mime.AttachmentException;
@@ -24,39 +23,25 @@ import java.util.Iterator;
  * @author Anton Zemliankin
  */
 public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
-    private String notAvailableSuffix = "666";
-    private String notFoundSuffix = "888";
+    public static int notAvailablePrefix = 6;
+    public static int notFoundPrefix = 9;
 
     @Override
     public NZSubscriberResult getSubscriberResult(String msisdn) {
-        if(msisdn.endsWith(notFoundSuffix)) {
+        final String notFoundPrefix = "64" + NZSubscriberInfoGatewayMock.notFoundPrefix;
+        if(msisdn.startsWith(notFoundPrefix)) {
             throw new SoapFaultClientException(getSoapFaultMessage(NZSubscriberInfoServiceImpl.NOT_FOUND_TOKEN));
         }
 
-        if (msisdn.endsWith(notAvailableSuffix)) {
+        final String notAvailablePrefix = "64" + NZSubscriberInfoGatewayMock.notAvailablePrefix;
+        if (msisdn.startsWith(notAvailablePrefix)) {
             throw new SoapFaultClientException(getSoapFaultMessage("Test reason."));
         }
 
         return new NZSubscriberResult("Prepay", "Vodafone", "300001121", "Simplepostpay_CCRoam");
     }
 
-    public String generateSuccessMsisdn() {
-        String time = StringUtils.reverse("" + System.nanoTime()).substring(0, 5);
-        return "64" + time + "777";
-    }
-
-    public String generateNotFoundMsisdn() {
-        String time = StringUtils.reverse("" + System.nanoTime()).substring(0, 5);
-        return "64" + time + notFoundSuffix;
-    }
-
-    public String generateNotAvailableMsisdn() {
-        String time = StringUtils.reverse("" + System.nanoTime()).substring(0, 5);
-        return "64" + time + notAvailableSuffix;
-    }
-
-
-    private SoapMessage getSoapFaultMessage(final String faultReason) {
+     private SoapMessage getSoapFaultMessage(final String faultReason) {
         return new SoapMessage() {
             public SoapEnvelope getEnvelope() throws SoapEnvelopeException {
                 return null;

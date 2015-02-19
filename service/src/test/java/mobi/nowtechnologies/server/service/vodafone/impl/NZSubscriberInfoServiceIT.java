@@ -29,8 +29,6 @@ public class NZSubscriberInfoServiceIT {
     NZSubscriberInfoService nzService;
     @Resource
     NZSubscriberInfoRepository subscriberInfoRepository;
-    @Resource
-    NZSubscriberInfoGatewayMock nzSubscriberInfoGatewayMock;
 
     @Test
     public void testNZService() throws Exception {
@@ -62,7 +60,7 @@ public class NZSubscriberInfoServiceIT {
 
     @Test(expected = SubscriberServiceException.ServiceNotAvailable.class)
     public void testNZServiceFault() throws Exception {
-        nzService.belongs(nzSubscriberInfoGatewayMock.generateNotAvailableMsisdn());
+        nzService.belongs("64" + NZSubscriberInfoGatewayMock.notAvailablePrefix + "101838801");
     }
 
     @After

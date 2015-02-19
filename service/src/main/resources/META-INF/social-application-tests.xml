@@ -14,10 +14,10 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" profile="appli
 
         <!-- O2 -->
         <bean id="service.O2Service" class="mobi.nowtechnologies.server.apptests.provider.o2.O2ServiceStub">
-            <property name="phoneExtensionsService" ref="phoneExtensionsService"/>
+            <property name="o2PhoneExtensionsService" ref="o2PhoneExtensionsService"/>
         </bean>
 
-        <bean id="phoneExtensionsService" class="mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService"/>
+        <bean id="o2PhoneExtensionsService" class="mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService"/>
 
         <!-- Email -->
         <bean id="mailModelSerializer" class="mobi.nowtechnologies.server.apptests.email.MailModelSerializer" />
