@@ -16,7 +16,6 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private SMPPServiceImpl smppService;
-    private SMSMessageProcessorContainer smppMessageProcessorContainer;
 
     @Override
     public SMSResponse send(String numbers, String message, String originator) {
@@ -28,7 +27,7 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
     }
 
     protected SMSResponse send(MTMessage messageObject){
-        LOGGER.debug("start sending sms [{}], [{}], [{}]", new Object[]{messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
+        LOGGER.info("start sending sms [{}], [{}], [{}]", messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
         boolean result = false;
         try {
             result = smppService.sendMessage(messageObject);
@@ -37,21 +36,13 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
             throw new ServiceException(e.getMessage());
         }
 
-        SMSResponse response = generateResponse(result, messageObject);
-        LOGGER.info(response.getMessage());
+        SMSResponse response = generateResponse(result);
+        LOGGER.info("Sms was sent successfully ({}) from [{}] to [{}] with message [{}]", response.isSuccessful(), messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
         return response;
     }
 
-    private SMSResponse generateResponse(final boolean result, final MTMessage message){
-        final String resultPrefix = result ? "" : "un";
+    private SMSResponse generateResponse(final boolean result){
         return new SMSResponse() {
-            private MTMessage mtMessage;
-            @Override
-            public String getMessage() {
-                return String.format("Sms was sent %ssuccessfully from [%s] to [%s] with message [%s]",
-                        resultPrefix, message.getOriginatingAddress(), message.getDestinationAddress(), message.getContent());
-            }
-
             @Override
             public boolean isSuccessful() {
                 return result;
@@ -63,7 +54,4 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
         this.smppService = smppService;
     }
 
-    public void setSmppMessageProcessorContainer(SMSMessageProcessorContainer smppMessageProcessorContainer) {
-        this.smppMessageProcessorContainer = smppMessageProcessorContainer;
-    }
 }
