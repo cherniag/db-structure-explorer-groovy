@@ -169,11 +169,6 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
             public SMSResponse answer(InvocationOnMock invocationOnMock) throws Throwable {
                 return new SMSResponse() {
                     @Override
-                    public String getMessage() {
-                        return "";
-                    }
-
-                    @Override
                     public boolean isSuccessful() {
                         return true;
                     }
