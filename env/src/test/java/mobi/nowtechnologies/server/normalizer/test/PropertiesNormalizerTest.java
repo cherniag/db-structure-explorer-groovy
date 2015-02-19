@@ -68,7 +68,7 @@ public class PropertiesNormalizerTest {
     private boolean compareFiles(String file) throws IOException {
         File file1 = new File(ROOT + NORMALIZED_PROPERTIES_FOLDER + File.separator + file);
         File file2 = new File(ROOT + GOLDEN_PROPERTIES_FOLDER + File.separator + file);
-        return FileUtils.contentEquals(file1, file2);
+        return FileUtils.contentEqualsIgnoreEOL(file1, file2, "UTF-8");
     }
 
     private void removeFile(String fileStr) {
