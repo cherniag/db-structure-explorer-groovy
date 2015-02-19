@@ -49,7 +49,7 @@
             <value>classpath:application.properties</value>
             <value>file:#{systemProperties['catalina.base']}/conf/application.properties</value>
             <value>classpath:application-tests/persistence.properties</value>
-            <value>classpath:application-tests/mno.properties</value>
+            <value>file:#{systemProperties['catalina.base']}/conf/persistence.properties</value>
             <value>classpath:application-tests/application.properties</value>
         </util:list>
     </beans>
