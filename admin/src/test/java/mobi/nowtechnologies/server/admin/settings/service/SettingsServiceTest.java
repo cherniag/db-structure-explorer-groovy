@@ -90,8 +90,6 @@ public class SettingsServiceTest {
         // when
         //
         SettingsDto dto = new SettingsDto(BehaviorConfigType.FREEMIUM);
-        // enabled
-        dto.setEnabled(false);
         // referrals
         dto.getReferralDto().setRequired(1);
         dto.getReferralDto().getDurationInfoDto().fromDuration(Duration.forPeriod(2, DurationUnit.WEEKS));

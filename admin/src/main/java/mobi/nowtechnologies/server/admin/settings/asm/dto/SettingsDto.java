@@ -28,28 +28,28 @@ public class SettingsDto {
     private ReferralDto referralDto = new ReferralDto();
 
     @JsonProperty(value = "playlistSettings")
-    private Map<Integer, Map<UserStatusType, PlaylistInfo>> playlistSettings = new HashMap<Integer, Map<UserStatusType, PlaylistInfo>>();
+    private Map<Integer, Map<UserStatusType, PlaylistInfo>> playlistSettings = new HashMap<>();
 
     @JsonProperty(value = "playlistInfo")
-    private Map<Integer, ChartListItemDto> playlistInfo = new HashMap<Integer, ChartListItemDto>();
+    private Map<Integer, ChartListItemDto> playlistInfo = new HashMap<>();
 
     @JsonProperty(value = "periods")
-    private List<DurationUnit> periods = new ArrayList<DurationUnit>();
+    private List<DurationUnit> periods = new ArrayList<>();
 
     @JsonProperty(value = "playlistTypeSettings")
-    private Map<ChartBehaviorType, PlaylistTypeInfoDto> playlistTypeSettings = new HashMap<ChartBehaviorType, PlaylistTypeInfoDto>();
+    private Map<ChartBehaviorType, PlaylistTypeInfoDto> playlistTypeSettings = new HashMap<>();
 
     @JsonProperty(value = "pages")
-    private Set<String> pages = new HashSet<String>();
+    private Set<String> pages = new HashSet<>();
 
     @JsonProperty(value = "actions")
-    private Set<String> actions = new HashSet<String>();
+    private Set<String> actions = new HashSet<>();
 
     @JsonProperty(value = "contentBehaviorTypes")
     private List<ContentBehaviorType> contentBehaviorTypes = new ArrayList<>();
 
     @JsonProperty(value = "chartTypes")
-    private Set<ChartBehaviorType> chartBehaviorTypes = new HashSet<ChartBehaviorType>();
+    private Set<ChartBehaviorType> chartBehaviorTypes = new HashSet<>();
 
     @JsonProperty(value = "favourites")
     private Map<UserStatusType, ContentBehaviorType> favourites = new HashMap<>();
@@ -64,6 +64,8 @@ public class SettingsDto {
 
     public SettingsDto(BehaviorConfigType behaviorConfigType) {
         this.behaviorConfigType = behaviorConfigType;
+        this.enabled = behaviorConfigType == BehaviorConfigType.FREEMIUM;
+
         playlistTypeSettings.putAll(initPlaylistTypeMappings());
         favourites.putAll(initStatuses());
         ads.putAll(initStatuses());
@@ -127,6 +129,10 @@ public class SettingsDto {
 
     public Map<UserStatusType, ContentBehaviorType> getAds() {
         return ads;
+    }
+
+    public Set<ChartBehaviorType> getChartBehaviorTypes() {
+        return chartBehaviorTypes;
     }
 
     public void addLocalizationInfo(Map<String, String> localizationData) {

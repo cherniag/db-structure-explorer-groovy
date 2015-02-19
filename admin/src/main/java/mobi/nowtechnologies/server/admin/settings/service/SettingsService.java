@@ -43,8 +43,6 @@ public class SettingsService {
         final BehaviorConfigType behaviorConfigType = communityConfig.getBehaviorConfig().getType();
         SettingsDto dto = new SettingsDto(behaviorConfigType);
 
-        dto.setEnabled(!behaviorConfigType.isDefault());
-
         final BehaviorConfig currentBehaviorConfig = communityConfig.getBehaviorConfig();
 
         dto.getReferralDto().setRequired(currentBehaviorConfig.getRequiredReferrals());
