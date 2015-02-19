@@ -71,6 +71,7 @@ public class UserNotificationServiceImplTest {
     private DeviceService deviceServiceMock;
     private PaymentDetailsService paymentDetailsServiceMock;
     private String forNWeeks;
+    private SmsServiceFacade smsServiceFacadeMock;
 
     @Test
 	public void testUserNotificationImpl_Constructor_Success()
@@ -2365,7 +2366,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 
-        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+        doReturn(migHttpServiceMock).when(smsServiceFacadeMock).getSMSProvider(anyString());
 
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
@@ -2447,7 +2448,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 
-        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+        doReturn(migHttpServiceMock).when(smsServiceFacadeMock).getSMSProvider(anyString());
 
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
@@ -2529,7 +2530,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 
-        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+        doReturn(migHttpServiceMock).when(smsServiceFacadeMock).getSMSProvider(anyString());
 
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
@@ -3093,7 +3094,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 
-        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+        doReturn(migHttpServiceMock).when(smsServiceFacadeMock).getSMSProvider(anyString());
 
         MigResponse migResponse = MigResponse.failMigResponse("error");
         doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
@@ -3175,7 +3176,7 @@ public class UserNotificationServiceImplTest {
 		doReturn(message).when(userNotificationImplSpy).getMessage(user, o2Community, msgCode, msgArgs);
 		doReturn(title).when(communityResourceBundleMessageSourceMock).getMessage(rewriteUrlParameter, "sms.title", null, null);
 
-        doReturn(migHttpServiceMock).when(userNotificationImplSpy).getSMSProvider(anyString());
+        doReturn(migHttpServiceMock).when(smsServiceFacadeMock).getSMSProvider(anyString());
 
 		MigResponse migResponse = MigResponse.successfulMigResponse();
 		doReturn(migResponse).when(migHttpServiceMock).send(user.getMobile(), message, title);
@@ -3434,6 +3435,7 @@ public class UserNotificationServiceImplTest {
 		migHttpServiceMock = mock(MigHttpService.class);
 		deviceServiceMock = mock(DeviceService.class);
         paymentDetailsServiceMock = mock(PaymentDetailsService.class);
+        smsServiceFacadeMock = mock(SmsServiceFacade.class);
 
 		userNotificationImplSpy.setUserService(userServiceMock);
 		userNotificationImplSpy.setPaymentsUrl("paymentsUrl");
@@ -3443,5 +3445,6 @@ public class UserNotificationServiceImplTest {
 		userNotificationImplSpy.setRememberMeServices(nowTechTokenBasedRememberMeServicesMock);
 		userNotificationImplSpy.setDeviceService(deviceServiceMock);
         userNotificationImplSpy.setPaymentDetailsService(paymentDetailsServiceMock);
+        userNotificationImplSpy.setSmsServiceFacade(smsServiceFacadeMock);
 	}
 }

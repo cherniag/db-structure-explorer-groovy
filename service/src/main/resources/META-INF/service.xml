@@ -459,8 +459,13 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="filterWithCriteriaRepository" ref="filterWithCriteriaRepository" />
 	</bean>
 
+    <bean name="smsServiceFacade" class="mobi.nowtechnologies.server.service.impl.SmsServiceFacade">
+        <property name="messageSource" ref="serviceMessageSource" />
+    </bean>
+
 	<bean id="service.UserNotificationService" class="mobi.nowtechnologies.server.service.impl.UserNotificationServiceImpl">
 		<property name="userService" ref="service.UserService" />
+		<property name="smsServiceFacade" ref="smsServiceFacade" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="paymentsUrl" value="${payments.url}" />
 		<property name="unsubscribeUrl" value="${unsubscribe.url}" />
