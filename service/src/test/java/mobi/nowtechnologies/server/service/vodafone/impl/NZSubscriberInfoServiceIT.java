@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
+import mobi.nowtechnologies.server.apptests.NZSubscriberInfoGatewayMock;
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
@@ -25,11 +26,11 @@ import static org.junit.Assert.*;
 public class NZSubscriberInfoServiceIT {
 
     @Resource
-    private NZSubscriberInfoService nzService;
-
+    NZSubscriberInfoService nzService;
     @Resource
     NZSubscriberInfoRepository subscriberInfoRepository;
-
+    @Resource
+    NZSubscriberInfoGatewayMock nzSubscriberInfoGatewayMock;
 
     @Test
     public void testNZService() throws Exception {
@@ -46,9 +47,22 @@ public class NZSubscriberInfoServiceIT {
         assertEquals("Simplepostpay_CCRoam", savedSubscriberInfo.getBillingAccountName());
     }
 
+    @Test
+    public void testConfirm() throws Exception {
+        final int userId = 777;
+        final String msisdn = "642101838801";
+
+        nzService.belongs(msisdn);
+        nzService.confirm(userId, msisdn);
+
+        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
+
+        assertEquals(userId, savedSubscriberInfo.getUserId().intValue());
+    }
+
     @Test(expected = SubscriberServiceException.ServiceNotAvailable.class)
     public void testNZServiceFault() throws Exception {
-        boolean isVodafone = nzService.belongs(NZSubscriberInfoGatewayMock.FAULT_DATA);
+        nzService.belongs(nzSubscriberInfoGatewayMock.generateNotAvailableMsisdn());
     }
 
     @After

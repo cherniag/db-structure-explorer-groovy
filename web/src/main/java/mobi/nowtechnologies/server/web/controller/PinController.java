@@ -86,7 +86,7 @@ public class PinController extends CommonController {
     }
 
     public static enum CheckResult {
-        OK, ERROR, EXPIRED, MAX_ATTEMTS;
+        OK, EXPIRED, MAX_ATTEMTS, ERROR;
 
         public boolean isOk() {
             return this == OK;

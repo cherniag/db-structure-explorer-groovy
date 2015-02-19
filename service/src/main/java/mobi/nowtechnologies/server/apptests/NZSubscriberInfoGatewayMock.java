@@ -1,7 +1,9 @@
-package mobi.nowtechnologies.server.service.vodafone.impl;
+package mobi.nowtechnologies.server.apptests;
 
 import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoGateway;
+import mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.ws.mime.Attachment;
 import org.springframework.ws.mime.AttachmentException;
@@ -15,43 +17,46 @@ import javax.xml.transform.Source;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+
 
 /**
  * @author Anton Zemliankin
  */
 public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
-
-    private static final String PAY_INDICATOR = "payIndicator";
-    private static final String PROVIDER_NAME = "providerName";
-    private static final String BILLING_ACCOUNT_NAME = "billingAccountName";
-    private static final String BILLING_ACCOUNT_NUMBER = "billingAccountNumber";
-    private static final String DEFAULT_DATA = "6421111111";
-
-    public static final String FAULT_DATA = "6420000000";
-
-    private static final Map<String, Map<String, String>> testData = new HashMap<String, Map<String, String>>() {{
-        put(DEFAULT_DATA, new HashMap<String, String>() {{
-            put(PAY_INDICATOR, "Prepay");
-            put(PROVIDER_NAME, "Vodafone");
-            put(BILLING_ACCOUNT_NAME, "Simplepostpay_CCRoam");
-            put(BILLING_ACCOUNT_NUMBER, "300001121");
-        }});
-    }};
+    private String notAvailableSuffix = "666";
+    private String notFoundSuffix = "888";
 
     @Override
     public NZSubscriberResult getSubscriberResult(String msisdn) {
-        if (FAULT_DATA.equals(msisdn)) {
-            throw new SoapFaultClientException(getSoapFaultMessage());
+        if(msisdn.endsWith(notFoundSuffix)) {
+            throw new SoapFaultClientException(getSoapFaultMessage(NZSubscriberInfoServiceImpl.NOT_FOUND_TOKEN));
         }
 
-        Map<String, String> data = testData.containsKey(msisdn) ? testData.get(msisdn) : testData.get(DEFAULT_DATA);
-        return new NZSubscriberResult(data.get(PAY_INDICATOR), data.get(PROVIDER_NAME), data.get(BILLING_ACCOUNT_NUMBER), data.get(BILLING_ACCOUNT_NAME));
+        if (msisdn.endsWith(notAvailableSuffix)) {
+            throw new SoapFaultClientException(getSoapFaultMessage("Test reason."));
+        }
+
+        return new NZSubscriberResult("Prepay", "Vodafone", "300001121", "Simplepostpay_CCRoam");
     }
 
-    private SoapMessage getSoapFaultMessage() {
+    public String generateSuccessMsisdn() {
+        String time = StringUtils.reverse("" + System.nanoTime()).substring(0, 5);
+        return "64" + time + "777";
+    }
+
+    public String generateNotFoundMsisdn() {
+        String time = StringUtils.reverse("" + System.nanoTime()).substring(0, 5);
+        return "64" + time + notFoundSuffix;
+    }
+
+    public String generateNotAvailableMsisdn() {
+        String time = StringUtils.reverse("" + System.nanoTime()).substring(0, 5);
+        return "64" + time + notAvailableSuffix;
+    }
+
+
+    private SoapMessage getSoapFaultMessage(final String faultReason) {
         return new SoapMessage() {
             public SoapEnvelope getEnvelope() throws SoapEnvelopeException {
                 return null;
@@ -88,7 +93,7 @@ public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
             }
 
             public String getFaultReason() {
-                return "Test reason.";
+                return faultReason;
             }
 
             public boolean isXopPackage() {
@@ -131,4 +136,5 @@ public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
             }
         };
     }
+
 }

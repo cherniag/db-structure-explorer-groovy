@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.ws.client.WebServiceFaultException;
 
@@ -15,6 +16,7 @@ import org.springframework.ws.client.WebServiceFaultException;
  * @author Anton Zemliankin
  */
 public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, InitializingBean {
+    public static final String NOT_FOUND_TOKEN = "MSISDN NOT FOUND IN INFRANET";
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     NZSubscriberInfoRepository subscriberInfoRepository;
@@ -22,18 +24,20 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
 
     @Override
     public boolean belongs(String msisdn) throws SubscriberServiceException.ServiceNotAvailable, SubscriberServiceException.MSISDNNotFound {
-        log.debug("Checking if {} is Vodafone msisdn.", msisdn);
+        log.info("Checking if {} is Vodafone msisdn.", msisdn);
         NZSubscriberInfo nzSubscriberInfo = refreshSubscriberInfo(msisdn);
         boolean isVodafone = "Vodafone".equals(nzSubscriberInfo.getProviderName());
-        log.debug("{} is{} Vodafone msisdn.", msisdn, isVodafone ? "" : " not");
+        log.info("{} is{} Vodafone msisdn.", msisdn, isVodafone ? "" : " not");
         return isVodafone;
     }
 
     @Override
+    @Transactional
     public NZSubscriberInfo confirm(int userId, String msisdn) {
+        log.info("confirm msisdn {} for {}", msisdn, userId);
         NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
         nzSubscriberInfo.setUserId(userId);
-        return subscriberInfoRepository.save(nzSubscriberInfo);
+        return nzSubscriberInfo;
     }
 
     private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws SubscriberServiceException.MSISDNNotFound, SubscriberServiceException.ServiceNotAvailable {
@@ -44,7 +48,7 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
 
             return subscriberInfoRepository.save(nzSubscriberInfo);
         } catch (WebServiceFaultException e) {
-            if ("MSISDN NOT FOUND IN INFRANET".equals(e.getMessage())) {
+            if (NOT_FOUND_TOKEN.equals(e.getMessage())) {
                 log.debug("Msisdn not found", e);
                 throw new SubscriberServiceException.MSISDNNotFound(e.getMessage(), e);
             } else {
