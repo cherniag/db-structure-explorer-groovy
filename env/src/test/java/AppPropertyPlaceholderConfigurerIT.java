@@ -27,7 +27,6 @@ public class AppPropertyPlaceholderConfigurerIT {
             {"classpath:application.properties", "classpath:props/orange/conf/application.properties", "classpath:env/orange/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/rage/conf/application.properties", "classpath:env/rage/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/staging/conf/application.properties", "classpath:env/staging/conf/application.properties"},
-
             {"classpath:application.properties", "classpath:props/prod_db1/conf/application.properties", "classpath:env/prod_db1/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/prod_db2/conf/application.properties", "classpath:env/prod_db2/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/prod_jadmin/conf/application.properties", "classpath:env/prod_jadmin/conf/application.properties"},
@@ -42,7 +41,6 @@ public class AppPropertyPlaceholderConfigurerIT {
             {"classpath:trackrepo-application.properties", "classpath:props/orange/conf/trackrepo-application.properties", "classpath:env/orange/conf/trackrepo-application.properties"},
             {"classpath:trackrepo-application.properties", "classpath:props/rage/conf/trackrepo-application.properties", "classpath:env/rage/conf/trackrepo-application.properties"},
             {"classpath:trackrepo-application.properties", "classpath:props/staging/conf/trackrepo-application.properties", "classpath:env/staging/conf/trackrepo-application.properties"},
-
             {"classpath:trackrepo-application.properties", "classpath:props/prod_trackrepo/conf/trackrepo-application.properties", "classpath:env/prod_trackrepo/conf/trackrepo-application.properties"},
     };
 

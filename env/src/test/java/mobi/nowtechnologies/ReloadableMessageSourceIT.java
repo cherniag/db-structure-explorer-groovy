@@ -53,12 +53,9 @@ public class ReloadableMessageSourceIT {
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/rage/conf/i18n/admin/messages", "classpath:env/rage/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/staging/conf/i18n/admin/messages", "classpath:env/staging/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/potato/conf/i18n/admin/messages", "classpath:env/potato/conf/i18n/admin/messages"},
-            {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/prod_db1/conf/i18n/admin/messages", "classpath:env/prod_db1/conf/i18n/admin/messages"},
-            {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/prod_db2/conf/i18n/admin/messages", "classpath:env/prod_db2/conf/i18n/admin/messages"},
             {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/prod_jadmin/conf/i18n/admin/messages", "classpath:env/prod_jadmin/conf/i18n/admin/messages"},
-            {"classpath:admin/src/main/webapp/i18n/messages", "classpath:props/prod_trackrepo/conf/i18n/admin/messages", "classpath:env/prod_trackrepo/conf/i18n/admin/messages"},
 
-           //web
+            //web
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/autotest/conf/i18n/web/messages", "classpath:env/autotest/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/cherry/conf/i18n/web/messages", "classpath:env/cherry/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/cucumber/conf/i18n/web/messages", "classpath:env/cucumber/conf/i18n/web/messages"},
@@ -70,8 +67,6 @@ public class ReloadableMessageSourceIT {
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/potato/conf/i18n/web/messages", "classpath:env/potato/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_db1/conf/i18n/web/messages", "classpath:env/prod_db1/conf/i18n/web/messages"},
             {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_db2/conf/i18n/web/messages", "classpath:env/prod_db2/conf/i18n/web/messages"},
-            {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_jadmin/conf/i18n/web/messages", "classpath:env/prod_jadmin/conf/i18n/web/messages"},
-            {"classpath:web/src/main/webapp/i18n/messages", "classpath:props/prod_trackrepo/conf/i18n/web/messages", "classpath:env/prod_trackrepo/conf/i18n/web/messages"}
     };
 
     @DataPoints public static String[] communities = {"o2", "vf_nz", "demo", "mtvnz", "hl_uk", "mtv1", "demo", "demo2", "demo3", "demo4", "demo5", "demo6"};
