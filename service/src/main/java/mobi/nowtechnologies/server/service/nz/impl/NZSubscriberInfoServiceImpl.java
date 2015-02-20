@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.nz.NZSubscriberResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.ws.client.WebServiceFaultException;
@@ -41,25 +42,29 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
     }
 
     private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws SubscriberServiceException.MSISDNNotFound, SubscriberServiceException.ServiceNotAvailable {
+        NZSubscriberInfo nzSubscriberInfo = null;
         try {
             NZSubscriberResult subscriberResult = subscriberInfoGateway.getSubscriberResult(msisdn);
 
-            NZSubscriberInfo nzSubscriberInfo = findOrCreate(msisdn, subscriberResult);
+            nzSubscriberInfo = findOrCreate(msisdn, subscriberResult);
 
             return subscriberInfoRepository.save(nzSubscriberInfo);
         } catch (WebServiceFaultException e) {
             if (NOT_FOUND_TOKEN.equals(e.getMessage())) {
-                log.debug("Msisdn not found", e);
+                log.info("Msisdn not found", e);
                 throw new SubscriberServiceException.MSISDNNotFound(e.getMessage(), e);
             } else {
-                log.debug("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
+                log.info("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
                 throw new SubscriberServiceException.ServiceNotAvailable(e.getMessage(), e);
             }
+        } catch(DataIntegrityViolationException e){
+            log.info("Unable insert subscriber info for msisdn " + msisdn, e);
+            return nzSubscriberInfo;
         }
     }
 
     private NZSubscriberInfo findOrCreate(String msisdn, NZSubscriberResult subscriberResult) {
-        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
+        NZSubscriberInfo nzSubscriberInfo = getSubscriberInfoByMsisdn(msisdn);
 
         if (nzSubscriberInfo == null) {
             nzSubscriberInfo = new NZSubscriberInfo(msisdn);
@@ -70,6 +75,10 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
         nzSubscriberInfo.setBillingAccountName(subscriberResult.getBillingAccountName());
         nzSubscriberInfo.setBillingAccountNumber(subscriberResult.getBillingAccountNumber());
         return nzSubscriberInfo;
+    }
+
+    NZSubscriberInfo getSubscriberInfoByMsisdn(String msisdn) {
+        return subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
     }
 
     @Override
