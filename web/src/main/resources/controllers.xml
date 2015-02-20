@@ -75,10 +75,7 @@
         <property name="paymentPolicyRepository" ref="paymentPolicyRepository" />
     </bean>
 
-    <bean class="mobi.nowtechnologies.server.web.controller.PinController">
-        <property name="communityServiceFactory" ref="communityServiceFactory" />
-        <property name="userRepository" ref="userRepository" />
-    </bean>
+    <bean class="mobi.nowtechnologies.server.web.controller.PinController" />
 
     <bean class="mobi.nowtechnologies.server.web.controller.PaymentsCreditCardController">
         <property name="countryService" ref="service.CountryService"/>

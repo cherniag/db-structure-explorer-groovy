@@ -16,9 +16,10 @@ import javax.annotation.Resource;
 
 @Controller
 public class PinController extends CommonController {
-    private CommunityServiceFactory communityServiceFactory;
-    private UserRepository userRepository;
-
+    @Resource
+    CommunityServiceFactory communityServiceFactory;
+    @Resource
+    UserRepository userRepository;
     @Resource
     PinCodeService pinCodeService;
 
@@ -49,14 +50,6 @@ public class PinController extends CommonController {
         }
         modelAndView.addObject("result", result);
         return modelAndView;
-    }
-
-    public void setCommunityServiceFactory(CommunityServiceFactory communityServiceFactory) {
-        this.communityServiceFactory = communityServiceFactory;
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 
     //
