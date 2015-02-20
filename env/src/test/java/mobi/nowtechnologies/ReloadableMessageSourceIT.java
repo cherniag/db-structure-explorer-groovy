@@ -108,8 +108,8 @@ public class ReloadableMessageSourceIT {
 
         for (String oldPropertyName : allOldLocalProperties.stringPropertyNames()) {
             //when
-            String oldMessage = oldCommunityResourceBundleMessageSource.getMessage(community, oldPropertyName, null, null, locale);
-            String newMessage = newCommunityResourceBundleMessageSource.getMessage(community, oldPropertyName, null, null, locale);
+            String oldMessage = oldCommunityResourceBundleMessageSource.getMessage(community, oldPropertyName, null, null, locale).trim();
+            String newMessage = newCommunityResourceBundleMessageSource.getMessage(community, oldPropertyName, null, null, locale).trim();
 
             //then
             try {
