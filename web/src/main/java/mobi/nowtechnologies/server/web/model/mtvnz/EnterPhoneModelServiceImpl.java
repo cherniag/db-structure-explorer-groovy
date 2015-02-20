@@ -48,7 +48,7 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
                 String code = generated.getCode();
 
                 String smsText = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), "enter.phone.pin.sms.text", new Object[]{code}, null);
-                String smsTitle = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), "enter.phone.pin.sms.title", null, null);
+                String smsTitle = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), "sms.title", null, null);
 
                 smsProvider.send(phone, smsText, smsTitle);
 
