@@ -58,7 +58,7 @@ public class PartnerDeviceSet extends ClientDevicesSet {
     public void signUpAndActivate(UserDeviceData userDeviceData){
         singup(userDeviceData);
 
-        String phoneNumber = phoneNumberCreator.createValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);
+        String phoneNumber = phoneNumberCreator.createO2ValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);
         enterPhoneNumber(userDeviceData, phoneNumber);
 
         PhoneState phoneState = getPhoneState(userDeviceData);

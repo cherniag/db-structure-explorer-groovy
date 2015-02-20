@@ -10,12 +10,17 @@
         </jsp:include>
     </c:when>
     <c:when test="${result.error}">
+        <jsp:include page="not-valid.jsp">
+            <jsp:param name="callingPage" value="check_phone" />
+        </jsp:include>
+    </c:when>
+    <c:when test="${result.maxAttempts}">
         <jsp:include page="result.jsp">
             <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:when>
     <c:otherwise>
-        <jsp:include page="result.jsp">
+        <jsp:include page="expired.jsp">
             <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:otherwise>

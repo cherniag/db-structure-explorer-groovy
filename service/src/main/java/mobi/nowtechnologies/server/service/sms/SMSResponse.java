@@ -8,6 +8,5 @@ package mobi.nowtechnologies.server.service.sms;
  * To change this template use File | Settings | File Templates.
  */
 public interface SMSResponse {
-    String getMessage();
     boolean isSuccessful();
 }

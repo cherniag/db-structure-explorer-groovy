@@ -74,9 +74,9 @@ public class PinController extends CommonController {
                 return CheckResult.ERROR;
             }
         } catch (PinCodeException.NotFound notFound) {
-            return CheckResult.ERROR;
-        } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
             return CheckResult.EXPIRED;
+        } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
+            return CheckResult.MAX_ATTEMTS;
         }
     }
 
@@ -86,7 +86,7 @@ public class PinController extends CommonController {
     }
 
     public static enum CheckResult {
-        OK, ERROR, EXPIRED;
+        OK, EXPIRED, MAX_ATTEMTS, ERROR;
 
         public boolean isOk() {
             return this == OK;
@@ -94,6 +94,10 @@ public class PinController extends CommonController {
 
         public boolean isError() {
             return this == ERROR;
+        }
+
+        public boolean isMaxAttempts() {
+            return this == MAX_ATTEMTS;
         }
     }
 }

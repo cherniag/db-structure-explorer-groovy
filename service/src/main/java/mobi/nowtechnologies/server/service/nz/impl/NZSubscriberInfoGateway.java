@@ -23,13 +23,13 @@ public class NZSubscriberInfoGateway extends WebServiceGatewaySupport {
     private String nzUserId;
 
     public NZSubscriberResult getSubscriberResult(String msisdn) {
-        log.debug("Getting nz user info for {}", msisdn);
+        log.info("Getting nz user info for {}", msisdn);
 
         TConnectionResponse connectionDetails = createConnectionDetails(Preconditions.checkNotNull(msisdn));
 
         TConnectionResponseInfo ci = connectionDetails.getConnectionResponseInfo();
 
-        log.debug("Provider name for {} is {}", msisdn, ci.getProviderName());
+        log.info("Provider name for {} is {}", msisdn, ci.getProviderName());
 
         return new NZSubscriberResult(ci.getPayIndicator(), ci.getProviderName(), ci.getBillingAccountNumber(), ci.getBillingAccountName());
     }

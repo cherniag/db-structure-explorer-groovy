@@ -3,15 +3,25 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
+<script src="${requestScope.assetsPathWithoutCommunity}scripts/utils.js"></script>
+
 Not valid, try again
 
 Enter
-<input type="text" id="pin" />
+<div id="pinCodeId" class="pin-code">
+    <input class="pin-code-digit" type="text" maxlength="1" style="left: 0%;" />
+    <input class="pin-code-digit" type="text" maxlength="1" style="left: 25%;" />
+    <input class="pin-code-digit" type="text" maxlength="1" style="left: 50%;" />
+    <input class="pin-code-digit" type="text" maxlength="1" style="left: 75%;" />
+</div>
 
 <script>
-    var enterPin = function() {
-        window.location = "pin/result?pin=" + $('#pin').val();
-    }
+    $(document).ready(function() {
+        var pinControl = new PinCodeControl("pinCodeId");
+        enterPin = function() {
+            window.location = "pin/result?pin=" + pinControl.getValue();
+        };
+    });
 </script>
 
 <c:if test="${not empty error}">

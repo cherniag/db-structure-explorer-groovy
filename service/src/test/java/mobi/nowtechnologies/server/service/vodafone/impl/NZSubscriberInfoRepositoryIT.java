@@ -1,13 +1,10 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
+import mobi.nowtechnologies.server.persistence.repository.AbstractRepositoryIT;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.annotation.Resource;
 
@@ -17,14 +14,10 @@ import static org.junit.Assert.assertEquals;
  * @author Anton Zemliankin
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml"})
-@TransactionConfiguration(transactionManager = "persistence.TransactionManager")
-public class NZSubscriberInfoRepositoryIT {
+public class NZSubscriberInfoRepositoryIT extends AbstractRepositoryIT {
 
     @Resource
     private NZSubscriberInfoRepository subscriberInfoRepository;
-
 
     @Test
     public void findSubscriberInfoByMsisdnTest() {
