@@ -1,11 +1,11 @@
 package mobi.nowtechnologies.server.service.nz.impl;
 
+import mobi.nowtechnologies.server.apptests.NZSubscriberInfoGatewayMock;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
-import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -23,23 +23,28 @@ import static org.junit.Assert.assertEquals;
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager")
 public class NZSubscriberInfoServiceConcurrentIT {
 
-
-    @Resource
-    @Qualifier("service.NZSubscriberInfoServiceForTest")
-    NZSubscriberInfoService nzService;
+    NZSubscriberInfoServiceForTest nzService;
 
     @Resource
     NZSubscriberInfoRepository subscriberInfoRepository;
 
+    @Resource
+    NZSubscriberInfoGatewayMock subscriberInfoGatewayMock;
 
     @Test
     public void testNZServiceConcurrentBelongs() throws Exception {
-        boolean belongs1 =  nzService.belongs("6410183880");
-        boolean belongs2 =  nzService.belongs("6410183880");
+        boolean belongs1 = nzService.belongs("6410183880");
+        boolean belongs2 = nzService.belongs("6410183880");
 
         assertEquals(belongs1, belongs2);
     }
 
+    @Before
+    public void init(){
+        nzService = new NZSubscriberInfoServiceForTest();
+        nzService.setSubscriberInfoRepository(subscriberInfoRepository);
+        nzService.setSubscriberInfoGateway(subscriberInfoGatewayMock);
+    }
 
     @After
     public void tearDown() throws Exception {
