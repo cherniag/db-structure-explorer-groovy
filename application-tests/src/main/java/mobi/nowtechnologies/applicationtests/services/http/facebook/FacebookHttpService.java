@@ -5,7 +5,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.domain.facebook.FacebookResponse;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 @Service
 public class FacebookHttpService extends AbstractHttpService {
 
-    public mobi.nowtechnologies.applicationtests.services.http.domain.common.User login(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
+    public mobi.nowtechnologies.applicationtests.services.http.domain.common.User login(UserDeviceData deviceData, String deviceUID, AccountCheckDto accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
         ResponseEntity<FacebookResponse> responseEntity = doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, accountCheck.userName, accountCheck.userToken);
 
         return responseEntity.getBody().getUser();
@@ -27,7 +27,7 @@ public class FacebookHttpService extends AbstractHttpService {
         return doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, userName, userToken);
     }
 
-    public ResponseEntity<FacebookResponse> loginWithoutAccessToken(UserDeviceData deviceData, String deviceUID, AccountCheckDTO accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
+    public ResponseEntity<FacebookResponse> loginWithoutAccessToken(UserDeviceData deviceData, String deviceUID, AccountCheckDto accountCheck, RequestFormat format, String accessToken, String facebookUserId) {
         return doLogin(deviceData, deviceUID, format, accessToken, facebookUserId, accountCheck.userName, accountCheck.userToken, true);
     }
 

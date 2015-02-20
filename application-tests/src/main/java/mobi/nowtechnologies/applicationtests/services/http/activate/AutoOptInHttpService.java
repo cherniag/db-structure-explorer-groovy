@@ -5,7 +5,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -20,7 +20,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  */
 @Service
 public class AutoOptInHttpService extends AbstractHttpService {
-    public AccountCheckDTO autoOptIn(AccountCheckDTO accountCheck, UserDeviceData deviceData, String otac, RequestFormat format){
+    public AccountCheckDto autoOptIn(AccountCheckDto accountCheck, UserDeviceData deviceData, String otac, RequestFormat format){
         Assert.notNull(accountCheck);
 
         UserDataCreator.TimestampTokenData token = createUserToken(accountCheck.userToken);
@@ -41,6 +41,6 @@ public class AutoOptInHttpService extends AbstractHttpService {
         String body = entity.getBody();
         logger.info("Response body [{}]\n", body);
 
-        return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
+        return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDto.class);
     }
 }
