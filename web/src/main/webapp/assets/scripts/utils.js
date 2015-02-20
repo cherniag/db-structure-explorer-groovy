@@ -92,6 +92,17 @@ function PinCodeControl(controlId){
                     prev[0].focus();
                     if(prev.val().length) prev[0].setSelectionRange(1, 1);
                 }
+            })
+            .on('keydown', function(e){
+                var next = $(this).next('input[type=text]'),
+                    val = $(this).val(),
+                    charCode = (e.which) ? e.which : e.keyCode;
+
+                if(val && this.selectionStart == 1 && next.length && !next.val() && (charCode >= 48 && charCode <= 57)){
+                    next.val(String.fromCharCode(charCode));
+                    next[0].focus();
+                    next[0].setSelectionRange(1, 1);
+                }
             });
     });
 }
