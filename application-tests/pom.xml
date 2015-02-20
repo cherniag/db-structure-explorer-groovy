@@ -4,7 +4,7 @@
     <parent>
         <groupId>mobi.nowtechnologies.java</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>5.14</version>
+        <version>5.15</version>
         <relativePath>../mq-parent-pom/pom.xml</relativePath>
     </parent>
 
@@ -103,6 +103,11 @@
         <dependency>
             <groupId>mobi.nowtechnologies.java.server</groupId>
             <artifactId>web</artifactId>
+            <classifier>jar</classifier>
+        </dependency>
+        <dependency>
+            <groupId>mobi.nowtechnologies.java.server</groupId>
+            <artifactId>admin</artifactId>
             <classifier>jar</classifier>
         </dependency>
         <!-- Spring -->

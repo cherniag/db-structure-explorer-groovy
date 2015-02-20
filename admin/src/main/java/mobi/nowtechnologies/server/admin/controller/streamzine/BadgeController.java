@@ -144,7 +144,7 @@ public class BadgeController {
         logger().info("Creating resolution for: {}", community);
 
         Resolution resolution = badgesDtoAsm.toResolution(dto);
-        badgesService.createResolution(community, resolution);
+        badgesService.createResolution(resolution);
     }
 
     @RequestMapping(value = "/badges/badges/assign", method = RequestMethod.POST)

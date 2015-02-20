@@ -74,7 +74,7 @@ class GooglePlusSuccessFeature {
 
     @When('^Registered user enters Google Plus credentials$')
     def "Registered user enters Google Plus credentials"() {
-        currentUserDevices.each {deviceSet.loginUsingGooglePlus(it)}
+        runner.parallel {deviceSet.loginUsingGooglePlus(it)}
     }
 
     @Then('^Default promo set in services properties is applied$')
@@ -104,7 +104,9 @@ class GooglePlusSuccessFeature {
 
     @And('^\'deviceType\' field is the same as sent during registration$')
     def "deviceType field is the same as sent during registration"() {
-        commonAssertionsService.checkDeviceTypeField(currentUserDevices, deviceSet)
+        runner.parallel {
+            commonAssertionsService.checkDeviceTypeField(it, deviceSet)
+        }
     }
 
     @And('^\'deviceUID\' field is the same as sent during registration$')

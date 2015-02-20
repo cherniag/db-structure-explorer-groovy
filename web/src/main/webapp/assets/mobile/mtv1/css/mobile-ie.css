@@ -361,6 +361,11 @@ body {
     background-color: white;
 }
 
+.go-premium-container-ios {
+    padding: 30px;
+    background-color: white;
+}
+
 .go-premium-header {
     display: table;
 }

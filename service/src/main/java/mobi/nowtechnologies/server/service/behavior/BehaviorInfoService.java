@@ -47,7 +47,7 @@ public class BehaviorInfoService {
             UserReferralsSnapshot newOne = new UserReferralsSnapshot(
                     user.getId(), behaviorConfig.getRequiredReferrals(), behaviorConfig.getReferralsDuration());
             int referredAndConfirmedCount = getReferredAndConfirmedCount(user, behaviorConfig);
-            newOne.updateMatchesData(referredAndConfirmedCount);
+            newOne.updateMatchesData(referredAndConfirmedCount, new Date());
 
             existing = userReferralsSnapshotRepository.saveAndFlush(newOne);
             logger.info("New user referrals snapshot {} created for user id {}", existing, user.getId());

@@ -24,18 +24,18 @@ public class FileControllerTestIT extends AbstractTrackRepoIT {
 
     @Test
     public void testFile() throws Exception {
-        mockMvc.perform(get("/file").param("id", "1")).
+        AssetFileFactory assetFileFactory = new AssetFileFactory();
+        assetFileFactory.setFileDir(publishDir.getFile());
+        AssetFile assetFile = assetFileFactory.anyAssetFile();
+
+        AssetFile save = fileRepository.save(assetFile);
+
+        mockMvc.perform(get("/file").param("id", String.valueOf(save.getId()))).
                 andExpect(status().isOk()).andExpect(content().contentType("image/jpeg"));
     }
 
     @Before
     public void setUp() throws Exception {
-        AssetFileFactory assetFileFactory = new AssetFileFactory();
-        assetFileFactory.setFileDir(publishDir.getFile());
 
-        AssetFile assetFile = assetFileFactory.anyAssetFile();
-
-
-        fileRepository.save(assetFile);
     }
 }

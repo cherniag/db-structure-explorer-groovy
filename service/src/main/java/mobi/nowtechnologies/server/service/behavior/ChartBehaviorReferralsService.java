@@ -35,8 +35,8 @@ class ChartBehaviorReferralsService {
             ChartBehaviorInfo info = pair.getValue();
 
             if(snapshot.includes(datePeriod.getStart(), datePeriod.getEnd())) {
-                boolean currentLock = info.isLocked();
-                if(currentLock || (index>0 && periods.get(index-1).getValue().wasUnlocked())) {
+                boolean canBeUnlocked = info.canBeUnlocked();
+                if(canBeUnlocked || (index>0 && periods.get(index-1).getValue().wasUnlocked())) {
                     info.chartBehaviorType = chartBehaviorReferralsRulesService.newType(info);
                     info.unlock();
                 }

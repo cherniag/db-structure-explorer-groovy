@@ -8,6 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class ApiVersions {
+    public static enum SubSetType {
+        BELOW, ABOVE
+    }
+
     private List<String> versions = new ArrayList<>();
 
     private ApiVersions() {
@@ -29,5 +33,9 @@ public class ApiVersions {
     public List<String> bellow(String of) {
         int indexOf = versions.indexOf(of);
         return new ArrayList<>(versions.subList(0, indexOf));
+    }
+
+    public List<String> of(String of, SubSetType subSetType) {
+        return (SubSetType.ABOVE == subSetType) ? above(of) : bellow(of);
     }
 }

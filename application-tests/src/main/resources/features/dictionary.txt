@@ -3,19 +3,19 @@
 # Empty line is also skipped
 # Separate with coma list values
 #
-facebook supported communities=hl_uk
+facebook supported communities=mtv1, mtvnz
 all facebook supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8
 
-google plus supported communities=hl_uk
+google plus supported communities=mtv1, mtvnz
 all google plus supported versions=6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8
 
-email supported communities=hl_uk
+email supported communities=mtv1
 all email supported versions=5.3, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8
 
-streamzine supported communities=hl_uk
+streamzine supported communities=mtv1
 all streamzine supported versions=6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8
 
-providers supported communities=hl_uk
+providers supported communities=mtv1
 all providers supported versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8
 
 JSON and XML=JSON, XML
@@ -27,7 +27,13 @@ all devices=ANDROID, IOS, WINDOWS_PHONE
 any device=ANDROID
 
 partner communities=o2, vf_nz
-all communities=o2, vf_nz, hl_uk
+all communities=o2, vf_nz, mtv1
 all versions=5.2, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8
 
-get context supported communities=mtv1
+get context supported communities=mtv1, mtvnz
+
+#
+# Try to avoid unneeded server polling
+#
+all versions to signup=6.0, 6.3, 6.5, 6.7
+all versions to get context=6.8

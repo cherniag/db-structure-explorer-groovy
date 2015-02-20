@@ -14,6 +14,10 @@ import java.util.Map;
 @Component
 public class SimpleInterpolator {
     public String interpolate(String template, Map<String, Object> model) {
+        if(template == null) {
+            return null;
+        }
+
         String interpolated = template;
 
         for (Map.Entry<String, ?> entry : model.entrySet()) {

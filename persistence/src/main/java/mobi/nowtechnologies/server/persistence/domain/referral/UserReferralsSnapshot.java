@@ -45,7 +45,7 @@ public class UserReferralsSnapshot {
         this.referralsDuration = duration;
     }
 
-    public void updateMatchesData(int currentReferrals) {
+    public void updateMatchesData(int currentReferrals, Date serverTime) {
         if (currentReferrals > 0) {
             this.currentReferrals = currentReferrals;
 
@@ -53,7 +53,7 @@ public class UserReferralsSnapshot {
             boolean matchesReferralsCount = currentReferrals >= requiredReferrals;
 
             if (notMarkedAsMatchedYet && matchesReferralsCount) {
-                matchedDate = new Date();
+                matchedDate = serverTime;
             }
         }
     }

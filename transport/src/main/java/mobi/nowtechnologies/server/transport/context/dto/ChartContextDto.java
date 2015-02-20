@@ -6,10 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class ChartContextDto {
@@ -19,7 +16,7 @@ public class ChartContextDto {
 
     @XmlElement(name = "instructions")
     @JsonProperty(value = "instructions")
-    private ArrayList<ChartBehaviorsDto> chartBehaviors = new ArrayList<ChartBehaviorsDto>();
+    private Set<ChartBehaviorsDto> chartBehaviors = new TreeSet<>();
 
     protected ChartContextDto() {
         chartTemplateBehaviors.putAll(createBehaviorTemplates());
@@ -39,7 +36,7 @@ public class ChartContextDto {
         return chartTemplateBehaviors.get(type);
     }
 
-    public List<ChartBehaviorsDto> getChartBehaviors() {
+    public Collection<ChartBehaviorsDto> getChartBehaviors() {
         return chartBehaviors;
     }
 }

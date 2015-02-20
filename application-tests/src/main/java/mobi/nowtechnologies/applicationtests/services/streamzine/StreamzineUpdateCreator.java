@@ -33,11 +33,4 @@ public class StreamzineUpdateCreator {
         Update restored = new Update(DateUtils.addSeconds(new Date(), plusSecondsInTheFuture - secondsInThePast), c);
         return streamzineUpdateRepository.saveAndFlush(restored);
     }
-
-    @Transactional(value = "applicationTestsTransactionManager")
-    public void deleteAll() {
-        for (Update update : streamzineUpdateRepository.findAll()) {
-            streamzineUpdateRepository.delete(update.getId());
-        }
-    }
 }

@@ -37,7 +37,7 @@ public class ITunesServiceImpl implements ITunesService {
 
                     @Override
                     public String getPassword() {
-                        return messageSource.getMessage(community, APPLE_IN_APP_PASSWORD, null, null);
+                        return messageSource.getDecryptedMessage(community, APPLE_IN_APP_PASSWORD, null, null);
                     }
                 }, actualReceipt);
 
@@ -46,7 +46,7 @@ public class ITunesServiceImpl implements ITunesService {
             iTunesPaymentService.createSubmittedPayment(user, actualReceipt, result, iTunesPaymentService);
             logger.info("Finish processing ITunes subscription");
         } else {
-            logger.info("ITunes rejected the encoded receipt [{}], result: [{}]", actualReceipt, result);
+            logger.warn("ITunes rejected the encoded receipt [{}], result: [{}]", actualReceipt, result);
         }
     }
 

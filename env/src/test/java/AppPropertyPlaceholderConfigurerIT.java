@@ -21,6 +21,7 @@ public class AppPropertyPlaceholderConfigurerIT {
             {"classpath:application.properties", "classpath:props/autotest/conf/application.properties", "classpath:env/autotest/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/cherry/conf/application.properties", "classpath:env/cherry/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/cucumber/conf/application.properties", "classpath:env/cucumber/conf/application.properties"},
+            {"classpath:application.properties", "classpath:props/potato/conf/application.properties", "classpath:env/potato/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/kiwi/conf/application.properties", "classpath:env/kiwi/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/lime/conf/application.properties", "classpath:env/lime/conf/application.properties"},
             {"classpath:application.properties", "classpath:props/orange/conf/application.properties", "classpath:env/orange/conf/application.properties"},
@@ -35,6 +36,7 @@ public class AppPropertyPlaceholderConfigurerIT {
             {"classpath:trackrepo-application.properties", "classpath:props/autotest/conf/trackrepo-application.properties", "classpath:env/autotest/conf/trackrepo-application.properties"},
             {"classpath:trackrepo-application.properties", "classpath:props/cherry/conf/trackrepo-application.properties", "classpath:env/cherry/conf/trackrepo-application.properties"},
             {"classpath:trackrepo-application.properties", "classpath:props/cucumber/conf/trackrepo-application.properties", "classpath:env/cucumber/conf/trackrepo-application.properties"},
+            {"classpath:trackrepo-application.properties", "classpath:props/potato/conf/trackrepo-application.properties", "classpath:env/potato/conf/trackrepo-application.properties"},
             {"classpath:trackrepo-application.properties", "classpath:props/kiwi/conf/trackrepo-application.properties", "classpath:env/kiwi/conf/trackrepo-application.properties"},
             {"classpath:trackrepo-application.properties", "classpath:props/lime/conf/trackrepo-application.properties", "classpath:env/lime/conf/trackrepo-application.properties"},
             {"classpath:trackrepo-application.properties", "classpath:props/orange/conf/trackrepo-application.properties", "classpath:env/orange/conf/trackrepo-application.properties"},
@@ -71,7 +73,9 @@ public class AppPropertyPlaceholderConfigurerIT {
         assertThat(newProperties.size(), is(oldProperties.size()));
 
         for (String oldPropertyKey : oldProperties.stringPropertyNames()) {
-            assertThat(newProperties.getProperty(oldPropertyKey).trim(), is(oldProperties.getProperty(oldPropertyKey).trim()));
+            String newTrimmedProp = newProperties.getProperty(oldPropertyKey).trim();
+            String oldTrimmedProp = oldProperties.getProperty(oldPropertyKey).trim();
+            assertThat("The values for key [" + oldPropertyKey +"] newTrimmedProp: [" + newTrimmedProp + "] oldTrimmedProp: [" + oldTrimmedProp + "] are different in new " + filePaths[2] + " and old " + filePaths[1] + "( uses " + filePaths[0] + " file as general)  files" , newTrimmedProp, is(oldTrimmedProp));
         }
     }
 }

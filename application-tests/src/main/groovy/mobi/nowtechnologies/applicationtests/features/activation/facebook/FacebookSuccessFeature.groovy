@@ -82,7 +82,7 @@ class FacebookSuccessFeature {
 
     @When('^Registered user enters Facebook credentials$')
     def "Registered_user_enters_Facebook_credentials"() {
-        currentUserDevices.each { deviceSet.loginUsingFacebook(it) }
+        runner.parallel { deviceSet.loginUsingFacebook(it) }
     }
 
     @Then('^Default promo set in services properties is applied$')
@@ -116,7 +116,9 @@ class FacebookSuccessFeature {
 
     @And('^\'deviceType\' field is the same as sent during registration$')
     def "deviceType field is the same as sent during registration"() {
-        commonAssertionsService.checkDeviceTypeField(currentUserDevices, deviceSet)
+        runner.parallel {
+            commonAssertionsService.checkDeviceTypeField(it, deviceSet)
+        }
     }
 
     @And('^\'deviceUID\' field is the same as sent during registration$')

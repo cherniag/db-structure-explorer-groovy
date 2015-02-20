@@ -10,9 +10,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @JsonTypeName("value")
 @XmlAccessorType(XmlAccessType.NONE)
 public class PlaylistInfo {
-    @JsonProperty(value = "locked")
-    private boolean locked;
-
     @JsonProperty(value = "action")
     private String action;
 
@@ -25,14 +22,6 @@ public class PlaylistInfo {
 
     public void setChartBehaviorType(ChartBehaviorType chartBehaviorType) {
         this.chartBehaviorType = chartBehaviorType;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
     }
 
     public String getAction() {

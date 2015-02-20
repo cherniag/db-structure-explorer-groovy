@@ -41,10 +41,10 @@
                         </div>
                     </div>
 
-                    <h3>Ads</h3>
+                    <h3>Disable Ads</h3>
                     <div>{view.adSettings}</div>
 
-                    <h3>Favourites</h3>
+                    <h3>Disable Favourites</h3>
                     <div>{view.favouriteSettings}</div>
 
                     <h3>Playlist types</h3>
@@ -122,16 +122,14 @@
                 <div class="settings-editor-cell settings-editor-cell-value">{statusTitle}</div>
                 <div class="settings-editor-cell settings-title"> status and </div>
                 <div class="settings-editor-cell settings-editor-cell-value" data-editor="dictionary" data-dictionary-path="chartTypes" data-path="playlistSettings.{id}.{status}.chartBehaviorType">{typeTitle}</div>
-                <div class="settings-editor-cell settings-title"> playlist type </div>
+                <div class="settings-editor-cell settings-title"> playlist type</div>
                 <div class="settings-editor-cell">{info}</div>
             </div>
         </div>
 
         <div id="playlistInfoValueId" style="display: none;">
             <div style="display: table">
-                <div class="settings-editor-cell settings-title">Locked:</div>
-                <div class="settings-editor-cell" data-editor="boolean" data-path="playlistSettings.{id}.{status}.locked">{locked}</div>
-                <div class="settings-editor-cell settings-title">Action:</div>
+                <div class="settings-editor-cell settings-title">Unlock Action:</div>
                 <div class="settings-editor-cell" data-editor="dictionary" data-dictionary-path="actions" data-path="playlistSettings.{id}.{status}.action">{action}</div>
             </div>
         </div>

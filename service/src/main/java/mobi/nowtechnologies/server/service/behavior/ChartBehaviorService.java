@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.behavior;
 
+import com.google.common.annotations.VisibleForTesting;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
 import java.util.*;
 
 public class ChartBehaviorService {
+    private final static String UNLOCK_ACTION = "refer_a_friend";
     @Resource
     ChartUserStatusBehaviorRepository chartUserStatusBehaviorRepository;
     @Resource
@@ -52,7 +54,8 @@ public class ChartBehaviorService {
         return userStatusTypesFilter;
     }
 
-    private NavigableSet<ChartBehaviorInfo> createInfos(User user, Map.Entry<Integer, Map<UserStatusType, ChartUserStatusBehavior>> chartToStatusBehaviorMapping, List<Pair<UserStatusType, Date>> userStatusTypeSinceChronology) {
+    @VisibleForTesting
+    NavigableSet<ChartBehaviorInfo> createInfos(User user, Map.Entry<Integer, Map<UserStatusType, ChartUserStatusBehavior>> chartToStatusBehaviorMapping, List<Pair<UserStatusType, Date>> userStatusTypeSinceChronology) {
         NavigableSet<ChartBehaviorInfo> infos = new TreeSet<>();
 
         for (Map.Entry<UserStatusType, Date> chronology : userStatusTypeSinceChronology) {
@@ -65,7 +68,7 @@ public class ChartBehaviorService {
             i.userStatusType = userStatusType;
             i.chartBehaviorType = value.getChartBehavior().getType();
             i.lockedAction = calcedLockedAction;
-            i.lockedActionHistory = calcedLockedAction;
+            i.canBeUnlocked = calcIsLocked(value.getAction());
             i.validFrom = chronology.getValue();
             infos.add(i);
         }
@@ -79,6 +82,10 @@ public class ChartBehaviorService {
         } else {
             return deepLinkUrlFactory.createForChart(user.getCommunity(), chartId, behavior.getAction());
         }
+    }
+
+    private boolean calcIsLocked(String lockedAction) {
+        return UNLOCK_ACTION.equals(lockedAction);
     }
 
 }

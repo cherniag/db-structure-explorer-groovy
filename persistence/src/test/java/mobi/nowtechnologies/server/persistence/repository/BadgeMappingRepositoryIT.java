@@ -127,7 +127,7 @@ public class BadgeMappingRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void testFindAllDefault() throws Exception {
+    public void testFindAllDefaultWithCommunity() throws Exception {
         Community anyCommmunity = communityRepository.findAll().get(0);
 
         FilenameAlias generalAlias1 = new FilenameAlias("name-general-1", "title", new Dimensions(5, 5)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
@@ -151,6 +151,30 @@ public class BadgeMappingRepositoryIT extends AbstractRepositoryIT {
         assertEquals(m2.getId(), list.get(0).getId());
         assertEquals(m1.getId(), list.get(1).getId());
         assertEquals(m0.getId(), list.get(2).getId());
+
+    }
+
+    @Test
+    public void testFindAllDefaultWithoutCommunity() throws Exception {
+        Community anyCommunity1 = communityRepository.findAll().get(0);
+        FilenameAlias generalAlias1 = new FilenameAlias("name-general-1", "title1", new Dimensions(5, 5)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        filenameAliasRepository.saveAndFlush(generalAlias1);
+        BadgeMapping m0 = badgeMappingRepository.saveAndFlush(BadgeMapping.general(anyCommunity1, generalAlias1));
+
+        Community anyCommunity2 = communityRepository.findAll().get(0);
+        FilenameAlias generalAlias2 = new FilenameAlias("name-general-2", "title2", new Dimensions(6, 6)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        filenameAliasRepository.saveAndFlush(generalAlias2);
+        BadgeMapping m1 = badgeMappingRepository.saveAndFlush(BadgeMapping.general(anyCommunity2, generalAlias2));
+
+        FilenameAlias generalAlias3 = new FilenameAlias("name-general-3", "title3", new Dimensions(7, 7)).forDomain(FilenameAlias.Domain.HEY_LIST_BADGES);
+        filenameAliasRepository.saveAndFlush(generalAlias3);
+        BadgeMapping m2 = badgeMappingRepository.saveAndFlush(BadgeMapping.general(anyCommunity2, generalAlias3));
+
+
+        List<BadgeMapping> list = badgeMappingRepository.findAllDefault();
+        assertEquals(m0.getId(), list.get(0).getId());
+        assertEquals(m1.getId(), list.get(1).getId());
+        assertEquals(m2.getId(), list.get(2).getId());
 
     }
 

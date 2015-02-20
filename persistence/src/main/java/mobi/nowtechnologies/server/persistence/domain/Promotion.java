@@ -19,7 +19,7 @@ public class Promotion implements Serializable {
 
 	public static final String NQ_GET_PROMOTION_WITH_FILTER = "getPromotionWithFilter";
 
-	public static final String ADD_FREE_WEEKS_PROMOTION = "promoCode";
+	public static final String ADD_FREE_WEEKS_PROMOTION = "PromoCode";
 	public static final String ADD_SUBBALANCE_PROMOTION = "noPromoCode";
 
 	@Id

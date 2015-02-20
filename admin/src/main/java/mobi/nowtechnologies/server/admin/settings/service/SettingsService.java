@@ -78,7 +78,6 @@ public class SettingsService {
             for (UserStatusType userStatusType : UserStatusType.values()) {
                 ChartUserStatusBehavior chartBehaviorForStatus = chartUserStatusBehaviorRepository.findByChartIdBehaviorConfigAndStatus(chartId, freemiumBehaviorConfig, userStatusType);
                 integerPlaylistInfoMap.get(userStatusType).setAction(chartBehaviorForStatus.getAction());
-                integerPlaylistInfoMap.get(userStatusType).setLocked(chartBehaviorForStatus.isLocked());
                 integerPlaylistInfoMap.get(userStatusType).setChartBehaviorType(chartBehaviorForStatus.getChartBehavior().getType());
             }
         }
@@ -148,7 +147,6 @@ public class SettingsService {
                 ChartUserStatusBehavior chartUserStatusBehavior = chartUserStatusBehaviorRepository.findByChartIdBehaviorConfigAndStatus(chartId, freemiumBehaviorConfig, userStatusType);
                 chartUserStatusBehavior.setChartBehavior(selectedChartBehavior);
                 chartUserStatusBehavior.setAction(playlistInfo.getAction());
-                chartUserStatusBehavior.setLocked(playlistInfo.isLocked());
             }
         }
     }

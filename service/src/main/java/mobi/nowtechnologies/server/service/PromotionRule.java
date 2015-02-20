@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.Promotion;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.user.criteria.Matcher;
-import mobi.nowtechnologies.server.user.rules.*;
+import mobi.nowtechnologies.server.user.rules.PromotionBasedValidationDelegate;
+import mobi.nowtechnologies.server.user.rules.Rule;
+import mobi.nowtechnologies.server.user.rules.RuleResult;
+import mobi.nowtechnologies.server.user.rules.ValidationDelegate;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 

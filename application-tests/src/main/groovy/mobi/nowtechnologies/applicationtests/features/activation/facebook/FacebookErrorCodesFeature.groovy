@@ -61,8 +61,6 @@ class FacebookErrorCodesFeature {
         runner.parallel {
             deviceSet.singup(it)
 
-        }
-        currentUserDevices.each {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
 
@@ -76,7 +74,7 @@ class FacebookErrorCodesFeature {
 
     @When('^Registered user enters Facebook credentials$')
     def "Registered_user_enters_Facebook_credentials"() {
-        currentUserDevices.each { deviceSet.loginUsingFacebook(it) }
+        runner.parallel { deviceSet.loginUsingFacebook(it) }
     }
 
     @Then('^User gets (\\d+) http error code and (\\d+) error code and (.*) message$')

@@ -117,7 +117,7 @@ public class ITunesServiceIT {
 
     @Test
     public void processITunesPaymentInCaseOfDuplicate() throws Exception {
-        final int nextSubPayment = 1423820502;
+        final int nextSubPayment = 1523820502;
         final String productId = "com.musicqubed.ios.mp.subscription.weekly.1";
         final String transactionId = "555555555555";
         String transactionReceipt = createAutoRenewableToken(productId, transactionId, nextSubPayment);
