@@ -57,41 +57,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>mobi.nowtechnologies.server.normalizer.PropertiesNormalizer</mainClass>
-                            <classpathScope>test</classpathScope>
-                            <systemProperties>
-                                <systemProperty>
-                                    <key>normalizer.properties.folder</key>
-                                    <value>*/conf</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <key>normalizer.property.name</key>
-                                    <value>application.properties</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <key>normalizer.prod.environments</key>
-                                    <value>prod_db1,prod_db2,prod_jadmin,prod_trackrepo</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <key>normalizer.override.original.properties</key>
-                                    <value>false</value>
-                                </systemProperty>
-                            </systemProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 

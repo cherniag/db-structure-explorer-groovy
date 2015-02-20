@@ -14,7 +14,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c.%M():%L - %m%n"/>
+                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n"/>
         </layout>
     </appender>
 
@@ -27,7 +27,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c.%M():%L - %m%n"/>
+                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n"/>
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="LevelMin" value="WARN"/>
@@ -45,7 +45,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c.%M():%L - %m%n"/>
+                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n"/>
         </layout>
     </appender>
 
@@ -58,7 +58,7 @@
         <layout class="mobi.nowtechnologies.server.shared.log.UnixTimePatternLayout">
             <!--The " ut " will be replace on current "unix time" value-->
             <param name="ConversionPattern"
-                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c.%M():%L - %m%n"/>
+                   value="%-24d{ISO8601}:  [%15.15t] [%X{userName} from %X{communityUrl} with %X{remoteAddr} remote address] %-5p %30.30c - %m%n"/>
         </layout>
     </appender>
 
@@ -87,20 +87,20 @@
         <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.service">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.persistence">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.trackrepo">
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="track-repo-RollingFileAppender"/>
     </logger>
 
     <root>
-        <level value="INFO"></level>
+        <level value="DEBUG"></level>
         <appender-ref ref="errors-track-repo-RollingFileAppender"/>
     </root>
 

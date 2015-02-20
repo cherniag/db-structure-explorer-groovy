@@ -18,10 +18,9 @@ public class PropertiesProcessor {
         this.bundlesResolver = bundlesResolver;
     }
 
-    public Map<String, String> extractCommonValuesToDefaultProperty() throws IOException {
+    public void extractCommonValuesToDefaultProperty() throws IOException {
         System.out.println("...................Start extracting common values to default property....................");
 
-        Map<String, String> extractedProperties = new HashMap<String, String>();
         Set<String> propertiesIntersection = null;
 
         //find common properties in bundle
@@ -64,22 +63,20 @@ public class PropertiesProcessor {
 
                 if (allEquals) {
                     extractCommonValueToDefaultProperty(propertyKey, value);
-                    extractedProperties.put(propertyKey, value);
                 }
             }
         }
 
         System.out.println(".........................................................................................\n");
-        return extractedProperties;
     }
 
     private void extractCommonValueToDefaultProperty(String propertyKey, String propertyValue) throws IOException {
         for (String propertyName : bundle.keySet()) {
             if (propertyName.equalsIgnoreCase(mainPropertyPath)) {
-                if(bundle.get(propertyName).containsKey(propertyKey) && !propertyValue.equals(bundle.get(propertyName).getProperty(propertyKey))){
-                    System.out.println("Rewrite default property " + propertyKey + ". Old value [" + bundle.get(propertyName).getProperty(propertyKey) + "]. New value [" + propertyValue + "]");
+                if(bundle.get(mainPropertyPath).containsKey(propertyKey) && !propertyValue.equals(bundle.get(mainPropertyPath).getProperty(propertyKey))){
+                    System.out.println("Rewrite default property " + propertyKey + ". Old value [" + bundle.get(mainPropertyPath).getProperty(propertyKey) + "]. New value [" + propertyValue + "]");
                 }
-                bundle.get(propertyName).setProperty(propertyKey, propertyValue);
+                bundle.get(mainPropertyPath).setProperty(propertyKey, propertyValue);
             } else {
                 bundle.get(propertyName).remove(propertyKey);
                 System.out.println("Property " + propertyKey + " has been removed from " + propertyName);
@@ -119,17 +116,6 @@ public class PropertiesProcessor {
     public void loadTestRowProperties(String propertiesFolder, String mainPropertyName, String[] prodEnvironments) throws IOException {
         mainPropertyPath = bundlesResolver.getCommonPropertiesFolder(propertiesFolder) + File.separator + mainPropertyName;
         bundle.putAll(bundlesResolver.readRowTestProperties(propertiesFolder, mainPropertyName, prodEnvironments));
-    }
-
-    public void filterCommonProperty(Map<String, String> existedProperties) throws IOException {
-        System.out.println(".........................Start filtering common properties file..........................");
-        for(String propertyKey : bundle.get(mainPropertyPath).stringPropertyNames()){
-            if(!existedProperties.containsKey(propertyKey)){
-                bundle.get(mainPropertyPath).remove(propertyKey);
-                System.out.println("Property " + propertyKey + " has been removed from " + mainPropertyPath);
-            }
-        }
-        System.out.println(".........................................................................................\n");
     }
 
     public void extractCommonValuesFromTestEnvironments(String[] prodEnvironments) throws IOException {
@@ -245,5 +231,9 @@ public class PropertiesProcessor {
                 }
             }
         System.out.println(".........................................................................................\n");
+    }
+
+    public void mergeCommonPropertiesWith(String mergePropertiesWithFilePath) throws IOException {
+        bundlesResolver.mergeProperties(mergePropertiesWithFilePath, mainPropertyPath);
     }
 }

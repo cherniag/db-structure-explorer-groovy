@@ -55,7 +55,7 @@ public class SubscriptionTextsGeneratorTest {
 		s.setDaysToNextBillingDate(DAYS);
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("<br />You have " + DAYS + " days of your free trial left", r.getNextBillingText());
+		Assert.assertEquals("<br />You have " + DAYS + " days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 
 	}
@@ -72,7 +72,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("<br />You have 10 days of your free trial left", r.getNextBillingText());
+		Assert.assertEquals("<br />You have " + DAYS + " days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 
@@ -87,7 +87,7 @@ public class SubscriptionTextsGeneratorTest {
 
 		SubscriptionTexts r = generator.generate(s);
 		Assert.assertEquals("Free Trial", r.getStatusText());
-		Assert.assertEquals("<br />You have 10 days of your free trial left", r.getNextBillingText());
+		Assert.assertEquals("<br />You have " + DAYS + " days left on your free trial", r.getNextBillingText());
 		Assert.assertNull(r.getFutureText());
 	}
 

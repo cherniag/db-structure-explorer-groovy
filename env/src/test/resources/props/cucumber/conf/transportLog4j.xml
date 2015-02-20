@@ -330,14 +330,14 @@
     </appender>
 
     <logger name="org.springframework.orm.jpa">
-        <level value="TRACE"/>
+        <level value="INFO"/>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
     </logger>
     <logger name="org.springframework.transaction">
-        <level value="TRACE"/>
+        <level value="INFO"/>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userSMSNotificationAppender"/>
@@ -356,7 +356,7 @@
     </logger>
 
     <logger name="org.hibernate.SQL">
-        <level value="DEBUG"></level>
+        <level value="INFO"></level>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
@@ -366,7 +366,7 @@
         <!-- <appender-ref ref="transportControllerAppender" /> -->
     </logger>
     <logger name="org.hibernate.type">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="paymentExecutionAppender"/>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="weeklyUpdateServiceFile"/>
@@ -376,7 +376,7 @@
         <!-- <appender-ref ref="transportControllerAppender" /> -->
     </logger>
     <logger name="org.hibernate.cache">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="pendingPaymentJobAppender"/>
         <appender-ref ref="smsAccordingToLawJobAppender"/>
         <appender-ref ref="userNotificationAppender"/>
