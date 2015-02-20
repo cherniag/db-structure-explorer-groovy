@@ -71,4 +71,15 @@ public class PinCode {
     public void setEntered(boolean entered) {
         this.entered = entered;
     }
+
+    @Override
+    public String toString() {
+        return "PinCode{" +
+                "code='" + code + '\'' +
+                ", userId=" + userId +
+                ", creationTime=" + creationTime +
+                ", attempts=" + attempts +
+                ", entered=" + entered +
+                '}';
+    }
 }

@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,9 +32,10 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
 
     @Override
     public PinCode generate(User user, int digitsCount) throws PinCodeException.MaxPinCodesReached {
-        log.debug("Generating new {}-digit pin code for user {}", digitsCount, user.getId());
+        log.info("Generating new {}-digit pin code for user {}", digitsCount, user.getId());
 
-        Date selectFromDate = new Date(System.currentTimeMillis() - limitSeconds * 1000);
+        Date selectFromDate = DateUtils.addSeconds(new Date(), -limitSeconds);
+
         int allUserPinCodesCount = pinCodeRepository.countUserPinCodes(user.getId(), selectFromDate);
 
         if (allUserPinCodesCount >= limitCount) {
@@ -42,16 +44,17 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
 
         PinCode pinCode = new PinCode(user.getId(), generateValue(digitsCount));
 
-        log.debug("Generated pin code {} for user {}", pinCode.getCode(), user.getId());
+        log.info("Generated pin code {} for user {}", pinCode.getCode(), user.getId());
         return pinCodeRepository.save(pinCode);
     }
 
     @Override
     public boolean check(User user, String pinCodeStr) throws PinCodeException.NotFound, PinCodeException.MaxAttemptsReached {
-        log.debug("Checking pin code {} for user {}", pinCodeStr, user.getId());
+        log.info("Checking pin code {} for user {}", pinCodeStr, user.getId());
 
-        Date selectFromTime = new Date(System.currentTimeMillis() - expirationSeconds * 1000);
-        List<PinCode> userLatestPinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(user.getId(), selectFromTime);
+        Date selectFromDate = DateUtils.addSeconds(new Date(), -expirationSeconds);
+
+        List<PinCode> userLatestPinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(user.getId(), selectFromDate);
 
         if (CollectionUtils.isEmpty(userLatestPinCodes)) {
             throw new PinCodeException.NotFound("Pin code not found or has been expired.");
@@ -67,7 +70,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
         userLatestPinCode.setEntered(checkResult);
         pinCodeRepository.save(userLatestPinCode);
 
-        log.debug("Pin code {} for user {} is {}", pinCodeStr, user.getId(), checkResult ? "valid" : "not valid");
+        log.info("Pin code {} for user {} is {}", pinCodeStr, user.getId(), checkResult ? "valid" : "not valid");
         return checkResult;
     }
 

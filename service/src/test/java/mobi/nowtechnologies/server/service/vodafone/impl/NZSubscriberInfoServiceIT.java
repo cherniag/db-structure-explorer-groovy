@@ -8,6 +8,7 @@ import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
 public class NZSubscriberInfoServiceIT {
 
     @Resource
+    @Qualifier("service.NZSubscriberInfoService")
     NZSubscriberInfoService nzService;
     @Resource
     NZSubscriberInfoRepository subscriberInfoRepository;

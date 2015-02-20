@@ -11,7 +11,6 @@ import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.UserNotificationService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.Contract;
@@ -25,9 +24,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +46,7 @@ import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class UserNotificationServiceImpl implements UserNotificationService, ApplicationContextAware {
+public class UserNotificationServiceImpl implements UserNotificationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserNotificationServiceImpl.class);
     private UserService userService;
@@ -64,7 +60,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
     private String tinyUrlService;
     private String rememberMeTokenCookieName;
     private DeviceService deviceService;
-    private ApplicationContext applicationContext;
+    private SmsServiceFacade smsServiceFacade;
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -119,6 +115,10 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+    }
+
+    public void setSmsServiceFacade(SmsServiceFacade smsServiceFacade) {
+        this.smsServiceFacade = smsServiceFacade;
     }
 
     @Async
@@ -559,7 +559,7 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
                     if (!StringUtils.isBlank(message)) {
                         String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
-                        SMSResponse smsResponse = getSMSProvider(communityUrl).send(user.getMobile(), message, title);
+                        SMSResponse smsResponse = smsServiceFacade.getSMSProvider(communityUrl).send(user.getMobile(), message, title);
                         if (smsResponse.isSuccessful()) {
                             wasSmsSentSuccessfully = true;
                         } else {
@@ -580,11 +580,6 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
 
         LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
         return wasSmsSentSuccessfully;
-    }
-
-    public SMSGatewayService getSMSProvider(String communityUrl) {
-        String smsProviderBeanName = messageSource.getMessage(communityUrl, "service.bean.smsProvider", null, null);
-        return (SMSGatewayService) applicationContext.getBean(smsProviderBeanName);
     }
 
     public boolean rejectDevice(User user, String code) {
@@ -708,10 +703,5 @@ public class UserNotificationServiceImpl implements UserNotificationService, App
         }
         LOGGER.debug("Output parameter code=[{}]", code);
         return code;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 }

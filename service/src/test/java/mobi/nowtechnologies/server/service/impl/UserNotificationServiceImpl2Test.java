@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * and to see messages sent to migservice
  */
 @RunWith(PowerMockRunner.class)
-public class UserNotificationServiceImplTest2 {
+public class UserNotificationServiceImpl2Test {
 
 	CommunityResourceBundleMessageSourceImpl messageSource;
 	DeviceService deviceService;
@@ -45,12 +45,15 @@ public class UserNotificationServiceImplTest2 {
 	List<User> audioOnlyUsers;
 	List<User> videoUsers;
 	MigHttpService migHttpService;
+    SmsServiceFacade smsServiceFacade;
 
     @Mock
     private PaymentDetailsService paymentDetailsServiceMock;
 	
 	@Before
 	public void setUp() {
+        smsServiceFacade = mock(SmsServiceFacade.class);
+
         ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
 
         reloadableResourceBundleMessageSource.setBasenames("classpath:services_test");
@@ -66,6 +69,7 @@ public class UserNotificationServiceImplTest2 {
 
 		userNotificationService = spy(new UserNotificationServiceImpl());
 		userNotificationService.setMessageSource(messageSource);
+        userNotificationService.setSmsServiceFacade(smsServiceFacade);
         userNotificationService.setDeviceService(deviceService);
 		userNotificationService.setAvailableCommunities(new String[]{O2_COMMUNITY_REWRITE_URL,VF_NZ_COMMUNITY_REWRITE_URL});
         userNotificationService.setPaymentDetailsService(paymentDetailsServiceMock);
@@ -75,7 +79,7 @@ public class UserNotificationServiceImplTest2 {
 		Mockito.when(migResponse.getHttpStatus()).thenReturn(200);
 		Mockito.when(migResponse.getMessage()).thenReturn("000=[GEN] OK ");
 		Mockito.when(migResponse.isSuccessful()).thenReturn(true);
-        doReturn(migHttpService).when(userNotificationService).getSMSProvider(anyString());
+        doReturn(migHttpService).when(smsServiceFacade).getSMSProvider(anyString());
 		Mockito.when(migHttpService.send(anyString(), anyString(), anyString())).thenReturn(migResponse);
 		
 		audioOnlyUsers = new ArrayList<User>();
@@ -102,16 +106,7 @@ public class UserNotificationServiceImplTest2 {
 			if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
-	
-	@Test
-	public void testForNonVideo_sendUnsubscribePotentialSMS() throws Exception {
-		int times = 1;
-		for ( User u : audioOnlyUsers ) {
-			userNotificationService.sendUnsubscribePotentialSMS(u);
-			if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-		}
-	}
-	
+
 	@Test
 	public void testForNonVideo_sendLowBalanceWarning() throws Exception {
 		int times = 1;
@@ -123,32 +118,7 @@ public class UserNotificationServiceImplTest2 {
 			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
-	
-	@Test
-	public void testForNonVideo_sendPaymentFailSMS() throws Exception {
-		int times = 1;
-		for ( User u : audioOnlyUsers ) {
-			userNotificationService.sendPaymentFailSMS(createPendingPayment(u));
-			if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) {
-                verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-            }
-		}
-	}
 
-    @Test
-    public void testForNonVideo_sendActivationPinSMS() throws Exception {
-        int times = 0;
-        for ( User u : audioOnlyUsers ) {
-            userNotificationService.sendActivationPinSMS(u);
-
-            if(VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())){
-                times++;
-            }
-
-            verify(migHttpService, times(times)).send(anyString(), anyString(), anyString());
-        }
-    }
-	
 	@Test
 	public void testForVideo_sendSmsOnFreeTrialExpired() throws Exception {
 		int times = 1;
@@ -167,15 +137,7 @@ public class UserNotificationServiceImplTest2 {
 		}
 	}
 	
-	@Test
-	public void testForVideo_sendUnsubscribePotentialSMS() throws Exception {
-		int times = 1;
-		for ( User u : videoUsers ) {
-			userNotificationService.sendUnsubscribePotentialSMS(u);
-			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-		}
-	}
-	
+
 	@Test
 	public void testForVideo_sendLowBalanceWarning() throws Exception {
 		int times = 1;
@@ -187,25 +149,7 @@ public class UserNotificationServiceImplTest2 {
 			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
 		}
 	}
-	
-	@Test
-	public void testForVideo_sendPaymentFailSMS() throws Exception {
-		int times = 1;
-		for ( User u : videoUsers ) {
-			userNotificationService.sendPaymentFailSMS(createPendingPayment(u));
-			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-		}
-	}
-	
-	@Test
-	public void testForVideo_send4GDowngradeSMS_freeTrial() throws Exception {
-		int times = 1;
-		for ( User u : videoUsers ) {
-			userNotificationService.send4GDowngradeSMS(u,UserNotificationServiceImpl.DOWNGRADE_FROM_4G_FREETRIAL);
-			verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-		}
-	}
-	
+
 	@Test
 	public void testForVideo_send4GDowngradeSMS_Subscribed() throws Exception {
 		int times = 1;
