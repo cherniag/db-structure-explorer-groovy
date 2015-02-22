@@ -5,23 +5,18 @@
 
 <c:choose>
     <c:when test="${result.ok}">
-        <jsp:include page="result.jsp">
-            <jsp:param name="callingPage" value="check_phone" />
-        </jsp:include>
-    </c:when>
-    <c:when test="${result.error}">
-        <jsp:include page="not-valid.jsp">
+        <jsp:include page="ok.jsp">
             <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:when>
     <c:when test="${result.maxAttempts}">
-        <jsp:include page="result.jsp">
+        <jsp:include page="maxAttempts.jsp">
             <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:when>
     <c:otherwise>
-        <jsp:include page="expired.jsp">
-            <jsp:param name="callingPage" value="check_phone" />
+        <jsp:include page="not-valid.jsp">
+            <jsp:param name="callingPage" value="check_pin" />
         </jsp:include>
     </c:otherwise>
 </c:choose>

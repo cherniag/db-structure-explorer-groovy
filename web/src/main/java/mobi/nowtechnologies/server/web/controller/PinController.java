@@ -64,12 +64,12 @@ public class PinController extends CommonController {
             if(pinCodeService.check(user, pin)){
                 return CheckResult.OK;
             } else {
-                return CheckResult.ERROR;
+                return CheckResult.INVALID;
             }
         } catch (PinCodeException.NotFound notFound) {
-            return CheckResult.EXPIRED;
+            return CheckResult.INVALID;
         } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
-            return CheckResult.MAX_ATTEMTS;
+            return CheckResult.MAX_ATTEMPTS;
         }
     }
 
@@ -79,18 +79,14 @@ public class PinController extends CommonController {
     }
 
     public static enum CheckResult {
-        OK, EXPIRED, MAX_ATTEMTS, ERROR;
+        OK, MAX_ATTEMPTS, INVALID;
 
         public boolean isOk() {
             return this == OK;
         }
 
-        public boolean isError() {
-            return this == ERROR;
-        }
-
         public boolean isMaxAttempts() {
-            return this == MAX_ATTEMTS;
+            return this == MAX_ATTEMPTS;
         }
     }
 }
