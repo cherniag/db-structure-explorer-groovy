@@ -5,5 +5,15 @@
 
 Non VF user.
 
-Subscribe using PayPal
+<a class="go-premium-button go-premium-button-device go-premium-body-button-below go-premium-button-target go-premium-body-ok" href="payments_inapp.html">
+    <span>
+        Pay with PayPal
+    </span>
+</a>
 
+
+<a class="go-premium-button go-premium-button-device go-premium-body-button-below go-premium-button-target go-premium-body-cancel" href="#">
+    <span>
+        Back to the App
+    </span>
+</a>
