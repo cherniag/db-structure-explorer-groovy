@@ -36,8 +36,21 @@ if(Settings == undefined) {
                     // rendering
                     render(options.renderTo);
 
-                    $('#enableOrDisableFreemiumId').text('Switch').click(enableOrDisableFreemium);
-                    $('#currentBehaviorConfigType').text((model.enabled)?'FREEMIUM':'DEFAULT');
+                    for(var i = 0; i < model.behaviorConfigTypes.length ; i++){
+                        var configType = model.behaviorConfigTypes[i];
+
+                        $('#switchConfigTypeBlock').append('<button class="btn" type="submit" id="switchTo' + configType + '"></button>');
+                        var switchButton = $('#switchTo' + configType);
+                        switchButton.text(configType);
+
+                        if(configType == model.behaviorConfigType){
+                            switchButton.addClass("btn-success");
+                        } else {
+                            switchButton.addClass("btn-default");
+                            switchButton.click(getSwitchToConfigTypeHandler(switchButton, configType));
+                        }
+                    }
+
                     $('#saveId').click(save);
 
                     // editing
@@ -62,8 +75,12 @@ if(Settings == undefined) {
         // Internals
         //
 
-        function enableOrDisableFreemium() {
-            $('#enableOrDisableFreemiumId').text('Please wait...');
+        function getSwitchToConfigTypeHandler(button, behaviorConfigType){
+            return function(){ switchToConfigType(button, behaviorConfigType); }
+        }
+
+        function switchToConfigType(button, behaviorConfigType) {
+            button.text('Please wait...');
 
             if(progress) return;
             progress = true;
@@ -71,7 +88,7 @@ if(Settings == undefined) {
             $.ajax({
                 url : opts.switchUrl,
                 dataType: 'json',
-                data: JSON.stringify(!model.enabled),
+                data: JSON.stringify(behaviorConfigType),
                 contentType: 'application/json',
                 type: "POST",
                 success : function(data, textStatus, status) {

@@ -15,12 +15,9 @@
         h3 {
             margin-top: 20px;
         }
-        .behavior-config-type-label{
-            font-size: 16px;
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 5px;
-            margin-right: 10px;
+        #switchConfigTypeBlock button{
+            margin-right: 5px;
+            margin-top: 5px;
         }
     </style>
 	<body>
@@ -33,11 +30,9 @@
         <!-- Templates -->
         <div id="rootTemplateId" style="display: none;">
             <div style="width:60%;">
-                <div>
-                    <div style="display: inline-block;vertical-align: middle;padding-top: 2px;">
-                        Current model: <span id="currentBehaviorConfigType" class="behavior-config-type-label"></span>
-                    </div>
-                    <button class="btn btn-success" type="submit" id="enableOrDisableFreemiumId"></button>
+                <h3>Select current model:</h3>
+                <div id="switchConfigTypeBlock">
+
                 </div>
                 <div>
                     <br/><br/>

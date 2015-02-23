@@ -88,13 +88,10 @@ public class SettingsService {
     }
 
     @Transactional
-    public void switchConfigType(String communityUrl, boolean isFreemiumEnabled){
+    public void switchConfigType(String communityUrl, BehaviorConfigType newBehaviorConfigType){
         Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
         Assert.notNull(c);
         CommunityConfig communityConfig = communityConfigRepository.findByCommunity(c);
-
-        // Look at enabled/disabled
-        final BehaviorConfigType newBehaviorConfigType = decideType(isFreemiumEnabled);
 
         if (communityConfig.requiresBehaviorConfigChange(newBehaviorConfigType)) {
             BehaviorConfig newBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), newBehaviorConfigType);
@@ -111,10 +108,8 @@ public class SettingsService {
         Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
         Assert.notNull(c);
 
-        final BehaviorConfigType behaviorConfigType = decideType(dto.isEnabled());
-
         // Update current behavior config
-        BehaviorConfig currentBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), behaviorConfigType);
+        BehaviorConfig currentBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), dto.getBehaviorConfigType());
 
         Duration referralDuration = dto.getReferralDto().getDurationInfoDto().toDuration();
         int requiredAmount = dto.getReferralDto().getRequired();
@@ -183,10 +178,6 @@ public class SettingsService {
     //
     // internals
     //
-    private BehaviorConfigType decideType(boolean isFreemiumEnabled) {
-        return isFreemiumEnabled ? BehaviorConfigType.FREEMIUM : BehaviorConfigType.DEFAULT;
-    }
-
     private Logger logger() {
         return LoggerFactory.getLogger(getClass());
     }

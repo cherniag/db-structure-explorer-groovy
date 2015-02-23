@@ -33,9 +33,8 @@ public class SettingsAsm {
         }
 
         // add some dictionary data
-        BehaviorConfigType configType = dto.isEnabled() ? BehaviorConfigType.FREEMIUM : BehaviorConfigType.DEFAULT;
         dto.setPages(pages);
-        dto.setMetaInfo(createMetaInfo(configType));
+        dto.setMetaInfo(createMetaInfo(dto.getBehaviorConfigType()));
         dto.setActions(actions);
         dto.setContentBehaviorTypes(Arrays.asList(ContentBehaviorType.values()));
         dto.addPlaylistInfo(chartListItemDtos);

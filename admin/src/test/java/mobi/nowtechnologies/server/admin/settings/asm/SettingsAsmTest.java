@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.MetaInfo;
 import mobi.nowtechnologies.server.admin.settings.service.SettingsService;
 import mobi.nowtechnologies.server.dto.streamzine.ChartListItemDto;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.service.behavior.BehaviorInfoService;
 import org.junit.Before;
@@ -47,7 +48,7 @@ public class SettingsAsmTest {
 
 
         SettingsDto dto = mock(SettingsDto.class);
-        when(dto.isEnabled()).thenReturn(true);
+        when(dto.getBehaviorConfigType()).thenReturn(BehaviorConfigType.FREEMIUM);
         when(settingsService.export(url)).thenReturn(dto);
 
         // when

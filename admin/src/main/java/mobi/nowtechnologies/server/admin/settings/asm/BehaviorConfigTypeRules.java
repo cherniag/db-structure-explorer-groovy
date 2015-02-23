@@ -11,9 +11,14 @@ import java.util.*;
  * Date: 2/18/2015
  */
 public enum BehaviorConfigTypeRules {
-
-    FREEMIUM_RULES(BehaviorConfigType.FREEMIUM, Arrays.asList(UserStatusType.values()), Arrays.asList(ChartBehaviorType.values())),
-    DEFAULT_RULES(BehaviorConfigType.DEFAULT, Arrays.asList(UserStatusType.FREE_TRIAL), Arrays.asList(ChartBehaviorType.NORMAL, ChartBehaviorType.PREVIEW));
+    FREEMIUM_RULES(BehaviorConfigType.FREEMIUM,
+            Arrays.asList(UserStatusType.values()),
+            Arrays.asList(ChartBehaviorType.values())
+    ),
+    DEFAULT_RULES(BehaviorConfigType.DEFAULT,
+            Arrays.asList(UserStatusType.FREE_TRIAL),
+            Arrays.asList(ChartBehaviorType.NORMAL, ChartBehaviorType.PREVIEW)
+    );
 
     private BehaviorConfigType configType;
     private List<UserStatusType> userStatusTypes;
@@ -25,20 +30,19 @@ public enum BehaviorConfigTypeRules {
         this.chartBehaviorTypes = chartBehaviorTypes;
     }
 
-
     public static List<UserStatusType> allowedUserStatusTypes(BehaviorConfigType behaviorConfigType){
-        for (BehaviorConfigTypeRules rules : values()) {
-            if(behaviorConfigType == rules.configType){
-                return new ArrayList<>(rules.userStatusTypes);
-            }
-        }
-        throw new IllegalArgumentException("Couldn't find rules for config type " + behaviorConfigType);
+        return new ArrayList<>(find(behaviorConfigType).userStatusTypes);
     }
 
+
     public static List<ChartBehaviorType> allowedChartBehaviorTypes(BehaviorConfigType behaviorConfigType){
+        return new ArrayList<>(find(behaviorConfigType).chartBehaviorTypes);
+    }
+
+    private static BehaviorConfigTypeRules find(BehaviorConfigType behaviorConfigType) {
         for (BehaviorConfigTypeRules rules : values()) {
             if(behaviorConfigType == rules.configType){
-                return new ArrayList<>(rules.chartBehaviorTypes);
+                return rules;
             }
         }
         throw new IllegalArgumentException("Couldn't find rules for config type " + behaviorConfigType);

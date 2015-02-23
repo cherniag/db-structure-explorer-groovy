@@ -21,8 +21,6 @@ import java.util.*;
 @JsonTypeName("settings")
 @XmlAccessorType(XmlAccessType.NONE)
 public class SettingsDto {
-    @JsonProperty(value = "enabled")
-    private boolean enabled = true;
 
     @JsonProperty(value = "referral")
     private ReferralDto referralDto = new ReferralDto();
@@ -60,30 +58,26 @@ public class SettingsDto {
     @JsonProperty(value = "i18n")
     private Map<String, String> i18n = new HashMap<>();
 
-    private transient BehaviorConfigType behaviorConfigType;
+    @JsonProperty(value = "behaviorConfigType")
+    private BehaviorConfigType behaviorConfigType;
+
+    @JsonProperty(value = "behaviorConfigTypes")
+    private List<BehaviorConfigType> behaviorConfigTypes = new ArrayList<>();
 
     public SettingsDto(BehaviorConfigType behaviorConfigType) {
         this.behaviorConfigType = behaviorConfigType;
-        this.enabled = behaviorConfigType == BehaviorConfigType.FREEMIUM;
 
         playlistTypeSettings.putAll(initPlaylistTypeMappings());
         favourites.putAll(initStatuses());
         ads.putAll(initStatuses());
         periods.addAll(getRequiredPeriodValues());
         chartBehaviorTypes.addAll(BehaviorConfigTypeRules.allowedChartBehaviorTypes(behaviorConfigType));
+        behaviorConfigTypes.addAll(Arrays.asList(BehaviorConfigType.values()));
     }
 
     // for JSON
     public SettingsDto() {
 
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public void addPlaylistInfo(List<ChartListItemDto> chartListItemDtos) {
@@ -147,6 +141,14 @@ public class SettingsDto {
             playlistTypeSettings.get(key).getMetaInfo().setTracksInfoSupported(value.isTracksInfoSupported());
             playlistTypeSettings.get(key).getMetaInfo().setTracksPlayDurationSupported(value.isTracksPlayDurationSupported());
         }
+    }
+
+    public List<BehaviorConfigType> getBehaviorConfigTypes() {
+        return behaviorConfigTypes;
+    }
+
+    public BehaviorConfigType getBehaviorConfigType() {
+        return behaviorConfigType;
     }
 
     //

@@ -17,7 +17,7 @@ public class SettingsDtoTest {
     @Test
     public void createDtoForDefaultModel() throws Exception {
         SettingsDto dto = new SettingsDto(BehaviorConfigType.DEFAULT);
-        assertFalse(dto.isEnabled());
+        assertEquals(BehaviorConfigType.DEFAULT, dto.getBehaviorConfigType());
 
         Map<ChartBehaviorType, PlaylistTypeInfoDto> playlistTypeSettings = dto.getPlaylistTypeSettings();
         assertEquals(2, playlistTypeSettings.size());
@@ -45,7 +45,7 @@ public class SettingsDtoTest {
     @Test
     public void createDtoForFreemiumModel() throws Exception {
         SettingsDto dto = new SettingsDto(BehaviorConfigType.FREEMIUM);
-        assertTrue(dto.isEnabled());
+        assertEquals(BehaviorConfigType.FREEMIUM, dto.getBehaviorConfigType());
 
         Map<ChartBehaviorType, PlaylistTypeInfoDto> playlistTypeSettings = dto.getPlaylistTypeSettings();
         assertEquals(3, playlistTypeSettings.size());
