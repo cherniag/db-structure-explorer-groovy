@@ -18,7 +18,6 @@
         </c:choose>
     </c:when>
     <c:otherwise>
-        NOT IOS
         <c:choose>
             <c:when test="${paymentsPage.subscriptionInfo.premium}">
                 premium

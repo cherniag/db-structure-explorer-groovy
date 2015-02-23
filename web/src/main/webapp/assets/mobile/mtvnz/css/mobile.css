@@ -31,9 +31,123 @@ body {
     display: none;
 }
 
+
+.root-container {
+    padding: 20px 20px 0 20px;
+    height: 100%;
+}
+
+.root-container-selection {
+    background: url(../imgs/bgs/coming_soon.png) no-repeat top left;
+    background-size: cover;
+}
+
+.container-option {
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.container-root-logo {
+    display: table;
+}
+
+.go-premium-header {
+    display: table;
+    height: 20%;
+    width: 100%;
+}
+.go-premium-header-logo {
+    display: table-cell;
+    vertical-align: middle;
+    background: url(../imgs/badge_mtv.png) no-repeat center;
+    background-size: 100% auto;
+    height: 100%;
+    width: 30%;
+}
+.go-premium-header-ad {
+    display: table-cell;
+    vertical-align: middle;
+}
+.go-premium-header-title {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+}
+.go-premium-header-title-options {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+}
+
+
+
+
+
+
+
+/*
+Buttons
+*/
+.go-premium-button {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    display: block;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    margin: 0 auto;
+    color: black;
+}
+.go-premium-button-device {
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 20px;
+    width: 70%;
+}
+.go-premium-button-target:active {
+    opacity: 0.5;
+}
+.go-premium-body-ok {
+    background-color: #19f3cd;
+    border: 1px solid #19f3cd;
+}
+.go-premium-body-cancel {
+    background-color: #fff;
+    border: 1px solid #000;
+}
+
+
+
+.mobile-input {
+    background-color: transparent;
+    border: 0 solid;
+    border-bottom-width: 1px;
+}
+
+.mobile-input:focus {
+    outline: 0;
+}
+
+.pin-code-digit {
+    text-align: center;
+    outline: none;
+    border: #000 1px solid;
+    margin: 1px;
+    width: 20%;
+}
+
+.pin-code-digit-1 {
+    float:left;
+}
+.pin-code-digit-2 {
+    float:left;
+}
+.pin-code-digit-3 {
+    float:left;
+}
+.pin-code-digit-4 {
+}
+
+
 /**
 ** HOLDING PAGE SECTION
-**/
+**//*
+
 .holding_page_main_container {
     background: url(../imgs/bgs/coming_soon.png) no-repeat;
     background-size: cover;
@@ -133,17 +247,6 @@ body {
     height: 50px;
     margin: 20px auto;
     position: relative;
-}
-
-.pin-code-digit {
-    position:absolute;
-    top:0;
-    bottom:0;
-    text-align: center;
-    outline: none;
-    border: #000 1px solid;
-    font-size: 30px;
-    width: 25%;
 }
 
 .pin-error {
@@ -348,7 +451,9 @@ body {
     }
 }
 
-/* iPhone fix */
+*/
+/* iPhone fix *//*
+
 @media all and (width: 640px) and (height: 960px){
 
     .holding_page_logo {
@@ -382,9 +487,11 @@ body {
 }
 
 
+*/
 /**
 ** GO PREMIUM SECTION - OLD
-**/
+**//*
+
 .go-premium-container {
     padding: 30px;
     height: 100%;
@@ -585,9 +692,11 @@ body {
     position: absolute;
 }
 
+*/
 /**
 ** GO PREMIUM SECTION - NEW
-**/
+**//*
+
 .subscription_root_container {
     background: url(../imgs/bgs/bg.png) no-repeat;
     background-size: cover;
@@ -1336,7 +1445,9 @@ body {
     }
 
     .subscription_premium_logo_device{
-        /*width: 210px;*/
+        */
+/*width: 210px;*//*
+
         height: 46px;
     }
 
@@ -1760,3 +1871,4 @@ body {
         font-size: 25px;
     }
 }
+*/
