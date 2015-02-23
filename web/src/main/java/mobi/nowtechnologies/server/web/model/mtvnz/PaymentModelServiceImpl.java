@@ -23,16 +23,20 @@ class PaymentModelServiceImpl implements PaymentModelService {
         Map<String, Object> model = new HashMap<>();
         List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user);
 
+        Collection<PaymentPolicy> payPal = Collections2.filter(all, new PaymentTypePredicate("PAY_PAL"));
         Collection<PaymentPolicy> iTunes = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.ITUNES_SUBSCRIPTION));
         Collection<PaymentPolicy> vfPsms = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));
 
+        Preconditions.checkState(payPal.size() == 1, "Found not one payment policy for PayPal for community " + user.getCommunity());
         Preconditions.checkState(iTunes.size() == 1, "Found not one payment policy for iTunes for community " + user.getCommunity());
         Preconditions.checkState(!vfPsms.isEmpty(), "Found not one payment policy for VF SMS for community " + user.getCommunity());
 
         Set<PaymentPolicyDto> sorted = new TreeSet<>(PaymentPolicyDto.convert(vfPsms));
-        Collection<PaymentPolicyDto> iTunesDto = PaymentPolicyDto.convert(iTunes);
+        Collection<PaymentPolicyDto> payPalDtos = PaymentPolicyDto.convert(payPal);
+        Collection<PaymentPolicyDto> iTunesDtos = PaymentPolicyDto.convert(iTunes);
 
-        model.put("iTunesPaymentPolicy", Iterables.getLast(iTunesDto));
+        model.put("payPalPaymentPolicy", Iterables.getLast(payPalDtos));
+        model.put("iTunesPaymentPolicy", Iterables.getLast(iTunesDtos));
         model.put("smsPaymentPolicy", Iterables.getFirst(sorted, null));
         return model;
     }

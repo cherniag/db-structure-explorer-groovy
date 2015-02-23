@@ -3,6 +3,8 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<jsp:include page="../../get_listening.jsp">
-    <jsp:param name="callingPage" value="payments_inapp" />
-</jsp:include>
+Premium :)
+
+<a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="returnToApp();">
+    <span><s:message code='button.get.listening.title' /></span>
+</a>

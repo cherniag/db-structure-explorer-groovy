@@ -11,18 +11,19 @@
                 premium
             </c:when>
             <c:otherwise>
-                not premium
+                <jsp:include page="subscribe/start_ios.jsp">
+                    <jsp:param name="callingPage" value="payments_inapp" />
+                </jsp:include>
             </c:otherwise>
         </c:choose>
     </c:when>
     <c:otherwise>
-        NOT IOS
         <c:choose>
             <c:when test="${paymentsPage.subscriptionInfo.premium}">
                 premium
             </c:when>
             <c:otherwise>
-                <jsp:include page="subscribe.jsp">
+                <jsp:include page="subscribe/start_not_ios.jsp">
                     <jsp:param name="callingPage" value="payments_inapp" />
                 </jsp:include>
             </c:otherwise>

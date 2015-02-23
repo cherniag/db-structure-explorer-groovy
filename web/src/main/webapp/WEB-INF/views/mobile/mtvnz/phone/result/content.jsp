@@ -9,8 +9,13 @@
             <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:when>
-    <c:when test="${result.connectionProblem}">
+    <c:when test="${result.connectionError}">
         <jsp:include page="nonvf/subscribe-conn-error.jsp">
+            <jsp:param name="callingPage" value="check_phone" />
+        </jsp:include>
+    </c:when>
+    <c:when test="${result.limitReached}">
+        <jsp:include page="nonvf/subscribe-limited-reached.jsp">
             <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:when>

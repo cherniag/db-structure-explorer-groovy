@@ -35,6 +35,8 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
 
         CheckResult checkResult = doCheck(phone);
 
+        model.put("result", checkResult);
+
         logger.info("Result of check {}", checkResult);
 
         if(checkResult.isYes()){
@@ -53,8 +55,6 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
                 smsProvider.send(phone, smsText, smsTitle);
 
                 logger.info("Sms was sent to user id {}", user.getId());
-
-                model.put("result", checkResult);
             } catch (PinCodeException.MaxPinCodesReached maxPinCodesReached) {
                 model.put("result", CheckResult.LIMIT_REACHED);
             }
@@ -84,8 +84,13 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
             return this == YES;
         }
 
-        public boolean isConnectionProblem() {
+        public boolean isConnectionError() {
             return this == CONN_ERROR;
         }
+
+        public boolean isLimitReached() {
+            return this == LIMIT_REACHED;
+        }
+
     }
 }

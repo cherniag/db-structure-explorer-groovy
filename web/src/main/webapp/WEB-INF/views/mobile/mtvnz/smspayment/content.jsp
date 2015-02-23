@@ -3,6 +3,6 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-Premium
-
-Get listening
+<jsp:include page="../get_listening.jsp">
+    <jsp:param name="callingPage" value="payments_inapp" />
+</jsp:include>
