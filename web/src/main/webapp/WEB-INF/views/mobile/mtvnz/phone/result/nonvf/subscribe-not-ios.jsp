@@ -6,14 +6,9 @@
 Non VF user.
 
 <a class="go-premium-button go-premium-button-device go-premium-body-button-below go-premium-button-target go-premium-body-ok" href="payments_inapp.html">
-    <span>
-        Pay with PayPal
-    </span>
+    <span><s:message code='button.pay.paypal.title' /></span>
 </a>
 
-
-<a class="go-premium-button go-premium-button-device go-premium-body-button-below go-premium-button-target go-premium-body-cancel" href="#">
-    <span>
-        Back to the App
-    </span>
+<a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
+    <span><s:message code='button.back.to.the.app.title' /></span>
 </a>

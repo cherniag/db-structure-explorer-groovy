@@ -143,6 +143,17 @@ Buttons
 .pin-code-digit-4 {
 }
 
+.pin-error {
+    color: #DE3D16;
+    border: #DE3D16 1px solid;
+}
+
+.pin-error-msg {
+    color: #DE3D16;
+    font-size: 13px;
+    text-align: center;
+}
+
 
 /**
 ** HOLDING PAGE SECTION

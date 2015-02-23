@@ -6,7 +6,7 @@
 <script src="${requestScope.assetsPathWithoutCommunity}scripts/utils.js"></script>
 
 <div>
-    <s:message code='enter.pin.header' arguments="${phone}"/>
+    <s:message code='enter.pin.header' arguments='${phone}'/>
 </div>
 
 <div>

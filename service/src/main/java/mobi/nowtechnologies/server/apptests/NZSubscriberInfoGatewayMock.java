@@ -24,16 +24,22 @@ import java.util.Iterator;
  */
 public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
     public static int notAvailablePrefix = 6;
-    public static int notFoundPrefix = 9;
+    public static int doesNotBelong = 9;
 
     @Override
     public NZSubscriberResult getSubscriberResult(String msisdn) {
-        final String notFoundPrefix = "64" + NZSubscriberInfoGatewayMock.notFoundPrefix;
-        if(msisdn.startsWith(notFoundPrefix)) {
+        final String vodafoneMsisdnPrefix = "64";
+
+        if(!msisdn.startsWith(vodafoneMsisdnPrefix)) {
             throw new SoapFaultClientException(getSoapFaultMessage(NZSubscriberInfoServiceImpl.NOT_FOUND_TOKEN));
         }
 
-        final String notAvailablePrefix = "64" + NZSubscriberInfoGatewayMock.notAvailablePrefix;
+        final String notFoundPrefix = vodafoneMsisdnPrefix + NZSubscriberInfoGatewayMock.doesNotBelong;
+        if(msisdn.startsWith(notFoundPrefix)) {
+            return new NZSubscriberResult("Prepay", "Unknown Operator", "300001121", "Simplepostpay_CCRoam");
+        }
+
+        final String notAvailablePrefix = vodafoneMsisdnPrefix + NZSubscriberInfoGatewayMock.notAvailablePrefix;
         if (msisdn.startsWith(notAvailablePrefix)) {
             throw new SoapFaultClientException(getSoapFaultMessage("Test reason."));
         }

@@ -73,12 +73,12 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
         } catch (SubscriberServiceException.ServiceNotAvailable e) {
             return CheckResult.CONN_ERROR;
         } catch (SubscriberServiceException.MSISDNNotFound e) {
-            return CheckResult.NO;
+            return CheckResult.NOT_VALID;
         }
     }
 
     public static enum CheckResult {
-        YES, NO, CONN_ERROR, LIMIT_REACHED;
+        YES, NO, CONN_ERROR, NOT_VALID, LIMIT_REACHED;
 
         public boolean isYes() {
             return this == YES;
@@ -90,6 +90,10 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
 
         public boolean isLimitReached() {
             return this == LIMIT_REACHED;
+        }
+
+        public boolean isNotValid() {
+            return this == NOT_VALID;
         }
 
     }
