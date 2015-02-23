@@ -28,6 +28,8 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
     SmsServiceFacade smsServiceFacade;
     @Resource
     CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    @Resource
+    PaymentModelServiceImpl paymentModelService;
 
     @Override
     public Map<String, Object> getModel(User user, String phone) {
@@ -60,6 +62,10 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
             }
         }
 
+        if(checkResult.isNo()) {
+            model.putAll(paymentModelService.getModel(user));
+        }
+
         return model;
     }
 
@@ -82,6 +88,10 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
 
         public boolean isYes() {
             return this == YES;
+        }
+
+        public boolean isNo(){
+            return this == NO;
         }
 
         public boolean isConnectionError() {

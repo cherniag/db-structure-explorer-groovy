@@ -61,6 +61,16 @@ public class PaymentPolicyDto implements Comparable<PaymentPolicyDto> {
         return Integer.valueOf(thisPeriodWeight).compareTo(thatPeriodWeight);
     }
 
+    @Override
+    public String toString() {
+        return "PaymentPolicyDto{" +
+                "id=" + id +
+                ", subCost=" + subCost +
+                ", durationUnit=" + durationUnit +
+                ", appStoreProductId='" + appStoreProductId + '\'' +
+                '}';
+    }
+
     public static Collection<PaymentPolicyDto> convert(Collection<PaymentPolicy> paymentPolicies) {
         Collection<PaymentPolicyDto> dtos = new ArrayList<>();
         for (PaymentPolicy paymentPolicy : paymentPolicies) {

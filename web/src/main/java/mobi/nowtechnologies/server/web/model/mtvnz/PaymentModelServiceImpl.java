@@ -23,6 +23,8 @@ class PaymentModelServiceImpl implements PaymentModelService {
         Map<String, Object> model = new HashMap<>();
         List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user);
 
+        logger.info("Found for user id {} policies: {}", user.getId(), PaymentPolicyDto.convert(all));
+
         Collection<PaymentPolicy> payPal = Collections2.filter(all, new PaymentTypePredicate("PAY_PAL"));
         Collection<PaymentPolicy> iTunes = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.ITUNES_SUBSCRIPTION));
         Collection<PaymentPolicy> vfPsms = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));

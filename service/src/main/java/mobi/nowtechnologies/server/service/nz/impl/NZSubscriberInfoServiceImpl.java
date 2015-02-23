@@ -51,7 +51,7 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
             return subscriberInfoRepository.save(nzSubscriberInfo);
         } catch (WebServiceFaultException e) {
             if (NOT_FOUND_TOKEN.equals(e.getMessage())) {
-                log.info("Msisdn not found", e);
+                log.info("Msisdn not found {}", msisdn);
                 throw new SubscriberServiceException.MSISDNNotFound(e.getMessage(), e);
             } else {
                 log.info("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
