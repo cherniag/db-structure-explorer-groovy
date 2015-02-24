@@ -36,6 +36,7 @@ public class ReferralController extends CommonController {
 
     @RequestMapping(method = POST,
             value = {
+                    "**/{community}/{apiVersion:6\\.9}/REFERRALS",
                     "**/{community}/{apiVersion:6\\.8}/REFERRALS",
                     "**/{community}/{apiVersion:6\\.7}/REFERRALS"
             })

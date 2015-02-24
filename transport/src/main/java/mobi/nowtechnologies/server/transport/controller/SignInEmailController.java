@@ -27,6 +27,7 @@ public class SignInEmailController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.9}/SIGN_IN_EMAIL",
             "**/{community}/{apiVersion:6\\.8}/SIGN_IN_EMAIL"
     })
     public ModelAndView applyPromotionByEmailWithOneTimePayment(
@@ -42,7 +43,7 @@ public class SignInEmailController extends CommonController {
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.[0-7]}/SIGN_IN_EMAIL",
-            "**/{community}/{apiVersion:3\\.[6-9]|[4-9]{1}\\.[0-9]{1,3}}/SIGN_IN_EMAIL"
+            "**/{community}/{apiVersion:3\\.[6-9]|[4-5]{1}\\.[0-9]{1,3}}/SIGN_IN_EMAIL"
     })
     public ModelAndView applyPromotionByEmail(
             @RequestParam("USER_TOKEN") String userToken,
