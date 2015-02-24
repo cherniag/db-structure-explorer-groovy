@@ -12,9 +12,7 @@
 
     <bean id="mtvnz.EnterPhoneModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.EnterPhoneModelServiceImpl" />
 
-    <bean id="mtvnz.PaymentModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PaymentModelServiceImpl">
-        <property name="paymentPolicyService" ref="service.PaymentPolicyService"/>
-    </bean>
+    <bean id="mtvnz.PaymentModelService" class="mobi.nowtechnologies.server.web.model.mtvnz.PaymentModelServiceImpl"/>
 
     <alias name="service.vfPaymentService" alias="mtvnz.PSMSPaymentService" />
 

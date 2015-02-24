@@ -5,10 +5,18 @@
 
 <c:choose>
     <c:when test="${paymentsPage.subscriptionInfo.ios}">
-        IOS
         <c:choose>
             <c:when test="${paymentsPage.subscriptionInfo.premium}">
-                premium
+                <c:choose>
+                    <c:when test="${vf}">
+                        Vodafone Premium IOS
+                    </c:when>
+                    <c:otherwise>
+                        <jsp:include page="unsubscribe/redirectAfter.jsp">
+                            <jsp:param name="callingPage" value="payments_inapp" />
+                        </jsp:include>
+                    </c:otherwise>
+                </c:choose>
             </c:when>
             <c:otherwise>
                 <jsp:include page="subscribe/start_ios.jsp">
@@ -20,7 +28,14 @@
     <c:otherwise>
         <c:choose>
             <c:when test="${paymentsPage.subscriptionInfo.premium}">
-                premium
+                <c:choose>
+                    <c:when test="${vf}">
+                        Vodafone Premium not IOS
+                    </c:when>
+                    <c:otherwise>
+                        Vodafone Premium not IOS, start to unsubscribe flow
+                    </c:otherwise>
+                </c:choose>
             </c:when>
             <c:otherwise>
                 <jsp:include page="subscribe/start_not_ios.jsp">

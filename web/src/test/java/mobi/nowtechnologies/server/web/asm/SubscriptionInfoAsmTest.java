@@ -15,7 +15,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
@@ -25,9 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -168,6 +167,7 @@ public class SubscriptionInfoAsmTest {
         when(details.isActivated()).thenReturn(true);
         when(user.getCurrentPaymentDetails()).thenReturn(details);
         when(user.hasActivePaymentDetails()).thenReturn(true);
+        when(user.isPremium(now)).thenReturn(true);
 
         return user;
     }
@@ -179,6 +179,7 @@ public class SubscriptionInfoAsmTest {
         when(user.getCurrentPaymentDetails()).thenReturn(null);
         when(user.getLastSubscribedPaymentSystem()).thenReturn(PaymentDetails.ITUNES_SUBSCRIPTION);
         when(user.isSubscribedStatus()).thenReturn(true);
+        when(user.isPremium(now)).thenReturn(true);
 
         return user;
     }

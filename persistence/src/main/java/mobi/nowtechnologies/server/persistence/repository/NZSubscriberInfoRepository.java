@@ -12,4 +12,6 @@ public interface NZSubscriberInfoRepository extends JpaRepository<NZSubscriberIn
     @Query(value = "select si from NZSubscriberInfo si where si.msisdn = ?1")
     NZSubscriberInfo findSubscriberInfoByMsisdn(String msisdn);
 
+    @Query(value = "select si from NZSubscriberInfo si where si.userId = ?1")
+    NZSubscriberInfo findSubscriberInfoByUserId(int userId);
 }

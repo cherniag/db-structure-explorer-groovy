@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.service.nz.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
+import mobi.nowtechnologies.server.persistence.domain.NZProviderType;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
@@ -26,7 +27,7 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
     public boolean belongs(String msisdn) throws SubscriberServiceException.ServiceNotAvailable, SubscriberServiceException.MSISDNNotFound {
         log.info("Checking if {} is Vodafone msisdn.", msisdn);
         NZSubscriberInfo nzSubscriberInfo = refreshSubscriberInfo(msisdn);
-        boolean isVodafone = "Vodafone".equals(nzSubscriberInfo.getProviderName());
+        boolean isVodafone = nzSubscriberInfo.getProviderType() == NZProviderType.VODAFONE;
         log.info("{} is{} Vodafone msisdn.", msisdn, isVodafone ? "" : " not");
         return isVodafone;
     }

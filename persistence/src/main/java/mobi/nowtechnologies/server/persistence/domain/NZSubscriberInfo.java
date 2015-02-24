@@ -96,6 +96,10 @@ public class NZSubscriberInfo {
         this.billingAccountName = billingAccountName;
     }
 
+    public NZProviderType getProviderType() {
+        return NZProviderType.of(getProviderName());
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
