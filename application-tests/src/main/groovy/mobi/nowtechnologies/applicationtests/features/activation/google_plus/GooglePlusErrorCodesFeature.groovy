@@ -7,7 +7,6 @@ import cucumber.api.java.en.When
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word
-import mobi.nowtechnologies.applicationtests.services.CommonAssertionsService
 import mobi.nowtechnologies.applicationtests.services.RequestFormat
 import mobi.nowtechnologies.applicationtests.services.db.UserDbService
 import mobi.nowtechnologies.applicationtests.services.device.UserDeviceDataService
@@ -18,11 +17,13 @@ import mobi.nowtechnologies.server.persistence.domain.User
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.unitils.core.util.ObjectFormatter
+import org.unitils.reflectionassert.ReflectionComparatorMode
 
 import javax.annotation.Resource
 import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.assertEquals
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals
 /**
  * Created by kots on 9/15/2014.
  */
@@ -40,10 +41,6 @@ class GooglePlusErrorCodesFeature {
 
     @Resource
     RunnerService runnerService;
-
-    @Resource
-    CommonAssertionsService assertionsService;
-
     Runner runner;
 
     List<UserDeviceData> currentUserDevices
@@ -64,7 +61,7 @@ class GooglePlusErrorCodesFeature {
             def user = userDbService.findUser(phoneState, it)
 
             //dirty hack to fetch all lazy deps without customizing hibernate queries of manually checking data
-            new ObjectFormatter(Integer.MAX_VALUE).format(user)
+            new ObjectFormatter().format(user)
             //end of dirty hack
 
             users.put(it, user)
@@ -98,8 +95,7 @@ class GooglePlusErrorCodesFeature {
             def phoneState = deviceSet.getPhoneState(it)
             def user = userDbService.findUser(phoneState, it)
             def oldUser = users[it]
-
-            assertionsService.checkUserWasNotChanged(oldUser, user);
+            assertReflectionEquals(oldUser, user, ReflectionComparatorMode.LENIENT_ORDER)
         }
     }
 
