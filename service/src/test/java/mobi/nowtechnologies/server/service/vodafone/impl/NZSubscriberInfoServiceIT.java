@@ -47,19 +47,6 @@ public class NZSubscriberInfoServiceIT {
         assertEquals("Simplepostpay_CCRoam", savedSubscriberInfo.getBillingAccountName());
     }
 
-    @Test
-    public void testConfirm() throws Exception {
-        final int userId = 777;
-        final String msisdn = "642101838801";
-
-        nzService.belongs(msisdn);
-        nzService.confirm(userId, msisdn);
-
-        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
-
-        assertEquals(userId, savedSubscriberInfo.getUserId().intValue());
-    }
-
     @Test(expected = SubscriberServiceException.ServiceNotAvailable.class)
     public void testNZServiceFault() throws Exception {
         nzService.belongs("64" + NZSubscriberInfoGatewayMock.notAvailablePrefix + "101838801");

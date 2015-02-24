@@ -1,11 +1,15 @@
 package mobi.nowtechnologies.server.web.controller;
 
+import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
 import mobi.nowtechnologies.server.web.model.PinModelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +26,10 @@ public class PinController extends CommonController {
     UserRepository userRepository;
     @Resource
     PinCodeService pinCodeService;
+    @Resource
+    NZSubscriberInfoRepository subscriberInfoRepository;
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping(value = {"pin/check"}, method = RequestMethod.GET)
     public ModelAndView enter() {
@@ -60,6 +68,8 @@ public class PinController extends CommonController {
         modelAndView.addObject("phone", phone);
 
         if(result) {
+            confirm(user.getId(), phone);
+
             PinModelService pinModelService = getModelService(user);
             if(pinModelService != null) {
                 modelAndView.addAllObjects(pinModelService.getModel(user));
@@ -69,9 +79,19 @@ public class PinController extends CommonController {
         return modelAndView;
     }
 
+
+
     //
     // Internal staff
     //
+
+    private NZSubscriberInfo confirm(int userId, String msisdn) {
+        logger.info("confirm msisdn {} for {}", msisdn, userId);
+        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
+        nzSubscriberInfo.setUserId(userId);
+        return subscriberInfoRepository.saveAndFlush(nzSubscriberInfo);
+    }
+
     private PinModelService getModelService(User user) {
         return communityServiceFactory.find(user.getCommunity(), PinModelService.class);
     }

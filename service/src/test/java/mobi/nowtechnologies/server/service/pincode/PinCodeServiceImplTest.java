@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
 import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import mobi.nowtechnologies.server.service.pincode.impl.PinCodeServiceImpl;
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -97,8 +98,8 @@ public class PinCodeServiceImplTest {
         User user = new User();
         user.setId(DEFAULT_USER.getId() + 1);
 
-        thrown.expect(PinCodeException.NotValid.class);
-        pinCodeService.attempt(user, pinCode.getCode());
+        // thrown.expect(PinCodeException.NotValid.class);
+        Assert.assertFalse(pinCodeService.attempt(user, pinCode.getCode()));
     }
 
 

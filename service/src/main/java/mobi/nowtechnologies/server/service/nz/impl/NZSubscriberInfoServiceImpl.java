@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.ws.client.WebServiceFaultException;
 
@@ -30,15 +29,6 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
         boolean isVodafone = "Vodafone".equals(nzSubscriberInfo.getProviderName());
         log.info("{} is{} Vodafone msisdn.", msisdn, isVodafone ? "" : " not");
         return isVodafone;
-    }
-
-    @Override
-    @Transactional
-    public NZSubscriberInfo confirm(int userId, String msisdn) {
-        log.info("confirm msisdn {} for {}", msisdn, userId);
-        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
-        nzSubscriberInfo.setUserId(userId);
-        return nzSubscriberInfo;
     }
 
     private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws SubscriberServiceException.MSISDNNotFound, SubscriberServiceException.ServiceNotAvailable {
