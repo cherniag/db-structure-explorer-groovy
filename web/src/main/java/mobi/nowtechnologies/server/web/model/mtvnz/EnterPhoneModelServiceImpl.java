@@ -57,8 +57,9 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
                 smsProvider.send(phone, smsText, smsTitle);
 
                 logger.info("Sms was sent to user id {}", user.getId());
-            } catch (PinCodeException.MaxPinCodesReached maxPinCodesReached) {
+            } catch (PinCodeException.MaxGenerationReached maxGenerationReached) {
                 model.put("result", CheckResult.LIMIT_REACHED);
+                model.put("check", false);
             }
         }
 

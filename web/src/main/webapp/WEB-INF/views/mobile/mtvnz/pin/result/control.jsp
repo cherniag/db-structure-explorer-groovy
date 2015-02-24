@@ -20,42 +20,45 @@
     <input class="pin-code-digit pin-code-digit-4" type="text" maxlength="1"  />
 </div>
 
+<c:if test="${check == false}">
+    <s:message code="enter.pin.error.notValid" />
+</c:if>
+<c:if test="${not empty maxAttemptsReached}">
+    <s:message code="enter.pin.error.maxAttempts" />
+</c:if>
+
+
 <script>
     $(document).ready(function() {
         var pinControl = new PinCodeControl("pinCodeId");
         enterPin = function() {
-            window.location = "pin/result?pin=" + pinControl.getValue();
+            window.location = "pin/result?pin=" + pinControl.getValue() + "&phone=" + ${phone};
         };
     });
 
     function resendCode() {
-        alert('Resend code');
+        window.location = "pin/resend?phone=" + ${phone};
     }
 
 </script>
 
-<c:if test="${not empty showEnterButton}">
-    <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="enterPin()">
-        <span>
-            <s:message code='button.enter.title'/>
-        </span>
-    </a>
-</c:if>
+<c:choose>
+    <c:when test="${empty maxAttemptsReached}">
+        <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="enterPin()">
+            <span>
+                <s:message code='button.enter.title'/>
+            </span>
+        </a>
+        <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="resendCode()">
+            <span>
+                <s:message code='button.resend.code.title'/>
+            </span>
+        </a>
+    </c:when>
+    <c:otherwise>
+        <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
+            <span><s:message code='button.back.to.the.app.title' /></span>
+        </a>
+    </c:otherwise>
+</c:choose>
 
-<c:if test="${not empty showResendCodeButton}">
-    <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="resendCode()">
-        <span>
-            <s:message code='button.resend.code.title'/>
-        </span>
-    </a>
-</c:if>
-
-<c:if test="${not empty showBackToTheAppCodeButton}">
-    <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
-        <span><s:message code='button.back.to.the.app.title' /></span>
-    </a>
-</c:if>
-
-<c:if test="${not empty error}">
-    ${error}
-</c:if>
