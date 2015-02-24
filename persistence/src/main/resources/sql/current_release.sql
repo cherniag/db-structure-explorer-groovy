@@ -124,3 +124,24 @@ drop temporary table users_on_ios_2;
 drop temporary table users_on_ios;
 
 COMMIT;
+
+
+-- START  http://jira.musicqubed.com/browse/SRV-560: [SERVER] Set up payment options for mtv1 community.
+SET AUTOCOMMIT=0;
+START TRANSACTION;
+
+SET @communityId = (SELECT id FROM tb_communities WHERE name='mtv1');
+
+UPDATE tb_paymentPolicy set online=0 where communityID=@communityID;
+INSERT INTO tb_paymentPolicy
+(communityID,  subWeeks, subCost, paymentType,          payment_policy_type, shortCode, currencyIso, app_store_product_id,                                advanced_payment_seconds, after_next_sub_payment_seconds, online, duration, duration_unit) VALUES
+(@communityId, 0,        0.79,    'PAY_PAL',            'RECURRENT',         '',        'GBP',       null,                                                0,                        0,                              1,      1,        'WEEKS'),
+(@communityId, 0,        7.99,    'PAY_PAL',            'ONETIME',           '',        'GBP',       null,                                                0,                        0,                              1,      3,        'MONTHS'),
+(@communityId, 0,        12.99,   'PAY_PAL',            'ONETIME',           '',        'GBP',       null,                                                0,                        0,                              1,      6,        'MONTHS'),
+(@communityId, 0,        0.79,    'iTunesSubscription', 'RECURRENT',         '',        'GBP',       'com.musicqubed.ios.mtv1.subscription.weekly.1',     0,                        0,                              1,      1,        'WEEKS'),
+(@communityId, 0,        7.99,    'iTunesSubscription', 'ONETIME',           '',        'GBP',       'com.musicqubed.ios.mtv1.onetime.1'            ,     0,                        0,                              1,      3,        'MONTHS'),
+(@communityId, 0,        12.99,   'iTunesSubscription', 'ONETIME',           '',        'GBP',       'com.musicqubed.ios.mtv1.onetime.2'            ,     0,                        0,                              1,      6,        'MONTHS');
+
+COMMIT;
+SET AUTOCOMMIT = 1;
+-- END http://jira.musicqubed.com/browse/SRV-560: [SERVER] Set up payment options for mtv1 community.
