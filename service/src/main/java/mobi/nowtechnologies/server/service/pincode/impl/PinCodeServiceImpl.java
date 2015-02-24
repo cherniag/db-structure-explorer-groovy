@@ -11,6 +11,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.util.Assert;
 
 import java.util.Date;
@@ -54,7 +55,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
 
         Date selectFromDate = DateUtils.addSeconds(new Date(), -expirationSeconds);
 
-        List<PinCode> userLatestPinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(user.getId(), selectFromDate);
+        List<PinCode> userLatestPinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(user.getId(), selectFromDate, new PageRequest(0,1));
 
         if (CollectionUtils.isEmpty(userLatestPinCodes)) {
             throw new PinCodeException.NotFound("Pin code not found or has been expired.");

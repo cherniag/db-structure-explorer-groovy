@@ -16,14 +16,13 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -93,7 +92,7 @@ public class PinCodeServiceImplTest {
     public void testPinCodeServiceCheckNotFound() throws Exception {
         final PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
 
-        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(asList(pinCode));
+        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class), any(Pageable.class))).thenReturn(asList(pinCode));
 
         User user = new User();
         user.setId(DEFAULT_USER.getId() + 1);
@@ -108,7 +107,7 @@ public class PinCodeServiceImplTest {
         final PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
         ReflectionTestUtils.setField(pinCode, "attempts", maxAttempts);
 
-        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(asList(pinCode));
+        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class), any(Pageable.class))).thenReturn(asList(pinCode));
 
         thrown.expect(PinCodeException.MaxAttemptsReached.class);
         pinCodeService.check(DEFAULT_USER, pinCode.getCode());
@@ -118,7 +117,7 @@ public class PinCodeServiceImplTest {
     @Test
     public void testPinCodeServiceCheckTrue() throws Exception {
         final PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
-        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(asList(pinCode));
+        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class), any(Pageable.class))).thenReturn(asList(pinCode));
 
         boolean result = pinCodeService.check(DEFAULT_USER, pinCode.getCode());
         assertTrue(result);
@@ -128,7 +127,7 @@ public class PinCodeServiceImplTest {
     @Test
     public void testPinCodeServiceCheckFalse() throws Exception {
         final PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
-        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(asList(pinCode));
+        when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class), any(Pageable.class))).thenReturn(asList(pinCode));
 
         boolean result = pinCodeService.check(DEFAULT_USER, "WRONG_CODE");
         assertFalse(result);

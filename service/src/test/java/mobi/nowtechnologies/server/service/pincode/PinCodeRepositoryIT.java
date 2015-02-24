@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.repository.AbstractRepositoryIT;
 import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.annotation.Resource;
@@ -34,11 +35,11 @@ public class PinCodeRepositoryIT extends AbstractRepositoryIT {
 
         savePinCode(1, "888", 2, true);  //2 minutes ago and already entered
 
-        savePinCode(1, "999", 8, true);  //8 minutes ago
+        savePinCode(1, "999", 8, true);  //8 minutes ago and already entered
 
-        List<PinCode> pinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(1, new Date(System.currentTimeMillis() - 7 * 60 * 1000));
+        List<PinCode> pinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(1, new Date(System.currentTimeMillis() - 7 * 60 * 1000), new PageRequest(0,1));
 
-        assertEquals(3, pinCodes.size());
+        assertEquals(1, pinCodes.size());
 
         PinCode pinCode = pinCodes.get(0);
 
