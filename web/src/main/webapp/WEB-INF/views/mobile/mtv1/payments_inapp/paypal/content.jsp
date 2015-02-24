@@ -6,7 +6,7 @@
 <c:choose>
     <c:when test="${result != null && result != 'fail'}">
         <c:choose>
-            <c:when test="${currentPaymentPolicyType == 'ONETIME'}">
+            <c:when test="${currentPaymentPolicy.paymentPolicyType == 'ONETIME'}">
                 <jsp:include page="pass/subcription_success.jsp"/>
             </c:when>
             <c:otherwise>

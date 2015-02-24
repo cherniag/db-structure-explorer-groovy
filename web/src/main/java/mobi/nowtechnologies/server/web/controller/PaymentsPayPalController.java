@@ -66,7 +66,7 @@ public class PaymentsPayPalController extends CommonController {
             }
             modelAndModel.addObject(REQUEST_PARAM_PAYPAL, result);
             PaymentPolicyDto dto = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
-            modelAndModel.addObject("currentPaymentPolicyType", dto.getPaymentPolicyType());
+            modelAndModel.addObject("currentPaymentPolicy", dto);
         }else{
             PaymentPolicyDto paymentPolicy = paymentPolicyService.getPaymentPolicyDto(paymentPolicyId);
             modelAndModel.addObject(PaymentPolicyDto.PAYMENT_POLICY_DTO, paymentPolicy);
