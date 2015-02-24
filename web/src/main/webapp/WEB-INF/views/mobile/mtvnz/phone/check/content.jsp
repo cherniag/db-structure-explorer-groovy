@@ -16,7 +16,7 @@
     <input type="text" id="phone" class="mobile-input" placeholder="<s:message code="enter.phone.hint" />" />
 
     <c:if test="${not empty error}">
-        <div class="pin-error-msg">
+        <div class="phone-error-msg">
         ${error}
         </div>
     </c:if>

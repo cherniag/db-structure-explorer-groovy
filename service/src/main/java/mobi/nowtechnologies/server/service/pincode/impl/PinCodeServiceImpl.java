@@ -31,7 +31,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
     private int limitCount;
 
     @Override
-    public PinCode generate(User user, int digitsCount) throws PinCodeException.MaxPinCodesReached {
+    public PinCode generate(User user, int digitsCount) throws PinCodeException.MaxGenerationReached {
         log.info("Generating new {}-digit pin code for user {}", digitsCount, user.getId());
 
         Date selectFromDate = DateUtils.addSeconds(new Date(), -limitSeconds);
@@ -39,7 +39,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
         int allUserPinCodesCount = pinCodeRepository.countUserPinCodes(user.getId(), selectFromDate);
 
         if (allUserPinCodesCount >= limitCount) {
-            throw new PinCodeException.MaxPinCodesReached(String.format("Max count(%s) of pin codes for user per period(%s seconds) has been reached.", limitCount, limitSeconds));
+            throw new PinCodeException.MaxGenerationReached(String.format("Max count(%s) of pin codes for user per period(%s seconds) has been reached.", limitCount, limitSeconds));
         }
 
         PinCode pinCode = new PinCode(user.getId(), generateValue(digitsCount));
@@ -49,7 +49,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
     }
 
     @Override
-    public boolean check(User user, String pinCodeStr) throws PinCodeException.NotFound, PinCodeException.MaxAttemptsReached {
+    public boolean attempt(User user, String pinCodeStr) throws PinCodeException.MaxAttemptsReached {
         log.info("Checking pin code {} for user {}", pinCodeStr, user.getId());
 
         Date selectFromDate = DateUtils.addSeconds(new Date(), -expirationSeconds);
@@ -57,7 +57,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
         List<PinCode> userLatestPinCodes = pinCodeRepository.findPinCodesByUserAndCreationTime(user.getId(), selectFromDate);
 
         if (CollectionUtils.isEmpty(userLatestPinCodes)) {
-            throw new PinCodeException.NotFound("Pin code not found or has been expired.");
+            return false;
         }
 
         PinCode userLatestPinCode = userLatestPinCodes.get(0);

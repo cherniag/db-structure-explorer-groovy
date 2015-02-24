@@ -7,8 +7,8 @@ package mobi.nowtechnologies.server.service.exception;
 public class PinCodeException {
 
     //Pin code not found or has been expired
-    public static class NotFound extends Exception {
-        public NotFound(String msg) {
+    public static class NotValid extends Exception {
+        public NotValid(String msg) {
             super(msg);
         }
     }
@@ -21,8 +21,8 @@ public class PinCodeException {
     }
 
     //User has reached max pin codes per period
-    public static class MaxPinCodesReached extends Exception {
-        public MaxPinCodesReached(String msg) {
+    public static class MaxGenerationReached extends Exception {
+        public MaxGenerationReached(String msg) {
             super(msg);
         }
     }

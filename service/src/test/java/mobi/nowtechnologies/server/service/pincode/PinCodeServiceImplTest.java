@@ -69,7 +69,7 @@ public class PinCodeServiceImplTest {
     @Test
     public void testPinCodeServiceMaxPinCodesReached() throws Exception {
         when(pinCodeRepository.countUserPinCodes(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(limitCount);
-        thrown.expect(PinCodeException.MaxPinCodesReached.class);
+        thrown.expect(PinCodeException.MaxGenerationReached.class);
         pinCodeService.generate(DEFAULT_USER, DEFAULT_CODE_LENGTH);
     }
 
@@ -98,8 +98,8 @@ public class PinCodeServiceImplTest {
         User user = new User();
         user.setId(DEFAULT_USER.getId() + 1);
 
-        thrown.expect(PinCodeException.NotFound.class);
-        pinCodeService.check(user, pinCode.getCode());
+        thrown.expect(PinCodeException.NotValid.class);
+        pinCodeService.attempt(user, pinCode.getCode());
     }
 
 
@@ -111,7 +111,7 @@ public class PinCodeServiceImplTest {
         when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(asList(pinCode));
 
         thrown.expect(PinCodeException.MaxAttemptsReached.class);
-        pinCodeService.check(DEFAULT_USER, pinCode.getCode());
+        pinCodeService.attempt(DEFAULT_USER, pinCode.getCode());
     }
 
 
@@ -120,7 +120,7 @@ public class PinCodeServiceImplTest {
         final PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
         when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(asList(pinCode));
 
-        boolean result = pinCodeService.check(DEFAULT_USER, pinCode.getCode());
+        boolean result = pinCodeService.attempt(DEFAULT_USER, pinCode.getCode());
         assertTrue(result);
     }
 
@@ -130,7 +130,7 @@ public class PinCodeServiceImplTest {
         final PinCode pinCode = createPinCode(DEFAULT_USER, DEFAULT_CODE_LENGTH, new Date(), false);
         when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(asList(pinCode));
 
-        boolean result = pinCodeService.check(DEFAULT_USER, "WRONG_CODE");
+        boolean result = pinCodeService.attempt(DEFAULT_USER, "WRONG_CODE");
         assertFalse(result);
     }
 
