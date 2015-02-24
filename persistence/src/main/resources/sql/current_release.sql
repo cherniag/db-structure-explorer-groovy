@@ -145,3 +145,24 @@ INSERT INTO tb_paymentPolicy
 COMMIT;
 SET AUTOCOMMIT = 1;
 -- END http://jira.musicqubed.com/browse/SRV-560: [SERVER] Set up payment options for mtv1 community.
+
+-- SRV-590
+set AUTOCOMMIT=0;
+START TRANSACTION;
+
+select @userGroupId:= c.id from tb_communities c join tb_userGroups ug on ug.community = c.id where c.name = 'mtvnz';
+
+update tb_promotions p join tb_promoCode pC on p.i=pC.promotionId set isActive=false where userGroup=@userGroupId and pC.code='mtvnz.2weeks.promo.audio';
+
+INSERT INTO tb_promotions
+(description               , numUsers, maxUsers, startDate                            , endDate                              , isActive, freeWeeks, subWeeks, userGroup   , type       , showPromotion, label                     , is_white_listed) VALUES
+('mtvnz.4weeks.promo.audio', 0       , 0       , UNIX_TIMESTAMP('2015-03-03 11:00:00'), UNIX_TIMESTAMP('2020-12-30 11:00:00'), TRUE    , 4        , 0       , @userGroupId, 'PromoCode', 0            , 'mtvnz.4weeks.promo.audio', FALSE);
+
+INSERT INTO tb_promoCode
+(code         , promotionId, media_type)
+select p.label, i          , 'AUDIO' from tb_promotions p where p.userGroup=@userGroupId and p.label in ('mtvnz.4weeks.promo.audio');
+
+commit;
+
+SET AUTOCOMMIT = 1;
+-- End of SRV-590
