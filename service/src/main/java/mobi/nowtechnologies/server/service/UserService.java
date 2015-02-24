@@ -46,6 +46,7 @@ import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -54,6 +55,7 @@ import java.util.concurrent.Future;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.Math.max;
+import static mobi.nowtechnologies.common.util.DateTimeUtils.newDate;
 import static mobi.nowtechnologies.server.builder.PromoRequestBuilder.PromoRequest;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.VF_PSMS_TYPE;
@@ -70,7 +72,6 @@ import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
 import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
-import static mobi.nowtechnologies.common.util.DateTimeUtils.newDate;
 import static mobi.nowtechnologies.server.shared.util.EmailValidator.isNotEmail;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.EMPTY;
@@ -94,7 +95,6 @@ public class UserService {
     private PaymentDetailsService paymentDetailsService;
     private MigHttpService migHttpService;
     private CountryByIpService countryByIpService;
-    private UserDeviceDetailsService userDeviceDetailsService;
     private CommunityService communityService;
     private MailService mailService;
 
@@ -120,6 +120,8 @@ public class UserService {
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
     private DeviceUserDataService deviceUserDataService;
     private AppsFlyerDataService appsFlyerDataService;
+
+    private UrbanAirshipTokenService urbanAirshipTokenService;
 
     private MergeResult checkAndMerge(User user, User mobileUser) {
         boolean mergeIsDone = false;
@@ -429,7 +431,7 @@ public class UserService {
     public User mergeUser(User oldUser, User tempUser) {
         LOGGER.info("Attempt to merge old user [{}] with current user [{}]. The old user deviceUID should be updated with current user deviceUID. Current user should be removed and replaced on old user", oldUser, tempUser);
 
-        userDeviceDetailsService.removeUserDeviceDetails(tempUser);
+        urbanAirshipTokenService.mergeToken(tempUser, oldUser);
 
         deviceUserDataService.removeDeviceUserData(oldUser);
         deviceUserDataService.removeDeviceUserData(tempUser);
@@ -1515,8 +1517,8 @@ public class UserService {
         this.deviceService = deviceService;
     }
 
-    public void setUserDeviceDetailsService(UserDeviceDetailsService userDeviceDetailsService) {
-        this.userDeviceDetailsService = userDeviceDetailsService;
+    public void setUrbanAirshipTokenService(UrbanAirshipTokenService urbanAirshipTokenService) {
+        this.urbanAirshipTokenService = urbanAirshipTokenService;
     }
 
     public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {

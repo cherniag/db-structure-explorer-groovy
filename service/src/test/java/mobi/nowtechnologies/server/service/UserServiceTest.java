@@ -129,7 +129,7 @@ public class UserServiceTest {
     private O2UserDetailsUpdater o2UserDetailsUpdaterMock;
     private OtacValidationService otacValidationServiceMock;
     private UserGroupRepository userGroupRepositoryMock;
-    private UserDeviceDetailsService userDeviceDetailsServiceMock;
+	private UrbanAirshipTokenService urbanAirshipTokenServiceMock;
     private TaskService taskService;
 
 	@Mock AutoOptInRuleService autoOptInRuleServiceMock;
@@ -163,7 +163,7 @@ public class UserServiceTest {
 
         o2UserDetailsUpdaterMock = PowerMockito.mock(O2UserDetailsUpdater.class);
         userGroupRepositoryMock = PowerMockito.mock(UserGroupRepository.class);
-        userDeviceDetailsServiceMock = PowerMockito.mock(UserDeviceDetailsService.class);
+		urbanAirshipTokenServiceMock = PowerMockito.mock(UrbanAirshipTokenService.class);
         deviceUserDataService = PowerMockito.mock(DeviceUserDataService.class);
         taskService = PowerMockito.mock(TaskService.class);
 
@@ -172,7 +172,7 @@ public class UserServiceTest {
         userServiceSpy.setUserRepository(userRepositoryMock);
         userServiceSpy.setCountryByIpService(countryByIpServiceMock);
         userServiceSpy.setPaymentDetailsService(paymentDetailsServiceMock);
-        userServiceSpy.setUserDeviceDetailsService(userDeviceDetailsServiceMock);
+		userServiceSpy.setUrbanAirshipTokenService(urbanAirshipTokenServiceMock);
         userServiceSpy.setPromotionService(promotionServiceMock);
         userServiceSpy.setUserDao(userDaoMock);
         userServiceSpy.setCountryAppVersionService(countryAppVersionServiceMock);
@@ -189,7 +189,6 @@ public class UserServiceTest {
         userServiceSpy.setO2UserDetailsUpdater(o2UserDetailsUpdaterMock);
         userServiceSpy.setOtacValidationService(otacValidationServiceMock);
         userServiceSpy.setUserGroupRepository(userGroupRepositoryMock);
-        userServiceSpy.setUserDeviceDetailsService(userDeviceDetailsServiceMock);
 
         userServiceSpy.setUserDetailsUpdater(o2UserDetailsUpdaterMock);
         userServiceSpy.setMobileProviderService(o2ClientServiceMock);
@@ -3081,7 +3080,7 @@ public class UserServiceTest {
         User oldUser = new User().withDeviceUID("d1").withDeviceModel("dm1").withDeviceType(new DeviceType()).withIpAddress("ip1");
         User currentUser = new User().withDeviceUID("d2").withDeviceModel("dm2").withDeviceType(new DeviceType()).withIpAddress("ip2");
 
-        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
+        Mockito.doNothing().when(urbanAirshipTokenServiceMock).mergeToken(currentUser, oldUser);
         Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
@@ -3096,7 +3095,7 @@ public class UserServiceTest {
         assertThat(actualUser.getDeviceModel(), is(currentUser.getDeviceModel()));
         assertThat(actualUser.getIpAddress(), is(currentUser.getIpAddress()));
 
-        verify(userDeviceDetailsServiceMock, times(1)).removeUserDeviceDetails(currentUser);
+        verify(urbanAirshipTokenServiceMock, times(1)).mergeToken(currentUser, oldUser);
         verify(deviceUserDataService, times(1)).removeDeviceUserData(currentUser);
         verify(deviceUserDataService, times(1)).removeDeviceUserData(oldUser);
         verify(userRepositoryMock, times(1)).deleteUser(currentUser.getId());
@@ -3111,7 +3110,7 @@ public class UserServiceTest {
         User oldUser = null;
         User currentUser = new User().withDeviceUID("b");
 
-        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
+        Mockito.doNothing().when(urbanAirshipTokenServiceMock).mergeToken(currentUser, oldUser);
         Mockito.doReturn(1).when(userRepositoryMock).deleteUser(currentUser.getId());
         Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
@@ -3126,8 +3125,8 @@ public class UserServiceTest {
         User oldUser = new User().withDeviceUID("a");
         User currentUser = null;
 
-        Mockito.doNothing().when(userDeviceDetailsServiceMock).removeUserDeviceDetails(currentUser);
-        Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
+        Mockito.doNothing().when(urbanAirshipTokenServiceMock).mergeToken(currentUser, oldUser);
+		Mockito.doNothing().when(userRepositoryMock).delete(currentUser);
         Mockito.doReturn(oldUser).when(userRepositoryMock).save(oldUser);
         Mockito.doReturn(new AccountLog()).when(accountLogServiceMock).logAccountMergeEvent(oldUser, currentUser);
 

@@ -40,6 +40,20 @@ public class AccountCheckHttpService extends AbstractHttpService {
         return execute(parameters, deviceData, format);
     }
 
+    public AccountCheckDto accountCheckWithUrbanAirshipToken(UserDeviceData deviceData,
+                                                             String userName,
+                                                             String storedUserToken,
+                                                             RequestFormat format,
+                                                             String urbanAirshipToken) {
+        Assert.hasText(userName);
+        Assert.hasText(storedUserToken);
+
+        MultiValueMap<String, String> parameters = createCommonParameters(userName, storedUserToken);
+        parameters.add("UA_TOKEN", urbanAirshipToken);
+
+        return execute(parameters, deviceData, format);
+    }
+
     //
     // Internals
     //

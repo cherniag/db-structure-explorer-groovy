@@ -6,10 +6,7 @@ import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.UserStatus;
-import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
-import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
-import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.*;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.junit.Test;
@@ -23,6 +20,8 @@ import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
 import static mobi.nowtechnologies.server.transport.controller.core.CommonController.OAUTH_REALM_USERS;
 import static mobi.nowtechnologies.server.transport.controller.core.CommonController.WWW_AUTHENTICATE_HEADER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,6 +36,9 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
 
     @Resource(name = "communityRepository")
     private CommunityRepository communityRepository;
+
+    @Resource
+    private UrbanAirshipTokenRepository urbanAirshipTokenRepository;
 
     @Resource
     private ReactivationUserInfoRepository reactivationUserInfoRepository;
@@ -99,6 +101,34 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT{
                 .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS"))
                 .andExpect(jsonPath("$.response.data[0].user.oneTimePayment").value(true));
 
+    }
+
+    @Test
+    public void testAccCheckUrbanAirshipTokenIsStored() throws Exception {
+        String userName = "+447111111114";
+        String apiVersion = "6.9";
+        String communityUrl = "o2";
+        String timestamp = "2011_12_26_07_04_23";
+        String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
+        String userToken = Utils.createTimestampToken(storedToken, timestamp);
+        String urbanAirshipToken = "test-urban-airship-token";
+
+        User user = userService.findByNameAndCommunity(userName, communityUrl);
+        setUserSelectedCharts(user, 5);
+
+        mockMvc.perform(
+                post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json")
+                        .param("COMMUNITY_NAME", communityUrl)
+                        .param("USER_NAME", userName)
+                        .param("USER_TOKEN", userToken)
+                        .param("TIMESTAMP", timestamp)
+                        .param("UA_TOKEN", urbanAirshipToken)
+        )
+                .andExpect(status().isOk());
+
+        UrbanAirshipToken tokenFromDB = urbanAirshipTokenRepository.findDataByUserId(user.getId());
+
+        assertEquals(tokenFromDB.getToken(), urbanAirshipToken);
     }
 
     @Test

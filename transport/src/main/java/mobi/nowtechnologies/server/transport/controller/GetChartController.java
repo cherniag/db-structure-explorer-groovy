@@ -47,6 +47,7 @@ public class GetChartController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = {
+            "**/{community}/{apiVersion:6\\.9}/GET_CHART",
             "**/{community}/{apiVersion:6\\.8}/GET_CHART"
     })
     public ModelAndView getChartV68(

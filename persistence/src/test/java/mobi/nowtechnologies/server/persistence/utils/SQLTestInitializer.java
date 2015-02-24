@@ -44,6 +44,9 @@ public class SQLTestInitializer {
     @Resource
     private AppsFlyerDataRepository appsFlyerDataRepository;
 
+    @Resource
+    private UrbanAirshipTokenRepository urbanAirshipTokenRepository;
+
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
     }
@@ -100,6 +103,7 @@ public class SQLTestInitializer {
         }
         chartRepository.delete(charts);
 
+        urbanAirshipTokenRepository.deleteAll();
         appsFlyerDataRepository.deleteAll();
         drmRepository.deleteAll();
         accountLogRepository.deleteAll();

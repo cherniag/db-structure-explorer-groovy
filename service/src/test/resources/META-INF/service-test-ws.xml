@@ -28,9 +28,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="service.PaymentService" class="java.lang.Object" />
     <bean id="service.FacebookService" class="java.lang.Object" />
     <bean id="service.WeeklyUpdateService" class="java.lang.Object" />
-    <bean id="service.UserDeviceDetailsService" class="java.lang.Object" />
-    <bean id="service.UserIPhoneDetailsService" class="java.lang.Object" />
-    <bean id="service.UserAndroidDetailsService" class="java.lang.Object" />
+    <bean id="service.UrbanAirshipTokenService" class="java.lang.Object" />
     <bean id="mailNotificationAspect" class="java.lang.Object" />
     <bean id="smsNotificationAspect" class="java.lang.Object" />
     <bean id="service.communityService" class="java.lang.Object" />

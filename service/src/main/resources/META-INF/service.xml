@@ -70,6 +70,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <bean id="userDetailsDtoAsm" class="mobi.nowtechnologies.server.assembler.UserDetailsDtoAsm"/>
 
+	<bean id="service.UrbanAirshipTokenService" class="mobi.nowtechnologies.server.service.UrbanAirshipTokenService"/>
+
     <bean name="deepLinkInfoService" class="mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService">
         <property name="mediaRepository" ref="mediaRepository" />
         <property name="messageRepository" ref="messageRepository"/>
@@ -118,7 +120,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		<property name="migHttpService" ref="service.migHttpService" />
 		<property name="messageSource" ref="serviceMessageSource" />
 		<property name="countryByIpService" ref="service.CountryByIpService" />
-		<property name="userDeviceDetailsService" ref="service.UserDeviceDetailsService" />
 		<property name="communityService" ref="service.communityService" />
 		<property name="mailService" ref="service.MailService" />
 		<property name="deviceService" ref="service.DeviceService" />
@@ -128,6 +129,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="refundService" ref="service.RefundService" />
         <property name="userServiceNotification" ref="service.UserServiceNotification"/>
         <property name="o2UserDetailsUpdater" ref="service.O2UserDetailsUpdater" />
+		<property name="urbanAirshipTokenService" ref="service.UrbanAirshipTokenService"/>
 
         <property name="mobileProviderService" ref="service.O2ClientService" />
         <property name="userDetailsUpdater" ref="service.O2UserDetailsUpdater" />
@@ -351,22 +353,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<bean id="service.WeeklyUpdateService" class="mobi.nowtechnologies.server.service.WeeklyUpdateService">
 		<property name="userService" ref="service.UserService" />
-	</bean>
-
-	<bean id="service.UserDeviceDetailsService" class="mobi.nowtechnologies.server.service.UserDeviceDetailsService">
-		<property name="entityService" ref="service.EntityService" />
-		<property name="userIPhoneDetailsService" ref="service.UserIPhoneDetailsService" />
-		<property name="userAndroidDetailsService" ref="service.UserAndroidDetailsService" />
-	</bean>
-
-	<bean id="service.UserIPhoneDetailsService" class="mobi.nowtechnologies.server.service.UserIPhoneDetailsService" parent="service.UserDeviceDetailsService">
-		<property name="userIPhoneDetailsRepository" ref="userIPhoneDetailsRepository" />
-		<property name="userIPhoneDetailsDao" ref="persistence.UserIPhoneDetailsDao" />
-	</bean>
-
-
-	<bean id="service.UserAndroidDetailsService" class="mobi.nowtechnologies.server.service.UserAndroidDetailsService" parent="service.UserDeviceDetailsService">
-		<property name="userAndroidDetailsDao" ref="persistence.UserAndroidDetailsDao" />
 	</bean>
 
 	<bean id="service.CountryByIpService" class="mobi.nowtechnologies.server.service.CountryByIpService">

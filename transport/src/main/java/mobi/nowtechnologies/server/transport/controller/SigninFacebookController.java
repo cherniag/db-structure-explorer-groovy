@@ -30,6 +30,7 @@ public class SigninFacebookController extends CommonController {
     private UserPromoService userPromoService;
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.9}/SIGN_IN_FACEBOOK",
             "**/{community}/{apiVersion:6\\.8}/SIGN_IN_FACEBOOK"
     })
     public ModelAndView applyPromotionByFacebookWithOneTimePayment(
