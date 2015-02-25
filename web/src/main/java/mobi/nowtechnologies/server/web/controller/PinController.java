@@ -52,7 +52,9 @@ public class PinController extends CommonController {
     }
 
     @RequestMapping(value = {"pin/result"}, method = RequestMethod.GET)
-    public ModelAndView result(@RequestParam("pin") String pin, @RequestParam("phone") String phone) {
+    public ModelAndView result(@RequestParam("pin") String pin,
+                               @RequestParam("phone") String phone,
+                               @RequestParam("key") String key) {
         User user = currentUser();
 
         ModelAndView modelAndView = new ModelAndView("pin/result");
@@ -66,6 +68,7 @@ public class PinController extends CommonController {
 
         modelAndView.addObject("check", result);
         modelAndView.addObject("phone", phone);
+        modelAndView.addObject("key", key);
 
         if(result) {
             confirm(user.getId(), phone);

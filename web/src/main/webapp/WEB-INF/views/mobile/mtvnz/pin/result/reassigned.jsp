@@ -3,9 +3,8 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<c:set var="endpoint" scope="request" value="result"/>
-<s:message code='enter.phone.error.notValid' scope="request" var="error"/>
+Reassigned
 
-<jsp:include page="../../control.jsp">
-    <jsp:param name="callingPage" value="check_pin" />
-</jsp:include>
+<a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
+    <span><s:message code='button.cancel.title' /></span>
+</a>

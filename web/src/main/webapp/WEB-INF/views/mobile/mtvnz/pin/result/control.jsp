@@ -5,6 +5,10 @@
 
 <script src="${requestScope.assetsPathWithoutCommunity}scripts/utils.js"></script>
 
+<c:if test="${reassigned}">
+    <c:set var="key" value="reassigned" />
+</c:if>
+
 <div>
     <s:message code='enter.pin.header' arguments='${phone}'/>
 </div>
@@ -32,7 +36,7 @@
     $(document).ready(function() {
         var pinControl = new PinCodeControl("pinCodeId");
         enterPin = function() {
-            window.location = "pin/result?pin=" + pinControl.getValue() + "&phone=" + ${phone};
+            window.location = "pin/result?pin=" + pinControl.getValue() + "&phone=" + ${phone} + "&key=${key}";
         };
     });
 

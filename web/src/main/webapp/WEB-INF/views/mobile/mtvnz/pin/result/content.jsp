@@ -5,9 +5,18 @@
 
 <c:choose>
     <c:when test="${check}">
-        <jsp:include page="ok.jsp">
-            <jsp:param name="callingPage" value="check_phone" />
-        </jsp:include>
+        <c:choose>
+            <c:when test="${key=='reassigned'}">
+                <jsp:include page="reassigned.jsp">
+                    <jsp:param name="callingPage" value="check_phone" />
+                </jsp:include>
+            </c:when>
+            <c:otherwise>
+                <jsp:include page="ok.jsp">
+                    <jsp:param name="callingPage" value="check_phone" />
+                </jsp:include>
+            </c:otherwise>
+        </c:choose>
     </c:when>
     <c:otherwise>
         <jsp:include page="control.jsp">
