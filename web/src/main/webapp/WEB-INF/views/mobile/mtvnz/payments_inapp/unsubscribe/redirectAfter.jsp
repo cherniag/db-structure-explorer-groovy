@@ -4,6 +4,8 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="subscription_root_container">
+    You are using MTX Trax Premium.
+
     <a class="go-premium-button go-premium-button-device go-premium-body-button-up go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
         <span><s:message code='button.back.to.the.app.title' /></span>
     </a>

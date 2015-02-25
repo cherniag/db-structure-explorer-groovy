@@ -8,15 +8,9 @@
     </div>
     <div class="go-premium-unsubscribe-2-banner go-premium-unsubscribe-banner go-premium-unsubscribe-banner-device">
     </div>
-    <span class="go-premium-body-title go-premium-body-title-device">
-        <s:message code='head.unsubscribe' />
-    </span>
-    <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device">
-        <span class="go-premium-text-message go-premium-text-message-device">
-            <s:message code='message.unsubscribe.premium' />
-        </span>
-        <br/>
-    </div>
+
+    Unsubscribe?
+
     <a class="go-premium-button go-premium-button-device go-premium-body-button-up go-premium-button-target go-premium-body-ok" onclick="submitForm('unsubscribeFormId')">
         <span><s:message code='button.yes.title' /></span>
     </a>
