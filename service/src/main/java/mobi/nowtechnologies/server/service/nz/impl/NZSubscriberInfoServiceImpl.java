@@ -1,5 +1,6 @@
 package mobi.nowtechnologies.server.service.nz.impl;
 
+import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.NZProviderType;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
@@ -35,9 +36,18 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
     private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws SubscriberServiceException.MSISDNNotFound, SubscriberServiceException.ServiceNotAvailable {
         NZSubscriberInfo nzSubscriberInfo = null;
         try {
+            long wsCallTime = DateTimeUtils.getEpochMillis();
             NZSubscriberResult subscriberResult = subscriberInfoGateway.getSubscriberResult(msisdn);
+            wsCallTime = DateTimeUtils.getEpochMillis() - wsCallTime;
 
             nzSubscriberInfo = findOrCreate(msisdn, subscriberResult);
+            nzSubscriberInfo.setWsCallMillis(wsCallTime);
+
+            if(wsCallTime > 500){
+                log.warn("NZ subscriber web service call took {} milliseconds", wsCallTime);
+            } else {
+                log.info("NZ subscriber web service call took {} milliseconds", wsCallTime);
+            }
 
             return subscriberInfoRepository.save(nzSubscriberInfo);
         } catch (WebServiceFaultException e) {
@@ -45,6 +55,11 @@ public class NZSubscriberInfoServiceImpl implements NZSubscriberInfoService, Ini
                 log.info("Msisdn not found {}", msisdn);
                 throw new SubscriberServiceException.MSISDNNotFound(e.getMessage(), e);
             } else {
+                nzSubscriberInfo = getSubscriberInfoByMsisdn(msisdn);
+                if(nzSubscriberInfo != null) {
+                    return nzSubscriberInfo;
+                }
+
                 log.info("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
                 throw new SubscriberServiceException.ServiceNotAvailable(e.getMessage(), e);
             }

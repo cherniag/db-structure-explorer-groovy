@@ -37,9 +37,19 @@ public class NZSubscriberInfo {
     @Column(name = "billing_account_name")
     private String billingAccountName;
 
+    @Column(name = "ws_call_millis")
+    private long wsCallMillis;
+
+    @Column(name = "ws_call_count")
+    private int wsCallCount;
+
     @Column(name = "create_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTimestamp = new Date();
+
+    @Column(name = "update_timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTimestamp = new Date();
 
     protected NZSubscriberInfo() {
     }
@@ -69,6 +79,7 @@ public class NZSubscriberInfo {
     }
 
     public void setPayIndicator(String payIndicator) {
+        tryRefreshUpdateTimestamp();
         this.payIndicator = payIndicator;
     }
 
@@ -77,6 +88,7 @@ public class NZSubscriberInfo {
     }
 
     public void setProviderName(String providerName) {
+        tryRefreshUpdateTimestamp();
         this.providerName = providerName;
     }
 
@@ -85,6 +97,7 @@ public class NZSubscriberInfo {
     }
 
     public void setBillingAccountNumber(String billingAccountNumber) {
+        tryRefreshUpdateTimestamp();
         this.billingAccountNumber = billingAccountNumber;
     }
 
@@ -93,11 +106,21 @@ public class NZSubscriberInfo {
     }
 
     public void setBillingAccountName(String billingAccountName) {
+        tryRefreshUpdateTimestamp();
         this.billingAccountName = billingAccountName;
     }
 
     public NZProviderType getProviderType() {
         return NZProviderType.of(getProviderName());
+    }
+
+    public void setWsCallMillis(long wsCallMillis) {
+        this.wsCallMillis = wsCallMillis;
+        wsCallCount++;
+    }
+
+    private void tryRefreshUpdateTimestamp(){
+        updateTimestamp = new Date();
     }
 
     @Override
@@ -110,6 +133,9 @@ public class NZSubscriberInfo {
                 .append("providerName", providerName)
                 .append("billingAccountNumber", billingAccountNumber)
                 .append("billingAccountName", billingAccountName)
+                .append("wsCallCount", wsCallCount)
+                .append("wsCallMillis", wsCallMillis)
+                .append("updateTimestamp", updateTimestamp)
                 .append("createTimestamp", createTimestamp)
                 .toString();
     }
