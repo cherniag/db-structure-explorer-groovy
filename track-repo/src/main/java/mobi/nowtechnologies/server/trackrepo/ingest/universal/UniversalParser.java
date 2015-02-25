@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,7 +93,7 @@ public class UniversalParser extends IParser {
         LOGGER.debug("Replacing xml namespaces.");
 
         byte[] bytes = Files.readAllBytes(file.toPath());
-        String inputData = new String(bytes, StandardCharsets.UTF_8);
+        String inputData = new String(bytes);
 
         Matcher matcher = OLD_XML_NAMESPACE_REGEXP_PATTERN.matcher(inputData);
 
