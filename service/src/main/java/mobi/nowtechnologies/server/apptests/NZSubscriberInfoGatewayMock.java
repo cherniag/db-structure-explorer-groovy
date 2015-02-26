@@ -30,10 +30,6 @@ public class NZSubscriberInfoGatewayMock extends NZSubscriberInfoGateway {
     public NZSubscriberResult getSubscriberResult(String msisdn) {
         final String vodafoneMsisdnPrefix = "64";
 
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {}
-
         if(!msisdn.startsWith(vodafoneMsisdnPrefix)) {
             throw new SoapFaultClientException(getSoapFaultMessage(NZSubscriberInfoServiceImpl.NOT_FOUND_TOKEN));
         }

@@ -79,7 +79,7 @@ public class NZSubscriberInfo {
     }
 
     public void setPayIndicator(String payIndicator) {
-        tryRefreshUpdateTimestamp();
+        refreshUpdateTimestamp();
         this.payIndicator = payIndicator;
     }
 
@@ -88,7 +88,7 @@ public class NZSubscriberInfo {
     }
 
     public void setProviderName(String providerName) {
-        tryRefreshUpdateTimestamp();
+        refreshUpdateTimestamp();
         this.providerName = providerName;
     }
 
@@ -97,7 +97,7 @@ public class NZSubscriberInfo {
     }
 
     public void setBillingAccountNumber(String billingAccountNumber) {
-        tryRefreshUpdateTimestamp();
+        refreshUpdateTimestamp();
         this.billingAccountNumber = billingAccountNumber;
     }
 
@@ -106,7 +106,7 @@ public class NZSubscriberInfo {
     }
 
     public void setBillingAccountName(String billingAccountName) {
-        tryRefreshUpdateTimestamp();
+        refreshUpdateTimestamp();
         this.billingAccountName = billingAccountName;
     }
 
@@ -119,7 +119,7 @@ public class NZSubscriberInfo {
         wsCallCount++;
     }
 
-    private void tryRefreshUpdateTimestamp(){
+    private void refreshUpdateTimestamp(){
         updateTimestamp = new Date();
     }
 
