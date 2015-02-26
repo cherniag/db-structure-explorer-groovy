@@ -1,8 +1,6 @@
 package mobi.nowtechnologies.server.web.controller;
 
-import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
@@ -26,8 +24,6 @@ public class PinController extends CommonController {
     UserRepository userRepository;
     @Resource
     PinCodeService pinCodeService;
-    @Resource
-    NZSubscriberInfoRepository subscriberInfoRepository;
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -71,11 +67,9 @@ public class PinController extends CommonController {
         modelAndView.addObject("key", key);
 
         if(result) {
-            confirm(user.getId(), phone);
-
             PinModelService pinModelService = getModelService(user);
             if(pinModelService != null) {
-                modelAndView.addAllObjects(pinModelService.getModel(user));
+                modelAndView.addAllObjects(pinModelService.getModel(user, phone));
             }
         }
 
@@ -87,13 +81,6 @@ public class PinController extends CommonController {
     //
     // Internal staff
     //
-
-    private NZSubscriberInfo confirm(int userId, String msisdn) {
-        logger.info("confirm msisdn {} for {}", msisdn, userId);
-        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
-        nzSubscriberInfo.setUserId(userId);
-        return subscriberInfoRepository.saveAndFlush(nzSubscriberInfo);
-    }
 
     private PinModelService getModelService(User user) {
         return communityServiceFactory.find(user.getCommunity(), PinModelService.class);
