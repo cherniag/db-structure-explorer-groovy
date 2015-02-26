@@ -9,7 +9,7 @@
             <c:when test="${paymentsPage.subscriptionInfo.premium}">
                 <c:choose>
                     <c:when test="${paymentData.vf}">
-                        <jsp:include page="manage/vf_ios.jsp">
+                        <jsp:include page="manage/vf_any_device.jsp">
                             <jsp:param name="callingPage" value="payments_inapp" />
                         </jsp:include>
                     </c:when>
@@ -32,7 +32,7 @@
             <c:when test="${paymentsPage.subscriptionInfo.premium}">
                 <c:choose>
                     <c:when test="${paymentData.vf}">
-                        <jsp:include page="manage/vf_not_ios.jsp">
+                        <jsp:include page="manage/vf_any_device.jsp">
                             <jsp:param name="callingPage" value="payments_inapp" />
                         </jsp:include>
                     </c:when>

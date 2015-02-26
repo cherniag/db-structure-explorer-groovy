@@ -42,6 +42,7 @@ class PaymentModelServiceImpl implements PaymentModelService {
         Collection<PaymentPolicy> iTunes = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.ITUNES_SUBSCRIPTION));
         Collection<PaymentPolicy> vfPsms = Collections2.filter(all, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));
 
+        Preconditions.checkState(vfPsms.size() == 2, "Found not one payment policy for vfPsms for community " + user.getCommunity());
         Preconditions.checkState(payPal.size() == 1, "Found not one payment policy for PayPal for community " + user.getCommunity());
         Preconditions.checkState(iTunes.size() == 1, "Found not one payment policy for iTunes for community " + user.getCommunity());
         Preconditions.checkState(!vfPsms.isEmpty(), "Found not one payment policy for VF SMS for community " + user.getCommunity());
@@ -50,6 +51,7 @@ class PaymentModelServiceImpl implements PaymentModelService {
         Collection<PaymentPolicyDto> payPalDtos = PaymentPolicyDto.convert(payPal);
         Collection<PaymentPolicyDto> iTunesDtos = PaymentPolicyDto.convert(iTunes);
 
+        model.put("anotherPaymentPolicy", anotherPaymentPolicy(user, sorted));
         model.put("payPalPaymentPolicy", Iterables.getLast(payPalDtos));
         model.put("iTunesPaymentPolicy", Iterables.getLast(iTunesDtos));
         model.put("smsPaymentPolicy", Iterables.getFirst(sorted, null));
@@ -63,5 +65,16 @@ class PaymentModelServiceImpl implements PaymentModelService {
         }
 
         return model;
+    }
+
+    private Object anotherPaymentPolicy(User user, Set<PaymentPolicyDto> sorted) {
+        if(user.getCurrentPaymentDetails() == null) {
+            return null;
+        }
+
+        PaymentPolicyDto current = new PaymentPolicyDto(user.getCurrentPaymentDetails().getPaymentPolicy());
+        List<PaymentPolicyDto> all = new ArrayList<>(sorted);
+        all.remove(current);
+        return Iterables.getLast(all);
     }
 }

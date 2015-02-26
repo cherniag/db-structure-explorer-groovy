@@ -4,7 +4,13 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="root-container">
-    unsubscribe for iTunes ...
+    <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" href="smspayment/result.html?id=${paymentData.anotherPaymentPolicy.id}">
+        <span>
+            <s:message code="payment.per.${paymentData.anotherPaymentPolicy.durationUnit}" arguments="${paymentData.anotherPaymentPolicy.subCost}" var="anotherPaymentPolicyMessage"/>
+            <s:message code="button.phone.change.payment" arguments="${anotherPaymentPolicyMessage}" />
+        </span>
+    </a>
+
     <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" href="phone/reassign.html">
         <span><s:message code='button.phone.change' /></span>
     </a>

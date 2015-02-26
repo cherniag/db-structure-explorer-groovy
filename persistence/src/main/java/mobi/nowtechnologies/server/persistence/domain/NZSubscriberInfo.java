@@ -66,8 +66,12 @@ public class NZSubscriberInfo {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public void unassignUser() {
+        this.userId = null;
     }
 
     public String getMsisdn() {

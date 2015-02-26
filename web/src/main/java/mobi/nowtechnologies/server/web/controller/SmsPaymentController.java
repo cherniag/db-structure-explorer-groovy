@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
@@ -20,12 +21,33 @@ public class SmsPaymentController extends CommonController {
 
     @RequestMapping(value = {"smspayment/result"}, method = RequestMethod.GET)
     public ModelAndView commit(@RequestParam("id") int policyId) {
-        User user = userRepository.findOne(getUserId());
+        ModelAndView modelAndView = new ModelAndView("smspayment/result");
+
+        User user = getUser();
+
+        boolean vfPaymentType = hasVodafonePaymentType(user);
+
+        assign(policyId, user);
+
+        if(vfPaymentType) {
+            modelAndView.addObject("changed", true);
+        }
+
+        return modelAndView;
+    }
+
+    private boolean hasVodafonePaymentType(User user) {
+        return user.getCurrentPaymentDetails() != null && PaymentDetails.VF_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType());
+    }
+
+    private void assign(int policyId, User user) {
         PaymentPolicy policy = paymentPolicyRepository.findOne(policyId);
         PSMSPaymentService psmsPaymentService = communityServiceFactory.find(user.getCommunity(), PSMSPaymentService.class);
         psmsPaymentService.commitPaymentDetails(user, policy);
-        ModelAndView modelAndView = new ModelAndView("smspayment/result");
-        return modelAndView;
+    }
+
+    private User getUser() {
+        return userRepository.findOne(getUserId());
     }
 
     public void setUserRepository(UserRepository userRepository) {
