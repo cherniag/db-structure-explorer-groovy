@@ -45,12 +45,13 @@ public class NZSubscriberInfoService implements InitializingBean {
 
             return subscriberInfoRepository.save(nzSubscriberInfo);
         } catch (ProviderNotAvailableException e) {
+            log.warn("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
+
             nzSubscriberInfo = getSubscriberInfoByMsisdn(msisdn);
             if(nzSubscriberInfo != null) {
                 return nzSubscriberInfo;
             }
 
-            log.info("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
             throw e;
         } catch(DataIntegrityViolationException e){
             log.info("Unable insert subscriber info for msisdn " + msisdn, e);
