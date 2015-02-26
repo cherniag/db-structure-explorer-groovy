@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.web.controller.SubscriptionInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
@@ -30,6 +31,7 @@ public class SubscriptionInfoAsm {
         info.setCurrentPaymentPolicy(currentPaymentPolicyDto);
 
         List<PaymentPolicyDto> included = filterPaymentPolicyDTOs(paymentPolicyDtos, isIos);
+        Collections.sort(included, new PaymentPolicyDto.ByDurationAsc());
         info.addPaymentPolicyDto(included);
 
         return info;

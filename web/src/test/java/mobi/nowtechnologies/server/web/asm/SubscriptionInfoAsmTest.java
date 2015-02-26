@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -147,6 +148,36 @@ public class SubscriptionInfoAsmTest {
         assertEquals(false, subscriptionInfo.isPremium());
     }
 
+    @Test
+    public void testCreateSubscriptionInfoOrder() throws Exception {
+        // given
+        PaymentPolicyDto paymentPolicy1 = createPaypal();
+        when(paymentPolicy1.getSubcost()).thenReturn(new BigDecimal("4"));
+        when(paymentPolicy1.getDuration()).thenReturn(1);
+        when(paymentPolicy1.getDurationUnit()).thenReturn(DurationUnit.MONTHS);
+
+        PaymentPolicyDto paymentPolicy2 = createPaypal();
+        when(paymentPolicy2.getSubcost()).thenReturn(new BigDecimal("1"));
+        when(paymentPolicy2.getDuration()).thenReturn(1);
+        when(paymentPolicy2.getDurationUnit()).thenReturn(DurationUnit.WEEKS);
+
+        PaymentPolicyDto paymentPolicy3 = createPaypal();
+        when(paymentPolicy3.getSubcost()).thenReturn(new BigDecimal("10"));
+        when(paymentPolicy3.getDuration()).thenReturn(6);
+        when(paymentPolicy3.getDurationUnit()).thenReturn(DurationUnit.MONTHS);
+
+        List<PaymentPolicyDto> policies = Lists.newArrayList(paymentPolicy1, paymentPolicy2, paymentPolicy3);
+
+        // when
+        User user = makeNotPremiumAndroidUser();
+        SubscriptionInfo subscriptionInfo = subscriptionInfoAsm.createSubscriptionInfo(user, policies);
+
+        // then
+        assertEquals(paymentPolicy2, subscriptionInfo.getPaymentPolicyDTOs().get(0));
+        assertEquals(paymentPolicy1, subscriptionInfo.getPaymentPolicyDTOs().get(1));
+        assertEquals(paymentPolicy3, subscriptionInfo.getPaymentPolicyDTOs().get(2));
+    }
+
     //
     // internals
     //
@@ -205,6 +236,8 @@ public class SubscriptionInfoAsmTest {
         PaymentPolicyDto ios = mock(PaymentPolicyDto.class);
         when(ios.getId()).thenReturn(paypalId);
         when(ios.getPaymentType()).thenReturn("PAY_PAL");
+        when(ios.getDuration()).thenReturn(1);
+        when(ios.getDurationUnit()).thenReturn(WEEKS);
         return ios;
     }
 
@@ -212,6 +245,8 @@ public class SubscriptionInfoAsmTest {
         PaymentPolicyDto ios = mock(PaymentPolicyDto.class);
         when(ios.getId()).thenReturn(notPaypalId);
         when(ios.getPaymentType()).thenReturn("NOT_PAY_PAL");
+        when(ios.getDuration()).thenReturn(1);
+        when(ios.getDurationUnit()).thenReturn(MONTHS);
         return ios;
     }
 

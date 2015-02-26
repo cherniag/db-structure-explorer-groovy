@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
+import java.util.Comparator;
 
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
@@ -249,4 +250,12 @@ public class PaymentPolicyDto {
                 .append("appStoreProductId", appStoreProductId)
                 .toString();
     }
+
+    public static class ByDurationAsc implements Comparator<PaymentPolicyDto> {
+        @Override
+        public int compare(PaymentPolicyDto dto1, PaymentPolicyDto dto2) {
+            int durationUnitCompareResult = dto1.getDurationUnit().compareTo(dto2.getDurationUnit());
+            return durationUnitCompareResult != 0 ? durationUnitCompareResult : Integer.compare(dto1.getDuration(), dto2.getDuration());
+        }
+    };
 }
