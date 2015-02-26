@@ -7,7 +7,7 @@ import mobi.nowtechnologies.applicationtests.services.helper.PhoneNumberCreator;
 import mobi.nowtechnologies.applicationtests.services.http.activate.ApplyInitPromoHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.activate.AutoOptInHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneNumberHttpService;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.shared.enums.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -44,12 +44,12 @@ public class PartnerDeviceSet extends ClientDevicesSet {
         final PhoneStateImpl state = states.get(userDeviceData);
 
         if(state.getLastAccountCheckResponse().subjectToAutoOptIn) {
-            AccountCheckDTO response = autoOptInHttpService.autoOptIn(state.getLastAccountCheckResponse(), userDeviceData, otac, userDeviceData.getFormat());
+            AccountCheckDto response = autoOptInHttpService.autoOptIn(state.getLastAccountCheckResponse(), userDeviceData, otac, userDeviceData.getFormat());
 
             state.accountCheck = response;
             state.activationResponse = response;
         } else {
-            AccountCheckDTO response = applyInitPromoHttpService.applyInitPromo(state.getLastAccountCheckResponse(), userDeviceData, otac, userDeviceData.getFormat());
+            AccountCheckDto response = applyInitPromoHttpService.applyInitPromo(state.getLastAccountCheckResponse(), userDeviceData, otac, userDeviceData.getFormat());
             state.accountCheck = response;
             state.activationResponse = response;
         }

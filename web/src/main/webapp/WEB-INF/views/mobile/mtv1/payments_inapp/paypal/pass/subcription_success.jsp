@@ -16,7 +16,12 @@
             <br/>
             <span class="go-premium-success-salutation-title go-premium-success-salutation-title-1-device"><s:message code="paypal.success.pass.salutation.title1" /></span>
             <br/>
-            <span class="go-premium-success-salutation-title go-premium-success-salutation-title-2-device"><s:message code="paypal.success.pass.salutation.title2" /></span>
+
+            <s:message code="paypal.success.pass.salutation.period.${currentPaymentPolicy.durationUnit}" var="durationUnit"/>
+
+            <span class="go-premium-success-salutation-title go-premium-success-salutation-title-2-device">
+                <s:message code="paypal.success.pass.salutation.title2" arguments="${currentPaymentPolicy.duration},${durationUnit}"/>
+            </span>
         </div>
     </div>
     <div class="go-premium-success-notification-container">

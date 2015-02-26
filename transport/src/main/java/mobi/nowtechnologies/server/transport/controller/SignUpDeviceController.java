@@ -40,6 +40,7 @@ public class SignUpDeviceController extends CommonController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.9}/SIGN_UP_DEVICE",
             "**/{community}/{apiVersion:6\\.8}/SIGN_UP_DEVICE",
             "**/{community}/{apiVersion:6\\.7}/SIGN_UP_DEVICE",
             "**/{community}/{apiVersion:6\\.6}/SIGN_UP_DEVICE"

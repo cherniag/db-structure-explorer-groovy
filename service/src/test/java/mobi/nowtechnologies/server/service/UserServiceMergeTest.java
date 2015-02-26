@@ -28,7 +28,7 @@ public class UserServiceMergeTest {
     private AccountLogService accountLogService;
 
     @Mock
-    private UserDeviceDetailsService userDeviceDetailsService;
+    private UrbanAirshipTokenService urbanAirshipTokenService;
 
     @Mock
     private DeviceUserDataService deviceUserDataService;
@@ -69,7 +69,7 @@ public class UserServiceMergeTest {
 
         userService.mergeUser(oldUser, tempUser);
 
-        verify(userDeviceDetailsService).removeUserDeviceDetails(tempUser);
+        verify(urbanAirshipTokenService).mergeToken(tempUser, oldUser);
         verify(deviceUserDataService).removeDeviceUserData(oldUser);
         verify(deviceUserDataService).removeDeviceUserData(tempUser);
         verify(userRepository).deleteUser(987);

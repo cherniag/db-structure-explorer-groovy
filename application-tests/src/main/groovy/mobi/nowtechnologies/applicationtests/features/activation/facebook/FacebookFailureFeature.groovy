@@ -65,7 +65,7 @@ class FacebookFailureFeature {
             def user = userDbService.findUser(phoneState, it)
 
             //dirty hack to fetch all lazy deps without customizing hibernate queries of manually checking data
-            new ObjectFormatter(Integer.MAX_VALUE).format(user)
+            new ObjectFormatter(10).format(user)
             //end of dirty hack
 
             users.put(it, user)

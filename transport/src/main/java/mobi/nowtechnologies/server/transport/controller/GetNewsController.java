@@ -28,6 +28,7 @@ public class GetNewsController extends CommonController {
     private MessageService messageService;
 
     @RequestMapping(method = RequestMethod.GET, value = {
+            "**/{community}/{apiVersion:6\\.9}/GET_NEWS",
             "**/{community}/{apiVersion:6\\.8}/GET_NEWS"
     })
     public ModelAndView getNewsWithBannersWithOneTimeSubscription(

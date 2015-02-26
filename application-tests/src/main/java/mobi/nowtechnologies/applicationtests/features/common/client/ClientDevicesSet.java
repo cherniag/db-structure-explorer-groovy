@@ -15,7 +15,7 @@ import mobi.nowtechnologies.applicationtests.services.http.news.json.JsonNewsRes
 import mobi.nowtechnologies.applicationtests.services.http.news.xml.XmlNewsResponse;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActivationDto;
 import mobi.nowtechnologies.applicationtests.services.http.signup.SignupHttpService;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -52,6 +52,18 @@ public abstract class ClientDevicesSet {
         state.accountCheck = accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
     }
 
+    public void accountCheckWithUrbanAirshipToken(UserDeviceData userDeviceData, String urbanAirshipToken) {
+        final PhoneStateImpl state = states.get(userDeviceData);
+
+        state.accountCheck = accountCheckHttpService.accountCheckWithUrbanAirshipToken(
+                userDeviceData,
+                state.getLastAccountCheckResponse().userName,
+                state.getLastAccountCheckResponse().userToken,
+                userDeviceData.getFormat(),
+                urbanAirshipToken
+        );
+    }
+
     public void accountCheckFromIOS(UserDeviceData userDeviceData, String iTunesReceipt){
         final PhoneStateImpl state = states.get(userDeviceData);
         state.accountCheck = accountCheckHttpService.accountCheckFromIOS(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat(), iTunesReceipt);
@@ -70,6 +82,10 @@ public abstract class ClientDevicesSet {
     // Sign up
     //
     public void singup(UserDeviceData deviceData) {
+        singup(deviceData, null, null, false, userDataCreator.generateDeviceUID());
+    }
+
+    public void singupWithUrbanAirshipToken(UserDeviceData deviceData, String urbanAirshipToken) {
         singup(deviceData, null, null, false, userDataCreator.generateDeviceUID());
     }
 
@@ -187,12 +203,12 @@ public abstract class ClientDevicesSet {
     static class PhoneStateImpl implements PhoneState {
         String deviceUID;
         String email;
-        AccountCheckDTO accountCheck;
+        AccountCheckDto accountCheck;
         Error lastFacebookError;
         User lastFacebookInfo;
         User lastGooglePlusUserInfo;
         public PhoneActivationDto phoneActivationDto;
-        public AccountCheckDTO activationResponse;
+        public AccountCheckDto activationResponse;
         public String lastSentXTofyToken;
         public String facebookUserId;
         public String googlePlusUserId;
@@ -203,6 +219,7 @@ public abstract class ClientDevicesSet {
         public String googlePlusToken;
         public Error lastGooglePlusError;
         public HttpStatus lastGooglePlusErrorStatus;
+        public String urbanAirshipToken;
 
         PhoneStateImpl() {
         }
@@ -233,7 +250,7 @@ public abstract class ClientDevicesSet {
         }
 
         @Override
-        public AccountCheckDTO getLastAccountCheckResponse() {
+        public AccountCheckDto getLastAccountCheckResponse() {
             return accountCheck;
         }
 
@@ -258,7 +275,7 @@ public abstract class ClientDevicesSet {
         }
 
         @Override
-        public AccountCheckDTO getActivationResponse() {
+        public AccountCheckDto getActivationResponse() {
             return activationResponse;
         }
 

@@ -5,8 +5,8 @@ import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.DeviceUserDataService;
+import mobi.nowtechnologies.server.service.UrbanAirshipTokenService;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
-import mobi.nowtechnologies.server.service.UserDeviceDetailsService;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +33,30 @@ public class AccCheckController extends CommonController {
     @Resource(name = "service.DeviceUserDataService")
     private DeviceUserDataService deviceUserDataService;
 
-    @Resource(name = "service.UserDeviceDetailsService")
-    private UserDeviceDetailsService userDeviceDetailsService;
-
     @Resource
     private ITunesService iTunesService;
+
+    @Resource(name = "service.UrbanAirshipTokenService")
+    private UrbanAirshipTokenService urbanAirshipTokenService;
+
+    @RequestMapping(method = RequestMethod.POST, value = {
+            "**/{community}/{apiVersion:6\\.9}/ACC_CHECK"
+
+    })
+    public ModelAndView accountCheckWithUUIDNewApi(
+            @RequestParam("USER_NAME") String userName,
+            @RequestParam("USER_TOKEN") String userToken,
+            @RequestParam("TIMESTAMP") String timestamp,
+            @RequestParam(required = false, value = "DEVICE_TYPE", defaultValue = UserRegInfo.DeviceType.IOS) String deviceType,
+            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
+            @RequestParam(required = false, value = "UA_TOKEN") String uaToken,
+            @RequestParam(required = false, value = "XTIFY_TOKEN") String xtifyToken,
+            @RequestParam(required = false, value = "TRANSACTION_RECEIPT") String transactionReceipt,
+            @RequestParam(required = false, value = "IDFA") String idfa) throws Exception {
+
+        return accCheckImpl(userName, userToken, timestamp, deviceType, deviceUID, null, uaToken, xtifyToken, transactionReceipt, idfa, true, true, true);
+    }
+
 
     @RequestMapping(method = RequestMethod.POST, value = {
             "**/{community}/{apiVersion:6\\.8}/ACC_CHECK"
@@ -173,8 +192,9 @@ public class AccCheckController extends CommonController {
                 }
             }
 
-            if (deviceType != null && pushNotificationToken != null)
-                userDeviceDetailsService.mergeUserDeviceDetails(user, pushNotificationToken, deviceType);
+            if (isNotBlank(pushNotificationToken)) {
+                urbanAirshipTokenService.saveToken(user, pushNotificationToken);
+            }
 
             if (!user.hasActivePaymentDetails() && (transactionReceipt != null || user.hasAppReceiptInLimitedState())) {
                 try {

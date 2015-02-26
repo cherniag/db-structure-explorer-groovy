@@ -2,7 +2,6 @@ package mobi.nowtechnologies.server.trackrepo.ingest.universal;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.*;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -17,13 +16,23 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Locale.ENGLISH;
 
 public class UniversalParser extends IParser {
+
+    private Pattern OLD_XML_NAMESPACE_REGEXP_PATTERN = Pattern.compile("xmlns=\"http://www.digiplug.com/dsc/(.*?)\"");
+
+    private final static String OLD_XML_NAMESPACE_PATTERN = "xmlns=\"http://www.digiplug.com/dsc/%s\"";
+    private final static String NEW_XML_NAMESPACE_PATTERN = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+            "xsi:noNamespaceSchemaLocation=\"http://www.digiplug.com/dsc/%s\"";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UniversalParser.class);
     private PeriodFormatter durationFormatter;
     protected SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", ENGLISH);
@@ -52,6 +61,8 @@ public class UniversalParser extends IParser {
         for (File file : files) {
             if (file.getName().endsWith(".xml")) {
                 try {
+                    preprocess(file);
+
                     LOGGER.debug("Loading [{}]",  file.getPath());
 
                     Document document = builder.build(file);
@@ -67,6 +78,35 @@ public class UniversalParser extends IParser {
         }
 
         return resultDropTracksWithMetadata;
+    }
+
+    /*
+     * The method is intended to replace input xml namespace
+     * from: xmlns="http://www.digiplug.com/dsc/umgistd-1_4_5"
+     * to: xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.digiplug.com/dsc/umgistd-1_4_5".
+     *
+     * Method takes into account that namespace version other than umgistd-1_4_5 could be be sent and properly replaces it.
+     *
+     * Xml namespace schema is needed to avoid parser failure.
+     */
+    private void preprocess(File file) throws IOException {
+        LOGGER.debug("Replacing xml namespaces.");
+
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        String inputData = new String(bytes);
+
+        Matcher matcher = OLD_XML_NAMESPACE_REGEXP_PATTERN.matcher(inputData);
+
+        while (matcher.find()) {
+            String version = matcher.group(1);
+
+            String outputData = inputData.replaceFirst(
+                    String.format(OLD_XML_NAMESPACE_PATTERN, version),
+                    String.format(NEW_XML_NAMESPACE_PATTERN, version)
+            );
+
+            Files.write(file.toPath(), outputData.getBytes());
+        }
     }
 
     private void addProductMetadata(String code, Map<String, List<DropAssetFile>> fulfillmentFiles, Element product, Map<String, DropTrack> resultDropTracks) {

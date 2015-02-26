@@ -5,7 +5,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -21,7 +21,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
     //
     // API
     //
-    public AccountCheckDTO accountCheck(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format) {
+    public AccountCheckDto accountCheck(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format) {
         Assert.hasText(userName);
         Assert.hasText(storedUserToken);
 
@@ -30,12 +30,26 @@ public class AccountCheckHttpService extends AbstractHttpService {
         return execute(parameters, deviceData, format);
     }
 
-    public AccountCheckDTO accountCheckFromIOS(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String iTunesReceipt) {
+    public AccountCheckDto accountCheckFromIOS(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String iTunesReceipt) {
         Assert.hasText(userName);
         Assert.hasText(storedUserToken);
 
         MultiValueMap<String, String> parameters = createCommonParameters(userName, storedUserToken);
         parameters.add("TRANSACTION_RECEIPT", iTunesReceipt);
+
+        return execute(parameters, deviceData, format);
+    }
+
+    public AccountCheckDto accountCheckWithUrbanAirshipToken(UserDeviceData deviceData,
+                                                             String userName,
+                                                             String storedUserToken,
+                                                             RequestFormat format,
+                                                             String urbanAirshipToken) {
+        Assert.hasText(userName);
+        Assert.hasText(storedUserToken);
+
+        MultiValueMap<String, String> parameters = createCommonParameters(userName, storedUserToken);
+        parameters.add("UA_TOKEN", urbanAirshipToken);
 
         return execute(parameters, deviceData, format);
     }
@@ -53,7 +67,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
         return request;
     }
 
-    private AccountCheckDTO execute(MultiValueMap<String, String> parameters, UserDeviceData deviceData, RequestFormat format) {
+    private AccountCheckDto execute(MultiValueMap<String, String> parameters, UserDeviceData deviceData, RequestFormat format) {
         String uri = getUri(deviceData, "ACC_CHECK", format);
 
         logger.info("\nSending for for [{}] to [{}] parameters [{}]", deviceData, uri, parameters);
@@ -61,7 +75,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
         String body = entity.getBody();
         logger.info("Response body [{}]\n", body);
 
-        return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDTO.class);
+        return jsonHelper.extractObjectValueByPath(body, JsonHelper.USER_PATH, AccountCheckDto.class);
     }
 
 
