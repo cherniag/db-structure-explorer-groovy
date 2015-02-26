@@ -4,19 +4,19 @@ insert into system (release_time_millis, version, release_name) values(unix_time
 SET autocommit = 0;
 START TRANSACTION;
 /*setup messages*/
-set @last_id_1 = (select count(id) from client_version_messages) + 1;
+set @last_id_1 = (select coalesce(max(id), 0) from client_version_messages) + 1;
 insert into client_version_messages(id, message_key, url) values(@last_id_1, 'service.config.mtv.tracks.FORCED_UPDATE.IOS.1.1.0', 'https://itunes.apple.com/gb/app/mtv-trax-free-music-player/id925265172');
 
-set @last_id_2 = (select count(id) from client_version_messages) + 1;
+set @last_id_2 = (select coalesce(max(id), 0) from client_version_messages) + 1;
 insert into client_version_messages(id, message_key, url) values(@last_id_2, 'service.config.mtv.tracks.FORCED_UPDATE.IOS.1.2.0', 'https://itunes.apple.com/gb/app/mtv-trax-free-music-player/id925265172');
 
-set @last_id_3 = (select count(id) from client_version_messages) + 1 ;
+set @last_id_3 = (select coalesce(max(id), 0) from client_version_messages) + 1 ;
 insert into client_version_messages(id, message_key, url) values(@last_id_3, 'service.config.mtv.tracks.FORCED_UPDATE.ANDROID.1.0.0', 'https://play.google.com/store/apps/details?id=com.musicqubed.mtv');
 
-set @last_id_4 = (select count(id) from client_version_messages) + 1 ;
+set @last_id_4 = (select coalesce(max(id), 0) from client_version_messages) + 1 ;
 insert into client_version_messages(id, message_key, url) values(@last_id_4, 'service.config.mtv.tracks.FORCED_UPDATE.ANDROID.1.1.0', 'https://play.google.com/store/apps/details?id=com.musicqubed.mtv');
 
-set @last_id_5 = (select count(id) from client_version_messages) + 1 ;
+set @last_id_5 = (select coalesce(max(id), 0) from client_version_messages) + 1 ;
 insert into client_version_messages(id, message_key, url) values(@last_id_5, 'service.config.mtv.tracks.FORCED_UPDATE.ANDROID.1.2.0', 'https://play.google.com/store/apps/details?id=com.musicqubed.mtv');
 
 /*setup client versions*/
