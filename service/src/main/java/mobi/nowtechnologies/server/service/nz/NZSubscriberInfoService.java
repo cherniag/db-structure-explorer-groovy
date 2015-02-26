@@ -30,18 +30,16 @@ public class NZSubscriberInfoService implements InitializingBean {
     private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws ProviderNotAvailableException, MsisdnNotFoundException {
         NZSubscriberInfo nzSubscriberInfo = null;
         try {
-            long wsCallTime = DateTimeUtils.getEpochMillis();
+            long callTime = DateTimeUtils.getEpochMillis();
             NZSubscriberResult subscriberResult = subscriberInfoProvider.getSubscriberResult(msisdn);
-            wsCallTime = DateTimeUtils.getEpochMillis() - wsCallTime;
+
+            if(DateTimeUtils.getEpochMillis() - callTime > 500){
+                log.warn("NZ subscriber web service call took {} milliseconds", callTime);
+            } else {
+                log.info("NZ subscriber web service call took {} milliseconds", callTime);
+            }
 
             nzSubscriberInfo = findOrCreate(msisdn, subscriberResult);
-            nzSubscriberInfo.setWsCallMillis(wsCallTime);
-
-            if(wsCallTime > 500){
-                log.warn("NZ subscriber web service call took {} milliseconds", wsCallTime);
-            } else {
-                log.info("NZ subscriber web service call took {} milliseconds", wsCallTime);
-            }
 
             return subscriberInfoRepository.save(nzSubscriberInfo);
         } catch (ProviderNotAvailableException e) {
@@ -65,6 +63,7 @@ public class NZSubscriberInfoService implements InitializingBean {
             nzSubscriberInfo = new NZSubscriberInfo(msisdn);
         }
 
+        nzSubscriberInfo.incCallCount();
         nzSubscriberInfo.setPayIndicator(subscriberResult.getPayIndicator());
         nzSubscriberInfo.setProviderName(subscriberResult.getProviderName());
         nzSubscriberInfo.setBillingAccountName(subscriberResult.getBillingAccountName());

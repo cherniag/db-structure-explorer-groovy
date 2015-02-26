@@ -37,11 +37,8 @@ public class NZSubscriberInfo {
     @Column(name = "billing_account_name")
     private String billingAccountName;
 
-    @Column(name = "ws_call_millis")
-    private long wsCallMillis;
-
-    @Column(name = "ws_call_count")
-    private int wsCallCount;
+    @Column(name = "call_count")
+    private int callCount;
 
     @Column(name = "create_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
@@ -49,7 +46,7 @@ public class NZSubscriberInfo {
 
     @Column(name = "update_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updateTimestamp = new Date();
+    private Date updateTimestamp = new Date(createTimestamp.getTime());
 
     protected NZSubscriberInfo() {
     }
@@ -118,9 +115,8 @@ public class NZSubscriberInfo {
         return NZProviderType.of(getProviderName());
     }
 
-    public void setWsCallMillis(long wsCallMillis) {
-        this.wsCallMillis = wsCallMillis;
-        wsCallCount++;
+    public void incCallCount() {
+        callCount++;
     }
 
     private void refreshUpdateTimestamp(){
@@ -137,8 +133,7 @@ public class NZSubscriberInfo {
                 .append("providerName", providerName)
                 .append("billingAccountNumber", billingAccountNumber)
                 .append("billingAccountName", billingAccountName)
-                .append("wsCallCount", wsCallCount)
-                .append("wsCallMillis", wsCallMillis)
+                .append("callCount", callCount)
                 .append("updateTimestamp", updateTimestamp)
                 .append("createTimestamp", createTimestamp)
                 .toString();

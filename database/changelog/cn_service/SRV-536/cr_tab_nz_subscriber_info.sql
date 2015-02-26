@@ -13,10 +13,9 @@ CREATE TABLE nz_subscriber_info (
   provider_name varchar(60) CHARACTER SET utf8 NOT NULL,
   billing_account_number varchar(60) NOT NULL,
   billing_account_name varchar(255) CHARACTER SET utf8,
-  ws_call_millis int UNSIGNED,
-  ws_call_count int UNSIGNED,
-  create_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  update_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  call_count int UNSIGNED,
+  create_timestamp timestamp NOT NULL,
+  update_timestamp timestamp NOT NULL
 );
 
 ALTER TABLE nz_subscriber_info ADD CONSTRAINT fk_nz_subscriber_info_users FOREIGN KEY (user_id) REFERENCES tb_users(i);
