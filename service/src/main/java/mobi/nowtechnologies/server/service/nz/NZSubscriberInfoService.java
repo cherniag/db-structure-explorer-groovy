@@ -1,10 +1,92 @@
 package mobi.nowtechnologies.server.service.nz;
 
-import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
+import mobi.nowtechnologies.common.util.DateTimeUtils;
+import mobi.nowtechnologies.server.persistence.domain.NZProviderType;
+import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
+import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.util.Assert;
 
 /**
  * @author Anton Zemliankin
  */
-public interface NZSubscriberInfoService {
-    boolean belongs(String msisdn) throws SubscriberServiceException.ServiceNotAvailable, SubscriberServiceException.MSISDNNotFound;
+public class NZSubscriberInfoService implements InitializingBean {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    NZSubscriberInfoRepository subscriberInfoRepository;
+    NZSubscriberInfoProvider subscriberInfoProvider;
+
+    public boolean belongs(String msisdn) throws ProviderNotAvailableException, MsisdnNotFoundException {
+        log.info("Checking if {} is Vodafone msisdn.", msisdn);
+        NZSubscriberInfo nzSubscriberInfo = refreshSubscriberInfo(msisdn);
+        boolean isVodafone = nzSubscriberInfo.getProviderType() == NZProviderType.VODAFONE;
+        log.info("{} is {} msisdn.", msisdn, nzSubscriberInfo.getProviderName());
+        return isVodafone;
+    }
+
+    private NZSubscriberInfo refreshSubscriberInfo(String msisdn) throws ProviderNotAvailableException, MsisdnNotFoundException {
+        NZSubscriberInfo nzSubscriberInfo = null;
+        try {
+            long wsCallTime = DateTimeUtils.getEpochMillis();
+            NZSubscriberResult subscriberResult = subscriberInfoProvider.getSubscriberResult(msisdn);
+            wsCallTime = DateTimeUtils.getEpochMillis() - wsCallTime;
+
+            nzSubscriberInfo = findOrCreate(msisdn, subscriberResult);
+            nzSubscriberInfo.setWsCallMillis(wsCallTime);
+
+            if(wsCallTime > 500){
+                log.warn("NZ subscriber web service call took {} milliseconds", wsCallTime);
+            } else {
+                log.info("NZ subscriber web service call took {} milliseconds", wsCallTime);
+            }
+
+            return subscriberInfoRepository.save(nzSubscriberInfo);
+        } catch (ProviderNotAvailableException e) {
+            nzSubscriberInfo = getSubscriberInfoByMsisdn(msisdn);
+            if(nzSubscriberInfo != null) {
+                return nzSubscriberInfo;
+            }
+
+            log.info("Failed to connect to NZ subscribers service: " + e.getMessage(), e);
+            throw e;
+        } catch(DataIntegrityViolationException e){
+            log.info("Unable insert subscriber info for msisdn " + msisdn, e);
+            return nzSubscriberInfo;
+        }
+    }
+
+    private NZSubscriberInfo findOrCreate(String msisdn, NZSubscriberResult subscriberResult) {
+        NZSubscriberInfo nzSubscriberInfo = getSubscriberInfoByMsisdn(msisdn);
+
+        if (nzSubscriberInfo == null) {
+            nzSubscriberInfo = new NZSubscriberInfo(msisdn);
+        }
+
+        nzSubscriberInfo.setPayIndicator(subscriberResult.getPayIndicator());
+        nzSubscriberInfo.setProviderName(subscriberResult.getProviderName());
+        nzSubscriberInfo.setBillingAccountName(subscriberResult.getBillingAccountName());
+        nzSubscriberInfo.setBillingAccountNumber(subscriberResult.getBillingAccountNumber());
+        return nzSubscriberInfo;
+    }
+
+    NZSubscriberInfo getSubscriberInfoByMsisdn(String msisdn) {
+        return subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(subscriberInfoRepository, "subscriberInfoRepository should not be null.");
+        Assert.notNull(subscriberInfoProvider, "subscriberInfoProvider should not be null.");
+    }
+
+    public void setSubscriberInfoRepository(NZSubscriberInfoRepository subscriberInfoRepository) {
+        this.subscriberInfoRepository = subscriberInfoRepository;
+    }
+
+    public void setSubscriberInfoProvider(NZSubscriberInfoProvider subscriberInfoProvider) {
+        this.subscriberInfoProvider = subscriberInfoProvider;
+    }
 }

@@ -3,7 +3,8 @@ package mobi.nowtechnologies.server.service.pincode.impl;
 import mobi.nowtechnologies.server.persistence.domain.PinCode;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
-import mobi.nowtechnologies.server.service.exception.PinCodeException;
+import mobi.nowtechnologies.server.service.pincode.MaxAttemptsReachedException;
+import mobi.nowtechnologies.server.service.pincode.MaxGenerationReachedException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -32,7 +33,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
     private int limitCount;
 
     @Override
-    public PinCode generate(User user, int digitsCount) throws PinCodeException.MaxGenerationReached {
+    public PinCode generate(User user, int digitsCount) throws MaxGenerationReachedException {
         log.info("Generating new {}-digit pin code for user {}", digitsCount, user.getId());
 
         Date selectFromDate = DateUtils.addSeconds(new Date(), -limitSeconds);
@@ -40,7 +41,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
         int allUserPinCodesCount = pinCodeRepository.countUserPinCodes(user.getId(), selectFromDate);
 
         if (allUserPinCodesCount >= limitCount) {
-            throw new PinCodeException.MaxGenerationReached(String.format("Max count(%s) of pin codes for user per period(%s seconds) has been reached.", limitCount, limitSeconds));
+            throw new MaxGenerationReachedException(String.format("Max count(%s) of pin codes for user per period(%s seconds) has been reached.", limitCount, limitSeconds));
         }
 
         PinCode pinCode = new PinCode(user.getId(), generateValue(digitsCount));
@@ -50,7 +51,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
     }
 
     @Override
-    public boolean attempt(User user, String pinCodeStr) throws PinCodeException.MaxAttemptsReached {
+    public boolean attempt(User user, String pinCodeStr) throws MaxAttemptsReachedException {
         log.info("Checking pin code {} for user {}", pinCodeStr, user.getId());
 
         Date selectFromDate = DateUtils.addSeconds(new Date(), -expirationSeconds);
@@ -63,7 +64,7 @@ public class PinCodeServiceImpl implements PinCodeService, InitializingBean {
 
         PinCode userLatestPinCode = userLatestPinCodes.get(0);
         if (userLatestPinCode.getAttempts() >= maxAttempts) {
-            throw new PinCodeException.MaxAttemptsReached(String.format("Max count(%s) of attempts has been reached.", maxAttempts));
+            throw new MaxAttemptsReachedException(String.format("Max count(%s) of attempts has been reached.", maxAttempts));
         }
 
         boolean checkResult = userLatestPinCode.getCode().equals(pinCodeStr);

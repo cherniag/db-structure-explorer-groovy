@@ -2,7 +2,8 @@ package mobi.nowtechnologies.server.web.controller;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.exception.PinCodeException;
+import mobi.nowtechnologies.server.service.pincode.MaxAttemptsReachedException;
+import mobi.nowtechnologies.server.service.pincode.MaxGenerationReachedException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
 import mobi.nowtechnologies.server.web.model.PinModelService;
@@ -40,7 +41,7 @@ public class PinController extends CommonController {
 
         try {
             pinCodeService.generate(user, 4);
-        } catch (PinCodeException.MaxGenerationReached maxGenerationReached) {
+        } catch (MaxGenerationReachedException maxGenerationReached) {
             modelAndView.addObject("maxAttemptsReached", true);
         }
         modelAndView.addObject("phone", phone);
@@ -58,7 +59,7 @@ public class PinController extends CommonController {
         boolean result = false;
         try {
             result = pinCodeService.attempt(user, pin);
-        } catch (PinCodeException.MaxAttemptsReached maxAttemptsReached) {
+        } catch (MaxAttemptsReachedException maxAttemptsReached) {
             modelAndView.addObject("maxAttemptsReached", true);
         }
 

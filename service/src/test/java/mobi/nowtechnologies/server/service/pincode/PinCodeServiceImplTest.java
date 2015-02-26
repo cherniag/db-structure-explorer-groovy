@@ -3,7 +3,6 @@ package mobi.nowtechnologies.server.service.pincode;
 import mobi.nowtechnologies.server.persistence.domain.PinCode;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.PinCodeRepository;
-import mobi.nowtechnologies.server.service.exception.PinCodeException;
 import mobi.nowtechnologies.server.service.pincode.impl.PinCodeServiceImpl;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
@@ -69,7 +68,7 @@ public class PinCodeServiceImplTest {
     @Test
     public void testPinCodeServiceMaxPinCodesReached() throws Exception {
         when(pinCodeRepository.countUserPinCodes(eq(DEFAULT_USER.getId()), any(Date.class))).thenReturn(limitCount);
-        thrown.expect(PinCodeException.MaxGenerationReached.class);
+        thrown.expect(MaxGenerationReachedException.class);
         pinCodeService.generate(DEFAULT_USER, DEFAULT_CODE_LENGTH);
     }
 
@@ -110,7 +109,7 @@ public class PinCodeServiceImplTest {
 
         when(pinCodeRepository.findPinCodesByUserAndCreationTime(eq(DEFAULT_USER.getId()), any(Date.class), any(Pageable.class))).thenReturn(asList(pinCode));
 
-        thrown.expect(PinCodeException.MaxAttemptsReached.class);
+        thrown.expect(MaxAttemptsReachedException.class);
         pinCodeService.attempt(DEFAULT_USER, pinCode.getCode());
     }
 

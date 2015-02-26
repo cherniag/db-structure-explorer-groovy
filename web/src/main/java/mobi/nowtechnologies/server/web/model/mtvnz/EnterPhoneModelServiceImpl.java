@@ -2,10 +2,11 @@ package mobi.nowtechnologies.server.web.model.mtvnz;
 
 import mobi.nowtechnologies.server.persistence.domain.PinCode;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.exception.PinCodeException;
-import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
 import mobi.nowtechnologies.server.service.impl.SmsServiceFacade;
+import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
+import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
+import mobi.nowtechnologies.server.service.pincode.MaxGenerationReachedException;
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -57,7 +58,7 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
                 smsProvider.send(phone, smsText, smsTitle);
 
                 logger.info("Sms was sent to user id {}", user.getId());
-            } catch (PinCodeException.MaxGenerationReached maxGenerationReached) {
+            } catch (MaxGenerationReachedException maxGenerationReached) {
                 model.put("result", CheckResult.LIMIT_REACHED);
                 model.put("check", false);
             }
@@ -77,9 +78,9 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
             } else {
                 return CheckResult.NO;
             }
-        } catch (SubscriberServiceException.ServiceNotAvailable e) {
+        } catch (ProviderNotAvailableException e) {
             return CheckResult.CONN_ERROR;
-        } catch (SubscriberServiceException.MSISDNNotFound e) {
+        } catch (MsisdnNotFoundException e) {
             return CheckResult.NOT_VALID;
         }
     }
