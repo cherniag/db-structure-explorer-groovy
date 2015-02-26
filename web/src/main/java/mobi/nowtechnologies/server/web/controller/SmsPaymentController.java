@@ -6,6 +6,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PSMSPaymentService;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,12 @@ public class SmsPaymentController extends CommonController {
 
         User user = getUser();
 
+
+        if(hasAwaitingStatus(user)) {
+            modelAndView.addObject("awaiting", true);
+            return modelAndView;
+        }
+
         boolean vfPaymentType = hasVodafonePaymentType(user);
 
         assign(policyId, user);
@@ -38,6 +45,10 @@ public class SmsPaymentController extends CommonController {
 
     private boolean hasVodafonePaymentType(User user) {
         return user.getCurrentPaymentDetails() != null && PaymentDetails.VF_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType());
+    }
+
+    private boolean hasAwaitingStatus(User user) {
+        return user.getCurrentPaymentDetails() != null && user.getCurrentPaymentDetails().getLastPaymentStatus() == PaymentDetailsStatus.AWAITING;
     }
 
     private void assign(int policyId, User user) {
