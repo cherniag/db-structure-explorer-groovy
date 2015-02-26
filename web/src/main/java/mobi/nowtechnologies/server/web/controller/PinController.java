@@ -37,7 +37,7 @@ public class PinController extends CommonController {
     }
 
     @RequestMapping(value = {"pin/resend"}, method = RequestMethod.GET)
-    public ModelAndView resend() {
+    public ModelAndView resend(@RequestParam("phone") String phone) {
         User user = currentUser();
 
         ModelAndView modelAndView = new ModelAndView("pin/check");
@@ -47,12 +47,14 @@ public class PinController extends CommonController {
         } catch (PinCodeException.MaxGenerationReached maxGenerationReached) {
             modelAndView.addObject("maxAttemptsReached", true);
         }
-
+        modelAndView.addObject("phone", phone);
         return modelAndView;
     }
 
     @RequestMapping(value = {"pin/result"}, method = RequestMethod.GET)
-    public ModelAndView result(@RequestParam("pin") String pin, @RequestParam("phone") String phone) {
+    public ModelAndView result(@RequestParam("pin") String pin,
+                               @RequestParam("phone") String phone,
+                               @RequestParam("key") String key) {
         User user = currentUser();
 
         ModelAndView modelAndView = new ModelAndView("pin/result");
@@ -66,6 +68,7 @@ public class PinController extends CommonController {
 
         modelAndView.addObject("check", result);
         modelAndView.addObject("phone", phone);
+        modelAndView.addObject("key", key);
 
         if(result) {
             confirm(user.getId(), phone);

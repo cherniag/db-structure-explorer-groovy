@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.TimeService;
-import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
-import mobi.nowtechnologies.server.persistence.domain.NZProviderType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
@@ -57,14 +55,11 @@ class PaymentModelServiceImpl implements PaymentModelService {
         model.put("smsPaymentPolicy", Iterables.getFirst(sorted, null));
 
         if(user.isPremium(timeService.now())) {
-            logger.info("User id {} is premium user", user.getId());
+            boolean vfPaymentType = user.getCurrentPaymentDetails() != null && PaymentDetails.VF_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType());
 
-            NZSubscriberInfo info = subscriberInfoRepository.findSubscriberInfoByUserId(user.getId());
-            logger.info("User id {} has info {}", user.getId(), info);
+            model.put("vf", vfPaymentType);
 
-            boolean vf = info.getProviderType() == NZProviderType.VODAFONE;
-
-            model.put("vf", vf);
+            logger.info("User id {} is premium user and has payment type: {}", user.getId(), vfPaymentType);
         }
 
         return model;

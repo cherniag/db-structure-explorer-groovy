@@ -3,7 +3,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<c:set var="endpoint" scope="request" value="result"/>
+<c:set var="endpoint" scope="request" value="change"/>
 
 <jsp:include page="../control.jsp">
     <jsp:param name="callingPage" value="check_pin" />
