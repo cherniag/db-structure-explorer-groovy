@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
 import javax.annotation.Resource;
 import java.util.List;
 
-public class ChartUserStatusBehaviorRepositoryTest extends AbstractRepositoryIT {
+public class ChartUserStatusBehaviorRepositoryIT extends AbstractRepositoryIT {
     @Resource
     ChartUserStatusBehaviorRepository chartUserStatusBehaviorRepository;
     @Resource

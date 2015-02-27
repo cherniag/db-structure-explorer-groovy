@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ResolutionRepositoryTest extends AbstractRepositoryIT {
+public class ResolutionRepositoryIT extends AbstractRepositoryIT {
     @Resource
     private ResolutionRepository resolutionRepository;
 
