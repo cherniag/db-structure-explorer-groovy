@@ -6,7 +6,10 @@
 <div class="root-container root-container-selection">
     <div class="container-option">
         <div class="go-premium-header">
-            <div class="go-premium-header-logo"></div>
+            <div class="go-premium-header-logo">
+                <img src="${requestScope.assetsPathAccordingToCommunity}imgs/badge_mtv.png"
+                     class="go-premium-header-logo-img"/>
+            </div>
             <div class="go-premium-header-ad">
                 <div class="go-premium-header-title">
                     <s:message code='subscription.header.block.headline1'/>

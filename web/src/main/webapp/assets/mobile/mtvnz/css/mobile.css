@@ -20,6 +20,7 @@ body {
     font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    font-size: 14px;
     -webkit-user-select: none;
     -webkit-text-size-adjust: none;
 }
@@ -60,10 +61,10 @@ body {
 .go-premium-header-logo {
     display: table-cell;
     vertical-align: middle;
-    background: url(../imgs/badge_mtv.png) no-repeat center;
-    background-size: 100% auto;
-    height: 100%;
     width: 30%;
+}
+.go-premium-header-logo-img {
+    height: 30%;
 }
 .go-premium-header-ad {
     display: table-cell;
@@ -78,8 +79,11 @@ body {
 
 .message {
     font-family: 'NimbusSanTOTLig', Sans, sans-serif;
-    font-size: 14px;
     text-align: center;
+}
+
+.message-terms-and-conditions {
+    font-size: 0.8em;
 }
 
 
@@ -103,7 +107,6 @@ Buttons
 }
 .go-premium-button-device {
     padding: 10px;
-    font-size: 14px;
     border-radius: 20px;
     width: 60%;
 }
@@ -122,9 +125,16 @@ Buttons
 
 
 .mobile-input {
+    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+    text-align: center;
     background-color: transparent;
     border: 0 solid;
     border-bottom-width: 1px;
+    width:100%;
+}
+.mobile-input-wrapper {
+    margin: 20px auto 20px;
+    width: 70%;
 }
 .mobile-input:focus {
     outline: 0;
@@ -155,7 +165,6 @@ Buttons
 }
 .pin-error-msg {
     color: #DE3D16;
-    font-size: 13px;
     text-align: center;
 }
 
