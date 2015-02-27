@@ -4,20 +4,25 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="root-container root-container-selection">
-    <div class="go-premium-header container-option">
-        <div class="go-premium-header-logo"></div>
-        <div class="go-premium-header-ad">
-            <div class="go-premium-header-title">
-                <s:message code='subscription.header.block.headline1'/>
-            </div>
-            <div class="go-premium-header-title-options">
-                <s:message code='subscription.header.block.headline2'/>
+    <div class="container-option">
+        <div class="go-premium-header">
+            <div class="go-premium-header-logo"></div>
+            <div class="go-premium-header-ad">
+                <div class="go-premium-header-title">
+                    <s:message code='subscription.header.block.headline1'/>
+                </div>
+                <div class="go-premium-header-title-options">
+                    <s:message code='subscription.header.block.headline2'/>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="container-option">
         <div>
+            <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_payment_vf.png" class="payment-logo" />
+        </div>
+        <div class="message">
             <s:message code='vf.payment.title'/>
         </div>
         <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" href="phone/check.html">
@@ -28,6 +33,9 @@
     </div>
 
     <div class="container-option">
+        <div>
+            <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_payment_itunes.png" class="payment-logo" />
+        </div>
         <div>
             <s:message code='vf.itunes.title'/>
         </div>

@@ -44,7 +44,8 @@ body {
 
 .container-option {
     background-color: white;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    padding: 5px;
 }
 
 .container-root-logo {
@@ -75,11 +76,18 @@ body {
     font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
 }
 
+.message {
+    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
 
 
-
-
-
+.payment-logo {
+    width: 40%;
+    margin: 0 auto;
+    display: block;
+}
 
 /*
 Buttons
@@ -90,14 +98,14 @@ Buttons
     text-align: center;
     vertical-align: middle;
     text-decoration: none;
-    margin: 0 auto;
+    margin: 10px auto 5px;
     color: black;
 }
 .go-premium-button-device {
-    padding: 14px;
-    font-size: 16px;
+    padding: 10px;
+    font-size: 14px;
     border-radius: 20px;
-    width: 70%;
+    width: 60%;
 }
 .go-premium-button-target:active {
     opacity: 0.5;
@@ -118,10 +126,10 @@ Buttons
     border: 0 solid;
     border-bottom-width: 1px;
 }
-
 .mobile-input:focus {
     outline: 0;
 }
+
 
 .pin-code-digit {
     text-align: center;
@@ -130,7 +138,6 @@ Buttons
     margin: 1px;
     width: 20%;
 }
-
 .pin-code-digit-1 {
     float:left;
 }
@@ -142,12 +149,10 @@ Buttons
 }
 .pin-code-digit-4 {
 }
-
 .pin-error {
     color: #DE3D16;
     border: #DE3D16 1px solid;
 }
-
 .pin-error-msg {
     color: #DE3D16;
     font-size: 13px;

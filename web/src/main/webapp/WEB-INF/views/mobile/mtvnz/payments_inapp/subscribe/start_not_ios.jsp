@@ -18,6 +18,9 @@
 
     <div class="container-option">
         <div>
+            <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_payment_vf.png" class="payment-logo" />
+        </div>
+        <div class="message">
             <s:message code='vf.payment.title'/>
         </div>
         <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" href="phone/check.html">
@@ -29,6 +32,9 @@
 
     <div class="container-option">
         <div>
+            <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_payment_paypal.png" class="payment-logo" />
+        </div>
+        <div class="message">
             <s:message code='vf.paypal.title'/>
         </div>
         <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="submitForm('subscribe_form_${paymentData.payPalPaymentPolicy.id}');">
