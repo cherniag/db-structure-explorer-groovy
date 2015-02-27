@@ -81,7 +81,10 @@ body {
     font-family: 'NimbusSanTOTLig', Sans, sans-serif;
     text-align: center;
 }
-
+.error {
+    color: #DE3D16;
+    font-size: 0.8em;
+}
 .message-terms-and-conditions {
     font-size: 0.8em;
 }
@@ -140,33 +143,43 @@ Buttons
     outline: 0;
 }
 
-
+.pin-code-wrapper {
+    width: 165px;
+    background-color: #000;
+    margin: 10px auto;
+    clear:both;
+}
+.pin-code-wrapper-error {
+    width: 165px;
+    background-color: #DE3D16;
+    margin: 10px auto;
+    clear:both;
+}
 .pin-code-digit {
     text-align: center;
-    outline: none;
-    border: #000 1px solid;
-    margin: 1px;
-    width: 20%;
+    width: 40px;
+    height: 40px;
+    border: 0 solid;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
 .pin-code-digit-1 {
     float:left;
+    margin-left:1px;
 }
 .pin-code-digit-2 {
     float:left;
+    margin-left:1px;
 }
 .pin-code-digit-3 {
     float:left;
+    margin-left:1px;
 }
 .pin-code-digit-4 {
+    margin-left:1px;
+    margin-right:1px;
 }
-.pin-error {
-    color: #DE3D16;
-    border: #DE3D16 1px solid;
-}
-.pin-error-msg {
-    color: #DE3D16;
-    text-align: center;
-}
+
 
 
 /**

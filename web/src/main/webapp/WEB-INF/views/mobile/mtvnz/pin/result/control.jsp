@@ -9,28 +9,34 @@
     <c:set var="key" value="reassigned" />
 </c:if>
 
-<div>
+<div class="message">
     <s:message code='enter.pin.header' arguments='${phone}'/>
 </div>
 
-<div>
+<br/>
+<br/>
+
+<div class="message">
     <s:message code='enter.pin.footer'/>
 </div>
 
-<div id="pinCodeId">
+<br/>
+
+<div id="pinCodeId" class="pin-code-wrapper">
     <input class="pin-code-digit pin-code-digit-1" type="text" maxlength="1" />
     <input class="pin-code-digit pin-code-digit-2" type="text" maxlength="1" />
     <input class="pin-code-digit pin-code-digit-3" type="text" maxlength="1" />
-    <input class="pin-code-digit pin-code-digit-4" type="text" maxlength="1"  />
+    <input class="pin-code-digit pin-code-digit-4" type="text" maxlength="1" />
 </div>
 
-<c:if test="${check == false}">
-    <s:message code="enter.pin.error.notValid" />
-</c:if>
-<c:if test="${not empty maxAttemptsReached}">
-    <s:message code="enter.pin.error.maxAttempts" />
-</c:if>
-
+<div class="message error">
+    <c:if test="${check == false}">
+        <s:message code="enter.pin.error.notValid" />
+    </c:if>
+    <c:if test="${not empty maxAttemptsReached}">
+        <s:message code="enter.pin.error.maxAttempts" />
+    </c:if>
+</div>
 
 <script>
     $(document).ready(function() {
