@@ -23,7 +23,20 @@
 
     <br/>
 
-    <div id="pinCodeId" class="pin-code-wrapper">
+    <c:choose>
+        <c:when test="${check == false && empty maxAttemptsReached}">
+            <s:message code="enter.pin.error.notValid" var="errorMessage" />
+            <c:set var="showError" value="true" />
+        </c:when>
+        <c:otherwise>
+            <c:if test="${not empty maxAttemptsReached}">
+                <s:message code="enter.pin.error.maxAttempts" var="errorMessage" />
+                <c:set var="showError" value="true" />
+            </c:if>
+        </c:otherwise>
+    </c:choose>
+
+    <div id="pinCodeId" class="pin-code-wrapper<c:if test="${not empty showError}">-error</c:if>">
         <input class="pin-code-digit pin-code-digit-1" type="text" maxlength="1" />
         <input class="pin-code-digit pin-code-digit-2" type="text" maxlength="1" />
         <input class="pin-code-digit pin-code-digit-3" type="text" maxlength="1" />
@@ -31,12 +44,7 @@
     </div>
 
     <div class="message error">
-        <c:if test="${check == false}">
-            <s:message code="enter.pin.error.notValid" />
-        </c:if>
-        <c:if test="${not empty maxAttemptsReached}">
-            <s:message code="enter.pin.error.maxAttempts" />
-        </c:if>
+        ${errorMessage}
     </div>
 
     <script>
