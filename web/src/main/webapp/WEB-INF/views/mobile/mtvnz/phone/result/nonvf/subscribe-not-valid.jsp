@@ -3,9 +3,9 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<c:set var="showEnterButton" value="true" scope="request"/>
-<c:set var="showResendCodeButton" value="true" scope="request"/>
-<c:set var="error" value="Invalid code. Please try again." scope="request"/>
-<jsp:include page="control.jsp">
+<c:set var="endpoint" scope="request" value="result"/>
+<s:message code='enter.phone.error.notValid' scope="request" var="error"/>
+
+<jsp:include page="../../control.jsp">
     <jsp:param name="callingPage" value="check_pin" />
 </jsp:include>

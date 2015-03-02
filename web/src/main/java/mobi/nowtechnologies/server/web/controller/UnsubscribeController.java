@@ -44,11 +44,16 @@ public class UnsubscribeController extends CommonController {
     @RequestMapping(value = SCOPE_PREFIX + "/unsubscribe.html", method = RequestMethod.GET)
     public ModelAndView getUnsubscribePage(@PathVariable("scopePrefix") String scopePrefix) {
         ModelAndView modelAndView = new ModelAndView(scopePrefix + "/unsubscribe");
-        User user = userService.findById(getSecurityContextDetails().getUserId());
+        User user = userService.findById(getUserId());
         PaymentPolicyDto currentPaymentPolicy = subscriptionInfoAsm.getCurrentPaymentPolicy(user);
         modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
         modelAndView.addObject(UnsubscribeDto.NAME, new UnsubscribeDto());
         return modelAndView;
+    }
+
+    @RequestMapping(value = SCOPE_PREFIX + "/unsubscribeConfirmation.html", method = RequestMethod.GET)
+    public ModelAndView getUnsubscribeConfirmationPage(@PathVariable("scopePrefix") String scopePrefix) {
+        return new ModelAndView(scopePrefix + "/unsubscribeConfirmation");
     }
 
     @RequestMapping(value = PAGE_UNSUBSCRIBE_BY_PAYPAL, method = RequestMethod.GET)
@@ -77,7 +82,7 @@ public class UnsubscribeController extends CommonController {
         if (result.hasErrors()) {
             modelAndView.addObject("result", "fail");
         } else {
-            userService.unsubscribeUser(getSecurityContextDetails().getUserId(), dto);
+            userService.unsubscribeUser(getUserId(), dto);
             modelAndView.addObject("result", "successful");
         }
         return modelAndView;
@@ -95,7 +100,7 @@ public class UnsubscribeController extends CommonController {
             modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
             return modelAndView;
         } else {
-            userService.unsubscribeUser(getSecurityContextDetails().getUserId(), dto);
+            userService.unsubscribeUser(getUserId(), dto);
             ModelAndView modelAndView = new ModelAndView(scopePrefix + "/redirectAfterUnsubscribe");
             modelAndView.addObject("currentPaymentPolicy", currentPaymentPolicy);
             return modelAndView;

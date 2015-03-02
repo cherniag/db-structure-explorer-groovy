@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.PinCode;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,10 +15,10 @@ public interface PinCodeRepository extends JpaRepository<PinCode, Integer> {
 
     @Query(value = "select p from PinCode p " +
             " where p.userId = ?1" +
-            " and p.entered = 0 " +
+            " and p.entered = false " +
             " and p.creationTime > ?2 " +
             " order by p.creationTime desc")
-    List<PinCode> findPinCodesByUserAndCreationTime(Integer userId, Date creationTime);
+    List<PinCode> findPinCodesByUserAndCreationTime(Integer userId, Date creationTime, Pageable pageable);
 
     @Query(value="select count(p) from PinCode p " +
             " where p.userId = ?1" +

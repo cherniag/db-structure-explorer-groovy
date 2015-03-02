@@ -23,21 +23,45 @@ public class EnterPhoneNumberController extends CommonController {
 
     @RequestMapping(value = {"check"}, method = RequestMethod.GET)
     public ModelAndView check() {
-        ModelAndView modelAndView = new ModelAndView("phone/check");
+        return new ModelAndView("phone/check");
+    }
+
+    @RequestMapping(value = {"reassign"}, method = RequestMethod.GET)
+    public ModelAndView change() {
+        return new ModelAndView("phone/reassign");
+    }
+
+    @RequestMapping(value = {"change"}, method = RequestMethod.GET)
+    public ModelAndView reassign(@RequestParam("phone") String phone) {
+        ModelAndView modelAndView = process(phone);
+        modelAndView.setViewName("phone/result");
+        modelAndView.addObject("reassigned", true);
         return modelAndView;
     }
 
     @RequestMapping(value = {"result"}, method = RequestMethod.GET)
     public ModelAndView result(@RequestParam("phone") String phone) {
+        ModelAndView modelAndView = process(phone);
+        modelAndView.setViewName("phone/result");
+        return modelAndView;
+    }
+
+    private ModelAndView process(String phone) {
         User user = userRepository.findOne(getUserId());
 
-        EnterPhoneModelService enterPhoneModelService = communityServiceFactory.find(user.getCommunity(), EnterPhoneModelService.class);
-
-        ModelAndView modelAndView = new ModelAndView("phone/result");
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("phone", phone);
-        modelAndView.addObject("ios", DeviceType.IOS.equals(user.getDeviceType().getName()));
-        modelAndView.addAllObjects(enterPhoneModelService.getModel(user, phone));
+        modelAndView.addObject("ios", doesUserPayByITunes(user));
+        modelAndView.addAllObjects(findModelService(user).getModel(user, phone));
         return modelAndView;
+    }
+
+    private boolean doesUserPayByITunes(User user) {
+        return DeviceType.IOS.equals(user.getDeviceType().getName());
+    }
+
+    private EnterPhoneModelService findModelService(User user) {
+        return communityServiceFactory.find(user.getCommunity(), EnterPhoneModelService.class);
     }
 
     public void setCommunityServiceFactory(CommunityServiceFactory communityServiceFactory) {

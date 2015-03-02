@@ -3,8 +3,8 @@ package mobi.nowtechnologies.server.service.vodafone.impl;
 import mobi.nowtechnologies.server.apptests.NZSubscriberInfoGatewayMock;
 import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
-import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
+import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,22 +47,22 @@ public class NZSubscriberInfoServiceIT {
         assertEquals("Simplepostpay_CCRoam", savedSubscriberInfo.getBillingAccountName());
     }
 
-    @Test
-    public void testConfirm() throws Exception {
-        final int userId = 777;
-        final String msisdn = "642101838801";
-
-        nzService.belongs(msisdn);
-        nzService.confirm(userId, msisdn);
-
-        NZSubscriberInfo savedSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
-
-        assertEquals(userId, savedSubscriberInfo.getUserId().intValue());
-    }
-
-    @Test(expected = SubscriberServiceException.ServiceNotAvailable.class)
+    @Test(expected = ProviderNotAvailableException.class)
     public void testNZServiceFault() throws Exception {
         nzService.belongs("64" + NZSubscriberInfoGatewayMock.notAvailablePrefix + "101838801");
+    }
+
+    @Test
+    public void testNZServiceFaultButMSISDNAlreadyInDB() throws Exception {
+        String msisdn = "64" + NZSubscriberInfoGatewayMock.notAvailablePrefix + "101838801";
+        NZSubscriberInfo subscriberInfo = new NZSubscriberInfo(msisdn);
+        subscriberInfo.setPayIndicator("Prepay");
+        subscriberInfo.setBillingAccountNumber("300001121");
+        subscriberInfo.setProviderName("Vodafone");
+        subscriberInfoRepository.save(subscriberInfo);
+
+        boolean isVodafone = nzService.belongs(msisdn);
+        assertTrue(isVodafone);
     }
 
     @After

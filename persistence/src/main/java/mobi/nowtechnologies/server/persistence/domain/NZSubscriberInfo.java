@@ -37,9 +37,16 @@ public class NZSubscriberInfo {
     @Column(name = "billing_account_name")
     private String billingAccountName;
 
+    @Column(name = "call_count")
+    private int callCount;
+
     @Column(name = "create_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTimestamp = new Date();
+
+    @Column(name = "update_timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTimestamp = new Date(createTimestamp.getTime());
 
     protected NZSubscriberInfo() {
     }
@@ -56,8 +63,12 @@ public class NZSubscriberInfo {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public void unassignUser() {
+        this.userId = null;
     }
 
     public String getMsisdn() {
@@ -69,6 +80,7 @@ public class NZSubscriberInfo {
     }
 
     public void setPayIndicator(String payIndicator) {
+        refreshUpdateTimestamp();
         this.payIndicator = payIndicator;
     }
 
@@ -77,6 +89,7 @@ public class NZSubscriberInfo {
     }
 
     public void setProviderName(String providerName) {
+        refreshUpdateTimestamp();
         this.providerName = providerName;
     }
 
@@ -85,6 +98,7 @@ public class NZSubscriberInfo {
     }
 
     public void setBillingAccountNumber(String billingAccountNumber) {
+        refreshUpdateTimestamp();
         this.billingAccountNumber = billingAccountNumber;
     }
 
@@ -93,7 +107,20 @@ public class NZSubscriberInfo {
     }
 
     public void setBillingAccountName(String billingAccountName) {
+        refreshUpdateTimestamp();
         this.billingAccountName = billingAccountName;
+    }
+
+    public NZProviderType getProviderType() {
+        return NZProviderType.of(getProviderName());
+    }
+
+    public void incCallCount() {
+        callCount++;
+    }
+
+    private void refreshUpdateTimestamp(){
+        updateTimestamp = new Date();
     }
 
     @Override
@@ -106,6 +133,8 @@ public class NZSubscriberInfo {
                 .append("providerName", providerName)
                 .append("billingAccountNumber", billingAccountNumber)
                 .append("billingAccountName", billingAccountName)
+                .append("callCount", callCount)
+                .append("updateTimestamp", updateTimestamp)
                 .append("createTimestamp", createTimestamp)
                 .toString();
     }

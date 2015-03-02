@@ -36,14 +36,18 @@ public class PhoneNumberCreator {
         final int validPhoneTypePrefix = 1;
 
         Preconditions.checkState(validPhoneTypePrefix != NZSubscriberInfoGatewayMock.notAvailablePrefix);
-        Preconditions.checkState(validPhoneTypePrefix != NZSubscriberInfoGatewayMock.notFoundPrefix);
+        Preconditions.checkState(validPhoneTypePrefix != NZSubscriberInfoGatewayMock.doesNotBelong);
 
         return doCreatePhone("+64%01d%07d", validPhoneTypePrefix);
     }
 
     @Transactional("applicationTestsTransactionManager")
     public String createNZNotFoundPhoneNumber() {
-        return doCreatePhone("+64%01d%07d", NZSubscriberInfoGatewayMock.notFoundPrefix);
+        return doCreatePhone("+00%01d%07d", 0);
+    }
+    @Transactional("applicationTestsTransactionManager")
+    public String createNZDoesNotBelong() {
+        return doCreatePhone("+00%01d%07d", NZSubscriberInfoGatewayMock.doesNotBelong);
     }
     @Transactional("applicationTestsTransactionManager")
     public String createNZNotAvailablePhoneNumber() {

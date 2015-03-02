@@ -1,15 +1,12 @@
 package mobi.nowtechnologies.server.web.model.mtvnz;
 
-import mobi.nowtechnologies.server.persistence.domain.PinCode;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.exception.PinCodeException;
-import mobi.nowtechnologies.server.service.exception.SubscriberServiceException;
-import mobi.nowtechnologies.server.service.impl.SmsServiceFacade;
+import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
-import mobi.nowtechnologies.server.service.pincode.PinCodeService;
-import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
+import mobi.nowtechnologies.server.service.pincode.MaxGenerationReachedException;
 import mobi.nowtechnologies.server.web.model.EnterPhoneModelService;
+import mobi.nowtechnologies.server.web.service.impl.PinService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +18,11 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
-    PinCodeService pinCodeService;
-    @Resource
     NZSubscriberInfoService nzSubscriberInfoService;
     @Resource
-    SmsServiceFacade smsServiceFacade;
+    PaymentModelServiceImpl paymentModelService;
     @Resource
-    CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    PinService pinService;
 
     @Override
     public Map<String, Object> getModel(User user, String phone) {
@@ -39,25 +34,17 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
 
         logger.info("Result of check {}", checkResult);
 
-        if(checkResult.isYes()){
+        if(checkResult.isYes()) {
             try {
-                PinCode generated = pinCodeService.generate(user, 4);
-
-                logger.info("Generated Pin Code {}", generated);
-
-                SMSGatewayService smsProvider = smsServiceFacade.getSMSProvider(user.getCommunityRewriteUrl());
-
-                String code = generated.getCode();
-
-                String smsText = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), "enter.phone.pin.sms.text", new Object[]{code}, null);
-                String smsTitle = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), "sms.title", null, null);
-
-                smsProvider.send(phone, smsText, smsTitle);
-
-                logger.info("Sms was sent to user id {}", user.getId());
-            } catch (PinCodeException.MaxPinCodesReached maxPinCodesReached) {
+                pinService.sendPinToUser(user, phone);
+            } catch (MaxGenerationReachedException maxGenerationReached) {
                 model.put("result", CheckResult.LIMIT_REACHED);
+                model.put("check", false);
             }
+        }
+
+        if(checkResult.isNo()) {
+            model.putAll(paymentModelService.getModel(user));
         }
 
         return model;
@@ -70,18 +57,22 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
             } else {
                 return CheckResult.NO;
             }
-        } catch (SubscriberServiceException.ServiceNotAvailable e) {
+        } catch (ProviderNotAvailableException e) {
             return CheckResult.CONN_ERROR;
-        } catch (SubscriberServiceException.MSISDNNotFound e) {
-            return CheckResult.NO;
+        } catch (MsisdnNotFoundException e) {
+            return CheckResult.NOT_VALID;
         }
     }
 
     public static enum CheckResult {
-        YES, NO, CONN_ERROR, LIMIT_REACHED;
+        YES, NO, CONN_ERROR, NOT_VALID, LIMIT_REACHED;
 
         public boolean isYes() {
             return this == YES;
+        }
+
+        public boolean isNo(){
+            return this == NO;
         }
 
         public boolean isConnectionError() {
@@ -90,6 +81,10 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
 
         public boolean isLimitReached() {
             return this == LIMIT_REACHED;
+        }
+
+        public boolean isNotValid() {
+            return this == NOT_VALID;
         }
 
     }

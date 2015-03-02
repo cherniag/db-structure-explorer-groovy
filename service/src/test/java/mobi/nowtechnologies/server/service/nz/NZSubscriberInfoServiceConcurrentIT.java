@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.service.nz.impl;
+package mobi.nowtechnologies.server.service.nz;
 
 import mobi.nowtechnologies.server.apptests.NZSubscriberInfoGatewayMock;
 import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
@@ -43,7 +43,7 @@ public class NZSubscriberInfoServiceConcurrentIT {
     public void init(){
         nzService = new NZSubscriberInfoServiceForTest();
         nzService.setSubscriberInfoRepository(subscriberInfoRepository);
-        nzService.setSubscriberInfoGateway(subscriberInfoGatewayMock);
+        nzService.setSubscriberInfoProvider(subscriberInfoGatewayMock);
     }
 
     @After

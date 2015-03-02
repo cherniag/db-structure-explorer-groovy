@@ -19,18 +19,34 @@
             <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:when>
+    <c:when test="${result.notValid}">
+        <jsp:include page="nonvf/subscribe-not-valid.jsp">
+            <jsp:param name="callingPage" value="check_phone" />
+        </jsp:include>
+    </c:when>
     <c:otherwise>
+
         <c:choose>
-            <c:when test="${ios}">
-                <jsp:include page="nonvf/subscribe-ios.jsp">
+            <c:when test="${reassigned}">
+                <jsp:include page="nonvf/subscribe-reassigned.jsp">
                     <jsp:param name="callingPage" value="check_phone" />
                 </jsp:include>
             </c:when>
             <c:otherwise>
-                <jsp:include page="nonvf/subscribe-not-ios.jsp">
-                    <jsp:param name="callingPage" value="check_phone" />
-                </jsp:include>
+                <c:choose>
+                    <c:when test="${ios}">
+                        <jsp:include page="nonvf/subscribe-ios.jsp">
+                            <jsp:param name="callingPage" value="check_phone" />
+                        </jsp:include>
+                    </c:when>
+                    <c:otherwise>
+                        <jsp:include page="nonvf/subscribe-not-ios.jsp">
+                            <jsp:param name="callingPage" value="check_phone" />
+                        </jsp:include>
+                    </c:otherwise>
+                </c:choose>
             </c:otherwise>
         </c:choose>
+
     </c:otherwise>
 </c:choose>

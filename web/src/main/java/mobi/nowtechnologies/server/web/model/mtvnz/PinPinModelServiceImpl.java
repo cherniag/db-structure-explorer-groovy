@@ -1,29 +1,40 @@
 package mobi.nowtechnologies.server.web.model.mtvnz;
 
 import com.google.common.collect.Collections2;
+import mobi.nowtechnologies.server.persistence.domain.NZSubscriberInfo;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.repository.NZSubscriberInfoRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.web.model.PinModelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.*;
 
-class PinPinModelServiceImpl implements PinModelService {
+public class PinPinModelServiceImpl implements PinModelService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private PaymentPolicyService paymentPolicyService;
+    @Resource
+    PaymentPolicyService paymentPolicyService;
+    @Resource
+    NZSubscriberInfoRepository subscriberInfoRepository;
 
     @Override
-    public Map<String, Object> getModel(User user) {
+    @Transactional
+    public Map<String, Object> getModel(User user, String phone) {
         List<PaymentPolicy> all = paymentPolicyService.findPaymentPolicies(user);
         List<PaymentPolicy> filtered = filterWithOneDurationLength(all);
         Collection<PaymentPolicy> vfPsms = Collections2.filter(filtered, new PaymentTypePredicate(PaymentDetails.VF_PSMS_TYPE));
         Collection<PaymentPolicyDto> converted = PaymentPolicyDto.convert(vfPsms);
         Object policies = new ArrayList<>(new TreeSet<>(converted));
+
+        confirm(user.getId(), phone);
+
         return Collections.singletonMap("paymentPolicyDtos", policies);
     }
 
@@ -41,7 +52,15 @@ class PinPinModelServiceImpl implements PinModelService {
         return dtos;
     }
 
-    public void setPaymentPolicyService(PaymentPolicyService paymentPolicyService) {
-        this.paymentPolicyService = paymentPolicyService;
+    private void confirm(int userId, String msisdn) {
+        NZSubscriberInfo existing = subscriberInfoRepository.findSubscriberInfoByUserId(userId);
+        if(existing != null) {
+            existing.unassignUser();
+        }
+
+        logger.info("confirm msisdn {} for {}", msisdn, userId);
+        NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
+        nzSubscriberInfo.setUserId(userId);
     }
+
 }

@@ -344,6 +344,21 @@ public class User implements Serializable {
         setTariff(_3G);
     }
 
+    public boolean isPremium(Date time) {
+        final boolean isIos = DeviceType.IOS.equals(getDeviceType().getName());
+
+        if (isIos) {
+            boolean hasITunesSubscription = ITUNES_SUBSCRIPTION.equals(getLastSubscribedPaymentSystem()) &&
+                    (getCurrentPaymentDetails() == null || getCurrentPaymentDetails().isDeactivated()) &&
+                    getNextSubPaymentAsDate().after(time);
+            boolean hasAnotherCurrentPaymentDetails = getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated();
+
+            return hasITunesSubscription || hasAnotherCurrentPaymentDetails;
+        } else {
+            return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated();
+        }
+    }
+
     public boolean isHasPromo() {
         return hasPromo;
     }

@@ -660,8 +660,8 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		</property>
 	</bean>
 
-	<bean id="service.NZSubscriberInfoService" class="mobi.nowtechnologies.server.service.nz.impl.NZSubscriberInfoServiceImpl">
-		<property name="subscriberInfoGateway" ref="service.NZSubscriberInfoGateway"/>
+	<bean id="service.NZSubscriberInfoService" class="mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService">
+		<property name="subscriberInfoProvider" ref="service.NZSubscriberInfoGateway"/>
 		<property name="subscriberInfoRepository" ref="NZSubscriberInfoRepository"/>
 	</bean>
 

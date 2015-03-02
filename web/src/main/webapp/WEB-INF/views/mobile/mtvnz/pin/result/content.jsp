@@ -4,19 +4,23 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <c:choose>
-    <c:when test="${result.ok}">
-        <jsp:include page="ok.jsp">
-            <jsp:param name="callingPage" value="check_phone" />
-        </jsp:include>
-    </c:when>
-    <c:when test="${result.maxAttempts}">
-        <jsp:include page="maxAttempts.jsp">
-            <jsp:param name="callingPage" value="check_phone" />
-        </jsp:include>
+    <c:when test="${check}">
+        <c:choose>
+            <c:when test="${key=='reassigned'}">
+                <jsp:include page="reassigned.jsp">
+                    <jsp:param name="callingPage" value="check_phone" />
+                </jsp:include>
+            </c:when>
+            <c:otherwise>
+                <jsp:include page="ok.jsp">
+                    <jsp:param name="callingPage" value="check_phone" />
+                </jsp:include>
+            </c:otherwise>
+        </c:choose>
     </c:when>
     <c:otherwise>
-        <jsp:include page="not-valid.jsp">
-            <jsp:param name="callingPage" value="check_pin" />
+        <jsp:include page="control.jsp">
+            <jsp:param name="callingPage" value="check_phone" />
         </jsp:include>
     </c:otherwise>
 </c:choose>
