@@ -7,6 +7,7 @@ import mobi.nowtechnologies.server.service.pincode.MaxGenerationReachedException
 import mobi.nowtechnologies.server.service.pincode.PinCodeService;
 import mobi.nowtechnologies.server.web.model.CommunityServiceFactory;
 import mobi.nowtechnologies.server.web.model.PinModelService;
+import mobi.nowtechnologies.server.web.service.impl.PinService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,8 @@ public class PinController extends CommonController {
     @Resource
     UserRepository userRepository;
     @Resource
+    PinService pinService;
+    @Resource
     PinCodeService pinCodeService;
 
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -40,7 +43,7 @@ public class PinController extends CommonController {
         ModelAndView modelAndView = new ModelAndView("pin/check");
 
         try {
-            pinCodeService.generate(user, 4);
+            pinService.sendPinToUser(user, phone);
         } catch (MaxGenerationReachedException maxGenerationReached) {
             modelAndView.addObject("maxAttemptsReached", true);
         }

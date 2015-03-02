@@ -43,9 +43,11 @@
         <input class="pin-code-digit pin-code-digit-4" type="text" maxlength="1" />
     </div>
 
-    <div class="message error">
-        ${errorMessage}
-    </div>
+    <c:if test="${not empty errorMessage}">
+        <div class="message error">
+            ${errorMessage}
+        </div>
+    </c:if>
 
     <script>
         $(document).ready(function() {

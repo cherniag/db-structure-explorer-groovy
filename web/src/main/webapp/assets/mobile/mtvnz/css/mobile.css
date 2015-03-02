@@ -83,7 +83,7 @@ body {
 }
 .error {
     color: #DE3D16;
-    font-size: 0.8em;
+    font-size: 0.7em;
 }
 .message-terms-and-conditions {
     font-size: 0.8em;
@@ -136,7 +136,7 @@ Buttons
     width:100%;
 }
 .mobile-input-wrapper {
-    margin: 20px auto 20px;
+    margin: 20px auto 5px;
     width: 70%;
 }
 .mobile-input:focus {

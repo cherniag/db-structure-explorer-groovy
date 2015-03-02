@@ -1,16 +1,12 @@
 package mobi.nowtechnologies.server.web.model.mtvnz;
 
-import mobi.nowtechnologies.server.persistence.domain.PinCode;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.service.impl.SmsServiceFacade;
 import mobi.nowtechnologies.server.service.nz.MsisdnNotFoundException;
 import mobi.nowtechnologies.server.service.nz.NZSubscriberInfoService;
 import mobi.nowtechnologies.server.service.nz.ProviderNotAvailableException;
 import mobi.nowtechnologies.server.service.pincode.MaxGenerationReachedException;
-import mobi.nowtechnologies.server.service.pincode.PinCodeService;
-import mobi.nowtechnologies.server.service.sms.SMSGatewayService;
-import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.web.model.EnterPhoneModelService;
+import mobi.nowtechnologies.server.web.service.impl.PinService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,15 +18,11 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
-    PinCodeService pinCodeService;
-    @Resource
     NZSubscriberInfoService nzSubscriberInfoService;
     @Resource
-    SmsServiceFacade smsServiceFacade;
-    @Resource
-    CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
-    @Resource
     PaymentModelServiceImpl paymentModelService;
+    @Resource
+    PinService pinService;
 
     @Override
     public Map<String, Object> getModel(User user, String phone) {
@@ -42,22 +34,9 @@ class EnterPhoneModelServiceImpl implements EnterPhoneModelService {
 
         logger.info("Result of check {}", checkResult);
 
-        if(checkResult.isYes()){
+        if(checkResult.isYes()) {
             try {
-                PinCode generated = pinCodeService.generate(user, 4);
-
-                logger.info("Generated Pin Code {}", generated);
-
-                SMSGatewayService smsProvider = smsServiceFacade.getSMSProvider(user.getCommunityRewriteUrl());
-
-                String code = generated.getCode();
-
-                String smsText = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), "enter.phone.pin.sms.text", new Object[]{code}, null);
-                String smsTitle = communityResourceBundleMessageSource.getMessage(user.getCommunityRewriteUrl(), "sms.title", null, null);
-
-                smsProvider.send(phone, smsText, smsTitle);
-
-                logger.info("Sms was sent to user id {}", user.getId());
+                pinService.sendPinToUser(user, phone);
             } catch (MaxGenerationReachedException maxGenerationReached) {
                 model.put("result", CheckResult.LIMIT_REACHED);
                 model.put("check", false);

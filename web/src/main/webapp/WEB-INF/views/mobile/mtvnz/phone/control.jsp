@@ -18,11 +18,12 @@
     </div>
 
     <c:if test="${not empty error}">
-        <div class="phone-error-msg">
+        <div class="message error">
                 ${error}
         </div>
     </c:if>
 
+    <br />
     <div class="message message-terms-and-conditions">
         <s:message code="enter.phone.footer" />
     </div>
