@@ -104,6 +104,9 @@ body {
     color: #DE3D16;
     font-size: 0.7em;
 }
+.notification {
+    font-size: 0.7em;
+}
 .message-terms-and-conditions {
     font-size: 0.8em;
 }

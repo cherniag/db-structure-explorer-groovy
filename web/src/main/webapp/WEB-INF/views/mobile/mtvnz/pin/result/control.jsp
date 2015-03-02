@@ -44,7 +44,7 @@
     </div>
 
     <c:if test="${resent}">
-        <div class="message">
+        <div class="message notification">
             <s:message code="pin.sent" />
         </div>
     </c:if>
