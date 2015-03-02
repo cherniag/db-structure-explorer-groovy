@@ -122,8 +122,11 @@ body {
     display: block;
 }
 .premium-logo {
-    width: 90%;
+    height: 100%;
     margin: 0 auto;
+    display: block;
+}
+.success-logo {
     display: block;
 }
 
@@ -1941,3 +1944,39 @@ Buttons
     }
 }
 */
+
+.go-premium-first-half {
+    width: 100%;
+    height: 50%;
+    background-color: #19f3cd;
+}
+.go-premium-second-half {
+    width: 100%;
+    height: 50%;
+}
+.go-premium-success {
+    padding: 0 !important;
+    height: 100%;
+}
+.go-premium-success-avatar-container {
+    width: 100%;
+    height: 30%;
+    /*top: 35%;*/
+    top: 32%;
+    position: absolute;
+}
+.go-premium-success-ad {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    text-align: center;
+    width: 100%;
+    /*top: 32% + 30%; */
+    top: 64%;
+    position: absolute;
+    font-size: 1.1em;
+}
+.go-premium-success-salutation {
+    font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+}
