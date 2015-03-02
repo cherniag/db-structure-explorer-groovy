@@ -32,6 +32,10 @@ public class SmsPaymentController extends CommonController {
             return modelAndView;
         }
 
+        if(samePolicy(user, policyId)) {
+            return modelAndView;
+        }
+
         boolean vfPaymentType = hasVodafonePaymentType(user);
 
         assign(policyId, user);
@@ -41,6 +45,13 @@ public class SmsPaymentController extends CommonController {
         }
 
         return modelAndView;
+    }
+
+    private boolean samePolicy(User user, int policyId) {
+        return user.getCurrentPaymentDetails() != null &&
+                user.getCurrentPaymentDetails().isActivated() &&
+                user.getCurrentPaymentDetails().getPaymentPolicy() != null &&
+                user.getCurrentPaymentDetails().getPaymentPolicy().getId() == policyId;
     }
 
     private boolean hasVodafonePaymentType(User user) {
