@@ -28,7 +28,7 @@
 
         <c:choose>
             <c:when test="${reassigned}">
-                <jsp:include page="nonvf/subscribe-non-vf.jsp">
+                <jsp:include page="nonvf/subscribe-reassigned.jsp">
                     <jsp:param name="callingPage" value="check_phone" />
                 </jsp:include>
             </c:when>
