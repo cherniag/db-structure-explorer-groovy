@@ -43,6 +43,12 @@
         <input class="pin-code-digit pin-code-digit-4" type="text" maxlength="1" />
     </div>
 
+    <c:if test="${resent}">
+        <div class="message">
+            <s:message code="pin.sent" />
+        </div>
+    </c:if>
+
     <c:if test="${not empty errorMessage}">
         <div class="message error">
             ${errorMessage}

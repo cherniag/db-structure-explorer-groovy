@@ -48,6 +48,7 @@ public class PinController extends CommonController {
             modelAndView.addObject("maxAttemptsReached", true);
         }
         modelAndView.addObject("phone", phone);
+        modelAndView.addObject("resent", true);
         return modelAndView;
     }
 

@@ -5,7 +5,7 @@
 
 <c:choose>
     <c:when test="${paymentsPage.awaitingPaymentStatus}">
-        <jsp:include page="manage/vf_any_device.jsp">
+        <jsp:include page="awaiting.jsp">
             <jsp:param name="callingPage" value="payments_inapp" />
         </jsp:include>
     </c:when>

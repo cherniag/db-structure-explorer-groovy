@@ -44,7 +44,9 @@ public class SmsPaymentController extends CommonController {
     }
 
     private boolean hasVodafonePaymentType(User user) {
-        return user.getCurrentPaymentDetails() != null && PaymentDetails.VF_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType());
+        return user.getCurrentPaymentDetails() != null &&
+                PaymentDetails.VF_PSMS_TYPE.equals(user.getCurrentPaymentDetails().getPaymentType()) &&
+                user.getCurrentPaymentDetails().isActivated();
     }
 
     private boolean hasAwaitingStatus(User user) {

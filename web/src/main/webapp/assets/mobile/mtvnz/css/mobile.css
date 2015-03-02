@@ -76,7 +76,26 @@ body {
 .go-premium-header-title-options {
     font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
 }
-
+.center-container {
+    text-align: center;
+}
+.header {
+    background-color: #000;
+}
+.header1 {
+    font-family: 'FuturaSB-BoldItalic', Sans, sans-serif;
+    font-size: 1.5em;
+    color: #fff;
+    font-weight: bold;
+    padding: 0.15em;
+}
+.header2 {
+    font-family: 'FuturaSB-BoldItalic', Sans, sans-serif;
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: bold;
+    padding: 0.15em;
+}
 .message {
     font-family: 'NimbusSanTOTLig', Sans, sans-serif;
     text-align: center;
@@ -89,7 +108,11 @@ body {
     font-size: 0.8em;
 }
 
-
+.error-logo {
+    width: 40%;
+    margin: 0 auto;
+    display: block;
+}
 .payment-logo {
     width: 40%;
     margin: 0 auto;
