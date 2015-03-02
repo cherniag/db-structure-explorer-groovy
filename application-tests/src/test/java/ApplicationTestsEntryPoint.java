@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 @RunWith(CustomCucumberRunner.class)
 @CucumberOptions(
         tags = {
-                "@Ready"
+                "@Ready1"
                 // ,"@InDevelopment"
         },
         glue = "mobi.nowtechnologies.applicationtests.features",

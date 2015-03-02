@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.*;
 
-class PinPinModelServiceImpl implements PinModelService {
+public class PinPinModelServiceImpl implements PinModelService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
@@ -52,7 +52,7 @@ class PinPinModelServiceImpl implements PinModelService {
         return dtos;
     }
 
-    private NZSubscriberInfo confirm(int userId, String msisdn) {
+    private void confirm(int userId, String msisdn) {
         NZSubscriberInfo existing = subscriberInfoRepository.findSubscriberInfoByUserId(userId);
         if(existing != null) {
             existing.unassignUser();
@@ -61,7 +61,6 @@ class PinPinModelServiceImpl implements PinModelService {
         logger.info("confirm msisdn {} for {}", msisdn, userId);
         NZSubscriberInfo nzSubscriberInfo = subscriberInfoRepository.findSubscriberInfoByMsisdn(msisdn);
         nzSubscriberInfo.setUserId(userId);
-        return subscriberInfoRepository.saveAndFlush(nzSubscriberInfo);
     }
 
 }

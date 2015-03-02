@@ -9,6 +9,8 @@
 
     <import resource="model-service.xml" />
 
+    <bean class="mobi.nowtechnologies.server.web.service.impl.PinService" />
+
     <bean id="subscriptionInfoAsm" class="mobi.nowtechnologies.server.web.asm.SubscriptionInfoAsm">
         <property name="timeService" ref="timeService"/>
         <property name="iTunesPaymentService" ref="service.iTunesPaymentService"/>

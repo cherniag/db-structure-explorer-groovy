@@ -20,6 +20,7 @@ body {
     font-family: 'FrutigerRegular', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    font-size: 14px;
     -webkit-user-select: none;
     -webkit-text-size-adjust: none;
 }
@@ -44,7 +45,8 @@ body {
 
 .container-option {
     background-color: white;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    padding: 5px;
 }
 
 .container-root-logo {
@@ -59,10 +61,10 @@ body {
 .go-premium-header-logo {
     display: table-cell;
     vertical-align: middle;
-    background: url(../imgs/badge_mtv.png) no-repeat center;
-    background-size: 100% auto;
-    height: 100%;
     width: 30%;
+}
+.go-premium-header-logo-img {
+    height: 30%;
 }
 .go-premium-header-ad {
     display: table-cell;
@@ -75,11 +77,24 @@ body {
     font-family: 'FuturaSB-BoldItalic', Arial, sans-serif;
 }
 
+.message {
+    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+    text-align: center;
+}
+.error {
+    color: #DE3D16;
+    font-size: 0.7em;
+}
+.message-terms-and-conditions {
+    font-size: 0.8em;
+}
 
 
-
-
-
+.payment-logo {
+    width: 40%;
+    margin: 0 auto;
+    display: block;
+}
 
 /*
 Buttons
@@ -90,14 +105,13 @@ Buttons
     text-align: center;
     vertical-align: middle;
     text-decoration: none;
-    margin: 0 auto;
+    margin: 10px auto 5px;
     color: black;
 }
 .go-premium-button-device {
-    padding: 14px;
-    font-size: 16px;
+    padding: 10px;
     border-radius: 20px;
-    width: 70%;
+    width: 60%;
 }
 .go-premium-button-target:active {
     opacity: 0.5;
@@ -114,45 +128,58 @@ Buttons
 
 
 .mobile-input {
+    font-family: 'NimbusSanTOTLig', Sans, sans-serif;
+    text-align: center;
     background-color: transparent;
     border: 0 solid;
     border-bottom-width: 1px;
+    width:100%;
 }
-
+.mobile-input-wrapper {
+    margin: 20px auto 5px;
+    width: 70%;
+}
 .mobile-input:focus {
     outline: 0;
 }
 
+.pin-code-wrapper {
+    width: 165px;
+    background-color: #000;
+    margin: 10px auto;
+    clear:both;
+}
+.pin-code-wrapper-error {
+    width: 165px;
+    background-color: #DE3D16;
+    margin: 10px auto;
+    clear:both;
+}
 .pin-code-digit {
     text-align: center;
-    outline: none;
-    border: #000 1px solid;
-    margin: 1px;
-    width: 20%;
+    width: 40px;
+    height: 40px;
+    border: 0 solid;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
-
 .pin-code-digit-1 {
     float:left;
+    margin-left:1px;
 }
 .pin-code-digit-2 {
     float:left;
+    margin-left:1px;
 }
 .pin-code-digit-3 {
     float:left;
+    margin-left:1px;
 }
 .pin-code-digit-4 {
+    margin-left:1px;
+    margin-right:1px;
 }
 
-.pin-error {
-    color: #DE3D16;
-    border: #DE3D16 1px solid;
-}
-
-.pin-error-msg {
-    color: #DE3D16;
-    font-size: 13px;
-    text-align: center;
-}
 
 
 /**

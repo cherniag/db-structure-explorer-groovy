@@ -9,19 +9,22 @@
         }
     </script>
 
-    <div>
+    <div class="message">
         <s:message code="enter.phone.header" />
     </div>
 
-    <input type="text" id="phone" class="mobile-input" placeholder="<s:message code="enter.phone.hint" />" />
+    <div class="mobile-input-wrapper">
+        <input type="text" id="phone" class="mobile-input" placeholder="<s:message code="enter.phone.hint" />" />
+    </div>
 
     <c:if test="${not empty error}">
-        <div class="phone-error-msg">
+        <div class="message error">
                 ${error}
         </div>
     </c:if>
 
-    <div>
+    <br />
+    <div class="message message-terms-and-conditions">
         <s:message code="enter.phone.footer" />
     </div>
 

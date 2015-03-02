@@ -5,64 +5,84 @@
 
 <script src="${requestScope.assetsPathWithoutCommunity}scripts/utils.js"></script>
 
-<c:if test="${reassigned}">
-    <c:set var="key" value="reassigned" />
-</c:if>
+<div class="root-container">
+    <c:if test="${reassigned}">
+        <c:set var="key" value="reassigned" />
+    </c:if>
 
-<div>
-    <s:message code='enter.pin.header' arguments='${phone}'/>
-</div>
+    <div class="message">
+        <s:message code='enter.pin.header' arguments='${phone}'/>
+    </div>
 
-<div>
-    <s:message code='enter.pin.footer'/>
-</div>
+    <br/>
+    <br/>
 
-<div id="pinCodeId">
-    <input class="pin-code-digit pin-code-digit-1" type="text" maxlength="1" />
-    <input class="pin-code-digit pin-code-digit-2" type="text" maxlength="1" />
-    <input class="pin-code-digit pin-code-digit-3" type="text" maxlength="1" />
-    <input class="pin-code-digit pin-code-digit-4" type="text" maxlength="1"  />
-</div>
+    <div class="message">
+        <s:message code='enter.pin.footer'/>
+    </div>
 
-<c:if test="${check == false}">
-    <s:message code="enter.pin.error.notValid" />
-</c:if>
-<c:if test="${not empty maxAttemptsReached}">
-    <s:message code="enter.pin.error.maxAttempts" />
-</c:if>
+    <br/>
 
+    <c:choose>
+        <c:when test="${check == false && empty maxAttemptsReached}">
+            <s:message code="enter.pin.error.notValid" var="errorMessage" />
+            <c:set var="showError" value="true" />
+        </c:when>
+        <c:otherwise>
+            <c:if test="${not empty maxAttemptsReached}">
+                <s:message code="enter.pin.error.maxAttempts" var="errorMessage" />
+                <c:set var="showError" value="true" />
+            </c:if>
+        </c:otherwise>
+    </c:choose>
 
-<script>
-    $(document).ready(function() {
-        var pinControl = new PinCodeControl("pinCodeId");
-        enterPin = function() {
-            window.location = "pin/result?pin=" + pinControl.getValue() + "&phone=" + ${phone} + "&key=${key}";
-        };
-    });
+    <div id="pinCodeId" class="pin-code-wrapper<c:if test="${not empty showError}">-error</c:if>">
+        <input class="pin-code-digit pin-code-digit-1" type="text" maxlength="1" />
+        <input class="pin-code-digit pin-code-digit-2" type="text" maxlength="1" />
+        <input class="pin-code-digit pin-code-digit-3" type="text" maxlength="1" />
+        <input class="pin-code-digit pin-code-digit-4" type="text" maxlength="1" />
+    </div>
 
-    function resendCode() {
-        window.location = "pin/resend?phone=" + ${phone};
-    }
+    <c:if test="${not empty errorMessage}">
+        <div class="message error">
+            ${errorMessage}
+        </div>
+    </c:if>
 
-</script>
+    <script>
+        $(document).ready(function() {
+            var pinControl = new PinCodeControl("pinCodeId");
+            enterPin = function() {
+                window.location = "pin/result?pin=" + pinControl.getValue() + "&phone=" + ${phone} + "&key=${key}";
+            };
+        });
 
-<c:choose>
-    <c:when test="${empty maxAttemptsReached}">
-        <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="enterPin()">
+        function resendCode() {
+            window.location = "pin/resend?phone=" + ${phone};
+        }
+
+    </script>
+
+    <c:choose>
+        <c:when test="${empty maxAttemptsReached}">
+            <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="enterPin()">
             <span>
                 <s:message code='button.enter.title'/>
             </span>
-        </a>
-        <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="resendCode()">
+            </a>
+            <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="resendCode()">
             <span>
                 <s:message code='button.resend.code.title'/>
             </span>
-        </a>
-    </c:when>
-    <c:otherwise>
-        <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
-            <span><s:message code='button.back.to.the.app.title' /></span>
-        </a>
-    </c:otherwise>
-</c:choose>
+            </a>
+        </c:when>
+        <c:otherwise>
+            <a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-cancel" onclick="returnToApp();">
+                <span><s:message code='button.back.to.the.app.title' /></span>
+            </a>
+        </c:otherwise>
+    </c:choose>
+</div>
+
+
 
