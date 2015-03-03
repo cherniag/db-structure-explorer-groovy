@@ -1,21 +1,13 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import com.google.common.collect.ComparisonChain;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.*;
 import mobi.nowtechnologies.server.security.NowTechTokenBasedRememberMeServices;
-import mobi.nowtechnologies.server.service.DeviceService;
-import mobi.nowtechnologies.server.service.PaymentDetailsService;
-import mobi.nowtechnologies.server.service.UserNotificationService;
-import mobi.nowtechnologies.server.service.UserService;
+import mobi.nowtechnologies.server.service.*;
 import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.shared.Utils;
-import mobi.nowtechnologies.server.shared.enums.Contract;
-import mobi.nowtechnologies.server.shared.enums.SegmentType;
-import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
@@ -34,13 +26,10 @@ import org.springframework.web.client.RestTemplate;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
 /**
@@ -598,110 +587,11 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     }
 
     protected String getMessage(User user, Community community, String msgCodeBase, String[] msgArgs) {
-        LOGGER.debug("input parameters user, community, msgCodeBase, msgArgs: [{}], [{}], [{}], [{}]", user, community, msgCodeBase, msgArgs);
-
-        if (msgCodeBase == null)
-            throw new NullPointerException("The parameter msgCodeBase is null");
-
-        String msg = null;
-
-        String[] codes = new String[27];
-
-        final String providerKey = isNull(user.getProvider()) ? null : user.getProvider().getKey();
-        final SegmentType segment = user.getSegment();
-        final Contract contract = user.getContract();
-        final DeviceType deviceType = user.getDeviceType();
-        final PaymentDetails paymentDetails = user.getCurrentPaymentDetails();
-        String deviceTypeName = null;
-
-        if (deviceType != null) {
-            deviceTypeName = deviceType.getName();
-        }
-
-        codes[0] = msgCodeBase;
-        codes[1] = getCode(codes, 0, providerKey, true);
-        codes[2] = getCode(codes, 1, segment, true);
-        codes[3] = getCode(codes, 2, contract, true);
-        codes[4] = getCode(codes, 3, deviceTypeName, true);
-        codes[5] = getCode(codes, 4, Tariff._4G.equals(user.getTariff()) ? "VIDEO" : null, true);
-        codes[6] = getCode(codes, 5, paymentDetails != null ? paymentDetails.getPaymentType() : null, true);
-
-        if(paymentDetails != null){
-            PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
-            String prefix = "before";
-            final String preProviderKey = isNull(paymentPolicy.getProvider()) ? null : paymentPolicy.getProvider().getKey();
-            final SegmentType preSegment = paymentPolicy.getSegment();
-            final Contract preContract = paymentPolicy.getContract();
-            final String providerSuffix = prefix+"."+preProviderKey;
-            final String segmentSuffix = providerSuffix+"."+preSegment;
-            final String contractSuffix = segmentSuffix+"."+preContract;
-            for(int i = 1; i <= 6; i++){
-                if(!StringUtils.equals(preProviderKey, providerKey))
-                    codes[1*6+i] = getCode(codes, i, providerSuffix, false);
-                if(segment != preSegment)
-                    codes[2*6+i] = getCode(codes, i, segmentSuffix, false);
-                if(contract != preContract)
-                    codes[3*6+i] = getCode(codes, i, contractSuffix, false);
-            }
-            PaymentDetails previousPaymentDetails = user.getPreviousPaymentDetails();
-            if(isNotNull(previousPaymentDetails)) {
-                if(previousPaymentDetails.getPaymentPolicy().getId().equals(paymentPolicy.getId())){
-                    codes[25] = getCode(codes, 6, "prevPaymentPolicyIsTheSame", true);
-                }else {
-                    codes[25] = getCode(codes, 6, "prevPaymentPolicyIsDiffer", true);
-                }
-            }
-            if(user.isOnFreeTrial()) {
-                codes[26] = getCode(codes, 6, "onFreeTrial", true);
-            }
-        }
-
-        for (int i = codes.length - 1; i >= 0; i--) {
-            if (codes[i] != null) {
-                msg = messageSource.getMessage(community.getRewriteUrlParameter(), codes[i], msgArgs, "", null);
-                if (StringUtils.isNotEmpty(msg))
-                    break;
-            }
-        }
-
+        MessageNotificationService messageNotificationService = smsServiceFacade.getMessageNotificationService(community.getRewriteUrlParameter());
+        String msg = messageNotificationService.getMessage(user, community, msgCodeBase, msgArgs);
         if (msg == null) {
             LOGGER.warn("A user has not received sms notification because no message was found. getMessage( [{}], [{}])", user.getId(), msgCodeBase);
         }
-
-        LOGGER.debug("Output parameter msg=[{}]", msg);
         return msg;
-    }
-
-    private String getCode(String[] codes, int i, Object value, boolean recursive) {
-        LOGGER.debug("input parameters codes, i, value: [{}], [{}], [{}]", codes, i, value);
-
-        if (codes == null)
-            throw new NullPointerException("The parameter codes is null");
-        if (codes.length == 0)
-            throw new IllegalArgumentException("The parameter codes of array type has 0 size");
-        if (codes[0] == null) {
-            throw new IllegalArgumentException("The parameter codes of array type has null value as first element");
-        }
-        if (i >= codes.length)
-            throw new IllegalArgumentException("The parameter i>=codes.length. i=" + i);
-        if (i < 0)
-            throw new IllegalArgumentException("The parameter i less than 0. i=" + i);
-
-        String code = null;
-
-        if (value != null) {
-            final String prefix = codes[i];
-            if (prefix != null) {
-                if (i == 0) {
-                    code = prefix + ".for." + value;
-                } else {
-                    code = prefix + "." + value;
-                }
-            } else if(recursive){
-                code = getCode(codes, i - 1, value, recursive);
-            }
-        }
-        LOGGER.debug("Output parameter code=[{}]", code);
-        return code;
     }
 }

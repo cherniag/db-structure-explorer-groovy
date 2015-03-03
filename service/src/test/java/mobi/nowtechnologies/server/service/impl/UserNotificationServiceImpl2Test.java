@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.MessageNotificationService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.MigResponse;
@@ -49,7 +50,13 @@ public class UserNotificationServiceImpl2Test {
 
     @Mock
     private PaymentDetailsService paymentDetailsServiceMock;
-	
+
+    @Mock
+    MessageNotificationService messageNotificationServiceMock;
+
+    static Community o2Community = createCommunity(O2_COMMUNITY_REWRITE_URL);
+    static Community vfNzCommunity = createCommunity(VF_NZ_COMMUNITY_REWRITE_URL);
+
 	@Before
 	public void setUp() {
         smsServiceFacade = mock(SmsServiceFacade.class);
@@ -80,8 +87,11 @@ public class UserNotificationServiceImpl2Test {
 		Mockito.when(migResponse.getMessage()).thenReturn("000=[GEN] OK ");
 		Mockito.when(migResponse.isSuccessful()).thenReturn(true);
         doReturn(migHttpService).when(smsServiceFacade).getSMSProvider(anyString());
+        doReturn(messageNotificationServiceMock).when(smsServiceFacade).getMessageNotificationService(anyString());
 		Mockito.when(migHttpService.send(anyString(), anyString(), anyString())).thenReturn(migResponse);
-		
+        when(messageNotificationServiceMock.getMessage(any(User.class), eq(o2Community), anyString(), any(String[].class))).thenReturn("a");
+        when(messageNotificationServiceMock.getMessage(any(User.class), eq(vfNzCommunity), anyString(), any(String[].class))).thenReturn("a");
+
 		audioOnlyUsers = new ArrayList<User>();
 		addAudioUsers( audioOnlyUsers );
 		
@@ -181,7 +191,7 @@ public class UserNotificationServiceImpl2Test {
 		return pp;
 	}
 	
-	private User createUser(String community, ProviderType provider, SegmentType st,Contract c, String device, Tariff tariff,final String paymentType) {
+	private User createUser(Community community, ProviderType provider, SegmentType st,Contract c, String device, Tariff tariff,final String paymentType) {
 		User user = new User();
 
 		user.setProvider( provider );
@@ -189,12 +199,8 @@ public class UserNotificationServiceImpl2Test {
 		user.setContract( c );
         user.setMobile("+642111111111");
 		
-		Community com = new Community();
-		com.setRewriteUrlParameter(community);
-		com.setName(community);
-		
 		UserGroup ug = new UserGroup();
-		ug.setCommunity(com);
+		ug.setCommunity(community);
 		user.setUserGroup(ug);
 		
 		DeviceType dt = new DeviceType();
@@ -219,7 +225,14 @@ public class UserNotificationServiceImpl2Test {
 
     private User createUser(ProviderType provider, SegmentType st,Contract c, String device, Tariff tariff) {
 
-        return createUser(O2_COMMUNITY_REWRITE_URL, provider, st, c, device, tariff, "o2Psms");
+        return createUser(o2Community, provider, st, c, device, tariff, "o2Psms");
+    }
+
+    static Community createCommunity(String community){
+        Community com = new Community();
+        com.setRewriteUrlParameter(community);
+        com.setName(community);
+        return com;
     }
 	
 	private void addVideoUsers(List<User> ret) {
@@ -294,21 +307,21 @@ public class UserNotificationServiceImpl2Test {
 		list.add( createUser(NON_O2, null, null, DeviceType.ANDROID, null) );
 
 		// vf_nz on-net
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.NONE, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.ANDROID, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.IOS, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.J2ME, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.SYMBIAN, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, VF, null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, VF, null, null, DeviceType.NONE, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, VF, null, null, DeviceType.ANDROID, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, VF, null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, VF, null, null, DeviceType.IOS, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, VF, null, null, DeviceType.J2ME, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, VF, null, null, DeviceType.SYMBIAN, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, VF, null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
 
         // vf_nz off-net
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.NONE, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.ANDROID, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.IOS, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.J2ME, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.SYMBIAN, null, "vfPSms") );
-        list.add( createUser(VF_NZ_COMMUNITY_REWRITE_URL, NON_VF, null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, NON_VF, null, null, DeviceType.NONE, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, NON_VF, null, null, DeviceType.ANDROID, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, NON_VF, null, null, DeviceType.BLACKBERRY, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, NON_VF, null, null, DeviceType.IOS, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, NON_VF, null, null, DeviceType.J2ME, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, NON_VF, null, null, DeviceType.SYMBIAN, null, "vfPSms") );
+        list.add( createUser(vfNzCommunity, NON_VF, null, null, DeviceType.WINDOWS_PHONE, null, "vfPSms") );
 	}
 }
