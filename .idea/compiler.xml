@@ -37,7 +37,6 @@
     <bytecodeTargetLevel>
       <module name="admin" target="1.7" />
       <module name="application-tests" target="1.7" />
-      <module name="dtos" target="1.7" />
       <module name="env" target="1.7" />
       <module name="persistence" target="1.7" />
       <module name="service" target="1.7" />
@@ -45,7 +44,6 @@
       <module name="shared-web" target="1.7" />
       <module name="track-repo" target="1.7" />
       <module name="transport" target="1.7" />
-      <module name="uits" target="1.7" />
       <module name="web" target="1.7" />
     </bytecodeTargetLevel>
   </component>

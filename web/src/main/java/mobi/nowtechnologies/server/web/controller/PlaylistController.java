@@ -25,6 +25,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PlaylistController extends CommonController {
 
+    public final static String URL_TO_TRACKS = "URL_TO_TRACKS";
+    public final static String URL_TO_CHART_COVER = "URL_TO_CHART_COVER";
+
     public static final String VIEW_PLAYLIST = "playlist";
     public static final String VIEW_PLAYLIST_PREVIEW = "playlist/preview";
     public static final String PAGE_PLAYLIST = "playlists/{playlistType}/playlist.html";
@@ -34,7 +37,7 @@ public class PlaylistController extends CommonController {
     private ChartDetailService chartDetailService;
     private ChartService chartService;
     private UserService userService;
-    private Map<String, Object> env;
+    private Map<String, String> env;
 
     @RequestMapping(value = PAGE_PLAYLIST, method = RequestMethod.GET)
     public ModelAndView getPlaylistPage(@PathVariable("playlistType") ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
@@ -54,7 +57,7 @@ public class PlaylistController extends CommonController {
         throws IOException {
         User user = userService.getUserWithSelectedCharts(getUserId());
         List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, playlistType);
-        return new ModelAndView().addObject("playlists", PlaylistDto.toList(user, charts, env));
+        return new ModelAndView().addObject("playlists", PlaylistDto.toList(user, charts, env.get(URL_TO_CHART_COVER)));
     }
 
     @RequestMapping(value = JSON_PLAYLIST + "/{playlistID}", produces = "application/json", method = RequestMethod.PUT)
@@ -68,7 +71,7 @@ public class PlaylistController extends CommonController {
     @RequestMapping(value = JSON_PLAYLIST_TRACKS, produces = "application/json", method = RequestMethod.GET)
     public ModelAndView getTracks(@PathVariable("playlistId") Integer playlistID) {
         List<ChartDetail> chartDetails = chartDetailService.getChartItemsByDate(playlistID, new Date(), false);
-        List<TrackDto> tracks = TrackDto.toList(chartDetails, env);
+        List<TrackDto> tracks = TrackDto.toList(chartDetails, env.get(URL_TO_TRACKS));
         return new ModelAndView().addObject("tracks", tracks);
     }
 
@@ -84,7 +87,7 @@ public class PlaylistController extends CommonController {
         this.chartDetailService = chartDetailService;
     }
 
-    public void setEnv(Map<String, Object> env) {
+    public void setEnv(Map<String, String> env) {
         this.env = env;
     }
 }
