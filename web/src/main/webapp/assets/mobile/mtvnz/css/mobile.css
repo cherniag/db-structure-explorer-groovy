@@ -126,6 +126,9 @@ body {
     margin: 0 auto;
     display: block;
 }
+.premium-logo-container {
+    height: 30%;
+}
 .success-logo {
     display: block;
 }

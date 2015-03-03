@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <div class="root-container">
-    <div class="center-container">
+    <div class="center-container premium-logo-container">
         <img src="${requestScope.assetsPathAccordingToCommunity}imgs/notification_premium.png" class="premium-logo" />
     </div>
 
