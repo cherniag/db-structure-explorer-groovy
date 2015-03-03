@@ -1,9 +1,3 @@
-<%--
-<a class="go-premium-button go-premium-button-device go-premium-button-target go-premium-body-ok" onclick="returnToApp();">
-    <span><s:message code='button.get.listening.title' /></span>
-</a>
---%>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -11,6 +5,8 @@
 
 
 <div class="go-premium-success">
+    <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_close_72.png" class="go-premium-button-target go-premium-button-close go-premium-button-close-salutation" onclick="returnToApp();" />
+
     <div class="go-premium-success-salutation">
         <span class="header1">
             <br/>
