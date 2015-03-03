@@ -1,8 +1,30 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
-import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
-import mobi.nowtechnologies.server.trackrepo.ingest.warner.WarnerParserV34;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.DOWNLOAD;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.IMAGE;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.MOBILE;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.PREVIEW;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import static java.io.File.separator;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -14,22 +36,7 @@ import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import static com.google.common.primitives.Ints.checkedCast;
-import static java.io.File.separator;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.INSERT;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type.UPDATE;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
@@ -37,7 +44,12 @@ public abstract class DDEXParser extends IParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DDEXParser.class);
 
-    private Map<String, DropTrack> parseReleases(DropAssetFile imageFile, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, Map<String, Map<String, DropTerritory>> deals, String distributor, Type action, Element rootNode) {
+    public DDEXParser(String root) throws FileNotFoundException {
+        super(root);
+    }
+
+    private Map<String, DropTrack> parseReleases(DropAssetFile imageFile, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, Map<String, Map<String, DropTerritory>> deals,
+                                                 String distributor, Type action, Element rootNode) {
         Element albumElement = null;
         Map<String, DropTrack> result = new HashMap<String, DropTrack>();
         List<Element> releaseList = rootNode.getChild("ReleaseList").getChildren("Release");
@@ -49,7 +61,7 @@ public abstract class DDEXParser extends IParser {
 
             boolean isAlbum = checkAlbum(type);
 
-            if (isAlbum == false){
+            if (isAlbum == false) {
                 isAlbum = isWrongAlbum(release);
             }
 
@@ -57,7 +69,8 @@ public abstract class DDEXParser extends IParser {
                 DropTrack track = parseTrack(distributor, action, deals, files, resourceDetails, imageFile, release);
 
                 result.put(track.isrc + track.productCode + getClass(), track);
-            } else {
+            }
+            else {
                 albumElement = release;
             }
         }
@@ -79,34 +92,37 @@ public abstract class DDEXParser extends IParser {
         }
         LOGGER.info("album [{}]", albumTitle);
         // Add album title to all tracks
-        if (albumTitle != null)
+        if (albumTitle != null) {
             for (DropTrack track : result.values()) {
                 track.album = albumTitle;
                 setUpc(track, upc);
                 setGRid(track, grid);
             }
+        }
     }
 
-    private DropTrack parseTrack(String distributor, Type action, Map<String, Map<String, DropTerritory>> deals, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails, DropAssetFile imageFile, Element release) {
+    private DropTrack parseTrack(String distributor, Type action, Map<String, Map<String, DropTerritory>> deals, Map<String, List<DropAssetFile>> files, Map<String, DropTrack> resourceDetails,
+                                 DropAssetFile imageFile, Element release) {
         DropTrack track = new DropTrack();
         track.type = action;
 
         String resourceRef = release.getChild("ReleaseResourceReferenceList").getChildText("ReleaseResourceReference");
         LOGGER.info("Resource reference [{}]", resourceRef);
 
-        if (files.get(resourceRef) != null)
+        if (files.get(resourceRef) != null) {
             track.files.addAll(files.get(resourceRef));
+        }
 
-        if (imageFile != null)
+        if (imageFile != null) {
             track.files.add(imageFile);
+        }
 
         getIds(release, track, track.files);
 
         DropTrack resourceDetail = resourceDetails.get(resourceRef);
 
         if (isEmpty(track.isrc)) {
-            if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1
-                    && resourceDetail != null) {
+            if (release.getChild("ReleaseResourceReferenceList").getChildren("ReleaseResourceReference").size() == 1 && resourceDetail != null) {
                 LOGGER.info("Getting ISRC from resource [{}]", resourceRef);
                 track.isrc = resourceDetail.isrc;
             }
@@ -116,7 +132,8 @@ public abstract class DDEXParser extends IParser {
         if (pLine != null) {
             track.year = pLine.getChildText("Year");
             track.copyright = pLine.getChildText("PLineText");
-        } else if (resourceDetail != null) {
+        }
+        else if (resourceDetail != null) {
             track.year = resourceDetail.year;
             track.copyright = resourceDetail.copyright;
         }
@@ -172,11 +189,13 @@ public abstract class DDEXParser extends IParser {
             for (int si = 0; si < subTitles.size(); si++) {
                 Element subTitleElement = (Element) subTitles.get(si);
                 fullSubTitle += subTitleElement.getText();
-                if (si < subTitles.size() - 1)
+                if (si < subTitles.size() - 1) {
                     fullSubTitle += " / ";
+                }
             }
-            if (isNotEmpty(fullSubTitle))
+            if (isNotEmpty(fullSubTitle)) {
                 subTitle = fullSubTitle;
+            }
         }
 
         return subTitle;
@@ -189,8 +208,9 @@ public abstract class DDEXParser extends IParser {
             for (int i = 0; i < territoryCodes.size(); i++) {
                 String releaseReference = release.getChildText("ReleaseReference");
                 Element genre = territory.getChild("Genre");
-                if (genre != null)
+                if (genre != null) {
                     track.genre = genre.getChildText("GenreText");
+                }
 
                 Map<String, DropTerritory> deal = deals.get(releaseReference);
                 LOGGER.info("Deal for release ref [{}] [{}]", releaseReference, deal);
@@ -205,7 +225,8 @@ public abstract class DDEXParser extends IParser {
                     while (it.hasNext()) {
                         parseTerritory(distributor, track, territory, deal, it.next());
                     }
-                } else {
+                }
+                else {
                     parseTerritory(distributor, track, territory, deal, code);
                 }
             }
@@ -231,7 +252,9 @@ public abstract class DDEXParser extends IParser {
 
     protected Type getActionType(Element rootNode) {
         String updateIndicator = rootNode.getChildText("UpdateIndicator");
-        return "UpdateMessage".equals(updateIndicator) ? UPDATE : INSERT;
+        return "UpdateMessage".equals(updateIndicator) ?
+               UPDATE :
+               INSERT;
     }
 
     private Map<String, Map<String, DropTerritory>> parseDeals(Element rootNode) {
@@ -258,10 +281,12 @@ public abstract class DDEXParser extends IParser {
             for (Element reference : references) {
                 LOGGER.info("Loading deal reference [{}]", reference.getText());
                 Map<String, DropTerritory> existingDealsMap = deals.get(reference.getText());
-                if (existingDealsMap == null)
+                if (existingDealsMap == null) {
                     deals.put(reference.getText(), dealsMap);
-                else
+                }
+                else {
                     existingDealsMap.putAll(dealsMap);
+                }
             }
         }
         return deals;
@@ -276,7 +301,8 @@ public abstract class DDEXParser extends IParser {
             SimpleDateFormat dateParse = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 dealStartDate = dateParse.parse(startDate);
-            } catch (ParseException e) {
+            }
+            catch (ParseException e) {
                 LOGGER.error(e.getMessage());
             }
 
@@ -308,9 +334,11 @@ public abstract class DDEXParser extends IParser {
                 territory.startdate = dealStartDate;
                 territory.dealReference = reference;
                 try {
-                    if (price != null)
+                    if (price != null) {
                         territory.price = Float.valueOf(price);
-                } catch (NumberFormatException e) {
+                    }
+                }
+                catch (NumberFormatException e) {
                     LOGGER.error(e.getMessage());
                 }
                 territory.currency = currency;
@@ -325,8 +353,8 @@ public abstract class DDEXParser extends IParser {
         if (usage != null) {
             List<Element> useTypes = usage.getChildren("UseType");
             for (Element useType : useTypes) {
-                if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText())
-                        || "PermanentDownload".equals(useType.getText()) || "ConditionalDownload".equals(useType.getText())) {
+                if ("AsPerContract".equals(useType.getText()) || "Download".equals(useType.getText()) || "PermanentDownload".equals(useType.getText()) ||
+                    "ConditionalDownload".equals(useType.getText())) {
                     LOGGER.info("Found valid usage, [{}] ", useType.getText());
                     validUseType = true;
                     break;
@@ -357,8 +385,9 @@ public abstract class DDEXParser extends IParser {
                     }
                 }
             }
-            if (isPriorityImage(node))
+            if (isPriorityImage(node)) {
                 return imageFile;
+            }
         }
         return imageFile;
     }
@@ -375,7 +404,7 @@ public abstract class DDEXParser extends IParser {
             String parentalWarningType = details.getChildText("ParentalWarningType");
             resourceDetail.explicit = "Explicit".equals(parentalWarningType);
             Element genreElement = details.getChild("Genre");
-            if (isNotNull(genreElement)){
+            if (isNotNull(genreElement)) {
                 resourceDetail.genre = genreElement.getChildText("GenreText");
             }
             resourceDetails.put(reference, resourceDetail);
@@ -456,8 +485,7 @@ public abstract class DDEXParser extends IParser {
     }
 
     private String getUserDefinedValue(Element techDetail) {
-        return techDetail.getChild("AudioCodecType").getAttributeValue(
-                "UserDefinedValue");
+        return techDetail.getChild("AudioCodecType").getAttributeValue("UserDefinedValue");
     }
 
     protected Integer getDuration(String duration) {
@@ -474,7 +502,9 @@ public abstract class DDEXParser extends IParser {
     protected String getDistributor(Element rootNode) {
         Element messageHeader = rootNode.getChild("MessageHeader");
         Element onBehalf = messageHeader.getChild("SentOnBehalfOf");
-        Element general = onBehalf != null ? onBehalf : messageHeader.getChild("MessageSender");
+        Element general = onBehalf != null ?
+                          onBehalf :
+                          messageHeader.getChild("MessageSender");
 
         return general.getChild("PartyName").getChildText("FullName");
     }
@@ -483,13 +513,13 @@ public abstract class DDEXParser extends IParser {
         return root + "/resources/" + fileName;
     }
 
-    protected List<DropData> getDrops(File folder, boolean auto){
+    protected List<DropData> getDrops(File folder, boolean auto) {
         List<DropData> result = new ArrayList<DropData>();
-        if(!folder.exists()){
-			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
-			return result;
-		}
-        
+        if (!folder.exists()) {
+            LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
+            return result;
+        }
+
         File[] content = folder.listFiles();
         boolean deliveryComplete = false;
         boolean processed = false;
@@ -497,11 +527,14 @@ public abstract class DDEXParser extends IParser {
             if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
-            } else if (file.getName().startsWith("BatchComplete")) {
+            }
+            else if (file.getName().startsWith("BatchComplete")) {
                 deliveryComplete = true;
-            } else if (INGEST_ACK.equals(file.getName())) {
+            }
+            else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            }
+            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }
@@ -527,7 +560,7 @@ public abstract class DDEXParser extends IParser {
     }
 
     protected boolean checkAlbum(String type) {
-        if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type) || "VideoSingle".equals(type))  {
+        if ("Single".equals(type) || "Album".equals(type) || "SingleResourceRelease".equals(type) || "VideoSingle".equals(type)) {
             LOGGER.info("Album for [{}]", type);
             return true;
         }
@@ -542,38 +575,40 @@ public abstract class DDEXParser extends IParser {
             String audioCodecType = techDetail.getChildText("AudioCodecType");
             String videoCodecType = techDetail.getChildText("VideoCodecType");
 
-            if (isNotNull(videoCodecType)){
+            if (isNotNull(videoCodecType)) {
                 return FileType.VIDEO;
             }
 
-            if (isNull(audioCodecType)
-                    || audioCodecType.equals("MP3")
-                    || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))) {
+            if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail)))) {
                 fileType = DOWNLOAD;
-            } else {
+            }
+            else {
                 fileType = MOBILE;
             }
-        } else {
+        }
+        else {
             fileType = PREVIEW;
         }
         return fileType;
     }
 
-    public DDEXParser(String root) throws FileNotFoundException {
-        super(root);
+    private String getXmlFileName(String parentFolderName) {
+        return parentFolderName + ".xml";
     }
 
-    private String getXmlFileName(String parentFolderName){
-        return parentFolderName +  ".xml";
+    private File getXmlFileParentFolder(File fileOrDir) {
+        if (fileOrDir.isDirectory()) {
+            return fileOrDir;
+        }
+        else if (fileOrDir.isFile()) {
+            return fileOrDir.getParentFile();
+        }
+        else {
+            throw new IllegalArgumentException("Unknown folder content [" + fileOrDir + "]");
+        }
     }
 
-    private File getXmlFileParentFolder(File fileOrDir){
-        if (fileOrDir.isDirectory()) return fileOrDir;
-        else if (fileOrDir.isFile()) return fileOrDir.getParentFile();
-        else throw new IllegalArgumentException("Unknown folder content ["+fileOrDir+"]");
-    }
-
-    private File getXmlFile(File fileOrDir){
+    private File getXmlFile(File fileOrDir) {
         File xmlFileParentFolder = getXmlFileParentFolder(fileOrDir);
         return new File(xmlFileParentFolder + separator + getXmlFileName(xmlFileParentFolder.getName()));
     }
@@ -591,7 +626,8 @@ public abstract class DDEXParser extends IParser {
                 }
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Ingest failed: [{}]", e.getMessage(), e);
         }
         return tracks;
@@ -621,27 +657,29 @@ public abstract class DDEXParser extends IParser {
 
             return parseReleases(imageFile, files, resourceDetails, deals, distributor, action, rootNode);
 
-        } catch (IOException io) {
+        }
+        catch (IOException io) {
             LOGGER.error("Exception: [{}]", io.getMessage());
-        } catch (JDOMException jdomex) {
+        }
+        catch (JDOMException jdomex) {
             LOGGER.error("Exception: [{}]", jdomex.getMessage());
         }
         return null;
     }
 
     @Override
-    public List<DropData> getDrops(boolean auto){
+    public List<DropData> getDrops(boolean auto) {
         List<DropData> result = new ArrayList<DropData>();
         File rootFolder = new File(root);
         result.addAll(getDrops(rootFolder, auto));
         return result;
     }
 
-    protected boolean isWrongAlbum(Element release){
-      return false;
+    protected boolean isWrongAlbum(Element release) {
+        return false;
     }
 
-    protected boolean isPriorityImage (Element node){
+    protected boolean isPriorityImage(Element node) {
         return false;
     }
 

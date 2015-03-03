@@ -4,26 +4,26 @@ import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import static mobi.nowtechnologies.server.shared.enums.TransactionType.ACCOUNT_MERGE;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+
+import static org.hamcrest.CoreMatchers.is;
+
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertNotNull;
-import static mobi.nowtechnologies.server.shared.enums.TransactionType.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 
 /**
- * User: Titov Mykhaylo (titov)
- * 04.10.13 15:40
+ * User: Titov Mykhaylo (titov) 04.10.13 15:40
  */
 @PrepareForTest(Utils.class)
 @RunWith(PowerMockRunner.class)
@@ -35,7 +35,7 @@ public class AccountLogServiceTest {
     AccountLogRepository accountLogRepositoryMock;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         accountLogServiceFixture = new AccountLogService();
         accountLogServiceFixture.setAccountLogRepository(accountLogRepositoryMock);
     }

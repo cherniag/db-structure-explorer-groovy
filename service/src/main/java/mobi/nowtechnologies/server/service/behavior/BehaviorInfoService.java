@@ -11,15 +11,17 @@ import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotR
 import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
+
 public class BehaviorInfoService {
-    private Logger logger = LoggerFactory.getLogger(BehaviorInfoService.class);
 
     @Resource
     UserReferralsSnapshotRepository userReferralsSnapshotRepository;
@@ -31,7 +33,7 @@ public class BehaviorInfoService {
     CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
     @Resource
     BehaviorConfigRepository behaviorConfigRepository;
-
+    private Logger logger = LoggerFactory.getLogger(BehaviorInfoService.class);
     private String activationDatePropertyName;
 
     public boolean isFirstDeviceLoginBeforeReferralsActivation(User user) {
@@ -44,8 +46,7 @@ public class BehaviorInfoService {
     public UserReferralsSnapshot getUserReferralsSnapshot(User user, BehaviorConfig behaviorConfig) {
         UserReferralsSnapshot existing = userReferralsSnapshotRepository.findOne(user.getId());
         if (existing == null) {
-            UserReferralsSnapshot newOne = new UserReferralsSnapshot(
-                    user.getId(), behaviorConfig.getRequiredReferrals(), behaviorConfig.getReferralsDuration());
+            UserReferralsSnapshot newOne = new UserReferralsSnapshot(user.getId(), behaviorConfig.getRequiredReferrals(), behaviorConfig.getReferralsDuration());
             int referredAndConfirmedCount = getReferredAndConfirmedCount(user, behaviorConfig);
             newOne.updateMatchesData(referredAndConfirmedCount, new Date());
 
@@ -64,8 +65,8 @@ public class BehaviorInfoService {
     @Transactional(readOnly = true)
     public BehaviorConfig getBehaviorConfig(boolean supportsFreemium, Community community) {
         return supportsFreemium ?
-                communityConfigRepository.findByCommunity(community).getBehaviorConfig() :
-                behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(community.getId(), BehaviorConfigType.DEFAULT);
+               communityConfigRepository.findByCommunity(community).getBehaviorConfig() :
+               behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(community.getId(), BehaviorConfigType.DEFAULT);
     }
 
     public void setActivationDatePropertyName(String activationDatePropertyName) {

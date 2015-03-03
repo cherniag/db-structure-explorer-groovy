@@ -1,36 +1,50 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Version;
 
-import javax.persistence.*;
 import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "tb_files")
 public class MediaFile implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer i;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "filename", columnDefinition = "char(40)")
-	private String filename;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer i;
 
-	@Column(name = "fileType", insertable = false, updatable = false)
-	private byte fileTypeId;
+    @Column(name = "filename", columnDefinition = "char(40)")
+    private String filename;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "fileType")
-	private FileType fileType;
+    @Column(name = "fileType", insertable = false, updatable = false)
+    private byte fileTypeId;
 
-	private int size;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fileType")
+    private FileType fileType;
+
+    private int size;
 
     private int duration;
 
-	@Version
-	private Integer version;
+    @Version
+    private Integer version;
+
+    public MediaFile() {
+    }
 
     public Integer getVersion() {
         return version;
@@ -40,55 +54,54 @@ public class MediaFile implements Serializable {
         this.version = version;
     }
 
-    public MediaFile() {
-	}
+    public Integer getI() {
+        return this.i;
+    }
 
-	public Integer getI() {
-		return this.i;
-	}
+    public void setI(Integer i) {
+        this.i = i;
+    }
 
-	public void setI(Integer i) {
-		this.i = i;
-	}
+    public String getFilename() {
+        return this.filename;
+    }
 
-	public String getFilename() {
-		return this.filename;
-	}
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+    public FileType getFileType() {
+        return fileType;
+    }
 
-	public FileType getFileType() {
-		return fileType;
-	}
+    public void setFileType(FileType fileType) {
+        this.fileType = fileType;
+        fileTypeId = fileType.getI();
+    }
 
-	public void setFileType(FileType fileType) {
-		this.fileType = fileType;
-		fileTypeId = fileType.getI();
-	}
+    public byte getFileTypeId() {
+        return fileTypeId;
+    }
 
-	public byte getFileTypeId() {
-		return fileTypeId;
-	}
+    public int getSize() {
+        return this.size;
+    }
 
-	public int getSize() {
-		return this.size;
-	}
-
-	public void setSize(int size) {
-		this.size = size;
-	}
+    public void setSize(int size) {
+        this.size = size;
+    }
 
     @Deprecated
     public int getVersionAsPrimitive() {
-        return version != null ? version: 0;
-	}
+        return version != null ?
+               version :
+               0;
+    }
 
     @Deprecated
     public void setVersionAsPrimitive(int version) {
-		this.version = version;
-	}
+        this.version = version;
+    }
 
     public int getDuration() {
         return duration;
@@ -98,26 +111,20 @@ public class MediaFile implements Serializable {
         this.duration = duration;
     }
 
-    public MediaFile withFileType(FileType fileType){
+    public MediaFile withFileType(FileType fileType) {
         setFileType(fileType);
         return this;
     }
 
-    public MediaFile withFileName(String fileName){
+    public MediaFile withFileName(String fileName) {
         setFilename(fileName);
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("filename", filename)
-                .append("fileTypeId", fileTypeId)
-                .append("size", size)
-                .append("duration", duration)
-                .append("version", version)
-                .toString();
+        return new ToStringBuilder(this).append("i", i).append("filename", filename).append("fileTypeId", fileTypeId).append("size", size).append("duration", duration).append("version", version)
+                                        .toString();
     }
 
 

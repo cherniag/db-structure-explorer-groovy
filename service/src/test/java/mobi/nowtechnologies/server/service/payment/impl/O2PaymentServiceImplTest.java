@@ -1,11 +1,36 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import mobi.nowtechnologies.server.persistence.dao.*;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
+import mobi.nowtechnologies.server.persistence.dao.OperatorDao;
+import mobi.nowtechnologies.server.persistence.dao.UserDao;
+import mobi.nowtechnologies.server.persistence.dao.UserGroupDao;
+import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
+import mobi.nowtechnologies.server.persistence.domain.AccountLog;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.O2PSMSPaymentDetailsFactory;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.payment.AbstractPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import mobi.nowtechnologies.server.service.*;
+import mobi.nowtechnologies.server.service.AccountLogService;
+import mobi.nowtechnologies.server.service.CommunityService;
+import mobi.nowtechnologies.server.service.CountryService;
+import mobi.nowtechnologies.server.service.DeviceService;
+import mobi.nowtechnologies.server.service.EntityService;
+import mobi.nowtechnologies.server.service.PaymentDetailsService;
+import mobi.nowtechnologies.server.service.RefundService;
+import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
@@ -15,37 +40,36 @@ import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.Contract;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.context.ApplicationEventPublisher;
-
-import java.util.Locale;
-
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.EXTERNAL_ERROR;
 import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.SUCCESSFUL;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+
+import java.util.Locale;
+
+import org.springframework.context.ApplicationEventPublisher;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({UserService.class, UserStatusDao.class, Utils.class, DeviceTypeDao.class, UserGroupDao.class, OperatorDao.class, AccountLog.class, SubmittedPayment.class, O2PSMSPaymentDetails.class})
@@ -104,42 +128,42 @@ public class O2PaymentServiceImplTest {
 
     @Test
     public void testStartPayment_SuccessfulO2Response_Success() throws Exception {
-		final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
-		final UserGroup userGroup = UserGroupFactory.createUserGroup();
-		final Community community = CommunityFactory.createCommunity();
-		
-		final O2PSMSPaymentDetails o2psmsPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
-		final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
-		
-		o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
+        final User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        final UserGroup userGroup = UserGroupFactory.createUserGroup();
+        final Community community = CommunityFactory.createCommunity();
+
+        final O2PSMSPaymentDetails o2psmsPaymentDetails = O2PSMSPaymentDetailsFactory.createO2PSMSPaymentDetails();
+        final PaymentPolicy paymentPolicy = PaymentPolicyFactory.createPaymentPolicy();
+
+        o2psmsPaymentDetails.setPaymentPolicy(paymentPolicy);
         o2psmsPaymentDetails.withLastPaymentStatus(ERROR);
-		o2psmsPaymentDetails.withMadeRetries(2);
-		o2psmsPaymentDetails.setRetriesOnError(3);
-		o2psmsPaymentDetails.setActivated(true);
-		o2psmsPaymentDetails.setOwner(user);
-		
-		community.setRewriteUrlParameter(Community.O2_COMMUNITY_REWRITE_URL);
-		userGroup.setCommunity(community);
-		user.setUserGroup(userGroup);
-		user.setProvider(O2);
-		user.setSegment(CONSUMER);
-		user.setContract(Contract.PAYG);
-		user.setNextSubPayment(Utils.getEpochSeconds() - 50*60*60);
-		user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
-		user.setCurrentPaymentDetails(o2psmsPaymentDetails);
-		
-		
-		PendingPayment pendingPayment = new PendingPayment();
-		pendingPayment.setUser(user);
-		pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
+        o2psmsPaymentDetails.withMadeRetries(2);
+        o2psmsPaymentDetails.setRetriesOnError(3);
+        o2psmsPaymentDetails.setActivated(true);
+        o2psmsPaymentDetails.setOwner(user);
+
+        community.setRewriteUrlParameter(Community.O2_COMMUNITY_REWRITE_URL);
+        userGroup.setCommunity(community);
+        user.setUserGroup(userGroup);
+        user.setProvider(O2);
+        user.setSegment(CONSUMER);
+        user.setContract(Contract.PAYG);
+        user.setNextSubPayment(Utils.getEpochSeconds() - 50 * 60 * 60);
+        user.setLastSubscribedPaymentSystem(PaymentDetails.O2_PSMS_TYPE);
+        user.setCurrentPaymentDetails(o2psmsPaymentDetails);
+
+
+        PendingPayment pendingPayment = new PendingPayment();
+        pendingPayment.setUser(user);
+        pendingPayment.setPaymentDetails(o2psmsPaymentDetails);
         pendingPayment.setPeriod(new Period().withDuration(1).withDurationUnit(WEEKS));
 
-		final Boolean smsNotify = Boolean.TRUE;
-		when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
-		final String message = "message";
-		when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale)isNull())).thenReturn(message);
-		
-		final int internalTxId = Integer.MAX_VALUE;
+        final Boolean smsNotify = Boolean.TRUE;
+        when(mockCommunityResourceBundleMessageSource.getMessage("o2", "sms.o2Psms.send", null, null)).thenReturn(String.valueOf(smsNotify));
+        final String message = "message";
+        when(mockCommunityResourceBundleMessageSource.getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull())).thenReturn(message);
+
+        final int internalTxId = Integer.MAX_VALUE;
 
         mockStatic(Utils.class);
         when(Utils.getBigRandomInt()).thenReturn(internalTxId);
@@ -148,10 +172,9 @@ public class O2PaymentServiceImplTest {
         O2Response o2Response = O2Response.successfulO2Response();
         o2Response.setExternalTxId(externalTxId);
 
-        when(
-                mockO2ClientService.makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
-                        paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue()))
-                .thenReturn(o2Response);
+        when(mockO2ClientService
+                 .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
+                                        paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue())).thenReturn(o2Response);
 
         when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
@@ -220,9 +243,9 @@ public class O2PaymentServiceImplTest {
 
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2Psms.send", null, null);
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull());
-        verify(
-                mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
-                paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
+        verify(mockO2ClientService, times(1))
+            .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
+                                   paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
         verify(mockEntityService, times(1)).updateEntity(pendingPayment);
         verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(1)).publishEvent(argThat(matcher));
@@ -279,10 +302,9 @@ public class O2PaymentServiceImplTest {
         final O2Response o2Response = O2Response.failO2Response("");
         o2Response.setExternalTxId(externalTxId);
 
-        when(
-                mockO2ClientService.makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
-                        paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue()))
-                .thenReturn(o2Response);
+        when(mockO2ClientService
+                 .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
+                                        paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue())).thenReturn(o2Response);
 
         when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
@@ -353,9 +375,9 @@ public class O2PaymentServiceImplTest {
 
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2Psms.send", null, null);
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull());
-        verify(
-                mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
-                paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
+        verify(mockO2ClientService, times(1))
+            .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
+                                   paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
         verify(mockEntityService, times(1)).updateEntity(pendingPayment);
         verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));
@@ -409,10 +431,9 @@ public class O2PaymentServiceImplTest {
         final O2Response o2Response = O2Response.failO2Response("");
         o2Response.setExternalTxId(externalTxId);
 
-        when(
-                mockO2ClientService.makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
-                        paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue()))
-                .thenReturn(o2Response);
+        when(mockO2ClientService
+                 .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
+                                        paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue())).thenReturn(o2Response);
 
         when(mockEntityService.updateEntity(pendingPayment)).thenAnswer(new Answer<PendingPayment>() {
 
@@ -482,9 +503,9 @@ public class O2PaymentServiceImplTest {
 
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage("o2", "sms.o2Psms.send", null, null);
         verify(mockCommunityResourceBundleMessageSource, times(1)).getMessage(eq("o2"), eq("sms.o2Psms"), (Object[]) any(), (Locale) isNull());
-        verify(
-                mockO2ClientService, times(1)).makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message,
-                paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
+        verify(mockO2ClientService, times(1))
+            .makePremiumSMSRequest(user.getId(), String.valueOf(internalTxId), pendingPayment.getAmount(), o2psmsPaymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(),
+                                   paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), smsNotify.booleanValue());
         verify(mockEntityService, times(1)).updateEntity(pendingPayment);
         verify(mockEntityService, times(1)).removeEntity(PendingPayment.class, pendingPayment.getI());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(argThat(matcher));

@@ -2,79 +2,118 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
+import static javax.persistence.EnumType.ORDINAL;
+import static javax.persistence.FetchType.EAGER;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
-
-import static javax.persistence.EnumType.ORDINAL;
-import static javax.persistence.FetchType.EAGER;
-
 @Entity
-@Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = { "media", "chart", "publishTimeMillis" }))
+@Table(name = "tb_chartDetail", uniqueConstraints = @UniqueConstraint(columnNames = {"media", "chart", "publishTimeMillis"}))
 public class ChartDetail {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetail.class);
-	public static final int TITLE_LENGTH = 255;
-	public static final int SUBTITLE_LENGTH = 255;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer i;
+    public static final int TITLE_LENGTH = 255;
+    public static final int SUBTITLE_LENGTH = 255;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChartDetail.class);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer i;
 
-	@Column(name = "chart", insertable = false, updatable = false)
-	private Integer chartId;
+    @Column(name = "chart", insertable = false, updatable = false)
+    private Integer chartId;
 
-	@ManyToOne(fetch = EAGER)
-	@JoinColumn(name = "chart")
-	private Chart chart;
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "chart")
+    private Chart chart;
 
-	@Column(name = "media", insertable = false, updatable = false)
-	private Integer mediaId;
+    @Column(name = "media", insertable = false, updatable = false)
+    private Integer mediaId;
 
-	@ManyToOne(fetch = EAGER)
-	@JoinColumn(name = "media")
-	private Media media;
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "media")
+    private Media media;
 
-	@Column(name = "info", columnDefinition = "text")
-	@Lob()
-	private String info;
+    @Column(name = "info", columnDefinition = "text")
+    @Lob()
+    private String info;
 
-	private byte position;
+    private byte position;
 
-	private Byte prevPosition;
+    private Byte prevPosition;
 
-	@Column(name = "chgPosition", insertable = false, updatable = false)
-	private Integer chgPositionId;
+    @Column(name = "chgPosition", insertable = false, updatable = false)
+    private Integer chgPositionId;
 
-	@Enumerated(ORDINAL)
-	private ChgPosition chgPosition;
+    @Enumerated(ORDINAL)
+    private ChgPosition chgPosition;
 
-	private String channel;
+    private String channel;
 
-	@Column(name = "image_filename")
-	private String imageFileName;
+    @Column(name = "image_filename")
+    private String imageFileName;
 
-	@Column(name = "image_title")
-	private String imageTitle;
+    @Column(name = "image_title")
+    private String imageTitle;
 
-	@Column(name = "title", length = TITLE_LENGTH, nullable = true)
-	private String title;
+    @Column(name = "title", length = TITLE_LENGTH, nullable = true)
+    private String title;
 
-	@Column(name = "subtitle", length = SUBTITLE_LENGTH, nullable = true)
-	private String subtitle;
+    @Column(name = "subtitle", length = SUBTITLE_LENGTH, nullable = true)
+    private String subtitle;
 
-	private long publishTimeMillis;
-	
-	private Boolean locked;
-	
-	private Boolean defaultChart;
+    private long publishTimeMillis;
+
+    private Boolean locked;
+
+    private Boolean defaultChart;
 
     @Column(name = "badge_filename_id")
     private Long badgeId;
 
-	@Version
-	private Integer version;
+    @Version
+    private Integer version;
+
+    public ChartDetail() {
+    }
+
+    public static ChartDetail newInstance(ChartDetail chartDetail) {
+        LOGGER.debug("input parameters chartDetail: [{}]", chartDetail);
+
+        ChartDetail newChartDetail = new ChartDetail();
+        newChartDetail.setChannel(chartDetail.getChannel());
+        newChartDetail.setChart(chartDetail.getChart());
+        newChartDetail.setChgPosition(chartDetail.getChgPosition());
+        newChartDetail.setInfo(chartDetail.getInfo());
+        if (chartDetail.getMedia() != null) {
+            newChartDetail.setMedia(chartDetail.getMedia());
+        }
+        newChartDetail.setPosition(chartDetail.getPosition());
+        newChartDetail.setPrevPosition(chartDetail.getPrevPosition());
+        newChartDetail.setTitle(chartDetail.getTitle());
+        newChartDetail.setSubtitle(chartDetail.getSubtitle());
+        newChartDetail.setImageFileName(chartDetail.getImageFileName());
+        newChartDetail.setImageTitle(chartDetail.getImageTitle());
+        newChartDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
+        newChartDetail.setDefaultChart(chartDetail.getDefaultChart());
+        newChartDetail.setBadgeId(chartDetail.getBadgeId());
+
+        LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
+        return newChartDetail;
+    }
 
     public Integer getVersion() {
         return version;
@@ -84,202 +123,178 @@ public class ChartDetail {
         this.version = version;
     }
 
-    public ChartDetail() {
-	}
-
     public Integer getI() {
         return this.i;
+    }
+
+    public void setI(Integer i) {
+        this.i = i;
     }
 
     public boolean isDefaultChart() {
         return defaultChart;
     }
 
-	public void setDefaultChart(boolean defaultChart) {
-		this.defaultChart = defaultChart;
-	}
+    public void setDefaultChart(boolean defaultChart) {
+        this.defaultChart = defaultChart;
+    }
 
-	public void setI(Integer i) {
-		this.i = i;
-	}
+    public Chart getChart() {
+        return this.chart;
+    }
 
-	public Chart getChart() {
-		return this.chart;
-	}
+    public void setChart(Chart chart) {
+        this.chart = chart;
+        chartId = chart.getI();
+    }
 
-	public void setChart(Chart chart) {
-		this.chart = chart;
-		chartId = chart.getI();
-	}
+    public Integer getChartId() {
+        return chartId;
+    }
 
-	public Integer getChartId() {
-		return chartId;
-	}
+    public Media getMedia() {
+        return this.media;
+    }
 
-	public Media getMedia() {
-		return this.media;
-	}
+    public void setMedia(Media media) {
+        this.media = media;
+        mediaId = media.getI() != null ?
+                  media.getI() :
+                  null;
+    }
 
-	public void setMedia(Media media) {
-		this.media = media;
-		mediaId = media.getI() != null ? media.getI() : null;
-	}
+    public Boolean getLocked() {
+        return locked;
+    }
 
-	public Boolean getLocked() {
-		return locked;
-	}
-	
-	public ChartType getChartType(){
-		return chart.getType();
-	}
-	
-	public String getChartDescription(){
-		return getInfo();
-	}
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
-	}
+    public ChartType getChartType() {
+        return chart.getType();
+    }
 
-	public Boolean getDefaultChart() {
-		return defaultChart;
-	}
+    public String getChartDescription() {
+        return getInfo();
+    }
 
-	public void setDefaultChart(Boolean defaultChart) {
-		this.defaultChart = defaultChart;
-	}
+    public Boolean getDefaultChart() {
+        return defaultChart;
+    }
 
-	public String getImageFileName() {
-		return imageFileName;
-	}
+    public void setDefaultChart(Boolean defaultChart) {
+        this.defaultChart = defaultChart;
+    }
 
-	public void setImageFileName(String imageFileName) {
-		this.imageFileName = imageFileName;
-	}
+    public String getImageFileName() {
+        return imageFileName;
+    }
 
-	public String getImageTitle() {
-		return imageTitle;
-	}
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
+    }
 
-	public void setImageTitle(String imageTitle) {
-		this.imageTitle = imageTitle;
-	}
+    public String getImageTitle() {
+        return imageTitle;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public void setImageTitle(String imageTitle) {
+        this.imageTitle = imageTitle;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public String getSubtitle() {
-		return subtitle;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setSubtitle(String subtitle) {
-		this.subtitle = subtitle;
-	}
+    public String getSubtitle() {
+        return subtitle;
+    }
 
-	public byte getPosition() {
-		return this.position;
-	}
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
 
-	public void setPosition(byte position) {
-		this.position = position;
-	}
+    public byte getPosition() {
+        return this.position;
+    }
 
-	public int getMediaId() {
-		return mediaId;
-	}
+    public void setPosition(byte position) {
+        this.position = position;
+    }
 
-	public Byte getPrevPosition() {
-		return prevPosition;
-	}
+    public int getMediaId() {
+        return mediaId;
+    }
 
-	public void setPrevPosition(Byte prevPosition) {
-		this.prevPosition = prevPosition;
-	}
+    public Byte getPrevPosition() {
+        return prevPosition;
+    }
 
-	public ChgPosition getChgPosition() {
-		return chgPosition;
-	}
+    public void setPrevPosition(Byte prevPosition) {
+        this.prevPosition = prevPosition;
+    }
 
-	public void setChgPosition(ChgPosition chgPosition) {
-		this.chgPosition = chgPosition;
-	}
+    public ChgPosition getChgPosition() {
+        return chgPosition;
+    }
 
-	public Integer getChgPositionId() {
-		return chgPositionId;
-	}
+    public void setChgPosition(ChgPosition chgPosition) {
+        this.chgPosition = chgPosition;
+    }
 
-	public String getChannel() {
-		return channel;
-	}
+    public Integer getChgPositionId() {
+        return chgPositionId;
+    }
 
-	public void setChannel(String channel) {
-		this.channel = channel;
-	}
+    public String getChannel() {
+        return channel;
+    }
 
-	public String getInfo() {
-		return info;
-	}
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
 
-	public void setInfo(String info) {
-		this.info = info;
-	}
+    public String getInfo() {
+        return info;
+    }
 
-	public long getPublishTimeMillis() {
-		return publishTimeMillis;
-	}
+    public void setInfo(String info) {
+        this.info = info;
+    }
 
-	public void setPublishTimeMillis(long publishTimeMillis) {
-		this.publishTimeMillis = publishTimeMillis;
-	}
+    public long getPublishTimeMillis() {
+        return publishTimeMillis;
+    }
 
-	@Deprecated
+    public void setPublishTimeMillis(long publishTimeMillis) {
+        this.publishTimeMillis = publishTimeMillis;
+    }
+
+    @Deprecated
     public int getVersionAsPrimitive() {
-        return version != null ? version: 0;
-	}
+        return version != null ?
+               version :
+               0;
+    }
 
     @Deprecated
     public void setVersionAsPrimitive(int version) {
-		this.version = version;
-	}
+        this.version = version;
+    }
 
-	public boolean isChartItem() {
-		return media != null;
-	}
+    public boolean isChartItem() {
+        return media != null;
+    }
 
-	public static ChartDetail newInstance(ChartDetail chartDetail) {
-		LOGGER.debug("input parameters chartDetail: [{}]", chartDetail);
-
-		ChartDetail newChartDetail = new ChartDetail();
-		newChartDetail.setChannel(chartDetail.getChannel());
-		newChartDetail.setChart(chartDetail.getChart());
-		newChartDetail.setChgPosition(chartDetail.getChgPosition());
-		newChartDetail.setInfo(chartDetail.getInfo());
-		if(chartDetail.getMedia() != null) {
-            newChartDetail.setMedia(chartDetail.getMedia());
-        }
-		newChartDetail.setPosition(chartDetail.getPosition());
-		newChartDetail.setPrevPosition(chartDetail.getPrevPosition());
-		newChartDetail.setTitle(chartDetail.getTitle());
-		newChartDetail.setSubtitle(chartDetail.getSubtitle());
-		newChartDetail.setImageFileName(chartDetail.getImageFileName());
-		newChartDetail.setImageTitle(chartDetail.getImageTitle());
-		newChartDetail.setPublishTimeMillis(chartDetail.getPublishTimeMillis());
-		newChartDetail.setDefaultChart(chartDetail.getDefaultChart());
-        newChartDetail.setBadgeId(chartDetail.getBadgeId());
-
-		LOGGER.info("Output parameter newChartDetail=[{}]", newChartDetail);
-		return newChartDetail;
-	}
-
-	public ChartDetail withI(Integer i) {
-		setI(i);
-		return this;
-	}
+    public ChartDetail withI(Integer i) {
+        setI(i);
+        return this;
+    }
 
     public ChartDetail withMedia(Media media) {
         setMedia(media);
@@ -326,25 +341,10 @@ public class ChartDetail {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("chartId", chartId)
-                .append("mediaId", mediaId)
-                .append("info", info)
-                .append("position", position)
-                .append("prevPosition", prevPosition)
-                .append("chgPositionId", chgPositionId)
-                .append("channel", channel)
-                .append("imageFileName", imageFileName)
-                .append("imageTitle", imageTitle)
-                .append("title", title)
-                .append("subtitle", subtitle)
-                .append("publishTimeMillis", publishTimeMillis)
-                .append("locked", locked)
-                .append("defaultChart", defaultChart)
-                .append("badgeId", badgeId)
-                .append("version", version)
-                .toString();
+        return new ToStringBuilder(this).append("i", i).append("chartId", chartId).append("mediaId", mediaId).append("info", info).append("position", position).append("prevPosition", prevPosition)
+                                        .append("chgPositionId", chgPositionId).append("channel", channel).append("imageFileName", imageFileName).append("imageTitle", imageTitle)
+                                        .append("title", title).append("subtitle", subtitle).append("publishTimeMillis", publishTimeMillis).append("locked", locked)
+                                        .append("defaultChart", defaultChart).append("badgeId", badgeId).append("version", version).toString();
     }
 
 }

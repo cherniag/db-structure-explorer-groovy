@@ -5,30 +5,27 @@ import mobi.nowtechnologies.server.persistence.domain.Refund;
 import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.junit.Test;
+import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 
 import javax.annotation.Resource;
 
+import org.junit.*;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static mobi.nowtechnologies.server.shared.enums.ActionReason.USER_DOWNGRADED_TARIFF;
 
 /**
- * User: Titov Mykhaylo (titov)
- * 16.07.13 10:28
+ * User: Titov Mykhaylo (titov) 16.07.13 10:28
  */
 
-public class RefundRepositoryIT  extends AbstractRepositoryIT{
-
-    @Resource(name = "userRepository")
-    private UserRepository userRepository;
-
-    @Resource(name = "paymentDetailsRepository")
-    private PaymentDetailsRepository paymentDetailsRepository;
+public class RefundRepositoryIT extends AbstractRepositoryIT {
 
     @Resource(name = "refundRepository")
     RefundRepository refundRepository;
-
+    @Resource(name = "userRepository")
+    private UserRepository userRepository;
+    @Resource(name = "paymentDetailsRepository")
+    private PaymentDetailsRepository paymentDetailsRepository;
     private Refund actualRefund;
     private Refund refund;
 
@@ -66,7 +63,7 @@ public class RefundRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void testSave_Success(){
+    public void testSave_Success() {
         prepareDataForSave();
 
         actualRefund = refundRepository.save(refund);
@@ -75,7 +72,7 @@ public class RefundRepositoryIT  extends AbstractRepositoryIT{
     }
 
     @Test
-    public void testFindOne_Success(){
+    public void testFindOne_Success() {
         prepareDateForFindOne();
 
         actualRefund = refundRepository.findOne(actualRefund.id);

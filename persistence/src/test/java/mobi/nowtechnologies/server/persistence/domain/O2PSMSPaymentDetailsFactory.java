@@ -6,9 +6,9 @@ import mobi.nowtechnologies.server.persistence.domain.payment.O2PSMSPaymentDetai
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class O2PSMSPaymentDetailsFactory{
+public class O2PSMSPaymentDetailsFactory {
 
-	public static O2PSMSPaymentDetails createO2PSMSPaymentDetails() {
-		return new O2PSMSPaymentDetails();
-	}
+    public static O2PSMSPaymentDetails createO2PSMSPaymentDetails() {
+        return new O2PSMSPaymentDetails();
+    }
 }

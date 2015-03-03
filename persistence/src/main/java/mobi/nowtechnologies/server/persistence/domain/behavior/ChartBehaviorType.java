@@ -1,8 +1,8 @@
 package mobi.nowtechnologies.server.persistence.domain.behavior;
 
-import com.google.common.collect.Lists;
-
 import java.util.Collection;
+
+import com.google.common.collect.Lists;
 
 /**
  * Created by zam on 12/9/2014.
@@ -45,6 +45,7 @@ public enum ChartBehaviorType {
     }
 
     public abstract boolean isTracksInfoSupported();
+
     public abstract boolean isTracksPlayDurationSupported();
 
 }

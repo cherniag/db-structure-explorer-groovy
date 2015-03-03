@@ -2,14 +2,12 @@ package mobi.nowtechnologies.server.user.rules;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.user.criteria.Matcher;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/9/2014
+ * Author: Gennadii Cherniaiev Date: 4/9/2014
  */
 public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
 
@@ -47,11 +45,7 @@ public class SubscriptionCampaignUserRule implements Rule<User, Boolean> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-                .append("rootMatcher", rootMatcher)
-                .append("validation", validationDelegate)
-                .append("isValid", isValid())
-                .append("rulePriority", rulePriority)
-                .toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("rootMatcher", rootMatcher).append("validation", validationDelegate).append("isValid", isValid())
+                                                            .append("rulePriority", rulePriority).toString();
     }
 }

@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfig;
@@ -8,13 +7,19 @@ import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigTyp
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBehavior;
 import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository;
-import org.junit.Test;
-import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import org.springframework.util.Assert;
+
+import org.junit.*;
+
 public class ChartUserStatusBehaviorRepositoryIT extends AbstractRepositoryIT {
+
     @Resource
     ChartUserStatusBehaviorRepository chartUserStatusBehaviorRepository;
     @Resource

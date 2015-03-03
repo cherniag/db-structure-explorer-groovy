@@ -1,6 +1,15 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * Created by oar on 4/30/2014.
@@ -8,6 +17,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "reactivation_user_info", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id"})})
 public class ReactivationUserInfo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,10 +29,6 @@ public class ReactivationUserInfo {
     @Column(name = "reactivation_request")
     private boolean reactivationRequest;
 
-    public void setReactivationRequest(boolean reactivationRequest) {
-        this.reactivationRequest = reactivationRequest;
-    }
-
     public Long getId() {
         return id;
 
@@ -32,12 +38,16 @@ public class ReactivationUserInfo {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public boolean isReactivationRequest() {
         return reactivationRequest;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setReactivationRequest(boolean reactivationRequest) {
+        this.reactivationRequest = reactivationRequest;
     }
 
 }

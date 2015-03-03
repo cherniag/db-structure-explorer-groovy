@@ -11,11 +11,11 @@ public enum PlayerType {
         this.id = id;
     }
 
-    public String getId() {
-        return id;
+    public static PlayerType getDefaultPlayerType() {
+        return REGULAR_PLAYER_ONLY;
     }
 
-    public static PlayerType getDefaultPlayerType(){
-        return REGULAR_PLAYER_ONLY;
+    public String getId() {
+        return id;
     }
 }

@@ -1,122 +1,121 @@
 package mobi.nowtechnologies.server.shared.dto;
 
+import javax.validation.constraints.Pattern;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Pattern;
-
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class UserDetailsDto {
 
-	public static final String NAME = "UserDetailsDto";
+    public static final String NAME = "UserDetailsDto";
 
-	@Email
-	@NotEmpty
-	private String email;
+    @Email
+    @NotEmpty
+    private String email;
 
-	@NotEmpty
-	private String deviceId;
+    @NotEmpty
+    private String deviceId;
 
-	@NotEmpty
-	private String storedToken;
-	
-	@NotEmpty
-	@Pattern(regexp = ".{6,20}")
-	private String newPassword;
-	
-	@NotEmpty
-	@Pattern(regexp = ".{6,20}")
-	private String newConfirmPassword;
+    @NotEmpty
+    private String storedToken;
 
-	@NotEmpty
-	private String communityRedirectUrl;
+    @NotEmpty
+    @Pattern(regexp = ".{6,20}")
+    private String newPassword;
 
-	private String ipAddress;
+    @NotEmpty
+    @Pattern(regexp = ".{6,20}")
+    private String newConfirmPassword;
 
-	@NotEmpty
-	private String apiVersion;
+    @NotEmpty
+    private String communityRedirectUrl;
 
-	@NotEmpty
-	private String appVersion;
+    private String ipAddress;
 
-	public String getCommunityName() {
-		return communityRedirectUrl;
-	}
-	
-	public void setCOMMUNITY_NAME(String communityRedirectUrl) {
-		this.communityRedirectUrl = communityRedirectUrl;
-	}
+    @NotEmpty
+    private String apiVersion;
 
-	public String getIpAddress() {
-		return ipAddress;
-	}
+    @NotEmpty
+    private String appVersion;
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    public String getCommunityName() {
+        return communityRedirectUrl;
+    }
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public void setCOMMUNITY_NAME(String communityRedirectUrl) {
+        this.communityRedirectUrl = communityRedirectUrl;
+    }
 
-	public void setAPI_VERSION(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	public String getAppVersion() {
-		return appVersion;
-	}
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
-	public void setAPP_VERSION(String appVersion) {
-		this.appVersion = appVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setAPI_VERSION(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 
-	public void setUSER_NAME(String email) {
-		this.email = email;
-	}
+    public String getAppVersion() {
+        return appVersion;
+    }
 
-	public String getDeviceId() {
-		return deviceId;
-	}
+    public void setAPP_VERSION(String appVersion) {
+        this.appVersion = appVersion;
+    }
 
-	public void setDEVICE_UID(String deviceId) {
-		this.deviceId = deviceId;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getStoredToken() {
-		return storedToken;
-	}
+    public void setUSER_NAME(String email) {
+        this.email = email;
+    }
 
-	public void setSTORED_TOKEN(String storedToken) {
-		this.storedToken = storedToken;
-	}
+    public String getDeviceId() {
+        return deviceId;
+    }
 
-	public String getNewPassword() {
-		return newPassword;
-	}
+    public void setDEVICE_UID(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
-	public void setNEW_PASSWORD(String newPassword) {
-		this.newPassword = newPassword;
-	}
+    public String getStoredToken() {
+        return storedToken;
+    }
 
-	public String getNewConfirmPassword() {
-		return newConfirmPassword;
-	}
+    public void setSTORED_TOKEN(String storedToken) {
+        this.storedToken = storedToken;
+    }
 
-	public void setNEW_CONFIRM_PASSWORD(String newConfirmPassword) {
-		this.newConfirmPassword = newConfirmPassword;
-	}
+    public String getNewPassword() {
+        return newPassword;
+    }
 
-	@Override
-	public String toString() {
-		return "UserDetailsDto [deviceId=" + deviceId + ", email=" + email + "apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", communityRedirectUrl="
-				+ communityRedirectUrl + ", ipAddress=" + ipAddress + "]";
-	}
+    public void setNEW_PASSWORD(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getNewConfirmPassword() {
+        return newConfirmPassword;
+    }
+
+    public void setNEW_CONFIRM_PASSWORD(String newConfirmPassword) {
+        this.newConfirmPassword = newConfirmPassword;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetailsDto [deviceId=" + deviceId + ", email=" + email + "apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", communityRedirectUrl=" + communityRedirectUrl +
+               ", ipAddress=" + ipAddress + "]";
+    }
 }

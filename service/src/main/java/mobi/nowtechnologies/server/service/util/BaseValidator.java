@@ -1,15 +1,15 @@
 package mobi.nowtechnologies.server.service.util;
 
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-
 public abstract class BaseValidator implements Validator {
-	
-	private static SpringValidatorAdapter springValidator;
+
+    private static SpringValidatorAdapter springValidator;
 
     static {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -24,7 +24,7 @@ public abstract class BaseValidator implements Validator {
         customValidate(target, errors);
     }
 
-    protected void baseValidate(Object target, Errors errors){
+    protected void baseValidate(Object target, Errors errors) {
         springValidator.validate(target, errors);
     }
 

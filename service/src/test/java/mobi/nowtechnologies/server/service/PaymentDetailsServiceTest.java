@@ -11,38 +11,41 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsReposito
 import mobi.nowtechnologies.server.service.exception.CanNotDeactivatePaymentDetailsException;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
 
 import java.util.Collections;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.O2_PSMS;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
+
+import static org.hamcrest.core.Is.is;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
 /**
- * User: Titov Mykhaylo (titov)
- * 05.09.13 14:15
+ * User: Titov Mykhaylo (titov) 05.09.13 14:15
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PaymentDetailsService.class)
 public class PaymentDetailsServiceTest {
+
     @Mock
     private PaymentPolicyService paymentPolicyServiceMock;
     @Mock
@@ -71,7 +74,7 @@ public class PaymentDetailsServiceTest {
                 PaymentDetailsDto paymentDetailsDto = (PaymentDetailsDto) argument;
 
                 assertEquals(O2_PSMS, paymentDetailsDto.getPaymentType());
-                assertEquals(defaultPaymentPolicy.getId(),paymentDetailsDto.getPaymentPolicyId());
+                assertEquals(defaultPaymentPolicy.getId(), paymentDetailsDto.getPaymentPolicyId());
 
                 return true;
             }
@@ -164,14 +167,15 @@ public class PaymentDetailsServiceTest {
     }
 
     @Test
-    public void shouldFindFailurePaymentPaymentDetailsWithNoNotification(){
+    public void shouldFindFailurePaymentPaymentDetailsWithNoNotification() {
         //given
-        String communityUrl ="";
-        Pageable pageable = new PageRequest(0,1);
+        String communityUrl = "";
+        Pageable pageable = new PageRequest(0, 1);
 
         List<PaymentDetails> expectedPaymentDetailsList = Collections.<PaymentDetails>singletonList(new O2PSMSPaymentDetails());
 
-        doReturn(expectedPaymentDetailsList).when(paymentDetailsRepositoryMock).findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);;
+        doReturn(expectedPaymentDetailsList).when(paymentDetailsRepositoryMock).findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);
+        ;
 
         //when
         List<PaymentDetails> paymentDetailsList = paymentDetailsServiceSpy.findFailedPaymentWithNoNotificationPaymentDetails(communityUrl, pageable);

@@ -1,22 +1,25 @@
 package mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.json;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.dto.streamzine.VisualBlock;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 @JsonTypeName("value")
 @XmlRootElement(name = "update")
 @XmlAccessorType(XmlAccessType.NONE)
 public class StreamzineUpdateDto {
+
     @XmlElement(name = "updated")
     @JsonProperty(value = "updated")
     private long updated;

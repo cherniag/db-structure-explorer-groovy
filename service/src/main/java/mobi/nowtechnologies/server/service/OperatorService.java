@@ -1,9 +1,10 @@
 package mobi.nowtechnologies.server.service;
 
-import java.util.Collection;
-
 import mobi.nowtechnologies.server.persistence.domain.Operator;
 
+import java.util.Collection;
+
 public interface OperatorService {
-	public Collection<Operator> getOperators();
+
+    public Collection<Operator> getOperators();
 }

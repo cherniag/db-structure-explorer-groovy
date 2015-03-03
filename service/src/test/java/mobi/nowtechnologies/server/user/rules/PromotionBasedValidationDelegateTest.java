@@ -2,12 +2,14 @@ package mobi.nowtechnologies.server.user.rules;
 
 import mobi.nowtechnologies.server.persistence.domain.Promotion;
 
+import java.util.Date;
+
 import org.apache.commons.lang.time.DateUtils;
+
+import org.junit.*;
+
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
-
-import java.util.Date;
 
 //TODO: update test to test public isValid instead of isValidImpl (time issue)
 public class PromotionBasedValidationDelegateTest {
@@ -15,7 +17,7 @@ public class PromotionBasedValidationDelegateTest {
     private PromotionBasedValidationDelegate testInstance;
 
     @Test
-    public void shouldBeValid(){
+    public void shouldBeValid() {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, 0);
         promotion.setIsActive(true);
@@ -24,7 +26,7 @@ public class PromotionBasedValidationDelegateTest {
     }
 
     @Test
-    public void shouldBeNotValidBecauseOfNotActive(){
+    public void shouldBeNotValidBecauseOfNotActive() {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, 0);
         promotion.setIsActive(false);
@@ -33,7 +35,7 @@ public class PromotionBasedValidationDelegateTest {
     }
 
     @Test
-    public void shouldBeNotValidBecauseWeekAgoFinished(){
+    public void shouldBeNotValidBecauseWeekAgoFinished() {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, -7);
         promotion.setIsActive(true);
@@ -42,7 +44,7 @@ public class PromotionBasedValidationDelegateTest {
     }
 
     @Test
-    public void shouldBeNotValidBecauseWillBeActiveOnNextWeek(){
+    public void shouldBeNotValidBecauseWillBeActiveOnNextWeek() {
         Promotion promotion = new Promotion();
         updateWithValidDate(promotion, 7);
         promotion.setIsActive(true);
@@ -52,9 +54,9 @@ public class PromotionBasedValidationDelegateTest {
 
     private void updateWithValidDate(Promotion promotion, int dayOffset) {
         Date nowDate = new Date();
-        Date endDate = DateUtils.addDays(nowDate, 1+dayOffset);
-        Date startDate = DateUtils.addDays(nowDate, -1+dayOffset);
-        promotion.setEndDate((int) (endDate.getTime()/1000L));
-        promotion.setStartDate((int) (startDate.getTime()/1000L));
+        Date endDate = DateUtils.addDays(nowDate, 1 + dayOffset);
+        Date startDate = DateUtils.addDays(nowDate, -1 + dayOffset);
+        promotion.setEndDate((int) (endDate.getTime() / 1000L));
+        promotion.setStartDate((int) (startDate.getTime() / 1000L));
     }
 }

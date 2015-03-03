@@ -1,24 +1,29 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
-import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by oar on 2/10/14.
  */
 public class FacebookUserInfoRepositoryIT extends AbstractRepositoryIT {
+
     @Resource(name = "userRepository")
     private UserRepository userRepository;
 

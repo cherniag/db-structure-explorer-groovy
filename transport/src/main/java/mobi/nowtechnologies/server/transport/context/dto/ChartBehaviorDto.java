@@ -1,18 +1,21 @@
 package mobi.nowtechnologies.server.transport.context.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.service.behavior.ChartBehaviorInfo;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class ChartBehaviorDto {
+
     @XmlElement(name = "behavior")
     @JsonProperty(value = "behavior")
     private ChartBehaviorType chartBehaviorType;

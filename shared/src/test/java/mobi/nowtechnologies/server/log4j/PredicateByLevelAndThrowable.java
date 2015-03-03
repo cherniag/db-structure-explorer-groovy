@@ -9,7 +9,7 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public class PredicateByLevelAndThrowable implements Predicate<LoggingEvent> {
 
-  private final Level level;
+    private final Level level;
 
     public PredicateByLevelAndThrowable(Level level) {
         this.level = level;

@@ -1,10 +1,24 @@
 package mobi.nowtechnologies.server.persistence.domain.behavior;
 
 import mobi.nowtechnologies.server.persistence.domain.Duration;
-import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import java.io.Serializable;
+
+import org.hibernate.annotations.Cascade;
 
 /**
  * Created by zam on 12/9/2014.
@@ -12,6 +26,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "chart_behavior")
 public class ChartBehavior implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -31,10 +46,7 @@ public class ChartBehavior implements Serializable {
     private int maxTracks = BehaviorConfig.IGNORE;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "max_tracks_duration")),
-            @AttributeOverride(name = "unit", column = @Column(name = "max_tracks_duration_type"))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "amount", column = @Column(name = "max_tracks_duration")), @AttributeOverride(name = "unit", column = @Column(name = "max_tracks_duration_type"))})
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Duration maxTracksDuration = Duration.noPeriod();
 
@@ -42,10 +54,7 @@ public class ChartBehavior implements Serializable {
     private int skipTracks = BehaviorConfig.IGNORE;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "skip_tracks_duration")),
-            @AttributeOverride(name = "unit", column = @Column(name = "skip_tracks_duration_type"))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "amount", column = @Column(name = "skip_tracks_duration")), @AttributeOverride(name = "unit", column = @Column(name = "skip_tracks_duration_type"))})
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Duration skipTracksDuration = Duration.noPeriod();
 
@@ -55,21 +64,25 @@ public class ChartBehavior implements Serializable {
     protected ChartBehavior() {
     }
 
-    public void setType(ChartBehaviorType type) {
-        this.type = type;
-    }
-
     public ChartBehaviorType getType() {
         return type;
     }
 
+    public void setType(ChartBehaviorType type) {
+        this.type = type;
+    }
+
     public void updateMaxTracksInfo(int count, Duration duration) {
-        maxTracks = (count < 0) ? 0 : count;
+        maxTracks = (count < 0) ?
+                    0 :
+                    count;
         maxTracksDuration = duration;
     }
 
     public void updateSkipTracksInfo(int count, Duration duration) {
-        skipTracks = (count < 0) ? 0 : count;
+        skipTracks = (count < 0) ?
+                     0 :
+                     count;
         skipTracksDuration = duration;
     }
 
@@ -85,12 +98,12 @@ public class ChartBehavior implements Serializable {
         this.offline = offline;
     }
 
-    public void setPlayTracksSeconds(int playTracksSeconds) {
-        this.playTracksSeconds = playTracksSeconds;
-    }
-
     public int getPlayTracksSeconds() {
         return playTracksSeconds;
+    }
+
+    public void setPlayTracksSeconds(int playTracksSeconds) {
+        this.playTracksSeconds = playTracksSeconds;
     }
 
     public int getMaxTracks() {
@@ -116,14 +129,14 @@ public class ChartBehavior implements Serializable {
     @Override
     public String toString() {
         return "ChartBehavior{" +
-                "behaviorConfig=" + behaviorConfig +
-                ", type=" + type +
-                ", offline=" + offline +
-                ", maxTracks=" + maxTracks +
-                ", maxTracksDuration=" + maxTracksDuration +
-                ", skipTracks=" + skipTracks +
-                ", skipTracksDuration=" + skipTracksDuration +
-                ", playTracksSeconds=" + playTracksSeconds +
-                '}';
+               "behaviorConfig=" + behaviorConfig +
+               ", type=" + type +
+               ", offline=" + offline +
+               ", maxTracks=" + maxTracks +
+               ", maxTracksDuration=" + maxTracksDuration +
+               ", skipTracks=" + skipTracks +
+               ", skipTracksDuration=" + skipTracksDuration +
+               ", playTracksSeconds=" + playTracksSeconds +
+               '}';
     }
 }

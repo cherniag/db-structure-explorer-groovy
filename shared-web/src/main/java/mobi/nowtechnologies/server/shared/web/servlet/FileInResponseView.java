@@ -1,15 +1,17 @@
 package mobi.nowtechnologies.server.shared.web.servlet;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHeaders;
-import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.view.AbstractView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHeaders;
+
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.view.AbstractView;
 
 /**
  * Created by oar on 3/3/14.
@@ -19,7 +21,9 @@ public class FileInResponseView extends AbstractView {
     private InputStream stream;
 
     public FileInResponseView(String contentType, InputStream stream) {
-        this.stream = (stream instanceof BufferedInputStream) ? stream : new BufferedInputStream(stream);
+        this.stream = (stream instanceof BufferedInputStream) ?
+                      stream :
+                      new BufferedInputStream(stream);
         setContentType(contentType);
     }
 
@@ -39,7 +43,8 @@ public class FileInResponseView extends AbstractView {
         }
         try {
             IOUtils.copy(stream, response.getOutputStream());
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(stream);
         }
     }

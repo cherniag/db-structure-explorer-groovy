@@ -8,21 +8,21 @@ import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import org.junit.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class UserServiceRegistrationTest {
+
+    UserDeviceRegDetailsDto userDeviceRegDetailsDto = mock(UserDeviceRegDetailsDto.class);
+    Community community = mock(Community.class);
+    UserGroup userGroup = mock(UserGroup.class);
+    ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
     @Mock
     private CommunityService communityService;
     @Mock
@@ -31,9 +31,8 @@ public class UserServiceRegistrationTest {
     private UserGroupRepository userGroupRepository;
     @Mock
     private CountryService countryService;
-
     @InjectMocks
-    private UserService userService = new UserService(){
+    private UserService userService = new UserService() {
         @Override
         protected DeviceType getDeviceType(String device) {
             DeviceType deviceType = mock(DeviceType.class);
@@ -52,12 +51,6 @@ public class UserServiceRegistrationTest {
             return 0;
         }
     };
-
-    UserDeviceRegDetailsDto userDeviceRegDetailsDto = mock(UserDeviceRegDetailsDto.class);
-    Community community = mock(Community.class);
-    UserGroup userGroup = mock(UserGroup.class);
-    ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-
 
     @Before
     public void setUp() throws Exception {

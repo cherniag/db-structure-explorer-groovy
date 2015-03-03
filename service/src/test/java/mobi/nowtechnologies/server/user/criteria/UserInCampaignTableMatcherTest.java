@@ -2,20 +2,18 @@ package mobi.nowtechnologies.server.user.criteria;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.mockito.Mockito.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/8/2014
+ * Author: Gennadii Cherniaiev Date: 4/8/2014
  */
 @RunWith(MockitoJUnitRunner.class)
 public class UserInCampaignTableMatcherTest {

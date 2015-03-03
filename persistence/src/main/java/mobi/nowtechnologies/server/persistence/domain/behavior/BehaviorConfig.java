@@ -2,13 +2,28 @@ package mobi.nowtechnologies.server.persistence.domain.behavior;
 
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import org.hibernate.annotations.Cascade;
-import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.annotations.Cascade;
+
+import org.springframework.util.Assert;
 
 /**
  * Created by zam on 12/9/2014.
@@ -16,43 +31,36 @@ import java.util.Set;
 @Entity
 @Table(name = "behavior_config")
 public class BehaviorConfig implements Serializable {
+
     public static final int IGNORE = -1;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "community_id")
-    private int communityId;
-
-    @Column(name = "type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private BehaviorConfigType type;
-
-    @Column(name = "required_referrals")
-    private int requiredReferrals = IGNORE;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "referrals_duration")),
-            @AttributeOverride(name = "unit", column = @Column(name = "referrals_duration_type"))
-    })
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    private Duration referralsDuration = Duration.noPeriod();
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "behaviorConfig")
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     Set<ChartBehavior> chartBehaviors = new HashSet<ChartBehavior>();
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "behaviorConfig")
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     Set<ContentUserStatusBehavior> contentUserStatusBehaviors = new HashSet<ContentUserStatusBehavior>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @Column(name = "community_id")
+    private int communityId;
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BehaviorConfigType type;
+    @Column(name = "required_referrals")
+    private int requiredReferrals = IGNORE;
+    @Embedded
+    @AttributeOverrides({@AttributeOverride(name = "amount", column = @Column(name = "referrals_duration")), @AttributeOverride(name = "unit", column = @Column(name = "referrals_duration_type"))})
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Duration referralsDuration = Duration.noPeriod();
 
     protected BehaviorConfig() {
     }
 
     public void updateReferralsInfo(int requiredAmount, Duration duration) {
-        requiredReferrals = (requiredAmount < 0) ? IGNORE : requiredAmount;
+        requiredReferrals = (requiredAmount < 0) ?
+                            IGNORE :
+                            requiredAmount;
         referralsDuration = duration;
     }
 
@@ -99,9 +107,9 @@ public class BehaviorConfig implements Serializable {
     @Override
     public String toString() {
         return "BehaviorConfig{" +
-                "requiredReferrals=" + requiredReferrals +
-                ", referralsDuration=" + referralsDuration +
-                ", type=" + type +
-                '}';
+               "requiredReferrals=" + requiredReferrals +
+               ", referralsDuration=" + referralsDuration +
+               ", type=" + type +
+               '}';
     }
 }

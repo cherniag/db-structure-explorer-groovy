@@ -2,47 +2,46 @@ package mobi.nowtechnologies.server.admin.validator;
 
 import mobi.nowtechnologies.server.dto.AdItemDto;
 import mobi.nowtechnologies.server.shared.enums.AdActionType;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.validation.Errors;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.validation.Errors;
+import org.springframework.web.multipart.MultipartFile;
+
+import org.junit.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import org.springframework.mock.web.MockMultipartFile;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
-public class AdItemDtoValidatorTest{
-	
-	private static AdItemDtoValidator adItemDtoValidator;
+public class AdItemDtoValidatorTest {
+
+    private static AdItemDtoValidator adItemDtoValidator;
 
     @BeforeClass
-	public static void setUp() {
-		adItemDtoValidator = new AdItemDtoValidator();
-	}
-	
-	@Test
-	public void testCustomValidate_Success(){
-		AdItemDto adItemDto = new AdItemDto();
-		
-		adItemDto.setActionType(AdActionType.URL);
-		adItemDto.setAction("http://google.com.ua");
-		adItemDto.setFile(new MockMultipartFile("test", "content".getBytes()));
-		adItemDto.setMessage("message");
+    public static void setUp() {
+        adItemDtoValidator = new AdItemDtoValidator();
+    }
+
+    @Test
+    public void testCustomValidate_Success() {
+        AdItemDto adItemDto = new AdItemDto();
+
+        adItemDto.setActionType(AdActionType.URL);
+        adItemDto.setAction("http://google.com.ua");
+        adItemDto.setFile(new MockMultipartFile("test", "content".getBytes()));
+        adItemDto.setMessage("message");
         final List<Object[]> errorList = new ArrayList<Object[]>();
-		
-		Errors errors = mock(Errors.class);
-		
-		doAnswer(new Answer<Object>() {
+
+        Errors errors = mock(Errors.class);
+
+        doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 errorList.add(invocation.getArguments());
@@ -51,30 +50,30 @@ public class AdItemDtoValidatorTest{
         }).when(errors).rejectValue(anyString(), anyString(), anyString());
 
         mockErrors(errorList, errors);
-		
-		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
-		
-		assertFalse(hasErrors);
-		
-		verify(errors, times(0)).rejectValue(anyString(), anyString(), anyString());
-	}
-	
-	@Test
-	public void testCustomValidate_IdIsNotNullAndImageFileNameIsNull_Success(){
-		AdItemDto adItemDto = new AdItemDto();
-		
-		adItemDto.setId(Integer.MAX_VALUE);
-		adItemDto.setActionType(AdActionType.URL);
-		adItemDto.setAction("http://google.com.ua");
-		adItemDto.setFile(new MockMultipartFile("test", "content".getBytes()));
-		adItemDto.setMessage("message");
-		adItemDto.setImageFileName(null);
-		
-		final List<Object[]> errorList = new ArrayList<Object[]>();
-		
-		Errors errors = mock(Errors.class);
-		
-		doAnswer(new Answer<Object>() {
+
+        boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
+
+        assertFalse(hasErrors);
+
+        verify(errors, times(0)).rejectValue(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testCustomValidate_IdIsNotNullAndImageFileNameIsNull_Success() {
+        AdItemDto adItemDto = new AdItemDto();
+
+        adItemDto.setId(Integer.MAX_VALUE);
+        adItemDto.setActionType(AdActionType.URL);
+        adItemDto.setAction("http://google.com.ua");
+        adItemDto.setFile(new MockMultipartFile("test", "content".getBytes()));
+        adItemDto.setMessage("message");
+        adItemDto.setImageFileName(null);
+
+        final List<Object[]> errorList = new ArrayList<Object[]>();
+
+        Errors errors = mock(Errors.class);
+
+        doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
 
@@ -94,18 +93,18 @@ public class AdItemDtoValidatorTest{
         }).when(errors).rejectValue(anyString(), anyString(), anyString());
 
         mockErrors(errorList, errors);
-		
-		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
-		
-		assertFalse(hasErrors);
-		
-		assertEquals(0, errorList.size());
-		
-		verify(errors, times(0)).rejectValue(anyString(), anyString(), anyString());
-	}
+
+        boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
+
+        assertFalse(hasErrors);
+
+        assertEquals(0, errorList.size());
+
+        verify(errors, times(0)).rejectValue(anyString(), anyString(), anyString());
+    }
 
     @Test
-    public void testCustomValidate_FileIsNullAndRemoveFileIsTrue_Success(){
+    public void testCustomValidate_FileIsNullAndRemoveFileIsTrue_Success() {
         AdItemDto adItemDto = new AdItemDto();
 
         adItemDto.setActionType(AdActionType.URL);
@@ -136,18 +135,18 @@ public class AdItemDtoValidatorTest{
     }
 
     @Test
-	public void testCustomValidate_FileIsNullAndRemoveFileIsFalse_Failure(){
-		AdItemDto adItemDto = new AdItemDto();
+    public void testCustomValidate_FileIsNullAndRemoveFileIsFalse_Failure() {
+        AdItemDto adItemDto = new AdItemDto();
 
-		adItemDto.setActionType(AdActionType.URL);
-		adItemDto.setAction("http://google.com.ua");
-		adItemDto.setMessage("message");
+        adItemDto.setActionType(AdActionType.URL);
+        adItemDto.setAction("http://google.com.ua");
+        adItemDto.setMessage("message");
 
-		final List<Object[]> errorList = new ArrayList<Object[]>();
+        final List<Object[]> errorList = new ArrayList<Object[]>();
 
-		Errors errors = mock(Errors.class);
+        Errors errors = mock(Errors.class);
 
-		doAnswer(new Answer<Object>() {
+        doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
 
@@ -170,14 +169,14 @@ public class AdItemDtoValidatorTest{
 
         boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
 
-		assertTrue(hasErrors);
-		assertEquals(1, errorList.size());
+        assertTrue(hasErrors);
+        assertEquals(1, errorList.size());
 
-		verify(errors).rejectValue(anyString(), anyString(), anyString());
-	}
+        verify(errors).rejectValue(anyString(), anyString(), anyString());
+    }
 
     @Test
-    public void testCustomValidate_FileIsEmptyAndRemoveFileIsFalse_Failure(){
+    public void testCustomValidate_FileIsEmptyAndRemoveFileIsFalse_Failure() {
         AdItemDto adItemDto = new AdItemDto();
 
         adItemDto.setActionType(AdActionType.URL);
@@ -229,24 +228,24 @@ public class AdItemDtoValidatorTest{
         });
     }
 
-	@Test
-	public void testCustomValidate_WrongFileSize_Failure(){
-		AdItemDto adItemDto = new AdItemDto();
-		
-		byte[] content = new byte[100000]; 
+    @Test
+    public void testCustomValidate_WrongFileSize_Failure() {
+        AdItemDto adItemDto = new AdItemDto();
 
-		Arrays.fill(content, 0, content.length-1, Byte.MAX_VALUE);
-		
-		adItemDto.setFile(new MockMultipartFile("test", content));
-		adItemDto.setActionType(AdActionType.URL);
-		adItemDto.setAction("http://google.com.ua");
-		adItemDto.setMessage("message");
-		
-		final List<Object[]> errorList = new ArrayList<Object[]>();
-		
-		Errors errors = mock(Errors.class);
-		
-		doAnswer(new Answer<Object>() {
+        byte[] content = new byte[100000];
+
+        Arrays.fill(content, 0, content.length - 1, Byte.MAX_VALUE);
+
+        adItemDto.setFile(new MockMultipartFile("test", content));
+        adItemDto.setActionType(AdActionType.URL);
+        adItemDto.setAction("http://google.com.ua");
+        adItemDto.setMessage("message");
+
+        final List<Object[]> errorList = new ArrayList<Object[]>();
+
+        Errors errors = mock(Errors.class);
+
+        doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
 
@@ -266,25 +265,25 @@ public class AdItemDtoValidatorTest{
         }).when(errors).rejectValue(anyString(), anyString(), anyString());
 
         mockErrors(errorList, errors);
-		
-		boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
-		
-		assertTrue(hasErrors);
-		assertEquals(1, errorList.size());
-		
-		verify(errors, times(1)).rejectValue(anyString(), anyString(), anyString());
-	}
-	
-	@Test
-	public void testSupports_Success(){
-		boolean isSupport = adItemDtoValidator.supports(AdItemDto.class);
-		assertTrue(isSupport);
-	}
-	
-	@Test
-	public void testSupports_Failure(){
-		boolean isSupport = adItemDtoValidator.supports(String.class);
-		assertFalse(isSupport);
-	}
-	
+
+        boolean hasErrors = adItemDtoValidator.customValidate(adItemDto, errors);
+
+        assertTrue(hasErrors);
+        assertEquals(1, errorList.size());
+
+        verify(errors, times(1)).rejectValue(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testSupports_Success() {
+        boolean isSupport = adItemDtoValidator.supports(AdItemDto.class);
+        assertTrue(isSupport);
+    }
+
+    @Test
+    public void testSupports_Failure() {
+        boolean isSupport = adItemDtoValidator.supports(String.class);
+        assertFalse(isSupport);
+    }
+
 }

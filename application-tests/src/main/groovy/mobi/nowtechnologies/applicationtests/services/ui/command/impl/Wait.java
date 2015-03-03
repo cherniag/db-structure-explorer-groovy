@@ -4,6 +4,7 @@ import mobi.nowtechnologies.applicationtests.services.ui.WebPage;
 import mobi.nowtechnologies.applicationtests.services.ui.command.Command;
 
 public class Wait implements Command {
+
     private String waitForSelector;
     private boolean invert = false;
 
@@ -20,7 +21,7 @@ public class Wait implements Command {
     public boolean process(WebPage page) {
         boolean visible = page.waitForVisible(waitForSelector);
 
-        if(!visible && invert) {
+        if (!visible && invert) {
             return true;
         }
 

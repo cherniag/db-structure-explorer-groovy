@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller.core;
 
-import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.common.util.ServerMessage;
 import mobi.nowtechnologies.server.error.ThrottlingException;
 import mobi.nowtechnologies.server.persistence.domain.Community;
@@ -10,13 +9,32 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.AccCheckService;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.exception.*;
+import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
+import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
+import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
+import mobi.nowtechnologies.server.service.exception.NoNewContentException;
+import mobi.nowtechnologies.server.service.exception.ReactivateUserException;
+import mobi.nowtechnologies.server.service.exception.ServiceException;
+import mobi.nowtechnologies.server.service.exception.UserCredentialsException;
+import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.Date;
+import java.util.Locale;
+
+import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
+import static org.apache.commons.lang.Validate.notNull;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -26,30 +44,22 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.Locale;
-
-import static com.google.common.net.HttpHeaders.LAST_MODIFIED;
-import static org.apache.commons.lang.Validate.notNull;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kollpakov (akolpakov)
  */
 public abstract class CommonController extends ProfileController {
-    private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
 
     public static final String MODEL_NAME = "response";
     public static final int VERSION_4 = 4;
     public static final String WWW_AUTHENTICATE_HEADER = "WWW-Authenticate";
-
     public static final String VERSION_5_2 = "5.2";
     public static final String OAUTH_REALM_USERS = "OAuth realm=\"users\"";
+    private static final String COMMUNITY_NAME_PARAM = "COMMUNITY_NAME";
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Resource(name = "serviceMessageSource")
@@ -73,37 +83,36 @@ public abstract class CommonController extends ProfileController {
     private ThreadLocal<String> commandNameThreadLocal = new ThreadLocal<String>();
     private ThreadLocal<String> remoteAddrThreadLocal = new ThreadLocal<String>();
 
-
-    public void setCurrentCommandName(String commandName) {
-        this.commandNameThreadLocal.set(commandName);
+    public String getCurrentRemoteAddr() {
+        return this.remoteAddrThreadLocal.get();
     }
 
     public void setCurrentRemoteAddr(String remoteAddr) {
         this.remoteAddrThreadLocal.set(remoteAddr);
     }
 
-    public void setCurrentApiVersion(String apiVersion) {
-        this.apiVersionThreadLocal.set(apiVersion);
-    }
-
-    public void setCurrentCommunityUri(String communityUri) {
-        this.communityUriThreadLocal.set(communityUri);
-    }
-
-    public String getCurrentRemoteAddr() {
-        return this.remoteAddrThreadLocal.get();
-    }
-
     public String getCurrentCommandName() {
         return this.commandNameThreadLocal.get();
+    }
+
+    public void setCurrentCommandName(String commandName) {
+        this.commandNameThreadLocal.set(commandName);
     }
 
     public String getCurrentApiVersion() {
         return this.apiVersionThreadLocal.get();
     }
 
+    public void setCurrentApiVersion(String apiVersion) {
+        this.apiVersionThreadLocal.set(apiVersion);
+    }
+
     public String getCurrentCommunityUri() {
         return this.communityUriThreadLocal.get();
+    }
+
+    public void setCurrentCommunityUri(String communityUri) {
+        this.communityUriThreadLocal.set(communityUri);
     }
 
     protected ModelAndView buildModelAndView(Object... objs) {
@@ -131,14 +140,16 @@ public abstract class CommonController extends ProfileController {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ModelAndView handleException(MissingServletRequestParameterException exception, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = versionPriority > 0 ? BAD_REQUEST : INTERNAL_SERVER_ERROR;
+        HttpStatus status = versionPriority > 0 ?
+                            BAD_REQUEST :
+                            INTERNAL_SERVER_ERROR;
 
         return sendResponse(exception, response, status, true);
     }
 
     @ExceptionHandler(ServletRequestBindingException.class)
     public ModelAndView handleRequestBinding(MissingServletRequestParameterException exception, HttpServletResponse response) {
-        return sendResponse(exception, response, BAD_REQUEST , true);
+        return sendResponse(exception, response, BAD_REQUEST, true);
     }
 
 
@@ -169,7 +180,9 @@ public abstract class CommonController extends ProfileController {
 
     private ModelAndView processException(ValidationException validationException, HttpServletRequest httpServletRequest, HttpServletResponse response) {
         int versionPriority = Utils.compareVersions(getCurrentApiVersion(), VERSION_5_2);
-        HttpStatus status = versionPriority > 0 ? BAD_REQUEST : INTERNAL_SERVER_ERROR;
+        HttpStatus status = versionPriority > 0 ?
+                            BAD_REQUEST :
+                            INTERNAL_SERVER_ERROR;
 
         ServerMessage serverMessage = validationException.getServerMessage();
         String errorCodeForMessageLocalization = validationException.getErrorCodeForMessageLocalization();
@@ -179,12 +192,14 @@ public abstract class CommonController extends ProfileController {
         if (serverMessage != null) {
             localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
             message = localizedDisplayMessage;
-        } else if (errorCodeForMessageLocalization != null) {
+        }
+        else if (errorCodeForMessageLocalization != null) {
             Locale locale = httpServletRequest.getLocale();
             String commnityUri = getCommunityUrl(httpServletRequest);
             localizedDisplayMessage = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, locale);
             message = messageSource.getMessage(commnityUri, errorCodeForMessageLocalization, null, Locale.ENGLISH);
-        } else {
+        }
+        else {
             localizedDisplayMessage = validationException.getLocalizedMessage();
             message = validationException.getMessage();
         }
@@ -213,11 +228,16 @@ public abstract class CommonController extends ProfileController {
             errorCode = serverMessage.getErrorCode();
 
             localizedDisplayMessage = ServerMessage.getMessage(ServerMessage.EN, errorCode, serverMessage.getParameters());
-            localizedDisplayMessage = versionPriority > 0 ? localizedDisplayMessage : "Bad user credentials";
+            localizedDisplayMessage = versionPriority > 0 ?
+                                      localizedDisplayMessage :
+                                      "Bad user credentials";
             message = localizedDisplayMessage;
-        } else {
+        }
+        else {
             errorCode = null;
-            localizedDisplayMessage = versionPriority > 0 ? exception.getMessage() : "Bad user credentials";
+            localizedDisplayMessage = versionPriority > 0 ?
+                                      exception.getMessage() :
+                                      "Bad user credentials";
             message = localizedDisplayMessage;
         }
 
@@ -233,7 +253,8 @@ public abstract class CommonController extends ProfileController {
         LOGGER.info(exception.toString());
         response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         response.addHeader("reason", "throttling");
-        ErrorMessage errorMessage = getErrorMessage("Server is temporary overloaded and unavailable", "Server is temporary overloaded and unavailable. Please, try again later.", HttpStatus.SERVICE_UNAVAILABLE.value());
+        ErrorMessage errorMessage =
+            getErrorMessage("Server is temporary overloaded and unavailable", "Server is temporary overloaded and unavailable. Please, try again later.", HttpStatus.SERVICE_UNAVAILABLE.value());
         return sendResponse(errorMessage, HttpStatus.SERVICE_UNAVAILABLE, response);
     }
 
@@ -248,23 +269,29 @@ public abstract class CommonController extends ProfileController {
         if (message != null && serverMessage == null) {
             if (throwable != null) {
                 errorMessage = getErrorMessage(throwable.getLocalizedMessage(), message, null);
-            } else
+            }
+            else {
                 errorMessage = getErrorMessage(message, message, null);
+            }
             LOGGER.error(message, serviceException);
-        } else if (serverMessage != null) {
+        }
+        else if (serverMessage != null) {
             String localizedMessage = ServerMessage.getMessage(ServerMessage.EN, serverMessage.getErrorCode(), serverMessage.getParameters());
 
             errorMessage = getErrorMessage(localizedMessage, localizedMessage, serviceException.getServerMessage().getErrorCode());
             LOGGER.error(message);
-        } else if (errorCodeForMessageLocalization != null) {
+        }
+        else if (errorCodeForMessageLocalization != null) {
             Locale locale = httpServletRequest.getLocale();
             String communityUri = getCommunityUrl(httpServletRequest);
             String localizedMessage = messageSource.getMessage(communityUri, errorCodeForMessageLocalization, null, locale);
             message = serviceException.getLocalizedMessage();
             errorMessage = getErrorMessage(localizedMessage, message, serviceException.getErrorCode());
             LOGGER.error(message);
-        } else
+        }
+        else {
             throw new RuntimeException("The given serviceException doesn't contain message or serverMessage", serviceException.getCause());
+        }
         return sendResponse(errorMessage, INTERNAL_SERVER_ERROR, response);
     }
 
@@ -279,7 +306,9 @@ public abstract class CommonController extends ProfileController {
 
         if (communityName != null) {
             Community community = communityService.getCommunityByName(communityName);
-            return community != null ? community.getRewriteUrlParameter() : null;
+            return community != null ?
+                   community.getRewriteUrlParameter() :
+                   null;
         }
 
         return null;
@@ -307,14 +336,18 @@ public abstract class CommonController extends ProfileController {
         final String message = exception.getMessage();
         Integer errorCode;
         try {
-            errorCode = exception instanceof ServiceException ? new Integer(((ServiceException) exception).getErrorCodeForMessageLocalization()) : null;
-        } catch (NumberFormatException e) {
+            errorCode = exception instanceof ServiceException ?
+                        new Integer(((ServiceException) exception).getErrorCodeForMessageLocalization()) :
+                        null;
+        }
+        catch (NumberFormatException e) {
             errorCode = null;
         }
         ErrorMessage errorMessage = getErrorMessage(localizedDisplayMessage, message, errorCode);
         if (isCriticalException) {
             LOGGER.error(message, exception);
-        } else {
+        }
+        else {
             LOGGER.warn(message, exception);
         }
 
@@ -329,7 +362,8 @@ public abstract class CommonController extends ProfileController {
     protected boolean isMajorApiVersionNumberLessThan(int majorVersionNumber, String apiVersion) {
         try {
             return Utils.isMajorVersionNumberLessThan(majorVersionNumber, apiVersion);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't parse apiVersion [" + apiVersion + "]");
         }

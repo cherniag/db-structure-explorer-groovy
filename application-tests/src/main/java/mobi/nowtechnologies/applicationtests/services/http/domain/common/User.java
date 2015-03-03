@@ -7,6 +7,7 @@ import mobi.nowtechnologies.applicationtests.services.http.common.UserInResponse
  * @since 8/20/2014.
  */
 public class User extends UserInResponse {
+
     private UserDetails userDetails;
 
     public UserDetails getUserDetails() {

@@ -1,16 +1,26 @@
 package mobi.nowtechnologies.server.persistence.domain.social;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Created by oar on 2/10/14.
  */
 @Entity
-@Inheritance( strategy = InheritanceType.JOINED )
-@Table(name="social_info")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "social_info")
 public abstract class SocialInfo {
 
     @Id

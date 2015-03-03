@@ -1,20 +1,29 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.time.DateUtils;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.*;
-
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-
 public class StreamzineUpdateService {
+
     private static final int REQUESTED_PERIOD_INTERVAL = 30;
     private StreamzineUpdateRepository streamzineUpdateRepository;
     private CommunityRepository communityRepository;
@@ -59,7 +68,9 @@ public class StreamzineUpdateService {
 
     private Update findLatestUpdate(Date date, Community community) {
         Date lastDateSince = streamzineUpdateRepository.findLastDateSince(date, community);
-        return lastDateSince != null ? streamzineUpdateRepository.findByPublishDate(lastDateSince, community) : null;
+        return lastDateSince != null ?
+               streamzineUpdateRepository.findByPublishDate(lastDateSince, community) :
+               null;
     }
 
     @Transactional

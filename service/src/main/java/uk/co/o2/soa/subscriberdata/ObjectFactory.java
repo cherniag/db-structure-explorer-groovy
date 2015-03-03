@@ -1,26 +1,17 @@
-
 package uk.co.o2.soa.subscriberdata;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
+
 import uk.co.o2.soa.coredata.SOAFaultType;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the uk.co.o2.soa.subscriberdata. package.
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
- * provided in this class.
- * 
+ * This object contains factory methods for each Java content interface and Java element interface generated in the uk.co.o2.soa.subscriberdata. package. <p>An ObjectFactory allows you to
+ * programatically construct new instances of the Java representation for XML content. The Java representation of XML content can consist of schema derived interfaces and classes representing the
+ * binding of schema type definitions, element declarations and model groups.  Factory methods for each of these are provided in this class.
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -58,14 +49,12 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: uk.co.o2.soa.subscriberdata.
-     * 
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link GetSubscriberAndBillingSystemResponse }
-     * 
      */
     public GetSubscriberAndBillingSystemResponse createGetSubscriberAndBillingSystemResponse() {
         return new GetSubscriberAndBillingSystemResponse();
@@ -73,7 +62,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberSegmentResponse }
-     * 
      */
     public GetSubscriberSegmentResponse createGetSubscriberSegmentResponse() {
         return new GetSubscriberSegmentResponse();
@@ -81,7 +69,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberAndBillingSystem }
-     * 
      */
     public GetSubscriberAndBillingSystem createGetSubscriberAndBillingSystem() {
         return new GetSubscriberAndBillingSystem();
@@ -89,7 +76,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProductListType }
-     * 
      */
     public ProductListType createProductListType() {
         return new ProductListType();
@@ -97,7 +83,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetBillProfile }
-     * 
      */
     public GetBillProfile createGetBillProfile() {
         return new GetBillProfile();
@@ -105,7 +90,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberProfile }
-     * 
      */
     public GetSubscriberProfile createGetSubscriberProfile() {
         return new GetSubscriberProfile();
@@ -113,7 +97,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SubscriberProfileType }
-     * 
      */
     public SubscriberProfileType createSubscriberProfileType() {
         return new SubscriberProfileType();
@@ -121,7 +104,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberProfileResponse }
-     * 
      */
     public GetSubscriberProfileResponse createGetSubscriberProfileResponse() {
         return new GetSubscriberProfileResponse();
@@ -129,7 +111,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetChargingCategory }
-     * 
      */
     public GetChargingCategory createGetChargingCategory() {
         return new GetChargingCategory();
@@ -137,7 +118,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetBillingSystem }
-     * 
      */
     public GetBillingSystem createGetBillingSystem() {
         return new GetBillingSystem();
@@ -145,7 +125,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberOperator }
-     * 
      */
     public GetSubscriberOperator createGetSubscriberOperator() {
         return new GetSubscriberOperator();
@@ -153,7 +132,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetBillProfileResponse }
-     * 
      */
     public GetBillProfileResponse createGetBillProfileResponse() {
         return new GetBillProfileResponse();
@@ -161,7 +139,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberChannelResponse }
-     * 
      */
     public GetSubscriberChannelResponse createGetSubscriberChannelResponse() {
         return new GetSubscriberChannelResponse();
@@ -169,7 +146,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberChannel }
-     * 
      */
     public GetSubscriberChannel createGetSubscriberChannel() {
         return new GetSubscriberChannel();
@@ -177,7 +153,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberOperatorResponse }
-     * 
      */
     public GetSubscriberOperatorResponse createGetSubscriberOperatorResponse() {
         return new GetSubscriberOperatorResponse();
@@ -185,7 +160,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServiceProviderDetailsType }
-     * 
      */
     public ServiceProviderDetailsType createServiceProviderDetailsType() {
         return new ServiceProviderDetailsType();
@@ -193,7 +167,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberPaymentCategory }
-     * 
      */
     public GetSubscriberPaymentCategory createGetSubscriberPaymentCategory() {
         return new GetSubscriberPaymentCategory();
@@ -201,7 +174,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServicesType }
-     * 
      */
     public ServicesType createServicesType() {
         return new ServicesType();
@@ -209,7 +181,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberPaymentCategoryResponse }
-     * 
      */
     public GetSubscriberPaymentCategoryResponse createGetSubscriberPaymentCategoryResponse() {
         return new GetSubscriberPaymentCategoryResponse();
@@ -217,7 +188,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSPIDDetails1RequestType }
-     * 
      */
     public GetSPIDDetails1RequestType createGetSPIDDetails1RequestType() {
         return new GetSPIDDetails1RequestType();
@@ -225,7 +195,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MsisdnList }
-     * 
      */
     public MsisdnList createMsisdnList() {
         return new MsisdnList();
@@ -233,7 +202,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetChargingCategoryResponse }
-     * 
      */
     public GetChargingCategoryResponse createGetChargingCategoryResponse() {
         return new GetChargingCategoryResponse();
@@ -241,7 +209,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSubscriberSegment }
-     * 
      */
     public GetSubscriberSegment createGetSubscriberSegment() {
         return new GetSubscriberSegment();
@@ -249,7 +216,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetSPIDDetails1ResponseType }
-     * 
      */
     public GetSPIDDetails1ResponseType createGetSPIDDetails1ResponseType() {
         return new GetSPIDDetails1ResponseType();
@@ -257,7 +223,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetBillingSystemResponse }
-     * 
      */
     public GetBillingSystemResponse createGetBillingSystemResponse() {
         return new GetBillingSystemResponse();
@@ -265,7 +230,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberOperatorFault")
     public JAXBElement<SOAFaultType> createGetSubscriberOperatorFault(SOAFaultType value) {
@@ -274,7 +238,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSPIDDetails1RequestType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSPIDDetails_1")
     public JAXBElement<GetSPIDDetails1RequestType> createGetSPIDDetails1(GetSPIDDetails1RequestType value) {
@@ -283,7 +246,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetChargingCategory }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getChargingCategory")
     public JAXBElement<GetChargingCategory> createGetChargingCategory(GetChargingCategory value) {
@@ -292,7 +254,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberPaymentCategoryFault")
     public JAXBElement<SOAFaultType> createGetSubscriberPaymentCategoryFault(SOAFaultType value) {
@@ -301,7 +262,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberSegmentFault")
     public JAXBElement<SOAFaultType> createGetSubscriberSegmentFault(SOAFaultType value) {
@@ -310,7 +270,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSPIDDetails1ResponseType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSPIDDetails_1Response")
     public JAXBElement<GetSPIDDetails1ResponseType> createGetSPIDDetails1Response(GetSPIDDetails1ResponseType value) {
@@ -319,7 +278,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberProfileFault")
     public JAXBElement<SOAFaultType> createGetSubscriberProfileFault(SOAFaultType value) {
@@ -328,7 +286,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getBillingSystemFault")
     public JAXBElement<SOAFaultType> createGetBillingSystemFault(SOAFaultType value) {
@@ -337,7 +294,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getBillProfileFault")
     public JAXBElement<SOAFaultType> createGetBillProfileFault(SOAFaultType value) {
@@ -346,7 +302,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetBillingSystemResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getBillingSystemResponse")
     public JAXBElement<GetBillingSystemResponse> createGetBillingSystemResponse(GetBillingSystemResponse value) {
@@ -355,7 +310,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberChannel }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberChannel")
     public JAXBElement<GetSubscriberChannel> createGetSubscriberChannel(GetSubscriberChannel value) {
@@ -364,7 +318,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetChargingCategoryResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getChargingCategoryResponse")
     public JAXBElement<GetChargingCategoryResponse> createGetChargingCategoryResponse(GetChargingCategoryResponse value) {
@@ -373,7 +326,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getChargingCategoryFault")
     public JAXBElement<SOAFaultType> createGetChargingCategoryFault(SOAFaultType value) {
@@ -382,7 +334,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberOperatorResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberOperatorResponse")
     public JAXBElement<GetSubscriberOperatorResponse> createGetSubscriberOperatorResponse(GetSubscriberOperatorResponse value) {
@@ -391,7 +342,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberAndBillingSystemFault")
     public JAXBElement<SOAFaultType> createGetSubscriberAndBillingSystemFault(SOAFaultType value) {
@@ -400,7 +350,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberOperator }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberOperator")
     public JAXBElement<GetSubscriberOperator> createGetSubscriberOperator(GetSubscriberOperator value) {
@@ -409,7 +358,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSPIDDetails_1Fault")
     public JAXBElement<SOAFaultType> createGetSPIDDetails1Fault(SOAFaultType value) {
@@ -418,7 +366,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberAndBillingSystemResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberAndBillingSystemResponse")
     public JAXBElement<GetSubscriberAndBillingSystemResponse> createGetSubscriberAndBillingSystemResponse(GetSubscriberAndBillingSystemResponse value) {
@@ -427,7 +374,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetBillProfileResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getBillProfileResponse")
     public JAXBElement<GetBillProfileResponse> createGetBillProfileResponse(GetBillProfileResponse value) {
@@ -436,7 +382,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberPaymentCategory }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberPaymentCategory")
     public JAXBElement<GetSubscriberPaymentCategory> createGetSubscriberPaymentCategory(GetSubscriberPaymentCategory value) {
@@ -445,7 +390,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberProfileResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberProfileResponse")
     public JAXBElement<GetSubscriberProfileResponse> createGetSubscriberProfileResponse(GetSubscriberProfileResponse value) {
@@ -454,7 +398,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberChannelResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberChannelResponse")
     public JAXBElement<GetSubscriberChannelResponse> createGetSubscriberChannelResponse(GetSubscriberChannelResponse value) {
@@ -463,7 +406,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberSegmentResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberSegmentResponse")
     public JAXBElement<GetSubscriberSegmentResponse> createGetSubscriberSegmentResponse(GetSubscriberSegmentResponse value) {
@@ -472,7 +414,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetBillProfile }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getBillProfile")
     public JAXBElement<GetBillProfile> createGetBillProfile(GetBillProfile value) {
@@ -481,7 +422,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberSegment }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberSegment")
     public JAXBElement<GetSubscriberSegment> createGetSubscriberSegment(GetSubscriberSegment value) {
@@ -490,7 +430,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SOAFaultType }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberChannelFault")
     public JAXBElement<SOAFaultType> createGetSubscriberChannelFault(SOAFaultType value) {
@@ -499,7 +438,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberProfile }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberProfile")
     public JAXBElement<GetSubscriberProfile> createGetSubscriberProfile(GetSubscriberProfile value) {
@@ -508,7 +446,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberPaymentCategoryResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberPaymentCategoryResponse")
     public JAXBElement<GetSubscriberPaymentCategoryResponse> createGetSubscriberPaymentCategoryResponse(GetSubscriberPaymentCategoryResponse value) {
@@ -517,7 +454,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubscriberAndBillingSystem }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getSubscriberAndBillingSystem")
     public JAXBElement<GetSubscriberAndBillingSystem> createGetSubscriberAndBillingSystem(GetSubscriberAndBillingSystem value) {
@@ -526,7 +462,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetBillingSystem }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://soa.o2.co.uk/subscriberdata_2", name = "getBillingSystem")
     public JAXBElement<GetBillingSystem> createGetBillingSystem(GetBillingSystem value) {

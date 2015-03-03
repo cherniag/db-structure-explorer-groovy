@@ -1,29 +1,26 @@
 package mobi.nowtechnologies.server.service.behavior;
 
-import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.referral.UserReferralsSnapshot;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.Date;
 import java.util.TreeSet;
 
+import com.google.common.collect.Iterables;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.junit.*;
 import static org.junit.Assert.*;
 
 
 /**
- * Rm - date when Referral Matched
- * Re - date when Referral Expires
- * FT - free trial expires
- * Lim- limited
- * S  - subscribed
+ * Rm - date when Referral Matched Re - date when Referral Expires FT - free trial expires Lim- limited S  - subscribed
  */
 public class ChartBehaviorReferralsServiceTest {
+
     static ChartBehaviorType ADMIN_CHART_TYPE_1 = ChartBehaviorType.PREVIEW;
     static ChartBehaviorType ADMIN_CHART_TYPE_2 = ChartBehaviorType.PREVIEW;
 
@@ -35,9 +32,7 @@ public class ChartBehaviorReferralsServiceTest {
     }
 
     /**
-     *                        FT
-     * -----*--------[]-------|---*--------------------------->
-     *      Rm       NOW          Re
+     * FT -----*--------[]-------|---*---------------------------> Rm       NOW          Re
      */
     @Test
     public void testReferralWithPeriodIncludesFreeTrialExpiresDateAndInLimitedThereIsALock() throws Exception {
@@ -77,9 +72,7 @@ public class ChartBehaviorReferralsServiceTest {
     }
 
     /**
-     *                        FT
-     * -----*--------[]-------|---*--------------------------->
-     *      Rm       NOW          Re
+     * FT -----*--------[]-------|---*---------------------------> Rm       NOW          Re
      */
     @Test
     public void testReferralWithPeriodIncludesFreeTrialExpiresDateAndInLimitedThereIsALock1() throws Exception {
@@ -120,9 +113,7 @@ public class ChartBehaviorReferralsServiceTest {
 
 
     /**
-     *                        FT
-     * -----*--------[]-------|------------------------------->
-     *      Rm       NOW
+     * FT -----*--------[]-------|-------------------------------> Rm       NOW
      */
     @Test
     public void testReferralWithNoPeriodIncludesFreeTrialExpiresDate() throws Exception {
@@ -159,9 +150,7 @@ public class ChartBehaviorReferralsServiceTest {
     }
 
     /**
-     *                     FT
-     * -----*---[]---*-----|------------------------------->
-     *      Rm  NOW  Re
+     * FT -----*---[]---*-----|-------------------------------> Rm  NOW  Re
      */
     @Test
     public void testReferralWithPeriodDoesNotIncludeFreeTrialExpiresDate() throws Exception {
@@ -200,9 +189,7 @@ public class ChartBehaviorReferralsServiceTest {
     }
 
     /**
-     *                        FT
-     * -----*--------[]-------|------------------------------->
-     *      Rm       NOW
+     * FT -----*--------[]-------|-------------------------------> Rm       NOW
      */
     @Test
     public void testReferralWithNoPeriodIncludesFreeTrialExpiresDateDifferentLocks() throws Exception {
@@ -238,9 +225,7 @@ public class ChartBehaviorReferralsServiceTest {
     }
 
     /**
-     *    Lim
-     * ---|--*--------[]-------------------------------------->
-     *       Rm       NOW
+     * Lim ---|--*--------[]--------------------------------------> Rm       NOW
      */
     @Test
     public void testReferralWithNoPeriodIncludesLimited() throws Exception {
@@ -272,9 +257,7 @@ public class ChartBehaviorReferralsServiceTest {
     }
 
     /**
-     *    Lim
-     * ---|--*--------[]-----*-------------------------------->
-     *       Rm       NOW    Re
+     * Lim ---|--*--------[]-----*--------------------------------> Rm       NOW    Re
      */
     @Test
     public void testReferralWithPeriodIncludesLimited() throws Exception {
@@ -309,9 +292,7 @@ public class ChartBehaviorReferralsServiceTest {
     }
 
     /**
-     *    |        S        |           Lim
-     * ---|---*-------[]----|--*-------------------------------->
-     *        Rm     NOW       Re
+     * |        S        |           Lim ---|---*-------[]----|--*--------------------------------> Rm     NOW       Re
      */
     @Test
     public void testReferralWithPeriodIncludesLimitedAfterSubscribed() throws Exception {
@@ -374,7 +355,9 @@ public class ChartBehaviorReferralsServiceTest {
         info.userStatusType = status;
         info.validFrom = validFrom;
         info.chartBehaviorType = type;
-        info.lockedAction = (locked) ? "lock action" : null;
+        info.lockedAction = (locked) ?
+                            "lock action" :
+                            null;
         info.canBeUnlocked = locked;
         return info;
     }

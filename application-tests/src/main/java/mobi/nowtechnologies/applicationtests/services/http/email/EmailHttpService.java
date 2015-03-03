@@ -5,15 +5,17 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.Map;
-
 @Service
 public class EmailHttpService extends AbstractHttpService {
+
     public long generateEmail(RequestFormat format, UserDeviceData deviceData, String email, String deviceUID, String userName) {
         String uri = getUri(deviceData, "EMAIL_GENERATE", format);
 

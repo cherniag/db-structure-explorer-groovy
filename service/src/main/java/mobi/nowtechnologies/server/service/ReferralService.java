@@ -12,20 +12,23 @@ import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotR
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository;
 import mobi.nowtechnologies.server.persistence.repository.social.GooglePlusUserInfoRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 11/21/2014
+ * Author: Gennadii Cherniaiev Date: 11/21/2014
  */
 public class ReferralService {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
@@ -53,7 +56,8 @@ public class ReferralService {
             Community community = communityRepository.findOne(referral.getCommunityId());
             if (exists(referral, community)) {
                 logger.info("Skipped to save referral", referral);
-            } else {
+            }
+            else {
                 referralRepository.saveAndFlush(referral);
             }
         }
@@ -81,8 +85,8 @@ public class ReferralService {
         for (UserReferralsSnapshot snapshot : snapshots) {
             int referredAndConfirmedCount = referralRepository.getCountByCommunityIdUserIdAndStates(communityId, snapshot.getUserId(), ReferralState.ACTIVATED);
 
-            logger.info("trying to update matchesData in snapshotId={} for communityId={}, userId={} with currentReferrals={}",
-                    snapshot.getUserId(), communityId, snapshot.getUserId(), referredAndConfirmedCount);
+            logger.info("trying to update matchesData in snapshotId={} for communityId={}, userId={} with currentReferrals={}", snapshot.getUserId(), communityId, snapshot.getUserId(),
+                        referredAndConfirmedCount);
 
             snapshot.updateMatchesData(referredAndConfirmedCount, new Date());
         }

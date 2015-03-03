@@ -1,35 +1,48 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PayPalPaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepository;
+import mobi.nowtechnologies.server.persistence.repository.PendingPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PayPalPaymentService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+import com.google.common.collect.Lists;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/META-INF/dao-test.xml", "/META-INF/service-test.xml","/META-INF/shared.xml" })
+@ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 public class PayPalPaymentServiceImpIT {
 
     @Resource(name = "service.payPalPaymentService")
@@ -75,7 +88,7 @@ public class PayPalPaymentServiceImpIT {
         assertEquals(1, submittedPayments.size());
     }
 
-    private PendingPayment createPendingPayment(User user, PaymentDetails paymentDetails){
+    private PendingPayment createPendingPayment(User user, PaymentDetails paymentDetails) {
         PendingPayment pendingPayment = new PendingPayment();
         pendingPayment.setUser(user);
         pendingPayment.setPaymentDetails(paymentDetails);
@@ -100,7 +113,7 @@ public class PayPalPaymentServiceImpIT {
         return user;
     }
 
-    private PaymentDetails createPaymentDetails(User user, PaymentPolicy paymentPolicy){
+    private PaymentDetails createPaymentDetails(User user, PaymentPolicy paymentPolicy) {
         PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails();
         paymentDetails.setActivated(true);
         paymentDetails.setOwner(user);
@@ -113,7 +126,7 @@ public class PayPalPaymentServiceImpIT {
         return paymentDetails;
     }
 
-    private PaymentPolicy createPaymentPolicy(String communityRewriteUrl, PaymentPolicyType paymentPolicyType){
+    private PaymentPolicy createPaymentPolicy(String communityRewriteUrl, PaymentPolicyType paymentPolicyType) {
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         paymentPolicy.setCurrencyISO("GBP");
         paymentPolicy.setPaymentType(UserRegInfo.PaymentType.PAY_PAL);

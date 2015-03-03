@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.applicationtests.features.common;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class ValidTypeTest {
+
     @Test
     public void testGetNotValid() throws Exception {
         String data = "some_data";

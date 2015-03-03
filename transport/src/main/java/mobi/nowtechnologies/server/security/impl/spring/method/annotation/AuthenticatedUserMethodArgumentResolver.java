@@ -1,6 +1,9 @@
 package mobi.nowtechnologies.server.security.impl.spring.method.annotation;
 
 import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
+
+import javax.servlet.ServletException;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
@@ -8,8 +11,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver;
-
-import javax.servlet.ServletException;
 
 /**
  * Created by zam on 11/26/2014.
@@ -35,8 +36,8 @@ public class AuthenticatedUserMethodArgumentResolver extends AbstractNamedValueM
     protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
         AuthenticatedUser annotation = parameter.getParameterAnnotation(AuthenticatedUser.class);
         return (annotation != null) ?
-                new AuthenticatedUserNamedValueInfo(annotation) :
-                new AuthenticatedUserNamedValueInfo();
+               new AuthenticatedUserNamedValueInfo(annotation) :
+               new AuthenticatedUserNamedValueInfo();
     }
 
     @Override
@@ -51,8 +52,7 @@ public class AuthenticatedUserMethodArgumentResolver extends AbstractNamedValueM
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(AuthenticatedUser.class) &&
-                parameterType.isAssignableFrom(parameter.getParameterType());
+        return parameter.hasParameterAnnotation(AuthenticatedUser.class) && parameterType.isAssignableFrom(parameter.getParameterType());
     }
 
     private class AuthenticatedUserNamedValueInfo extends NamedValueInfo {

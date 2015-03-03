@@ -1,12 +1,19 @@
 package mobi.nowtechnologies.server.persistence.domain.behavior;
 
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import org.hibernate.annotations.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import java.io.Serializable;
+
+import org.hibernate.annotations.Cascade;
 
 /**
  * Created by zam on 12/9/2014.
@@ -14,6 +21,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "chart_user_status_behavior")
 public class ChartUserStatusBehavior implements Serializable {
+
     @Id
     private long id;
 
@@ -62,10 +70,10 @@ public class ChartUserStatusBehavior implements Serializable {
     @Override
     public String toString() {
         return "ChartUserStatusBehavior{" +
-                "  chart id=" + chartId +
-                ", action=" + action +
-                ", userStatusType=" + userStatusType +
-                ", chartBehavior='" + chartBehavior + '\'' +
-                '}';
+               "  chart id=" + chartId +
+               ", action=" + action +
+               ", userStatusType=" + userStatusType +
+               ", chartBehavior='" + chartBehavior + '\'' +
+               '}';
     }
 }

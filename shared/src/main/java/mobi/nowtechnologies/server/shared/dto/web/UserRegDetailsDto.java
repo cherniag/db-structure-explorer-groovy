@@ -1,168 +1,166 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
+import javax.validation.constraints.Pattern;
+
+import java.io.Serializable;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Pattern;
-import java.io.Serializable;
-
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class UserRegDetailsDto implements Serializable {
 
-	private static final long serialVersionUID = 8241491538199898452L;
+    public static final String USER_REG_DETAILS_DTO = "UserRegDetailsDto";
+    private static final long serialVersionUID = 8241491538199898452L;
+    @Email
+    @NotEmpty
+    private String email;
 
-	public static final String USER_REG_DETAILS_DTO = "UserRegDetailsDto";
+    @NotEmpty
+    @Pattern(regexp = ".{6,20}")
+    private String password;
 
-	@Email
-	@NotEmpty
-	private String email;
+    @NotEmpty
+    @Pattern(regexp = ".{6,20}")
+    private String confirmPassword;
 
-	@NotEmpty
-	@Pattern(regexp = ".{6,20}")
-	private String password;
+    @NotEmpty
+    private String communityName;
 
-	@NotEmpty
-	@Pattern(regexp = ".{6,20}")
-	private String confirmPassword;
+    private boolean termsConfirmed;
 
-	@NotEmpty
-	private String communityName;
+    private boolean newsDeliveringConfirmed;
 
-	private boolean termsConfirmed;
+    private String ipAddress;
 
-	private boolean newsDeliveringConfirmed;
+    private String promotionCode;
 
-	private String ipAddress;
+    private String facebookId;
 
-	private String promotionCode;
+    @NotEmpty
+    private String apiVersion;
 
-	private String facebookId;
+    @NotEmpty
+    private String appVersion;
 
-	@NotEmpty
-	private String apiVersion;
+    private String deviceType;
 
-	@NotEmpty
-	private String appVersion;
-	
-	private String deviceType;
-	
-	private String deviceString;
-	
-	public UserRegDetailsDto() {
-	}
+    private String deviceString;
 
-	public String getEmail() {
-		return email;
-	}
+    public UserRegDetailsDto() {
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setConfirmPassword(String confirmPassword) {
-		this.confirmPassword = confirmPassword;
-	}
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
 
-	public boolean isTermsConfirmed() {
-		return termsConfirmed;
-	}
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
 
-	public void setTermsConfirmed(boolean termsConfirmed) {
-		this.termsConfirmed = termsConfirmed;
-	}
+    public boolean isTermsConfirmed() {
+        return termsConfirmed;
+    }
 
-	public boolean isNewsDeliveringConfirmed() {
-		return newsDeliveringConfirmed;
-	}
+    public void setTermsConfirmed(boolean termsConfirmed) {
+        this.termsConfirmed = termsConfirmed;
+    }
 
-	public void setNewsDeliveringConfirmed(boolean newsDeliveringConfirmed) {
-		this.newsDeliveringConfirmed = newsDeliveringConfirmed;
-	}
+    public boolean isNewsDeliveringConfirmed() {
+        return newsDeliveringConfirmed;
+    }
 
-	public String getIpAddress() {
-		return ipAddress;
-	}
+    public void setNewsDeliveringConfirmed(boolean newsDeliveringConfirmed) {
+        this.newsDeliveringConfirmed = newsDeliveringConfirmed;
+    }
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	public void setFacebookId(String facebookId) {
-		this.facebookId = facebookId;
-	}
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
-	public String getFacebookId() {
-		return facebookId;
-	}
+    public String getFacebookId() {
+        return facebookId;
+    }
 
-	public String getCommunityName() {
-		return communityName;
-	}
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
+    }
 
-	public void setCommunityName(String communityName) {
-		this.communityName = communityName;
-	}
+    public String getCommunityName() {
+        return communityName;
+    }
 
-	public String getPromotionCode() {
-		return promotionCode;
-	}
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
+    }
 
-	public void setPromotionCode(String promotionCode) {
-		this.promotionCode = promotionCode;
-	}
+    public String getPromotionCode() {
+        return promotionCode;
+    }
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public void setPromotionCode(String promotionCode) {
+        this.promotionCode = promotionCode;
+    }
 
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	public String getAppVersion() {
-		return appVersion;
-	}
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 
-	public void setAppVersion(String appVersion) {
-		this.appVersion = appVersion;
-	}
+    public String getAppVersion() {
+        return appVersion;
+    }
 
-	public String getDeviceType() {
-		return deviceType;
-	}
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
 
-	public void setDeviceType(String deviceType) {
-		this.deviceType = deviceType;
-	}
+    public String getDeviceType() {
+        return deviceType;
+    }
 
-	public String getDeviceString() {
-		return deviceString;
-	}
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
 
-	public void setDeviceString(String deviceString) {
-		this.deviceString = deviceString;
-	}
+    public String getDeviceString() {
+        return deviceString;
+    }
 
-	@Override
-	public String toString() {
-		return "UserRegDetailsDto [email=" + email + ", communityName=" + communityName + ", newsDeliveringConfirmed=" + newsDeliveringConfirmed
-				+ ", termsConfirmed=" + termsConfirmed + ", ipAddress=" + ipAddress + ", facebookId=" + facebookId + ", promotionCode=" + promotionCode
-				+ ", apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", deviceType=" + deviceType + ", deviceString=" + deviceString + "]";
-	}
+    public void setDeviceString(String deviceString) {
+        this.deviceString = deviceString;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRegDetailsDto [email=" + email + ", communityName=" + communityName + ", newsDeliveringConfirmed=" + newsDeliveringConfirmed + ", termsConfirmed=" + termsConfirmed +
+               ", ipAddress=" + ipAddress + ", facebookId=" + facebookId + ", promotionCode=" + promotionCode + ", apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", deviceType=" +
+               deviceType + ", deviceString=" + deviceString + "]";
+    }
 
 }

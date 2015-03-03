@@ -15,13 +15,24 @@ import mobi.nowtechnologies.server.service.behavior.BehaviorInfoService;
 import mobi.nowtechnologies.server.service.behavior.ChartBehaviorInfo;
 import mobi.nowtechnologies.server.service.behavior.ChartBehaviorService;
 import mobi.nowtechnologies.server.service.behavior.UserStatusTypeService;
-import mobi.nowtechnologies.server.transport.context.dto.*;
-import org.apache.commons.lang3.tuple.Pair;
+import mobi.nowtechnologies.server.transport.context.dto.BehaviorTemplateDto;
+import mobi.nowtechnologies.server.transport.context.dto.ChartBehaviorDto;
+import mobi.nowtechnologies.server.transport.context.dto.ChartBehaviorsDto;
+import mobi.nowtechnologies.server.transport.context.dto.ContextDto;
+import mobi.nowtechnologies.server.transport.context.dto.InstructionDto;
 
 import javax.annotation.Resource;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ContextDtoAsm {
+
     @Resource
     UserStatusTypeService userStatusTypeService;
     @Resource
@@ -58,15 +69,9 @@ public class ContextDtoAsm {
         context.getReferralsContextDto().fill(snapshot);
         fillChartsTemplatesInfo(context, behaviorConfig);
 
-        context.getFavoritesContextDto().getInstructions().addAll(
-                calcFavouritesInstructions(behaviorConfig, userStatusTypeDateMap)
-        );
-        context.getAdsContextDto().getInstructions().addAll(
-                calcAdsInstructions(behaviorConfig, userStatusTypeDateMap)
-        );
-        context.getChartContextDto().getChartBehaviors().addAll(
-                calcChartBehaviors(chartBehaviorService.info(behaviorConfig, userStatusTypeDateMap, snapshot, user, serverTime))
-        );
+        context.getFavoritesContextDto().getInstructions().addAll(calcFavouritesInstructions(behaviorConfig, userStatusTypeDateMap));
+        context.getAdsContextDto().getInstructions().addAll(calcAdsInstructions(behaviorConfig, userStatusTypeDateMap));
+        context.getChartContextDto().getChartBehaviors().addAll(calcChartBehaviors(chartBehaviorService.info(behaviorConfig, userStatusTypeDateMap, snapshot, user, serverTime)));
 
         return context;
     }

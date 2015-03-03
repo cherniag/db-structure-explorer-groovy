@@ -1,15 +1,17 @@
 package mobi.nowtechnologies.server.transport.context.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class ChartBehaviorsDto implements Comparable<ChartBehaviorsDto> {
+
     @XmlElement(name = "ID")
     @JsonProperty(value = "ID")
     private int id;
@@ -31,12 +33,18 @@ public class ChartBehaviorsDto implements Comparable<ChartBehaviorsDto> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ChartBehaviorsDto)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChartBehaviorsDto)) {
+            return false;
+        }
 
         ChartBehaviorsDto that = (ChartBehaviorsDto) o;
 
-        if (id != that.id) return false;
+        if (id != that.id) {
+            return false;
+        }
 
         return true;
     }

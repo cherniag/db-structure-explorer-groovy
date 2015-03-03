@@ -9,7 +9,7 @@ import java.util.List;
 // @author Titov Mykhaylo (titov) on 20.11.2014.
 public class CommunityDtoAsm {
 
-    public List<CommunityDto> toCommunityDtos(List<Community> communities){
+    public List<CommunityDto> toCommunityDtos(List<Community> communities) {
         List<CommunityDto> communityDtos = new ArrayList<CommunityDto>(communities.size());
         for (Community community : communities) {
             communityDtos.add(toCommunityDto(community));
@@ -17,7 +17,7 @@ public class CommunityDtoAsm {
         return communityDtos;
     }
 
-    public CommunityDto toCommunityDto(Community community){
+    public CommunityDto toCommunityDto(Community community) {
         CommunityDto communityDto = new CommunityDto();
         communityDto.setUrl(community.getRewriteUrlParameter());
         communityDto.setActive(community.isLive());

@@ -1,47 +1,58 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.absolute;
 
-import com.google.common.base.Joiner;
-import mobi.nowtechnologies.server.trackrepo.ingest.*;
-import net.sf.saxon.s9api.*;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.joda.time.MutablePeriod;
-import org.joda.time.ReadWritablePeriod;
-import org.joda.time.format.ISOPeriodFormat;
-import org.joda.time.format.PeriodParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DDEXParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.DOWNLOAD;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.IMAGE;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.MOBILE;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.PREVIEW;
+import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static com.google.common.primitives.Ints.checkedCast;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import static java.lang.Integer.parseInt;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.*;
-import static mobi.nowtechnologies.server.trackrepo.ingest.DropTrack.Type;
+
+import com.google.common.base.Joiner;
+import net.sf.saxon.s9api.DocumentBuilder;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XPathCompiler;
+import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmAtomicValue;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmValue;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser {
 
+    protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
     private static final Logger LOGGER = LoggerFactory.getLogger(AbsoluteParserCleanerWithPreCompiledXPathVersion.class);
-
     private static final String ISRC = "isrc";
     private static final String DEAL_RELEASE_REFERENCE = "dealReleaseReference";
     private static final String X_PATH_IMAGE_FILE_INDEX = "xPathImageFileIndex";
     private static final String X_PATH_FILE_INDEX = "xPathFileIndex";
-
-    protected final static DateFormat YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
-
     private static XPathCompiler xPathCompiler;
     private static XdmNode xdmNode;
 
@@ -81,34 +92,34 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
     private int xPathFileIndex;
     private XPathSelector priceRangeXPathSelector;
 
+    public AbsoluteParserCleanerWithPreCompiledXPathVersion(String root) throws FileNotFoundException {
+        super(root);
+    }
+
     private List<DropTerritory> createTerritory(Element details, String distributor, String label) throws SaxonApiException, ParseException {
         List<DropTerritory> res = new ArrayList<DropTerritory>();
         List<Element> territoryCode = details.getChildren("TerritoryCode");
-        for (Element e : territoryCode)
-            res.add(new DropTerritory(e.getText())
-                    .addCurrency(evaluate(currencyCodeXPathSelector))
-                    .addDistributor(distributor)
-                    .addLabel(label)
-                    .addPrice(getPrice())
-                    .addPriceCode(getPriceCode())
-                    .addPublisher(null)
-                    .addReportingId(isrc)
-                    .addDealReference(evaluate(dealReferenceXPathSelector))
-                    .addStartDate(YYYY_MM_DD.parse(evaluate(startDateXPathSelector)))
-                    .addTakeDown(getTakeDown())
-            );
+        for (Element e : territoryCode) {
+            res.add(new DropTerritory(e.getText()).addCurrency(evaluate(currencyCodeXPathSelector)).addDistributor(distributor).addLabel(label).addPrice(getPrice()).addPriceCode(getPriceCode())
+                                                  .addPublisher(null).addReportingId(isrc).addDealReference(evaluate(dealReferenceXPathSelector))
+                                                  .addStartDate(YYYY_MM_DD.parse(evaluate(startDateXPathSelector))).addTakeDown(getTakeDown()));
+        }
         return res;
     }
 
     private String getPriceCode() throws SaxonApiException {
         String priceType = evaluate(priceTypeXPathSelector);
-        if (isEmpty(priceType)) return getPriceRange(priceRangeXPathSelector);
+        if (isEmpty(priceType)) {
+            return getPriceRange(priceRangeXPathSelector);
+        }
         return null;
     }
 
     private String getPriceRange(XPathSelector priceRangeXPathSelector) throws SaxonApiException {
         String priceRange = evaluate(priceRangeXPathSelector);
-        if(isNotEmpty(priceRange)) return priceRange;
+        if (isNotEmpty(priceRange)) {
+            return priceRange;
+        }
         return null;
     }
 
@@ -156,8 +167,9 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
     }
 
     private String getImageMD5() throws SaxonApiException {
-        if ("MD5".equals(getImageFileHashSumAlgorithmType()))
+        if ("MD5".equals(getImageFileHashSumAlgorithmType())) {
             return evaluate(imageFileHashSumXPathSelector);
+        }
         return null;
     }
 
@@ -179,12 +191,16 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
 
     private Float getPrice() throws SaxonApiException {
         String price = evaluate(wholesalePricePerUnitXPathSelector);
-        if (isNotBlank(price)) return Float.parseFloat(price);
+        if (isNotBlank(price)) {
+            return Float.parseFloat(price);
+        }
         return null;
     }
 
     private boolean getTakeDown() throws SaxonApiException {
-        if (isNotNull(evaluate(takeDownXPathSelector))) return Boolean.parseBoolean(evaluate(takeDownXPathSelector));
+        if (isNotNull(evaluate(takeDownXPathSelector))) {
+            return Boolean.parseBoolean(evaluate(takeDownXPathSelector));
+        }
         return false;
     }
 
@@ -197,10 +213,12 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
             String userDefinedValue = evaluate(userDefinedValueFileXPathSelector);
             if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))) {
                 fileType = DOWNLOAD;
-            } else {
+            }
+            else {
                 fileType = MOBILE;
             }
-        } else {
+        }
+        else {
             fileType = PREVIEW;
         }
         return fileType;
@@ -225,7 +243,9 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
 
     private String getSubTitle() throws SaxonApiException {
         String subTile = evaluate(subTitleXPathSelector);
-        if (isNotEmpty(subTile)) return subTile;
+        if (isNotEmpty(subTile)) {
+            return subTile;
+        }
         return null;
     }
 
@@ -257,24 +277,38 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
         startDateXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/ValidityPeriod/StartDate").load();
         releaseReferenceXPathSelector = xPathCompiler.compile("//ReleaseList/Release[ReleaseId/ISRC eq $" + ISRC + "]/ReleaseReference").load();
         dealReferenceXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealReference").load();
-        fileCountXPathSelector = xPathCompiler.compile("count(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)").load();
+        fileCountXPathSelector =
+            xPathCompiler.compile("count(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File)").load();
         takeDownXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/TakeDown").load();
-        priceTypeXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/PriceType").load();
+        priceTypeXPathSelector =
+            xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/PriceType").load();
         priceRangeXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/PriceRangeType").load();
-        currencyCodeXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/CurrencyCode").load();
+        currencyCodeXPathSelector =
+            xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit/CurrencyCode").load();
         durationXPathSelector = xPathCompiler.compile("//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/Duration").load();
-        wholesalePricePerUnitXPathSelector = xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit").load();
+        wholesalePricePerUnitXPathSelector =
+            xPathCompiler.compile("//DealList/ReleaseDeal[DealReleaseReference eq $" + DEAL_RELEASE_REFERENCE + "]/Deal/DealTerms/PriceInformation/WholesalePricePerUnit").load();
         parentalWarningTypeXPathSelector = xPathCompiler.compile("//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/ParentalWarningType").load();
         imageCountXPathSelector = xPathCompiler.compile("count(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File)").load();
         xmlXPathSelector = xPathCompiler.compile("//ReleaseList/Release[ReleaseId/ISRC eq $" + ISRC + "]").load();
         imageFileNameXPathSelector = xPathCompiler.compile("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/FileName)[$" + X_PATH_IMAGE_FILE_INDEX + "]").load();
         imageFileHashSumXPathSelector = xPathCompiler.compile("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSum)[$" + X_PATH_IMAGE_FILE_INDEX + "]").load();
-        imageFileHashSumAlgorithmTypeXPathSelector = xPathCompiler.compile("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSumAlgorithmType)[$" + X_PATH_IMAGE_FILE_INDEX + "]").load();
-        fileNameXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)[$" + X_PATH_FILE_INDEX + "]").load();
-        fileHashSumXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)[$" + X_PATH_FILE_INDEX + "]").load();
-        isPreviewFileXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)[$" + X_PATH_FILE_INDEX + "]").load();
-        audioCodecTypeFileXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)[$" + X_PATH_FILE_INDEX + "]").load();
-        userDefinedValueFileXPathSelector = xPathCompiler.compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[$" + X_PATH_FILE_INDEX + "]").load();
+        imageFileHashSumAlgorithmTypeXPathSelector =
+            xPathCompiler.compile("(//ResourceList/Image/ImageDetailsByTerritory/TechnicalImageDetails/File/HashSum/HashSumAlgorithmType)[$" + X_PATH_IMAGE_FILE_INDEX + "]").load();
+        fileNameXPathSelector = xPathCompiler.compile(
+            "(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/FileName)[$" + X_PATH_FILE_INDEX + "]").load();
+        fileHashSumXPathSelector = xPathCompiler.compile(
+            "(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/File/HashSum/HashSum)[$" + X_PATH_FILE_INDEX + "]")
+                                                .load();
+        isPreviewFileXPathSelector = xPathCompiler
+            .compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/IsPreview)[$" + X_PATH_FILE_INDEX + "]")
+            .load();
+        audioCodecTypeFileXPathSelector = xPathCompiler.compile(
+            "(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)[$" + X_PATH_FILE_INDEX + "]")
+                                                       .load();
+        userDefinedValueFileXPathSelector = xPathCompiler.compile(
+            "(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[$" +
+            X_PATH_FILE_INDEX + "]").load();
     }
 
     private String getProprietaryId() throws SaxonApiException {
@@ -298,11 +332,14 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
         for (File file : content) {
             if (isDirectory(file)) {
                 result.addAll(getDrops(file, auto));
-            } else if (DELIVERY_COMPLETE.equals(file.getName())) {
+            }
+            else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
-            } else if (INGEST_ACK.equals(file.getName())) {
+            }
+            else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            }
+            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }
@@ -317,15 +354,13 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
         return result;
     }
 
-    public AbsoluteParserCleanerWithPreCompiledXPathVersion(String root) throws FileNotFoundException {
-        super(root);
-    }
-
     @Override
     public Map<String, DropTrack> loadXml(File file) {
         HashMap<String, DropTrack> res = new HashMap<String, DropTrack>();
         try {
-            if (!file.exists()) return res;
+            if (!file.exists()) {
+                return res;
+            }
             prepareXPath(file);
 
             SAXBuilder builder = new SAXBuilder();
@@ -351,28 +386,13 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
                 List<DropTerritory> territories = createTerritory(details, distributor, label);
                 List<DropAssetFile> files = createFiles(file.getParent());
 
-                res.put(getDropTrackKey(), new DropTrack()
-                        .addType(actionType)
-                        .addProductCode(productCode)
-                        .addTitle(title)
-                        .addSubTitle(getSubTitle())
-                        .addArtist(artist)
-                        .addGenre(genre)
-                        .addCopyright(copyright)
-                        .addLabel(label)
-                        .addYear(year)
-                        .addIsrc(isrc)
-                        .addPhysicalProductId(isrc)
-                        .addInfo(null)
-                        .addExplicit(getExplicit())
-                        .addProductId(isrc)
-                        .addTerritories(territories)
-                        .addFiles(files)
-                        .addAlbum(album)
-                        .addXml(getXml())
-                );
+                res.put(getDropTrackKey(),
+                        new DropTrack().addType(actionType).addProductCode(productCode).addTitle(title).addSubTitle(getSubTitle()).addArtist(artist).addGenre(genre).addCopyright(copyright)
+                                       .addLabel(label).addYear(year).addIsrc(isrc).addPhysicalProductId(isrc).addInfo(null).addExplicit(getExplicit()).addProductId(isrc).addTerritories(territories)
+                                       .addFiles(files).addAlbum(album).addXml(getXml()));
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return res;

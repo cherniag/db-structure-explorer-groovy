@@ -2,93 +2,88 @@ package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 public class AssetFileDto {
-	private FileType type;
-	private String path;
-	private String md5;
-	private byte[] content;
-	
-	public AssetFileDto(){
-	}
-	
-	public AssetFileDto(AssetFile file){
-		this.setType(toFileType(file.getType()));
-		this.setMd5(file.getMd5());
-		this.setPath(file.getPath());
-	}
-	
-	public FileType getType() {
-		return type;
-	}
 
-	public void setType(FileType type) {
-		this.type = type;
-	}
+    private FileType type;
+    private String path;
+    private String md5;
+    private byte[] content;
 
-	public String getPath() {
-		return path;
-	}
+    public AssetFileDto() {
+    }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+    public AssetFileDto(AssetFile file) {
+        this.setType(toFileType(file.getType()));
+        this.setMd5(file.getMd5());
+        this.setPath(file.getPath());
+    }
 
-	public String getMd5() {
-		return md5;
-	}
+    public static List<AssetFileDto> toList(List<AssetFile> files) {
+        List<AssetFileDto> fileDtos = new LinkedList<AssetFileDto>();
 
-	public void setMd5(String md5) {
-		this.md5 = md5;
-	}
+        for (AssetFile track : files) {
+            fileDtos.add(new AssetFileDto(track));
+        }
+        return fileDtos;
+    }
 
-	public byte[] getContent() {
-		return content;
-	}
+    public static FileType toFileType(AssetFile.FileType fileType) {
+        switch (fileType) {
+            case DOWNLOAD:
+                return FileType.ORIGINAL_MP3;
+            case MOBILE:
+                return FileType.ORIGINAL_ACC;
+            case IMAGE:
+                return FileType.IMAGE;
+            case PREVIEW:
+                return FileType.ORIGINAL_ACC;
+            case VIDEO:
+                return FileType.VIDEO;
+        }
+        return null;
+    }
 
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
-	
-	public static List<AssetFileDto> toList(List<AssetFile> files) {
-		List<AssetFileDto> fileDtos = new LinkedList<AssetFileDto>();
+    public FileType getType() {
+        return type;
+    }
 
-		for (AssetFile track : files) {
-			fileDtos.add(new AssetFileDto(track));
-		}
-		return fileDtos;
-	}
+    public void setType(FileType type) {
+        this.type = type;
+    }
 
-	public static FileType toFileType(AssetFile.FileType fileType) {
-		switch (fileType) {
-			case DOWNLOAD:
-				return FileType.ORIGINAL_MP3;
-			case MOBILE:
-				return FileType.ORIGINAL_ACC;
-			case IMAGE:
-				return FileType.IMAGE;
-			case PREVIEW:
-				return FileType.ORIGINAL_ACC;
-			case VIDEO:
-				return FileType.VIDEO;
-		}
-		return null;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-				.append("type", type)
-				.append("path", path)
-				.append("md5", md5)
-				.append("content", content)
-				.toString();
-	}
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("type", type).append("path", path).append("md5", md5).append("content", content).toString();
+    }
 }

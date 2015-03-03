@@ -2,13 +2,9 @@ package mobi.nowtechnologies.server.transport.service;
 
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import org.apache.commons.io.FileUtils;
-import org.apache.http.NameValuePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,23 +12,25 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.http.NameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * Created by oar on 12/20/13.
  */
 public class PostsSaverPostService extends PostService {
-    public interface Monitor {
-        void waitToComplete(long timeout) throws Exception;
-    }
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-
     @Value("${sms.temporaryFolder}")
     private File smsTemporaryFolder;
-
     private ArrayBlockingQueue<Integer> queue;
 
     public Monitor getMonitor() {
-        if(queue != null) {
+        if (queue != null) {
             throw new IllegalStateException("already monitoring...");
         }
 
@@ -43,7 +41,8 @@ public class PostsSaverPostService extends PostService {
             public void waitToComplete(final long timeout) throws Exception {
                 try {
                     queue.poll(timeout, TimeUnit.MILLISECONDS);
-                } finally {
+                }
+                finally {
                     queue = null;
                 }
             }
@@ -56,7 +55,8 @@ public class PostsSaverPostService extends PostService {
 
 
                 saveDataToFile(url, nameValuePairs, body);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 logger.error("Error save to file", e);
                 throw new RuntimeException(e);
             }
@@ -64,8 +64,9 @@ public class PostsSaverPostService extends PostService {
             response.setMessage("OK");
             response.setStatusCode(200);
             return response;
-        } finally {
-            if(queue != null) {
+        }
+        finally {
+            if (queue != null) {
                 queue.add(0);
             }
         }
@@ -86,9 +87,15 @@ public class PostsSaverPostService extends PostService {
     private void initData() throws IOException {
         if (smsTemporaryFolder.exists()) {
             FileUtils.cleanDirectory(smsTemporaryFolder);
-        } else {
+        }
+        else {
             smsTemporaryFolder.mkdirs();
         }
+    }
+
+    public interface Monitor {
+
+        void waitToComplete(long timeout) throws Exception;
     }
 
 }

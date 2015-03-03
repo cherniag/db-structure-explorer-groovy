@@ -7,30 +7,30 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;
 
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
-
 /**
- * User: gch
- * Date: 11/20/13
+ * User: gch Date: 11/20/13
  */
 public class PaymentTestUtils {
 
-    public static BasicResponse createBasicResponse(final int statusCode,final String message){
+    public static BasicResponse createBasicResponse(final int statusCode, final String message) {
         return new BasicResponse() {
             @Override
             public int getStatusCode() {
                 return statusCode;
             }
-            @Override public String getMessage() {
+
+            @Override
+            public String getMessage() {
                 return message;
             }
         };
     }
 
-    public static PaymentPolicy createPaymentPolicy(){
+    public static PaymentPolicy createPaymentPolicy() {
         PaymentPolicy paymentPolicy = new PaymentPolicy();
         paymentPolicy.setAvailableInStore(true);
         paymentPolicy.setCurrencyISO("GBP");

@@ -7,17 +7,14 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.mock.web.MockMultipartFile;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import org.springframework.mock.web.MockMultipartFile;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChartAsmTest {
@@ -82,7 +79,7 @@ public class ChartAsmTest {
         assertEquals(null, result.getPosition());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testToChartDto_IsChartItem_Failure() throws Exception {
 
         ChartDetail chartDetail = ChartDetailFactory.createChartDetail();

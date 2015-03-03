@@ -4,20 +4,25 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
+
 @Service
 public class ChartHttpService extends AbstractHttpService {
 
-    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData, PhoneState state, String resolution, HttpMethod httpMethod){
+    public ResponseEntity<ChartResponse> getChart(UserDeviceData deviceData, PhoneState state, String resolution, HttpMethod httpMethod) {
         MultiValueMap<String, String> parameters = getParametersMultiValueMap(state, resolution);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getUri(deviceData, "GET_CHART", deviceData.getFormat()));
         for (Map.Entry<String, List<String>> entry : parameters.entrySet()) {
@@ -51,7 +56,7 @@ public class ChartHttpService extends AbstractHttpService {
         parameters.add("USER_TOKEN", token.getTimestampToken());
         parameters.add("TIMESTAMP", token.getTimestamp());
         parameters.add("DEVICE_UID", state.getDeviceUID());
-        if(resolution != null) {
+        if (resolution != null) {
             parameters.add("WIDTHXHEIGHT", resolution);
         }
         return parameters;

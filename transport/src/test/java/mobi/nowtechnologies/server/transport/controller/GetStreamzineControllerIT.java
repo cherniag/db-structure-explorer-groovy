@@ -1,45 +1,65 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.dto.streamzine.DeeplinkType;
 import mobi.nowtechnologies.server.persistence.dao.CommunityDao;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsStoryDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
-import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
+import mobi.nowtechnologies.server.persistence.repository.BadgeMappingRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
+import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
+import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
-import org.apache.commons.lang.time.DateUtils;
-import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Test;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.Date;
-
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
-import static org.hamcrest.Matchers.is;
+
+import javax.annotation.Resource;
+
+import java.util.Date;
+
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.core.IsCollectionContaining;
+import static org.hamcrest.Matchers.is;
+
 @Transactional
 public class GetStreamzineControllerIT extends AbstractControllerTestIT {
+
     @Resource
     private StreamzineUpdateService streamzineUpdateService;
     @Resource
@@ -99,43 +119,45 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", null).andExpect(status().isOk()).andDo(print());
 
         resultActions.andDo(print())
-                // check the orders
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
+            // check the orders
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name()))).andExpect(
+            jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
 
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
-                        // check badges
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.MINI_PLAYER_ONLY.getId()+"&id=" + chartId)))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+ PlayerType.REGULAR_PLAYER_ONLY.getId()+"&id=" + existingMedia.getIsrcTrackId())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name()))).andExpect(
+            jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
+                // check badges
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
+                //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player=" + PlayerType.MINI_PLAYER_ONLY.getId() + "&id=" + chartId)))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue))).andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value",
+                                                                                                                                         is("hl-uk://content/track?player=" +
+                                                                                                                                            PlayerType.REGULAR_PLAYER_ONLY.getId() + "&id=" +
+                                                                                                                                            existingMedia.getIsrcTrackId())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
     }
 
     @Test
@@ -215,43 +237,43 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = doRequestBefore63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60").andExpect(status().isOk()).andDo(print());
 
         resultActions.andDo(print())
-                // check the orders
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
+            // check the orders
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name()))).andExpect(
+            jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
 
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
-                        // check badges
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?id=" + chartId)))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?id=" + existingMedia.getIsrcTrackId())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name()))).andExpect(
+            jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
+                // check badges
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
+                //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?id=" + chartId)))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?id=" + existingMedia.getIsrcTrackId())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
     }
 
 
@@ -299,43 +321,45 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         ResultActions resultActions = doRequestFrom63(userName, deviceUID, apiVersion, communityUrl, timestamp, userToken, true, "60x60", null).andExpect(status().isOk()).andDo(print());
 
         resultActions.andDo(print())
-                // check the orders
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
+            // check the orders
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].block_type", is(ShapeType.WIDE.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[1].block_type", is(ShapeType.SLIM_BANNER.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[2].block_type", is(ShapeType.NARROW.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[3].block_type", is(ShapeType.SLIM_BANNER.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[4].block_type", is(ShapeType.WIDE.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[6].block_type", is(ShapeType.SLIM_BANNER.name()))).andExpect(
+            jsonPath("$.response.data[0].value.visual_blocks[5].block_type", is(ShapeType.NARROW.name())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_type", is(deepLinkTypeValue)))
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].link_value", is("hl-uk://web/aHR0cDovL2V4YW1wbGUuY29t?open=externally")))
 
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name())))
-                .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
-                        // check badges
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player="+ PlayerType.MINI_PLAYER_ONLY.getId()+"&id=" + chartId)))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue)))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value", is("hl-uk://content/track?player="+ PlayerType.REGULAR_PLAYER_ONLY.getId()+"&id=" + existingMedia.getIsrcTrackId())))
-                        //
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
-                .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.permission", is(Permission.RESTRICTED.name())))
+            .andExpect(jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.LIMITED.name()))).andExpect(
+            jsonPath("$.response.data[0].value.visual_blocks[0].access_policy.grantedTo", IsCollectionContaining.hasItem(GrantedToType.FREETRIAL.name())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[1].link_type", is(deepLinkTypeValue)))
+                // check badges
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[0].badge_icon", is(filenameAlias1.getFileName())))
+                //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[2].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[2].link_value", is("hl-uk://page/subscription_page?action=subscribe")))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[3].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[3].link_value", is("hl-uk://content/news?id=" + publishDate.getTime())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[4].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[4].link_value", is("hl-uk://content/story?id=" + newsMessage.getId())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[6].link_type", is(deepLinkTypeValue))).andExpect(
+            jsonPath("$.response.data[0].value.stream_content_items[6].link_value", is("hl-uk://content/playlist?player=" + PlayerType.MINI_PLAYER_ONLY.getId() + "&id=" + chartId)))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_type", is(deepLinkTypeValue))).andExpect(jsonPath("$.response.data[0].value.stream_content_items[5].link_value",
+                                                                                                                                         is("hl-uk://content/track?player=" +
+                                                                                                                                            PlayerType.REGULAR_PLAYER_ONLY.getId() + "&id=" +
+                                                                                                                                            existingMedia.getIsrcTrackId())))
+            //
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_type", is(DeeplinkType.ID_LIST.name())))
+            .andExpect(jsonPath("$.response.data[0].value.stream_content_items[7].link_value[0]", is(existingMedia.getI())));
     }
 
     @Test
@@ -370,44 +394,23 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         Thread.sleep(2500L);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", appVersion)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", user1.getDeviceUID())
-                        .param("USER_NAME", userName1)
-                        .param("USER_TOKEN", createTimestampToken(user1.getToken(), timestamp))
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).
-                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json").param("APP_VERSION", appVersion).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", user1.getDeviceUID()).param("USER_NAME", userName1)
+                                                                                            .param("USER_TOKEN", createTimestampToken(user1.getToken(), timestamp)).param("WIDTHXHEIGHT", "320x800")
+                                                                                            .param("TIMESTAMP", timestamp)).
+                   andExpect(status().isOk()).
+                   andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", appVersion)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", user2.getDeviceUID())
-                        .param("USER_NAME", userName2)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN", createTimestampToken(user2.getToken(), timestamp))
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).
-                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json").param("APP_VERSION", appVersion).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", user2.getDeviceUID()).param("USER_NAME", userName2).param("WIDTHXHEIGHT", "320x800")
+                                                                                            .param("USER_TOKEN", createTimestampToken(user2.getToken(), timestamp)).param("TIMESTAMP", timestamp)).
+                   andExpect(status().isOk()).
+                   andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", appVersion)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", user3.getDeviceUID())
-                        .param("USER_NAME", userName3)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN", createTimestampToken(user3.getToken(), timestamp))
-                        .param("TIMESTAMP", timestamp))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json").param("APP_VERSION", appVersion).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", user3.getDeviceUID()).param("USER_NAME", userName3).param("WIDTHXHEIGHT", "320x800")
+                                                                                            .param("USER_TOKEN", createTimestampToken(user3.getToken(), timestamp)).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
     }
 
     @Test
@@ -442,44 +445,23 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
 
         Thread.sleep(2500L);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", appVersion)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", user1.getDeviceUID())
-                        .param("USER_NAME", userName1)
-                        .param("USER_TOKEN", createTimestampToken(user1.getToken(), timestamp))
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).
-                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json").param("APP_VERSION", appVersion).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", user1.getDeviceUID()).param("USER_NAME", userName1)
+                                                                                            .param("USER_TOKEN", createTimestampToken(user1.getToken(), timestamp)).param("WIDTHXHEIGHT", "320x800")
+                                                                                            .param("TIMESTAMP", timestamp)).
+                   andExpect(status().isOk()).
+                   andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", appVersion)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", user2.getDeviceUID())
-                        .param("USER_NAME", userName2)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN", createTimestampToken(user2.getToken(), timestamp))
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isOk()).
-                andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json").param("APP_VERSION", appVersion).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", user2.getDeviceUID()).param("USER_NAME", userName2).param("WIDTHXHEIGHT", "320x800")
+                                                                                            .param("USER_TOKEN", createTimestampToken(user2.getToken(), timestamp)).param("TIMESTAMP", timestamp)).
+                   andExpect(status().isOk()).
+                   andExpect(jsonPath("$.response.data[0].value.updated").value(updateDateFuture.getTime()));
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", appVersion)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", user3.getDeviceUID())
-                        .param("USER_NAME", userName3)
-                        .param("WIDTHXHEIGHT", "320x800")
-                        .param("USER_TOKEN", createTimestampToken(user3.getToken(), timestamp))
-                        .param("TIMESTAMP", timestamp))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json").param("APP_VERSION", appVersion).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", user3.getDeviceUID()).param("USER_NAME", userName3).param("WIDTHXHEIGHT", "320x800")
+                                                                                            .param("USER_TOKEN", createTimestampToken(user3.getToken(), timestamp)).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).andExpect(jsonPath("$.response.data[0].value.updated").value(updateDatePast.getTime()));
     }
 
     @Test
@@ -496,17 +478,10 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         String timestamp = "" + futureDate.getTime();
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json")
-                        .param("APP_VERSION", userName)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("WIDTHXHEIGHT", "1x1")
-                        .param("TIMESTAMP", timestamp)).
-                andExpect(status().isNotFound());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE.json").param("APP_VERSION", userName).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", deviceUID).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                            .param("WIDTHXHEIGHT", "1x1").param("TIMESTAMP", timestamp)).
+                   andExpect(status().isNotFound());
     }
 
 
@@ -528,34 +503,28 @@ public class GetStreamzineControllerIT extends AbstractControllerTestIT {
         return mapping.getFilenameAlias();
     }
 
-    private ResultActions doRequestBefore63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution) throws Exception {
-        final String formatSpecific = (isJson) ? ".json" : "";
+    private ResultActions doRequestBefore63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution)
+        throws Exception {
+        final String formatSpecific = (isJson) ?
+                                      ".json" :
+                                      "";
 
         return mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
-                        .param("APP_VERSION", userName)
-                        .param("COMMUNITY_NAME", communityUrl)
-                        .param("API_VERSION", apiVersion)
-                        .param("DEVICE_UID", deviceUID)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("WIDTHXHEIGHT", resolution)
-        );
+            post("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific).param("APP_VERSION", userName).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                            .param("DEVICE_UID", deviceUID).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                            .param("TIMESTAMP", timestamp).param("WIDTHXHEIGHT", resolution));
     }
 
-    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution, Object modifiedSinceTime) throws Exception {
-        final String formatSpecific = (isJson) ? ".json" : "";
+    private ResultActions doRequestFrom63(String userName, String deviceUID, String apiVersion, String communityUrl, String timestamp, String userToken, boolean isJson, String resolution,
+                                          Object modifiedSinceTime) throws Exception {
+        final String formatSpecific = (isJson) ?
+                                      ".json" :
+                                      "";
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = get("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific)
-                .param("APP_VERSION", userName)
-                .param("COMMUNITY_NAME", communityUrl)
-                .param("API_VERSION", apiVersion)
-                .param("DEVICE_UID", deviceUID)
-                .param("USER_NAME", userName)
-                .param("USER_TOKEN", userToken)
-                .param("TIMESTAMP", timestamp)
-                .param("WIDTHXHEIGHT", resolution);
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder =
+            get("/" + communityUrl + "/" + apiVersion + "/GET_STREAMZINE" + formatSpecific).param("APP_VERSION", userName).param("COMMUNITY_NAME", communityUrl).param("API_VERSION", apiVersion)
+                                                                                           .param("DEVICE_UID", deviceUID).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                           .param("TIMESTAMP", timestamp).param("WIDTHXHEIGHT", resolution);
         if (modifiedSinceTime != null) {
             mockHttpServletRequestBuilder.headers(getHttpHeadersWithIfModifiedSince(modifiedSinceTime));
         }

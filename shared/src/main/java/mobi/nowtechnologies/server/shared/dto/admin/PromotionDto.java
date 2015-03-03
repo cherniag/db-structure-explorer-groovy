@@ -1,149 +1,138 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.Date;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
 public class PromotionDto {
-	
-	private int i;
 
-	private String description;
+    private int i;
 
-	private String type;
+    private String description;
 
-	private Date endDate;
+    private String type;
 
-	private byte freeWeeks;
+    private Date endDate;
 
-	private boolean isActive;
+    private byte freeWeeks;
 
-	private int maxUsers;
+    private boolean isActive;
 
-	private int numUsers;
+    private int maxUsers;
 
-	private Date startDate;
+    private int numUsers;
 
-	private byte subWeeks;
+    private Date startDate;
 
-	private boolean showPromotion;
+    private byte subWeeks;
 
-	private String label;
+    private boolean showPromotion;
 
-	public int getI() {
-		return i;
-	}
+    private String label;
 
-	public void setI(int i) {
-		this.i = i;
-	}
+    public int getI() {
+        return i;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setI(int i) {
+        this.i = i;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public byte getFreeWeeks() {
-		return freeWeeks;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setFreeWeeks(byte freeWeeks) {
-		this.freeWeeks = freeWeeks;
-	}
+    public byte getFreeWeeks() {
+        return freeWeeks;
+    }
 
-	public boolean isActive() {
-		return isActive;
-	}
+    public void setFreeWeeks(byte freeWeeks) {
+        this.freeWeeks = freeWeeks;
+    }
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+    public boolean isActive() {
+        return isActive;
+    }
 
-	public int getMaxUsers() {
-		return maxUsers;
-	}
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public void setMaxUsers(int maxUsers) {
-		this.maxUsers = maxUsers;
-	}
+    public int getMaxUsers() {
+        return maxUsers;
+    }
 
-	public int getNumUsers() {
-		return numUsers;
-	}
+    public void setMaxUsers(int maxUsers) {
+        this.maxUsers = maxUsers;
+    }
 
-	public void setNumUsers(int numUsers) {
-		this.numUsers = numUsers;
-	}
+    public int getNumUsers() {
+        return numUsers;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public void setNumUsers(int numUsers) {
+        this.numUsers = numUsers;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public byte getSubWeeks() {
-		return subWeeks;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setSubWeeks(byte subWeeks) {
-		this.subWeeks = subWeeks;
-	}
+    public byte getSubWeeks() {
+        return subWeeks;
+    }
 
-	public boolean isShowPromotion() {
-		return showPromotion;
-	}
+    public void setSubWeeks(byte subWeeks) {
+        this.subWeeks = subWeeks;
+    }
 
-	public void setShowPromotion(boolean showPromotion) {
-		this.showPromotion = showPromotion;
-	}
+    public boolean isShowPromotion() {
+        return showPromotion;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public void setShowPromotion(boolean showPromotion) {
+        this.showPromotion = showPromotion;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append("i", i)
-				.append("description", description)
-				.append("type", type)
-				.append("endDate", endDate)
-				.append("freeWeeks", freeWeeks)
-				.append("isActive", isActive)
-				.append("maxUsers", maxUsers)
-				.append("numUsers", numUsers)
-				.append("startDate", startDate)
-				.append("subWeeks", subWeeks)
-				.append("showPromotion", showPromotion)
-				.append("label", label)
-				.toString();
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("i", i).append("description", description).append("type", type).append("endDate", endDate).append("freeWeeks", freeWeeks).append("isActive", isActive)
+                                        .append("maxUsers", maxUsers).append("numUsers", numUsers).append("startDate", startDate).append("subWeeks", subWeeks).append("showPromotion", showPromotion)
+                                        .append("label", label).toString();
+    }
 }

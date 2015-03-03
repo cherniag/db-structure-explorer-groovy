@@ -1,14 +1,18 @@
 package mobi.nowtechnologies.applicationtests.services.device.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/3/2014
+ * Author: Gennadii Cherniaiev Date: 7/3/2014
  */
 @Entity
 @Table(name = "fat_currentPhone")
 public class CurrentPhone {
+
     @Id
     @GeneratedValue
     @Column(name = "phone_suffix")
@@ -17,8 +21,8 @@ public class CurrentPhone {
     @Override
     public String toString() {
         return "CurrentPhone{" +
-                "phoneSuffix=" + phoneSuffix +
-                '}';
+               "phoneSuffix=" + phoneSuffix +
+               '}';
     }
 
     public String getO2Phone(Integer phoneTypePrefix) {

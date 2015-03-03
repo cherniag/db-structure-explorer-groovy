@@ -6,15 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShapeTypeMappingDto {
+
     private String shapeType;
     private List<ContentWithSubTypesMappingDto> dtos = new ArrayList<ContentWithSubTypesMappingDto>();
 
-    public void setShapeType(ShapeType shapeType) {
-        this.shapeType = shapeType.name();
-    }
-
     public String getShapeType() {
         return shapeType;
+    }
+
+    public void setShapeType(ShapeType shapeType) {
+        this.shapeType = shapeType.name();
     }
 
     public List<ContentWithSubTypesMappingDto> getDtos() {
@@ -24,8 +25,8 @@ public class ShapeTypeMappingDto {
     @Override
     public String toString() {
         return "ShapeTypeMappingDto{" +
-                ", shapeType=" + shapeType +
-                ", dtos=" + dtos +
-                '}';
+               ", shapeType=" + shapeType +
+               ", dtos=" + dtos +
+               '}';
     }
 }

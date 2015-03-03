@@ -1,35 +1,37 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.VFPSMSPaymentDetails;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.service.payment.response.PaymentSystemResponse;
 import mobi.nowtechnologies.server.service.payment.response.VFResponse;
 import mobi.nowtechnologies.server.service.sms.BasicSMSMessageProcessor;
 import mobi.nowtechnologies.server.service.sms.SMSMessageProcessor;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
-import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.bean.SMSCDeliveryReceipt;
-import org.springframework.aop.framework.AopContext;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.VF_PSMS_TYPE;
 
 import java.util.List;
 import java.util.Set;
 
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.VF_PSMS_TYPE;
+import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
+
+import org.springframework.aop.framework.AopContext;
+import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
  * @author Alexander Kolpakov
  */
-public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaymentDetails> implements SMSMessageProcessor<VFResponse>{
+public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaymentDetails> implements SMSMessageProcessor<VFResponse> {
 
     protected VFNZSMSGatewayServiceImpl gatewayService;
     private Set<String> paymentCodes;
     private PendingPaymentService pendingPaymentService;
     private VFResponse futureResponse = VFResponse.futureResponse();
-    private BasicSMSMessageProcessor<VFResponse> smsMessageProcessor = (BasicSMSMessageProcessor<VFResponse>)new BasicSMSMessageProcessor<VFResponse>() {
+    private BasicSMSMessageProcessor<VFResponse> smsMessageProcessor = (BasicSMSMessageProcessor<VFResponse>) new BasicSMSMessageProcessor<VFResponse>() {
         @Override
         public boolean supports(DeliverSm deliverSm) {
             return VFPaymentServiceImpl.this.supports(deliverSm);
@@ -89,26 +91,27 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
         List<User> users = userService.findByMobile(phoneNumber);
 
-        for(User user : users){
+        for (User user : users) {
 
             PendingPayment pendingPayment = getPendingPayment(user.getId(), VF_PSMS_TYPE);
-            if(pendingPayment != null){
+            if (pendingPayment != null) {
                 getThis().commitPayment(pendingPayment, data);
             }
         }
     }
 
-    protected PendingPayment getPendingPayment(Integer userId, String paymentType){
+    protected PendingPayment getPendingPayment(Integer userId, String paymentType) {
         List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(userId);
-        for(PendingPayment pendingPayment : pendingPayments){
-            if(pendingPayment.getPaymentDetails().getPaymentType().equals(paymentType))
+        for (PendingPayment pendingPayment : pendingPayments) {
+            if (pendingPayment.getPaymentDetails().getPaymentType().equals(paymentType)) {
                 return pendingPayment;
+            }
         }
 
         return null;
     }
 
-    private VFPaymentServiceImpl getThis(){
+    private VFPaymentServiceImpl getThis() {
         return ((VFPaymentServiceImpl) AopContext.currentProxy());
     }
 }

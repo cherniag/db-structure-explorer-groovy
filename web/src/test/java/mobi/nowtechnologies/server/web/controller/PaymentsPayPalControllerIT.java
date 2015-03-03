@@ -9,26 +9,28 @@ import mobi.nowtechnologies.server.persistence.repository.PaymentPolicyRepositor
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.web.security.userdetails.UserDetailsImpl;
-import org.junit.Test;
+import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
+import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.GOOGLE_PLUS;
+import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
+import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
+import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
+import static mobi.nowtechnologies.server.web.controller.PaymentsPayPalController.REQUEST_PARAM_PAYPAL_PAYMENT_POLICY;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+
+import java.math.BigDecimal;
+
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
-import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import java.math.BigDecimal;
-
-import static mobi.nowtechnologies.common.dto.UserRegInfo.PaymentType.PAY_PAL;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.GOOGLE_PLUS;
-import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
-import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
-import static mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME;
-import static mobi.nowtechnologies.server.web.controller.PaymentsPayPalController.REQUEST_PARAM_PAYPAL_PAYMENT_POLICY;
+import org.junit.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,27 +57,23 @@ public class PaymentsPayPalControllerIT extends AbstractWebControllerIT {
         UserGroup o2UserGroup = userGroupRepository.findByCommunityRewriteUrl("o2");
         Community o2Community = o2UserGroup.getCommunity();
 
-        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withSubCost(new BigDecimal("4.99")
-        ).withPaymentType(PAY_PAL).withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract
-                (null).withSegment(null).withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS)
-                .withTariff(_3G).withMediaType(AUDIO).withDefault(false)).withOnline(true);
+        PaymentPolicy paymentPolicy = paymentPolicyRepository.save(
+            new PaymentPolicy().withCommunity(o2Community).withPeriod(new Period().withDuration(1).withDurationUnit(MONTHS)).withSubCost(new BigDecimal("4.99")).withPaymentType(PAY_PAL)
+                               .withOperator(null).withShortCode("").withCurrencyISO("GBP").withAvailableInStore(true).withAppStoreProductId(null).withContract(null).withSegment(null)
+                               .withContentCategory(null).withContentType(null).withContentDescription(null).withSubMerchantId(null).withProvider(GOOGLE_PLUS).withTariff(_3G).withMediaType(AUDIO)
+                               .withDefault(false)).withOnline(true);
         paymentPolicyRepository.save(paymentPolicy);
-        mockMvc.perform(
-                get("/payments_inapp/startPayPal.html")
-                        .cookie(new Cookie[]{new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
-                .andExpect(status().isMovedTemporarily()).andExpect(
-                redirectedUrl("/payments_inapp/paypal.html?" +
-                        REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId()));
+        mockMvc.perform(get("/payments_inapp/startPayPal.html").cookie(new Cookie[] {new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).andExpect(status().isMovedTemporarily())
+               .andExpect(redirectedUrl("/payments_inapp/paypal.html?" +
+                                        REQUEST_PARAM_PAYPAL_PAYMENT_POLICY + "=" + paymentPolicy.getId()));
     }
 
     @Test
     public void testStartPaypalWhenNoPaypalPolicy() throws Exception {
         String communityUrl = "o2";
         SecurityContextHolder.setContext(createSecurityContext(101));
-        mockMvc.perform(
-                get("/payments_inapp/startPayPal.html")
-                        .cookie(new Cookie[]{new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)}))
-                .andExpect(status().isInternalServerError()).andExpect(view().name("errors/500"));
+        mockMvc.perform(get("/payments_inapp/startPayPal.html").cookie(new Cookie[] {new Cookie(DEFAULT_COMMUNITY_COOKIE_NAME, communityUrl)})).andExpect(status().isInternalServerError())
+               .andExpect(view().name("errors/500"));
     }
 
 

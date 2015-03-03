@@ -1,22 +1,24 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
-import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import static mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData.TOKEN;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
+
+import com.google.common.base.Joiner;
+
+import org.junit.*;
+import org.junit.runner.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class TrackDataTest {
-    
+
     TrackData trackData;
 
     @Test(expected = NullPointerException.class)
@@ -148,6 +150,6 @@ public class TrackDataTest {
         String valueString = trackData.toValueString();
 
         //then
-        assertThat(valueString, is("null" +TOKEN + playerType));
+        assertThat(valueString, is("null" + TOKEN + playerType));
     }
 }

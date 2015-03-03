@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Test;
-import org.springframework.mock.web.MockMultipartFile;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+
+import org.junit.*;
+import org.springframework.mock.web.MockMultipartFile;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,13 +24,12 @@ public class ChartIT extends AbstractAdminITTest {
         String imageFileName = "someImageFileName";
 
         mockMvc.perform(fileUpload(requestURI).file(new MockMultipartFile("file", file)).
-                cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true)).
-                param("id", id.toString()).
-                param("name", name).
-                param("imageFileName", imageFileName).
-                param("position", "1").
-                param("subtitle", subtitle)
-        ).andExpect(status().isMovedTemporarily()).andExpect(redirectedUrl("/charts/5"));
+                            cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true)).
+                                                  param("id", id.toString()).
+                                                  param("name", name).
+                                                  param("imageFileName", imageFileName).
+                                                  param("position", "1").
+                                                  param("subtitle", subtitle)).andExpect(status().isMovedTemporarily()).andExpect(redirectedUrl("/charts/5"));
     }
 
 

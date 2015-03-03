@@ -3,18 +3,22 @@ package mobi.nowtechnologies.server.service.configuration;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import mobi.nowtechnologies.server.user.criteria.*;
-import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
-import mobi.nowtechnologies.server.user.rules.TriggerType;
-import org.junit.Test;
-
-import java.util.Map;
-
+import mobi.nowtechnologies.server.user.criteria.CallBackUserDetailsMatcher;
+import mobi.nowtechnologies.server.user.criteria.MatchException;
+import mobi.nowtechnologies.server.user.criteria.Matcher;
+import mobi.nowtechnologies.server.user.criteria.ReflectionUserDetailMatcher;
+import static mobi.nowtechnologies.server.service.configuration.Configuration.and;
+import static mobi.nowtechnologies.server.service.configuration.Configuration.equalTo;
+import static mobi.nowtechnologies.server.service.configuration.Configuration.not;
+import static mobi.nowtechnologies.server.service.configuration.Configuration.nullValue;
+import static mobi.nowtechnologies.server.service.configuration.Configuration.or;
 import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.greaterThan;
 import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
+
+import org.junit.*;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static mobi.nowtechnologies.server.service.configuration.Configuration.*;
 
 public class ConfigurationUtilsTest {
 
@@ -35,7 +39,7 @@ public class ConfigurationUtilsTest {
         Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
         Matcher<User> ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(9));
         Matcher<User> ReflectionUserDetailMatcher3 = new ReflectionUserDetailMatcher<String>("deviceType", equalTo("IOS"));
-        Matcher<User> orMatcher = or( or(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2), ReflectionUserDetailMatcher3);
+        Matcher<User> orMatcher = or(or(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2), ReflectionUserDetailMatcher3);
         User user = new User();
         user.setMobile("+44123456789");
         user.setSubBalance(100);
@@ -154,10 +158,10 @@ public class ConfigurationUtilsTest {
 
     @Test
     public void testAndMatchWith3MatchingArgs() throws Exception {
-        Matcher<User>  ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
-        Matcher<User>  ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(9));
-        Matcher<User>  ReflectionUserDetailMatcher3 = new ReflectionUserDetailMatcher<String>("device", equalTo("IOS"));
-        Matcher<User>  andMatcher = and(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2, ReflectionUserDetailMatcher3);
+        Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
+        Matcher<User> ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(9));
+        Matcher<User> ReflectionUserDetailMatcher3 = new ReflectionUserDetailMatcher<String>("device", equalTo("IOS"));
+        Matcher<User> andMatcher = and(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2, ReflectionUserDetailMatcher3);
         User user = new User();
         user.setMobile("+44123456789");
         user.setSubBalance(9);
@@ -171,7 +175,7 @@ public class ConfigurationUtilsTest {
         Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
         Matcher<User> ReflectionUserDetailMatcher2 = new ReflectionUserDetailMatcher<Integer>("subBalance", equalTo(9));
         Matcher<User> ReflectionUserDetailMatcher3 = new ReflectionUserDetailMatcher<String>("device", equalTo("IOS"));
-        Matcher<User> andMatcher = and( and(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2), ReflectionUserDetailMatcher3);
+        Matcher<User> andMatcher = and(and(ReflectionUserDetailMatcher1, ReflectionUserDetailMatcher2), ReflectionUserDetailMatcher3);
         User user = new User();
         user.setMobile("+44123456789");
         user.setSubBalance(9);
@@ -182,14 +186,14 @@ public class ConfigurationUtilsTest {
 
     @Test
     public void testSeveralMatcherTypes() throws Exception {
-        Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo( "+44123456789"));
+        Matcher<User> ReflectionUserDetailMatcher1 = new ReflectionUserDetailMatcher<String>("mobile", equalTo("+44123456789"));
         Matcher<User> callBackUserDetailsMatcher = new CallBackUserDetailsMatcher<Tariff>(new CallBackUserDetailsMatcher.UserDetailHolder<Tariff>() {
             @Override
             public Tariff getUserDetail(User user) {
                 return user.getTariff();
             }
         }, equalTo(Tariff._4G));
-        Matcher<User>  andMatcher = and(ReflectionUserDetailMatcher1, callBackUserDetailsMatcher);
+        Matcher<User> andMatcher = and(ReflectionUserDetailMatcher1, callBackUserDetailsMatcher);
         User user = new User();
         user.setMobile("+44123456789");
         user.setTariff(Tariff._4G);
@@ -229,7 +233,7 @@ public class ConfigurationUtilsTest {
         assertThat(callBackUserDetailsMatcher.match(user), is(false));
     }
 
-    private CallBackUserDetailsMatcher.UserDetailHolder<Long> freeTrialExpired(){
+    private CallBackUserDetailsMatcher.UserDetailHolder<Long> freeTrialExpired() {
         return new CallBackUserDetailsMatcher.UserDetailHolder<Long>() {
             @Override
             public Long getUserDetail(User user) {

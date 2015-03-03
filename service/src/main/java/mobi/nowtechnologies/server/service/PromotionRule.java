@@ -6,8 +6,8 @@ import mobi.nowtechnologies.server.user.rules.PromotionBasedValidationDelegate;
 import mobi.nowtechnologies.server.user.rules.Rule;
 import mobi.nowtechnologies.server.user.rules.RuleResult;
 import mobi.nowtechnologies.server.user.rules.ValidationDelegate;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
@@ -49,12 +49,7 @@ public class PromotionRule implements Rule<User, PromotionProvider.PromotionProx
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-                .append("rootMatcher", rootMatcher)
-                .append("validation", validationDelegate)
-                .append("isValid", isValid())
-                .append("rulePriority", rulePriority)
-                .append("promo", promo)
-                .toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("rootMatcher", rootMatcher).append("validation", validationDelegate).append("isValid", isValid())
+                                                            .append("rulePriority", rulePriority).append("promo", promo).toString();
     }
 }

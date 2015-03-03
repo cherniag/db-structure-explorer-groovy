@@ -2,34 +2,49 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
-import org.junit.Test;
 
 import javax.annotation.Resource;
 
 import java.util.List;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 // @author Oleg Artomov on 9/9/2014.
 public class CommunityRepositoryIT extends AbstractRepositoryIT {
 
-    @Resource OfferRepository offerRepository;
-    @Resource PaymentPolicyRepository paymentPolicyRepository;
-    @Resource MessageRepository messageRepository;
-    @Resource DrmRepository drmRepository;
-    @Resource PaymentDetailsRepository paymentDetailsRepository;
-    @Resource UserRepository userRepository;
-    @Resource PromoCodeRepository promoCodeRepository;
-    @Resource PromotionRepository promotionRepository;
-    @Resource UserGroupRepository userGroupRepository;
-    @Resource ChartDetailRepository chartDetailRepository;
-    @Resource ChartRepository chartRepository;
-    @Resource PromotedDeviceRepository promotedDeviceRepository;
-    @Resource DrmPolicyRepository drmPolicyRepository;
-    @Resource CommunityRepository communityRepository;
-    @Resource CommunityConfigRepository communityConfigRepository;
+    @Resource
+    OfferRepository offerRepository;
+    @Resource
+    PaymentPolicyRepository paymentPolicyRepository;
+    @Resource
+    MessageRepository messageRepository;
+    @Resource
+    DrmRepository drmRepository;
+    @Resource
+    PaymentDetailsRepository paymentDetailsRepository;
+    @Resource
+    UserRepository userRepository;
+    @Resource
+    PromoCodeRepository promoCodeRepository;
+    @Resource
+    PromotionRepository promotionRepository;
+    @Resource
+    UserGroupRepository userGroupRepository;
+    @Resource
+    ChartDetailRepository chartDetailRepository;
+    @Resource
+    ChartRepository chartRepository;
+    @Resource
+    PromotedDeviceRepository promotedDeviceRepository;
+    @Resource
+    DrmPolicyRepository drmPolicyRepository;
+    @Resource
+    CommunityRepository communityRepository;
+    @Resource
+    CommunityConfigRepository communityConfigRepository;
 
     @Test
     public void testFindByRewriteUrlParameter() {
@@ -38,7 +53,7 @@ public class CommunityRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldFindLiveCommunities(){
+    public void shouldFindLiveCommunities() {
         //given
         boolean isLive = true;
 
@@ -72,7 +87,7 @@ public class CommunityRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldFindDeadCommunities(){
+    public void shouldFindDeadCommunities() {
         //given
         boolean isLive = false;
 

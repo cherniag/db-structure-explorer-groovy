@@ -8,6 +8,8 @@ public enum ContentBehaviorType {
     ENABLED, DISABLED;
 
     public static ContentBehaviorType valueOf(boolean isOff) {
-        return isOff ? DISABLED : ENABLED;
+        return isOff ?
+               DISABLED :
+               ENABLED;
     }
 }

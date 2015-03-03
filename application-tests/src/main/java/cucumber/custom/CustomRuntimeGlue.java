@@ -1,6 +1,17 @@
 package cucumber.custom;
 
-import cucumber.runtime.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.MethodFormat;
+import cucumber.runtime.RuntimeGlue;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.java.CustomJavaBackend;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
@@ -8,13 +19,8 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.apache.commons.io.FilenameUtils;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 public class CustomRuntimeGlue extends RuntimeGlue {
+
     private final Map<String, List<StepDefinition>> allStepDefinitions = new TreeMap<String, List<StepDefinition>>();
     private final UndefinedStepsTracker tracker = new UndefinedStepsTracker();
 
@@ -27,10 +33,22 @@ public class CustomRuntimeGlue extends RuntimeGlue {
         this.localizedXStreams = new LocalizedXStreams(classLoader);
     }
 
+    private static List<Method> filterByClass(List<Method> inputMethods, Class<?> aClass) {
+        List<Method> methods = new ArrayList<Method>();
+
+        for (Method method : inputMethods) {
+            if (method.getDeclaringClass().equals(aClass)) {
+                methods.add(method);
+            }
+        }
+
+        return methods;
+    }
+
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException {
         final String pattern = stepDefinition.getPattern();
-        if(!allStepDefinitions.containsKey(pattern)) {
+        if (!allStepDefinitions.containsKey(pattern)) {
             allStepDefinitions.put(pattern, new ArrayList<StepDefinition>());
         }
         allStepDefinitions.get(pattern).add(stepDefinition);
@@ -48,7 +66,8 @@ public class CustomRuntimeGlue extends RuntimeGlue {
             // filter by method and feature path
             return filterByMethodAndFeaturePath(featurePath, matches);
 
-        } finally {
+        }
+        finally {
             tracker.storeStepKeyword(step, i18n);
         }
     }
@@ -61,7 +80,7 @@ public class CustomRuntimeGlue extends RuntimeGlue {
             List<Method> methodsByPattern = customJavaBackend.getMethodsByPattern(pattern);
             List<Method> methodsByClass = filterByClass(methodsByPattern, aClass);
             List<String> locations = convertToLocations(methodsByClass);
-            if(locations.contains(match.getLocation())) {
+            if (locations.contains(match.getLocation())) {
                 return match;
             }
         }
@@ -92,32 +111,20 @@ public class CustomRuntimeGlue extends RuntimeGlue {
         return result;
     }
 
-    private static List<Method> filterByClass(List<Method> inputMethods, Class<?> aClass) {
-        List<Method> methods = new ArrayList<Method>();
-
-        for (Method method : inputMethods) {
-            if(method.getDeclaringClass().equals(aClass)) {
-                methods.add(method);
-            }
-        }
-
-        return methods;
-    }
-
     private Class<?> restoreClass(String featurePath) {
         String baseName = FilenameUtils.getBaseName(featurePath) + "Feature";
         String packageName = FilenameUtils.getPathNoEndSeparator(featurePath).replace('/', '.');
 
         StringBuilder normalizedName = new StringBuilder(baseName.length());
-        for(int i = 0; i < baseName.length(); i++) {
+        for (int i = 0; i < baseName.length(); i++) {
             final char charAt = baseName.charAt(i);
 
-            if(i==0) {
+            if (i == 0) {
                 normalizedName.append(String.valueOf(charAt).toUpperCase());
                 continue;
             }
 
-            if(charAt == '-') {
+            if (charAt == '-') {
                 char afterDefis = baseName.charAt(++i);
                 normalizedName.append(String.valueOf(afterDefis).toUpperCase());
                 continue;
@@ -129,7 +136,8 @@ public class CustomRuntimeGlue extends RuntimeGlue {
         final String className = packageName + "." + normalizedName;
         try {
             return Class.forName(className);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not restore class for path: " + featurePath + ", should be: [" + className + "]");
         }
     }

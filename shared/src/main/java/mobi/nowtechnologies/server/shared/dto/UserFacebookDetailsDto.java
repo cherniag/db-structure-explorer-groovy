@@ -4,92 +4,91 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public class UserFacebookDetailsDto {
 
-	public static final String NAME = "UserFacebookDetailsDto";
+    public static final String NAME = "UserFacebookDetailsDto";
 
-	@NotEmpty
-	private String facebookToken;
+    @NotEmpty
+    private String facebookToken;
 
-	@NotEmpty
-	private String communityName;
+    @NotEmpty
+    private String communityName;
 
-	private String ipAddress;
+    private String ipAddress;
 
-	@NotEmpty
-	private String apiVersion;
+    @NotEmpty
+    private String apiVersion;
 
-	@NotEmpty
-	private String appVersion;
+    @NotEmpty
+    private String appVersion;
 
-	@NotEmpty
-	private String deviceUID;
-	
-	@NotEmpty
-	private String storedToken;
+    @NotEmpty
+    private String deviceUID;
 
-	public String getCommunityName() {
-		return communityName;
-	}
+    @NotEmpty
+    private String storedToken;
 
-	public void setCOMMUNITY_NAME(String communityName) {
-		this.communityName = communityName;
-	}
+    public String getCommunityName() {
+        return communityName;
+    }
 
-	public String getIpAddress() {
-		return ipAddress;
-	}
+    public void setCOMMUNITY_NAME(String communityName) {
+        this.communityName = communityName;
+    }
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
-	public void setAPI_VERSION(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	public String getAppVersion() {
-		return appVersion;
-	}
+    public void setAPI_VERSION(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 
-	public void setAPP_VERSION(String appVersion) {
-		this.appVersion = appVersion;
-	}
+    public String getAppVersion() {
+        return appVersion;
+    }
 
-	public String getFacebookToken() {
-		return facebookToken;
-	}
+    public void setAPP_VERSION(String appVersion) {
+        this.appVersion = appVersion;
+    }
 
-	public void setFACEBOOK_TOKEN(String facebookToken) {
-		this.facebookToken = facebookToken;
-	}
+    public String getFacebookToken() {
+        return facebookToken;
+    }
 
-	public String getDeviceUID() {
-		return deviceUID;
-	}
+    public void setFACEBOOK_TOKEN(String facebookToken) {
+        this.facebookToken = facebookToken;
+    }
 
-	public void setDEVICE_UID(String deviceUID) {
-		this.deviceUID = deviceUID;
-	}
+    public String getDeviceUID() {
+        return deviceUID;
+    }
 
-	public String getStoredToken() {
-		return storedToken;
-	}
+    public void setDEVICE_UID(String deviceUID) {
+        this.deviceUID = deviceUID;
+    }
 
-	public void setSTORED_TOKEN(String storedToken) {
-		this.storedToken = storedToken;
-	}
+    public String getStoredToken() {
+        return storedToken;
+    }
 
-	@Override
-	public String toString() {
-		return "UserFacebookDetailsDto [facebookToken=" + facebookToken + "apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", communityName="
-				+ communityName + ", ipAddress=" + ipAddress + ", deviceUID=" + deviceUID + "]";
-	}
+    public void setSTORED_TOKEN(String storedToken) {
+        this.storedToken = storedToken;
+    }
+
+    @Override
+    public String toString() {
+        return "UserFacebookDetailsDto [facebookToken=" + facebookToken + "apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", communityName=" + communityName + ", ipAddress=" + ipAddress +
+               ", deviceUID=" + deviceUID + "]";
+    }
 
 }

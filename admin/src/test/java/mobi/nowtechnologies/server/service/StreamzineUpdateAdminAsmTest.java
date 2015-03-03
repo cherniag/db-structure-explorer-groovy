@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateDto;
@@ -19,34 +18,33 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeTyp
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineUpdateAdminAsm;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.MessageSource;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.springframework.context.MessageSource;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 3/21/14
+ * Author: Gennadii Cherniaiev Date: 3/21/14
  */
 @RunWith(MockitoJUnitRunner.class)
 public class StreamzineUpdateAdminAsmTest {
+
     private static final String COMMUNITY = "c1";
 
     @Mock

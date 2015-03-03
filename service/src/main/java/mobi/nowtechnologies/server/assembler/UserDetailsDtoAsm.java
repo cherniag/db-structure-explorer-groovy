@@ -11,14 +11,15 @@ import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 
 import javax.annotation.Resource;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 10/28/2014
+ * Author: Gennadii Cherniaiev Date: 10/28/2014
  */
 public class UserDetailsDtoAsm {
+
     @Resource
     private FacebookUserInfoRepository facebookUserInfoRepository;
 
@@ -71,7 +72,7 @@ public class UserDetailsDtoAsm {
     }
 
     private String convertBirthday(Date birthday) {
-        if (birthday != null){
+        if (birthday != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             return dateFormat.format(birthday);
         }

@@ -1,22 +1,25 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+
 import java.util.Locale;
 
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
 public class CommunityResourceBundleMessageSourceIT {
 
-    @Resource(name = "serviceMessageSource") CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
+    @Resource(name = "serviceMessageSource")
+    CommunityResourceBundleMessageSource communityResourceBundleMessageSource;
 
     @Test
     public void shouldGetMessageWhenDefaultMessageAndLocaleAndArgsAreNull() {

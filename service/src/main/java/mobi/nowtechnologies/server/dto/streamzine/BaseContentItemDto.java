@@ -1,15 +1,16 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class BaseContentItemDto {
+
     @XmlElement(name = "id")
     @JsonProperty(value = "id")
     private String id;
@@ -42,18 +43,6 @@ public abstract class BaseContentItemDto {
         this.linkType = linkType;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getId() {
         return id;
     }
@@ -62,12 +51,24 @@ public abstract class BaseContentItemDto {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getSubTitle() {
         return subTitle;
     }
 
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
     public String getImage() {
         return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getBadgeIcon() {
@@ -84,13 +85,7 @@ public abstract class BaseContentItemDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("title", title)
-                .append("subTitle", subTitle)
-                .append("image", image)
-                .append("badgeIcon", badgeIcon)
-                .append("linkType", linkType)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("title", title).append("subTitle", subTitle).append("image", image).append("badgeIcon", badgeIcon).append("linkType", linkType)
+                                        .toString();
     }
 }

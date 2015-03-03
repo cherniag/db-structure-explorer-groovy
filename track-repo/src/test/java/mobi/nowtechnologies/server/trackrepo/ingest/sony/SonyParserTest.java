@@ -1,21 +1,17 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.sony;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
 import java.net.URL;
 
+import org.junit.*;
+import org.junit.runner.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
+
 /**
- * Created with IntelliJ IDEA.
- * User: sanya
- * Date: 7/10/13
- * Time: 8:32 AM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: sanya Date: 7/10/13 Time: 8:32 AM To change this template use File | Settings | File Templates.
  */
 @RunWith(PowerMockRunner.class)
 public class SonyParserTest {

@@ -1,9 +1,12 @@
 package mobi.nowtechnologies.server.service.payment.impl;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.common.dto.PaymentDetailsDto;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.service.EntityService;
 import mobi.nowtechnologies.server.service.PaymentDetailsService;
@@ -12,20 +15,22 @@ import mobi.nowtechnologies.server.service.payment.PaymentTestUtils;
 import mobi.nowtechnologies.server.service.payment.http.SagePayHttpService;
 import mobi.nowtechnologies.server.service.payment.response.SagePayResponse;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.context.ApplicationEventPublisher;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import org.springframework.context.ApplicationEventPublisher;
+
+import org.junit.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import static org.mockito.Matchers.*;
+
+import junit.framework.Assert;
 
 public class SagePayPaymentServiceImplTest {
 
@@ -169,20 +174,21 @@ public class SagePayPaymentServiceImplTest {
     }
 
     private SagePayResponse getFailSagePayResponse() {
-        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
-                "VPSProtocol=2.23\nStatus=INVALID\nStatusDetail=4022 : The Card Type selected does not match card number.,"));
+        return new SagePayResponse(
+            PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK, "VPSProtocol=2.23\nStatus=INVALID\nStatusDetail=4022 : The Card Type selected does not match card number.,"));
     }
 
     private SagePayResponse getHttpFailSagePayResponse() {
         return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>")
-        );
+                                                                        "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional" +
+                                                                        ".dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body></body></html>"));
     }
 
     private SagePayResponse getSuccesfulSagePayResponse() {
-        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
-                "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo=" + txAuthNo + "\nAVSCV2=SECURITY CODE MATCH ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId=" + vpsTxId + "\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey=" + securityKey + "\nVPSProtocol=2.23")
-        );
+        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK, "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo=" + txAuthNo +
+                                                                                                   "\nAVSCV2=SECURITY CODE MATCH ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId=" + vpsTxId +
+                                                                                                   "\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey=" +
+                                                                                                   securityKey + "\nVPSProtocol=2.23"));
     }
 
     private PaymentDetailsDto getPaymentDto() {
@@ -207,10 +213,8 @@ public class SagePayPaymentServiceImplTest {
     }
 
     /**
-     * Testing start payment procedure for SagePay system
-     * We send a release or repeat request to SagePay depends on lastPaymentStatus of the user
-     * If lastPaymentStatus of user equals to {@link PaymentDetailsStatus.NONE} means this user has never payed before
-     * and this is his first payment. In this case we make release request
+     * Testing start payment procedure for SagePay system We send a release or repeat request to SagePay depends on lastPaymentStatus of the user If lastPaymentStatus of user equals to {@link
+     * PaymentDetailsStatus.NONE} means this user has never payed before and this is his first payment. In this case we make release request
      */
     @Test
     public void startPayment_Successful() {
@@ -239,8 +243,6 @@ public class SagePayPaymentServiceImplTest {
     }
 
     private SagePayResponse getSagePayPayResponseSuccessful() {
-        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
-                "VPSProtocol=2.23\nStatus=OK\nStatusDetail=2004 : The Release was Successful.")
-        );
+        return new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK, "VPSProtocol=2.23\nStatus=OK\nStatusDetail=2004 : The Release was Successful."));
     }
 }

@@ -2,18 +2,20 @@ package mobi.nowtechnologies.server.interceptor;
 
 import mobi.nowtechnologies.server.shared.log.LogUtils;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.util.WebUtils;
 
 public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
@@ -29,7 +31,8 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
         Object bean = handlerMethod.getBean();
         if (bean instanceof CommonController) {
             CommonController controller = (CommonController) bean;
-            LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), controller.getCurrentCommunityUri(), request.getPathInfo().replaceFirst("/", ""), bean.getClass(), controller.getCurrentRemoteAddr());
+            LogUtils.putGlobalMDC(null, null, request.getParameter("USER_NAME"), controller.getCurrentCommunityUri(), request.getPathInfo().replaceFirst("/", ""), bean.getClass(),
+                                  controller.getCurrentRemoteAddr());
         }
 
         return super.preHandle(request, response, handler);
@@ -63,8 +66,9 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
         @Override
         public String getCharacterEncoding() {
-            return super.getCharacterEncoding() != null ? super.getCharacterEncoding() :
-                    WebUtils.DEFAULT_CHARACTER_ENCODING;
+            return super.getCharacterEncoding() != null ?
+                   super.getCharacterEncoding() :
+                   WebUtils.DEFAULT_CHARACTER_ENCODING;
         }
 
         @Override

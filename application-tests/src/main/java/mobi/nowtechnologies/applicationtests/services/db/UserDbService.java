@@ -6,12 +6,14 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Service;
+
 @Service
 public class UserDbService {
+
     @Resource
     private UserRepository userRepository;
     @Resource

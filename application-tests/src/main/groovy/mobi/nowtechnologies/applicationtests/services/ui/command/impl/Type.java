@@ -4,6 +4,7 @@ import mobi.nowtechnologies.applicationtests.services.ui.WebPage;
 import mobi.nowtechnologies.applicationtests.services.ui.command.Command;
 
 public class Type implements Command {
+
     private String value;
     private String selector;
 
@@ -21,6 +22,6 @@ public class Type implements Command {
 
     @Override
     public String toString() {
-        return "Type[" +value + "] to [" + selector + "]";
+        return "Type[" + value + "] to [" + selector + "]";
     }
 }

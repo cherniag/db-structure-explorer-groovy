@@ -11,7 +11,7 @@ public enum RecognizedAction {
 
     public static RecognizedAction recongnize(String actionId) {
         for (RecognizedAction action : values()) {
-            if(action.id.equals(actionId)) {
+            if (action.id.equals(actionId)) {
                 return action;
             }
         }

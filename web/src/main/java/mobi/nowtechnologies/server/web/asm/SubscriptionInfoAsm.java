@@ -7,14 +7,14 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.web.controller.SubscriptionInfo;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
-
 public class SubscriptionInfoAsm {
+
     private TimeService timeService;
     private ITunesPaymentService iTunesPaymentService;
 
@@ -44,9 +44,10 @@ public class SubscriptionInfoAsm {
     public PaymentPolicyDto getCurrentPaymentPolicy(User user) {
         if (user.hasActivePaymentDetails()) {
             return new PaymentPolicyDto(user.getCurrentPaymentDetails().getPaymentPolicy());
-        } else if (hasITunesSubscription(user)) {
+        }
+        else if (hasITunesSubscription(user)) {
             PaymentPolicy currentPaymentPolicy = iTunesPaymentService.getCurrentSubscribedPaymentPolicy(user);
-            if(currentPaymentPolicy!=null) {
+            if (currentPaymentPolicy != null) {
                 return new PaymentPolicyDto(currentPaymentPolicy);
             }
         }
@@ -71,9 +72,10 @@ public class SubscriptionInfoAsm {
     private boolean calcIsPremium(boolean isIos, User user) {
         if (isIos) {
             return ITUNES_SUBSCRIPTION.equals(user.getLastSubscribedPaymentSystem()) &&
-                    (user.getCurrentPaymentDetails() == null || user.getCurrentPaymentDetails().isDeactivated()) &&
-                    user.getNextSubPaymentAsDate().after(timeService.now());
-        } else {
+                   (user.getCurrentPaymentDetails() == null || user.getCurrentPaymentDetails().isDeactivated()) &&
+                   user.getNextSubPaymentAsDate().after(timeService.now());
+        }
+        else {
             return user.getCurrentPaymentDetails() != null && user.getCurrentPaymentDetails().isActivated();
         }
     }

@@ -1,10 +1,9 @@
 package mobi.nowtechnologies.applicationtests.services.runner;
 
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,8 +11,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 @Service
 public class RunnerService {
+
     @Value("${execution.threads}")
     private int threadsCount;
 

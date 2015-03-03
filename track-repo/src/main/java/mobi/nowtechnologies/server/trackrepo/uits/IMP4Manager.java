@@ -8,6 +8,7 @@ import java.io.OutputStream;
  * Created by Oleg Artomov on 7/1/2014.
  */
 public interface IMP4Manager {
+
     @SuppressWarnings("unused")
     int process(InputStream audioFile, OutputStream data, OutputStream header, OutputStream encoded, UitsParameters params, String md5, boolean encrypt);
 

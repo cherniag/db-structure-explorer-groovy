@@ -3,11 +3,11 @@ package mobi.nowtechnologies.server.user.criteria;
 import mobi.nowtechnologies.server.persistence.domain.SubscriptionCampaignRecord;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.SubscriptionCampaignRepository;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.junit.*;
+import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -15,8 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/10/2014
+ * Author: Gennadii Cherniaiev Date: 4/10/2014
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
@@ -42,7 +41,7 @@ public class IsInCampaignTableUserMatcherIT {
         String mobile = "+447123456789";
         createAndSaveSubscriptionCampaignRecord(mobile, "campaignId");
         createAndSaveSubscriptionCampaignRecord(mobile, "otherCampaign");
-        User user  = new User();
+        User user = new User();
         user.setMobile(mobile);
         assertThat(isInCampaignTableUserMatcher.match(user), is(true));
     }
@@ -55,7 +54,7 @@ public class IsInCampaignTableUserMatcherIT {
         createAndSaveSubscriptionCampaignRecord(mobile1, "campaignId");
         createAndSaveSubscriptionCampaignRecord(mobile2, "campaignId");
         createAndSaveSubscriptionCampaignRecord(mobile3, "otherCampaign");
-        User user  = new User();
+        User user = new User();
         user.setMobile(mobile3);
         assertThat(isInCampaignTableUserMatcher.match(user), is(false));
     }
@@ -67,7 +66,7 @@ public class IsInCampaignTableUserMatcherIT {
         String mobile3 = "+447000000000";
         createAndSaveSubscriptionCampaignRecord(mobile1, "campaignId");
         createAndSaveSubscriptionCampaignRecord(mobile2, "campaignId");
-        User user  = new User();
+        User user = new User();
         user.setMobile(mobile3);
         assertThat(isInCampaignTableUserMatcher.match(user), is(false));
     }
@@ -75,7 +74,7 @@ public class IsInCampaignTableUserMatcherIT {
     @Test
     public void testMatchWithMobileNull() throws Exception {
         String mobile = null;
-        User user  = new User();
+        User user = new User();
         user.setMobile(mobile);
         assertThat(isInCampaignTableUserMatcher.match(user), is(false));
     }

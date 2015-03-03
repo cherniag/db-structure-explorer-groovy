@@ -8,11 +8,11 @@ public enum BitRate {
 
     private final String value;
 
-    public String getValue() {
-        return value;
-    }
-
     BitRate(String value) {
         this.value = value;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

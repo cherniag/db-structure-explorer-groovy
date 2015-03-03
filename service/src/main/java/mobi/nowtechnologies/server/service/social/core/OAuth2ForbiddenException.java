@@ -43,7 +43,7 @@ public class OAuth2ForbiddenException extends ServiceException {
         INVALID_GOOGLE_PLUS_TOKEN("760", "invalid authorization token"),
         INVALID_GOOGLE_PLUS_USER_ID("761", "invalid user google plus id"),
         EMPTY_GOOGLE_PLUS_EMAIL("762", "email is not specified");
-        
+
         private final String errorCode;
         private final String message;
 

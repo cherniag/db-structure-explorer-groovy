@@ -2,9 +2,11 @@ package mobi.nowtechnologies.applicationtests.services.ui.command.impl;
 
 import mobi.nowtechnologies.applicationtests.services.ui.WebPage;
 import mobi.nowtechnologies.applicationtests.services.ui.command.Command;
+
 import org.openqa.selenium.NoSuchElementException;
 
 public class Compare implements Command {
+
     private String value;
     private String selector;
 
@@ -20,7 +22,8 @@ public class Compare implements Command {
         String text;
         try {
             text = page.text(selector);
-        } catch (NoSuchElementException notFound) {
+        }
+        catch (NoSuchElementException notFound) {
             return false;
         }
 

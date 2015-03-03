@@ -5,16 +5,17 @@ import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepositoryCustom;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+
+import javax.persistence.Query;
+
+import java.util.Iterator;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.CollectionUtils;
-
-import javax.persistence.Query;
-import java.util.Iterator;
-import java.util.List;
-
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -30,7 +31,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
 
         Long total = 1L;
         Integer pageSize = 1;
-        if(pageable != null){
+        if (pageable != null) {
             Query countQuery = buildQuery("SELECT t.id FROM Track t " + suffixQuery, searchTrackCriteria);
             countQuery.setFirstResult(pageable.getOffset());
             countQuery.setMaxResults(pageable.getPageSize() * 5 + 1);
@@ -40,7 +41,7 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
         }
 
         Query listQuery = buildQuery("SELECT t FROM Track t " + suffixQuery, searchTrackCriteria);
-        if(pageable != null){
+        if (pageable != null) {
             listQuery.setFirstResult(pageable.getOffset());
             listQuery.setMaxResults(pageable.getPageSize());
         }
@@ -52,15 +53,19 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
         while (i.hasNext() && j < pageSize) {
             Track track = i.next();
 
-            if (searchTrackCriteria.isWithTerritories())
+            if (searchTrackCriteria.isWithTerritories()) {
                 track.getTerritories().size();
-            else
+            }
+            else {
                 track.setTerritories(null);
+            }
 
-            if (searchTrackCriteria.isWithFiles())
+            if (searchTrackCriteria.isWithFiles()) {
                 track.getFiles().size();
-            else
+            }
+            else {
                 track.setFiles(null);
+            }
 
             j++;
         }
@@ -70,16 +75,19 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
     }
 
     private Query buildQuery(String queryText, SearchTrackCriteria trackCriteria) {
-        if (queryText == null)
+        if (queryText == null) {
             throw new NullPointerException("The parameter queryText is null");
-        if (trackCriteria == null)
+        }
+        if (trackCriteria == null) {
             throw new NullPointerException("The parameter trackCriteria is null");
+        }
 
         Query query = getEntityManager().createQuery(queryText);
 
         if (!CollectionUtils.isEmpty(trackCriteria.getTrackIds())) {
             query = query.setParameter("id", trackCriteria.getTrackIds().get(0).longValue());
-        } else {
+        }
+        else {
             setParamLike("genre", trackCriteria.getGenre(), query);
             setParamLike("album", trackCriteria.getAlbum(), query);
             setParamLike("artist", trackCriteria.getArtist(), query);
@@ -98,19 +106,23 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
             setParam("releaseFrom", trackCriteria.getReleaseFrom(), query);
             setParam("releaseTo", trackCriteria.getReleaseTo(), query);
 
-            if (trackCriteria.getMediaType() != null)
-                if (trackCriteria.getMediaType().equals(AssetFile.FileType.VIDEO.name()))
+            if (trackCriteria.getMediaType() != null) {
+                if (trackCriteria.getMediaType().equals(AssetFile.FileType.VIDEO.name())) {
                     setParam("mediaType", AssetFile.FileType.VIDEO, query);
-                else
+                }
+                else {
                     setParam("mediaType", AssetFile.FileType.DOWNLOAD, query);
+                }
+            }
         }
 
         return query;
     }
 
     private String createSuffixQuery(SearchTrackCriteria trackCriteria) {
-        if (trackCriteria == null)
+        if (trackCriteria == null) {
             throw new NullPointerException("The parameter trackCriteria is null");
+        }
 
         StringBuilder join = new StringBuilder();
 
@@ -119,35 +131,49 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
         }
 
         StringBuilder criteria = new StringBuilder();
-        if (!CollectionUtils.isEmpty(trackCriteria.getTrackIds()))
+        if (!CollectionUtils.isEmpty(trackCriteria.getTrackIds())) {
             addCriteria(criteria, " t.id = :id");
+        }
         else {
-            if (trackCriteria.getLabel() != null && !trackCriteria.getLabel().isEmpty())
+            if (trackCriteria.getLabel() != null && !trackCriteria.getLabel().isEmpty()) {
                 addCriteria(criteria, " (ter.label like :label or ter.distributor like :label)");
-            if (trackCriteria.getReleaseFrom() != null)
+            }
+            if (trackCriteria.getReleaseFrom() != null) {
                 addCriteria(criteria, " ter.startDate >= :releaseFrom");
-            if (trackCriteria.getReleaseTo() != null)
+            }
+            if (trackCriteria.getReleaseTo() != null) {
                 addCriteria(criteria, " ter.startDate <= :releaseTo");
-            if (trackCriteria.getGenre() != null && !trackCriteria.getGenre().isEmpty())
+            }
+            if (trackCriteria.getGenre() != null && !trackCriteria.getGenre().isEmpty()) {
                 addCriteria(criteria, " lower(t.genre) like :genre");
-            if (trackCriteria.getAlbum() != null && !trackCriteria.getAlbum().isEmpty())
+            }
+            if (trackCriteria.getAlbum() != null && !trackCriteria.getAlbum().isEmpty()) {
                 addCriteria(criteria, " lower(t.album) like :album");
-            if (trackCriteria.getArtist() != null && !trackCriteria.getArtist().isEmpty())
+            }
+            if (trackCriteria.getArtist() != null && !trackCriteria.getArtist().isEmpty()) {
                 addCriteria(criteria, " lower(t.artist) like :artist");
-            if (trackCriteria.getTitle() != null && !trackCriteria.getTitle().isEmpty())
+            }
+            if (trackCriteria.getTitle() != null && !trackCriteria.getTitle().isEmpty()) {
                 addCriteria(criteria, " lower(t.title) like :title");
-            if (trackCriteria.getIsrc() != null && !trackCriteria.getIsrc().isEmpty())
+            }
+            if (trackCriteria.getIsrc() != null && !trackCriteria.getIsrc().isEmpty()) {
                 addCriteria(criteria, " t.isrc = :isrc");
-            if (trackCriteria.getIngestFrom() != null)
+            }
+            if (trackCriteria.getIngestFrom() != null) {
                 addCriteria(criteria, " t.ingestionDate >= :from");
-            if (trackCriteria.getIngestTo() != null)
+            }
+            if (trackCriteria.getIngestTo() != null) {
                 addCriteria(criteria, " t.ingestionDate <= :to");
-            if (trackCriteria.getIngestor() != null && !trackCriteria.getIngestor().isEmpty())
+            }
+            if (trackCriteria.getIngestor() != null && !trackCriteria.getIngestor().isEmpty()) {
                 addCriteria(criteria, " lower(t.ingestor) like :ingestor");
-            if (trackCriteria.getTerritory() != null && !trackCriteria.getTerritory().isEmpty())
+            }
+            if (trackCriteria.getTerritory() != null && !trackCriteria.getTerritory().isEmpty()) {
                 addCriteria(criteria, " lower(t.territoryCodes) like :territory");
-            if (trackCriteria.getMediaType() !=null)
+            }
+            if (trackCriteria.getMediaType() != null) {
                 addCriteria(criteria, " t.mediaType = :mediaType");
+            }
 
             ReportingType reportingType = trackCriteria.getReportingType();
             if (isNotNull(reportingType)) {
@@ -161,17 +187,20 @@ public class TrackRepositoryImpl extends BaseJpaRepository implements TrackRepos
     }
 
     private void setParamLike(String paramKey, String paramVal, Query query) {
-        if (paramVal != null && !paramVal.isEmpty())
+        if (paramVal != null && !paramVal.isEmpty()) {
             query.setParameter(paramKey, "%" + paramVal.toLowerCase() + "%");
+        }
     }
 
     private void setParam(String paramKey, String paramVal, Query query) {
-        if (paramVal != null && !paramVal.isEmpty())
+        if (paramVal != null && !paramVal.isEmpty()) {
             query.setParameter(paramKey, paramVal);
+        }
     }
 
     private void setParam(String paramKey, Object paramVal, Query query) {
-        if (paramVal != null)
+        if (paramVal != null) {
             query.setParameter(paramKey, paramVal);
+        }
     }
 }

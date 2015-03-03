@@ -8,16 +8,16 @@ import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.repository.UrbanAirshipTokenRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import static org.junit.Assert.*;
 
 /**

@@ -12,13 +12,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "response")
 public class FacebookResponse {
+
     //json hack
     private Response response;
     private User user;
     private Error errorMessage;
 
     public Error getErrorMessage() {
-        return errorMessage != null ? errorMessage : response.getData().get(0).getErrorMessage();
+        return errorMessage != null ?
+               errorMessage :
+               response.getData().get(0).getErrorMessage();
     }
 
     public void setErrorMessage(Error errorMessage) {
@@ -27,7 +30,9 @@ public class FacebookResponse {
 
     public User getUser() {
         boolean xmlCase = user != null;
-        return xmlCase ? user : response.getData().get(0).getUser() ;
+        return xmlCase ?
+               user :
+               response.getData().get(0).getUser();
     }
 
     public void setUser(User user) {
@@ -45,9 +50,9 @@ public class FacebookResponse {
     @Override
     public String toString() {
         return "FacebookResponse{" +
-                "response=" + response +
-                ", user=" + user +
-                ", errorMessage=" + errorMessage +
-                '}';
+               "response=" + response +
+               ", user=" + user +
+               ", errorMessage=" + errorMessage +
+               '}';
     }
 }

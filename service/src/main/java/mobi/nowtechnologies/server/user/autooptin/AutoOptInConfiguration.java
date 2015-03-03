@@ -8,21 +8,17 @@ import mobi.nowtechnologies.server.service.configuration.Configuration;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.user.rules.Rule;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
-
-import java.util.Map;
-import java.util.SortedSet;
-
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
 import static mobi.nowtechnologies.server.shared.enums.SegmentType.CONSUMER;
 import static mobi.nowtechnologies.server.user.criteria.CompareMatchStrategy.lessThan;
 import static mobi.nowtechnologies.server.user.criteria.ExpectedValueHolder.currentTimestamp;
 
+import java.util.Map;
+import java.util.SortedSet;
 
-public class AutoOptInConfiguration extends Configuration<
-        AutoOptInRuleService.AutoOptInTriggerType,
-        Boolean,
-        AutoOptInRuleBuilder> {
+
+public class AutoOptInConfiguration extends Configuration<AutoOptInRuleService.AutoOptInTriggerType, Boolean, AutoOptInRuleBuilder> {
 
     private static final UserStatus USER_STATUS_LIMITED = new UserStatus(UserStatus.LIMITED);
     private PromotionProvider promotionProvider;
@@ -47,57 +43,33 @@ public class AutoOptInConfiguration extends Configuration<
         PromotionProvider.PromotionProxy promotion3G = promotionProvider.getPromotionProxyByPropertyName("o2.promotion.campaign.3g.promoCode", O2_COMMUNITY_REWRITE_URL);
         PromotionProvider.PromotionProxy promotion4G = promotionProvider.getPromotionProxyByPropertyName("o2.promotion.campaign.4g.promoCode", O2_COMMUNITY_REWRITE_URL);
 
-        rule(AutoOptInRuleService.AutoOptInTriggerType.ALL).priority(10).validAsPer(promotion3G).match(
-                and(
-                        //O2 Community
-                        is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
-                        is(userProviderType(), equalTo(O2)),
-                        is(userSegment(), equalTo(CONSUMER)),
-                        is(userTariff(), equalTo(Tariff._3G)),
-                        not(is(oldUser(), nullValue(User.class))),
-                        withOldUser(
-                                and(
-                                        is(userStatus(), equalTo(USER_STATUS_LIMITED)),
-                                        and(
-                                                not(is(userFreeTrialExpiredMillis(), nullValue(Long.class))),
-                                                is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()))
-                                        ),
-                                        or(
-                                                is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
-                                                is(userCurrentPaymentDetailsActivated(), equalTo(false))
-                                        ),
-                                        not(is(userLastPromoCodeId(), equalTo(promotion3G.getPromoCode().getId())))
-                                )
-                        ),
-                        campaignUser("O2reengagement")
-                )
-        ).result(true);
+        rule(AutoOptInRuleService.AutoOptInTriggerType.ALL).priority(10).validAsPer(promotion3G).match(and(
+                                                                                                           //O2 Community
+                                                                                                           is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
+                                                                                                           is(userProviderType(), equalTo(O2)), is(userSegment(), equalTo(CONSUMER)),
+                                                                                                           is(userTariff(), equalTo(Tariff._3G)), not(is(oldUser(), nullValue(User.class))),
+                                                                                                           withOldUser(and(is(userStatus(), equalTo(USER_STATUS_LIMITED)),
+                                                                                                                           and(not(is(userFreeTrialExpiredMillis(), nullValue(Long.class))),
+                                                                                                                               is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()))),
+                                                                                                                           or(is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
+                                                                                                                              is(userCurrentPaymentDetailsActivated(), equalTo(false))),
+                                                                                                                           not(is(userLastPromoCodeId(),
+                                                                                                                                  equalTo(promotion3G.getPromoCode().getId()))))),
+                                                                                                           campaignUser("O2reengagement"))).result(true);
 
-        rule(AutoOptInRuleService.AutoOptInTriggerType.ALL).priority(11).validAsPer(promotion4G).match(
-                and(
-                        //O2 Community
-                        is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
-                        is(userProviderType(), equalTo(O2)),
-                        is(userSegment(), equalTo(CONSUMER)),
-                        is(userTariff(), equalTo(Tariff._4G)),
-                        not(is(oldUser(), nullValue(User.class))),
-                        withOldUser(
-                                and(
-                                        is(userStatus(), equalTo(USER_STATUS_LIMITED)),
-                                        and(
-                                                not(is(userFreeTrialExpiredMillis(), nullValue(Long.class))),
-                                                is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()))
-                                        ),
-                                        or(
-                                                is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
-                                                is(userCurrentPaymentDetailsActivated(), equalTo(false))
-                                        ),
-                                        not(is(userLastPromoCodeId(), equalTo(promotion4G.getPromoCode().getId())))
-                                )
-                        ),
-                        campaignUser("O2reengagement")
-                )
-        ).result(true);
+        rule(AutoOptInRuleService.AutoOptInTriggerType.ALL).priority(11).validAsPer(promotion4G).match(and(
+                                                                                                           //O2 Community
+                                                                                                           is(userCommunityRewriteUrl(), equalTo(O2_COMMUNITY_REWRITE_URL)),
+                                                                                                           is(userProviderType(), equalTo(O2)), is(userSegment(), equalTo(CONSUMER)),
+                                                                                                           is(userTariff(), equalTo(Tariff._4G)), not(is(oldUser(), nullValue(User.class))),
+                                                                                                           withOldUser(and(is(userStatus(), equalTo(USER_STATUS_LIMITED)),
+                                                                                                                           and(not(is(userFreeTrialExpiredMillis(), nullValue(Long.class))),
+                                                                                                                               is(userFreeTrialExpiredMillis(), lessThan(currentTimestamp()))),
+                                                                                                                           or(is(userCurrentPaymentDetails(), nullValue(PaymentDetails.class)),
+                                                                                                                              is(userCurrentPaymentDetailsActivated(), equalTo(false))),
+                                                                                                                           not(is(userLastPromoCodeId(),
+                                                                                                                                  equalTo(promotion4G.getPromoCode().getId()))))),
+                                                                                                           campaignUser("O2reengagement"))).result(true);
     }
 
 

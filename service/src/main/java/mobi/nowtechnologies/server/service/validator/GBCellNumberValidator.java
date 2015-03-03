@@ -2,9 +2,9 @@ package mobi.nowtechnologies.server.service.validator;
 
 /**
  * @author Alexsandr_Kolpakov
- * 
  */
 public class GBCellNumberValidator extends AbstractCellNumberValidator {
+
     private static final String GB_CELL_PHONE_PATTERN = "7[0-9]{9}";
     private static final String GB_LOCAL_CODE_PATTERN = "0";
     private static final String GB_NATIONAL_CODE = "44";

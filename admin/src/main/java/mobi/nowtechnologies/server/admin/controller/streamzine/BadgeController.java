@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.admin.controller.streamzine;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import mobi.nowtechnologies.server.admin.validator.BadgeValidator;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeResolutionDto;
@@ -21,8 +20,20 @@ import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService;
 import mobi.nowtechnologies.server.service.streamzine.ImageDTO;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -31,20 +42,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 @Controller
 public class BadgeController {
+
     @Resource
     private BadgesService badgesService;
     @Resource
@@ -77,7 +89,7 @@ public class BadgeController {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public Set<ErrorDto> handleInvalidJson(HttpMessageNotReadableException error) {
-        if(error.getCause() instanceof InvalidFormatException) {
+        if (error.getCause() instanceof InvalidFormatException) {
             return errorDtoAsm.create((InvalidFormatException) error.getCause());
         }
         return errorDtoAsm.createUnknown();
@@ -136,9 +148,10 @@ public class BadgeController {
     }
 
     @RequestMapping(value = "/badges/resolution/add", method = RequestMethod.POST)
-    public @ResponseBody void resolution(
-            @RequestBody @Valid ResolutionDto dto,
-            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws MethodArgumentNotValidException {
+    public
+    @ResponseBody
+    void resolution(@RequestBody @Valid ResolutionDto dto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
+        throws MethodArgumentNotValidException {
         Community community = communityRepository.findByName(communityRewriteUrl);
 
         logger().info("Creating resolution for: {}", community);
@@ -148,9 +161,10 @@ public class BadgeController {
     }
 
     @RequestMapping(value = "/badges/badges/assign", method = RequestMethod.POST)
-    public @ResponseBody void assignBadgeResolution(
-            @RequestBody @Valid BadgeResolutionDto dto,
-            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
+    public
+    @ResponseBody
+    void assignBadgeResolution(@RequestBody @Valid BadgeResolutionDto dto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
+        throws IOException {
         logger().info("Assign resolution: {} and community {}", dto, communityRewriteUrl);
 
         Community community = communityRepository.findByName(communityRewriteUrl);
@@ -164,8 +178,7 @@ public class BadgeController {
     }
 
     @RequestMapping(value = "/badges/image/preview", method = RequestMethod.POST)
-    public ModelAndView uploadImage(MultipartFile file,
-                                    @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
+    public ModelAndView uploadImage(MultipartFile file, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
         Community community = communityRepository.findByName(communityRewriteUrl);
 
         Assert.notNull(community);
@@ -182,9 +195,10 @@ public class BadgeController {
     }
 
     @RequestMapping(value = "/badges/image/add", method = RequestMethod.POST)
-    public @ResponseBody void uploadImage(
-            @RequestBody @Valid BadgeInfoDto badgeInfoDto,
-            @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl) throws IOException {
+    public
+    @ResponseBody
+    void uploadImage(@RequestBody @Valid BadgeInfoDto badgeInfoDto, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME, required = false) String communityRewriteUrl)
+        throws IOException {
         logger().info("Adding placeholder, info: {} for community: {}", badgeInfoDto, communityRewriteUrl);
 
         Community community = communityRepository.findByName(communityRewriteUrl);
@@ -197,7 +211,7 @@ public class BadgeController {
     }
 
     private int calcWidth(ImageDTO dto, int width) {
-        if(dto.getWidth() != null) {
+        if (dto.getWidth() != null) {
             return Math.min(dto.getWidth().intValue(), width);
         }
 

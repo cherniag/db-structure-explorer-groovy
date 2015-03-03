@@ -9,37 +9,36 @@ import org.springframework.social.facebook.api.FacebookProfile;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class FacebookAuthenticationToken extends AbstractAuthenticationToken {
 
-	private static final long serialVersionUID = -2670588793017069929L;	
-	private FacebookProfile facebookProfile;
-	private UserDetails userDetails;
+    private static final long serialVersionUID = -2670588793017069929L;
+    private FacebookProfile facebookProfile;
+    private UserDetails userDetails;
 
-	public FacebookAuthenticationToken(UserDetails userDetails, Collection<? extends GrantedAuthority> authorities) {
-		super(authorities);
-		this.userDetails = userDetails;
-	}
-	
-	public FacebookAuthenticationToken(FacebookProfile facebookProfile, Collection<? extends GrantedAuthority> authorities) {
-		super(authorities);
-		this.facebookProfile = facebookProfile;
-	}
+    public FacebookAuthenticationToken(UserDetails userDetails, Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
+        this.userDetails = userDetails;
+    }
 
-	public FacebookProfile getFacebookProfile() {
-		return facebookProfile;
-	}
+    public FacebookAuthenticationToken(FacebookProfile facebookProfile, Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
+        this.facebookProfile = facebookProfile;
+    }
 
-	@Override
-	public Object getCredentials() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public FacebookProfile getFacebookProfile() {
+        return facebookProfile;
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return userDetails;
-	}
+    @Override
+    public Object getCredentials() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object getPrincipal() {
+        return userDetails;
+    }
 
 }

@@ -1,101 +1,104 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import javax.persistence.*;
 import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 /**
  * The persistent class for the tb_drmPolicy database table.
- * 
  */
 @Entity
-@Table(name="tb_drmPolicy")
+@Table(name = "tb_drmPolicy")
 public class DrmPolicy implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private byte i;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name="community", insertable=false,updatable=false)
-	private Integer communityId;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="community")
-	private Community community;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private byte i;
 
-	@Column(name="drmType", insertable=false,updatable=false)
-	private byte drmTypeId;
-	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="drmType")
-	private DrmType drmType;
+    @Column(name = "community", insertable = false, updatable = false)
+    private Integer communityId;
 
-	private byte drmValue;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community")
+    private Community community;
 
-	@Column(name="name",columnDefinition="char(25)")
-	private String name;
+    @Column(name = "drmType", insertable = false, updatable = false)
+    private byte drmTypeId;
 
-	public byte getI() {
-		return this.i;
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "drmType")
+    private DrmType drmType;
 
-	public void setI(byte i) {
-		this.i = i;
-	}
+    private byte drmValue;
 
-	public Community getCommunity() {
-		return community;
-	}
+    @Column(name = "name", columnDefinition = "char(25)")
+    private String name;
 
-	public void setCommunity(Community community) {
-		this.community = community;
-		communityId = community.getId();
-	}
+    public byte getI() {
+        return this.i;
+    }
 
-	public Integer getCommunityId() {
-		return communityId;
-	}
+    public void setI(byte i) {
+        this.i = i;
+    }
 
-	public DrmType getDrmType() {
-		return drmType;
-	}
+    public Community getCommunity() {
+        return community;
+    }
 
-	public void setDrmType(DrmType drmType) {
-		this.drmType = drmType;
-		drmTypeId=drmType.getI();
-	}
+    public void setCommunity(Community community) {
+        this.community = community;
+        communityId = community.getId();
+    }
 
-	public byte getDrmTypeId() {
-		return drmTypeId;
-	}
+    public Integer getCommunityId() {
+        return communityId;
+    }
 
-	public byte getDrmValue() {
-		return this.drmValue;
-	}
+    public DrmType getDrmType() {
+        return drmType;
+    }
 
-	public void setDrmValue(byte drmValue) {
-		this.drmValue = drmValue;
-	}
+    public void setDrmType(DrmType drmType) {
+        this.drmType = drmType;
+        drmTypeId = drmType.getI();
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public byte getDrmTypeId() {
+        return drmTypeId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public byte getDrmValue() {
+        return this.drmValue;
+    }
+
+    public void setDrmValue(byte drmValue) {
+        this.drmValue = drmValue;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("name", name)
-                .append("communityId", communityId)
-                .append("drmTypeId", drmTypeId)
-                .append("drmValue", drmValue)
-                .toString();
+        return new ToStringBuilder(this).append("i", i).append("name", name).append("communityId", communityId).append("drmTypeId", drmTypeId).append("drmValue", drmValue).toString();
     }
 }

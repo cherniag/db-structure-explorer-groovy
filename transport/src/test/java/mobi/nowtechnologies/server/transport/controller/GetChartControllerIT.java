@@ -1,27 +1,43 @@
 package mobi.nowtechnologies.server.transport.controller;
 
 import mobi.nowtechnologies.server.log4j.InMemoryEventAppender;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
-import mobi.nowtechnologies.server.shared.Utils;
+import mobi.nowtechnologies.server.persistence.domain.Artist;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.FileType;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Label;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
+import mobi.nowtechnologies.server.persistence.repository.ArtistRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
+import mobi.nowtechnologies.server.persistence.repository.GenreRepository;
+import mobi.nowtechnologies.server.persistence.repository.LabelRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaFileRepository;
+import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-
-import static junit.framework.Assert.assertEquals;
+import mobi.nowtechnologies.server.shared.Utils;
 import static mobi.nowtechnologies.server.shared.enums.ChgPosition.DOWN;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.IMAGE;
 import static mobi.nowtechnologies.server.trackrepo.enums.FileType.MOBILE_AUDIO;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Titov Mykhaylo (titov) on 25.06.2014.
@@ -79,30 +95,20 @@ public class GetChartControllerIT extends AbstractControllerTestIT {
         final String isrc = "isrc";
         final long trackId = 666L;
         Media media = mediaRepository.save(
-                new Media().withIsrc(isrc).withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile).withGenre(rockGenre).withLabel(label).withTrackId(trackId)
-        );
+            new Media().withIsrc(isrc).withTitle("title").withArtist(artist).withAudioFile(audioMediaFile).withImageFileSmall(imageFileSmallMediaFile).withImageFileLarge(imageFileLargeMediaFile)
+                       .withGenre(rockGenre).withLabel(label).withTrackId(trackId));
 
         Community community = communityRepository.findByRewriteUrlParameter(communityUrl);
         Chart chart = chartRepository.save(new Chart().withName("chart name").withGenre(rockGenre).withCommunity(community));
 
-        chartDetailRepository.save(
-                new ChartDetail().withMedia(media).withChart(chart).withPrevPosition(Byte.MAX_VALUE).withChgPosition(DOWN).withPosition(18)
-        );
+        chartDetailRepository.save(new ChartDetail().withMedia(media).withChart(chart).withPrevPosition(Byte.MAX_VALUE).withChgPosition(DOWN).withPosition(18));
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUID)
-        );
+            post("/" + communityUrl + "/" + apiVersion + "/GET_CHART.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUID));
 
         //then
-        resultActions
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(jsonPath("$.response.data[1].chart.tracks[(@.length-1)].media").value(isrc + "_" + trackId));
+        resultActions.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.response.data[1].chart.tracks[(@.length-1)].media").value(isrc + "_" + trackId));
         assertEquals(0, inMemoryEventAppender.countOfWarnForLogger(ChartDetailsConverter.class));
     }
 

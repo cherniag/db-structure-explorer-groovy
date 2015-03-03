@@ -9,20 +9,28 @@ import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
 @Controller
 public class SettingsController {
+
     @Value(value = "${cloudFile.filesURL}")
     private String imageURL;
     @Resource
@@ -44,7 +52,8 @@ public class SettingsController {
     }
 
     @RequestMapping(value = "/settings/get", method = RequestMethod.GET)
-    public @ResponseBody
+    public
+    @ResponseBody
     SettingsDto get(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl) {
         List<ChartDetail> chartDetails = chartService.getChartsByCommunityAndPublishTime(communityRewriteUrl, new Date());
         List<ChartListItemDto> chartListItemDtos = streamzineAdminMediaAsm.toChartListItemDtos(chartDetails);
@@ -59,7 +68,9 @@ public class SettingsController {
     }
 
     @RequestMapping(value = "/settings/save", method = RequestMethod.POST)
-    public @ResponseBody void save(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl, @RequestBody SettingsDto toSave) {
+    public
+    @ResponseBody
+    void save(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl, @RequestBody SettingsDto toSave) {
         logger().info("Saving {} for community id {}", toSave, communityRewriteUrl);
 
         settingsService.makeImport(communityRewriteUrl, toSave);

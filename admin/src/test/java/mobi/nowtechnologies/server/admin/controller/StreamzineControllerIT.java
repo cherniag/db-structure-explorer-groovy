@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.admin.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mobi.nowtechnologies.server.dto.streamzine.OrdinalBlockDto;
 import mobi.nowtechnologies.server.dto.streamzine.UpdateIncomingDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
@@ -16,18 +15,21 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeTyp
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Date;
-
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType.MINI_PLAYER_ONLY;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType.MUSIC;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType.MANUAL_COMPILATION;
 import static mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType.WIDE;
+
+import java.util.Date;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+
+import org.junit.*;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,8 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/4/2014
+ * Author: Gennadii Cherniaiev Date: 4/4/2014
  */
 public class StreamzineControllerIT extends AbstractAdminITTest {
 
@@ -76,13 +77,9 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         createAndSaveChartDetail(publishTime + 50 * 1000, null, (byte) 1, "cover3.jpg", "title3", 10);
         createAndSaveChartDetail(publishTime + 50 * 1000, 49, (byte) 2, null, null, 10);
 
-        mockMvc.perform(
-                get("/streamzine/chart/list")
-                        //.accept(MediaType.APPLICATION_JSON)
-                        .headers(getHttpHeaders(true))
-                        .cookie(getCommunityCookie(communityUrl))
-                        .param("id", String.valueOf(update.getId()))
-        ).andExpect(status().isOk());
+        mockMvc.perform(get("/streamzine/chart/list")
+                            //.accept(MediaType.APPLICATION_JSON)
+                            .headers(getHttpHeaders(true)).cookie(getCommunityCookie(communityUrl)).param("id", String.valueOf(update.getId()))).andExpect(status().isOk());
     }
 
     @Test
@@ -105,13 +102,8 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         createAndSaveChartDetail(publishTime + 50 * 1000, 71, 11);
 
         mockMvc.perform(
-                post("/streamzine/update")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .headers(getHttpHeaders(true))
-                        .content(objectMapper.writeValueAsString(dto))
-                        .cookie(getCommunityCookie(communityUrl))
-        ).andExpect(status().isOk());
+            post("/streamzine/update").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).headers(getHttpHeaders(true)).content(objectMapper.writeValueAsString(dto))
+                                      .cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk());
     }
 
 
@@ -130,17 +122,9 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         block.setKey(LinkLocationType.EXTERNAL_AD.toString());
         block.setIncluded(true);
         dto.getBlocks().add(block);
-        mockMvc.perform(
-                post("/streamzine/update")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .headers(getHttpHeaders(true))
-                        .content(objectMapper.writeValueAsString(dto)).
-                        cookie(getCommunityCookie(communityUrl))
-        )
-        .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$[3].message").value("Value does not look like URL: "));
+        mockMvc
+            .perform(post("/streamzine/update").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).headers(getHttpHeaders(true)).content(objectMapper.writeValueAsString(dto)).
+                         cookie(getCommunityCookie(communityUrl))).andDo(print()).andExpect(status().isBadRequest()).andExpect(jsonPath("$[3].message").value("Value does not look like URL: "));
     }
 
 
@@ -153,7 +137,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         UpdateIncomingDto dto = new UpdateIncomingDto();
         dto.setTimestamp(publishTime);
         ReflectionTestUtils.setField(dto, "id", update.getId());
-        for (ShapeType currentType : new ShapeType[]{WIDE, ShapeType.NARROW}) {
+        for (ShapeType currentType : new ShapeType[] {WIDE, ShapeType.NARROW}) {
             checkSave(communityUrl, dto, currentType, ContentType.NEWS, NewsType.LIST.name());
             checkSave(communityUrl, dto, currentType, ContentType.NEWS, NewsType.STORY.name());
             checkSave(communityUrl, dto, currentType, ContentType.PROMOTIONAL, LinkLocationType.INTERNAL_AD.name());
@@ -171,28 +155,19 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         ordinalBlockDto.setContentType(contentType);
         ordinalBlockDto.setKey(key);
         ordinalBlockDto.setIncluded(false);
-        if (key.equals(MusicType.PLAYLIST.name())|| key.equals(MusicType.TRACK.name())) {
-            ordinalBlockDto.setValue("#"+ MINI_PLAYER_ONLY);
+        if (key.equals(MusicType.PLAYLIST.name()) || key.equals(MusicType.TRACK.name())) {
+            ordinalBlockDto.setValue("#" + MINI_PLAYER_ONLY);
         }
         dto.getBlocks().clear();
         dto.getBlocks().add(ordinalBlockDto);
         if (currentType.equals(ShapeType.NARROW)) {
             dto.getBlocks().add(ordinalBlockDto);
         }
-        mockMvc.perform(
-                post("/streamzine/update")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .headers(getHttpHeaders(true))
-                        .content(objectMapper.writeValueAsString(dto)).
-                        cookie(getCommunityCookie(communityUrl))
-        ).andExpect(status().isOk());
+        mockMvc
+            .perform(post("/streamzine/update").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).headers(getHttpHeaders(true)).content(objectMapper.writeValueAsString(dto)).
+                         cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk());
         chartDetailRepository.flush();
-        mockMvc.perform(
-                get("/streamzine/edit/" + dto.getId())
-                        .headers(getHttpHeaders(true))
-                        .cookie(getCommunityCookie(communityUrl))
-        ).andExpect(status().isOk());
+        mockMvc.perform(get("/streamzine/edit/" + dto.getId()).headers(getHttpHeaders(true)).cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk());
         chartDetailRepository.flush();
 
     }
@@ -214,8 +189,8 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         return dto;
     }
 
-    private void createAndSaveChartDetail(long publishTimeMillis, Integer mediaId, int chartId){
-        createAndSaveChartDetail(publishTimeMillis, mediaId, (byte)1, "image", "title", chartId);
+    private void createAndSaveChartDetail(long publishTimeMillis, Integer mediaId, int chartId) {
+        createAndSaveChartDetail(publishTimeMillis, mediaId, (byte) 1, "image", "title", chartId);
     }
 
     private void createAndSaveChartDetail(long publishTimeMillis, Integer mediaId, byte position, String imageFileName, String title, int chartId) {

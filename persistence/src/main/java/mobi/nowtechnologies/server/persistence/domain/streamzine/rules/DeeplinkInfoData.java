@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentTy
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 
 public interface DeeplinkInfoData {
+
     ShapeType getShapeType();
 
     ContentType getContentType();

@@ -1,12 +1,14 @@
 package mobi.nowtechnologies.server.editor;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
-import org.junit.Test;
+
 import org.springframework.beans.ConversionNotSupportedException;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class ResolutionParameterEditorTest {
+
     ResolutionParameterEditor editor = new ResolutionParameterEditor();
 
     @Test

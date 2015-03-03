@@ -3,18 +3,21 @@ package mobi.nowtechnologies.server.service.behavior;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Test;
 
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 public class UserStatusTypeServiceTest {
+
     User user = mock(User.class);
     PaymentDetails paymentDetails = mock(PaymentDetails.class);
 

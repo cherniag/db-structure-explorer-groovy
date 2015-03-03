@@ -2,13 +2,23 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.shared.enums.ActionReason;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.*;
-
 /**
- * User: Titov Mykhaylo (titov)
- * 15.07.13 12:57
+ * User: Titov Mykhaylo (titov) 15.07.13 12:57
  */
 @Entity
 @Table(name = "refund")
@@ -36,6 +46,10 @@ public class Refund {
     @Enumerated(EnumType.STRING)
     public ActionReason actionReason;
 
+    public static Refund nullObject() {
+        return new NullObjectRefund();
+    }
+
     public Integer getUserId() {
         Integer userId = null;
         if (user != null) {
@@ -52,21 +66,11 @@ public class Refund {
         return paymentDetailsId;
     }
 
-    public static class NullObjectRefund extends Refund {}
-
-    public static Refund nullObject(){
-        return new NullObjectRefund();
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("getUserId()", getUserId())
-                .append("getPaymentDetailsId()", getPaymentDetailsId())
-                .append("logTimeMillis", logTimeMillis)
-                .append("nextSubPaymentMillis", nextSubPaymentMillis)
-                .append("actionReason", actionReason)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("getUserId()", getUserId()).append("getPaymentDetailsId()", getPaymentDetailsId()).append("logTimeMillis", logTimeMillis)
+                                        .append("nextSubPaymentMillis", nextSubPaymentMillis).append("actionReason", actionReason).toString();
     }
+
+    public static class NullObjectRefund extends Refund {}
 }

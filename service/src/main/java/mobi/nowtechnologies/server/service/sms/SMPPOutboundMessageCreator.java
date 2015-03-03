@@ -1,23 +1,22 @@
 package mobi.nowtechnologies.server.service.sms;
 
+import java.io.IOException;
+
 import com.sentaca.spring.smpp.mt.DefaultOutboundMessageCreator;
 import com.sentaca.spring.smpp.mt.MTMessage;
 import org.smslib.OutboundBinaryMessage;
 import org.smslib.OutboundMessage;
 
-import java.io.IOException;
-
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/21/13
- * Time: 5:33 PM
+ * User: Alexsandr_Kolpakov Date: 10/21/13 Time: 5:33 PM
  */
-public class SMPPOutboundMessageCreator extends DefaultOutboundMessageCreator{
+public class SMPPOutboundMessageCreator extends DefaultOutboundMessageCreator {
+
     @Override
     public OutboundMessage toOutboundMessage(MTMessage message) throws IOException {
-        OutboundBinaryMessage binaryMsg = (OutboundBinaryMessage)super.toOutboundMessage(message);
+        OutboundBinaryMessage binaryMsg = (OutboundBinaryMessage) super.toOutboundMessage(message);
 
-        if(message instanceof SMPPMessage){
+        if (message instanceof SMPPMessage) {
             SMPPOutboundMessage msg = new SMPPOutboundMessage();
             msg.setDataBytes(binaryMsg.getDataBytes());
             msg.setRecipient(binaryMsg.getRecipient());
@@ -25,7 +24,7 @@ public class SMPPOutboundMessageCreator extends DefaultOutboundMessageCreator{
             msg.setFrom(binaryMsg.getFrom());
             msg.setValidityPeriod(binaryMsg.getValidityPeriod());
 
-            SMPPMessage smppMessage = (SMPPMessage)message;
+            SMPPMessage smppMessage = (SMPPMessage) message;
             msg.setDeliveryReceiptMode(smppMessage.getDeliveryReceiptMode());
             binaryMsg = msg;
         }

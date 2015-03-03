@@ -4,15 +4,21 @@ import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import org.springframework.http.*;
+
+import java.util.Arrays;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-
 @Service
 public class ContextHttpService extends AbstractHttpService {
+
     //
     // API
     //

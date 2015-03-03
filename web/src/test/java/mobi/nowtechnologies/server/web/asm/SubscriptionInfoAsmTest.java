@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.web.asm;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.TimeService;
 import mobi.nowtechnologies.server.dto.payment.PaymentPolicyDto;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
@@ -11,29 +10,29 @@ import mobi.nowtechnologies.server.persistence.domain.payment.Period;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.web.controller.SubscriptionInfo;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.MessageSource;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.springframework.context.MessageSource;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SubscriptionInfoAsmTest {
+
     final int paypalId = 1;
     final int iosId = 2;
     final int notPaypalId = 3;
@@ -47,14 +46,13 @@ public class SubscriptionInfoAsmTest {
     ITunesPaymentService iTunesPaymentService;
     @InjectMocks
     SubscriptionInfoAsm subscriptionInfoAsm;
-    @Mock
-    private PaymentPolicy policy;
-
     //
     // Variables
     //
     Locale locale = Locale.CANADA;
     Period period = new Period(WEEKS, 3);
+    @Mock
+    private PaymentPolicy policy;
 
     @Before
     public void setUp() throws Exception {

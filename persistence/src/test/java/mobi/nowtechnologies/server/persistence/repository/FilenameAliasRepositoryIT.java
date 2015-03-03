@@ -2,13 +2,14 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import org.junit.Test;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class FilenameAliasRepositoryIT extends AbstractRepositoryIT {
+
     @Resource
     FilenameAliasRepository filenameAliasRepository;
 

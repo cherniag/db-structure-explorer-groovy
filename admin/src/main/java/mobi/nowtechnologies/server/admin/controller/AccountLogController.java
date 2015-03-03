@@ -15,70 +15,72 @@ import mobi.nowtechnologies.server.shared.dto.admin.AccountLogDto;
 import mobi.nowtechnologies.server.shared.dto.admin.PendingPaymentDto;
 import mobi.nowtechnologies.server.shared.dto.admin.SubmittedPaymentDto;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 @Controller
 public class AccountLogController extends AbstractCommonController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountLogController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountLogController.class);
 
-	private AccountLogService accountLogService;
-	private PendingPaymentService pendingPaymentService;
-	private SubmittedPaymentService submittedPaymentService;
-	private UserService userService;
+    private AccountLogService accountLogService;
+    private PendingPaymentService pendingPaymentService;
+    private SubmittedPaymentService submittedPaymentService;
+    private UserService userService;
 
-	public void setAccountLogService(AccountLogService accountLogService) {
-		this.accountLogService = accountLogService;
-	}
+    public void setAccountLogService(AccountLogService accountLogService) {
+        this.accountLogService = accountLogService;
+    }
 
-	public void setPendingPaymentService(PendingPaymentService pendingPaymentService) {
-		this.pendingPaymentService = pendingPaymentService;
-	}
+    public void setPendingPaymentService(PendingPaymentService pendingPaymentService) {
+        this.pendingPaymentService = pendingPaymentService;
+    }
 
-	public void setSubmittedPaymentService(SubmittedPaymentService submittedPaymentService) {
-		this.submittedPaymentService = submittedPaymentService;
-	}
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    public void setSubmittedPaymentService(SubmittedPaymentService submittedPaymentService) {
+        this.submittedPaymentService = submittedPaymentService;
+    }
 
-	@RequestMapping(value = "/accountLogs/{userId}", method = RequestMethod.GET)
-	public ModelAndView getTransactionHistory(HttpServletRequest request, @PathVariable(value = "userId") Integer userId) {
-		LOGGER.debug("input parameters request, userId: [{}], [{}]", request, userId);
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
-		User user = userService.findById(userId);
-		List<AccountLog> accountLogs = accountLogService.findByUserId(userId);
-		List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(userId);
-		List<SubmittedPayment> submittedPayments = submittedPaymentService.findByUserIdAndPaymentStatus(Arrays.asList(userId), Arrays.asList(
-				PaymentDetailsStatus.ERROR, PaymentDetailsStatus.EXTERNAL_ERROR));
+    @RequestMapping(value = "/accountLogs/{userId}", method = RequestMethod.GET)
+    public ModelAndView getTransactionHistory(HttpServletRequest request, @PathVariable(value = "userId") Integer userId) {
+        LOGGER.debug("input parameters request, userId: [{}], [{}]", request, userId);
 
-		List<AccountLogDto> accountLogDtos = AccountLogAsm.toAccountLogDtos(accountLogs);
-		List<PendingPaymentDto> pendingPaymentDtos = PendingPaymentAsm.toPendingPaymentDtos(pendingPayments);
-		List<SubmittedPaymentDto> submittedPaymentDtos = SubmittedPaymentAsm.toSubmittedPaymentDtos(submittedPayments);
+        User user = userService.findById(userId);
+        List<AccountLog> accountLogs = accountLogService.findByUserId(userId);
+        List<PendingPayment> pendingPayments = pendingPaymentService.getPendingPayments(userId);
+        List<SubmittedPayment> submittedPayments =
+            submittedPaymentService.findByUserIdAndPaymentStatus(Arrays.asList(userId), Arrays.asList(PaymentDetailsStatus.ERROR, PaymentDetailsStatus.EXTERNAL_ERROR));
 
-		final ModelAndView modelAndView = new ModelAndView("transactionHistory/transactionHistory");
-		modelAndView.addObject(AccountLogDto.ACCOUNT_LOG_DTO_LIST, accountLogDtos);
-		modelAndView.addObject(PendingPaymentDto.PENDING_PAYMENT_DTO_LIST, pendingPaymentDtos);
-		modelAndView.addObject(SubmittedPaymentDto.SUBMITTED_PAYMENT_DTO_LIST, submittedPaymentDtos);
-		modelAndView.addObject("userName", user.getUserName());
+        List<AccountLogDto> accountLogDtos = AccountLogAsm.toAccountLogDtos(accountLogs);
+        List<PendingPaymentDto> pendingPaymentDtos = PendingPaymentAsm.toPendingPaymentDtos(pendingPayments);
+        List<SubmittedPaymentDto> submittedPaymentDtos = SubmittedPaymentAsm.toSubmittedPaymentDtos(submittedPayments);
 
-		LOGGER.info("Output parameter modelAndView=[{}]", modelAndView);
-		return modelAndView;
-	}
+        final ModelAndView modelAndView = new ModelAndView("transactionHistory/transactionHistory");
+        modelAndView.addObject(AccountLogDto.ACCOUNT_LOG_DTO_LIST, accountLogDtos);
+        modelAndView.addObject(PendingPaymentDto.PENDING_PAYMENT_DTO_LIST, pendingPaymentDtos);
+        modelAndView.addObject(SubmittedPaymentDto.SUBMITTED_PAYMENT_DTO_LIST, submittedPaymentDtos);
+        modelAndView.addObject("userName", user.getUserName());
+
+        LOGGER.info("Output parameter modelAndView=[{}]", modelAndView);
+        return modelAndView;
+    }
 
 }

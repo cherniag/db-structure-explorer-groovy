@@ -1,15 +1,16 @@
 package mobi.nowtechnologies.applicationtests.features.common.transformers.list;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import cucumber.api.Transformer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 public class ListValues {
+
     private List<String> values;
 
     public static ListValues from(String value) {

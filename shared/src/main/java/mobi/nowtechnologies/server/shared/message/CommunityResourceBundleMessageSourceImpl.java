@@ -1,30 +1,31 @@
 package mobi.nowtechnologies.server.shared.message;
 
-import org.jasypt.encryption.StringEncryptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.util.Assert;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
+import org.jasypt.encryption.StringEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.StringUtils.trim;
 import static org.jasypt.properties.PropertyValueEncryptionUtils.decrypt;
 import static org.jasypt.properties.PropertyValueEncryptionUtils.isEncryptedValue;
 
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.util.Assert;
+
 
 public class CommunityResourceBundleMessageSourceImpl implements CommunityResourceBundleMessageSource {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
 
-    private static final String DEFAULT_COMMUNITY_DELIMITER = "_";
     public static final String DATE_FORMAT = "dd-MM-yyyy";
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityResourceBundleMessageSourceImpl.class);
+    private static final String DEFAULT_COMMUNITY_DELIMITER = "_";
     private final Locale DEFAULT_LOCALE = new Locale("");
 
     private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
@@ -43,7 +44,8 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
         try {
             String message = getMessage(community, code, null, null);
             return doConvertToDate(message);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return defaults;
         }
     }
@@ -56,7 +58,8 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
             Assert.hasText(message);
 
             return doConvertToDate(message);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -65,7 +68,8 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
     public boolean readBoolean(String community, String code, boolean defaults) {
         try {
             return parseBoolean(trim(getMessage(community, code, null, String.valueOf(defaults), null)));
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             return defaults;
         }
@@ -80,7 +84,8 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
     public int readInt(String community, String code, int defaultValue, Locale locale) {
         try {
             return parseInt(trim(getMessage(community, code, null, locale)));
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e) {
             return defaultValue;
         }
     }
@@ -104,9 +109,12 @@ public class CommunityResourceBundleMessageSourceImpl implements CommunityResour
     }
 
     private Locale getCommunityLocale(String community, Locale locale) {
-        Locale communityLocale = isNull(community) ? DEFAULT_LOCALE : new Locale(community);
-        if (isNotNull(locale))
+        Locale communityLocale = isNull(community) ?
+                                 DEFAULT_LOCALE :
+                                 new Locale(community);
+        if (isNotNull(locale)) {
             communityLocale = new Locale(community + DEFAULT_COMMUNITY_DELIMITER + locale.getLanguage(), locale.getCountry(), locale.getVariant());
+        }
         return communityLocale;
     }
 

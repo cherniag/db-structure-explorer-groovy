@@ -8,20 +8,22 @@ import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.service.util.Scheduler;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
- * User: gch
- * Date: 12/17/13
+ * User: gch Date: 12/17/13
  */
 public class TaskService {
+
     public static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
 
     private TaskRepository taskRepository;
@@ -38,7 +40,9 @@ public class TaskService {
         if (messageSource.readBoolean(user.getCommunityRewriteUrl(), "sendchargenotificationtask.creation.enabled", false)) {
             SendChargeNotificationTask sendChargeNotificationTask = null;
             List<Task> existingUserTasks = taskRepository.findActiveUserTasksByUserIdAndType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
-            LOGGER.info("Found {} {} tasks for user id={}", isEmptyList(existingUserTasks) ? 0 : existingUserTasks.size(), SendChargeNotificationTask.TASK_TYPE, user.getId());
+            LOGGER.info("Found {} {} tasks for user id={}", isEmptyList(existingUserTasks) ?
+                                                            0 :
+                                                            existingUserTasks.size(), SendChargeNotificationTask.TASK_TYPE, user.getId());
             try {
                 if (isEmptyList(existingUserTasks)) {
                     sendChargeNotificationTask = new SendChargeNotificationTask();
@@ -49,10 +53,12 @@ public class TaskService {
                     taskRepository.save(sendChargeNotificationTask);
                     LOGGER.info("{} task {} has been created successfully", SendChargeNotificationTask.TASK_TYPE, sendChargeNotificationTask);
                 }
-            } catch (ServiceException e) {
+            }
+            catch (ServiceException e) {
                 LOGGER.error(String.format("Can't create task [%s]", sendChargeNotificationTask), e);
             }
-        }else{
+        }
+        else {
             LOGGER.info("Send charge notification is not enabled for community {}", user.getCommunityRewriteUrl());
         }
     }
@@ -66,7 +72,7 @@ public class TaskService {
         if (user == null) {
             throw new ServiceException("Can't create SendChargeNotificationTask for user [null]");
         }
-        LOGGER.info("Canceling {} for user id={}", SendChargeNotificationTask.TASK_TYPE,user.getId());
+        LOGGER.info("Canceling {} for user id={}", SendChargeNotificationTask.TASK_TYPE, user.getId());
         int rowsDeleted = taskRepository.deleteByUserIdAndTaskType(user.getId(), SendChargeNotificationTask.TASK_TYPE);
         LOGGER.info("{} task(s) of user id={} has been deleted", rowsDeleted, user.getId());
     }
@@ -89,7 +95,8 @@ public class TaskService {
             scheduler.reScheduleTask(communityRewriteUrl, task);
             int rowsUpdated = taskRepository.updateExecutionTimestamp(task.getId(), task.getExecutionTimestamp());
             LOGGER.info("Task {} has been rescheduled, update rows count is {}", task, rowsUpdated);
-        } catch (ServiceException e) {
+        }
+        catch (ServiceException e) {
             LOGGER.error(String.format("Can't reschedule task [%s], communityRewriteUrl is %s", task, communityRewriteUrl), e);
         }
     }

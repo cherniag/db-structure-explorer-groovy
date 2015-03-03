@@ -1,15 +1,21 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import java.io.Serializable;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/8/2014
+ * Author: Gennadii Cherniaiev Date: 4/8/2014
  */
 @Entity
 @Table(name = "subscription_campaign")
-public class SubscriptionCampaignRecord implements Serializable{
+public class SubscriptionCampaignRecord implements Serializable {
+
     public static final long serialVersionUID = 1L;
 
     @Id

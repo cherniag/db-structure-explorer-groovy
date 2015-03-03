@@ -2,13 +2,13 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class BlockTest {
+
     @Test
     public void testInclude() throws Exception {
         Block block = createBlock(0);

@@ -2,7 +2,14 @@ package mobi.nowtechnologies.server.persistence.domain.social;
 
 import mobi.nowtechnologies.server.shared.enums.Gender;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
 import java.util.Date;
 
 /**
@@ -11,37 +18,38 @@ import java.util.Date;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "google_plus_user_info")
-public class GooglePlusUserInfo extends SocialInfo{
-    @Column(name="email",columnDefinition="char(100)", nullable = false)
+public class GooglePlusUserInfo extends SocialInfo {
+
+    @Column(name = "email", columnDefinition = "char(100)", nullable = false)
     private String email;
 
-    @Column(name="gp_id",columnDefinition="char(100)", nullable = false)
+    @Column(name = "gp_id", columnDefinition = "char(100)", nullable = false)
     private String googlePlusId;
 
-    @Column(name="display_name",columnDefinition="char(100)")
+    @Column(name = "display_name", columnDefinition = "char(100)")
     private String displayName;
 
-    @Column(name="picture_url",columnDefinition="char(100)")
+    @Column(name = "picture_url", columnDefinition = "char(100)")
     private String picture;
 
-    @Column(name="date_of_birth")
+    @Column(name = "date_of_birth")
     private Date birthday;
 
-    @Column(name="location",columnDefinition="char(100)")
+    @Column(name = "location", columnDefinition = "char(100)")
     private String location;
 
 
-    @Enumerated(value=EnumType.STRING)
-    @Column(name="gender",columnDefinition="char(10)")
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "gender", columnDefinition = "char(10)")
     private Gender gender;
 
-    @Column(name="given_name",columnDefinition="char(100)")
+    @Column(name = "given_name", columnDefinition = "char(100)")
     private String givenName;
 
-    @Column(name="family_name",columnDefinition="char(100)")
+    @Column(name = "family_name", columnDefinition = "char(100)")
     private String familyName;
 
-    @Column(name="home_page",columnDefinition="char(100)")
+    @Column(name = "home_page", columnDefinition = "char(100)")
     private String homePage;
 
     public String getHomePage() {
@@ -72,6 +80,10 @@ public class GooglePlusUserInfo extends SocialInfo{
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String getFirstName() {
         return getGivenName();
@@ -85,10 +97,6 @@ public class GooglePlusUserInfo extends SocialInfo{
     @Override
     public String getSocialId() {
         return getGooglePlusId();
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getGooglePlusId() {

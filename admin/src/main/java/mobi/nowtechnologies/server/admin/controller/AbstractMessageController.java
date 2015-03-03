@@ -8,12 +8,6 @@ import mobi.nowtechnologies.server.shared.dto.admin.FilterDto;
 import mobi.nowtechnologies.server.shared.dto.admin.MessageDto;
 import mobi.nowtechnologies.server.shared.dto.admin.NewsItemDto;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.propertyeditors.CustomCollectionEditor;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,69 +15,78 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.propertyeditors.CustomCollectionEditor;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
 /**
  * @author Titov Mykhaylo (titov)
- * 
  */
 public abstract class AbstractMessageController extends AbstractCommonController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMessageController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMessageController.class);
 
-	protected MessageService messageService;
-	protected FilterService filterService;
+    protected MessageService messageService;
+    protected FilterService filterService;
 
-	public void setMessageService(MessageService messageService) {
-		this.messageService = messageService;
-	}
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
-	public void setFilterService(FilterService filterService) {
-		this.filterService = filterService;
-	}
+    public void setFilterService(FilterService filterService) {
+        this.filterService = filterService;
+    }
 
-	@InitBinder( { MessageDto.MESSAGE_DTO, NewsItemDto.NEWS_ITEM_DTO })
-	public void initBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(Set.class, "filterDtos", new CustomCollectionEditor(Set.class) {
-			protected Object convertElement(Object element) {
-				FilterDto selectedfilterDto = null;
-				if (element instanceof FilterDto) {
-					selectedfilterDto = (FilterDto) element;
-				} else if (element instanceof String) {
-					Set<FilterDto> allMessageFilterDtos = populateAllMessageFilterDtos();
-					for (FilterDto filterDto : allMessageFilterDtos) {
-						if (filterDto.getName().equals(element)) {
-							selectedfilterDto = filterDto;
-							break;
-						}
-					}
-				}
-				return selectedfilterDto;
-			}
-		});
+    @InitBinder({MessageDto.MESSAGE_DTO, NewsItemDto.NEWS_ITEM_DTO})
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(Set.class, "filterDtos", new CustomCollectionEditor(Set.class) {
+            protected Object convertElement(Object element) {
+                FilterDto selectedfilterDto = null;
+                if (element instanceof FilterDto) {
+                    selectedfilterDto = (FilterDto) element;
+                }
+                else if (element instanceof String) {
+                    Set<FilterDto> allMessageFilterDtos = populateAllMessageFilterDtos();
+                    for (FilterDto filterDto : allMessageFilterDtos) {
+                        if (filterDto.getName().equals(element)) {
+                            selectedfilterDto = filterDto;
+                            break;
+                        }
+                    }
+                }
+                return selectedfilterDto;
+            }
+        });
 
-	}
+    }
 
-	@ModelAttribute("allMessageFilterDtos")
-	public Set<FilterDto> populateAllMessageFilterDtos() {
-		return filterService.getAllFilters();
-	}
+    @ModelAttribute("allMessageFilterDtos")
+    public Set<FilterDto> populateAllMessageFilterDtos() {
+        return filterService.getAllFilters();
+    }
 
-	@ModelAttribute("allFrequencies")
-	public MessageFrequence[] populateAllFrequencies() {
-		return MessageFrequence.values();
-	}
+    @ModelAttribute("allFrequencies")
+    public MessageFrequence[] populateAllFrequencies() {
+        return MessageFrequence.values();
+    }
 
-	@ModelAttribute("allMessageDtoTypes")
-	public List<MessageType> populateAllMessageDtoTypes() {
-		return MessageType.getMessageTypes();
-	}
-	
-	protected Date validateSelectedPublishDate(String selectedPublishDate) {
-		try {
+    @ModelAttribute("allMessageDtoTypes")
+    public List<MessageType> populateAllMessageDtoTypes() {
+        return MessageType.getMessageTypes();
+    }
+
+    protected Date validateSelectedPublishDate(String selectedPublishDate) {
+        try {
             return new SimpleDateFormat(URL_DATE_FORMAT).parse(selectedPublishDate);
-		} catch (ParseException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ServiceException("messages.pages.invalidSelectedPublishDateFormat", "Invalid selectedPublishDate format. It muse be in " + URL_DATE_FORMAT + " format");
-		}
-	}
+        }
+        catch (ParseException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ServiceException("messages.pages.invalidSelectedPublishDateFormat", "Invalid selectedPublishDate format. It muse be in " + URL_DATE_FORMAT + " format");
+        }
+    }
 
 }

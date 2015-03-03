@@ -1,5 +1,9 @@
 package mobi.nowtechnologies.server.log4j;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -7,11 +11,6 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 
@@ -69,7 +68,7 @@ public class InMemoryEventAppender extends AppenderSkeleton {
         return result;
     }
 
-    private int countByPredicateAndClass(Class loggerClass, Predicate<LoggingEvent> predicate){
+    private int countByPredicateAndClass(Class loggerClass, Predicate<LoggingEvent> predicate) {
         Collection<LoggingEvent> events = map.get(loggerClass.getName());
         if (!isEmpty(events)) {
             return Collections2.filter(events, predicate).size();

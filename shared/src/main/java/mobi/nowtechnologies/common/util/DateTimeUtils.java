@@ -1,13 +1,18 @@
 package mobi.nowtechnologies.common.util;
 
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import org.joda.time.*;
 
 import java.util.Calendar;
 import java.util.Date;
-
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+import org.joda.time.Minutes;
+import org.joda.time.Seconds;
+import org.joda.time.Weeks;
 
 /**
  * This class is wrapper around

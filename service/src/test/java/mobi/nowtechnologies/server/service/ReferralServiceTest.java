@@ -13,25 +13,23 @@ import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.springframework.dao.DataIntegrityViolationException;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReferralServiceTest {
+
     @Mock
     private ReferralRepository referralRepository;
     @Mock

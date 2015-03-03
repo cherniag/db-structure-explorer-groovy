@@ -3,16 +3,18 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
-import org.springframework.util.Assert;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.springframework.util.Assert;
+
 @Entity
 @Table(name = "sz_deeplink_news_story")
 public class NewsStoryDeeplinkInfo extends DeeplinkInfo {
+
     @OneToOne
     @JoinColumn(name = "news_id")
     private Message message;

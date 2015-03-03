@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlNewsResponse {
+
     private XmlNewsDto news;
 
     private UserInResponse user;

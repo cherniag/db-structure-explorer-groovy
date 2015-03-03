@@ -1,11 +1,23 @@
 package mobi.nowtechnologies.server.normalizer;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * @author Anton Zemliankin
@@ -25,9 +37,10 @@ public class BundlesResolver {
 
     public BundlesResolver(String originalPropertiesFolder, boolean overrideOriginal) {
         this.originalPropertiesFolder = originalPropertiesFolder;
-        if(overrideOriginal){
+        if (overrideOriginal) {
             this.normalizedPropertiesFolder = originalPropertiesFolder;
-        }else{
+        }
+        else {
             this.normalizedPropertiesFolder = new File(originalPropertiesFolder).getParent() + File.separator + NORMALIZED_FOLDER_NAME;
         }
     }
@@ -35,8 +48,9 @@ public class BundlesResolver {
 
     /**
      * Reads bundles and stores it in map
+     *
      * @param propertiesFolderName - folder that contains properties file
-     * @param mainPropertyName - properties name
+     * @param mainPropertyName     - properties name
      * @return - map of loaded bundles
      * @throws IOException
      */
@@ -48,7 +62,7 @@ public class BundlesResolver {
 
         storeAndCopyProperty(bundles, parentDir, propertiesFolderName, mainPropertyName);
 
-        for(String bundleFileName : bundleFilesNames){
+        for (String bundleFileName : bundleFilesNames) {
             storeAndCopyProperty(bundles, parentDir, propertiesFolderName, bundleFileName);
         }
 
@@ -58,9 +72,10 @@ public class BundlesResolver {
 
     /**
      * Reads row properties from PROD environments and stores it in map
+     *
      * @param propertiesFolderMask - folder wildcard that contains properties file
-     * @param propertyName - properties name
-     * @param prodEnvironments - list of PROD environments
+     * @param propertyName         - properties name
+     * @param prodEnvironments     - list of PROD environments
      * @return - map of loaded bundles
      * @throws IOException
      */
@@ -69,10 +84,12 @@ public class BundlesResolver {
         File originalPropertiesRoot = new File(originalPropertiesFolder);
 
         bundles.put(getCommonPropertiesFolder(propertiesFolderMask) + File.separator + propertyName, new Properties());
-        copyBundle(new File(originalPropertiesRoot.getPath() + File.separator + propertiesFolderMask.replace("*", prodEnvironments[0]) + File.separator + propertyName), getCommonPropertiesFolder(propertiesFolderMask), propertyName);
+        copyBundle(new File(originalPropertiesRoot.getPath() + File.separator + propertiesFolderMask.replace("*", prodEnvironments[0]) + File.separator + propertyName),
+                   getCommonPropertiesFolder(propertiesFolderMask), propertyName);
 
-        for(String environmentDirName : prodEnvironments){
-            storeAndCopyProperty(bundles, new File(originalPropertiesRoot.getPath() + File.separator + propertiesFolderMask.replace("*", environmentDirName)), propertiesFolderMask.replace("*", environmentDirName), propertyName);
+        for (String environmentDirName : prodEnvironments) {
+            storeAndCopyProperty(bundles, new File(originalPropertiesRoot.getPath() + File.separator + propertiesFolderMask.replace("*", environmentDirName)),
+                                 propertiesFolderMask.replace("*", environmentDirName), propertyName);
         }
         return bundles;
     }
@@ -80,8 +97,9 @@ public class BundlesResolver {
 
     /**
      * Reads row properties from TEST environments and stores it in map
+     *
      * @param propertiesFolder - folder wildcard that contains properties file
-     * @param propertyName - properties name
+     * @param propertyName     - properties name
      * @param prodEnvironments - list of PROD environments
      * @return - map of loaded bundles
      * @throws IOException
@@ -93,12 +111,13 @@ public class BundlesResolver {
         String[] propertiesDirs = originalPropertiesRoot.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return !name.equalsIgnoreCase(COMMON_PROPERTIES_FOLDER) && new File(dir, name).isDirectory() && Arrays.binarySearch(prodEnvironments, name)<0;
+                return !name.equalsIgnoreCase(COMMON_PROPERTIES_FOLDER) && new File(dir, name).isDirectory() && Arrays.binarySearch(prodEnvironments, name) < 0;
             }
         });
 
-        for(String propertiesDir : propertiesDirs){
-            storeAndCopyProperty(bundles, new File(originalPropertiesRoot.getPath() + File.separator + propertiesFolder.replace("*", propertiesDir)), propertiesFolder.replace("*", propertiesDir), propertyName);
+        for (String propertiesDir : propertiesDirs) {
+            storeAndCopyProperty(bundles, new File(originalPropertiesRoot.getPath() + File.separator + propertiesFolder.replace("*", propertiesDir)), propertiesFolder.replace("*", propertiesDir),
+                                 propertyName);
         }
         return bundles;
     }
@@ -106,15 +125,16 @@ public class BundlesResolver {
 
     /**
      * Stores properties in bundles map and copies property file
-     * @param bundles - map of all loaded bundles
-     * @param propertyDir - initial properties file directory
+     *
+     * @param bundles              - map of all loaded bundles
+     * @param propertyDir          - initial properties file directory
      * @param propertiesFolderName - folder that contains properties file
-     * @param propertyName - property file name
+     * @param propertyName         - property file name
      * @throws IOException
      */
     private void storeAndCopyProperty(Map<String, Properties> bundles, File propertyDir, String propertiesFolderName, String propertyName) throws IOException {
         File propertyFile = new File(propertyDir, propertyName);
-        if(propertyFile.exists()) {
+        if (propertyFile.exists()) {
             storeProperty(bundles, propertyFile, propertiesFolderName + File.separator + propertyName);
             copyBundle(propertyFile, propertiesFolderName, propertyName);
         }
@@ -123,9 +143,10 @@ public class BundlesResolver {
 
     /**
      * Adds bundle to bundles map
-     * @param bundles - map of all loaded bundles
+     *
+     * @param bundles      - map of all loaded bundles
      * @param propertyFile - initial properties file to read property from
-     * @param propertyKey - map key for properties
+     * @param propertyKey  - map key for properties
      * @throws IOException
      */
     private void storeProperty(Map<String, Properties> bundles, File propertyFile, String propertyKey) throws IOException {
@@ -137,14 +158,15 @@ public class BundlesResolver {
 
     /**
      * Copy bundle to normalized folder and remove duplicates
-     * @param propertyFile - initial properties file
+     *
+     * @param propertyFile         - initial properties file
      * @param propertiesFolderName - folder that contains properties file
-     * @param propertyName - property file name
+     * @param propertyName         - property file name
      * @throws IOException
      */
     private void copyBundle(File propertyFile, String propertiesFolderName, String propertyName) throws IOException {
         File newPropertiesFileDirectory = new File(normalizedPropertiesFolder + File.separator + propertiesFolderName);
-        if(!normalizedPropertiesFolder.equalsIgnoreCase(originalPropertiesFolder) || propertiesFolderName.startsWith(COMMON_PROPERTIES_FOLDER)){
+        if (!normalizedPropertiesFolder.equalsIgnoreCase(originalPropertiesFolder) || propertiesFolderName.startsWith(COMMON_PROPERTIES_FOLDER)) {
             FileUtils.copyFileToDirectory(propertyFile, newPropertiesFileDirectory);
         }
         removeDuplicates(new File(newPropertiesFileDirectory, propertyName));
@@ -153,6 +175,7 @@ public class BundlesResolver {
 
     /**
      * Removes duplicate properties from property file
+     *
      * @param newPropertiesFile - properties file
      * @throws IOException
      */
@@ -163,11 +186,11 @@ public class BundlesResolver {
         BufferedReader reader = new BufferedReader(new FileReader(newPropertiesFile));
         String currentLine;
         int row = 0;
-        while((currentLine = reader.readLine()) != null) {
-            if(!currentLine.trim().startsWith("#") && currentLine.contains("=")){
+        while ((currentLine = reader.readLine()) != null) {
+            if (!currentLine.trim().startsWith("#") && currentLine.contains("=")) {
                 String propertyKey = currentLine.substring(0, currentLine.indexOf("=")).trim();
 
-                if(existedProperties.containsKey(propertyKey)){
+                if (existedProperties.containsKey(propertyKey)) {
                     rowsToDelete.add(existedProperties.get(propertyKey));
                 }
                 existedProperties.put(propertyKey, row);
@@ -175,7 +198,8 @@ public class BundlesResolver {
             row++;
         }
         IOUtils.closeQuietly(reader);
-        reader = null; System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
+        reader = null;
+        System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
 
         File tempFile = new File(newPropertiesFile.getPath() + ".tmp");
 
@@ -183,21 +207,25 @@ public class BundlesResolver {
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
         row = 0;
 
-        while((currentLine = reader.readLine()) != null) {
-            if(!rowsToDelete.contains(row)){
+        while ((currentLine = reader.readLine()) != null) {
+            if (!rowsToDelete.contains(row)) {
                 writer.write(currentLine + LINE_SEPARATOR);
-            } else{
+            }
+            else {
                 System.out.println("Duplicate '" + currentLine + "' was found in " + newPropertiesFile.getPath());
             }
             row++;
         }
         IOUtils.closeQuietly(writer);
         IOUtils.closeQuietly(reader);
-        writer = null; reader = null; System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
+        writer = null;
+        reader = null;
+        System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
 
-        if(newPropertiesFile.delete() & tempFile.renameTo(newPropertiesFile)){
+        if (newPropertiesFile.delete() & tempFile.renameTo(newPropertiesFile)) {
             System.out.println(newPropertiesFile.getPath() + " has been cleaned for duplicates.");
-        }else{
+        }
+        else {
             throw new IllegalStateException("ERROR cleaning duplicates from " + newPropertiesFile.getPath());
         }
     }
@@ -205,11 +233,12 @@ public class BundlesResolver {
 
     /**
      * Search all bundle properties files in directory
-     * @param parentDir - directory to search in
+     *
+     * @param parentDir        - directory to search in
      * @param mainPropertyName - main property file name
      * @return - array of properties files
      */
-    private String[] searchBundleFileNames(File parentDir, String mainPropertyName){
+    private String[] searchBundleFileNames(File parentDir, String mainPropertyName) {
         final String mainExtension = mainPropertyName.substring(mainPropertyName.lastIndexOf(EXTENSION_SEPARATOR) + 1);
         final String mainName = mainPropertyName.substring(0, mainPropertyName.length() - mainExtension.length() - 1);
 
@@ -224,8 +253,9 @@ public class BundlesResolver {
 
     /**
      * Synchronizes properties file with Properties container
+     *
      * @param propertyPath - path to properties file
-     * @param properties - properties container
+     * @param properties   - properties container
      * @return - successful result
      * @throws IOException
      */
@@ -238,40 +268,46 @@ public class BundlesResolver {
 
         String currentLine;
 
-        while((currentLine = reader.readLine()) != null) {
-            if(!currentLine.trim().startsWith("#") && currentLine.contains("=")){
+        while ((currentLine = reader.readLine()) != null) {
+            if (!currentLine.trim().startsWith("#") && currentLine.contains("=")) {
                 String propertyKey = currentLine.substring(0, currentLine.indexOf("=")).trim();
-                String propertyValue = currentLine.substring(currentLine.indexOf("=")+1).trim();
+                String propertyValue = currentLine.substring(currentLine.indexOf("=") + 1).trim();
 
-                if(!properties.containsKey(propertyKey)){ //remove
+                if (!properties.containsKey(propertyKey)) { //remove
                     System.out.println("Remove property " + propertyKey + " from " + propertyPath);
                     //do nothing
-                } else {
+                }
+                else {
 
                     String newValue = StringEscapeUtils.escapeJava(properties.getProperty(propertyKey).trim());
-                    if(propertyValue.equals(newValue)){ //no changes
+                    if (propertyValue.equals(newValue)) { //no changes
                         writer.write(currentLine + LINE_SEPARATOR);
-                    } else {
+                    }
+                    else {
                         writer.write(propertyKey + "=" + newValue + LINE_SEPARATOR);
                         System.out.println("Update property " + propertyKey + " in " + propertyPath + ". Old value = [" + propertyValue + "]. New value = [" + newValue + "].");
                     }
                 }
 
-            }else{
+            }
+            else {
                 writer.write(currentLine + LINE_SEPARATOR); //write comments or empty lines
             }
         }
         IOUtils.closeQuietly(writer);
         IOUtils.closeQuietly(reader);
-        writer = null; reader = null; System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
+        writer = null;
+        reader = null;
+        System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
         return inputFile.delete() & tempFile.renameTo(inputFile);
     }
 
 
     /**
      * Merges default properties with generated
+     *
      * @param mergePropertiesWithFilePath - default properties absolute path
-     * @param mainPropertyPath - generated properties relative path
+     * @param mainPropertyPath            - generated properties relative path
      * @return - successful result
      * @throws IOException
      */
@@ -286,12 +322,13 @@ public class BundlesResolver {
         BufferedReader reader = new BufferedReader(new FileReader(commonProperties));
         String currentLine;
 
-        while((currentLine = reader.readLine()) != null) {
+        while ((currentLine = reader.readLine()) != null) {
             FileUtils.writeStringToFile(tempFile, currentLine + LINE_SEPARATOR, true);
         }
 
         IOUtils.closeQuietly(reader);
-        reader = null; System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
+        reader = null;
+        System.gc(); //java bug http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4715154
 
         removeDuplicates(tempFile);
 
@@ -299,15 +336,15 @@ public class BundlesResolver {
     }
 
 
-    public String getCommonPropertiesFolder(String folderMask){
+    public String getCommonPropertiesFolder(String folderMask) {
         return folderMask.replace("*", COMMON_PROPERTIES_FOLDER);
     }
 
 
-    private File getParentDirectory(String propertiesFolderName){
+    private File getParentDirectory(String propertiesFolderName) {
         File parentDir = new File(originalPropertiesFolder + File.separator + propertiesFolderName);
 
-        if(!parentDir.exists()){
+        if (!parentDir.exists()) {
             throw new IllegalStateException("Folder does not exist: " + parentDir.getPath());
         }
 

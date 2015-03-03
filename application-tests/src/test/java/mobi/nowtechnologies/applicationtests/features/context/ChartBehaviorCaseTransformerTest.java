@@ -1,15 +1,14 @@
 package mobi.nowtechnologies.applicationtests.features.context;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Test;
-
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.lang.time.DateUtils;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class ChartBehaviorCaseTransformerTest {
+
     ChartBehaviorCaseTransformer transformer = new ChartBehaviorCaseTransformer();
 
     @Test

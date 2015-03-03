@@ -1,16 +1,13 @@
 package mobi.nowtechnologies.applicationtests.services.device.domain;
 
-import org.springframework.util.Assert;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.util.Assert;
+
 public class ApiVersions {
-    public static enum SubSetType {
-        BELOW, ABOVE
-    }
 
     private List<String> versions = new ArrayList<>();
 
@@ -36,6 +33,12 @@ public class ApiVersions {
     }
 
     public List<String> of(String of, SubSetType subSetType) {
-        return (SubSetType.ABOVE == subSetType) ? above(of) : bellow(of);
+        return (SubSetType.ABOVE == subSetType) ?
+               above(of) :
+               bellow(of);
+    }
+
+    public static enum SubSetType {
+        BELOW, ABOVE
     }
 }

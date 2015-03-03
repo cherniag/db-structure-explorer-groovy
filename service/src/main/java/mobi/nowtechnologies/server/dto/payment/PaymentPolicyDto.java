@@ -3,21 +3,22 @@ package mobi.nowtechnologies.server.dto.payment;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PromotionPaymentPolicy;
-import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.math.BigDecimal;
 import java.util.Comparator;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-@XmlRootElement(name="PaymentPolicy")
+@XmlRootElement(name = "PaymentPolicy")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class PaymentPolicyDto {
 
@@ -44,7 +45,7 @@ public class PaymentPolicyDto {
 
     public PaymentPolicyDto() { }
 
-    public PaymentPolicyDto(PaymentPolicy policy, PromotionPaymentPolicy promotionPaymentPolicy){
+    public PaymentPolicyDto(PaymentPolicy policy, PromotionPaymentPolicy promotionPaymentPolicy) {
         this(policy);
         if (isNotNull(promotionPaymentPolicy)) {
             setSubcost(promotionPaymentPolicy.getSubcost());
@@ -72,15 +73,15 @@ public class PaymentPolicyDto {
         setCurrencyISO(policy.getCurrencyISO());
         setVideoAndAudio4GSubscription(policy.is4GVideoAudioSubscription());
         setPaymentPolicyMediaType(policy.getMediaType());
-        setFourG( Tariff._4G == policy.getTariff() );
-        setThreeG( Tariff._3G == policy.getTariff() );
+        setFourG(Tariff._4G == policy.getTariff());
+        setThreeG(Tariff._3G == policy.getTariff());
         setPaymentPolicyType(policy.getPaymentPolicyType());
         setAppStoreProductId(policy.getAppStoreProductId());
     }
-    
-	public boolean isMonthly() {
-		return durationUnit.equals(MONTHS);
-	}
+
+    public boolean isMonthly() {
+        return durationUnit.equals(MONTHS);
+    }
 
     public Integer getId() {
         return id;
@@ -145,39 +146,38 @@ public class PaymentPolicyDto {
     public void setCurrencyISO(String currencyISO) {
         this.currencyISO = currencyISO;
     }
-    
+
     public boolean isVideoAndAudio4GSubscription() {
-		return videoAndAudio4GSubscription;
-	}
+        return videoAndAudio4GSubscription;
+    }
 
-	public void setVideoAndAudio4GSubscription(boolean fourGPaymentPolicy) {
-		this.videoAndAudio4GSubscription = fourGPaymentPolicy;
-	}
+    public void setVideoAndAudio4GSubscription(boolean fourGPaymentPolicy) {
+        this.videoAndAudio4GSubscription = fourGPaymentPolicy;
+    }
 
-	public MediaType getPaymentPolicyMediaType() {
-		return paymentPolicyMediaType;
-	}
+    public MediaType getPaymentPolicyMediaType() {
+        return paymentPolicyMediaType;
+    }
 
-	public void setPaymentPolicyMediaType(
-			MediaType paymentPolicyMediaType) {
-		this.paymentPolicyMediaType = paymentPolicyMediaType;
-	}
+    public void setPaymentPolicyMediaType(MediaType paymentPolicyMediaType) {
+        this.paymentPolicyMediaType = paymentPolicyMediaType;
+    }
 
-	public boolean isFourG() {
-		return fourG;
-	}
+    public boolean isFourG() {
+        return fourG;
+    }
 
-	public void setFourG(boolean fourG) {
-		this.fourG = fourG;
-	}
+    public void setFourG(boolean fourG) {
+        this.fourG = fourG;
+    }
 
-	public boolean isThreeG() {
-		return threeG;
-	}
+    public boolean isThreeG() {
+        return threeG;
+    }
 
-	public void setThreeG(boolean threeG) {
-		this.threeG = threeG;
-	}
+    public void setThreeG(boolean threeG) {
+        this.threeG = threeG;
+    }
 
     public Integer getOldDuration() {
         return oldDuration;
@@ -229,33 +229,24 @@ public class PaymentPolicyDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("subcost", subcost)
-                .append("duration", duration)
-                .append("periodUnit", durationUnit)
-                .append("operator", operator)
-                .append("operatorName", operatorName)
-                .append("paymentType", paymentType)
-                .append("shortCode", shortCode)
-                .append("oldSubcost", oldSubcost)
-                .append("oldDuration", oldDuration)
-                .append("oldPeriodUnit", oldDurationUnit)
-                .append("currencyISO", currencyISO)
-                .append("videoAndAudio4GSubscription", videoAndAudio4GSubscription)
-                .append("fourG", fourG)
-                .append("threeG", threeG)
-                .append("paymentPolicyMediaType", paymentPolicyMediaType)
-                .append("paymentPolicyType", paymentPolicyType)
-                .append("appStoreProductId", appStoreProductId)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("subcost", subcost).append("duration", duration).append("periodUnit", durationUnit).append("operator", operator)
+                                        .append("operatorName", operatorName).append("paymentType", paymentType).append("shortCode", shortCode).append("oldSubcost", oldSubcost)
+                                        .append("oldDuration", oldDuration).append("oldPeriodUnit", oldDurationUnit).append("currencyISO", currencyISO)
+                                        .append("videoAndAudio4GSubscription", videoAndAudio4GSubscription).append("fourG", fourG).append("threeG", threeG)
+                                        .append("paymentPolicyMediaType", paymentPolicyMediaType).append("paymentPolicyType", paymentPolicyType).append("appStoreProductId", appStoreProductId)
+                                        .toString();
     }
 
     public static class ByDurationAsc implements Comparator<PaymentPolicyDto> {
+
         @Override
         public int compare(PaymentPolicyDto dto1, PaymentPolicyDto dto2) {
             int durationUnitCompareResult = dto1.getDurationUnit().compareTo(dto2.getDurationUnit());
-            return durationUnitCompareResult != 0 ? durationUnitCompareResult : Integer.compare(dto1.getDuration(), dto2.getDuration());
+            return durationUnitCompareResult != 0 ?
+                   durationUnitCompareResult :
+                   Integer.compare(dto1.getDuration(), dto2.getDuration());
         }
-    };
+    }
+
+    ;
 }

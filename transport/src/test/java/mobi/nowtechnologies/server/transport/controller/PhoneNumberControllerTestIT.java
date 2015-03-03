@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.sentaca.spring.smpp.mo.MOMessage;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
@@ -10,25 +9,26 @@ import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
-import org.apache.commons.lang3.StringUtils;
-import org.jsmpp.bean.DeliverSm;
-import org.junit.After;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.smslib.Message;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.sentaca.spring.smpp.mo.MOMessage;
+import org.apache.commons.lang3.StringUtils;
+import org.jsmpp.bean.DeliverSm;
+import org.smslib.Message;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
@@ -51,16 +51,12 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(content().string(("{\"response\":{\"data\":" +
-                "[{\"phoneActivation\":" +
-                "{\"activation\":\"ENTERED_NUMBER\",\"phoneNumber\":\"+64279000456\"}" +
-                "}]}}")));
+        mockMvc
+            .perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+            .andExpect(status().isOk()).andExpect(content().string(("{\"response\":{\"data\":" +
+                                                                    "[{\"phoneActivation\":" +
+                                                                    "{\"activation\":\"ENTERED_NUMBER\",\"phoneNumber\":\"+64279000456\"}" +
+                                                                    "}]}}")));
     }
 
     @Test
@@ -84,27 +80,18 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         doReturn(new PhoneNumberValidationData().withPhoneNumber(phone)).when(o2ProviderServiceSpy).validatePhoneNumber(phone);
 
         mockMvc.perform(
-                post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/phoneActivation/activation").string("ENTERED_NUMBER"))
-                .andExpect(xpath("/response/phoneActivation/phoneNumber").string("+447111111113"));
+            post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(xpath("/response/phoneActivation/activation").string("ENTERED_NUMBER"))
+               .andExpect(xpath("/response/phoneActivation/phoneNumber").string("+447111111113"));
 
         verify(o2ServiceMock, times(1)).getSubscriberData(phone);
         verify(o2ProviderServiceSpy, times(1)).validatePhoneNumber(phone);
 
 
-        mockMvc.perform(
-                post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andDo(print()).
-                andExpect(xpath("/response/user/provider").string("o2")).
-                andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
+        mockMvc.perform(post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                         .param("TIMESTAMP", timestamp)).andExpect(status().isOk()).andDo(print()).
+                   andExpect(xpath("/response/user/provider").string("o2")).
+                   andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
 
     }
 
@@ -128,26 +115,18 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         doReturn(new PhoneNumberValidationData().withPhoneNumber(phone)).when(o2ProviderServiceSpy).validatePhoneNumber(phone);
 
         mockMvc.perform(
-                post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/phoneActivation/activation").string("ENTERED_NUMBER"))
-                .andExpect(xpath("/response/phoneActivation/phoneNumber").string("+447111111114"));
+            post("/some_key/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(xpath("/response/phoneActivation/activation").string("ENTERED_NUMBER"))
+               .andExpect(xpath("/response/phoneActivation/phoneNumber").string("+447111111114"));
         ;
 
         verify(o2ServiceMock, times(0)).getSubscriberData(phone);
         verify(o2ProviderServiceSpy, times(1)).validatePhoneNumber(phone);
 
-        mockMvc.perform(
-                post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).
-                andExpect(xpath("/response/user/provider").string("o2")).
-                andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
+        mockMvc.perform(post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).
+            andExpect(xpath("/response/user/provider").string("o2")).
+                   andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
     }
 
     @Test
@@ -181,13 +160,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
             }
         }).when(vfGatewayServiceSpy).send(eq("+642102247311"), anyString(), eq("4003"));
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642102247311</phoneNumber></phoneActivation></response>"));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(content().string(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+642102247311</phoneNumber></phoneActivation" +
+            "></response>"));
 
 
         user = vfUserService.findByNameAndCommunity(userName, communityName);
@@ -201,14 +177,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
         Thread.sleep(1000);
 
-        mockMvc.perform(
-                post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).
-                andExpect(xpath("/response/user/provider").string("vf")).
-                andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
+        mockMvc.perform(post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).
+            andExpect(xpath("/response/user/provider").string("vf")).
+                   andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
 
         verify(vfGatewayServiceSpy, times(1)).send(eq("+642102247311"), anyString(), eq("4003"));
     }
@@ -227,13 +199,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         user.setProvider(null);
         vfUserService.updateUser(user);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isOk()).andExpect(content().string(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation" +
+            "></response>"));
 
 
         user = vfUserService.findByNameAndCommunity(userName, communityName);
@@ -247,14 +216,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
         Thread.sleep(1000);
 
-        mockMvc.perform(
-                post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).
-                andExpect(xpath("/response/user/provider").string("non-vf")).
-                andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
+        mockMvc.perform(post("/someid/" + communityUrl + "/" + apiVersion + "/ACC_CHECK").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).
+            andExpect(xpath("/response/user/provider").string("non-vf")).
+                   andExpect(xpath("/response/user/hasAllDetails").booleanValue(true));
 
         verify(vfGatewayServiceSpy, times(1)).send(eq("+64279000456"), anyString(), eq("4003"));
     }
@@ -269,13 +234,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation></response>"));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                     .param("TIMESTAMP", timestamp)).andExpect(status().isOk()).andExpect(content().string(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+64279000456</phoneNumber></phoneActivation" +
+            "></response>"));
 
 
         verify(vfGatewayServiceSpy, times(0)).send(eq("+64279000456"), anyString(), eq("5804"));
@@ -297,13 +259,10 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
         o2ProviderServiceSpy.setO2Service(o2Service);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(content().string("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl>http://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                     .param("TIMESTAMP", timestamp)).andExpect(status().isOk()).andExpect(content().string(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><response><phoneActivation><activation>ENTERED_NUMBER</activation><phoneNumber>+447111111114</phoneNumber><redeemServerUrl" +
+            ">http://uat.mqapi.com</redeemServerUrl></phoneActivation></response>"));
     }
 
     @Test
@@ -319,13 +278,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
         resetMobile(userName);
 
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isForbidden()).andExpect(xpath("/response/errorMessage/errorCode").string("604"));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp)).andExpect(status().isForbidden())
+               .andExpect(xpath("/response/errorMessage/errorCode").string("604"));
     }
 
     @Test
@@ -342,14 +297,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
         resetMobile(userName);
 
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isForbidden()).andExpect(xpath("/response/errorMessage/errorCode").string("604"));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp).param("PHONE", phone)).andExpect(status().isForbidden())
+               .andExpect(xpath("/response/errorMessage/errorCode").string("604"));
     }
 
     @Test
@@ -363,14 +313,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").doesNotExist())
-                .andExpect(xpath("/response/phoneActivation/activation").string(ActivationStatus.ENTERED_NUMBER.name()));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp)).andExpect(status().isOk())
+               .andExpect(xpath("/response/errorMessage/errorCode").doesNotExist()).andExpect(xpath("/response/phoneActivation/activation").string(ActivationStatus.ENTERED_NUMBER.name()));
     }
 
     @Test
@@ -384,14 +329,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp).param("PHONE", phone)).andExpect(status().isOk())
+               .andExpect(xpath("/response/errorMessage/errorCode").string("601"));
     }
 
     @Test
@@ -407,13 +347,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
         resetMobile(userName);
 
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp)).andExpect(status().isOk())
+               .andExpect(xpath("/response/errorMessage/errorCode").string("601"));
     }
 
     @Test
@@ -430,14 +366,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
 
         resetMobile(userName);
 
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp).param("PHONE", phone)).andExpect(status().isOk())
+               .andExpect(xpath("/response/errorMessage/errorCode").string("601"));
     }
 
     @Test
@@ -451,14 +382,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").doesNotExist())
-                .andExpect(xpath("/response/phoneActivation/activation").string(ActivationStatus.ENTERED_NUMBER.name()));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp)).andExpect(status().isOk())
+               .andExpect(xpath("/response/errorMessage/errorCode").doesNotExist()).andExpect(xpath("/response/phoneActivation/activation").string(ActivationStatus.ENTERED_NUMBER.name()));
     }
 
     @Test
@@ -472,14 +398,9 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String timestamp = "2011_12_26_07_04_23";
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
-        mockMvc.perform(
-                post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("COMMUNITY_NAME", communityName)
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(xpath("/response/errorMessage/errorCode").string("601"));
+        mockMvc.perform(post("/somekey/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("COMMUNITY_NAME", communityName).param("USER_NAME", userName).param("USER_TOKEN", userToken)
+                                                                                             .param("TIMESTAMP", timestamp).param("PHONE", phone)).andExpect(status().isOk())
+               .andExpect(xpath("/response/errorMessage/errorCode").string("601"));
     }
 
     @Test
@@ -492,16 +413,12 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isOk()).andExpect(content().string(("{\"response\":{\"data\":" +
-                "[{\"phoneActivation\":" +
-                "{\"activation\":\"ENTERED_NUMBER\",\"phoneNumber\":\"+64279000456\"}" +
-                "}]}}")));
+        mockMvc
+            .perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+            .andExpect(status().isOk()).andExpect(content().string(("{\"response\":{\"data\":" +
+                                                                    "[{\"phoneActivation\":" +
+                                                                    "{\"activation\":\"ENTERED_NUMBER\",\"phoneNumber\":\"+64279000456\"}" +
+                                                                    "}]}}")));
     }
 
     @Test
@@ -514,13 +431,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -531,12 +443,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isInternalServerError());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -547,12 +455,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -563,12 +467,8 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
         String communityUrl = "vf_nz";
         String timestamp = "2011_12_26_07_04_23";
 
-        mockMvc.perform(
-                post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER")
-                        .param("USER_NAME", userName)
-                        .param("TIMESTAMP", timestamp)
-                        .param("PHONE", phone)
-        ).andExpect(status().isNotFound());
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/PHONE_NUMBER").param("USER_NAME", userName).param("TIMESTAMP", timestamp).param("PHONE", phone))
+               .andExpect(status().isNotFound());
     }
 
 

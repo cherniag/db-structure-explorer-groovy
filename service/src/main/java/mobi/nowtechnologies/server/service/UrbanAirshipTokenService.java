@@ -3,12 +3,14 @@ package mobi.nowtechnologies.server.service;
 import mobi.nowtechnologies.server.persistence.domain.UrbanAirshipToken;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UrbanAirshipTokenRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by enes on 1/27/15.
@@ -32,7 +34,8 @@ public class UrbanAirshipTokenService {
             urbanAirshipToken.setUser(user);
             urbanAirshipToken.setToken(token);
             urbanAirshipTokenRepository.save(urbanAirshipToken);
-        } else if (!token.equals(urbanAirshipToken.getToken())) {
+        }
+        else if (!token.equals(urbanAirshipToken.getToken())) {
             logger.info("Token differs from already persisted one, updating...");
             urbanAirshipToken.setToken(token);
             urbanAirshipTokenRepository.save(urbanAirshipToken);
@@ -59,7 +62,8 @@ public class UrbanAirshipTokenService {
                 toToken = new UrbanAirshipToken();
                 toToken.setUser(toUser);
                 toToken.setToken(fromToken.getToken());
-            } else {
+            }
+            else {
                 toToken.setToken(fromToken.getToken());
             }
 

@@ -1,30 +1,29 @@
 package mobi.nowtechnologies.server.assembler;
 
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.AutoOptInExemptPhoneNumber;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.DeviceType;
+import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
+import mobi.nowtechnologies.server.persistence.domain.DrmType;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
 import mobi.nowtechnologies.server.service.itunes.payment.ITunesPaymentService;
-import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
-import mobi.nowtechnologies.server.user.rules.RuleResult;
-import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
+import static junit.framework.Assert.assertFalse;
 
 @SuppressWarnings("unchecked")
 public class AccountCheckDTOAsmOneTimeFlagTest {
+
     @Mock
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
     @Mock

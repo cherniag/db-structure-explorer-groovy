@@ -9,24 +9,27 @@ import mobi.nowtechnologies.server.persistence.repository.ActivationEmailReposit
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.runners.*;
+import org.mockito.stubbing.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(locations = {"/META-INF/dao-test.xml", "/META-INF/service-test.xml", "/META-INF/shared.xml"})
@@ -129,8 +132,7 @@ public class ActivationEmailServiceIT {
             }
         });
 
-        when(messageSource.getMessage(eq(Community.O2_COMMUNITY_REWRITE_URL), anyString(),
-                isNull(Object[].class), isNull(Locale.class))).thenCallRealMethod();
+        when(messageSource.getMessage(eq(Community.O2_COMMUNITY_REWRITE_URL), anyString(), isNull(Object[].class), isNull(Locale.class))).thenCallRealMethod();
 
         activationEmailService.sendEmail(EMAIL, "htc", "htc", Community.O2_COMMUNITY_REWRITE_URL);
 
@@ -151,8 +153,7 @@ public class ActivationEmailServiceIT {
             }
         });
 
-        when(messageSource.getMessage(eq(Community.O2_COMMUNITY_REWRITE_URL), anyString(),
-                isNull(Object[].class), isNull(Locale.class))).thenCallRealMethod();
+        when(messageSource.getMessage(eq(Community.O2_COMMUNITY_REWRITE_URL), anyString(), isNull(Object[].class), isNull(Locale.class))).thenCallRealMethod();
 
         activationEmailService.sendEmail("ttt", "htc", "htc", Community.O2_COMMUNITY_REWRITE_URL);
 

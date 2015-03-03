@@ -6,20 +6,20 @@ import mobi.nowtechnologies.server.admin.settings.service.SettingsService;
 import mobi.nowtechnologies.server.dto.streamzine.ChartListItemDto;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.service.behavior.BehaviorInfoService;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.*;
-import org.springframework.context.MessageSource;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import org.springframework.context.MessageSource;
+
+import org.junit.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class SettingsAsmTest {
+
     @InjectMocks
     SettingsAsm settingsAsm;
     @Mock

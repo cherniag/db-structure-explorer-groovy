@@ -1,60 +1,59 @@
 package mobi.nowtechnologies.server.dto.transport;
 
-import java.util.List;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.shared.enums.ChartType;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import mobi.nowtechnologies.server.persistence.domain.Chart;
-import mobi.nowtechnologies.server.shared.enums.ChartType;
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @XmlRootElement(name = "playlist")
 public class SelectedPlaylistDto {
-	private ChartType type;
-	private Integer id;
 
-	public ChartType getType() {
-		return type;
-	}
+    private ChartType type;
+    private Integer id;
 
-	public void setType(ChartType type) {
-		this.type = type;
-	}
+    public static SelectedPlaylistDto[] fromChartList(List<Chart> charts) {
+        SelectedPlaylistDto[] dtos = new SelectedPlaylistDto[charts.size()];
 
-	public Integer getId() {
-		return id;
-	}
+        int i = 0;
+        for (Chart chart : charts) {
+            dtos[i] = fromChart(chart);
+            i++;
+        }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+        return dtos;
+    }
 
-	public static SelectedPlaylistDto[] fromChartList(List<Chart> charts) {
-		SelectedPlaylistDto[] dtos = new SelectedPlaylistDto[charts.size()];
+    public static SelectedPlaylistDto fromChart(Chart chart) {
+        SelectedPlaylistDto dto = new SelectedPlaylistDto();
+        dto.setId((int) chart.getI());
+        dto.setType(chart.getType());
 
-		int i = 0;
-		for (Chart chart : charts) {
-			dtos[i] = fromChart(chart);
-			i++;
-		}
+        return dto;
+    }
 
-		return dtos;
-	}
+    public ChartType getType() {
+        return type;
+    }
 
-	public static SelectedPlaylistDto fromChart(Chart chart) {
-		SelectedPlaylistDto dto = new SelectedPlaylistDto();
-		dto.setId((int) chart.getI());
-		dto.setType(chart.getType());
+    public void setType(ChartType type) {
+        this.type = type;
+    }
 
-		return dto;
-	}
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("type", type)
-                .append("id", id)
-                .toString();
+        return new ToStringBuilder(this).append("type", type).append("id", id).toString();
     }
 
 }

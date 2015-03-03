@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.applicationtests.services.runner;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import groovy.lang.Closure;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 
 import java.util.ArrayList;
@@ -11,7 +8,12 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import groovy.lang.Closure;
+
 public class Runner {
+
     private List<UserDeviceData> datas;
     private ExecutorService service;
     private int threads;
@@ -22,13 +24,13 @@ public class Runner {
         service = executorService;
     }
 
-    public void sequence(Closure<UserDeviceData> closure)  {
+    public void sequence(Closure<UserDeviceData> closure) {
         for (UserDeviceData data : datas) {
             closure.call(data);
         }
     }
 
-    public void parallel(Closure<UserDeviceData> toInvoke)  {
+    public void parallel(Closure<UserDeviceData> toInvoke) {
         List<UserDeviceData> copy = new ArrayList<>(datas);
 
         UserDeviceData firstTest = copy.get(0);
@@ -37,16 +39,17 @@ public class Runner {
 
         // run others when first is OK
         List<List<UserDeviceData>> partitions = Lists.partition(copy, threads);
-        for(List<UserDeviceData> p : partitions) {
+        for (List<UserDeviceData> p : partitions) {
             try {
                 service.invokeAll(createTasks(p, toInvoke));
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public void parallel(Invoker<UserDeviceData> toInvoke)  {
+    public void parallel(Invoker<UserDeviceData> toInvoke) {
         List<UserDeviceData> copy = new ArrayList<>(datas);
 
         UserDeviceData firstTest = copy.get(0);
@@ -55,10 +58,11 @@ public class Runner {
 
         // run others when first is OK
         List<List<UserDeviceData>> partitions = Lists.partition(copy, threads);
-        for(List<UserDeviceData> p : partitions) {
+        for (List<UserDeviceData> p : partitions) {
             try {
                 service.invokeAll(createTasks(p, toInvoke));
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }

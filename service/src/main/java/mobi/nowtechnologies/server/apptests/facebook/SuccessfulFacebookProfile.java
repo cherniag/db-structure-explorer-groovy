@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.server.apptests.facebook;
 
+import java.util.Locale;
+
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.Reference;
 
-import java.util.Locale;
-
 class SuccessfulFacebookProfile extends FacebookProfile {
+
     private String email;
     private String country;
     private String city;
@@ -30,9 +31,10 @@ class SuccessfulFacebookProfile extends FacebookProfile {
     @Override
     public Reference getLocation() {
         // try to recognized null values: NULL_VALUE_MARKER
-        if(AppTestFacebookTokenService.unmaskNullValueIfNeeded(country) == null) {
+        if (AppTestFacebookTokenService.unmaskNullValueIfNeeded(country) == null) {
             return new Reference("", city);
-        } else {
+        }
+        else {
             String facebookLocation = city + "," + country;
             return new Reference("", facebookLocation);
         }

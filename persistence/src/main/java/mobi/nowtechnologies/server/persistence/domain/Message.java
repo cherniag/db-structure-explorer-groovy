@@ -3,220 +3,236 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto.MessageFrequence;
 import mobi.nowtechnologies.server.shared.enums.MessageActionType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Mayboroda Dmytro
  * @author Titov Mykhaylo (titov)
  */
 @Entity
-@Table(name = "messages", uniqueConstraints = @UniqueConstraint(columnNames = { "position", "community_id", "messageType", "publishTimeMillis" }))
+@Table(name = "messages", uniqueConstraints = @UniqueConstraint(columnNames = {"position", "community_id", "messageType", "publishTimeMillis"}))
 public class Message {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Message.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Message.class);
 
-	private Integer id;
+    private Integer id;
 
-	private Community community;
+    private Community community;
 
-	private Integer communityId;
+    private Integer communityId;
 
-	private String title;
+    private String title;
 
-	private String body;
+    private String body;
 
-	private boolean activated;
+    private boolean activated;
 
-	private MessageFrequence frequence;
+    private MessageFrequence frequence;
 
-	private MessageType messageType;
+    private MessageType messageType;
 
-	private long publishTimeMillis;
+    private long publishTimeMillis;
 
-	private int position;
+    private int position;
 
-	private String imageFileName;
+    private String imageFileName;
 
-	private Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
-	
-	private MessageActionType actionType;
-	
-	private String action;
-	
-	private String actionButtonText;
+    private Set<AbstractFilterWithCtiteria> filterWithCtiteria = new HashSet<AbstractFilterWithCtiteria>();
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer getId() {
-		return this.id;
-	}
+    private MessageActionType actionType;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    private String action;
 
-	@JoinColumn(name = "community_id")
-	@ManyToOne(optional = false)
-	public Community getCommunity() {
-		return this.community;
-	}
+    private String actionButtonText;
 
-	public void setCommunity(Community community) {
-		this.community = community;
-		if (community != null)
-			communityId = community.getId();
-	}
+    public Message() {
+    }
 
-	protected void setCommunityId(Integer communityId) {
-		this.communityId = communityId;
-	}
+    public static Message newInstance(Message message) {
+        LOGGER.debug("input parameters message: [{}], [{}]", message);
 
-	@Column(name = "community_id", insertable = false, updatable = false)
-	public Integer getCommunityId() {
-		return communityId;
-	}
+        Set<AbstractFilterWithCtiteria> filterWithCtiterias = new HashSet<AbstractFilterWithCtiteria>(message.getFilterWithCtiteria());
 
-	@Column(nullable = false)
-	public String getTitle() {
-		return this.title;
-	}
+        Message clonedMessage = new Message();
+        clonedMessage.setActivated(message.isActivated());
+        clonedMessage.setBody(message.getBody());
+        clonedMessage.setCommunity(message.getCommunity());
+        clonedMessage.setFilterWithCtiteria(filterWithCtiterias);
+        clonedMessage.setFrequence(message.getFrequence());
+        clonedMessage.setImageFileName(message.getImageFileName());
+        clonedMessage.setMessageType(message.getMessageType());
+        clonedMessage.setPosition(message.getPosition());
+        clonedMessage.setPublishTimeMillis(message.getPublishTimeMillis());
+        clonedMessage.setTitle(message.getTitle());
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+        LOGGER.debug("Output parameter clonedMessage=[{}]", clonedMessage);
+        return clonedMessage;
+    }
 
-	@Lob
-	@Column(nullable = false)
-	public String getBody() {
-		return this.body;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setBody(String body) {
-		this.body = body;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public boolean isActivated() {
-		return this.activated;
-	}
+    @JoinColumn(name = "community_id")
+    @ManyToOne(optional = false)
+    public Community getCommunity() {
+        return this.community;
+    }
 
-	public void setActivated(boolean activated) {
-		this.activated = activated;
-	}
+    public void setCommunity(Community community) {
+        this.community = community;
+        if (community != null) {
+            communityId = community.getId();
+        }
+    }
 
-	@Enumerated(EnumType.STRING)
-	public MessageFrequence getFrequence() {
-		return this.frequence;
-	}
+    @Column(name = "community_id", insertable = false, updatable = false)
+    public Integer getCommunityId() {
+        return communityId;
+    }
 
-	public void setFrequence(MessageFrequence frequence) {
-		this.frequence = frequence;
-	}
+    protected void setCommunityId(Integer communityId) {
+        this.communityId = communityId;
+    }
 
-	public String getImageFileName() {
-		return imageFileName;
-	}
+    @Column(nullable = false)
+    public String getTitle() {
+        return this.title;
+    }
 
-	public void setImageFileName(String imageFileName) {
-		this.imageFileName = imageFileName;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public int getPosition() {
-		return position;
-	}
+    @Lob
+    @Column(nullable = false)
+    public String getBody() {
+        return this.body;
+    }
 
-	public void setPosition(int position) {
-		this.position = position;
-	}
+    public void setBody(String body) {
+        this.body = body;
+    }
 
+    public boolean isActivated() {
+        return this.activated;
+    }
 
-	public Message() {
-	}
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 
-	@Enumerated(EnumType.STRING)
-	public MessageType getMessageType() {
-		return this.messageType;
-	}
+    @Enumerated(EnumType.STRING)
+    public MessageFrequence getFrequence() {
+        return this.frequence;
+    }
 
-	public void setMessageType(MessageType messageType) {
-		this.messageType = messageType;
-	}
+    public void setFrequence(MessageFrequence frequence) {
+        this.frequence = frequence;
+    }
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
-	public java.util.Set<AbstractFilterWithCtiteria> getFilterWithCtiteria() {
-		return this.filterWithCtiteria;
-	}
+    public String getImageFileName() {
+        return imageFileName;
+    }
 
-	public void setFilterWithCtiteria(java.util.Set<AbstractFilterWithCtiteria> filterWithCtiteria) {
-		this.filterWithCtiteria = filterWithCtiteria;
-	}
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
+    }
 
-	public void addFilterWithCtiteria(AbstractFilterWithCtiteria filterWithCtiteria) {
-		getFilterWithCtiteria().add(filterWithCtiteria);
-	}
+    public int getPosition() {
+        return position;
+    }
 
-	public void removeFilterWithCtiteria(AbstractFilterWithCtiteria filterWithCtiteria) {
-		getFilterWithCtiteria().remove(filterWithCtiteria);
-	}
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
-	public long getPublishTimeMillis() {
-		return publishTimeMillis;
-	}
+    @Enumerated(EnumType.STRING)
+    public MessageType getMessageType() {
+        return this.messageType;
+    }
 
-	public void setPublishTimeMillis(long publishTimeMillis) {
-		this.publishTimeMillis = publishTimeMillis;
-	}
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
+    }
 
-	@Enumerated(EnumType.STRING)
-	public MessageActionType getActionType() {
-		return actionType;
-	}
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    public java.util.Set<AbstractFilterWithCtiteria> getFilterWithCtiteria() {
+        return this.filterWithCtiteria;
+    }
 
-	public void setActionType(MessageActionType actionType) {
-		this.actionType = actionType;
-	}
+    public void setFilterWithCtiteria(java.util.Set<AbstractFilterWithCtiteria> filterWithCtiteria) {
+        this.filterWithCtiteria = filterWithCtiteria;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public void addFilterWithCtiteria(AbstractFilterWithCtiteria filterWithCtiteria) {
+        getFilterWithCtiteria().add(filterWithCtiteria);
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void removeFilterWithCtiteria(AbstractFilterWithCtiteria filterWithCtiteria) {
+        getFilterWithCtiteria().remove(filterWithCtiteria);
+    }
 
-	public String getActionButtonText() {
-		return actionButtonText;
-	}
+    public long getPublishTimeMillis() {
+        return publishTimeMillis;
+    }
 
-	public void setActionButtonText(String actionButtonText) {
-		this.actionButtonText = actionButtonText;
-	}
+    public void setPublishTimeMillis(long publishTimeMillis) {
+        this.publishTimeMillis = publishTimeMillis;
+    }
 
-	public static Message newInstance(Message message) {
-		LOGGER.debug("input parameters message: [{}], [{}]", message);
+    @Enumerated(EnumType.STRING)
+    public MessageActionType getActionType() {
+        return actionType;
+    }
 
-		Set<AbstractFilterWithCtiteria> filterWithCtiterias = new HashSet<AbstractFilterWithCtiteria>(message.getFilterWithCtiteria());
+    public void setActionType(MessageActionType actionType) {
+        this.actionType = actionType;
+    }
 
-		Message clonedMessage = new Message();
-		clonedMessage.setActivated(message.isActivated());
-		clonedMessage.setBody(message.getBody());
-		clonedMessage.setCommunity(message.getCommunity());
-		clonedMessage.setFilterWithCtiteria(filterWithCtiterias);
-		clonedMessage.setFrequence(message.getFrequence());
-		clonedMessage.setImageFileName(message.getImageFileName());
-		clonedMessage.setMessageType(message.getMessageType());
-		clonedMessage.setPosition(message.getPosition());
-		clonedMessage.setPublishTimeMillis(message.getPublishTimeMillis());
-		clonedMessage.setTitle(message.getTitle());
+    public String getAction() {
+        return action;
+    }
 
-		LOGGER.debug("Output parameter clonedMessage=[{}]", clonedMessage);
-		return clonedMessage;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getActionButtonText() {
+        return actionButtonText;
+    }
+
+    public void setActionButtonText(String actionButtonText) {
+        this.actionButtonText = actionButtonText;
+    }
 
     public Message withActivated(boolean activated) {
         this.activated = activated;
@@ -265,20 +281,8 @@ public class Message {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("communityId", communityId)
-                .append("title", title)
-                .append("body", body)
-                .append("activated", activated)
-                .append("frequence", frequence)
-                .append("messageType", messageType)
-                .append("publishTimeMillis", publishTimeMillis)
-                .append("position", position)
-                .append("imageFileName", imageFileName)
-                .append("actionType", actionType)
-                .append("action", action)
-                .append("actionButtonText", actionButtonText)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("communityId", communityId).append("title", title).append("body", body).append("activated", activated).append("frequence", frequence)
+                                        .append("messageType", messageType).append("publishTimeMillis", publishTimeMillis).append("position", position).append("imageFileName", imageFileName)
+                                        .append("actionType", actionType).append("action", action).append("actionButtonText", actionButtonText).toString();
     }
 }

@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.applicationtests.services.http.domain.google_plus;
 
-import mobi.nowtechnologies.applicationtests.services.http.domain.common.*;
 import mobi.nowtechnologies.applicationtests.services.http.common.Error;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.Response;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -11,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "response")
 public class GooglePlusResponse {
+
     private Error errorMessage;
     private Response response;
     private User user;
@@ -25,7 +27,9 @@ public class GooglePlusResponse {
 
     public User getUser() {
         boolean xmlCase = user != null;
-        return xmlCase ? user : response.getData().get(0).getUser() ;
+        return xmlCase ?
+               user :
+               response.getData().get(0).getUser();
     }
 
     public void setUser(User user) {
@@ -33,7 +37,9 @@ public class GooglePlusResponse {
     }
 
     public Error getErrorMessage() {
-        return errorMessage != null ? errorMessage : response.getData().get(0).getErrorMessage();
+        return errorMessage != null ?
+               errorMessage :
+               response.getData().get(0).getErrorMessage();
     }
 
     public void setErrorMessage(Error errorMessage) {
@@ -43,9 +49,9 @@ public class GooglePlusResponse {
     @Override
     public String toString() {
         return "GooglePlusResponse{" +
-                "errorMessage=" + errorMessage +
-                ", response=" + response +
-                ", user=" + user +
-                '}';
+               "errorMessage=" + errorMessage +
+               ", response=" + response +
+               ", user=" + user +
+               '}';
     }
 }

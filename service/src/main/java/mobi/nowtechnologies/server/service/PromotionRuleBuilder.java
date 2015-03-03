@@ -18,7 +18,7 @@ public class PromotionRuleBuilder extends AbstractRuleBuilder<User, PromotionPro
     }
 
     public PromotionRuleBuilder priority(int i) {
-       priority = i;
-       return this;
+        priority = i;
+        return this;
     }
 }

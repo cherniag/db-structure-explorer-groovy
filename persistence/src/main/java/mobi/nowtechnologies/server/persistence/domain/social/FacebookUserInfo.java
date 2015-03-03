@@ -2,7 +2,14 @@ package mobi.nowtechnologies.server.persistence.domain.social;
 
 import mobi.nowtechnologies.server.shared.enums.Gender;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
 import java.util.Date;
 
 /**
@@ -12,39 +19,40 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "facebook_user_info")
 public class FacebookUserInfo extends SocialInfo {
+
     private static final long serialVersionUID = 2546198857668889092L;
 
-    @Column(name="email",columnDefinition="char(100)", nullable = false)
+    @Column(name = "email", columnDefinition = "char(100)", nullable = false)
     private String email;
 
-    @Column(name="first_name",columnDefinition="char(100)")
+    @Column(name = "first_name", columnDefinition = "char(100)")
     private String firstName;
 
-    @Column(name="surname",columnDefinition="char(100)")
+    @Column(name = "surname", columnDefinition = "char(100)")
     private String surname;
 
-    @Column(name="city",columnDefinition="char(100)")
+    @Column(name = "city", columnDefinition = "char(100)")
     private String city;
 
 
-    @Column(name="profile_url",columnDefinition="char(200)")
+    @Column(name = "profile_url", columnDefinition = "char(200)")
     private String profileUrl;
 
-    @Column(name="fb_id",columnDefinition="char(100)", nullable = false)
+    @Column(name = "fb_id", columnDefinition = "char(100)", nullable = false)
     private String facebookId;
 
 
-    @Column(name="user_name",columnDefinition="char(100)", nullable = false)
+    @Column(name = "user_name", columnDefinition = "char(100)", nullable = false)
     private String userName;
 
-    @Column(name="country",columnDefinition="char(100)")
+    @Column(name = "country", columnDefinition = "char(100)")
     private String country;
 
-    @Enumerated(value=EnumType.STRING)
-    @Column(name="gender",columnDefinition="char(10)")
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "gender", columnDefinition = "char(10)")
     private Gender gender;
 
-    @Column(name="date_of_birth")
+    @Column(name = "date_of_birth")
     private Date birthday;
 
     public Date getBirthday() {
@@ -77,6 +85,10 @@ public class FacebookUserInfo extends SocialInfo {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     @Override
     public String getAvatarUrl() {
         return getProfileUrl();
@@ -85,10 +97,6 @@ public class FacebookUserInfo extends SocialInfo {
     @Override
     public String getSocialId() {
         return getFacebookId();
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public String getSurname() {
@@ -131,11 +139,11 @@ public class FacebookUserInfo extends SocialInfo {
         this.city = city;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
     public String getCountry() {
         return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

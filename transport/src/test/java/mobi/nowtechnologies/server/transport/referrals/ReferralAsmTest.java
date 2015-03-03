@@ -1,19 +1,19 @@
 package mobi.nowtechnologies.server.transport.referrals;
 
-import com.google.common.collect.Lists;
-import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.referral.Referral;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Lists;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReferralAsmTest {

@@ -5,24 +5,29 @@ import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.Play
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkInfoService.TrackData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
+
+import static org.hamcrest.core.Is.is;
+
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PrepareForTest(OrdinalBlockDto.class)
 @RunWith(PowerMockRunner.class)
 public class OrdinalBlockDtoTest {
 
-    @Mock ApplicationPageData applicationPageDataMock;
-    @Mock PlaylistData playlistDataMock;
-    @Mock TrackData trackDataMock;
+    @Mock
+    ApplicationPageData applicationPageDataMock;
+    @Mock
+    PlaylistData playlistDataMock;
+    @Mock
+    TrackData trackDataMock;
 
     OrdinalBlockDto ordinalBlockDto;
 

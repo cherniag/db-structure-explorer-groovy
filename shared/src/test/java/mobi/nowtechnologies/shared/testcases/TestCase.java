@@ -3,97 +3,107 @@ package mobi.nowtechnologies.shared.testcases;
 import java.util.Arrays;
 
 public class TestCase<IN, OUT> {
-	private String method = "DEFAULT METHOD";
-	private int retries = 1;
 
-	private IN input;
-	private OUT[] output;
+    private String method = "DEFAULT METHOD";
+    private int retries = 1;
 
-	private int hash;
+    private IN input;
+    private OUT[] output;
 
-	public TestCase(String method, int retries, IN input, OUT... output)
-	{
-		this.method = method != null ? method : this.method;
-		this.retries = retries > 0 ? retries : this.retries;
-		this.input = input;
-		this.output = output != null && output.length != 0 ? Arrays.copyOf(output, retries) : null;
-	}
+    private int hash;
 
-	public TestCase(int retries, IN input, OUT... output)
-	{
-		this(null, retries, input, output);
-	}
+    public TestCase(String method, int retries, IN input, OUT... output) {
+        this.method = method != null ?
+                      method :
+                      this.method;
+        this.retries = retries > 0 ?
+                       retries :
+                       this.retries;
+        this.input = input;
+        this.output = output != null && output.length != 0 ?
+                      Arrays.copyOf(output, retries) :
+                      null;
+    }
 
-	@SuppressWarnings("unchecked")
-	public TestCase(IN input, OUT output)
-	{
-		this(null, 0, input, output);
-	}
+    public TestCase(int retries, IN input, OUT... output) {
+        this(null, retries, input, output);
+    }
 
-	@Override
-	public int hashCode() {
-		if (hash == 0) {
-			hash = 1;
+    @SuppressWarnings("unchecked")
+    public TestCase(IN input, OUT output) {
+        this(null, 0, input, output);
+    }
 
-			hash = (31 * hash) + method.hashCode();
-			if (input != null)
-			{
-				if (input instanceof Object[]) {
-					Object[] inputarr = (Object[]) input;
-					for (int i = 0; i < inputarr.length; i++) {
-						hash = (31 * hash) + inputarr[i].hashCode();
-					}
-				} else {
-					hash = (31 * hash) + input.hashCode();
-				}
-			} else {
-				hash = (31 * hash) + 0;
-			}
-		}
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = 1;
 
-		return hash;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean equals(Object o) {
-		if(this == o)
-			return true;
-		if(o == null)
-			return false;
-		if(o.getClass() != this.getClass())
-			return false;
-		
-		TestCase<IN, OUT> testcase = (TestCase<IN, OUT>)o;
-		
-		return testcase.hashCode() == this.hashCode();
-	}
+            hash = (31 * hash) + method.hashCode();
+            if (input != null) {
+                if (input instanceof Object[]) {
+                    Object[] inputarr = (Object[]) input;
+                    for (int i = 0; i < inputarr.length; i++) {
+                        hash = (31 * hash) + inputarr[i].hashCode();
+                    }
+                }
+                else {
+                    hash = (31 * hash) + input.hashCode();
+                }
+            }
+            else {
+                hash = (31 * hash) + 0;
+            }
+        }
 
-	public String getMethod() {
-		return method;
-	}
+        return hash;
+    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
 
-	public int getRetries() {
-		return retries;
-	}
+        TestCase<IN, OUT> testcase = (TestCase<IN, OUT>) o;
 
-	public void setRetries(int retries) {
-		this.retries = retries;
-	}
+        return testcase.hashCode() == this.hashCode();
+    }
 
-	public IN getInput() {
-		return input;
-	}
+    public String getMethod() {
+        return method;
+    }
 
-	public OUT[] getOutput() {
-		return output;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-	public OUT getOutput(int retry) {
-		return output != null && output.length > retry && retry >= 0 ? output[retry] : null;
-	}
+    public int getRetries() {
+        return retries;
+    }
+
+    public void setRetries(int retries) {
+        this.retries = retries;
+    }
+
+    public IN getInput() {
+        return input;
+    }
+
+    public OUT[] getOutput() {
+        return output;
+    }
+
+    public OUT getOutput(int retry) {
+        return output != null && output.length > retry && retry >= 0 ?
+               output[retry] :
+               null;
+    }
 }

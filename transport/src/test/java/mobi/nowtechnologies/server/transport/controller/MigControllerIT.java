@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import org.junit.Test;
-
+import org.junit.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -14,20 +13,13 @@ public class MigControllerIT extends AbstractControllerTestIT {
 
     @Test
     public void testDRListener() throws Exception {
-        mockMvc.perform(get("/DRListener")
-                .param("MESSAGEID", "1")
-                .param("STATUSTYPE", "1")
-                .param("GUID", "1")
-                .param("STATUS", "1")).andExpect(status().isOk()).andDo(print()).andExpect(content().string("000"));
+        mockMvc.perform(get("/DRListener").param("MESSAGEID", "1").param("STATUSTYPE", "1").param("GUID", "1").param("STATUS", "1")).andExpect(status().isOk()).andDo(print())
+               .andExpect(content().string("000"));
     }
 
     @Test
     public void testMOListenerr() throws Exception {
-        mockMvc.perform(get("/MOListener")
-                        .param("BODY", "1")
-                        .param("OADC", "1")
-                        .param("CONNECTION", "1")
-        ).andExpect(status().isOk()).andDo(print());
+        mockMvc.perform(get("/MOListener").param("BODY", "1").param("OADC", "1").param("CONNECTION", "1")).andExpect(status().isOk()).andDo(print());
     }
 
 }

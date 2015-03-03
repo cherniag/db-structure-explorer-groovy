@@ -1,18 +1,29 @@
 package mobi.nowtechnologies.applicationtests.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
 import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
 import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
+import java.util.Properties;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -25,22 +36,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Properties;
-
 @Configuration
 @ComponentScan(
-        basePackages = {
-                "mobi.nowtechnologies.applicationtests.services",
-                "mobi.nowtechnologies.applicationtests.features"
-        })
+    basePackages = {"mobi.nowtechnologies.applicationtests.services", "mobi.nowtechnologies.applicationtests.features"})
 @Import(PropertyPlaceholderConfiguration.class)
-@ImportResource({
-        "classpath:META-INF/dao.xml",
-        "classpath:context/services.xml",
-        "classpath:META-INF/service-application-tests.xml"
-})
+@ImportResource({"classpath:META-INF/dao.xml", "classpath:context/services.xml", "classpath:META-INF/service-application-tests.xml"})
 @EnableTransactionManagement(proxyTargetClass = true)
 public class ApplicationConfiguration {
 
@@ -85,21 +85,18 @@ public class ApplicationConfiguration {
     }
 
     @Bean(name = "applicationTestsEntityManager")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Value("${jdbc.url}") String url,
-                                                                       @Value("${jdbc.username}") String username,
-                                                                       @Value("${jdbc.password}") String password) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Value("${jdbc.url}") String url, @Value("${jdbc.username}") String username, @Value("${jdbc.password}") String password) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource(url, username, password));
         em.setPackagesToScan(
-                // phone generator
-                "mobi.nowtechnologies.applicationtests",
-                // fat_email
-                "mobi.nowtechnologies.server.persistence.apptests",
-                // two mno tables
-                "mobi.nowtechnologies.server.mno.api.impl.domain",
-                // all the tables form persistence artifact
-                "mobi.nowtechnologies.server.persistence.domain"
-        );
+            // phone generator
+            "mobi.nowtechnologies.applicationtests",
+            // fat_email
+            "mobi.nowtechnologies.server.persistence.apptests",
+            // two mno tables
+            "mobi.nowtechnologies.server.mno.api.impl.domain",
+            // all the tables form persistence artifact
+            "mobi.nowtechnologies.server.persistence.domain");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(additionalProperties());
         return em;

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SubscriptionInfo {
+
     private boolean ios;
     private boolean premium;
     private PaymentPolicyDto currentPaymentPolicy;
@@ -34,7 +35,7 @@ public class SubscriptionInfo {
         return paymentPolicyDTOs;
     }
 
-    public void addPaymentPolicyDto(List<PaymentPolicyDto> paymentPolicyDTOs){
+    public void addPaymentPolicyDto(List<PaymentPolicyDto> paymentPolicyDTOs) {
         this.paymentPolicyDTOs.addAll(paymentPolicyDTOs);
     }
 

@@ -1,12 +1,12 @@
 package mobi.nowtechnologies.server.dto.transport;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -15,25 +15,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "user")
 @JsonTypeName("user")
-public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.AccountCheckDTO{
+public class AccountCheckDto extends mobi.nowtechnologies.server.shared.dto.AccountCheckDTO {
 
-	@XmlAnyElement
+    @XmlAnyElement
     public SelectedPlaylistDto[] playlists;
 
-	@XmlAnyElement
+    @XmlAnyElement
     public LockedTrackDto[] lockedTracks;
 
     public AccountCheckDto() {}
 
     public AccountCheckDto(mobi.nowtechnologies.server.shared.dto.AccountCheckDTO accountCheckDTO) {
-		super(accountCheckDTO);
+        super(accountCheckDTO);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString())
-                .append("playlists", playlists)
-                .append("lockedTracks", lockedTracks)
-                .toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append("playlists", playlists).append("lockedTracks", lockedTracks).toString();
     }
 }

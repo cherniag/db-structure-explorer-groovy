@@ -1,17 +1,19 @@
 package mobi.nowtechnologies.server.transport.context.dto;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
 
 // Created by zam on 11/21/2014.
 @XmlRootElement(name = "context")
 @JsonRootName("context")
 public class ContextDto {
+
     @JsonProperty("serverTime")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT")
     private Date serverTime;

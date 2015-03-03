@@ -8,28 +8,25 @@ import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
 import mobi.nowtechnologies.server.shared.util.EmailValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 
 @Transactional
 public class ActivationEmailServiceImpl implements ActivationEmailService {
 
-    private ActivationEmailRepository activationEmailRepository;
-
-    private UserService userService;
-
-    private MailService mailService;
-
-    private CommunityResourceBundleMessageSource messageSource;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivationEmailServiceImpl.class);
+    private ActivationEmailRepository activationEmailRepository;
+    private UserService userService;
+    private MailService mailService;
+    private CommunityResourceBundleMessageSource messageSource;
 
     @Override
     public void activate(Long id, String email, String token) {
@@ -48,7 +45,7 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
     public ActivationEmail sendEmail(String email, String userName, String deviceUID, String community) {
         LOGGER.info("Sending email to [{}]", email);
 
-        if(!EmailValidator.isEmail(email)) {
+        if (!EmailValidator.isEmail(email)) {
             throw new ValidationException("Email " + email + " is not valid!");
         }
 
@@ -67,9 +64,8 @@ public class ActivationEmailServiceImpl implements ActivationEmailService {
 
         String from = messageSource.getMessage(community, "activation.email.from", null, null, null);
         String subject = messageSource.getMessage(community, "activation.email.subject", null, null, null);
-        String body = messageSource.getMessage(community, user.getDeviceType().getName()
-                + ".activation.email.body", null, null, null);
-        mailService.sendMessage(from, new String[]{email}, subject, body, params);
+        String body = messageSource.getMessage(community, user.getDeviceType().getName() + ".activation.email.body", null, null, null);
+        mailService.sendMessage(from, new String[] {email}, subject, body, params);
         LOGGER.info("Email to [{}] sent", email);
         return activationEmail;
     }

@@ -1,8 +1,7 @@
 package mobi.nowtechnologies.applicationtests.features.serviceconfig;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 10/9/2014
+ * Author: Gennadii Cherniaiev Date: 10/9/2014
  */
 public class ServiceConfigVersionRow {
 

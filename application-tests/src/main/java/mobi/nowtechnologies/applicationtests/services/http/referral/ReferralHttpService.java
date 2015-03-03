@@ -1,24 +1,30 @@
 package mobi.nowtechnologies.applicationtests.services.http.referral;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.server.transport.referrals.ReferralDto;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 11/25/2014
+ * Author: Gennadii Cherniaiev Date: 11/25/2014
  */
 @Service
 public class ReferralHttpService extends AbstractHttpService {
@@ -61,7 +67,8 @@ public class ReferralHttpService extends AbstractHttpService {
     private String toJson(List<ReferralDto> referrals) {
         try {
             return objectMapper.writeValueAsString(referrals);
-        } catch (JsonProcessingException e) {
+        }
+        catch (JsonProcessingException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }

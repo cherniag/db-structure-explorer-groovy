@@ -3,14 +3,17 @@ package mobi.nowtechnologies.server.httpinvoker;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.shared.Utils;
+
+import javax.annotation.Resource;
+
+import java.util.Date;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.Resource;
-import java.util.Date;
-
 public class VideoAudioFreeTrialUrlStrategy implements DataToUrlStrategy {
+
     @Resource
     private UserRepository userRepository;
 
