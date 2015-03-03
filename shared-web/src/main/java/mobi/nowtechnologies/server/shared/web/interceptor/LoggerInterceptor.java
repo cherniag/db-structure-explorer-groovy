@@ -207,12 +207,12 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                     execTimeMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNano);
                 }
 
-                PROFILE_LOGGER.debug(
-                    "execTimeMillis=[{}]; currentPaymentDetailsId=[{}]; isCurrentPaymentDetailsActivated=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; " +
-                    "userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicyPeriod=[{}]; userPaymentPolicyPeriodUnit=[{}]; " +
-                    "userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
-                    execTimeMillis, currentPaymentDetailsId, isCurrentPaymentDetailsActivated, selectedPaymentPolicyId, existedPaymentPolicies, userContract, userSegment, userProvider,
-                    userPaymentPolicyId, userPaymentPolicySubCost, userPaymentPolicyPeriod, userPaymentPolicyPeriodUnit, userPaymentPolicyAdditionalInfo, result, errorMessages);
+                PROFILE_LOGGER
+                    .debug("execTimeMillis=[{}]; currentPaymentDetailsId=[{}]; isCurrentPaymentDetailsActivated=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; " +
+                           "userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicyPeriod=[{}]; userPaymentPolicyPeriodUnit=[{}]; " +
+                           "userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];", execTimeMillis, currentPaymentDetailsId, isCurrentPaymentDetailsActivated, selectedPaymentPolicyId,
+                           existedPaymentPolicies, userContract, userSegment, userProvider, userPaymentPolicyId, userPaymentPolicySubCost, userPaymentPolicyPeriod, userPaymentPolicyPeriodUnit,
+                           userPaymentPolicyAdditionalInfo, result, errorMessages);
             }
         }
         catch (Exception e) {
