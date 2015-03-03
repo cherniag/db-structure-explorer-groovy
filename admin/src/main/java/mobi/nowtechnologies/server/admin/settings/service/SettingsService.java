@@ -48,14 +48,16 @@ public class SettingsService {
             return null;
         }
 
+        BehaviorConfig freemiumBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), BehaviorConfigType.FREEMIUM);
+
+        if (freemiumBehaviorConfig == null) {
+            return null;
+        }
+
         SettingsDto dto = new SettingsDto();
         dto.setEnabled(!communityConfig.getBehaviorConfig().getType().isDefault());
-
-        final BehaviorConfig freemiumBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), BehaviorConfigType.FREEMIUM);
-
         dto.getReferralDto().setRequired(freemiumBehaviorConfig.getRequiredReferrals());
         dto.getReferralDto().getDurationInfoDto().fromDuration(freemiumBehaviorConfig.getReferralsDuration());
-
 
         for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
             final ChartBehavior chartBehavior = freemiumBehaviorConfig.getChartBehavior(chartBehaviorType);

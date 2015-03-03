@@ -93,19 +93,16 @@
         <property name="userService" ref="service.UserService"/>
     </bean>
 
-    <util:constant static-field="mobi.nowtechnologies.common.util.Env.URL_TO_CHART_COVER" id="URL_TO_CHART_COVER"/>
-    <util:constant static-field="mobi.nowtechnologies.common.util.Env.URL_TO_TRACKS" id="URL_TO_TRACKS"/>
-
-    <util:map id="env" key-type="java.lang.String">
-        <entry key="URL_TO_CHART_COVER" value="${cloudFile.filesURL}"/>
-        <entry key="URL_TO_TRACKS" value="${cloudFile.mediaCoverFileURL}"/>
-    </util:map>
-
     <bean class="mobi.nowtechnologies.server.web.controller.PlaylistController">
         <property name="chartService" ref="service.ChartService"/>
         <property name="userService" ref="service.UserService"/>
         <property name="chartDetailService" ref="service.ChartDetailService"/>
-        <property name="env" ref="env"/>
+        <property name="env">
+            <util:map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="#{T(mobi.nowtechnologies.server.web.controller.PlaylistController).URL_TO_CHART_COVER}" value="${cloudFile.filesURL}"/>
+                <entry key="#{T(mobi.nowtechnologies.server.web.controller.PlaylistController).URL_TO_TRACKS}" value="${cloudFile.mediaCoverFileURL}"/>
+            </util:map>
+        </property>
     </bean>
 
     <bean name="web.SupportController" class="mobi.nowtechnologies.server.web.controller.SupportController">
