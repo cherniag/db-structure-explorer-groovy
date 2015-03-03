@@ -98,7 +98,7 @@ public class AccCheckControllerTestIT extends AbstractControllerTestIT {
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("COMMUNITY_NAME", communityUrl).param("USER_NAME", userName).param("USER_TOKEN", userToken)
                                                                                        .param("TIMESTAMP", timestamp).param("TRANSACTION_RECEIPT", String
-                                .format("onetime:200:0:com.musicqubed.ios.hl-uk.onetime.0:1000000137405769:%s", purchase_date_ms))).andExpect(status().isOk())
+                .format("onetime:200:0:com.musicqubed.ios.hl-uk.onetime.0:1000000137405769:%s", purchase_date_ms))).andExpect(status().isOk())
                .andExpect(jsonPath("$.response.data[0].user.deviceType").value("IOS")).andExpect(jsonPath("$.response.data[0].user.oneTimePayment").value(true));
 
     }

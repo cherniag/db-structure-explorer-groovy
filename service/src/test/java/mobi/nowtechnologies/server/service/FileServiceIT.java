@@ -25,10 +25,12 @@ public class FileServiceIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileServiceIT.class.getName());
     private static final User user = new User();
+
     static {
         user.setId(1);
         //userWithCommunity.setDeviceType((byte) 0);
     }
+
     private static FileService fileService;
     @Autowired
     private FileService service;

@@ -112,6 +112,8 @@ public class PayPalHttpServiceTest {
 
     private BasicResponse getFailResponse() {
         return PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
-                                                    "TIMESTAMP=2011%2d12%2d26T14%3a08%3a40Z&CORRELATIONID=ca2c7bf39327f&ACK=Failure&VERSION=0%2e000000&BUILD=2271164&L_ERRORCODE0=10002&L_SHORTMESSAGE0=Authentication%2fAuthorization%20Failed&L_LONGMESSAGE0=You%20do%20not%20have%20permissions%20to%20make%20this%20API%20call&L_SEVERITYCODE0=Error");
+                                                    "TIMESTAMP=2011%2d12%2d26T14%3a08%3a40Z&CORRELATIONID=ca2c7bf39327f&ACK=Failure&VERSION=0%2e000000&BUILD=2271164&L_ERRORCODE0=10002" +
+                                                    "&L_SHORTMESSAGE0=Authentication%2fAuthorization%20Failed&L_LONGMESSAGE0=You%20do%20not%20have%20permissions%20to%20make%20this%20API%20call" +
+                                                    "&L_SEVERITYCODE0=Error");
     }
 }

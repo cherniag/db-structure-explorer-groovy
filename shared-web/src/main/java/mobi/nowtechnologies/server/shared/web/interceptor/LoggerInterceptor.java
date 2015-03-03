@@ -208,7 +208,9 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
                 }
 
                 PROFILE_LOGGER.debug(
-                    "execTimeMillis=[{}]; currentPaymentDetailsId=[{}]; isCurrentPaymentDetailsActivated=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicyPeriod=[{}]; userPaymentPolicyPeriodUnit=[{}]; userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
+                    "execTimeMillis=[{}]; currentPaymentDetailsId=[{}]; isCurrentPaymentDetailsActivated=[{}]; selectedPaymentPolicyId=[{}]; existedPaymentPolicies=[{}]; userContract=[{}]; " +
+                    "userSegment=[{}]; userProvider=[{}]; userPaymentPolicyId=[{}]; userPaymentPolicySubCost=[{}]; userPaymentPolicyPeriod=[{}]; userPaymentPolicyPeriodUnit=[{}]; " +
+                    "userPaymentPolicyAdditionalInfo=[{}]; result=[{}]; errorMessages=[{}];",
                     execTimeMillis, currentPaymentDetailsId, isCurrentPaymentDetailsActivated, selectedPaymentPolicyId, existedPaymentPolicies, userContract, userSegment, userProvider,
                     userPaymentPolicyId, userPaymentPolicySubCost, userPaymentPolicyPeriod, userPaymentPolicyPeriodUnit, userPaymentPolicyAdditionalInfo, result, errorMessages);
             }

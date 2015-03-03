@@ -29,9 +29,9 @@ public class MediaDao extends JpaDaoSupport {
         if (mediaId < 0) {
             throw new PersistenceException("The parameter aMediaUID < 0");
         }
-        Long status = (Long) getJpaTemplate().find(
-            "select count(*) from " + Media.class.getSimpleName() + " media, " + User.class.getSimpleName() + " user where media.price < (user.subBalance + user.freeBalance)" +
-            " and user.id = ?1 and media.i = ?2", userId, mediaId).get(0);
+        Long status = (Long) getJpaTemplate()
+            .find("select count(*) from " + Media.class.getSimpleName() + " media, " + User.class.getSimpleName() + " user where media.price < (user.subBalance + user.freeBalance)" +
+                  " and user.id = ?1 and media.i = ?2", userId, mediaId).get(0);
         return Long.valueOf(1L).equals(status);
     }
 

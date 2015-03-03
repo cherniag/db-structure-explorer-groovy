@@ -306,9 +306,9 @@ public class AbsoluteParserCleanerWithPreCompiledXPathVersion extends DDEXParser
         audioCodecTypeFileXPathSelector = xPathCompiler.compile(
             "(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType)[$" + X_PATH_FILE_INDEX + "]")
                                                        .load();
-        userDefinedValueFileXPathSelector = xPathCompiler.compile(
-            "(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[$" +
-            X_PATH_FILE_INDEX + "]").load();
+        userDefinedValueFileXPathSelector = xPathCompiler
+            .compile("(//ResourceList/SoundRecording[SoundRecordingId/ISRC eq $" + ISRC + "]/SoundRecordingDetailsByTerritory/TechnicalSoundRecordingDetails/AudioCodecType/@UserDefinedValue)[$" +
+                     X_PATH_FILE_INDEX + "]").load();
     }
 
     private String getProprietaryId() throws SaxonApiException {

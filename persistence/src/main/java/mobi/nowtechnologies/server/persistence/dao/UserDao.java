@@ -35,9 +35,9 @@ public class UserDao extends JpaDaoSupport {
         if (communityName == null) {
             throw new PersistenceException("The parameter communityName is null");
         }
-        List<?> list = getJpaTemplate().find(
-            "select user from " + User.class.getSimpleName() + " user where user.userName = ?1 and" + " user.userGroupId=(select userGroup.id from " + UserGroup.class.getSimpleName() +
-            " userGroup where userGroup.communityId=(select community.id from " + Community.class.getSimpleName() + " community where community.name=?2))", userName, communityName);
+        List<?> list = getJpaTemplate()
+            .find("select user from " + User.class.getSimpleName() + " user where user.userName = ?1 and" + " user.userGroupId=(select userGroup.id from " + UserGroup.class.getSimpleName() +
+                  " userGroup where userGroup.communityId=(select community.id from " + Community.class.getSimpleName() + " community where community.name=?2))", userName, communityName);
         int size = list.size();
         if (size == 0) {
             return null;
@@ -51,9 +51,9 @@ public class UserDao extends JpaDaoSupport {
     }
 
     public User findByFacebookAndCommunity(String facebookId, String communityName) throws DataAccessException {
-        List<?> list = getJpaTemplate().find(
-            "select user from " + User.class.getSimpleName() + " user where user.facebookId = ?1 and" + " user.userGroupId=(select userGroup.id from " + UserGroup.class.getSimpleName() +
-            " userGroup where userGroup.communityId=(select community.id from " + Community.class.getSimpleName() + " community where community.name=?2))", facebookId, communityName);
+        List<?> list = getJpaTemplate()
+            .find("select user from " + User.class.getSimpleName() + " user where user.facebookId = ?1 and" + " user.userGroupId=(select userGroup.id from " + UserGroup.class.getSimpleName() +
+                  " userGroup where userGroup.communityId=(select community.id from " + Community.class.getSimpleName() + " community where community.name=?2))", facebookId, communityName);
         int size = list.size();
         if (size == 0) {
             return null;

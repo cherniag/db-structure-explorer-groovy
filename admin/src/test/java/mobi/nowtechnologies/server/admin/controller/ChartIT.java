@@ -24,7 +24,7 @@ public class ChartIT extends AbstractAdminITTest {
         String imageFileName = "someImageFileName";
 
         mockMvc.perform(fileUpload(requestURI).file(new MockMultipartFile("file", file)).
-                            cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true)).
+            cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true)).
                                                   param("id", id.toString()).
                                                   param("name", name).
                                                   param("imageFileName", imageFileName).

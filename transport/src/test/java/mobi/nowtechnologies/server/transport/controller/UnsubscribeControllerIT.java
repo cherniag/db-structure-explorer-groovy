@@ -54,6 +54,7 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
     private static final XPathExpression PHONE_NUMBER_XPATHEXPRESSION;
     private static final XPathExpression OPERATOR_XPATHEXPRESSION;
     private static O2PSMSPaymentDetails o2psmsPaymentDetails;
+
     static {
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xPath = xPathFactory.newXPath();
@@ -65,6 +66,7 @@ public class UnsubscribeControllerIT extends AbstractControllerTestIT {
             throw new RuntimeException(e);
         }
     }
+
     @Resource(name = "serviceMessageSource")
     protected CommunityResourceBundleMessageSource messageSource;
     @Resource

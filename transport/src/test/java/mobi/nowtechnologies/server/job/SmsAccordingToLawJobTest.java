@@ -62,28 +62,28 @@ public class SmsAccordingToLawJobTest {
 
     private void mockMessage(String message, final String upperCaseCommunityURL, String messageCode) {
         PowerMockito.when(mockCommunityResourceBundleMessageSource.getMessage(Mockito.eq(upperCaseCommunityURL), Mockito.eq(messageCode), Mockito.argThat(new ArgumentMatcher<Object[]>() {
-                              @Override
-                              public boolean matches(Object argument) {
-                                  assertNull(argument);
-                                  return true;
-                              }
-                          }), Mockito.any(Locale.class))).thenReturn(message);
+            @Override
+            public boolean matches(Object argument) {
+                assertNull(argument);
+                return true;
+            }
+        }), Mockito.any(Locale.class))).thenReturn(message);
     }
 
     private void mockMessage(final String upperCaseCommunityURL, String messageCode, final Object[] expectedMessageArgs, String message) {
         PowerMockito.when(mockCommunityResourceBundleMessageSource.getMessage(Mockito.eq(upperCaseCommunityURL), Mockito.eq(messageCode), Mockito.argThat(new ArgumentMatcher<Object[]>() {
-                              @Override
-                              public boolean matches(Object argument) {
-                                  Object[] messageArgs = (Object[]) argument;
+            @Override
+            public boolean matches(Object argument) {
+                Object[] messageArgs = (Object[]) argument;
 
-                                  assertEquals(expectedMessageArgs.length, messageArgs.length);
-                                  for (int i = 0; i < expectedMessageArgs.length; i++) {
-                                      assertEquals(expectedMessageArgs[i], messageArgs[i]);
-                                  }
+                assertEquals(expectedMessageArgs.length, messageArgs.length);
+                for (int i = 0; i < expectedMessageArgs.length; i++) {
+                    assertEquals(expectedMessageArgs[i], messageArgs[i]);
+                }
 
-                                  return true;
-                              }
-                          }), Mockito.any(Locale.class))).thenReturn(message);
+                return true;
+            }
+        }), Mockito.any(Locale.class))).thenReturn(message);
     }
 
     private void mockMakeFreeSMSRequest(final MigPaymentDetails currentMigPaymentDetails, String message, MigResponse migResponse) {

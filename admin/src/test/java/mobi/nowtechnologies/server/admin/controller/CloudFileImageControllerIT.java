@@ -61,7 +61,7 @@ public class CloudFileImageControllerIT extends AbstractAdminITTest {
 
     private MvcResult uploadAndWait(String communityUrl, File fileResource, String fileName) throws Exception {
         MvcResult result = mockMvc.perform(post("/streamzine/upload/image").with(buildProcessorForFileUpload("file", fileName, fileResource)).
-                                               cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).andExpect(status().isOk()).andReturn();
+            cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).andExpect(status().isOk()).andReturn();
         Thread.sleep(3000);
         return result;
     }

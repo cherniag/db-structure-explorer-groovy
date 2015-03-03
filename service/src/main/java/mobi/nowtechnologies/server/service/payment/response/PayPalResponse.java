@@ -23,6 +23,7 @@ public class PayPalResponse extends PaymentSystemResponse {
     private static final Logger LOGGER = LoggerFactory.getLogger(PayPalResponse.class);
     private Map<PayPalResponseParam, String> properties;
     private Map<String, String> errors;
+
     public PayPalResponse(BasicResponse response) {
         super(response, false);
         properties = new HashMap<PayPalResponseParam, String>();

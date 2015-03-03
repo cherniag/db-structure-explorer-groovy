@@ -261,8 +261,7 @@ public class O2ProviderServiceImpl implements O2ProviderService {
                                             String contentDescription, String subMerchantId, boolean smsNotify) {
         LOGGER.debug(
             "input parameters userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription, subMerchantId, smsNotify: [{}], [{}], [{}], [{}], [{}], [{}], " +
-            "[{}], [{}], [{}], [{}]",
-            userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription, subMerchantId, smsNotify);
+            "[{}], [{}], [{}], [{}]", userId, internalTxId, subCost, o2PhoneNumber, message, contentCategory, contentType, contentDescription, subMerchantId, smsNotify);
 
         final BigInteger subCostPences = subCost.multiply(MULTIPLICAND_100).toBigInteger();
 

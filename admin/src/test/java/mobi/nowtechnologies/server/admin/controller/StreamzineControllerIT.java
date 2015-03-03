@@ -124,7 +124,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         dto.getBlocks().add(block);
         mockMvc
             .perform(post("/streamzine/update").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).headers(getHttpHeaders(true)).content(objectMapper.writeValueAsString(dto)).
-                         cookie(getCommunityCookie(communityUrl))).andDo(print()).andExpect(status().isBadRequest()).andExpect(jsonPath("$[3].message").value("Value does not look like URL: "));
+                cookie(getCommunityCookie(communityUrl))).andDo(print()).andExpect(status().isBadRequest()).andExpect(jsonPath("$[3].message").value("Value does not look like URL: "));
     }
 
 
@@ -165,7 +165,7 @@ public class StreamzineControllerIT extends AbstractAdminITTest {
         }
         mockMvc
             .perform(post("/streamzine/update").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).headers(getHttpHeaders(true)).content(objectMapper.writeValueAsString(dto)).
-                         cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk());
+                cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk());
         chartDetailRepository.flush();
         mockMvc.perform(get("/streamzine/edit/" + dto.getId()).headers(getHttpHeaders(true)).cookie(getCommunityCookie(communityUrl))).andExpect(status().isOk());
         chartDetailRepository.flush();

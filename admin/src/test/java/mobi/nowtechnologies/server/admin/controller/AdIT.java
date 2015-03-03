@@ -165,12 +165,14 @@ public class AdIT extends AbstractAdminITTest {
         mockMvc.perform(get(requestURI).cookie(getCommunityCookie(communityUrl)).headers(getHttpHeaders(true))).
             andExpect(status().isOk()).
                    andDo(print()).
-                   andExpect(content().string(
-                       "{\"allAdFilterDtos\":[{\"name\":\"J2ME\"},{\"name\":\"ONE_MONTH_PROMO\"},{\"name\":\"PAYMENT_ERROR\"},{\"name\":\"ANDROID\"},{\"name\":\"IOS\"}," +
-                       "{\"name\":\"LAST_TRIAL_DAY\"},{\"name\":\"LIMITED\"},{\"name\":\"BLACKBERRY\"},{\"name\":\"FREE_TRIAL\"},{\"name\":\"LIMITED_AFTER_TRIAL\"}," +
-                       "{\"name\":\"NOT_ACTIVE_PAYMENT_DETAILS_OR_NO_PAYMENT_DETAILS\"}],\"AD_ITEM_DTO\":{\"id\":81,\"actionType\":\"URL\",\"action\":\"http://www.ukr.net\",\"message\":\"Blue Ivy " +
-                       "Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory, making her the " +
-                       "youngest person ever to appear in the Billboard chart!\",\"activated\":true,\"filterDtos\":[{\"name\":\"LAST_TRIAL_DAY\"}],\"file\":null,\"imageFileName\":null,\"position\":1,\"removeImage\":true},\"filesURL\":\"http://c1129449.r49.cf3.rackcdn.com/\"}"));
+                   andExpect(content().string("{\"allAdFilterDtos\":[{\"name\":\"J2ME\"},{\"name\":\"ONE_MONTH_PROMO\"},{\"name\":\"PAYMENT_ERROR\"},{\"name\":\"ANDROID\"},{\"name\":\"IOS\"}," +
+                                              "{\"name\":\"LAST_TRIAL_DAY\"},{\"name\":\"LIMITED\"},{\"name\":\"BLACKBERRY\"},{\"name\":\"FREE_TRIAL\"},{\"name\":\"LIMITED_AFTER_TRIAL\"}," +
+                                              "{\"name\":\"NOT_ACTIVE_PAYMENT_DETAILS_OR_NO_PAYMENT_DETAILS\"}],\"AD_ITEM_DTO\":{\"id\":81,\"actionType\":\"URL\",\"action\":\"http://www.ukr.net\"," +
+                                              "\"message\":\"Blue Ivy " +
+                                              "Carter, new daughter of Beyonce and JayZ, is already making chart history! Daddy Z features cute cries from little Princess B on his new track, Glory," +
+                                              " making her the " +
+                                              "youngest person ever to appear in the Billboard chart!\",\"activated\":true,\"filterDtos\":[{\"name\":\"LAST_TRIAL_DAY\"}],\"file\":null," +
+                                              "\"imageFileName\":null,\"position\":1,\"removeImage\":true},\"filesURL\":\"http://c1129449.r49.cf3.rackcdn.com/\"}"));
 
     }
 

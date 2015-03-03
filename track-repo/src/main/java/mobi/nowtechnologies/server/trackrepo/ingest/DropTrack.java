@@ -34,6 +34,7 @@ public class DropTrack {
     public List<DropTerritory> territories = new ArrayList<DropTerritory>();
     public String productId;
     public ReportingType reportingType = REPORTED_BY_TAGS;
+
     public DropTrack() {
         licensed = true; // by default
     }

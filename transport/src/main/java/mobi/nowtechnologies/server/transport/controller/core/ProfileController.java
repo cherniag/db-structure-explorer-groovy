@@ -94,8 +94,10 @@ public abstract class ProfileController {
                 }
 
                 PROFILE_LOGGER.debug(
-                    "communityFromRequest=[{}]; deviceModelFromRequest=[{}]; deviceTypeFromRequest=[{}]; deviceUIDFromRequest=[{}]; PHONEFromRequest=[{}]; newUserId=[{}]; newUserName=[{}]; newCommunityRewriteUri=[{}]; newMobile=[{}]; newDeviceUID=[{}]; newDeviceModel=[{}]; newDeviceType=[{}]; result=[{}]; executionTimeMillis=[{}]; errorMessage=[{}]",
-                    new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri, newMobile, newDeviceUID, newDeviceModel, newDeviceType, result, executionTimeMillis, errorMessage});
+                    "communityFromRequest=[{}]; deviceModelFromRequest=[{}]; deviceTypeFromRequest=[{}]; deviceUIDFromRequest=[{}]; PHONEFromRequest=[{}]; newUserId=[{}]; newUserName=[{}]; " +
+                    "newCommunityRewriteUri=[{}]; newMobile=[{}]; newDeviceUID=[{}]; newDeviceModel=[{}]; newDeviceType=[{}]; result=[{}]; executionTimeMillis=[{}]; errorMessage=[{}]",
+                    new Object[] {communityFromRequest, deviceModelFromRequest, deviceTypeFromRequest, deviceUIDFromRequest, PHONEFromRequest, newUserId, newUserName, newCommunityRewriteUri,
+                        newMobile, newDeviceUID, newDeviceModel, newDeviceType, result, executionTimeMillis, errorMessage});
             }
         }
         catch (Exception e) {

@@ -54,10 +54,10 @@ public class PaymentSystemServiceIT {
     @Test
     public void commitSagePayPayment_Successful() throws Exception {
         // Preparations for test
-        PaymentSystemResponse response = new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK,
-                                                                                                  "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo=12123123\nAVSCV2=SECURITY CODE " +
-                                                                                                  "MATCH " +
-                                                                                                  "ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId=123123123\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey=123234234\nVPSProtocol=2.23"));
+        PaymentSystemResponse response =
+            new SagePayResponse(PaymentTestUtils.createBasicResponse(HttpServletResponse.SC_OK, "StatusDetail=0000 : The Authorisation was Successful.\nTxAuthNo=12123123\nAVSCV2=SECURITY CODE " +
+                                                                                                "MATCH " +
+                                                                                                "ONLY\n3DSecureStatus=NOTCHECKED\nVPSTxId=123123123\nStatus=OK\nAddressResult=NOTMATCHED\nPostCodeResult=MATCHED\nCV2Result=MATCHED\nSecurityKey=123234234\nVPSProtocol=2.23"));
 
         User user = new User();
         user.setUserName(UUID.randomUUID().toString());

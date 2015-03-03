@@ -25,8 +25,7 @@ public class PromotionDao extends JpaDaoSupport {
     public List<PromoCode> getActivePromoCodePromotion(final int userGroupId) {
         List<PromoCode> promotions = getJpaTemplate().find(
             "select promoCode from  PromoCode promoCode join promoCode.promotion p where p.showPromotion=true and (p.numUsers < p.maxUsers or p.maxUsers=0) and p.isActive=true and p.userGroup=?1 " +
-            "and p.type=?2 and p.startDate<?3 and p.endDate>?3",
-            userGroupId, Promotion.ADD_FREE_WEEKS_PROMOTION, Utils.getEpochSeconds());
+            "and p.type=?2 and p.startDate<?3 and p.endDate>?3", userGroupId, Promotion.ADD_FREE_WEEKS_PROMOTION, Utils.getEpochSeconds());
         return promotions;
     }
 

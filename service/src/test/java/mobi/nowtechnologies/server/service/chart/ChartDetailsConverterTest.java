@@ -77,9 +77,8 @@ public class ChartDetailsConverterTest {
         Community community = getCommunity("o2");
         chartDetailsConverter.setiTunesLinkFormatCutoverTimeMillis(System.currentTimeMillis() + 15000L);
         ChartDetailDto chartDetailDto = chartDetailsConverter.toChartDetailDto(chartDetail, community, "");
-        MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(),
-                                 is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttp%3A%2F%2Fitunes.apple" +
-                                    ".com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26partnerId%3D2003"));
+        MatcherAssert.assertThat(chartDetailDto.getiTunesUrl(), is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttp%3A%2F%2Fitunes.apple" +
+                                                                   ".com%2FGB%2Falbum%2Fmonster%2Fid440880917%3Fi%3D440880925%26uo%3D4%26partnerId%3D2003"));
     }
 
     @Test
@@ -277,9 +276,8 @@ public class ChartDetailsConverterTest {
         assertThat(chartDetailDto.getImageSmallVersion(), Is.is(media.getImageFileSmall().getVersionAsPrimitive()));
         assertThat(chartDetailDto.getDuration(), Is.is(media.getAudioFile().getDuration()));
         assertThat(chartDetailDto.getAmazonUrl(), Is.is("https%3A%2F%2Fm.7digital.com%2FGB%2Freleases%2F1425249%23t15720039%3Fpartner%3D3734"));
-        assertThat(chartDetailDto.getiTunesUrl(), Is.is(
-            "http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttps%3A%2F%2Fitunes.apple" +
-            ".com%2FGB%2Falbum%2Finhaler%2Fid573269843%3Fi%3D573269988%26uo%3D4%26partnerId%3D2003"));
+        assertThat(chartDetailDto.getiTunesUrl(), Is.is("http%3A%2F%2Fclkuk.tradedoubler.com%2Fclick%3Fp%3D23708%26a%3D1997010%26url%3Dhttps%3A%2F%2Fitunes.apple" +
+                                                        ".com%2FGB%2Falbum%2Finhaler%2Fid573269843%3Fi%3D573269988%26uo%3D4%26partnerId%3D2003"));
         assertThat(chartDetailDto.isArtistUrl(), Is.is(media.getAreArtistUrls()));
         assertThat(chartDetailDto.getPreviousPosition(), Is.is(chartDetail.getPrevPosition()));
         assertThat(chartDetailDto.getChangePosition(), Is.is(chartDetail.getChgPosition().getLabel()));

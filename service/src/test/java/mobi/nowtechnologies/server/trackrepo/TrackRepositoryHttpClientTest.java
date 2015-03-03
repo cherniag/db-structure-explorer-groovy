@@ -89,18 +89,23 @@ public class TrackRepositoryHttpClientTest {
             @Override
             public HttpEntity getEntity() {
                 try {
-                    return new StringEntity(
-                        "{\"suid\":\"1374224031997\",\"drops\":[{\"name\":\"manifest.00000000000002472000.txt\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-                        "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release/20111011_0926_13\",\"date\":1374219880000," +
-                        "\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release_3" +
-                        ".4/20130103060213909\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-                        "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/fuga_cdu/5051823094641_20130606112518431\",\"date\":1374219880000," +
-                        "\"tracks\":null,\"selected\":false},{\"name\":\"3000007191631\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-                        "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ioda_cdu/chartsnow_20121016_70734/477929\",\"date\":1374219880000," +
-                        "\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ci_cdu/PIAS/20130321103906984\"," +
-                        "\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-                        "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/manual/020313/020313.csv\",\"date\":1374219880000,\"tracks\":null," +
-                        "\"selected\":false},{\"name\":\"fake.xml\",\"date\":1374224024000,\"tracks\":null,\"selected\":false}]}");
+                    return new StringEntity("{\"suid\":\"1374224031997\",\"drops\":[{\"name\":\"manifest.00000000000002472000.txt\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release/20111011_0926_13\"," +
+                                            "\"date\":1374219880000," +
+                                            "\"tracks\":null,\"selected\":false}," +
+                                            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release_3" +
+                                            ".4/20130103060213909\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/fuga_cdu/5051823094641_20130606112518431\"," +
+                                            "\"date\":1374219880000," +
+                                            "\"tracks\":null,\"selected\":false},{\"name\":\"3000007191631\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ioda_cdu/chartsnow_20121016_70734/477929\"," +
+                                            "\"date\":1374219880000," +
+                                            "\"tracks\":null,\"selected\":false}," +
+                                            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ci_cdu/PIAS/20130321103906984\"," +
+                                            "\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/manual/020313/020313.csv\",\"date\":1374219880000," +
+                                            "\"tracks\":null," +
+                                            "\"selected\":false},{\"name\":\"fake.xml\",\"date\":1374224024000,\"tracks\":null,\"selected\":false}]}");
                 }
                 catch (UnsupportedEncodingException e) {
                     return null;
@@ -144,16 +149,21 @@ public class TrackRepositoryHttpClientTest {
     public void testSelectDrops_Successful() throws Exception {
         TrackRepositoryHttpClientImpl spy = spy(client);
 
-        final String inputJson =
-            "{\"suid\":\"1374224031997\",\"drops\":[{\"name\":\"manifest.00000000000002472000.txt\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release/20111011_0926_13\",\"date\":1374219880000,\"tracks\":null," +
-            "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release_3.4/20130103060213909\"," +
-            "\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/fuga_cdu" +
-            "/5051823094641_20130606112518431\",\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"3000007191631\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ioda_cdu/chartsnow_20121016_70734/477929\",\"date\":1374219880000,\"tracks\":null," +
-            "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ci_cdu/PIAS/20130321103906984\",\"date\":1374219880000," +
-            "\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/manual/020313/020313.csv\"," +
-            "\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"fake.xml\",\"date\":1374224024000,\"tracks\":null,\"selected\":false}]}";
+        final String inputJson = "{\"suid\":\"1374224031997\",\"drops\":[{\"name\":\"manifest.00000000000002472000.txt\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                 "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release/20111011_0926_13\"," +
+                                 "\"date\":1374219880000,\"tracks\":null," +
+                                 "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release_3" +
+                                 ".4/20130103060213909\"," +
+                                 "\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                 "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/fuga_cdu" +
+                                 "/5051823094641_20130606112518431\",\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"3000007191631\",\"date\":1374219880000,\"tracks\":null," +
+                                 "\"selected\":false}," +
+                                 "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ioda_cdu/chartsnow_20121016_70734/477929\"," +
+                                 "\"date\":1374219880000,\"tracks\":null," +
+                                 "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ci_cdu/PIAS/20130321103906984\"," +
+                                 "\"date\":1374219880000," +
+                                 "\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/manual/020313/020313.csv\"," +
+                                 "\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"fake.xml\",\"date\":1374224024000,\"tracks\":null,\"selected\":false}]}";
         Type type = new TypeToken<IngestWizardDataDto>() {}.getType();
         IngestWizardDataDto data = spy.gsonMillis.fromJson(new StringReader(inputJson), type);
         final String outputJson =
@@ -257,16 +267,21 @@ public class TrackRepositoryHttpClientTest {
         TrackRepositoryHttpClientImpl spy = spy(client);
         when(spy.getHttpClient()).thenReturn(httpClient);
 
-        final String inputJson =
-            "{\"suid\":\"1374224031997\",\"drops\":[{\"name\":\"manifest.00000000000002472000.txt\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release/20111011_0926_13\",\"date\":1374219880000,\"tracks\":null," +
-            "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release_3.4/20130103060213909\"," +
-            "\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/fuga_cdu" +
-            "/5051823094641_20130606112518431\",\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"3000007191631\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
-            "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ioda_cdu/chartsnow_20121016_70734/477929\",\"date\":1374219880000,\"tracks\":null," +
-            "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ci_cdu/PIAS/20130321103906984\",\"date\":1374219880000," +
-            "\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/manual/020313/020313.csv\"," +
-            "\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"fake.xml\",\"date\":1374224024000,\"tracks\":null,\"selected\":false}]}";
+        final String inputJson = "{\"suid\":\"1374224031997\",\"drops\":[{\"name\":\"manifest.00000000000002472000.txt\",\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                 "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release/20111011_0926_13\"," +
+                                 "\"date\":1374219880000,\"tracks\":null," +
+                                 "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/warner_cdu/new_release_3" +
+                                 ".4/20130103060213909\"," +
+                                 "\"date\":1374219880000,\"tracks\":null,\"selected\":false}," +
+                                 "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/fuga_cdu" +
+                                 "/5051823094641_20130606112518431\",\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"3000007191631\",\"date\":1374219880000,\"tracks\":null," +
+                                 "\"selected\":false}," +
+                                 "{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ioda_cdu/chartsnow_20121016_70734/477929\"," +
+                                 "\"date\":1374219880000,\"tracks\":null," +
+                                 "\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/ci_cdu/PIAS/20130321103906984\"," +
+                                 "\"date\":1374219880000," +
+                                 "\"tracks\":null,\"selected\":false},{\"name\":\"/home/sanya/WORKSPACE/git/MusicQubed/server/server/track-repo/target/test-classes/media/manual/020313/020313.csv\"," +
+                                 "\"date\":1374219880000,\"tracks\":null,\"selected\":false},{\"name\":\"fake.xml\",\"date\":1374224024000,\"tracks\":null,\"selected\":false}]}";
         Type type = new TypeToken<IngestWizardDataDto>() {}.getType();
         IngestWizardDataDto data = spy.gsonMillis.fromJson(new StringReader(inputJson), type);
 
@@ -800,11 +815,12 @@ public class TrackRepositoryHttpClientTest {
             @Override
             public HttpEntity getEntity() {
                 try {
-                    return new StringEntity(
-                        "{\"total\":10,\"page\":1,\"size\":10,\"list\":[{\"id\":383,\"ingestor\":null,\"isrc\":\"123456789\",\"title\":\"2011\",\"artist\":\"Paul Simon\"," +
-                        "\"ingestionDate\":\"2011-09-28\",\"status\":\"NONE\",\"subTitle\":null,\"productId\":null,\"productCode\":null,\"genre\":\"Pop\",\"copyright\":\"(P) 2010 Paul Simon under " +
-                        "exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true,\"ingestionUpdateDate\":\"2011-11-14\"," +
-                        "\"publishDate\":null,\"files\":null}]}");
+                    return new StringEntity("{\"total\":10,\"page\":1,\"size\":10,\"list\":[{\"id\":383,\"ingestor\":null,\"isrc\":\"123456789\",\"title\":\"2011\",\"artist\":\"Paul Simon\"," +
+                                            "\"ingestionDate\":\"2011-09-28\",\"status\":\"NONE\",\"subTitle\":null,\"productId\":null,\"productCode\":null,\"genre\":\"Pop\",\"copyright\":\"(P) " +
+                                            "2010 Paul Simon under " +
+                                            "exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true," +
+                                            "\"ingestionUpdateDate\":\"2011-11-14\"," +
+                                            "\"publishDate\":null,\"files\":null}]}");
                 }
                 catch (UnsupportedEncodingException e) {
                     return null;
@@ -838,11 +854,12 @@ public class TrackRepositoryHttpClientTest {
             @Override
             public HttpEntity getEntity() {
                 try {
-                    return new StringEntity(
-                        "{\"total\":10,\"page\":1,\"size\":10,\"list\":[{\"id\":383,\"ingestor\":null,\"isrc\":\"123456789\",\"title\":\"2011\",\"artist\":\"Paul Simon\"," +
-                        "\"ingestionDate\":\"2011-09-28\",\"status\":\"NONE\",\"subTitle\":null,\"productId\":null,\"productCode\":null,\"genre\":\"Pop\",\"copyright\":\"(P) 2010 Paul Simon under " +
-                        "exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true,\"ingestionUpdateDate\":\"2011-11-14\"," +
-                        "\"publishDate\":null,\"files\":null}]}");
+                    return new StringEntity("{\"total\":10,\"page\":1,\"size\":10,\"list\":[{\"id\":383,\"ingestor\":null,\"isrc\":\"123456789\",\"title\":\"2011\",\"artist\":\"Paul Simon\"," +
+                                            "\"ingestionDate\":\"2011-09-28\",\"status\":\"NONE\",\"subTitle\":null,\"productId\":null,\"productCode\":null,\"genre\":\"Pop\",\"copyright\":\"(P) " +
+                                            "2010 Paul Simon under " +
+                                            "exclusive license of Sony Music Entertainment\",\"year\":null,\"album\":\"Hearts And Bones\",\"info\":null,\"licensed\":true," +
+                                            "\"ingestionUpdateDate\":\"2011-11-14\"," +
+                                            "\"publishDate\":null,\"files\":null}]}");
                 }
                 catch (UnsupportedEncodingException e) {
                     return null;

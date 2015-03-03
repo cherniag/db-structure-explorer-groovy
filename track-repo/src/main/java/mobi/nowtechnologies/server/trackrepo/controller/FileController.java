@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class FileController extends AbstractCommonController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
-	private static final int DEFAULT_BUFFER_SIZE_BYTES = 10240; // 10KB
+    private static final int DEFAULT_BUFFER_SIZE_BYTES = 10240; // 10KB
 
     private FileService fileService;
 
@@ -65,9 +65,9 @@ public class FileController extends AbstractCommonController {
     public void file(@RequestParam("id") Long id, HttpServletRequest req, HttpServletResponse resp) {
         try {
             AssetFile file = fileService.getFile(id);
-			if (file == null) {
-				return;
-			}
+            if (file == null) {
+                return;
+            }
             File respFile = new File(file.getPath());
 
             String contentType = file.getPath().endsWith("wav") ?
@@ -111,9 +111,9 @@ public class FileController extends AbstractCommonController {
 
     private long[] parseRange(HttpServletRequest request, long fileLength) {
         String rangeHeader = request.getHeader("range");
-		if (StringUtils.isBlank(rangeHeader)) {
-			return new long[] {0, fileLength - 1};
-		}
+        if (StringUtils.isBlank(rangeHeader)) {
+            return new long[] {0, fileLength - 1};
+        }
 
         String rangeValue = rangeHeader.trim().substring("bytes=".length());
         long start, end;
@@ -128,9 +128,9 @@ public class FileController extends AbstractCommonController {
                   Long.parseLong(range[1]) :
                   fileLength - 1;
         }
-		if (end > fileLength - 1) {
-			end = fileLength - 1;
-		}
+        if (end > fileLength - 1) {
+            end = fileLength - 1;
+        }
 
         return new long[] {start, end};
     }

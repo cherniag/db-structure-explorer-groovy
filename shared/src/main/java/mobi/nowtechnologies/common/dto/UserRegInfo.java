@@ -480,6 +480,7 @@ public class UserRegInfo {
         public static final String UKE = "UKE";
         public static final String JCB = "JCB";
         private static final Hashtable SORTED_KEY_DISPLAY_VALUES = new Hashtable();
+
         static {
             SORTED_KEY_DISPLAY_VALUES.put(new CardType(MC, 0), "MasterCard");
             SORTED_KEY_DISPLAY_VALUES.put(new CardType(DELTA, 1), "Visa Debit");
@@ -488,6 +489,7 @@ public class UserRegInfo {
             SORTED_KEY_DISPLAY_VALUES.put(new CardType(MAESTRO, 4), "Maestro");
             SORTED_KEY_DISPLAY_VALUES.put(new CardType(JCB, 5), "JCB");
         }
+
         private String constantName;
         private int order;
 

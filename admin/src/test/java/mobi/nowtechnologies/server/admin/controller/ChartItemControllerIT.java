@@ -108,6 +108,7 @@ public class ChartItemControllerIT extends AbstractAdminITTest {
         perform.andExpect(content().string(
             "{\"duplicatedMediaAcrossNearestChartsDtos\":[{\"chartId\":19,\"chartName\":\"chart 1\",\"publishTimeMillis\":86400000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":19," +
             "\"chartName\":\"chart 1\",\"publishTimeMillis\":432000000,\"position\":1,\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":0,\"position\":1," +
-            "\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":518400000,\"position\":1,\"trackId\":\"isrc_666\"}],\"chartFilesURL\":\"http://c1129449.r49.cf3.rackcdn.com/\"}"));
+            "\"trackId\":\"isrc_666\"},{\"chartId\":20,\"chartName\":\"chart 2\",\"publishTimeMillis\":518400000,\"position\":1,\"trackId\":\"isrc_666\"}],\"chartFilesURL\":\"http://c1129449.r49" +
+            ".cf3.rackcdn.com/\"}"));
     }
 }

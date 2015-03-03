@@ -49,7 +49,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
                                                                                  .param("TYPE", fileType).header("Content-Type", "text/xml").
-                                header("Content-Length", "0")).andExpect(status().isOk()).
+                header("Content-Length", "0")).andExpect(status().isOk()).
                    andExpect(content().contentType(MediaType.TEXT_PLAIN)).
                    andExpect(content().string("http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId=2599461121001&pubId=2368678501001"));
     }
@@ -69,7 +69,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
                                                                                  .param("TYPE", fileType).header("Content-Type", "text/xml").
-                                header("Content-Length", "0")).andExpect(status().isOk()).
+                header("Content-Length", "0")).andExpect(status().isOk()).
                    andExpect(content().contentType(MediaType.TEXT_PLAIN)).
                    andExpect(content().string("http://c.brightcove.com/services/mobile/streaming/index/master.m3u8?videoId=2599461121001&pubId=2368678501001"));
     }
@@ -96,7 +96,7 @@ public class GetFileControllerTestIT extends AbstractControllerTestIT {
 
         mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/GET_FILE").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("ID", mediaId)
                                                                                  .param("TYPE", fileType).header("Content-Type", "text/xml").
-                                header("Content-Length", "0")).andExpect(status().isOk()).
+                header("Content-Length", "0")).andExpect(status().isOk()).
                    andExpect(content().string("http://brightcove.vo.llnwd.net/e1/uds/pd/2368678501001/2368678501001_2599463153001_Signs.mp4"));
     }
 
