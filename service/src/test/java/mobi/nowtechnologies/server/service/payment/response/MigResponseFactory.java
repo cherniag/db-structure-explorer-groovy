@@ -6,19 +6,18 @@ import mobi.nowtechnologies.server.shared.service.BasicResponse;
 /**
  * @author Titov Mykhaylo (titov)
  */
-public class MigResponseFactory
- {
+public class MigResponseFactory {
 
-	public static MigResponse createFailMigResponse() {
-		return MigResponse.failMigResponse("");
-	}
+    public static MigResponse createFailMigResponse() {
+        return MigResponse.failMigResponse("");
+    }
 
-	public static MigResponse createSuccessfulMigResponse() {
-		return MigResponse.successfulMigResponse();
-	}
+    public static MigResponse createSuccessfulMigResponse() {
+        return MigResponse.successfulMigResponse();
+    }
 
 
-	public static MigResponse createMigResponse2() {
-		return new MigResponse(new BasicResponse());
-	}
+    public static MigResponse createMigResponse2() {
+        return new MigResponse(new BasicResponse());
+    }
 }

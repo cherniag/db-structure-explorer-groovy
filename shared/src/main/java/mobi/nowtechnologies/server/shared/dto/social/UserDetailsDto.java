@@ -1,13 +1,14 @@
 package mobi.nowtechnologies.server.shared.dto.social;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.shared.enums.Gender;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Created by oar on 2/11/14.
@@ -26,6 +27,8 @@ public abstract class UserDetailsDto {
     private String location;
 
     private String userName;
+    private Gender gender;
+    private String birthDay;
 
     public String getUserName() {
         return userName;
@@ -58,12 +61,6 @@ public abstract class UserDetailsDto {
     public void setBirthDay(String birthDay) {
         this.birthDay = birthDay;
     }
-
-    private Gender gender;
-
-    private String birthDay;
-
-
 
     public String getEmail() {
         return email;

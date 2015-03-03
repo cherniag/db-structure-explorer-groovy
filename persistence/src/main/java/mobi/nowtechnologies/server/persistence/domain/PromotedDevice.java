@@ -8,5 +8,4 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "promoted_devices")
-public class PromotedDevice extends Device {
-}
+public class PromotedDevice extends Device {}

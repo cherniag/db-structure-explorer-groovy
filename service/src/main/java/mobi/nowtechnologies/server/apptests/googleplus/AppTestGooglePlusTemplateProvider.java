@@ -1,16 +1,17 @@
 package mobi.nowtechnologies.server.apptests.googleplus;
 
 import mobi.nowtechnologies.server.service.social.googleplus.GooglePlusTemplateProvider;
-import org.springframework.social.MissingAuthorizationException;
+
+import javax.annotation.Resource;
+
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.social.google.api.plus.PlusOperations;
 import org.springframework.social.google.api.plus.impl.PlusTemplate;
 import org.springframework.web.client.RestClientException;
 
-import javax.annotation.Resource;
-
 public class AppTestGooglePlusTemplateProvider implements GooglePlusTemplateProvider {
+
     @Resource
     private AppTestGooglePlusTokenService appTestGooglePlusTokenService;
 

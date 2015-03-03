@@ -1,21 +1,23 @@
 package mobi.nowtechnologies.server.service.itunes.impl;
 
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import mobi.nowtechnologies.server.service.itunes.ITunesResult;
-import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
 import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.util.Assert;
+import mobi.nowtechnologies.server.service.itunes.ITunesResponseParserException;
+import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 
 import javax.annotation.PostConstruct;
 
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import org.springframework.util.Assert;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 1/6/2015
+ * Author: Gennadii Cherniaiev Date: 1/6/2015
  */
 public class JPathReceiptParser implements ITunesResponseParser {
+
     private JsonPath statusPath;
     private JsonPath productIdPath;
     private JsonPath originalTransactionIdPath;
@@ -37,7 +39,8 @@ public class JPathReceiptParser implements ITunesResponseParser {
             Long purchaseTime = safeReadTime(purchaseTimestampPath, response);
 
             return new ITunesResult(result, productId, originalTransactionId, expireTime, purchaseTime);
-        } catch (InvalidPathException e) {
+        }
+        catch (InvalidPathException e) {
             throw new ITunesResponseParserException(e);
         }
     }
@@ -71,13 +74,10 @@ public class JPathReceiptParser implements ITunesResponseParser {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("statusPath", toString(statusPath))
-                .append("productIdPath", toString(productIdPath))
-                .append("originalTransactionIdPath", toString(originalTransactionIdPath))
-                .append("expireTimestampPath", toString(expireTimestampPath))
-                .append("purchaseTimestampPath", toString(purchaseTimestampPath))
-                .toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("statusPath", toString(statusPath)).append("productIdPath", toString(productIdPath))
+                                                                          .append("originalTransactionIdPath", toString(originalTransactionIdPath))
+                                                                          .append("expireTimestampPath", toString(expireTimestampPath)).append("purchaseTimestampPath", toString(purchaseTimestampPath))
+                                                                          .toString();
     }
 
     @PostConstruct
@@ -92,6 +92,8 @@ public class JPathReceiptParser implements ITunesResponseParser {
     }
 
     private String toString(JsonPath path) {
-        return (path == null) ? "null" : path.getPath();
+        return (path == null) ?
+               "null" :
+               path.getPath();
     }
 }

@@ -2,15 +2,17 @@ package mobi.nowtechnologies.server.dto.asm;
 
 import mobi.nowtechnologies.server.dto.CommunityDto;
 import mobi.nowtechnologies.server.persistence.domain.Community;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.List;
-
 import static java.util.Arrays.asList;
+
+import org.junit.*;
+import org.junit.runner.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class CommunityDtoAsmTest {

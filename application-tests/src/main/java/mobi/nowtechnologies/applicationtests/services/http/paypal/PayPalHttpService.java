@@ -1,6 +1,11 @@
 package mobi.nowtechnologies.applicationtests.services.http.paypal;
 
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -8,10 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class PayPalHttpService extends AbstractHttpService {
@@ -21,7 +22,7 @@ public class PayPalHttpService extends AbstractHttpService {
         parameters.add("community", communityRewriteUrl);
         parameters.add("_REMEMBER_ME", rememberMeToken);
         parameters.add("token", payPalToken);
-        parameters.add("paymentPolicyId", "" +paymentPolicyId);
+        parameters.add("paymentPolicyId", "" + paymentPolicyId);
         parameters.add("result", payPalSubscriptionResult);
 
         URI uri = getUri(parameters);
@@ -33,10 +34,7 @@ public class PayPalHttpService extends AbstractHttpService {
     }
 
     private URI getUri(MultiValueMap<String, String> parameters) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(environmentUrl)
-                .pathSegment("web")
-                .pathSegment("payments")
-                .pathSegment("paypal.html");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(environmentUrl).pathSegment("web").pathSegment("payments").pathSegment("paypal.html");
 
         for (Map.Entry<String, List<String>> parameter : parameters.entrySet()) {
             builder.queryParam(parameter.getKey(), parameter.getValue().toArray());

@@ -6,23 +6,24 @@ import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.MockitoAnnotations;
+
 import org.springframework.beans.ConversionNotSupportedException;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.*;
+import org.junit.rules.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class UserAgentRequestEditorTest {
-    CommunityRepository communityRepository = mock(CommunityRepository.class);
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+    CommunityRepository communityRepository = mock(CommunityRepository.class);
     UserAgentRequestEditor editor = new UserAgentRequestEditor(communityRepository) {
         @Override
         DeviceType restoreDeviceType(String deviceTypeString) {
-            if("android".equalsIgnoreCase(deviceTypeString) || "ios".equalsIgnoreCase(deviceTypeString)) {
+            if ("android".equalsIgnoreCase(deviceTypeString) || "ios".equalsIgnoreCase(deviceTypeString)) {
                 DeviceType deviceType = new DeviceType();
                 deviceType.setName(deviceTypeString);
                 return deviceType;
@@ -31,10 +32,6 @@ public class UserAgentRequestEditorTest {
             return null;
         }
     };
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
 
     @Before
     public void setUp() throws Exception {

@@ -1,19 +1,31 @@
 package mobi.nowtechnologies.server.shared;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import static mobi.nowtechnologies.server.shared.Utils.compareVersions;
+import static mobi.nowtechnologies.server.shared.Utils.createStoredToken;
+import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+import static mobi.nowtechnologies.server.shared.Utils.getMajorVersionNumber;
+import static mobi.nowtechnologies.server.shared.Utils.getMonthlyNextSubPayment;
+import static mobi.nowtechnologies.server.shared.Utils.getNewNextSubPayment;
+import static mobi.nowtechnologies.server.shared.Utils.getOTACode;
+import static mobi.nowtechnologies.server.shared.Utils.getTimeOfMovingToLimitedStatus;
+import static mobi.nowtechnologies.server.shared.Utils.isMajorVersionNumberLessThan;
+import static mobi.nowtechnologies.server.shared.Utils.md5;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
-import static mobi.nowtechnologies.server.shared.Utils.*;
-import static org.hamcrest.CoreMatchers.is;
+import org.junit.*;
+import org.junit.runner.*;
 import static org.junit.Assert.*;
+
+import static org.hamcrest.CoreMatchers.is;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Titov Mykhaylo (titov)

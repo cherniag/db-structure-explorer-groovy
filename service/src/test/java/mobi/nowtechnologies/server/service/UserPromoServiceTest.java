@@ -5,13 +5,12 @@ import mobi.nowtechnologies.server.persistence.domain.UserFactory;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ValidationException;
 import mobi.nowtechnologies.server.service.social.core.UserPromoService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -21,6 +20,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserPromoServiceTest {
+
     @InjectMocks
     private UserPromoService userPromoService;
 

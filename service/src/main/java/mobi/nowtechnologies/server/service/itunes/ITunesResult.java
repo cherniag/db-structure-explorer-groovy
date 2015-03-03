@@ -1,14 +1,13 @@
 package mobi.nowtechnologies.server.service.itunes;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 1/6/2015
+ * Author: Gennadii Cherniaiev Date: 1/6/2015
  */
 public class ITunesResult {
+
     private int result;
     private String productId;
     private String originalTransactionId;
@@ -27,7 +26,7 @@ public class ITunesResult {
         this.purchaseTime = purchaseTime;
     }
 
-    public boolean isSuccessful(){
+    public boolean isSuccessful() {
         return result == 0;
     }
 
@@ -48,12 +47,7 @@ public class ITunesResult {
     }
 
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-                .append("result", result)
-                .append("productId", productId)
-                .append("originalTransactionId", originalTransactionId)
-                .append("expireTime", expireTime)
-                .append("purchaseTime", purchaseTime)
-                .toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("result", result).append("productId", productId).append("originalTransactionId", originalTransactionId)
+                                                            .append("expireTime", expireTime).append("purchaseTime", purchaseTime).toString();
     }
 }

@@ -1,21 +1,29 @@
 package mobi.nowtechnologies.server.persistence.domain.referral;
 
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import org.springframework.util.Assert;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 11/21/2014
+ * Author: Gennadii Cherniaiev Date: 11/21/2014
  */
 @Entity
 @Table(name = "user_referrals",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "contact"})
-)
+       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "contact"}))
 public class Referral {
 
     @Id
@@ -91,14 +99,7 @@ public class Referral {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("id", id)
-                .append("userId", userId)
-                .append("communityId", communityId)
-                .append("contact", contact)
-                .append("providerType", providerType)
-                .append("state", state)
-                .append("createTimestamp", createTimestamp)
-                .toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", id).append("userId", userId).append("communityId", communityId).append("contact", contact)
+                                                                          .append("providerType", providerType).append("state", state).append("createTimestamp", createTimestamp).toString();
     }
 }

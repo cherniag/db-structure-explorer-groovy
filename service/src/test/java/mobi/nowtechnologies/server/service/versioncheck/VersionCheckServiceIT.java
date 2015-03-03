@@ -10,22 +10,25 @@ import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckS
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionMessage;
 import mobi.nowtechnologies.server.persistence.repository.VersionCheckRepository;
 import mobi.nowtechnologies.server.persistence.repository.VersionMessageRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import javax.annotation.Resource;
+
+import java.util.Set;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.util.Set;
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 
 /**
@@ -37,23 +40,18 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @Transactional
 public class VersionCheckServiceIT {
 
+    private static final String O2_TRACKS_APPLICATION_NAME = "O2_TRACKS";
+    private static final String VF_NZ_TRACKS_APPLICATION_NAME = "VF_NZ_TRACKS";
+    private static final String O2_TRACKS_APPLICATION_NAME_WQ = "O2_TRACKS_WQ";
+    private static final String HL_UK_APPLICATION_NAME = "HL_UK_TRACKS";
     @Resource
     private VersionCheckService versionCheckService;
     @Resource
     private VersionMessageRepository versionMessageRepository;
     @Resource
     private VersionCheckRepository versionCheckRepository;
-
     private Community community;
-
     private DeviceType deviceType;
-
-    private static final String O2_TRACKS_APPLICATION_NAME = "O2_TRACKS";
-    private static final String VF_NZ_TRACKS_APPLICATION_NAME = "VF_NZ_TRACKS";
-    private static final String O2_TRACKS_APPLICATION_NAME_WQ = "O2_TRACKS_WQ";
-
-    private static final String HL_UK_APPLICATION_NAME = "HL_UK_TRACKS";
-
 
     @Before
     public void prepareTest() {
@@ -63,62 +61,27 @@ public class VersionCheckServiceIT {
         VersionMessage versionMessage4 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_REJECTED"));
         VersionMessage versionMessage5 = versionMessageRepository.saveAndFlush(new VersionMessage("VERSION_MIGRATED", "http://play.google.com/new_community"));
 
-        versionCheckRepository.saveAndFlush(new VersionCheck(
-                DeviceTypeDao.getAndroidDeviceType(),
-                CommunityDao.getCommunity("o2"),
-                versionMessage1,
-                VersionCheckStatus.REVOKED,
-                O2_TRACKS_APPLICATION_NAME,
-                ClientVersion.from("1.5.0"),
-                "image_revoked_1.5.0.jpg"));
-        versionCheckRepository.saveAndFlush(new VersionCheck(
-                DeviceTypeDao.getAndroidDeviceType(),
-                CommunityDao.getCommunity("o2"),
-                versionMessage4,
-                VersionCheckStatus.REVOKED,
-                O2_TRACKS_APPLICATION_NAME,
-                ClientVersion.from("1.5.5"),
-                null));
-        versionCheckRepository.saveAndFlush(new VersionCheck(
-                DeviceTypeDao.getAndroidDeviceType(),
-                CommunityDao.getCommunity("o2"),
-                versionMessage4,
-                VersionCheckStatus.MIGRATED,
-                O2_TRACKS_APPLICATION_NAME,
-                ClientVersion.from("1.5.9"),
-                null));
-        versionCheckRepository.saveAndFlush(new VersionCheck(
-                DeviceTypeDao.getAndroidDeviceType(),
-                CommunityDao.getCommunity("o2"),
-                versionMessage1,
-                VersionCheckStatus.REVOKED,
-                O2_TRACKS_APPLICATION_NAME_WQ,
-                ClientVersion.from("1.5.0-RELEASE"),
-                "image_revoked_1.5.0-RELEASE.jpg"));
-        versionCheckRepository.saveAndFlush(new VersionCheck(
-                DeviceTypeDao.getAndroidDeviceType(),
-                CommunityDao.getCommunity("o2"),
-                versionMessage2,
-                VersionCheckStatus.FORCED_UPDATE,
-                O2_TRACKS_APPLICATION_NAME,
-                ClientVersion.from("1.6.0"),
-                "image_forced_1.6.0.jpg"));
-        versionCheckRepository.saveAndFlush(new VersionCheck(
-                DeviceTypeDao.getAndroidDeviceType(),
-                CommunityDao.getCommunity("o2"),
-                versionMessage3,
-                VersionCheckStatus.SUGGESTED_UPDATE,
-                O2_TRACKS_APPLICATION_NAME,
-                ClientVersion.from("1.7.0"),
-                "image_suggested_1.7.0.jpg"));
-        versionCheckRepository.saveAndFlush(new VersionCheck(
-                DeviceTypeDao.getAndroidDeviceType(),
-                CommunityDao.getCommunity("vf_nz"),
-                versionMessage5,
-                VersionCheckStatus.MIGRATED,
-                VF_NZ_TRACKS_APPLICATION_NAME,
-                ClientVersion.from("2.0.0"),
-                "image_migrated_2.0.0.jpg"));
+        versionCheckRepository.saveAndFlush(
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage1, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME,
+                             ClientVersion.from("1.5.0"), "image_revoked_1.5.0.jpg"));
+        versionCheckRepository.saveAndFlush(
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage4, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME,
+                             ClientVersion.from("1.5.5"), null));
+        versionCheckRepository.saveAndFlush(
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage4, VersionCheckStatus.MIGRATED, O2_TRACKS_APPLICATION_NAME,
+                             ClientVersion.from("1.5.9"), null));
+        versionCheckRepository.saveAndFlush(
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage1, VersionCheckStatus.REVOKED, O2_TRACKS_APPLICATION_NAME_WQ,
+                             ClientVersion.from("1.5.0-RELEASE"), "image_revoked_1.5.0-RELEASE.jpg"));
+        versionCheckRepository.saveAndFlush(
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage2, VersionCheckStatus.FORCED_UPDATE, O2_TRACKS_APPLICATION_NAME,
+                             ClientVersion.from("1.6.0"), "image_forced_1.6.0.jpg"));
+        versionCheckRepository.saveAndFlush(
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("o2"), versionMessage3, VersionCheckStatus.SUGGESTED_UPDATE, O2_TRACKS_APPLICATION_NAME,
+                             ClientVersion.from("1.7.0"), "image_suggested_1.7.0.jpg"));
+        versionCheckRepository.saveAndFlush(
+            new VersionCheck(DeviceTypeDao.getAndroidDeviceType(), CommunityDao.getCommunity("vf_nz"), versionMessage5, VersionCheckStatus.MIGRATED, VF_NZ_TRACKS_APPLICATION_NAME,
+                             ClientVersion.from("2.0.0"), "image_migrated_2.0.0.jpg"));
     }
 
     @Test
@@ -144,7 +107,8 @@ public class VersionCheckServiceIT {
     public void testVersionForO2CommunityWhereRangesArePresentForQualifier() {
         community = CommunityDao.getCommunity("o2");
         deviceType = DeviceTypeDao.getAndroidDeviceType();
-        checkVersion("RELEASE", 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME_WQ, "image_revoked_1.5.0-RELEASE.jpg", false);
+        checkVersion("RELEASE", 1, 5, 0, VersionCheckStatus.REVOKED, "VERSION_REJECTED", "http://play.google.com/new_community_app", O2_TRACKS_APPLICATION_NAME_WQ, "image_revoked_1.5.0-RELEASE.jpg",
+                     false);
     }
 
 
@@ -169,16 +133,20 @@ public class VersionCheckServiceIT {
         checkVersion(null, 2, 0, 0, VersionCheckStatus.CURRENT, null, null, VF_NZ_TRACKS_APPLICATION_NAME, null, false);
     }
 
-    private void checkVersion(String qualifier, int major, int minor, int revision, VersionCheckStatus status, String messageKey, String url, String applicationName, String imageFileName, boolean canHaveMigratedStatus){
-        Set<VersionCheckStatus> includedStatuses = canHaveMigratedStatus ? VersionCheckStatus.getAllStatuses() : VersionCheckStatus.getAllStatusesWithoutMigrated();
+    private void checkVersion(String qualifier, int major, int minor, int revision, VersionCheckStatus status, String messageKey, String url, String applicationName, String imageFileName,
+                              boolean canHaveMigratedStatus) {
+        Set<VersionCheckStatus> includedStatuses = canHaveMigratedStatus ?
+                                                   VersionCheckStatus.getAllStatuses() :
+                                                   VersionCheckStatus.getAllStatusesWithoutMigrated();
         VersionCheckResponse response = versionCheckService.check(buildRequest(qualifier, major, minor, revision, applicationName), includedStatuses);
         assertEquals(status, response.getStatus());
         assertEquals(messageKey, response.getMessageKey());
         assertEquals(imageFileName, response.getImageFileName());
 
-        if(StringUtils.isEmpty(url)){
+        if (StringUtils.isEmpty(url)) {
             assertTrue(StringUtils.isEmpty(response.getUri()));
-        }else{
+        }
+        else {
             assertEquals(url, response.getUri());
         }
     }
@@ -188,7 +156,7 @@ public class VersionCheckServiceIT {
         when(clientVersion.major()).thenReturn(major);
         when(clientVersion.minor()).thenReturn(minor);
         when(clientVersion.revision()).thenReturn(revision);
-        if(qualifier != null) {
+        if (qualifier != null) {
             when(clientVersion.qualifier()).thenReturn(qualifier);
         }
 

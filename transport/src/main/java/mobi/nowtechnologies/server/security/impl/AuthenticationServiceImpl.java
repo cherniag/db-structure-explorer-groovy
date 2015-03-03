@@ -28,10 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService<HttpServ
 
     @Override
     public Object authenticate(HttpServletRequest request) throws Exception {
-        return userService.authenticate(pathVariableResolver.resolveCommunityUri(request),
-                                        request.getParameter(AuthenticatedUser.USER_NAME),
-                                        request.getParameter(AuthenticatedUser.USER_TOKEN),
-                                        request.getParameter(AuthenticatedUser.TIMESTAMP),
-                                        request.getParameter(AuthenticatedUser.DEVICE_UID));
+        return userService.authenticate(pathVariableResolver.resolveCommunityUri(request), request.getParameter(AuthenticatedUser.USER_NAME), request.getParameter(AuthenticatedUser.USER_TOKEN),
+                                        request.getParameter(AuthenticatedUser.TIMESTAMP), request.getParameter(AuthenticatedUser.DEVICE_UID));
     }
 }

@@ -1,13 +1,12 @@
 package mobi.nowtechnologies.server.dto.streamzine.error;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 
+import org.junit.*;
+import org.mockito.*;
+
 public class ErrorDtoAsmTest {
+
     @Mock
     MessageSource messageSource;
 

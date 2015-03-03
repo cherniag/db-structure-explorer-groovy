@@ -2,11 +2,10 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.badge;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import org.junit.Test;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class BadgeMappingTest {
 

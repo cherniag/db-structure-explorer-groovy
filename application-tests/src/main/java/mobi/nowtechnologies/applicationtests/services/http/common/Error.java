@@ -5,6 +5,7 @@ package mobi.nowtechnologies.applicationtests.services.http.common;
  * @since 8/21/2014.
  */
 public class Error {
+
     private String displayMessage;
     private String message;
     private String errorCode;
@@ -36,9 +37,9 @@ public class Error {
     @Override
     public String toString() {
         return "Error{" +
-                "displayMessage='" + displayMessage + '\'' +
-                ", message='" + message + '\'' +
-                ", errorCode='" + errorCode + '\'' +
-                '}';
+               "displayMessage='" + displayMessage + '\'' +
+               ", message='" + message + '\'' +
+               ", errorCode='" + errorCode + '\'' +
+               '}';
     }
 }

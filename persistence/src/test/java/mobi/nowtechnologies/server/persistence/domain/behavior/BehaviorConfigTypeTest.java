@@ -1,8 +1,7 @@
 package mobi.nowtechnologies.server.persistence.domain.behavior;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class BehaviorConfigTypeTest {
 

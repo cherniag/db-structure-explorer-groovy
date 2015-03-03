@@ -1,22 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
-import mobi.nowtechnologies.server.shared.Utils;
-import org.joda.time.DateTime;
-import org.junit.Test;
-import org.powermock.api.mockito.PowerMockito;
-
-import java.util.Calendar;
-import java.util.TimeZone;
-
-import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-import static mobi.nowtechnologies.server.shared.Utils.getMonthlyNextSubPayment;
 import static mobi.nowtechnologies.server.shared.Utils.millisToIntSeconds;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
+
+import org.joda.time.DateTime;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 // @author Titov Mykhaylo (titov) on 22.10.2014.
 public class PeriodIT {

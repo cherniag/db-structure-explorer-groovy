@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "response")
 public class StandardResponse {
+
     private Error errorMessage;
     private Response response;
     private UserInResponse user;
@@ -26,7 +27,9 @@ public class StandardResponse {
 
     public UserInResponse getUser() {
         boolean xmlCase = user != null;
-        return xmlCase ? user : response.getData().get(0).getUser() ;
+        return xmlCase ?
+               user :
+               response.getData().get(0).getUser();
     }
 
     public void setUser(User user) {
@@ -34,7 +37,9 @@ public class StandardResponse {
     }
 
     public Error getErrorMessage() {
-        return errorMessage != null ? errorMessage : response.getData().get(0).getErrorMessage();
+        return errorMessage != null ?
+               errorMessage :
+               response.getData().get(0).getErrorMessage();
     }
 
     public void setErrorMessage(Error errorMessage) {
@@ -44,9 +49,9 @@ public class StandardResponse {
     @Override
     public String toString() {
         return "GooglePlusResponse{" +
-                "errorMessage=" + errorMessage +
-                ", response=" + response +
-                ", user=" + user +
-                '}';
+               "errorMessage=" + errorMessage +
+               ", response=" + response +
+               ", user=" + user +
+               '}';
     }
 }

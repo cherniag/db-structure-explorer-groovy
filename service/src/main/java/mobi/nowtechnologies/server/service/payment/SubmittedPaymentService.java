@@ -8,13 +8,12 @@ import java.util.List;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public interface SubmittedPaymentService {
-	
-	List<SubmittedPayment> findByUserIdAndPaymentStatus(List<Integer> userIds, List<PaymentDetailsStatus> paymentDetailsStatuses);
-	
-	SubmittedPayment save(SubmittedPayment submittedPayment);
 
-	SubmittedPayment getLatest(User user);
+    List<SubmittedPayment> findByUserIdAndPaymentStatus(List<Integer> userIds, List<PaymentDetailsStatus> paymentDetailsStatuses);
+
+    SubmittedPayment save(SubmittedPayment submittedPayment);
+
+    SubmittedPayment getLatest(User user);
 }

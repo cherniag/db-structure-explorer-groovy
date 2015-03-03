@@ -11,6 +11,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
+
     @Column(name = "link_type")
     @Enumerated(EnumType.STRING)
     private LinkLocationType linkType;
@@ -24,10 +25,6 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
     @Column(name = "opener")
     @Enumerated(EnumType.STRING)
     private Opener opener;
-
-    public Opener getOpener() {
-        return opener;
-    }
 
     protected InformationDeeplinkInfo() {
     }
@@ -44,6 +41,11 @@ public abstract class InformationDeeplinkInfo extends DeeplinkInfo {
         this.url = url;
         this.opener = opener;
     }
+
+    public Opener getOpener() {
+        return opener;
+    }
+
     @Override
     protected DeeplinkInfo provideInstance() {
         InformationDeeplinkInfo copy = getInstance();

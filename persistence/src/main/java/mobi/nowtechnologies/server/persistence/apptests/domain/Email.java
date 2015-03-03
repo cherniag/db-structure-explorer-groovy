@@ -1,13 +1,19 @@
 package mobi.nowtechnologies.server.persistence.apptests.domain;
 
-import com.google.common.base.Joiner;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
 import java.util.Date;
+
+import com.google.common.base.Joiner;
 
 @Entity
 @Table(name = "fat_email")
 public class Email {
+
     @Id
     @GeneratedValue
     private long id;
@@ -69,13 +75,13 @@ public class Email {
     @Override
     public String toString() {
         return "Email{" +
-                "id=" + id +
-                ", from='" + from + '\'' +
-                ", tos='" + tos + '\'' +
-                ", subject='" + subject + '\'' +
-                ", body='" + body + '\'' +
-                ", date=" + date +
-                ", model='" + model + '\'' +
-                '}';
+               "id=" + id +
+               ", from='" + from + '\'' +
+               ", tos='" + tos + '\'' +
+               ", subject='" + subject + '\'' +
+               ", body='" + body + '\'' +
+               ", date=" + date +
+               ", model='" + model + '\'' +
+               '}';
     }
 }

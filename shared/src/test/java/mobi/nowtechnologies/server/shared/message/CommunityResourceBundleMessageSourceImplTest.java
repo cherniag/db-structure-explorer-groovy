@@ -1,35 +1,42 @@
 package mobi.nowtechnologies.server.shared.message;
 
+import java.util.Locale;
+import static java.util.Locale.ENGLISH;
+
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.properties.PropertyValueEncryptionUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
-import java.util.Locale;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.Mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.*;
 
-import static java.util.Locale.ENGLISH;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.*;
+
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Locale.class, CommunityResourceBundleMessageSourceImpl.class, PropertyValueEncryptionUtils.class})
 public class CommunityResourceBundleMessageSourceImplTest {
 
-    @Mock ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
-    @Mock StringEncryptor stringEncryptor;
+    @Mock
+    ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
+    @Mock
+    StringEncryptor stringEncryptor;
 
-    @InjectMocks CommunityResourceBundleMessageSourceImpl communityResourceBundleMessageSourceSpy;
+    @InjectMocks
+    CommunityResourceBundleMessageSourceImpl communityResourceBundleMessageSourceSpy;
 
     @Before
     public void setUp() {

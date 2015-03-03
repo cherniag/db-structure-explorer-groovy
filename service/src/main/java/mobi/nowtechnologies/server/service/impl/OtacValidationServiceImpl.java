@@ -5,19 +5,20 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.OtacValidationService;
 import mobi.nowtechnologies.server.service.impl.details.ProviderDetailsExtractor;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.context.ApplicationContext;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
- * User: Titov Mykhaylo (titov)
- * 27.09.13 14:42
+ * User: Titov Mykhaylo (titov) 27.09.13 14:42
  */
 public class OtacValidationServiceImpl implements OtacValidationService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OtacValidationServiceImpl.class);
 
     private static final String PROVIDER_DETAILS_EXTRACTOR_BEAN_NAME = "providerDetailsExtractor.beanName";
@@ -35,7 +36,8 @@ public class OtacValidationServiceImpl implements OtacValidationService {
         ProviderDetailsExtractor detailsExtractor = resolveDetailsExtractorForCommunity(community);
         if (detailsExtractor != null) {
             return detailsExtractor.getUserDetails(otac, phoneNumber, community);
-        } else {
+        }
+        else {
             throw new UnsupportedOperationException("Details extractor is not specified for community [" + community + "]");
         }
     }

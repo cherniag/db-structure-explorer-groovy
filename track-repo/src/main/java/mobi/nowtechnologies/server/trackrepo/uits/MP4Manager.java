@@ -1,29 +1,28 @@
 package mobi.nowtechnologies.server.trackrepo.uits;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class MP4Manager implements IMP4Manager {
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+public class MP4Manager implements IMP4Manager {
 
     private static final String UITS_UUID_STRING = "99454E27-963A-4B56-8E76-1DB68C899CD4";
     private static final int UUID_SIZE = 16;
-
-    private MP4_SUBTYPES recognizedSubTypes[] = {
-            new MP4_SUBTYPES("qt  ", "Apple QuickTime (.MOV/QT) File"),
-            new MP4_SUBTYPES("M4A ", "Apple iTunes AAC-LC (.M4A) Audio File"),
-            new MP4_SUBTYPES("M4B ", "Apple iTunes AAC-LC (.M4B) Audio Book File"),
-            new MP4_SUBTYPES("M4V ", "Apple iTunes Video (.M4V) Video File"),
-            new MP4_SUBTYPES("M4VP", "Apple iPhone (.M4V) File"),
-            new MP4_SUBTYPES("mp42", "MP4 v2 [ISO 14496-14]")
-    };
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private MP4_SUBTYPES recognizedSubTypes[] = {new MP4_SUBTYPES("qt  ", "Apple QuickTime (.MOV/QT) File"), new MP4_SUBTYPES("M4A ", "Apple iTunes AAC-LC (.M4A) Audio File"), new MP4_SUBTYPES("M4B ",
+                                                                                                                                                                                                 "Apple iTunes AAC-LC (.M4B) Audio Book File"), new MP4_SUBTYPES(
+        "M4V ", "Apple iTunes Video (.M4V) Video File"), new MP4_SUBTYPES("M4VP", "Apple iPhone (.M4V) File"), new MP4_SUBTYPES("mp42", "MP4 v2 [ISO 14496-14]")};
 
     @Override
     public int process(InputStream inputStream, OutputStream audioOutputStream, OutputStream headerOutputStream, OutputStream encodedOutputStream, UitsParameters params, String md5, boolean encrypt) {
@@ -97,7 +96,7 @@ public class MP4Manager implements IMP4Manager {
             headerData.write(b);
             headerData.write("uuid".getBytes("ISO-8859-1"));
 
-			// now write the UUID as hex
+            // now write the UUID as hex
             UUID uuid = UUID.fromString(UITS_UUID_STRING);
 
             headerData.write(UitsAudioFileManager.toBytes(uuid));
@@ -114,9 +113,11 @@ public class MP4Manager implements IMP4Manager {
 
             logger.debug("Finish process");
             return 1;
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             logger.error("FileNotFoundException processing file: {}", e.getMessage(), e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error("IOException processing file: {}", e.getMessage(), e);
         }
         return 0;
@@ -124,15 +125,15 @@ public class MP4Manager implements IMP4Manager {
 
     @Override
     public int process(String inputFile, String audioFile, String headerFile, String encodedFile, UitsParameters params, String md5, boolean encrypt) throws IOException {
-        logger.debug("Start process : inputFile {}, audioFile {}, headerFile {}, encodedFile {}, params {}, md5 {}, encrypt {}",
-                inputFile, audioFile, headerFile, encodedFile, params, md5, encrypt);
+        logger.debug("Start process : inputFile {}, audioFile {}, headerFile {}, encodedFile {}, params {}, md5 {}, encrypt {}", inputFile, audioFile, headerFile, encodedFile, params, md5, encrypt);
         FileInputStream inputStream = new FileInputStream(inputFile);
         FileOutputStream audioOutputStream = new FileOutputStream(audioFile);
         FileOutputStream headerOutputStream = new FileOutputStream(headerFile);
         FileOutputStream encodedOutputStream = new FileOutputStream(encodedFile);
         try {
             return process(inputStream, audioOutputStream, headerOutputStream, encodedOutputStream, params, md5, encrypt);
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(inputStream);
             IOUtils.closeQuietly(audioOutputStream);
             IOUtils.closeQuietly(headerOutputStream);
@@ -141,7 +142,7 @@ public class MP4Manager implements IMP4Manager {
     }
 
 	/*
-	 * process the header file and fix the UITS header with the given parameters
+     * process the header file and fix the UITS header with the given parameters
 	 * return: 1: all ok 0: cannot process, no data returned to the output
 	 * stream. the caller can still use that stream -1: cannot process, but some
 	 * data might have been returned to the output stream. The stream is
@@ -178,7 +179,7 @@ public class MP4Manager implements IMP4Manager {
 
             String uitsPayloadXML = XmlPayload.buildPayload(params, md5);
             logger.debug("PayloadXML : {}", uitsPayloadXML);
-			// write the UITS payload in a uuid atom
+            // write the UITS payload in a uuid atom
             long payloadXMLSize = uitsPayloadXML.length();
             long atomSize = payloadXMLSize + 8 + UUID_SIZE;
 
@@ -203,7 +204,7 @@ public class MP4Manager implements IMP4Manager {
             out.write(b);
             out.write("uuid".getBytes("ISO-8859-1"));
 
-			// now write the UUID as hex
+            // now write the UUID as hex
             UUID uuid = UUID.fromString(UITS_UUID_STRING);
 
             out.write(UitsAudioFileManager.toBytes(uuid));
@@ -217,7 +218,8 @@ public class MP4Manager implements IMP4Manager {
             }
 
             return 1;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error("processHeader IOException processing file: {}", e.getMessage(), e);
         }
         return -1;
@@ -242,7 +244,9 @@ public class MP4Manager implements IMP4Manager {
 
                 while (copySize > 0) {
                     byte[] copyBuffer = new byte[1024];
-                    int read = audioInputStream.read(copyBuffer, 0, copySize > 1024 ? 1024 : copySize);
+                    int read = audioInputStream.read(copyBuffer, 0, copySize > 1024 ?
+                                                                    1024 :
+                                                                    copySize);
                     copySize = copySize - read;
                     if ("mdat".equals(atomType)) { // Audio: compute hash
                         crypto.addHash(copyBuffer, read);
@@ -264,9 +268,11 @@ public class MP4Manager implements IMP4Manager {
             }
 
             return crypto.finalizeHash();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error("getMediaHash IOException processing file: {}", e.getMessage(), e);
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(audioInputStream);
         }
         return null;
@@ -278,7 +284,8 @@ public class MP4Manager implements IMP4Manager {
             if (new String(buffer).equalsIgnoreCase("stco")) {
                 int stcoSize = patchStcoAtom(moovAtom, idx, offset);
                 idx += stcoSize - 4;
-            } else if (new String(buffer).equalsIgnoreCase("co64")) {
+            }
+            else if (new String(buffer).equalsIgnoreCase("co64")) {
                 int co64Size = patchCo64Atom(moovAtom, idx, offset);
                 idx += co64Size - 4;
             }
@@ -332,6 +339,7 @@ public class MP4Manager implements IMP4Manager {
     }
 
     private class Atom {
+
         public long offset;
         public long size;
         public long pos;
@@ -383,6 +391,7 @@ public class MP4Manager implements IMP4Manager {
     }
 
     class MP4_SUBTYPES {
+
         public final String extension;
         public final String comment;
 

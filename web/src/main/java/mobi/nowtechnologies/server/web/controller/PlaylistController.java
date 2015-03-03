@@ -9,17 +9,18 @@ import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.web.filter.CommunityResolverFilter;
 import mobi.nowtechnologies.server.web.dtos.PlaylistDto;
 import mobi.nowtechnologies.server.web.dtos.TrackDto;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class PlaylistController extends CommonController {
@@ -36,33 +37,32 @@ public class PlaylistController extends CommonController {
     private Map<String, Object> env;
 
     @RequestMapping(value = PAGE_PLAYLIST, method = RequestMethod.GET)
-    public ModelAndView getPlaylistPage(@PathVariable("playlistType") ChartType playlistType,
-                                        @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
-    	User user = userService.findById(getUserId());
-    	if(user.isLimited())
-    		return new ModelAndView(VIEW_PLAYLIST_PREVIEW);
-    	else	
-    		return new ModelAndView(VIEW_PLAYLIST).
-    				addObject("playlistType", playlistType).
-    				addObject("userID", getUserId());
+    public ModelAndView getPlaylistPage(@PathVariable("playlistType") ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) {
+        User user = userService.findById(getUserId());
+        if (user.isLimited()) {
+            return new ModelAndView(VIEW_PLAYLIST_PREVIEW);
+        }
+        else {
+            return new ModelAndView(VIEW_PLAYLIST).
+                                                      addObject("playlistType", playlistType).
+                                                      addObject("userID", getUserId());
+        }
     }
 
     @RequestMapping(value = JSON_PLAYLIST, produces = "application/json", method = RequestMethod.GET)
-    public ModelAndView getPlaylists(@PathVariable("playlistType") ChartType playlistType,
-                                     @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL) throws IOException {
-    	User user = userService.getUserWithSelectedCharts(getUserId());
+    public ModelAndView getPlaylists(@PathVariable("playlistType") ChartType playlistType, @CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityURL)
+        throws IOException {
+        User user = userService.getUserWithSelectedCharts(getUserId());
         List<ChartDetail> charts = chartService.getChartsByCommunity(communityURL, null, playlistType);
-        return new ModelAndView()
-                .addObject("playlists", PlaylistDto.toList(user, charts, env));
+        return new ModelAndView().addObject("playlists", PlaylistDto.toList(user, charts, env));
     }
 
     @RequestMapping(value = JSON_PLAYLIST + "/{playlistID}", produces = "application/json", method = RequestMethod.PUT)
     public ModelAndView updatePlaylist(@PathVariable("playlistID") Integer playlistId) throws IOException {
         chartService.selectChartByType(getUserId(), playlistId);
         List<PlaylistDto> playlists = null;
-        
-        return new ModelAndView()
-                .addObject("playlists", playlists);
+
+        return new ModelAndView().addObject("playlists", playlists);
     }
 
     @RequestMapping(value = JSON_PLAYLIST_TRACKS, produces = "application/json", method = RequestMethod.GET)
@@ -77,10 +77,10 @@ public class PlaylistController extends CommonController {
     }
 
     public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+        this.userService = userService;
+    }
 
-	public void setChartDetailService(ChartDetailService chartDetailService) {
+    public void setChartDetailService(ChartDetailService chartDetailService) {
         this.chartDetailService = chartDetailService;
     }
 

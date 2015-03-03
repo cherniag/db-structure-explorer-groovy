@@ -6,6 +6,7 @@ import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -13,11 +14,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/8/2014
+ * Author: Gennadii Cherniaiev Date: 7/8/2014
  */
 @Service
 public class AccountCheckHttpService extends AbstractHttpService {
+
     //
     // API
     //
@@ -40,11 +41,7 @@ public class AccountCheckHttpService extends AbstractHttpService {
         return execute(parameters, deviceData, format);
     }
 
-    public AccountCheckDto accountCheckWithUrbanAirshipToken(UserDeviceData deviceData,
-                                                             String userName,
-                                                             String storedUserToken,
-                                                             RequestFormat format,
-                                                             String urbanAirshipToken) {
+    public AccountCheckDto accountCheckWithUrbanAirshipToken(UserDeviceData deviceData, String userName, String storedUserToken, RequestFormat format, String urbanAirshipToken) {
         Assert.hasText(userName);
         Assert.hasText(storedUserToken);
 

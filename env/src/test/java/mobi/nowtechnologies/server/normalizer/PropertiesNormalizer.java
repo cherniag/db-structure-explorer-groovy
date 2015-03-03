@@ -27,16 +27,18 @@ public class PropertiesNormalizer {
 
         if (rootFolder == null || propertiesFolder == null || mainPropertyName == null) {
             System.out.println("-Dnormalizer.root.folder, -Dnormalizer.properties.folder, -Dnormalizer.property.name was not properly specified.");
-            System.out.println("Example for bundle: -Dnormalizer.root.folder=\"D:/Workspace/Server/env\" -Dnormalizer.properties.folder=\"cherry/conf\" -Dnormalizer.property.name=\"services.properties\"");
+            System.out
+                .println("Example for bundle: -Dnormalizer.root.folder=\"D:/Workspace/Server/env\" -Dnormalizer.properties.folder=\"cherry/conf\" -Dnormalizer.property.name=\"services.properties\"");
             System.out.println("Example for row properties: \n" +
-                                "-Dnormalizer.root.folder=\"D:/Workspace/Server/normalized_properties\" \n" +
-                                "-Dnormalizer.properties.folder=\"*/conf\" \n" +
-                                "-Dnormalizer.property.name=\"services_mtv1.properties\" \n" +
-                                "-Dnormalizer.prod.environments=\"prod_db1,prod_db2,prod_jadmin,prod_trackrepo\" \n" +
-                                "-Dnormalizer.override.original.properties=true \n" +
-                                "-Dnormalizer.property.merge.with=\"D:/Workspace/Server/service/src/main/resources\"");
+                               "-Dnormalizer.root.folder=\"D:/Workspace/Server/normalized_properties\" \n" +
+                               "-Dnormalizer.properties.folder=\"*/conf\" \n" +
+                               "-Dnormalizer.property.name=\"services_mtv1.properties\" \n" +
+                               "-Dnormalizer.prod.environments=\"prod_db1,prod_db2,prod_jadmin,prod_trackrepo\" \n" +
+                               "-Dnormalizer.override.original.properties=true \n" +
+                               "-Dnormalizer.property.merge.with=\"D:/Workspace/Server/service/src/main/resources\"");
             return;
-        } else {
+        }
+        else {
             propertiesFolder = propertiesFolder.replaceAll("\\\\|/", Matcher.quoteReplacement(File.separator));
         }
 
@@ -45,10 +47,12 @@ public class PropertiesNormalizer {
         if (propertiesFolder != null && mainPropertyName != null) {
             if (propertiesFolder.startsWith("*")) {
                 normalizer.normalizeRowProperties(propertiesFolder, mainPropertyName);
-            } else {
+            }
+            else {
                 normalizer.normalizeBundle(propertiesFolder, mainPropertyName);
             }
-        } else {
+        }
+        else {
             normalizer.normalizeAll();
         }
 
@@ -56,12 +60,11 @@ public class PropertiesNormalizer {
 
     private static String getDefaultRoot() {
         URL classesRoot = PropertiesNormalizer.class.getClassLoader().getResource(".");
-        if(classesRoot != null){
+        if (classesRoot != null) {
             return new File(new File(classesRoot.getFile()).getParent() + File.separator + "classes" + File.separator + DEFAULT_ORIGINAL_PROPERTIES_FOLDER).getPath();
         }
         return null;
     }
-
 
 
     private void normalizeRowProperties(String propertiesFolder, String mainPropertyName) throws IOException {
@@ -85,7 +88,7 @@ public class PropertiesNormalizer {
         propertiesProcessor.synchronizeBundles();
         propertiesProcessor.printWarnings();
 
-        if(propertyMergeWith != null) {
+        if (propertyMergeWith != null) {
             propertiesProcessor.mergeCommonPropertiesWith(propertyMergeWith + File.separator + mainPropertyName);
             //propertiesProcessor.removeCommonValuesFromSlaveProperties();
             //propertiesProcessor.synchronizeBundles();

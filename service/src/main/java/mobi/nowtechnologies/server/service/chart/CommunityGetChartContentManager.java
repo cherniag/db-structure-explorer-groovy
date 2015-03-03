@@ -10,6 +10,7 @@ import java.util.Map;
  * Created by Oleg Artomov on 7/7/2014.
  */
 public class CommunityGetChartContentManager extends AlwaysGetChartContentManager {
+
     @Override
     public ChartSupportResult support(User user, Map<ChartType, Integer> chartGroups, ChartDetail chart) {
         Boolean switchable = chartGroups.get(chart.getChart().getType()) > 1;

@@ -8,16 +8,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class TermsController extends CommonController {
-	
-	@RequestMapping(value="terms.html", method=RequestMethod.GET)
-	public ModelAndView getTermsPage(@RequestParam(required=false, value="show_back_button", defaultValue="1")String showBackButton) {
-		
-		ModelAndView modelAndView = new ModelAndView("terms");
-		
-		if ( "1".equals(showBackButton) ) {
-			modelAndView.addObject("showBackButton", true);
-		}
-		
-		return modelAndView ;
-	}
+
+    @RequestMapping(value = "terms.html", method = RequestMethod.GET)
+    public ModelAndView getTermsPage(@RequestParam(required = false, value = "show_back_button", defaultValue = "1") String showBackButton) {
+
+        ModelAndView modelAndView = new ModelAndView("terms");
+
+        if ("1".equals(showBackButton)) {
+            modelAndView.addObject("showBackButton", true);
+        }
+
+        return modelAndView;
+    }
 }

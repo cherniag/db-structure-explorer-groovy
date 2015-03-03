@@ -2,18 +2,20 @@ package mobi.nowtechnologies.server.service.social.facebook;
 
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
 import mobi.nowtechnologies.server.shared.enums.Gender;
+
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.Reference;
 
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.mockito.Mockito.*;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FacebookDataConverterTest {
@@ -47,7 +49,7 @@ public class FacebookDataConverterTest {
         assertThat(convert.getGender(), is(Gender.MALE));
         assertThat(convert.getCity(), is("Kiev"));
         assertThat(convert.getCountry(), is("Ukraine"));
-        assertThat(convert.getBirthday(), is(DateUtils.parseDate("24/06/1985","dd/MM/yyyy")));
+        assertThat(convert.getBirthday(), is(DateUtils.parseDate("24/06/1985", "dd/MM/yyyy")));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class FacebookDataConverterTest {
         assertThat(convert.getGender(), is(Gender.MALE));
         assertThat(convert.getCity(), is("Kiev"));
         assertThat(convert.getCountry(), is("Ukraine"));
-        assertThat(convert.getBirthday(), is(DateUtils.parseDate("24/06/1985","dd/MM/yyyy")));
+        assertThat(convert.getBirthday(), is(DateUtils.parseDate("24/06/1985", "dd/MM/yyyy")));
     }
 
     @Test

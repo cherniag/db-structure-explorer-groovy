@@ -2,20 +2,25 @@ package mobi.nowtechnologies.applicationtests.services.helper;
 
 import mobi.nowtechnologies.applicationtests.services.device.domain.CurrentPhone;
 import mobi.nowtechnologies.server.apptests.provider.o2.PhoneExtensionsService;
-import mobi.nowtechnologies.server.shared.enums.*;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/3/2014
+ * Author: Gennadii Cherniaiev Date: 7/3/2014
  */
 @Component
 public class PhoneNumberCreator {
+
     @PersistenceContext(name = "applicationTestsEntityManager", unitName = "applicationTestsEntityManager")
     private EntityManager applicationTestsEntityManager;
 
@@ -23,7 +28,7 @@ public class PhoneNumberCreator {
     private PhoneExtensionsService phoneExtensionsService;
 
     @Transactional("applicationTestsTransactionManager")
-    public String createValidPhoneNumber(ProviderType providerType, SegmentType segmentType, Contract contract, Tariff tariff, ContractChannel contractChannel){
+    public String createValidPhoneNumber(ProviderType providerType, SegmentType segmentType, Contract contract, Tariff tariff, ContractChannel contractChannel) {
         CurrentPhone currentPhone = new CurrentPhone();
         applicationTestsEntityManager.persist(currentPhone);
         Integer phoneTypePrefix = phoneExtensionsService.getPhoneNumberSuffix(providerType, segmentType, contract, tariff, contractChannel);

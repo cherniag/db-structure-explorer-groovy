@@ -1,12 +1,29 @@
 package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.assembler.UserAsm;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.Artist;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.ChartDetailFactory;
+import mobi.nowtechnologies.server.persistence.domain.ChartFactory;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.Drm;
+import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
+import mobi.nowtechnologies.server.persistence.domain.DrmType;
+import mobi.nowtechnologies.server.persistence.domain.Genre;
+import mobi.nowtechnologies.server.persistence.domain.Media;
+import mobi.nowtechnologies.server.persistence.domain.MediaFile;
+import mobi.nowtechnologies.server.persistence.domain.PromoCode;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.SagePayCreditCardPaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
 import mobi.nowtechnologies.server.service.chart.CommunityGetChartContentManager;
 import mobi.nowtechnologies.server.service.chart.GetChartContentManager;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
@@ -19,28 +36,28 @@ import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.shared.enums.ChgPosition;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSource;
-import mobi.nowtechnologies.server.service.chart.ChartDetailsConverter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
+import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static mobi.nowtechnologies.server.shared.enums.MediaType.VIDEO_AND_AUDIO;
-import static org.hamcrest.core.Is.is;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import org.springframework.mock.web.MockMultipartFile;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -48,8 +65,15 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyListOf;
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.*;
+
+import static org.hamcrest.core.Is.is;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(UserAsm.class)
@@ -57,15 +81,24 @@ public class ChartServiceTest {
 
     ChartService chartServiceFixture;
 
-    @Mock ChartRepository mockChartRepository;
-    @Mock DrmService mockDrmService;
-    @Mock ChartDetailRepository mockChartDetailRepository;
-    @Mock UserService mockUserService;
-    @Mock CommunityResourceBundleMessageSource mockMessageSource;
-    @Mock ChartDetailService mockChartDetailService;
-    @Mock CloudFileService mockCloudFileService;
-    @Mock ApplicationContext mockApplicationContext;
-    @Mock BadgesService badgesService;
+    @Mock
+    ChartRepository mockChartRepository;
+    @Mock
+    DrmService mockDrmService;
+    @Mock
+    ChartDetailRepository mockChartDetailRepository;
+    @Mock
+    UserService mockUserService;
+    @Mock
+    CommunityResourceBundleMessageSource mockMessageSource;
+    @Mock
+    ChartDetailService mockChartDetailService;
+    @Mock
+    CloudFileService mockCloudFileService;
+    @Mock
+    ApplicationContext mockApplicationContext;
+    @Mock
+    BadgesService badgesService;
 
 
     User testUser;
@@ -134,8 +167,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void testSelectChartByType_NotNullChartNotNullUserNullSelectedCharts_Success()
-            throws Exception {
+    public void testSelectChartByType_NotNullChartNotNullUserNullSelectedCharts_Success() throws Exception {
         Chart selectedChart = ChartFactory.createChart();
         selectedChart.setI(2);
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
@@ -208,7 +240,7 @@ public class ChartServiceTest {
 
     @Test
     public void testGetLockedChartItems_NotSubscribedNotPendingNotExpiring_Success() throws Exception {
-		List<Media> chartDetailIds = singletonList(new Media());
+        List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         String communityName = "chartsnow";
@@ -227,13 +259,13 @@ public class ChartServiceTest {
 
     @Test
     public void testGetLockedChartItems_UserSubscribedOnFreeTrial_Success() throws Exception {
-		List<Media> chartDetailIds = singletonList(new Media());
+        List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
         paymentDetails.setActivated(true);
         user.setCurrentPaymentDetails(paymentDetails);
-        user.setNextSubPayment(Utils.getEpochSeconds()+48*60*60);
+        user.setNextSubPayment(Utils.getEpochSeconds() + 48 * 60 * 60);
         user.setFreeTrialExpiredMillis(user.getNextSubPayment() * 1000L);
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -250,13 +282,13 @@ public class ChartServiceTest {
 
     @Test
     public void testGetLockedChartItems_UserPending_Success() throws Exception {
-		List<Media> chartDetailIds = singletonList(new Media());
+        List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
         paymentDetails.setActivated(true);
         user.setCurrentPaymentDetails(paymentDetails);
-        user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
+        user.setNextSubPayment(Utils.getEpochSeconds() + 10 * 60 * 60);
         user.setLastSuccessfulPaymentDetails(paymentDetails);
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -273,14 +305,14 @@ public class ChartServiceTest {
 
     @Test
     public void testGetLockedChartItems_UserExpiring_Success() throws Exception {
-		List<Media> chartDetailIds = singletonList(new Media());
+        List<Media> chartDetailIds = singletonList(new Media());
         List<Chart> charts = singletonList(ChartFactory.createChart());
         User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         PaymentDetails paymentDetails = new SagePayCreditCardPaymentDetails();
         paymentDetails.setActivated(false);
         paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.SUCCESSFUL);
         user.setCurrentPaymentDetails(paymentDetails);
-        user.setNextSubPayment(Utils.getEpochSeconds()+10*60*60);
+        user.setNextSubPayment(Utils.getEpochSeconds() + 10 * 60 * 60);
         user.setLastSuccessfulPaymentDetails(paymentDetails);
 
         when(mockChartRepository.getByCommunityName(anyString())).thenReturn(charts);
@@ -302,7 +334,7 @@ public class ChartServiceTest {
         User user = new User().withFreeTrialExpiredMillis(Long.MAX_VALUE).withLastPromo(new PromoCode().withMediaType(VIDEO_AND_AUDIO).withPromotion(new Promotion().withIsWhiteListed(true)));
         user.setUserGroup(new UserGroup().withCommunity(new Community().withName(communityName)));
 
-        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.<Chart> singletonList(new Chart()));
+        when(mockChartRepository.getByCommunityName(anyString())).thenReturn(Collections.<Chart>singletonList(new Chart()));
         when(mockChartDetailService.getLockedChartItemISRCs(any(Integer.class), any(Date.class))).thenReturn(Collections.<Media>emptyList());
 
         //when
@@ -479,7 +511,8 @@ public class ChartServiceTest {
         ChartDetail videoChartDetail = getChartDetailInstance(0, 5, media, videoChart3.getChart());
         videoChartDetail.getMedia().setHeaderFile(null);
 
-        doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1, videoChart3)).when(chartServiceFixture).getChartsByCommunity(eq((String)null), anyString(), any(ChartType.class));
+        doReturn(Arrays.asList(basicChart, basicChart1, topChart, otherChart2, otherChart1, videoChart3)).when(chartServiceFixture)
+                                                                                                         .getChartsByCommunity(eq((String) null), anyString(), any(ChartType.class));
         when(mockChartDetailService.findChartDetailTree(eq(1), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(basicChartDetail));
         when(mockChartDetailService.findChartDetailTree(eq(2), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(topChartDetail));
         when(mockChartDetailService.findChartDetailTree(eq(3), any(Date.class), anyBoolean())).thenReturn(Arrays.asList(otherChartDetail1));
@@ -642,7 +675,7 @@ public class ChartServiceTest {
         ChartDetail chartDetail3 = ChartDetailFactory.createChartDetail();
         chartDetail3.getChart().setI(3);
         List<Chart> charts = Arrays.asList(chartDetail1.getChart(), chartDetail2.getChart(), chartDetail3.getChart());
-        Long nearestLatestDate = new Date().getTime()-10000;
+        Long nearestLatestDate = new Date().getTime() - 10000;
         Date chosenDate = new Date();
 
         when(mockChartDetailRepository.findNearestLatestPublishDate(anyLong(), anyInt())).thenReturn(nearestLatestDate);
@@ -691,7 +724,7 @@ public class ChartServiceTest {
         ChartDetail chartDetail3 = ChartDetailFactory.createChartDetail();
         chartDetail3.getChart().setI(3);
         List<Chart> charts = Arrays.asList(chartDetail1.getChart(), chartDetail2.getChart(), chartDetail3.getChart());
-        Long nearestLatestDate = new Date().getTime()-100000;
+        Long nearestLatestDate = new Date().getTime() - 100000;
         Date chosenDate = new Date();
 
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyInt())).thenReturn(nearestLatestDate);
@@ -740,7 +773,7 @@ public class ChartServiceTest {
         ChartDetail chartDetail3 = ChartDetailFactory.createChartDetail();
         chartDetail3.getChart().setI(3);
         List<Chart> charts = Arrays.asList(chartDetail1.getChart(), chartDetail2.getChart(), chartDetail3.getChart());
-        Long nearestLatestDate = new Date().getTime()-100000;
+        Long nearestLatestDate = new Date().getTime() - 100000;
         Date chosenDate = new Date();
 
         when(mockChartDetailRepository.findNearestLatestChartPublishDate(anyLong(), anyInt())).thenReturn(nearestLatestDate);
@@ -821,7 +854,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnDuplicatedMediaChartDetails(){
+    public void shouldReturnDuplicatedMediaChartDetails() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -870,7 +903,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnDuplicatedMediaChartDetailsTillFeatureUpdateOfExcludedChartPublishTimeMillis(){
+    public void shouldReturnDuplicatedMediaChartDetailsTillFeatureUpdateOfExcludedChartPublishTimeMillis() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -919,7 +952,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnDuplicatedMediaChartDetailsWhenNoFeatureChartsUpdates(){
+    public void shouldReturnDuplicatedMediaChartDetailsWhenNoFeatureChartsUpdates() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -968,7 +1001,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnDuplicatedMediaChartDetailsWhenNoLatestChartUpdate(){
+    public void shouldReturnDuplicatedMediaChartDetailsWhenNoLatestChartUpdate() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -1017,7 +1050,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoCharts(){
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoCharts() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -1046,12 +1079,12 @@ public class ChartServiceTest {
         verify(mockChartDetailRepository, times(0)).findNearestLatestChartPublishDate(eq(selectedTimeMillis), anyInt());
         verify(mockChartDetailRepository, times(0)).findNearestFeatureChartPublishDateBeforeGivenDate(eq(selectedTimeMillis), eq(featureUpdateOfExcludedChartPublishTimeMillis), anyInt());
 
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class),  anyListOf(Integer.class));
-        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class),  anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
+        verify(mockChartDetailRepository, times(0)).getDuplicatedMediaChartDetails(any(Chart.class), anyListOf(Long.class), anyListOf(Integer.class));
     }
 
     @Test
-    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoAnyMedias(){
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoAnyMedias() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -1076,7 +1109,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoAnyUpdates(){
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoAnyUpdates() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -1120,7 +1153,7 @@ public class ChartServiceTest {
     }
 
     @Test
-    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoDuplicates(){
+    public void shouldReturnEmptyDuplicatedMediaChartDetailsListWhenNoDuplicates() {
         //given
         String communityUrl = "mtv1";
         long selectedTimeMillis = 111;
@@ -1171,8 +1204,8 @@ public class ChartServiceTest {
         originalChartDetail.setI(i);
         originalChartDetail.setInfo("info" + i);
         originalChartDetail.setMedia(media);
-        originalChartDetail.setPosition((byte)i);
-        originalChartDetail.setPrevPosition((byte)0);
+        originalChartDetail.setPosition((byte) i);
+        originalChartDetail.setPrevPosition((byte) 0);
         originalChartDetail.setPublishTimeMillis(publishTimeMillis);
         originalChartDetail.setVersionAsPrimitive(i);
         return originalChartDetail;
@@ -1198,7 +1231,7 @@ public class ChartServiceTest {
         media.setHeaderFile(mediaFile);
 
         Drm drm = new Drm();
-        drm.setDrmValue((byte)1);
+        drm.setDrmValue((byte) 1);
         drm.setDrmType(new DrmType());
         media.setDrms(singletonList(drm));
 

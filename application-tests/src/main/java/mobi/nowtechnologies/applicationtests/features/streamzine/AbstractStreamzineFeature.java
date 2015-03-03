@@ -15,15 +15,19 @@ import mobi.nowtechnologies.applicationtests.services.streamzine.StreamzineUpdat
 import mobi.nowtechnologies.applicationtests.services.util.SimpleInterpolator;
 import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class AbstractStreamzineFeature {
+
+    protected List<UserDeviceData> currentUserDevices = new ArrayList<UserDeviceData>();
     @Resource
     UserDataCreator userDataCreator;
     @Resource
@@ -40,15 +44,11 @@ public abstract class AbstractStreamzineFeature {
     ChartRepository chartRepository;
     @Resource
     DbMediaService dbMediaService;
-
     @Resource
     MQAppClientDeviceSet deviceSet;
     @Resource
     RunnerService runnerService;
-
     private Runner runner;
-
-    protected List<UserDeviceData> currentUserDevices = new ArrayList<UserDeviceData>();
 
     protected List<UserDeviceData> initUserData(Set<RequestFormat> requestFormats, Word versions, Word communities, Word devices) {
         List<UserDeviceData> datas = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), requestFormats);

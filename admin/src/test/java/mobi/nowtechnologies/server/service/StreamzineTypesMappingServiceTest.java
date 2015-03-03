@@ -1,20 +1,24 @@
 package mobi.nowtechnologies.server.service;
 
-import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfo;
 import mobi.nowtechnologies.server.domain.streamzine.TypesMappingInfoItem;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.types.TypeToSubTypePair;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineTypesMappingService;
-import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class StreamzineTypesMappingServiceTest {
+
     private StreamzineTypesMappingService service = new StreamzineTypesMappingService();
 
     @Test
@@ -32,19 +36,13 @@ public class StreamzineTypesMappingServiceTest {
 
         // ALL content types for NARROW:
         for (ContentType contentType : ContentType.values()) {
-            assertTrue(
-                    "Mapping for:" + shapeType + " does not contain: " + contentType,
-                    typeWithSubtypes.containsKey(contentType)
-            );
+            assertTrue("Mapping for:" + shapeType + " does not contain: " + contentType, typeWithSubtypes.containsKey(contentType));
 
             List<Enum<?>> subTypes = typeWithSubtypes.get(contentType);
 
             // ALL sub types for every Content Type of WIDE shape Type
             List<Enum<?>> allSubTypesByContentType = TypeToSubTypePair.getAllSubTypesByContentType(contentType);
-            assertTrue(
-                    "[" + shapeType + "-" + contentType + "] does not contain all types of " + allSubTypesByContentType,
-                    subTypes.containsAll(allSubTypesByContentType)
-            );
+            assertTrue("[" + shapeType + "-" + contentType + "] does not contain all types of " + allSubTypesByContentType, subTypes.containsAll(allSubTypesByContentType));
         }
     }
 
@@ -56,19 +54,13 @@ public class StreamzineTypesMappingServiceTest {
 
         // ALL content types for NARROW:
         for (ContentType contentType : ContentType.values()) {
-            assertTrue(
-                    "Mapping for:" + shapeType + " does not contain: " + contentType,
-                    typeWithSubtypes.containsKey(contentType)
-            );
+            assertTrue("Mapping for:" + shapeType + " does not contain: " + contentType, typeWithSubtypes.containsKey(contentType));
 
             List<Enum<?>> subTypes = typeWithSubtypes.get(contentType);
 
             // ALL sub types for every Content Type of WIDE shape Type
             List<Enum<?>> allSubTypesByContentType = TypeToSubTypePair.getAllSubTypesByContentType(contentType);
-            assertTrue(
-                    "[" + shapeType + "-" + contentType + "] does not contain all types of " + allSubTypesByContentType,
-                    subTypes.containsAll(allSubTypesByContentType)
-            );
+            assertTrue("[" + shapeType + "-" + contentType + "] does not contain all types of " + allSubTypesByContentType, subTypes.containsAll(allSubTypesByContentType));
         }
     }
 
@@ -82,10 +74,7 @@ public class StreamzineTypesMappingServiceTest {
         final ContentType promotional = ContentType.PROMOTIONAL;
 
         assertEquals(1, typeWithSubtypes.size());
-        assertTrue(
-                "Mapping for:" + shapeType + " does not contain: " + promotional,
-                typeWithSubtypes.containsKey(promotional)
-        );
+        assertTrue("Mapping for:" + shapeType + " does not contain: " + promotional, typeWithSubtypes.containsKey(promotional));
 
         List<Enum<?>> subTypes = typeWithSubtypes.get(promotional);
         // ALL link sub type only for PROMOTIONAL Type of SLIM_BANNER shape type

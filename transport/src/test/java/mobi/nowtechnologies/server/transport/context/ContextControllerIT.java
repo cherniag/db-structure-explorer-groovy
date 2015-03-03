@@ -2,15 +2,18 @@ package mobi.nowtechnologies.server.transport.context;
 
 import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
 import mobi.nowtechnologies.server.transport.controller.AbstractControllerTestIT;
-import org.junit.Test;
-import org.springframework.http.MediaType;
+import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
 
 import java.util.Date;
 
-import static mobi.nowtechnologies.server.shared.Utils.createTimestampToken;
+import org.springframework.http.MediaType;
+
+import org.junit.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ContextControllerIT extends AbstractControllerTestIT {
 
@@ -24,20 +27,19 @@ public class ContextControllerIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
-                        accept(MediaType.APPLICATION_JSON).
-                        param(AuthenticatedUser.USER_NAME, userName).
-                        param(AuthenticatedUser.USER_TOKEN, userToken).
-                        param(AuthenticatedUser.TIMESTAMP, timestamp)).
-                andDo(print()).
-                andExpect(status().isOk()).
-                andExpect(content().contentType(MediaType.APPLICATION_JSON)).
-                andExpect(jsonPath("$.context").exists()).
-                andExpect(jsonPath("$.context.referrals").exists()).
-                andExpect(jsonPath("$.context.referrals.required").value(-1)).
-                andExpect(jsonPath("$.context.referrals.activated").value(-1)).
-                andExpect(jsonPath("$.context.playlists").doesNotExist());
+        mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
+                                                                                   accept(MediaType.APPLICATION_JSON).
+                                                                                   param(AuthenticatedUser.USER_NAME, userName).
+                                                                                   param(AuthenticatedUser.USER_TOKEN, userToken).
+                                                                                   param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                   andDo(print()).
+                   andExpect(status().isOk()).
+                   andExpect(content().contentType(MediaType.APPLICATION_JSON)).
+                   andExpect(jsonPath("$.context").exists()).
+                   andExpect(jsonPath("$.context.referrals").exists()).
+                   andExpect(jsonPath("$.context.referrals.required").value(-1)).
+                   andExpect(jsonPath("$.context.referrals.activated").value(-1)).
+                   andExpect(jsonPath("$.context.playlists").doesNotExist());
     }
 
 
@@ -51,20 +53,19 @@ public class ContextControllerIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
-                        accept(MediaType.APPLICATION_JSON).
-                        param(AuthenticatedUser.USER_NAME, userName).
-                        param(AuthenticatedUser.USER_TOKEN, userToken).
-                        param(AuthenticatedUser.TIMESTAMP, timestamp)).
-                andDo(print()).
-                andExpect(status().isOk()).
-                andExpect(content().contentType(MediaType.APPLICATION_JSON)).
-                andExpect(jsonPath("$.context").exists()).
-                andExpect(jsonPath("$.context.referrals").exists()).
-                andExpect(jsonPath("$.context.referrals.required").value(5)).
-                andExpect(jsonPath("$.context.referrals.activated").value(0)).
-                andExpect(jsonPath("$.context.playlists").exists());
+        mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
+                                                                                   accept(MediaType.APPLICATION_JSON).
+                                                                                   param(AuthenticatedUser.USER_NAME, userName).
+                                                                                   param(AuthenticatedUser.USER_TOKEN, userToken).
+                                                                                   param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                   andDo(print()).
+                   andExpect(status().isOk()).
+                   andExpect(content().contentType(MediaType.APPLICATION_JSON)).
+                   andExpect(jsonPath("$.context").exists()).
+                   andExpect(jsonPath("$.context.referrals").exists()).
+                   andExpect(jsonPath("$.context.referrals.required").value(5)).
+                   andExpect(jsonPath("$.context.referrals.activated").value(0)).
+                   andExpect(jsonPath("$.context.playlists").exists());
     }
 
     @Test
@@ -77,26 +78,24 @@ public class ContextControllerIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
-                        accept(MediaType.APPLICATION_JSON).
-                        param(AuthenticatedUser.USER_NAME, userName).
-                        param(AuthenticatedUser.USER_TOKEN, userToken).
-                        param(AuthenticatedUser.TIMESTAMP, timestamp)).
-                andDo(print()).
-                andExpect(status().isOk()).
-                andExpect(content().contentType(MediaType.APPLICATION_JSON)).
-                andExpect(jsonPath("$.context").exists()).
-                andExpect(jsonPath("$.context.referrals").exists()).
-                andExpect(jsonPath("$.context.referrals.required").value(5)).
-                andExpect(jsonPath("$.context.referrals.activated").value(0)).
-                andExpect(jsonPath("$.context.playlists").exists());
+        mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
+                                                                                   accept(MediaType.APPLICATION_JSON).
+                                                                                   param(AuthenticatedUser.USER_NAME, userName).
+                                                                                   param(AuthenticatedUser.USER_TOKEN, userToken).
+                                                                                   param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                   andDo(print()).
+                   andExpect(status().isOk()).
+                   andExpect(content().contentType(MediaType.APPLICATION_JSON)).
+                   andExpect(jsonPath("$.context").exists()).
+                   andExpect(jsonPath("$.context.referrals").exists()).
+                   andExpect(jsonPath("$.context.referrals.required").value(5)).
+                   andExpect(jsonPath("$.context.referrals.activated").value(0)).
+                   andExpect(jsonPath("$.context.playlists").exists());
     }
 
 
     /**
-     * This is to test re-factoring introduced by
-     * {@link mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser}
+     * This is to test re-factoring introduced by {@link mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser}
      *
      * @throws Exception
      */
@@ -109,14 +108,13 @@ public class ContextControllerIT extends AbstractControllerTestIT {
         String storedToken = "f701af8d07e5c95d3f5cf3bd9a62344d";
         String userToken = createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
-                        accept(MediaType.APPLICATION_JSON).
-                        param(AuthenticatedUser.USER_NAME, "").
-                        param(AuthenticatedUser.USER_TOKEN, userToken).
-                        param(AuthenticatedUser.TIMESTAMP, timestamp)).
-                andDo(print()).
-                andExpect(status().isBadRequest());
+        mockMvc.perform(get("/" + communityUrl + "/" + apiVersion + "/CONTEXT").
+                                                                                   accept(MediaType.APPLICATION_JSON).
+                                                                                   param(AuthenticatedUser.USER_NAME, "").
+                                                                                   param(AuthenticatedUser.USER_TOKEN, userToken).
+                                                                                   param(AuthenticatedUser.TIMESTAMP, timestamp)).
+                   andDo(print()).
+                   andExpect(status().isBadRequest());
     }
 
 }

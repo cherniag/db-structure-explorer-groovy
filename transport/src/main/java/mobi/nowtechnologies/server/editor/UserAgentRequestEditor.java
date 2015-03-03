@@ -6,14 +6,16 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.ClientVersion;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.service.versioncheck.UserAgentRequest;
-import org.springframework.beans.ConversionNotSupportedException;
-import org.springframework.util.Assert;
 
 import java.beans.PropertyEditorSupport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.ConversionNotSupportedException;
+import org.springframework.util.Assert;
+
 public class UserAgentRequestEditor extends PropertyEditorSupport {
+
     private static Pattern pattern = Pattern.compile("(.+)/(\\d{1,2}\\.\\d.*) \\((\\S+); (\\S+)\\)");
 
     private CommunityRepository communityRepository;
@@ -32,7 +34,7 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
         Matcher hrefMatcher = pattern.matcher(text);
         boolean found = hrefMatcher.find();
 
-        if(!found) {
+        if (!found) {
             throw new ConversionNotSupportedException(text, UserAgentRequest.class, null);
         }
 
@@ -64,6 +66,7 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
     }
 
     private static class UserAgentRequestImpl implements UserAgentRequest {
+
         String applicationName;
         ClientVersion version;
         DeviceType platform;
@@ -92,11 +95,11 @@ public class UserAgentRequestEditor extends PropertyEditorSupport {
         @Override
         public String toString() {
             return "UserAgentRequestImpl{" +
-                    "community=" + community.getRewriteUrlParameter() +
-                    ", version=" + version +
-                    ", platform=" + platform +
-                    ", applicationName='" + applicationName + '\'' +
-                    '}';
+                   "community=" + community.getRewriteUrlParameter() +
+                   ", version=" + version +
+                   ", platform=" + platform +
+                   ", applicationName='" + applicationName + '\'' +
+                   '}';
         }
     }
 

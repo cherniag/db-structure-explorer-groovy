@@ -12,6 +12,23 @@ import java.util.List;
 import java.util.Map;
 
 public class RulesInfoAsm {
+
+    private static Map<String, List<String>> toMap(List<TypeToSubTypePair> pairs) {
+        Map<String, List<String>> mapView = new HashMap<String, List<String>>();
+
+        for (TypeToSubTypePair typeToSubTypePair : pairs) {
+            final String key = typeToSubTypePair.getContentType().name();
+
+            if (!mapView.containsKey(key)) {
+                mapView.put(key, new ArrayList<String>());
+            }
+
+            mapView.get(key).add(typeToSubTypePair.getSubType().name());
+        }
+
+        return mapView;
+    }
+
     public Map<String, Map<String, List<String>>> getBadgeMappingInfo() {
         Map<String, Map<String, List<String>>> info = new HashMap<String, Map<String, List<String>>>();
 
@@ -34,22 +51,6 @@ public class RulesInfoAsm {
             infos.put(titlesMappingRule.getShapeType().name(), info);
         }
         return infos;
-    }
-
-    private static Map<String, List<String>> toMap(List<TypeToSubTypePair> pairs) {
-        Map<String, List<String>> mapView = new HashMap<String, List<String>>();
-
-        for (TypeToSubTypePair typeToSubTypePair : pairs) {
-            final String key = typeToSubTypePair.getContentType().name();
-
-            if(!mapView.containsKey(key)) {
-                mapView.put(key, new ArrayList<String>());
-            }
-
-            mapView.get(key).add(typeToSubTypePair.getSubType().name());
-        }
-
-        return mapView;
     }
 
     public Map<String, String> buildTypesForOpener() {

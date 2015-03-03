@@ -1,28 +1,37 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.AccountLog;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
-import mobi.nowtechnologies.server.persistence.repository.*;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentLock;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
+import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
+import mobi.nowtechnologies.server.persistence.repository.ITunesPaymentLockRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.itunes.ITunesService;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.shared.enums.TransactionType;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import javax.annotation.Resource;
+
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import org.junit.*;
+import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import javax.annotation.Resource;
-import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/shared.xml", "/META-INF/dao-test.xml", "/META-INF/service-test.xml"})

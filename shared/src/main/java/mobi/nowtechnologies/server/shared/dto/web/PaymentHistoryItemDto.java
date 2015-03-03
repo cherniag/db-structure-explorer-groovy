@@ -1,97 +1,92 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
 public class PaymentHistoryItemDto {
-	public static final String PAYMENT_HISTORY_ITEM_DTO = "PaymentHistoryItemDto";
 
-	private String transactionId;
+    public static final String PAYMENT_HISTORY_ITEM_DTO = "PaymentHistoryItemDto";
 
-	private Date date;
+    private String transactionId;
 
-	private String description;
+    private Date date;
 
-	private BigDecimal amount;
+    private String description;
 
-	private String paymentMethod;
+    private BigDecimal amount;
 
-	private int duration;
+    private String paymentMethod;
 
-	private DurationUnit durationUnit;
+    private int duration;
 
-	public String getTransactionId() {
-		return transactionId;
-	}
+    private DurationUnit durationUnit;
 
-	public void setTransactionId(String transactionId) {
-		this.transactionId = transactionId;
-	}
+    public String getTransactionId() {
+        return transactionId;
+    }
 
-	public Date getDate() {
-		return date;
-	}
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}	
+    public String getDescription() {
+        return description;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public String getPaymentMethod() {
-		return paymentMethod;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
 
-	public long getDuration() {
-		return duration;
-	}
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
+    public long getDuration() {
+        return duration;
+    }
 
-	public DurationUnit getDurationUnit() {
-		return durationUnit;
-	}
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 
-	public void setDurationUnit(DurationUnit durationUnit) {
-		this.durationUnit = durationUnit;
-	}
+    public DurationUnit getDurationUnit() {
+        return durationUnit;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append("amount", amount)
-				.append("date", date)
-				.append("duration", duration)
-				.append("periodUnit", durationUnit)
-				.append("paymentMethod", paymentMethod)
-				.append("transactionId", transactionId)
-				.append("description", description)
-				.toString();
-	}
+    public void setDurationUnit(DurationUnit durationUnit) {
+        this.durationUnit = durationUnit;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("amount", amount).append("date", date).append("duration", duration).append("periodUnit", durationUnit).append("paymentMethod", paymentMethod)
+                                        .append("transactionId", transactionId).append("description", description).toString();
+    }
 }

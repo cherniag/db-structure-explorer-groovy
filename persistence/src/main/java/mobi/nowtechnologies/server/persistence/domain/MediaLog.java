@@ -1,151 +1,147 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.dto.web.PurchasedTrackDto;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 @Entity
 @Table(name = "tb_mediaLog")
-@NamedQueries({
-	@NamedQuery(name=MediaLog.NQ_GET_PURCHASED_TRACKS_BY_USER_ID, query="select mediaLog from MediaLog mediaLog join FETCH mediaLog.media media where mediaLog.logType=? and mediaLog.userUID=?"),
-	@NamedQuery(name=MediaLog.NQ_IS_DOWNLOADED_ORIGINAL, query="select count(mediaLog) from MediaLog mediaLog where mediaLog.logType=? and mediaLog.userUID=? and mediaLog.mediaUID=?")
-})
+@NamedQueries({@NamedQuery(name = MediaLog.NQ_GET_PURCHASED_TRACKS_BY_USER_ID,
+                           query = "select mediaLog from MediaLog mediaLog join FETCH mediaLog.media media where mediaLog.logType=? and mediaLog.userUID=?"), @NamedQuery(
+    name = MediaLog.NQ_IS_DOWNLOADED_ORIGINAL, query = "select count(mediaLog) from MediaLog mediaLog where mediaLog.logType=? and mediaLog.userUID=? and mediaLog.mediaUID=?")})
 public class MediaLog implements Serializable {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MediaLog.class);
+    public static final String NQ_GET_PURCHASED_TRACKS_BY_USER_ID = "getPurchasedTracksByUserId";
+    public static final String NQ_IS_DOWNLOADED_ORIGINAL = "isDowloadedOriginal";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MediaLog.class);
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int i;
+    private int logTimestamp;
+    private byte logType;
+    @Column(name = "mediaUID", insertable = false, updatable = false)
+    private int mediaUID;
+    private int userUID;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "mediaUID")
+    @Fetch(FetchMode.JOIN)
+    private Media media;
+    @Transient
+    private boolean alreadyDownloadedOriginal;
 
-	public static final String NQ_GET_PURCHASED_TRACKS_BY_USER_ID = "getPurchasedTracksByUserId";
-	public static final String NQ_IS_DOWNLOADED_ORIGINAL = "isDowloadedOriginal";
+    public MediaLog() {
+    }
 
-	private static final long serialVersionUID = 1L;
+    public static List<PurchasedTrackDto> toPurchasedTrackDtoList(List<MediaLog> mediaLogs) {
+        LOGGER.debug("input parameters mediaLogShallows: [{}]", mediaLogs);
+        List<PurchasedTrackDto> purchasedTrackDtos = new ArrayList<PurchasedTrackDto>(mediaLogs.size());
+        for (MediaLog mediaLog : mediaLogs) {
+            purchasedTrackDtos.add(mediaLog.toPurchasedTrackDto());
+        }
+        LOGGER.debug("Output parameter purchasedTrackDtos=[{}]", purchasedTrackDtos);
+        return purchasedTrackDtos;
+    }
 
-	public static enum Fields {
-		i();
-	}
+    public int getI() {
+        return this.i;
+    }
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int i;
+    public void setI(int i) {
+        this.i = i;
+    }
 
-	private int logTimestamp;
+    public int getLogTimestamp() {
+        return this.logTimestamp;
+    }
 
-	private byte logType;
-	
-	@Column(name = "mediaUID", insertable = false, updatable = false)
-	private int mediaUID;
+    public void setLogTimestamp(int logTimestamp) {
+        this.logTimestamp = logTimestamp;
+    }
 
-	private int userUID;
+    public byte getLogType() {
+        return this.logType;
+    }
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "mediaUID")
-	@Fetch(FetchMode.JOIN)
-	private Media media;
-	
-	@Transient
-	private boolean alreadyDownloadedOriginal;
+    public void setLogType(byte logType) {
+        this.logType = logType;
+    }
 
-	public MediaLog() {
-	}
+    public int getMediaUID() {
+        return this.mediaUID;
+    }
 
-	public int getI() {
-		return this.i;
-	}
+    public int getUserUID() {
+        return this.userUID;
+    }
 
-	public void setI(int i) {
-		this.i = i;
-	}
+    public void setUserUID(int userUID) {
+        this.userUID = userUID;
+    }
 
-	public int getLogTimestamp() {
-		return this.logTimestamp;
-	}
+    public boolean isAlreadyDownloadedOriginal() {
+        return alreadyDownloadedOriginal;
+    }
 
-	public void setLogTimestamp(int logTimestamp) {
-		this.logTimestamp = logTimestamp;
-	}
+    public void setAlreadyDownloadedOriginal(boolean alreadyDownloadedOriginal) {
+        this.alreadyDownloadedOriginal = alreadyDownloadedOriginal;
+    }
 
-	public byte getLogType() {
-		return this.logType;
-	}
+    public PurchasedTrackDto toPurchasedTrackDto() {
+        PurchasedTrackDto purchasedTrackDto = new PurchasedTrackDto();
 
-	public void setLogType(byte logType) {
-		this.logType = logType;
-	}
+        purchasedTrackDto.setMediaIsrc(media.getIsrc());
+        purchasedTrackDto.setMediaId(mediaUID);
+        purchasedTrackDto.setPurchasedDate(new Date(logTimestamp * 1000L));
+        purchasedTrackDto.setTrackName(media.getTitle());
+        purchasedTrackDto.setArtistName(media.getArtistName());
 
-	public int getMediaUID() {
-		return this.mediaUID;
-	}
+        LOGGER.debug("Output parameter purchasedTrackDto=[{}]", purchasedTrackDto);
+        return purchasedTrackDto;
+    }
 
-	public int getUserUID() {
-		return this.userUID;
-	}
+    public Media getMedia() {
+        return media;
+    }
 
-	public void setUserUID(int userUID) {
-		this.userUID = userUID;
-	}
-
-	public boolean isAlreadyDownloadedOriginal() {
-		return alreadyDownloadedOriginal;
-	}
-
-	public void setAlreadyDownloadedOriginal(boolean alreadyDownloadedOriginal) {
-		this.alreadyDownloadedOriginal = alreadyDownloadedOriginal;
-	}
-
-	public static List<PurchasedTrackDto> toPurchasedTrackDtoList(List<MediaLog> mediaLogs) {
-		LOGGER.debug("input parameters mediaLogShallows: [{}]", mediaLogs);
-		List<PurchasedTrackDto> purchasedTrackDtos = new ArrayList<PurchasedTrackDto>(mediaLogs.size());
-		for (MediaLog mediaLog : mediaLogs) {
-			purchasedTrackDtos.add(mediaLog.toPurchasedTrackDto());
-		}
-		LOGGER.debug("Output parameter purchasedTrackDtos=[{}]", purchasedTrackDtos);
-		return purchasedTrackDtos;
-	}
-
-	public PurchasedTrackDto toPurchasedTrackDto() {
-		PurchasedTrackDto purchasedTrackDto = new PurchasedTrackDto();
-
-		purchasedTrackDto.setMediaIsrc(media.getIsrc());
-		purchasedTrackDto.setMediaId(mediaUID);
-		purchasedTrackDto.setPurchasedDate(new Date(logTimestamp * 1000L));
-		purchasedTrackDto.setTrackName(media.getTitle());
-		purchasedTrackDto.setArtistName(media.getArtistName());
-
-		LOGGER.debug("Output parameter purchasedTrackDto=[{}]", purchasedTrackDto);
-		return purchasedTrackDto;
-	}
-
-	public Media getMedia() {
-		return media;
-	}
-
-	public void setMedia(Media media) {
-		this.media = media;
-		this.mediaUID = media.getI();
-	}
+    public void setMedia(Media media) {
+        this.media = media;
+        this.mediaUID = media.getI();
+    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("logTimestamp", logTimestamp)
-                .append("logType", logType)
-                .append("mediaUID", mediaUID)
-                .append("userUID", userUID)
-                .append("alreadyDownloadedOriginal", alreadyDownloadedOriginal)
-                .toString();
+        return new ToStringBuilder(this).append("i", i).append("logTimestamp", logTimestamp).append("logType", logType).append("mediaUID", mediaUID).append("userUID", userUID)
+                                        .append("alreadyDownloadedOriginal", alreadyDownloadedOriginal).toString();
+    }
+
+    public static enum Fields {
+        i();
     }
 
 

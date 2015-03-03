@@ -10,16 +10,24 @@ import mobi.nowtechnologies.server.persistence.repository.FilenameAliasRepositor
 import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.service.file.image.ImageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 public class BadgesService {
+
     private FilenameAliasRepository filenameAliasRepository;
     private CloudFileImagesService cloudFileImagesService;
     private ResolutionRepository resolutionRepository;
@@ -30,15 +38,19 @@ public class BadgesService {
     public void setFilenameAliasRepository(FilenameAliasRepository filenameAliasRepository) {
         this.filenameAliasRepository = filenameAliasRepository;
     }
+
     public void setCloudFileImagesService(CloudFileImagesService cloudFileImagesService) {
         this.cloudFileImagesService = cloudFileImagesService;
     }
+
     public void setResolutionRepository(ResolutionRepository resolutionRepository) {
         this.resolutionRepository = resolutionRepository;
     }
+
     public void setBadgeMappingRepository(BadgeMappingRepository badgeMappingRepository) {
         this.badgeMappingRepository = badgeMappingRepository;
     }
+
     public void setCloudFileService(CloudFileService cloudFileService) {
         this.cloudFileService = cloudFileService;
     }
@@ -59,7 +71,7 @@ public class BadgesService {
         for (BadgeMapping badgeMapping : badgeMappingRepository.findAllDefault(community)) {
             FilenameAlias originalFilenameAlias = badgeMapping.getOriginalFilenameAlias();
 
-            if(!resolutions.isEmpty()) {
+            if (!resolutions.isEmpty()) {
                 List<BadgeMapping> matched = badgeMappingRepository.findByCommunityResolutionsAndOriginalAlias(community, originalFilenameAlias, resolutions);
                 for (BadgeMapping mapping : matched) {
                     matrix.get(mapping.getResolution()).put(originalFilenameAlias.getId(), mapping);
@@ -93,15 +105,16 @@ public class BadgesService {
         BadgeMapping found = badgeMappingRepository.findByCommunityResolutionAndOriginalAlias(community, resolution, original);
 
         // means that the resolution was created from another community than current one:
-        if(found == null) {
+        if (found == null) {
             found = badgeMappingRepository.saveAndFlush(BadgeMapping.specific(resolution, community, original));
         }
 
         boolean needToRemovePrevious = found.getFilenameAlias() != null;
-        if(needToRemovePrevious) {
+        if (needToRemovePrevious) {
             try {
                 cloudFileService.deleteFile(found.getFilenameAlias().getFileName());
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 logger().warn("Could not delete file assigned to {}", found.getFilenameAlias(), e);
             }
         }
@@ -110,9 +123,10 @@ public class BadgesService {
         Dimensions dim = imageService.getImageFormat(bytes).getDimension();
         FilenameAlias specificAlias = original.createSpecific(resolution, dim);
         cloudFileImagesService.uploadImageWithGivenName(bytes, specificAlias.getFileName());
-        if(found.getFilenameAlias() == null) {
+        if (found.getFilenameAlias() == null) {
             found.setFilenameAlias(specificAlias);
-        } else {
+        }
+        else {
             found.getFilenameAlias().updateFrom(specificAlias);
         }
     }
@@ -140,7 +154,7 @@ public class BadgesService {
     public void hideBadge(Community community, long id) {
         FilenameAlias alias = filenameAliasRepository.findOne(id);
 
-        if(alias == null) {
+        if (alias == null) {
             return;
         }
 
@@ -162,7 +176,7 @@ public class BadgesService {
     public List<FilenameAlias> removeResolution(long id) {
         Resolution resolution = resolutionRepository.findOne(id);
 
-        if(resolution == null) {
+        if (resolution == null) {
             return Collections.emptyList();
         }
 
@@ -182,15 +196,16 @@ public class BadgesService {
 
     public void deleteCloudFileByAlias(FilenameAlias filenameAlias) {
         FilenameAlias alias = filenameAliasRepository.findOne(filenameAlias.getId());
-        if(alias != null) {
+        if (alias != null) {
             filenameAliasRepository.delete(filenameAlias);
         }
 
         try {
-            if(alias != null) {
+            if (alias != null) {
                 cloudFileService.deleteFile(filenameAlias.getFileName());
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger().warn("Did not succeeded to remove the cloud file: {} on cloud: {}", filenameAlias.getFileName(), cloudFileService.getFilesURL());
         }
     }
@@ -200,7 +215,7 @@ public class BadgesService {
 
         for (BadgeMapping mapping : mappings) {
             FilenameAlias filenameAlias = mapping.getFilenameAlias();
-            if(filenameAlias != null) {
+            if (filenameAlias != null) {
                 aliases.add(filenameAlias);
             }
         }
@@ -224,22 +239,24 @@ public class BadgesService {
 
     private List<BadgeMapping> getBadgeMappings(long badgeId, Community community, Resolution resolution) {
         Resolution inDatabase = resolutionRepository.find(resolution.getDeviceType(), resolution.getWidth(), resolution.getHeight());
-        if(inDatabase == null) {
+        if (inDatabase == null) {
             return badgeMappingRepository.findByCommunityAndFilenameId(community, badgeId);
-        } else {
+        }
+        else {
             return badgeMappingRepository.findByCommunityResolutionAndFilenameId(community, inDatabase, badgeId);
         }
     }
 
     private String chooseBadgeFileName(List<BadgeMapping> mappings) {
         // badge is backed by resolution (has specific, assigned for this resolution and community)
-        if(mappings.size() == 2) {
+        if (mappings.size() == 2) {
             FilenameAlias filenameAlias = mappings.get(0).getFilenameAlias();
             // there is the placeholder
             // specified the the size and server resized the image
-            if(filenameAlias != null && filenameAlias.getFileName() != null) {
+            if (filenameAlias != null && filenameAlias.getFileName() != null) {
                 return filenameAlias.getFileName();
-            } else {
+            }
+            else {
                 return mappings.get(1).getFilenameAlias().getFileName();
             }
         }

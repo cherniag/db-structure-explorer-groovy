@@ -1,12 +1,14 @@
 package mobi.nowtechnologies.server.dto.streamzine.badge;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class ResolutionDto {
+
     private long id;
 
     @JsonProperty(value = "deviceType")
@@ -30,12 +32,12 @@ public class ResolutionDto {
         return dto;
     }
 
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
-    }
-
     public String getDeviceType() {
         return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
     public int getWidth() {

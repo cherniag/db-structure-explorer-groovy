@@ -1,13 +1,15 @@
 package mobi.nowtechnologies.applicationtests.features.common.transformers;
 
-import cucumber.api.Transformer;
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import cucumber.api.Transformer;
+
 public class DeviceTypesTransformer extends Transformer<Set<String>> {
+
     @Override
     public Set<String> transform(String value) {
         // parsing ...

@@ -8,20 +8,25 @@ import mobi.nowtechnologies.applicationtests.services.http.activate.ApplyInitPro
 import mobi.nowtechnologies.applicationtests.services.http.activate.AutoOptInHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneNumberHttpService;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
-import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
+
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/2/2014
+ * Author: Gennadii Cherniaiev Date: 7/2/2014
  */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PartnerDeviceSet extends ClientDevicesSet {
+
     @Resource
     PhoneNumberHttpService phoneNumberHttpService;
     @Resource
@@ -33,29 +38,32 @@ public class PartnerDeviceSet extends ClientDevicesSet {
     @Resource
     OtacCodeCreator otacCodeCreator;
 
-    public void enterPhoneNumber(UserDeviceData userDeviceData, String phoneNumber){
+    public void enterPhoneNumber(UserDeviceData userDeviceData, String phoneNumber) {
         final PhoneStateImpl state = states.get(userDeviceData);
 
-        state.phoneActivationDto = phoneNumberHttpService.phoneNumber(userDeviceData, phoneNumber, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
-        state.accountCheck = accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
+        state.phoneActivationDto =
+            phoneNumberHttpService.phoneNumber(userDeviceData, phoneNumber, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
+        state.accountCheck =
+            accountCheckHttpService.accountCheck(userDeviceData, state.getLastAccountCheckResponse().userName, state.getLastAccountCheckResponse().userToken, userDeviceData.getFormat());
     }
 
-    public void activate(UserDeviceData userDeviceData, String otac){
+    public void activate(UserDeviceData userDeviceData, String otac) {
         final PhoneStateImpl state = states.get(userDeviceData);
 
-        if(state.getLastAccountCheckResponse().subjectToAutoOptIn) {
+        if (state.getLastAccountCheckResponse().subjectToAutoOptIn) {
             AccountCheckDto response = autoOptInHttpService.autoOptIn(state.getLastAccountCheckResponse(), userDeviceData, otac, userDeviceData.getFormat());
 
             state.accountCheck = response;
             state.activationResponse = response;
-        } else {
+        }
+        else {
             AccountCheckDto response = applyInitPromoHttpService.applyInitPromo(state.getLastAccountCheckResponse(), userDeviceData, otac, userDeviceData.getFormat());
             state.accountCheck = response;
             state.activationResponse = response;
         }
     }
 
-    public void signUpAndActivate(UserDeviceData userDeviceData){
+    public void signUpAndActivate(UserDeviceData userDeviceData) {
         singup(userDeviceData);
 
         String phoneNumber = phoneNumberCreator.createValidPhoneNumber(ProviderType.O2, SegmentType.BUSINESS, Contract.PAYG, Tariff._4G, ContractChannel.DIRECT);

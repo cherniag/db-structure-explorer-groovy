@@ -4,15 +4,19 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
+
+import javax.annotation.Resource;
+
+import java.util.Date;
+
 import org.apache.commons.lang.time.DateUtils;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.Date;
-
 @Service
 public class StreamzineUpdateCreator {
+
     @Resource
     CommunityRepository communityRepository;
     @Resource

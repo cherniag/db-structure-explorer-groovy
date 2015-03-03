@@ -1,183 +1,170 @@
 package mobi.nowtechnologies.server.shared.dto.web;
 
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
 public class PaymentDetailsByPaymentDto {
 
-	public static final String NAME = "paymentDetailsByPaymentDto";
+    public static final String NAME = "paymentDetailsByPaymentDto";
 
-	private Long paymentDetailsId;
-	private String paymentType;
-	private PaymentPolicyDto paymentPolicyDto;
-	private boolean activated;
+    private Long paymentDetailsId;
+    private String paymentType;
+    private PaymentPolicyDto paymentPolicyDto;
+    private boolean activated;
 
-	public class PaymentPolicyDto {
+    public String getPaymentType() {
+        return paymentType;
+    }
 
-		public static final String NAME = "paymentPolicyDto";
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
 
-		private BigDecimal subcost;
-		private int duration;
-		private DurationUnit durationUnit;
-		private Integer operator;
-		private String operatorName;
-		private String paymentType;
-		private String shortCode;
-		private BigDecimal oldSubcost;
-		private Integer oldDuration;
-		private DurationUnit oldDurationUnit;
-		private String currencyISO;
+    public Long getPaymentDetailsId() {
+        return paymentDetailsId;
+    }
 
-		public BigDecimal getSubcost() {
-			return subcost;
-		}
+    public void setPaymentDetailsId(Long paymentDetailsId) {
+        this.paymentDetailsId = paymentDetailsId;
+    }
 
-		public void setSubcost(BigDecimal subcost) {
-			this.subcost = subcost;
-		}
+    public PaymentPolicyDto getPaymentPolicyDto() {
+        return paymentPolicyDto;
+    }
 
-		public BigDecimal getOldSubcost() {
-			return oldSubcost;
-		}
+    public void setPaymentPolicyDto(PaymentPolicyDto paymentPolicyDto) {
+        this.paymentPolicyDto = paymentPolicyDto;
+    }
 
-		public void setOldSubcost(BigDecimal oldSubcost) {
-			this.oldSubcost = oldSubcost;
-		}
+    public boolean isActivated() {
+        return activated;
+    }
 
-		public Integer getOldDuration() {
-			return oldDuration;
-		}
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 
-		public void setOldDuration(Integer oldDuration) {
-			this.oldDuration = oldDuration;
-		}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("paymentDetailsId", paymentDetailsId).append("paymentType", paymentType).append("paymentPolicyDto", paymentPolicyDto).append("activated", activated)
+                                        .toString();
+    }
 
-		public Integer getOperator() {
-			return operator;
-		}
+    public class PaymentPolicyDto {
 
-		public void setOperator(Integer operator) {
-			this.operator = operator;
-		}
+        public static final String NAME = "paymentPolicyDto";
 
-		public String getPaymentType() {
-			return paymentType;
-		}
+        private BigDecimal subcost;
+        private int duration;
+        private DurationUnit durationUnit;
+        private Integer operator;
+        private String operatorName;
+        private String paymentType;
+        private String shortCode;
+        private BigDecimal oldSubcost;
+        private Integer oldDuration;
+        private DurationUnit oldDurationUnit;
+        private String currencyISO;
 
-		public void setPaymentType(String paymentType) {
-			this.paymentType = paymentType;
-		}
+        public BigDecimal getSubcost() {
+            return subcost;
+        }
 
-		public String getShortCode() {
-			return shortCode;
-		}
+        public void setSubcost(BigDecimal subcost) {
+            this.subcost = subcost;
+        }
 
-		public void setShortCode(String shortCode) {
-			this.shortCode = shortCode;
-		}
+        public BigDecimal getOldSubcost() {
+            return oldSubcost;
+        }
 
-		public String getOperatorName() {
-			return operatorName;
-		}
+        public void setOldSubcost(BigDecimal oldSubcost) {
+            this.oldSubcost = oldSubcost;
+        }
 
-		public void setOperatorName(String operatorName) {
-			this.operatorName = operatorName;
-		}
+        public Integer getOldDuration() {
+            return oldDuration;
+        }
 
-		public String getCurrencyISO() {
-			return currencyISO;
-		}
+        public void setOldDuration(Integer oldDuration) {
+            this.oldDuration = oldDuration;
+        }
 
-		public void setCurrencyISO(String currencyISO) {
-			this.currencyISO = currencyISO;
-		}
+        public Integer getOperator() {
+            return operator;
+        }
 
-		public long getDuration() {
-			return duration;
-		}
+        public void setOperator(Integer operator) {
+            this.operator = operator;
+        }
 
-		public void setDuration(int duration) {
-			this.duration = duration;
-		}
+        public String getPaymentType() {
+            return paymentType;
+        }
 
-		public DurationUnit getDurationUnit() {
-			return durationUnit;
-		}
+        public void setPaymentType(String paymentType) {
+            this.paymentType = paymentType;
+        }
 
-		public void setDurationUnit(DurationUnit durationUnit) {
-			this.durationUnit = durationUnit;
-		}
+        public String getShortCode() {
+            return shortCode;
+        }
 
-		public DurationUnit getOldDurationUnit() {
-			return oldDurationUnit;
-		}
+        public void setShortCode(String shortCode) {
+            this.shortCode = shortCode;
+        }
 
-		public void setOldDurationUnit(DurationUnit oldDurationUnit) {
-			this.oldDurationUnit = oldDurationUnit;
-		}
+        public String getOperatorName() {
+            return operatorName;
+        }
 
-		@Override
-		public String toString() {
-			return new ToStringBuilder(this)
-					.append("subcost", subcost)
-					.append("duration", duration)
-					.append("periodUnit", durationUnit)
-					.append("operator", operator)
-					.append("operatorName", operatorName)
-					.append("paymentType", paymentType)
-					.append("shortCode", shortCode)
-					.append("oldSubcost", oldSubcost)
-					.append("oldDuration", oldDuration)
-					.append("oldDurationUnit", oldDurationUnit)
-					.append("currencyISO", currencyISO)
-					.toString();
-		}
-	}
+        public void setOperatorName(String operatorName) {
+            this.operatorName = operatorName;
+        }
 
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
-	}
+        public String getCurrencyISO() {
+            return currencyISO;
+        }
 
-	public String getPaymentType() {
-		return paymentType;
-	}
+        public void setCurrencyISO(String currencyISO) {
+            this.currencyISO = currencyISO;
+        }
 
-	public Long getPaymentDetailsId() {
-		return paymentDetailsId;
-	}
+        public long getDuration() {
+            return duration;
+        }
 
-	public void setPaymentDetailsId(Long paymentDetailsId) {
-		this.paymentDetailsId = paymentDetailsId;
-	}
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
 
-	public PaymentPolicyDto getPaymentPolicyDto() {
-		return paymentPolicyDto;
-	}
+        public DurationUnit getDurationUnit() {
+            return durationUnit;
+        }
 
-	public void setPaymentPolicyDto(PaymentPolicyDto paymentPolicyDto) {
-		this.paymentPolicyDto = paymentPolicyDto;
-	}
+        public void setDurationUnit(DurationUnit durationUnit) {
+            this.durationUnit = durationUnit;
+        }
 
-	public void setActivated(boolean activated) {
-		this.activated = activated;
-	}
+        public DurationUnit getOldDurationUnit() {
+            return oldDurationUnit;
+        }
 
-	public boolean isActivated() {
-		return activated;
-	}
+        public void setOldDurationUnit(DurationUnit oldDurationUnit) {
+            this.oldDurationUnit = oldDurationUnit;
+        }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append("paymentDetailsId", paymentDetailsId)
-				.append("paymentType", paymentType)
-				.append("paymentPolicyDto", paymentPolicyDto)
-				.append("activated", activated)
-				.toString();
-	}
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this).append("subcost", subcost).append("duration", duration).append("periodUnit", durationUnit).append("operator", operator)
+                                            .append("operatorName", operatorName).append("paymentType", paymentType).append("shortCode", shortCode).append("oldSubcost", oldSubcost)
+                                            .append("oldDuration", oldDuration).append("oldDurationUnit", oldDurationUnit).append("currencyISO", currencyISO).toString();
+        }
+    }
 }

@@ -2,14 +2,16 @@ package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
-import org.junit.Test;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.*;
+import static org.junit.Assert.*;
 
-public class ResolutionRepositoryTest extends AbstractRepositoryIT {
+public class ResolutionRepositoryIT extends AbstractRepositoryIT {
+
     @Resource
     private ResolutionRepository resolutionRepository;
 

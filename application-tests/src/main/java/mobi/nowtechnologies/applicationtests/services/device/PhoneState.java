@@ -1,12 +1,14 @@
 package mobi.nowtechnologies.applicationtests.services.device;
 
-import mobi.nowtechnologies.applicationtests.services.http.domain.common.*;
 import mobi.nowtechnologies.applicationtests.services.http.common.Error;
+import mobi.nowtechnologies.applicationtests.services.http.domain.common.User;
 import mobi.nowtechnologies.applicationtests.services.http.phonenumber.PhoneActivationDto;
 import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+
 import org.springframework.http.HttpStatus;
 
 public interface PhoneState {
+
     String getDeviceUID();
 
     String getEmail();
@@ -35,9 +37,9 @@ public interface PhoneState {
 
     long getLastActivationEmailToken();
 
-    void setLastEnteredPhoneNumberOnWebPortal(String anyValid);
-
     String getLastEnteredPhoneNumberOnWebPortal();
+
+    void setLastEnteredPhoneNumberOnWebPortal(String anyValid);
 
     String getFacebookAccessToken();
 

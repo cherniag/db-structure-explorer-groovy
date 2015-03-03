@@ -5,48 +5,47 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class ContactUsDto {
-	
-	public static final String NAME="contactUsDto";
 
-	@NotEmpty
-	private String name;
-	
-	@NotEmpty
-	@Email
-	private String email;
-	
-	@NotEmpty
-	private String subject;
+    public static final String NAME = "contactUsDto";
 
-	public String getName() {
-		return name;
-	}
+    @NotEmpty
+    private String name;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @NotEmpty
+    @Email
+    private String email;
 
-	public String getEmail() {
-		return email;
-	}
+    @NotEmpty
+    private String subject;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getSubject() {
-		return subject;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	@Override
-	public String toString() {
-		return "ContactUsDto [email=" + email + ", name=" + name + ", subject=" + subject + "]";
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    @Override
+    public String toString() {
+        return "ContactUsDto [email=" + email + ", name=" + name + ", subject=" + subject + "]";
+    }
 }

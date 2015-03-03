@@ -1,15 +1,34 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import com.google.common.base.CharMatcher;
 import mobi.nowtechnologies.server.editor.ResolutionParameterEditor;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.ThrottlingService;
-import mobi.nowtechnologies.server.shared.dto.*;
+import mobi.nowtechnologies.server.shared.dto.AccountCheckDTO;
+import mobi.nowtechnologies.server.shared.dto.BonusChartDetailDto;
+import mobi.nowtechnologies.server.shared.dto.ChartDetailDto;
+import mobi.nowtechnologies.server.shared.dto.ChartDto;
+import mobi.nowtechnologies.server.shared.dto.PlaylistDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.FIFTH_CHART;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.FOURTH_CHART;
+import static mobi.nowtechnologies.server.shared.enums.ChartType.VIDEO_CHART;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import static java.util.Arrays.asList;
+
+import com.google.common.base.CharMatcher;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -17,14 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-import static java.util.Arrays.asList;
-import static mobi.nowtechnologies.server.shared.enums.ChartType.*;
 
 /**
  * GetChartController
@@ -46,19 +57,10 @@ public class GetChartController extends CommonController {
         binder.registerCustomEditor(Resolution.class, new ResolutionParameterEditor());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.9}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.8}/GET_CHART"
-    })
-    public ModelAndView getChartV68(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam("WIDTHXHEIGHT") Resolution resolution,
-            HttpServletResponse response
-    ) throws Exception {
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.9}/GET_CHART", "**/{community}/{apiVersion:6\\.8}/GET_CHART"})
+    public ModelAndView getChartV68(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
+                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
+        throws Exception {
         ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, true, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
@@ -66,18 +68,10 @@ public class GetChartController extends CommonController {
         return modelAndView;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.7}/GET_CHART"
-    })
-    public ModelAndView getChartV67(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam("WIDTHXHEIGHT") Resolution resolution,
-            HttpServletResponse response
-    ) throws Exception {
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.7}/GET_CHART"})
+    public ModelAndView getChartV67(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
+                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
+        throws Exception {
         ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, true, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
@@ -85,20 +79,10 @@ public class GetChartController extends CommonController {
         return modelAndView;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.6}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.5}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.4}/GET_CHART"
-    })
-    public ModelAndView getChartV6(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            @RequestParam("WIDTHXHEIGHT") Resolution resolution,
-            HttpServletResponse response
-    ) throws Exception {
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.6}/GET_CHART", "**/{community}/{apiVersion:6\\.5}/GET_CHART", "**/{community}/{apiVersion:6\\.4}/GET_CHART"})
+    public ModelAndView getChartV6(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
+                                   @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, @RequestParam("WIDTHXHEIGHT") Resolution resolution, HttpServletResponse response)
+        throws Exception {
         ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, resolution, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
@@ -107,17 +91,9 @@ public class GetChartController extends CommonController {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, value = {
-            "**/{community}/{apiVersion:6\\.3}/GET_CHART"
-    })
-    public ModelAndView getChartV63(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-            HttpServletResponse response
-    ) throws Exception {
+    @RequestMapping(method = RequestMethod.GET, value = {"**/{community}/{apiVersion:6\\.3}/GET_CHART"})
+    public ModelAndView getChartV63(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
+                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {
         ModelAndView modelAndView = getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.ACTIVATED);
 
         setMandatoryLastModifiedHeader(response);
@@ -126,48 +102,24 @@ public class GetChartController extends CommonController {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/{apiVersion:6\\.2}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.1}/GET_CHART",
-            "**/{community}/{apiVersion:6\\.0}/GET_CHART",
-            "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART",
-            "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART"
-    })
-    public ModelAndView getChart_O2_v4d0(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
-    ) throws Exception {
+    @RequestMapping(method = RequestMethod.POST,
+                    value = {"**/{community}/{apiVersion:6\\.2}/GET_CHART", "**/{community}/{apiVersion:6\\.1}/GET_CHART", "**/{community}/{apiVersion:6\\.0}/GET_CHART",
+                        "**/{community}/{apiVersion:5\\.[0-4]{1,3}}/GET_CHART", "**/{community}/{apiVersion:4\\.[0-9]{1,3}}/GET_CHART"})
+    public ModelAndView getChart_O2_v4d0(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
+                                         @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.ACTIVATED);
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community}/5.5/GET_CHART",
-            "**/{community}/5.5.0/GET_CHART"
-    })
-    public ModelAndView getChart_v5(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID
-    ) throws Exception {
-        return getChart(request, userName, userToken, timestamp, deviceUID,
-                null, false, false, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community}/5.5/GET_CHART", "**/{community}/5.5.0/GET_CHART"})
+    public ModelAndView getChart_v5(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp,
+                                    @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
+        return getChart(request, userName, userToken, timestamp, deviceUID, null, false, false, ActivationStatus.REGISTERED, ActivationStatus.ACTIVATED);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART"
-    })
-    public ModelAndView getChart_O2_v3d8(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3\\.[8-9]{1,3}}/GET_CHART"})
+    public ModelAndView getChart_O2_v3d8(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
+                                         @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -184,25 +136,21 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             ex = e;
             throw e;
-        } finally {
+        }
+        finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community:o2}/{apiVersion:3.7}/GET_CHART"
-    })
-    public ModelAndView getChart_O2_v3d7(
-            HttpServletRequest request,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/{apiVersion:3.7}/GET_CHART"})
+    public ModelAndView getChart_O2_v3d7(HttpServletRequest request, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
+                                         @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -219,26 +167,22 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             ex = e;
             throw e;
-        } finally {
+        }
+        finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, value = {
-            "**/{community:o2}/3.6/GET_CHART"
-    })
-    public ModelAndView getChart_O2(
-            HttpServletRequest request,
-            @RequestParam("API_VERSION") String apiVersion,
-            @RequestParam("USER_NAME") String userName,
-            @RequestParam("USER_TOKEN") String userToken,
-            @RequestParam("TIMESTAMP") String timestamp,
-            @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
+    @RequestMapping(method = RequestMethod.POST, value = {"**/{community:o2}/3.6/GET_CHART"})
+    public ModelAndView getChart_O2(HttpServletRequest request, @RequestParam("API_VERSION") String apiVersion, @RequestParam("USER_NAME") String userName,
+                                    @RequestParam("USER_TOKEN") String userToken, @RequestParam("TIMESTAMP") String timestamp, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID)
+        throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -255,24 +199,20 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             ex = e;
             throw e;
-        } finally {
+        }
+        finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
     }
 
 
-    private ModelAndView getChart(HttpServletRequest request,
-                                  String userName,
-                                  String userToken,
-                                  String timestamp,
-                                  String deviceUID,
-                                  Resolution resolution, boolean isPlayListLockedSupported,
-                                  boolean withOneTimePayment, 
-                                  ActivationStatus... activationStatuses) throws Exception {
+    private ModelAndView getChart(HttpServletRequest request, String userName, String userToken, String timestamp, String deviceUID, Resolution resolution, boolean isPlayListLockedSupported,
+                                  boolean withOneTimePayment, ActivationStatus... activationStatuses) throws Exception {
         User user = null;
         Exception ex = null;
         String community = getCurrentCommunityUri();
@@ -281,7 +221,7 @@ public class GetChartController extends CommonController {
             throttlingService.throttling(request, userName, deviceUID, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, activationStatuses);
 
-            if(resolution != null) {
+            if (resolution != null) {
                 resolution.withDeviceType(user.getDeviceType().getName());
             }
             ChartDto chartDto = chartService.processGetChartCommand(user, false, true, resolution, isPlayListLockedSupported);
@@ -289,10 +229,12 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
 
             return buildModelAndView(accountCheck, chartDto);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             ex = e;
             throw e;
-        } finally {
+        }
+        finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
@@ -302,7 +244,9 @@ public class GetChartController extends CommonController {
         version = CharMatcher.DIGIT.retainFrom(version).substring(0, 2);
         int intVersion = new Integer(version);
 
-        Set<ChartType> removeChartTypes = new HashSet<ChartType>(intVersion < 38 ? asList(FOURTH_CHART, FIFTH_CHART, VIDEO_CHART) : asList(VIDEO_CHART));
+        Set<ChartType> removeChartTypes = new HashSet<ChartType>(intVersion < 38 ?
+                                                                 asList(FOURTH_CHART, FIFTH_CHART, VIDEO_CHART) :
+                                                                 asList(VIDEO_CHART));
         PlaylistDto[] playlistDtos = chartDto.getPlaylistDtos();
         Set<Integer> removedPlaylistIds = new HashSet<Integer>();
         Map<Integer, PlaylistDto> playlistMap = new HashMap<Integer, PlaylistDto>();
@@ -311,7 +255,8 @@ public class GetChartController extends CommonController {
             if (removeChartTypes.contains(chartType)) {
                 removedPlaylistIds.add(playlistDtos[i].getId());
                 playlistDtos[i] = null;
-            } else {
+            }
+            else {
                 playlistMap.put(playlistDtos[i].getId(), playlistDtos[i]);
             }
         }
@@ -319,15 +264,19 @@ public class GetChartController extends CommonController {
         ChartDetailDto[] tracks = chartDto.getChartDetailDtos();
         Map<ChartType, Integer> positionMap = new HashMap<ChartType, Integer>();
         for (int i = 0; i < tracks.length; i++) {
-            if (removedPlaylistIds.contains(tracks[i].getPlaylistId()))
+            if (removedPlaylistIds.contains(tracks[i].getPlaylistId())) {
                 tracks[i] = null;
-            else if (tracks[i].getChannel() != null && intVersion < 37)
+            }
+            else if (tracks[i].getChannel() != null && intVersion < 37) {
                 tracks[i] = new BonusChartDetailDto(tracks[i]);
+            }
 
             if (intVersion < 38 && tracks[i] != null) {
                 PlaylistDto playlistDto = playlistMap.get(tracks[i].getPlaylistId());
                 Integer position = positionMap.get(playlistDto.getType());
-                position = position != null ? position : 1;
+                position = position != null ?
+                           position :
+                           1;
 
                 tracks[i].setPosition(position.byteValue());
 

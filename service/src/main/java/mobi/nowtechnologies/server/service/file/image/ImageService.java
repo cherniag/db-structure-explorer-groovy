@@ -1,19 +1,21 @@
 package mobi.nowtechnologies.server.service.file.image;
 
-import net.coobird.thumbnailator.Thumbnails;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import net.coobird.thumbnailator.Thumbnails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ImageService {
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     public byte[] resize(byte[] bytes, int width, int height) throws IOException {
@@ -35,7 +37,7 @@ public class ImageService {
 
             Iterator<ImageReader> iter = ImageIO.getImageReaders(imageInputStream);
 
-            if(!iter.hasNext()) {
+            if (!iter.hasNext()) {
                 return null;
             }
 
@@ -49,10 +51,12 @@ public class ImageService {
             final int height = reader.getHeight(minIndex);
 
             return new ImageInfo(format, width, height);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error("Got an error during getting image format", e);
             return null;
-        } finally {
+        }
+        finally {
             if (reader != null) {
                 reader.dispose();
             }

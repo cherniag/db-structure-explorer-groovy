@@ -26,17 +26,9 @@ public enum TypeToSubTypePair {
         this.subType = subType;
     }
 
-    public Enum<?> getSubType() {
-        return subType;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
     public static Enum<?> restoreSubType(ContentType contentType, String value) {
         for (TypeToSubTypePair typeToSubTypePair : values()) {
-            if(typeToSubTypePair.contentType == contentType) {
+            if (typeToSubTypePair.contentType == contentType) {
                 return typeToSubTypePair.subType.valueOf(typeToSubTypePair.subType.getClass(), value);
             }
         }
@@ -47,11 +39,19 @@ public enum TypeToSubTypePair {
         List<Enum<?>> subTypes = new ArrayList<Enum<?>>();
 
         for (TypeToSubTypePair typeToSubTypePair : values()) {
-            if(typeToSubTypePair.contentType == contentType) {
+            if (typeToSubTypePair.contentType == contentType) {
                 subTypes.add(typeToSubTypePair.subType);
             }
         }
 
         return subTypes;
+    }
+
+    public Enum<?> getSubType() {
+        return subType;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
     }
 }

@@ -1,53 +1,50 @@
 package mobi.nowtechnologies.server.transport.service;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Iterables;
-import com.google.common.io.Files;
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.job.CleanExpirePendingPaymentsJob;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
-import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import mobi.nowtechnologies.server.transport.controller.AbstractControllerTestIT;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
+import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
+
+import javax.annotation.Resource;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+
+import com.google.common.collect.Iterables;
+import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.google.common.base.Charsets.UTF_8;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import static org.junit.Assert.*;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-
-import static com.google.common.base.Charsets.UTF_8;
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType.RETRY;
-import static mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus.ERROR;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextHierarchy({
-        @ContextConfiguration(locations = {
-                "classpath:transport-root-test.xml", "classpath:post-service-test.xml"}),
-        @ContextConfiguration(locations = {
-                "classpath:transport-servlet-test.xml"})})
+@ContextHierarchy(
+    {@ContextConfiguration(locations = {"classpath:transport-root-test.xml", "classpath:post-service-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
 @WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
-public class FailedSmsAfterFailedPaymentForO2IT{
+public class FailedSmsAfterFailedPaymentForO2IT {
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
@@ -87,7 +84,7 @@ public class FailedSmsAfterFailedPaymentForO2IT{
         PaymentDetails paymentDetails = paymentDetailsRepository.findOne(4L);
         paymentDetails.setOwner(currentUser);
         paymentDetails.withLastPaymentStatus(ERROR);
-        paymentDetails.withMadeRetries(paymentDetails.getRetriesOnError()-1);
+        paymentDetails.withMadeRetries(paymentDetails.getRetriesOnError() - 1);
         currentUser.setCurrentPaymentDetails(paymentDetails);
 
         assertEquals(pendingPayments.size(), 1);

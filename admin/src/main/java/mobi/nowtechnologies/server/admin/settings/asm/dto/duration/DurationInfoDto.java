@@ -1,16 +1,18 @@
 package mobi.nowtechnologies.server.admin.settings.asm.dto.duration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 @JsonTypeName("durationInfoDto")
 @XmlAccessorType(XmlAccessType.NONE)
 public class DurationInfoDto {
+
     @JsonProperty(value = "amount")
     private int amount;
 
@@ -26,18 +28,20 @@ public class DurationInfoDto {
     }
 
     public Duration toDuration() {
-        if(amount <= 0 || durationUnit == null) {
+        if (amount <= 0 || durationUnit == null) {
             return Duration.noPeriod();
-        } else {
+        }
+        else {
             return Duration.forPeriod(amount, durationUnit);
         }
     }
 
     public void fromDuration(Duration duration) {
-        if(duration.containsPeriod()) {
+        if (duration.containsPeriod()) {
             amount = duration.getAmount();
             durationUnit = duration.getUnit();
-        } else {
+        }
+        else {
             amount = 0;
             durationUnit = null;
         }

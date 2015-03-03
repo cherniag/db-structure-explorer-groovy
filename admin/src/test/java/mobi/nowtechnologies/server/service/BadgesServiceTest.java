@@ -13,19 +13,20 @@ import mobi.nowtechnologies.server.persistence.repository.ResolutionRepository;
 import mobi.nowtechnologies.server.service.file.image.ImageService;
 import mobi.nowtechnologies.server.service.streamzine.BadgesService;
 import mobi.nowtechnologies.server.service.streamzine.CloudFileImagesService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.*;
+import org.junit.rules.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class BadgesServiceTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Mock
     private FilenameAliasRepository filenameAliasRepository;
     @Mock
@@ -38,16 +39,12 @@ public class BadgesServiceTest {
     private CloudFileService cloudFileService;
     @Mock
     private ImageService imageService;
-
     @InjectMocks
     private BadgesService badgesService;
-
     @Captor
     private ArgumentCaptor<FilenameAlias> filenameAlias;
     @Captor
     private ArgumentCaptor<Iterable<? extends BadgeMapping>> entities;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -79,9 +76,7 @@ public class BadgesServiceTest {
 
         // when
         final long badgeId = 1L;
-        List<BadgeMapping> mappings = Arrays.asList(
-                BadgeMappingFactory.general("fileName")
-        );
+        List<BadgeMapping> mappings = Arrays.asList(BadgeMappingFactory.general("fileName"));
 
         // No resolution:
         when(resolutionRepository.find(anyString(), anyInt(), anyInt())).thenReturn(null);
@@ -100,10 +95,7 @@ public class BadgesServiceTest {
 
         // when
         final long badgeId = 1L;
-        List<BadgeMapping> mappings = Arrays.asList(
-                BadgeMappingFactory.specific("general", "specific"),
-                BadgeMappingFactory.general("general")
-        );
+        List<BadgeMapping> mappings = Arrays.asList(BadgeMappingFactory.specific("general", "specific"), BadgeMappingFactory.general("general"));
 
         when(resolutionRepository.find(anyString(), anyInt(), anyInt())).thenReturn(resolution);
         when(badgeMappingRepository.findByCommunityResolutionAndFilenameId(community, resolution, badgeId)).thenReturn(mappings);
@@ -121,10 +113,7 @@ public class BadgesServiceTest {
 
         // when
         final long badgeId = 1L;
-        List<BadgeMapping> mappings = Arrays.asList(
-                BadgeMappingFactory.specific("general", null),
-                BadgeMappingFactory.general("general")
-        );
+        List<BadgeMapping> mappings = Arrays.asList(BadgeMappingFactory.specific("general", null), BadgeMappingFactory.general("general"));
 
         when(resolutionRepository.find(anyString(), anyInt(), anyInt())).thenReturn(resolution);
         when(badgeMappingRepository.findByCommunityResolutionAndFilenameId(community, resolution, badgeId)).thenReturn(mappings);
@@ -143,9 +132,8 @@ public class BadgesServiceTest {
         // when
         final long badgeId = 1L;
         List<BadgeMapping> mappings = Arrays.asList(
-                // no specific
-                BadgeMappingFactory.general("general")
-        );
+            // no specific
+            BadgeMappingFactory.general("general"));
 
         when(resolutionRepository.find(anyString(), anyInt(), anyInt())).thenReturn(resolution);
         when(badgeMappingRepository.findByCommunityResolutionAndFilenameId(community, resolution, badgeId)).thenReturn(mappings);
@@ -165,7 +153,7 @@ public class BadgesServiceTest {
         // when
         final long badgeId = 1L;
         List<BadgeMapping> mappings = Arrays.asList(
-                // not found: empty list
+            // not found: empty list
         );
 
         when(resolutionRepository.find(anyString(), anyInt(), anyInt())).thenReturn(resolution);
@@ -227,9 +215,7 @@ public class BadgesServiceTest {
     public void testRemoveResolution() throws Exception {
         // given
         long id = 1L;
-        List<BadgeMapping> mappings = Arrays.asList(
-                BadgeMappingFactory.specific("general", "specific")
-        );
+        List<BadgeMapping> mappings = Arrays.asList(BadgeMappingFactory.specific("general", "specific"));
 
         Resolution resolution = ResolutionFactory.create("deviceType", 1, 1);
 
@@ -250,9 +236,7 @@ public class BadgesServiceTest {
     @Test
     public void testCreateResolution() throws Exception {
         // given
-        List<BadgeMapping> mappings = Arrays.asList(
-                BadgeMappingFactory.specific("general", "specific")
-        );
+        List<BadgeMapping> mappings = Arrays.asList(BadgeMappingFactory.specific("general", "specific"));
 
         Community community = CommunityFactory.createCommunityMock(1, "hl_uk");
         Resolution resolution = ResolutionFactory.create("deviceType", 1, 1);

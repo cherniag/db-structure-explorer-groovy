@@ -4,31 +4,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlValue;
 
-@XmlRootElement(name="buyTrack")
+@XmlRootElement(name = "buyTrack")
 public class BuyTrackDto {
 
-	public static enum Status{
-		OK(),ALREADYPURCHASED(),NOTDOWNLOAD(),BALANCETOOLOW(), FAIL();
-	}
-	
-	private Status status=Status.FAIL;
+    private Status status = Status.FAIL;
 
-	@XmlTransient
-	public Status getStatus() {
-		return status;
-	}
+    @XmlTransient
+    public Status getStatus() {
+        return status;
+    }
 
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	
-	@XmlValue
-	public String getStatusValue() {
-		return status.name();
-	}
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-	@Override
-	public String toString() {
-		return "BuyTrackDto [status=" + status + "]";
-	}
+    @XmlValue
+    public String getStatusValue() {
+        return status.name();
+    }
+
+    @Override
+    public String toString() {
+        return "BuyTrackDto [status=" + status + "]";
+    }
+
+    public static enum Status {
+        OK(), ALREADYPURCHASED(), NOTDOWNLOAD(), BALANCETOOLOW(), FAIL();
+    }
 }

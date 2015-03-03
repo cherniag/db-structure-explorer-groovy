@@ -6,56 +6,62 @@ import mobi.nowtechnologies.server.trackrepo.domain.NegativeTag;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
-import org.springframework.data.domain.Page;
+import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
+import org.springframework.data.domain.Page;
 
 // @author Alexander Kolpakov (akolpakov)
 public class TrackDtoMapper extends TrackDto {
-	
-	public TrackDtoMapper(Track track) {
-		this.setId(track.getId());
-		this.setTitle(track.getTitle());
+
+    public TrackDtoMapper(Track track) {
+        this.setId(track.getId());
+        this.setTitle(track.getTitle());
         this.setExplicit(track.getExplicit());
-		this.setAlbum(track.getAlbum());
-		this.setArtist(track.getArtist());
-		this.setCopyright(track.getCopyright());
-		this.setStatus(track.getStatus());
-		this.setGenre(track.getGenre());
-		this.setInfo(track.getInfo());
-		this.setIngestor(track.getIngestor());
-		this.setIsrc(track.getIsrc());
-		this.setProductCode(track.getProductCode());
-		this.setProductId(track.getProductId());
-		this.setSubTitle(track.getSubTitle());
-		this.setYear(track.getYear());
-		this.setIngestionDate(track.getIngestionDate());
-		this.setIngestionUpdateDate(track.getIngestionUpdateDate());
-		this.setLicensed(track.getLicensed());
-		this.setResolution(track.getResolution());
-		this.setItunesUrl(track.getItunesUrl());
-		this.setAmazonUrl(track.getAmazonUrl());
+        this.setAlbum(track.getAlbum());
+        this.setArtist(track.getArtist());
+        this.setCopyright(track.getCopyright());
+        this.setStatus(track.getStatus());
+        this.setGenre(track.getGenre());
+        this.setInfo(track.getInfo());
+        this.setIngestor(track.getIngestor());
+        this.setIsrc(track.getIsrc());
+        this.setProductCode(track.getProductCode());
+        this.setProductId(track.getProductId());
+        this.setSubTitle(track.getSubTitle());
+        this.setYear(track.getYear());
+        this.setIngestionDate(track.getIngestionDate());
+        this.setIngestionUpdateDate(track.getIngestionUpdateDate());
+        this.setLicensed(track.getLicensed());
+        this.setResolution(track.getResolution());
+        this.setItunesUrl(track.getItunesUrl());
+        this.setAmazonUrl(track.getAmazonUrl());
         this.setPublishDate(track.getPublishDate());
         this.setUniqueTrackId(track.getUniqueTrackId());
 
-		this.setTerritoryCodes(track.getTerritoryCodes());
+        this.setTerritoryCodes(track.getTerritoryCodes());
         this.setLabel(track.getLabel());
         this.setReleaseDate(track.getReleaseDate());
-        this.setCoverFileName(track.getCoverFileId() != null ? track.getCoverFileId().toString() : "0");
-        this.setMediaFileName(track.getMediaFileId() != null ? track.getMediaFileId().toString() : "0");
-        this.setMediaType(track.getMediaType() != null ? FileType.valueOf(track.getMediaType().name()) : null);
+        this.setCoverFileName(track.getCoverFileId() != null ?
+                              track.getCoverFileId().toString() :
+                              "0");
+        this.setMediaFileName(track.getMediaFileId() != null ?
+                              track.getMediaFileId().toString() :
+                              "0");
+        this.setMediaType(track.getMediaType() != null ?
+                          FileType.valueOf(track.getMediaType().name()) :
+                          null);
         this.setReportingType(track.getReportingType());
 
-        if(track.getFiles() != null){
+        if (track.getFiles() != null) {
             List<ResourceFileDto> files = new LinkedList<ResourceFileDto>();
 
-            for (AssetFile file : track.getFiles()){
-                if(file.getType() != null){
+            for (AssetFile file : track.getFiles()) {
+                if (file.getType() != null) {
                     ResourceFileDto fileDto = new ResourceFileDto();
 
                     fileDto.setFilename(file.getPath());
@@ -69,10 +75,10 @@ public class TrackDtoMapper extends TrackDto {
             this.setFiles(files);
         }
 
-        if(track.getTerritories() != null){
+        if (track.getTerritories() != null) {
             List<TerritoryDto> territories = new LinkedList<TerritoryDto>();
 
-            for (Territory territory : track.getTerritories()){
+            for (Territory territory : track.getTerritories()) {
                 TerritoryDto territoryDto = new TerritoryDto();
 
                 territoryDto.setLabel(territory.getLabel());
@@ -96,29 +102,31 @@ public class TrackDtoMapper extends TrackDto {
         }
 
         Set<NegativeTag> negativeTags = track.getNegativeTags();
-        if(isNotNull(negativeTags)){
+        if (isNotNull(negativeTags)) {
             Set<String> negativeTagSet = new HashSet<String>(negativeTags.size());
             for (NegativeTag negativeTag : negativeTags) {
                 negativeTagSet.add(negativeTag.getTag());
             }
             this.setNegativeTags(negativeTagSet);
         }
-	}
-	
-	public static List<TrackDtoMapper> toList(List<Track> tracks) {
-		List<TrackDtoMapper> trackDtos = new LinkedList<TrackDtoMapper>();
+    }
 
-		for (Track track : tracks) {
-			trackDtos.add(new TrackDtoMapper(track));
-		}
+    public static List<TrackDtoMapper> toList(List<Track> tracks) {
+        List<TrackDtoMapper> trackDtos = new LinkedList<TrackDtoMapper>();
 
-		return trackDtos;
-	}
-	
-	public static PageListDto<TrackDtoMapper> toPage(Page<Track> tracks) {
-		long total = tracks.getTotalElements();
-		total = total % tracks.getSize() == 0 ? total / tracks.getSize() : total / tracks.getSize() + 1;
+        for (Track track : tracks) {
+            trackDtos.add(new TrackDtoMapper(track));
+        }
 
-		return new PageListDto<TrackDtoMapper>(toList(tracks.getContent()), (int) total, tracks.getNumber(), tracks.getSize());
-	}
+        return trackDtos;
+    }
+
+    public static PageListDto<TrackDtoMapper> toPage(Page<Track> tracks) {
+        long total = tracks.getTotalElements();
+        total = total % tracks.getSize() == 0 ?
+                total / tracks.getSize() :
+                total / tracks.getSize() + 1;
+
+        return new PageListDto<TrackDtoMapper>(toList(tracks.getContent()), (int) total, tracks.getNumber(), tracks.getSize());
+    }
 }

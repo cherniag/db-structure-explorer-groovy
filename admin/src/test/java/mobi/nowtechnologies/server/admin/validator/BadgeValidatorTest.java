@@ -3,13 +3,14 @@ package mobi.nowtechnologies.server.admin.validator;
 import mobi.nowtechnologies.common.dto.UserRegInfo;
 import mobi.nowtechnologies.server.dto.streamzine.badge.BadgeInfoDto;
 import mobi.nowtechnologies.server.dto.streamzine.badge.ResolutionDto;
-import org.junit.Test;
-import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import org.springframework.validation.Errors;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class BadgeValidatorTest {

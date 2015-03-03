@@ -29,15 +29,16 @@ public class TrackDto {
         this.artist = media.getArtistName();
         MediaFile imageFile = media.getImageFileSmall();
         String urlToTracks = options.get(Env.URL_TO_TRACKS);
-        this.cover = urlToTracks +imageFile.getFilename();
+        this.cover = urlToTracks + imageFile.getFilename();
         this.audio = urlToTracks + media.getIsrc() + "P.m4a";
         this.channel = detail.getChannel();
     }
 
-    public static List<TrackDto> toList(Collection<ChartDetail> details, Map options){
+    public static List<TrackDto> toList(Collection<ChartDetail> details, Map options) {
         List<TrackDto> result = new ArrayList<TrackDto>();
-        for (ChartDetail detail: details)
-            result.add(new TrackDto(detail, options ));
+        for (ChartDetail detail : details) {
+            result.add(new TrackDto(detail, options));
+        }
         return result;
     }
 

@@ -1,28 +1,27 @@
 package mobi.nowtechnologies.server.trackrepo.domain;
 
-import mobi.nowtechnologies.server.persistence.domain.Artist;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
 import static javax.persistence.InheritanceType.JOINED;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 @Entity
 @Inheritance(strategy = JOINED)
 public class DropContent extends AbstractEntity {
 
-    @Column(name="ISRC", nullable = false)
-	protected String isrc;
+    @Column(name = "ISRC", nullable = false)
+    protected String isrc;
 
-    @Column(name="Artist", nullable = false)
+    @Column(name = "Artist", nullable = false)
     protected String artist;
 
-    @Column(name="Title", nullable = false)
+    @Column(name = "Title", nullable = false)
     protected String title;
 
-    @Column(name="updated")
+    @Column(name = "updated")
     protected boolean updated;
 
     public String getIsrc() {
@@ -59,12 +58,6 @@ public class DropContent extends AbstractEntity {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-                .appendSuper(super.toString())
-                .append("isrc", isrc)
-                .append("artist", artist)
-                .append("title", title)
-                .append("updated", updated)
-                .toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("isrc", isrc).append("artist", artist).append("title", title).append("updated", updated).toString();
     }
 }

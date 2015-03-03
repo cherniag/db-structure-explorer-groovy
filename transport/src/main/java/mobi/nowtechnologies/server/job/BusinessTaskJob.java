@@ -4,19 +4,21 @@ import mobi.nowtechnologies.server.job.task.ProcessorContainer;
 import mobi.nowtechnologies.server.persistence.domain.task.Task;
 import mobi.nowtechnologies.server.service.TaskService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 /**
- * User: gch
- * Date: 12/19/13
+ * User: gch Date: 12/19/13
  */
 public class BusinessTaskJob {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BusinessTaskJob.class);
 
     private TaskService taskService;
@@ -37,12 +39,14 @@ public class BusinessTaskJob {
             for (Task task : tasksListForExecution) {
                 try {
                     executor.execute(new ExecutableTask(task));
-                } catch (RejectedExecutionException e) {
+                }
+                catch (RejectedExecutionException e) {
                     LOGGER.error("Can't execute ExecutableTask({})", task.toString(), e);
                 }
             }
             LOGGER.info("BusinessTaskJob completed.");
-        } finally {
+        }
+        finally {
             LogUtils.removeClassNameMDC();
         }
     }
@@ -76,6 +80,7 @@ public class BusinessTaskJob {
     }
 
     private class ExecutableTask implements Runnable {
+
         private Task task;
 
         private ExecutableTask(Task task) {

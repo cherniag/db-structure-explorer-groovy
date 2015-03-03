@@ -3,15 +3,26 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
-import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "sz_block")
 public class Block {
+
     public static final int TITLE_MAX_LENGTH = 255;
     public static final int SUBTITLE_MAX_LENGTH = 255;
 
@@ -75,18 +86,18 @@ public class Block {
         expanded = block.expanded;
         shapeType = block.shapeType;
 
-        if(block.accessPolicy != null) {
+        if (block.accessPolicy != null) {
             accessPolicy = block.accessPolicy.copy(this);
         }
         deeplinkInfo = block.deeplinkInfo.copy(this);
     }
 
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
-    }
-
     public String getCoverUrl() {
         return coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
     }
 
     public Long getBadgeId() {
@@ -97,20 +108,20 @@ public class Block {
         this.badgeId = badgeId;
     }
 
-    public void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
-    }
-
     public String getSubTitle() {
         return subTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void changePosition(int newPosition) {
@@ -156,22 +167,28 @@ public class Block {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Block)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Block)) {
+            return false;
+        }
 
         Block block = (Block) o;
 
-        if (position != block.position) return false;
+        if (position != block.position) {
+            return false;
+        }
 
         return true;
     }
 
-    public void setAccessPolicy(AccessPolicy accessPolicy) {
-        this.accessPolicy = accessPolicy;
-    }
-
     public AccessPolicy getAccessPolicy() {
         return accessPolicy;
+    }
+
+    public void setAccessPolicy(AccessPolicy accessPolicy) {
+        this.accessPolicy = accessPolicy;
     }
 
     @Override
@@ -181,14 +198,7 @@ public class Block {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("position", position)
-                .append("title", title)
-                .append("subTitle", subTitle)
-                .append("coverUrl", coverUrl)
-                .append("included", included)
-                .append("shapeType", shapeType)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("position", position).append("title", title).append("subTitle", subTitle).append("coverUrl", coverUrl).append("included", included)
+                                        .append("shapeType", shapeType).toString();
     }
 }

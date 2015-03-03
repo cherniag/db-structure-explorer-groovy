@@ -4,75 +4,74 @@ import mobi.nowtechnologies.server.trackrepo.enums.FileType;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class MediaFileDto {
-	
-	private int id;
 
-	private String filename;
+    private int id;
 
-	private FileType fileType;
+    private String filename;
 
-	private int size;
-	
-	private int duration;
+    private FileType fileType;
 
-	public int getId() {
-		return id;
-	}
+    private int size;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    private int duration;
 
-	public String getFilename() {
-		return filename;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public FileType getFileType() {
-		return fileType;
-	}
+    public String getFilename() {
+        return filename;
+    }
 
-	public void setFileType(FileType fileType) {
-		this.fileType = fileType;
-	}
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
-	public int getSize() {
-		return size;
-	}
+    public FileType getFileType() {
+        return fileType;
+    }
 
-	public void setSize(int size) {
-		this.size = size;
-	}
+    public void setFileType(FileType fileType) {
+        this.fileType = fileType;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public int getSize() {
+        return size;
+    }
 
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-	
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public String getFormattedDuration() {
-		if (duration > 0) {
-			return "" + (duration / 60000) + ":" + String.format("%02d", (duration / 1000) % 60);
-		}
-		
-		return "0:00";
-	}
+        if (duration > 0) {
+            return "" + (duration / 60000) + ":" + String.format("%02d", (duration / 1000) % 60);
+        }
 
-    public void setFormattedDuration(String value){
+        return "0:00";
+    }
+
+    public void setFormattedDuration(String value) {
 
     }
 
-	@Override
-	public String toString() {
-		return "MediaFileDto [fileType=" + fileType + ", filename=" + filename + ", id=" + id + ", size=" + size + "]";
-	}
+    @Override
+    public String toString() {
+        return "MediaFileDto [fileType=" + fileType + ", filename=" + filename + ", id=" + id + ", size=" + size + "]";
+    }
 
 }

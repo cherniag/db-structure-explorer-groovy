@@ -5,27 +5,29 @@ import mobi.nowtechnologies.server.trackrepo.domain.Track;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackReportingOptionsDto;
 import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
 import mobi.nowtechnologies.server.trackrepo.repository.TrackRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
+import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.INTERNAL_REPORTED;
 
 import java.util.HashSet;
-
 import static java.util.Collections.singleton;
-import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.INTERNAL_REPORTED;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.Mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.initMocks;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 public class TrackReportingOptionsServiceTest {
 
-    @Mock TrackRepository trackRepositoryMock;
+    @Mock
+    TrackRepository trackRepositoryMock;
     @InjectMocks
     TrackReportingOptionsService trackReportingOptionsService;
 

@@ -1,9 +1,11 @@
 package mobi.nowtechnologies.server.builder;
 
 import mobi.nowtechnologies.server.persistence.domain.User;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PromoRequestBuilder {
+
     private User user;
     private User mobileUser;
     private String otac;
@@ -12,39 +14,6 @@ public class PromoRequestBuilder {
     private boolean isSubjectToAutoOptIn;
     private boolean disableReactivationForUser;
 
-
-    public static class PromoRequest {
-        public final User user;
-        public final User mobileUser;
-        public final String otac;
-        public final boolean isMajorApiVersionNumberLessThan4;
-        public final boolean isApplyingWithoutEnterPhone;
-        public final boolean isSubjectToAutoOptIn;
-        public final boolean disableReactivationForUser;
-
-
-        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn, boolean disableReactivationForUser) {
-            this.user = user;
-            this.mobileUser = mobileUser;
-            this.otac = otac;
-            this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
-            this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
-            this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
-            this.disableReactivationForUser = disableReactivationForUser;
-        }
-
-        @Override
-        public String toString() {
-            return new ToStringBuilder(this)
-                    .append("user", user)
-                    .append("mobileUser", mobileUser)
-                    .append("otac", otac)
-                    .append("isMajorApiVersionNumberLessThan4", isMajorApiVersionNumberLessThan4)
-                    .append("isApplyingWithoutEnterPhone", isApplyingWithoutEnterPhone)
-                    .append("isSubjectToAutoOptIn", isSubjectToAutoOptIn)
-                    .toString();
-        }
-    }
 
     public PromoRequestBuilder() {
     }
@@ -79,7 +48,6 @@ public class PromoRequestBuilder {
         return this;
     }
 
-
     public PromoRequestBuilder setDisableReactivationForUser(boolean disableReactivationForUser) {
         this.disableReactivationForUser = disableReactivationForUser;
         return this;
@@ -97,5 +65,34 @@ public class PromoRequestBuilder {
 
     public PromoRequest createPromoRequest() {
         return new PromoRequest(user, mobileUser, otac, isMajorApiVersionNumberLessThan4, isApplyingWithoutEnterPhone, isSubjectToAutoOptIn, disableReactivationForUser);
+    }
+
+    public static class PromoRequest {
+
+        public final User user;
+        public final User mobileUser;
+        public final String otac;
+        public final boolean isMajorApiVersionNumberLessThan4;
+        public final boolean isApplyingWithoutEnterPhone;
+        public final boolean isSubjectToAutoOptIn;
+        public final boolean disableReactivationForUser;
+
+
+        private PromoRequest(User user, User mobileUser, String otac, boolean isMajorApiVersionNumberLessThan4, boolean isApplyingWithoutEnterPhone, boolean isSubjectToAutoOptIn,
+                             boolean disableReactivationForUser) {
+            this.user = user;
+            this.mobileUser = mobileUser;
+            this.otac = otac;
+            this.isMajorApiVersionNumberLessThan4 = isMajorApiVersionNumberLessThan4;
+            this.isApplyingWithoutEnterPhone = isApplyingWithoutEnterPhone;
+            this.isSubjectToAutoOptIn = isSubjectToAutoOptIn;
+            this.disableReactivationForUser = disableReactivationForUser;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this).append("user", user).append("mobileUser", mobileUser).append("otac", otac).append("isMajorApiVersionNumberLessThan4", isMajorApiVersionNumberLessThan4)
+                                            .append("isApplyingWithoutEnterPhone", isApplyingWithoutEnterPhone).append("isSubjectToAutoOptIn", isSubjectToAutoOptIn).toString();
+        }
     }
 }

@@ -1,21 +1,23 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
-
 @JsonTypeName("value")
 @XmlRootElement(name = "update")
 @XmlAccessorType(XmlAccessType.NONE)
 public class StreamzineUpdateDto {
+
     @XmlElement(name = "updated")
     @JsonProperty(value = "updated")
     private long updated;
@@ -57,10 +59,6 @@ public class StreamzineUpdateDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("updated", updated)
-                .append("blocks", blocks)
-                .append("items", items)
-                .toString();
+        return new ToStringBuilder(this).append("updated", updated).append("blocks", blocks).append("items", items).toString();
     }
 }

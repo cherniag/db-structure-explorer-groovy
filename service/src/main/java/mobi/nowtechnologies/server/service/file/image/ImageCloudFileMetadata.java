@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageCloudFileMetadata {
+
     private static final String FILE_NAME = "fileName";
     private static final String IMAGE_WIDTH = "Imagewidth";
     private static final String IMAGE_HEIGHT = "Imageheight";
@@ -17,7 +18,7 @@ public class ImageCloudFileMetadata {
     }
 
     public static ImageCloudFileMetadata fromImageInfo(ImageInfo imageInfo, String givenName) {
-        ImageCloudFileMetadata data  = new ImageCloudFileMetadata();
+        ImageCloudFileMetadata data = new ImageCloudFileMetadata();
         data.width = imageInfo.getDimension().getWidth();
         data.height = imageInfo.getDimension().getHeight();
         data.fileName = givenName;

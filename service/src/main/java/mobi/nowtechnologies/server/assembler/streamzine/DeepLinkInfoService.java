@@ -1,11 +1,16 @@
 package mobi.nowtechnologies.server.assembler.streamzine;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.InformationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsStoryDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.rules.DeeplinkInfoData;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.HasVip;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.RecognizedAction;
@@ -16,17 +21,26 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opene
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.repository.MediaRepository;
 import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
-
-import java.util.*;
-
-import static java.lang.Integer.parseInt;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import static java.lang.Integer.parseInt;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
+import org.springframework.util.Assert;
+
 public class DeepLinkInfoService {
+
     private MediaRepository mediaRepository;
 
     private MessageRepository messageRepository;
@@ -43,27 +57,27 @@ public class DeepLinkInfoService {
     // API
     //
     public Enum<?> getSubType(DeeplinkInfo info) {
-        if(info instanceof MusicPlayListDeeplinkInfo) {
+        if (info instanceof MusicPlayListDeeplinkInfo) {
             return MusicType.PLAYLIST;
         }
 
-        if(info instanceof MusicTrackDeeplinkInfo) {
+        if (info instanceof MusicTrackDeeplinkInfo) {
             return MusicType.TRACK;
         }
 
-        if(info instanceof ManualCompilationDeeplinkInfo) {
+        if (info instanceof ManualCompilationDeeplinkInfo) {
             return MusicType.MANUAL_COMPILATION;
         }
 
-        if(info instanceof NewsListDeeplinkInfo) {
+        if (info instanceof NewsListDeeplinkInfo) {
             return NewsType.LIST;
         }
 
-        if(info instanceof NewsStoryDeeplinkInfo) {
+        if (info instanceof NewsStoryDeeplinkInfo) {
             return NewsType.STORY;
         }
 
-        if(info instanceof InformationDeeplinkInfo) {
+        if (info instanceof InformationDeeplinkInfo) {
             return ((InformationDeeplinkInfo) info).getLinkType();
         }
 
@@ -86,11 +100,11 @@ public class DeepLinkInfoService {
     public <T extends DeeplinkInfoData & HasVip> AccessPolicy tryToHandleSecuredTile(T entry) {
         DeeplinkInfo deeplinkInfo = create(entry);
 
-        if(deeplinkInfo instanceof NotificationDeeplinkInfo) {
+        if (deeplinkInfo instanceof NotificationDeeplinkInfo) {
             return handlePromotional((NotificationDeeplinkInfo) deeplinkInfo);
         }
 
-        if(deeplinkInfo instanceof MusicPlayListDeeplinkInfo || deeplinkInfo instanceof MusicTrackDeeplinkInfo) {
+        if (deeplinkInfo instanceof MusicPlayListDeeplinkInfo || deeplinkInfo instanceof MusicTrackDeeplinkInfo) {
             return handleMusic(entry.isVip());
         }
 
@@ -98,16 +112,16 @@ public class DeepLinkInfoService {
     }
 
     private AccessPolicy handleMusic(boolean vip) {
-        if(vip) {
+        if (vip) {
             return AccessPolicy.enabledForVipOnly();
         }
         return null;
     }
 
     private AccessPolicy handlePromotional(NotificationDeeplinkInfo entry) {
-        if(entry.getAction() != null) {
+        if (entry.getAction() != null) {
             RecognizedAction recongnized = RecognizedAction.recongnize(entry.getAction());
-            if(RecognizedAction.SUBSCRIBE.equals(recongnized)) {
+            if (RecognizedAction.SUBSCRIBE.equals(recongnized)) {
                 return AccessPolicy.hiddenForSubscribed();
             }
         }
@@ -139,7 +153,7 @@ public class DeepLinkInfoService {
             TrackData trackData = new TrackData(value);
             Integer mediaId = trackData.getMediaId();
             PlayerType playerType = trackData.getPlayerType();
-            if(isNotNull(mediaId)) {
+            if (isNotNull(mediaId)) {
                 restored = mediaRepository.findOne(mediaId);
                 Assert.notNull(restored, "Can not find media during restoring deep link info from id: " + mediaId);
             }
@@ -197,7 +211,7 @@ public class DeepLinkInfoService {
             int id = parseInt(data.getValue().toString().trim());
             return messageRepository.findOne(id);
         }
-        return  null;
+        return null;
     }
 
     private Date calculateDate(DeeplinkInfoData data) {
@@ -214,7 +228,9 @@ public class DeepLinkInfoService {
     private DeeplinkInfo createPromotionalType(DeeplinkInfoData data) {
         LinkLocationType linkLocationType = LinkLocationType.valueOf(data.getKey().trim());
 
-        Object dataValue = data.getValue() != null ? data.getValue() : "";
+        Object dataValue = data.getValue() != null ?
+                           data.getValue() :
+                           "";
         ApplicationPageData applicationPageData = new ApplicationPageData(dataValue.toString().trim());
 
         NotificationDeeplinkInfo notificationDeeplinkInfo = null;
@@ -237,6 +253,7 @@ public class DeepLinkInfoService {
     }
 
     public static class ApplicationPageData {
+
         public static final String TOKEN = "#";
 
         private String[] rawValues;
@@ -246,13 +263,13 @@ public class DeepLinkInfoService {
         }
 
         public ApplicationPageData(String url, String action) {
-            this.rawValues = new String[]{url, action};
+            this.rawValues = new String[] {url, action};
 
             Assert.isTrue(rawValues.length == 2);
         }
 
         public ApplicationPageData(String url, Opener opener) {
-            this.rawValues = new String[]{url, opener.name()};
+            this.rawValues = new String[] {url, opener.name()};
             Assert.isTrue(rawValues.length == 2);
         }
 
@@ -270,13 +287,15 @@ public class DeepLinkInfoService {
         public String toUrlAndAction() {
             if (getAction().isEmpty()) {
                 return getUrl();
-            } else {
+            }
+            else {
                 return getUrl() + "#" + getAction();
             }
         }
     }
 
     public static class ManualCompilationData {
+
         public static final String TOKEN = "#";
         private Set<Integer> mediaIds = new LinkedHashSet<Integer>();
 
@@ -302,6 +321,7 @@ public class DeepLinkInfoService {
     }
 
     public static class TrackData {
+
         public static final String TOKEN = "#";
 
         private String[] values;
@@ -312,31 +332,33 @@ public class DeepLinkInfoService {
 
         public TrackData(Media media, PlayerType playerType) {
             values = new String[2];
-            if(isNotNull(media)) this.values[0] = String.valueOf(media.getI());
+            if (isNotNull(media)) {
+                this.values[0] = String.valueOf(media.getI());
+            }
             this.values[1] = playerType.name();
         }
 
-        public String getMediaIdString(){
+        public String getMediaIdString() {
             return values[0];
         }
 
-        public Integer getMediaId(){
+        public Integer getMediaId() {
             String mediaId = getMediaIdString();
-            if(isEmpty(mediaId)) {
+            if (isEmpty(mediaId)) {
                 return null;
             }
             return Integer.parseInt(mediaId);
         }
 
-        public PlayerType getPlayerType(){
+        public PlayerType getPlayerType() {
             return PlayerType.valueOf(getPlayerTypeString());
         }
 
-        public String getPlayerTypeString(){
+        public String getPlayerTypeString() {
             return values[1];
         }
 
-        public String toValueString(){
+        public String toValueString() {
             if (isNull(values[0])) {
                 return TOKEN + values[1];
             }
@@ -344,7 +366,8 @@ public class DeepLinkInfoService {
         }
     }
 
-    public static class PlaylistData{
+    public static class PlaylistData {
+
         public static final String TOKEN = "#";
 
         private String[] values;
@@ -355,31 +378,33 @@ public class DeepLinkInfoService {
 
         public PlaylistData(Integer chartId, PlayerType playerType) {
             values = new String[2];
-            if(isNotNull(chartId)) this.values[0] = String.valueOf(chartId);
+            if (isNotNull(chartId)) {
+                this.values[0] = String.valueOf(chartId);
+            }
             this.values[1] = playerType.name();
         }
 
-        public String getChartIdString(){
+        public String getChartIdString() {
             return values[0];
         }
 
-        public Integer getChartId(){
+        public Integer getChartId() {
             String chartId = getChartIdString();
-            if(isEmpty(chartId)) {
+            if (isEmpty(chartId)) {
                 return null;
             }
             return Integer.parseInt(chartId);
         }
 
-        public PlayerType getPlayerType(){
+        public PlayerType getPlayerType() {
             return PlayerType.valueOf(getPlayerTypeString());
         }
 
-        public String getPlayerTypeString(){
+        public String getPlayerTypeString() {
             return values[1];
         }
 
-        public String toValueString(){
+        public String toValueString() {
             if (isNull(values[0])) {
                 return TOKEN + values[1];
             }

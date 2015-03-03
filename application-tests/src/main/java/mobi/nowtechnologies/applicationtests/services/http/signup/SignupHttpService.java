@@ -5,6 +5,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.server.dto.transport.AccountCheckDto;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,12 +19,12 @@ public class SignupHttpService extends AbstractHttpService {
         MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
         request.add("DEVICE_TYPE", deviceData.getDeviceType());
         request.add("DEVICE_UID", deviceUID);
-        if(xtifyToken != null) {
+        if (xtifyToken != null) {
             // empty are allowed
             request.add("XTIFY_TOKEN", xtifyToken);
         }
 
-        if(appsFlyerUid != null) {
+        if (appsFlyerUid != null) {
             // empty are allowed
             request.add("APPSFLYER_UID", appsFlyerUid);
         }

@@ -4,6 +4,7 @@ import mobi.nowtechnologies.applicationtests.services.ui.WebPage;
 import mobi.nowtechnologies.applicationtests.services.ui.command.Command;
 
 public class Open implements Command {
+
     private String url;
 
     public Open(String url) {

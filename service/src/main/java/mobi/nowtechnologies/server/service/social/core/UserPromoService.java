@@ -14,11 +14,11 @@ import mobi.nowtechnologies.server.service.MergeResult;
 import mobi.nowtechnologies.server.service.ReferralService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.springframework.transaction.annotation.Transactional;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
 
 import javax.annotation.Resource;
 
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.EMAIL;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class UserPromoService {
@@ -69,7 +69,7 @@ public class UserPromoService {
 
         return mergeResult;
     }
-    
+
     private MergeResult doApplyPromo(User userAfterSignUp, SocialInfo socialInfo, BaseSocialRepository baseSocialRepository, ProviderType providerType, boolean disableReactivationForUser) {
         User refreshedSignUpUser = userRepository.findOne(userAfterSignUp.getId());
         User userForMerge = getUserForMerge(refreshedSignUpUser, socialInfo.getEmail());

@@ -1,15 +1,18 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 12/10/2014
+ * Author: Gennadii Cherniaiev Date: 12/10/2014
  */
 @Entity
 @Table(name = "itunes_payment_lock",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "next_sub_payment"})
-)
+       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "next_sub_payment"}))
 public class ITunesPaymentLock {
 
     @Id
@@ -40,8 +43,12 @@ public class ITunesPaymentLock {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ITunesPaymentLock)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ITunesPaymentLock)) {
+            return false;
+        }
 
         ITunesPaymentLock that = (ITunesPaymentLock) o;
 

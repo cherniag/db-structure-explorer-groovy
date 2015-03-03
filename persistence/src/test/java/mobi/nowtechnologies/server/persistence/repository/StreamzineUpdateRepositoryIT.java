@@ -9,22 +9,26 @@ import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.Notifi
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.junit.Test;
+import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 
 import javax.annotation.Resource;
+
 import java.util.Date;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static org.apache.commons.lang.time.DateUtils.addDays;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.*;
 
 
-public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
+public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT {
+
     @Resource
     private StreamzineUpdateRepository streamzineUpdateRepository;
 
@@ -98,7 +102,7 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
         assertNull(date);
         Date updateDate1 = addDays(dateZero, 6);
         streamzineUpdateRepository.saveAndFlush(buildUpdateEntity(updateDate1, user, community));
-        date  = streamzineUpdateRepository.findFirstDateAfterForUser(dateZero, user, community);
+        date = streamzineUpdateRepository.findFirstDateAfterForUser(dateZero, user, community);
         assertEquals(updateDate1, date);
     }
 
@@ -130,8 +134,8 @@ public class StreamzineUpdateRepositoryIT extends AbstractRepositoryIT{
 
     private Update buildUpdateEntity(Date lessDate, User user, Community community) {
         Update result = new Update(lessDate, community);
-        if (user != null){
-           result.addUser(user);
+        if (user != null) {
+            result.addUser(user);
         }
         return result;
     }

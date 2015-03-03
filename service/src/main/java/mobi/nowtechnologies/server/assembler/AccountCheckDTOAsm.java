@@ -1,8 +1,13 @@
 package mobi.nowtechnologies.server.assembler;
 
 
-import com.google.common.base.Joiner;
-import mobi.nowtechnologies.server.persistence.domain.*;
+import mobi.nowtechnologies.server.persistence.domain.AutoOptInExemptPhoneNumber;
+import mobi.nowtechnologies.server.persistence.domain.Chart;
+import mobi.nowtechnologies.server.persistence.domain.DrmPolicy;
+import mobi.nowtechnologies.server.persistence.domain.Promotion;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserStatus;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentStatus;
 import mobi.nowtechnologies.server.persistence.repository.AutoOptInExemptPhoneNumberRepository;
@@ -14,19 +19,25 @@ import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
 import mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-
-import java.util.List;
-
-import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.*;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.ITUNES_SUBSCRIPTION;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.MIG_SMS_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.PAYPAL_TYPE;
+import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.SAGEPAY_CREDITCARD_TYPE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.enums.ActivationStatus.ACTIVATED;
 import static mobi.nowtechnologies.server.user.autooptin.AutoOptInRuleService.AutoOptInTriggerType.ALL;
+
+import java.util.List;
+
+import com.google.common.base.Joiner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
+import org.springframework.util.StringUtils;
+
 public class AccountCheckDTOAsm {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountCheckDTOAsm.class);
 
     private AutoOptInExemptPhoneNumberRepository autoOptInExemptPhoneNumberRepository;
@@ -37,9 +48,60 @@ public class AccountCheckDTOAsm {
 
     private ITunesPaymentService iTunesPaymentService;
 
-    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation, boolean withUuid, boolean withOneTimePayment) {
-        LOGGER.debug("user=[{}], appStoreProductIds=[{}], canActivateVideoTrial={}, withUserDetails={}, firstActivation={}",
-                user, appStoreProductIds, canActivateVideoTrial, withUserDetails, firstActivation);
+    private static String getOldPaymentStatus(PaymentDetails paymentDetails) {
+        if (null == paymentDetails) {
+            return PaymentStatus.NULL;
+        }
+        if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
+            switch (paymentDetails.getLastPaymentStatus()) {
+                case AWAITING:
+                    return PaymentStatus.AWAITING_PAYMENT;
+                case SUCCESSFUL:
+                    return PaymentStatus.OK;
+                case ERROR:
+                case EXTERNAL_ERROR:
+                    return PaymentStatus.OK;
+                case NONE:
+                    return PaymentStatus.NULL;
+            }
+        }
+        else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
+            switch (paymentDetails.getLastPaymentStatus()) {
+                case AWAITING:
+                    return PaymentStatus.AWAITING_PAY_PAL;
+                case SUCCESSFUL:
+                    return PaymentStatus.OK;
+                case ERROR:
+                case EXTERNAL_ERROR:
+                    return PaymentStatus.PAY_PAL_ERROR;
+                case NONE:
+                    return PaymentStatus.NULL;
+            }
+        }
+        else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
+            switch (paymentDetails.getLastPaymentStatus()) {
+                case AWAITING:
+                    return PaymentStatus.AWAITING_PSMS;
+                case SUCCESSFUL:
+                    return PaymentStatus.OK;
+                case ERROR:
+                case EXTERNAL_ERROR:
+                    return PaymentStatus.PSMS_ERROR;
+            }
+            if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
+                return PaymentStatus.PIN_PENDING;
+            }
+            else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
+                return PaymentStatus.NULL;
+            }
+        }
+        return null;
+    }
+
+    public AccountCheckDTO toAccountCheckDTO(User user, String rememberMeToken, List<String> appStoreProductIds, boolean canActivateVideoTrial, boolean withUserDetails, Boolean firstActivation,
+                                             boolean withUuid, boolean withOneTimePayment) {
+        LOGGER.debug("user=[{}], appStoreProductIds=[{}], canActivateVideoTrial={}, withUserDetails={}, firstActivation={}", user, appStoreProductIds, canActivateVideoTrial, withUserDetails,
+                     firstActivation);
         String lastSubscribedPaymentSystem = user.getLastSubscribedPaymentSystem();
         UserStatus status = user.getStatus();
         int nextSubPayment = user.getNextSubPayment();
@@ -53,11 +115,10 @@ public class AccountCheckDTOAsm {
         PaymentDetails currentPaymentDetails = user.getCurrentPaymentDetails();
 
 
-        boolean hasOtherPaymentDetails = currentPaymentDetails != null && currentPaymentDetails.isActivated()
-                && (currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.NONE || currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.SUCCESSFUL);
-        boolean hasITunesSubscription =  ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && user.isSubscribedStatus();
-        boolean hasPaidByPaymentDetails =  !user.isOnFreeTrial() && user.isSubscribedStatus()
-                && user.getCurrentPaymentDetails() != null && user.isNextSubPaymentInTheFuture();
+        boolean hasOtherPaymentDetails = currentPaymentDetails != null && currentPaymentDetails.isActivated() &&
+                                         (currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.NONE || currentPaymentDetails.getLastPaymentStatus() == PaymentDetailsStatus.SUCCESSFUL);
+        boolean hasITunesSubscription = ITUNES_SUBSCRIPTION.equals(lastSubscribedPaymentSystem) && user.isSubscribedStatus();
+        boolean hasPaidByPaymentDetails = !user.isOnFreeTrial() && user.isSubscribedStatus() && user.getCurrentPaymentDetails() != null && user.isNextSubPaymentInTheFuture();
 
         String oldPaymentType = UserAsm.getPaymentType(currentPaymentDetails, lastSubscribedPaymentSystem);
         String oldPaymentStatus = getOldPaymentStatus(currentPaymentDetails);
@@ -67,8 +128,9 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.chartItems = chart.getNumTracks();
 
         accountCheckDTO.timeOfMovingToLimitedStatusSeconds = Utils.getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance);
-        if (null != currentPaymentDetails)
+        if (null != currentPaymentDetails) {
             accountCheckDTO.lastPaymentStatus = currentPaymentDetails.getLastPaymentStatus();
+        }
 
         accountCheckDTO.drmType = drmPolicy.getDrmType().getName();
         accountCheckDTO.drmValue = drmPolicy.getDrmValue();
@@ -86,7 +148,9 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.userToken = user.getToken();
         accountCheckDTO.rememberMeToken = rememberMeToken;
         accountCheckDTO.freeTrial = user.isOnFreeTrial();
-        accountCheckDTO.provider = isNotNull(user.getProvider()) ? user.getProvider().getKey() : null;
+        accountCheckDTO.provider = isNotNull(user.getProvider()) ?
+                                   user.getProvider().getKey() :
+                                   null;
         accountCheckDTO.contract = user.getContract();
         accountCheckDTO.segment = user.getSegment();
         accountCheckDTO.tariff = user.getTariff();
@@ -100,11 +164,14 @@ public class AccountCheckDTOAsm {
         accountCheckDTO.subscriptionChanged = user.getSubscriptionDirection();
         accountCheckDTO.eligibleForVideo = user.isEligibleForVideo();
 
-        accountCheckDTO.oAuthProvider = (StringUtils.hasText(user.getFacebookId()) ? OAuthProvider.FACEBOOK : OAuthProvider.NONE);
+        accountCheckDTO.oAuthProvider = (StringUtils.hasText(user.getFacebookId()) ?
+                                         OAuthProvider.FACEBOOK :
+                                         OAuthProvider.NONE);
         accountCheckDTO.nextSubPaymentSeconds = nextSubPayment;
 
-        if (potentialPromotion != null)
+        if (potentialPromotion != null) {
             accountCheckDTO.promotionLabel = potentialPromotion.getLabel();
+        }
         accountCheckDTO.hasPotentialPromoCodePromotion = (user.getPotentialPromoCodePromotion() != null);
 
         ActivationStatus activationStatus = user.getActivationStatus();
@@ -121,13 +188,14 @@ public class AccountCheckDTOAsm {
             UserDetailsDto userDetailsDto = userDetailsDtoAsm.toUserDetailsDto(user);
             accountCheckDTO.setUserDetails(userDetailsDto);
         }
-        if(withUuid){
+        if (withUuid) {
             accountCheckDTO.uuid = user.getUuid();
         }
         if (withOneTimePayment) {
             if (hasPaidByPaymentDetails) {
                 accountCheckDTO.oneTimePayment = user.hasOneTimeSubscription();
-            } else if (hasITunesSubscription) {
+            }
+            else if (hasITunesSubscription) {
                 accountCheckDTO.oneTimePayment = iTunesPaymentService.hasOneTimeSubscription(user);
             }
         }
@@ -148,52 +216,6 @@ public class AccountCheckDTOAsm {
         LOGGER.info("Not found in database auto-opt-in record for mobile: " + user.getMobile());
         return autoOptInRuleService.isSubjectToAutoOptIn(ALL, user);
 
-    }
-
-    private static String getOldPaymentStatus(PaymentDetails paymentDetails) {
-        if (null == paymentDetails)
-            return PaymentStatus.NULL;
-        if (SAGEPAY_CREDITCARD_TYPE.equals(paymentDetails.getPaymentType())) {
-            switch (paymentDetails.getLastPaymentStatus()) {
-                case AWAITING:
-                    return PaymentStatus.AWAITING_PAYMENT;
-                case SUCCESSFUL:
-                    return PaymentStatus.OK;
-                case ERROR:
-                case EXTERNAL_ERROR:
-                    return PaymentStatus.OK;
-                case NONE:
-                    return PaymentStatus.NULL;
-            }
-        } else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
-            switch (paymentDetails.getLastPaymentStatus()) {
-                case AWAITING:
-                    return PaymentStatus.AWAITING_PAY_PAL;
-                case SUCCESSFUL:
-                    return PaymentStatus.OK;
-                case ERROR:
-                case EXTERNAL_ERROR:
-                    return PaymentStatus.PAY_PAL_ERROR;
-                case NONE:
-                    return PaymentStatus.NULL;
-            }
-        } else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
-            switch (paymentDetails.getLastPaymentStatus()) {
-                case AWAITING:
-                    return PaymentStatus.AWAITING_PSMS;
-                case SUCCESSFUL:
-                    return PaymentStatus.OK;
-                case ERROR:
-                case EXTERNAL_ERROR:
-                    return PaymentStatus.PSMS_ERROR;
-            }
-            if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
-                return PaymentStatus.PIN_PENDING;
-            } else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
-                return PaymentStatus.NULL;
-            }
-        }
-        return null;
     }
 
     public void setAutoOptInRuleService(AutoOptInRuleService autoOptInRuleService) {

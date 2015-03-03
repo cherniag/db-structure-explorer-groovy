@@ -1,68 +1,77 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
-@Table(name="tb_charts")
+@Table(name = "tb_charts")
 @XmlRootElement
 public class Chart implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@XmlTransient
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-    @Column(name="i")
-	private Integer i;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = EAGER)
-	@JoinColumn(name = "genre")
-	private Genre genre;
-	
-	@Column(name="genre", insertable=false, updatable=false)
-	private Integer genreId;
+    @XmlTransient
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "i")
+    private Integer i;
 
-	@Column(name="name",columnDefinition="char(25)")
-	private String name;
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "genre")
+    private Genre genre;
 
-	@Enumerated(STRING)
-	private ChartType type;
-	
-	private byte numTracks;
-	
-	private byte numBonusTracks;
+    @Column(name = "genre", insertable = false, updatable = false)
+    private Integer genreId;
 
-	private int timestamp;
-	
-	@OneToMany(mappedBy="chart",fetch = LAZY)
-	@LazyCollection(LazyCollectionOption.TRUE)
-	private Set<ChartDetail> chartDetails = new HashSet<ChartDetail>();
+    @Column(name = "name", columnDefinition = "char(25)")
+    private String name;
 
-	@ManyToMany(fetch = LAZY)
-	@JoinTable(name="community_charts",
-    joinColumns=
-        @JoinColumn(name="chart_id", referencedColumnName="i"),
-    inverseJoinColumns=
-        @JoinColumn(name="community_id", referencedColumnName="id")
-    )
-	private List<Community> communities = new ArrayList<Community>();
-	
+    @Enumerated(STRING)
+    private ChartType type;
+
+    private byte numTracks;
+
+    private byte numBonusTracks;
+
+    private int timestamp;
+
+    @OneToMany(mappedBy = "chart", fetch = LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    private Set<ChartDetail> chartDetails = new HashSet<ChartDetail>();
+
+    @ManyToMany(fetch = LAZY)
+    @JoinTable(name = "community_charts",
+               joinColumns = @JoinColumn(name = "chart_id", referencedColumnName = "i"),
+               inverseJoinColumns = @JoinColumn(name = "community_id", referencedColumnName = "id"))
+    private List<Community> communities = new ArrayList<Community>();
+
     public Chart() {
     }
 
@@ -75,77 +84,77 @@ public class Chart implements Serializable {
     }
 
     public List<Community> getCommunities() {
-		return communities;
-	}
+        return communities;
+    }
 
-	public void setCommunities(List<Community> communites) {
-		this.communities = communites;
-	}
+    public void setCommunities(List<Community> communites) {
+        this.communities = communites;
+    }
 
-	public Genre getGenre() {
-		return this.genre;
-	}
+    public Genre getGenre() {
+        return this.genre;
+    }
 
-	public ChartType getType() {
-		return type;
-	}
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+        genreId = genre.getI();
+    }
 
-	public void setType(ChartType type) {
-		this.type = type;
-	}
+    public ChartType getType() {
+        return type;
+    }
 
-	public void setGenre(Genre genre) {
-		this.genre = genre;
-		genreId=genre.getI();
-	}
-	
-	public Integer getGenreId() {
-		return genreId;
-	}
+    public void setType(ChartType type) {
+        this.type = type;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public Integer getGenreId() {
+        return genreId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public byte getNumTracks() {
-		return this.numTracks;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setNumTracks(byte numTracks) {
-		this.numTracks = numTracks;
-	}
-	
-	public byte getNumBonusTracks() {
-		return numBonusTracks;
-	}
+    public byte getNumTracks() {
+        return this.numTracks;
+    }
 
-	public void setNumBonusTracks(byte numBonusTracks) {
-		this.numBonusTracks = numBonusTracks;
-	}
+    public void setNumTracks(byte numTracks) {
+        this.numTracks = numTracks;
+    }
 
-	public int getTimestamp() {
-		return this.timestamp;
-	}
+    public byte getNumBonusTracks() {
+        return numBonusTracks;
+    }
 
-	public void setTimestamp(int timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setNumBonusTracks(byte numBonusTracks) {
+        this.numBonusTracks = numBonusTracks;
+    }
 
-	public Set<ChartDetail> getChartDetails() {
-		return chartDetails;
-	}
+    public int getTimestamp() {
+        return this.timestamp;
+    }
 
-	public void setChartDetails(Set<ChartDetail> chartDetails) {
-		this.chartDetails = chartDetails;
-	}
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public String getGenreName() {
-		return genre.getName();
-	}
+    public Set<ChartDetail> getChartDetails() {
+        return chartDetails;
+    }
+
+    public void setChartDetails(Set<ChartDetail> chartDetails) {
+        this.chartDetails = chartDetails;
+    }
+
+    public String getGenreName() {
+        return genre.getName();
+    }
 
     public Chart withI(Integer i) {
         setI(i);
@@ -167,21 +176,14 @@ public class Chart implements Serializable {
         return this;
     }
 
-	public  Chart withChartType(ChartType chartType){
-		setType(chartType);
-		return this;
-	}
+    public Chart withChartType(ChartType chartType) {
+        setType(chartType);
+        return this;
+    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("genreId", genreId)
-                .append("name", name)
-                .append("type", type)
-                .append("numTracks", numTracks)
-                .append("numBonusTracks", numBonusTracks)
-                .append("timestamp", timestamp)
-                .toString();
+        return new ToStringBuilder(this).append("i", i).append("genreId", genreId).append("name", name).append("type", type).append("numTracks", numTracks).append("numBonusTracks", numBonusTracks)
+                                        .append("timestamp", timestamp).toString();
     }
 }

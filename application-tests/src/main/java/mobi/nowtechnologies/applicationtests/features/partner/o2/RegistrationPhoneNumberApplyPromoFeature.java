@@ -1,10 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.partner.o2;
 
-import cucumber.api.Transform;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.PartnerDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
@@ -18,20 +13,34 @@ import mobi.nowtechnologies.applicationtests.services.runner.Invoker;
 import mobi.nowtechnologies.applicationtests.services.runner.Runner;
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService;
 import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.shared.enums.*;
-import org.springframework.stereotype.Component;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import javax.annotation.Resource;
+
 import java.util.List;
+
+import cucumber.api.Transform;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+
+import org.springframework.stereotype.Component;
 
 import static org.junit.Assert.*;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/2/2014
+ * Author: Gennadii Cherniaiev Date: 7/2/2014
  */
 @Component
 public class RegistrationPhoneNumberApplyPromoFeature {
+
     @Resource
     PartnerDeviceSet partnerDeviceSet;
     @Resource
@@ -51,15 +60,12 @@ public class RegistrationPhoneNumberApplyPromoFeature {
 
 
     @Given("^First time user with device using JSON and XML formats for (.+) and (\\w+) community and (.+) available$")
-    public void given(
-                      @Transform(DictionaryTransformer.class) Word versions,
-                      String community,
-                      @Transform(DictionaryTransformer.class) Word deviceTypes){
+    public void given(@Transform(DictionaryTransformer.class) Word versions, String community, @Transform(DictionaryTransformer.class) Word deviceTypes) {
         userDeviceDatas = userDeviceDataService.table(versions.list(), community, deviceTypes.list());
     }
 
     @When("^User registers using device$")
-    public void whenUserRegisters(){
+    public void whenUserRegisters() {
         runner = runnerService.create(userDeviceDatas);
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
@@ -70,7 +76,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @Then("^User should be registered in system$")
-    public void thenUserShouldRegistered(){
+    public void thenUserShouldRegistered() {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -81,7 +87,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @When("^User sends o2 valid phone number$")
-    public void whenUserSendsPhoneNumber(){
+    public void whenUserSendsPhoneNumber() {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -92,7 +98,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @Then("^User should receive (\\w+) activation status in phone number response$")
-    public void thenUserShouldReceiveStateInResponse(final ActivationStatus activationStatus){
+    public void thenUserShouldReceiveStateInResponse(final ActivationStatus activationStatus) {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -103,7 +109,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @And("^User should have (\\w+) activation status in database")
-    public void thenUserShouldReceiveStateInDatabase(final ActivationStatus activationStatus){
+    public void thenUserShouldReceiveStateInDatabase(final ActivationStatus activationStatus) {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -115,7 +121,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @When("^User sends valid OTAC for applying promo$")
-    public void whenUserSendsValidOTAC(){
+    public void whenUserSendsValidOTAC() {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -127,7 +133,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @Then("^User should receive (\\w+) activation status in activation response$")
-    public void thenUserShouldHaveStatusInResponse(final ActivationStatus activationStatus){
+    public void thenUserShouldHaveStatusInResponse(final ActivationStatus activationStatus) {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -138,7 +144,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @And("^promo should be applied$")
-    public void thenUserShouldBeActivatedAndPromoShouldBeApplied(){
+    public void thenUserShouldBeActivatedAndPromoShouldBeApplied() {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -150,7 +156,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @And("^promo should have (\\w+) media type$")
-    public void andPromoShouldHaveMediaType(final MediaType mediaType){
+    public void andPromoShouldHaveMediaType(final MediaType mediaType) {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {
@@ -162,7 +168,7 @@ public class RegistrationPhoneNumberApplyPromoFeature {
     }
 
     @When("^User sends o2 valid phone number with provider (\\w+) and segment (\\w+) and tariff (\\w+)$")
-    public void whenUserSendsPhoneNumberConsumer(final ProviderType providerType, final SegmentType consumer, final Tariff tariff){
+    public void whenUserSendsPhoneNumberConsumer(final ProviderType providerType, final SegmentType consumer, final Tariff tariff) {
         runner.parallel(new Invoker<UserDeviceData>() {
             @Override
             public void invoke(UserDeviceData userDeviceData) {

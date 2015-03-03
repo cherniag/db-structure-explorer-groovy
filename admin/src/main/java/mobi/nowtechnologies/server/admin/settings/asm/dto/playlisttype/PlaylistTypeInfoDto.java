@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype;
 
 public class PlaylistTypeInfoDto {
+
     private MetaInfo metaInfo = new MetaInfo();
     private int playTrackSeconds;
     private boolean offline;

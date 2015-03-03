@@ -4,6 +4,7 @@ import mobi.nowtechnologies.applicationtests.services.ui.WebPage;
 import mobi.nowtechnologies.applicationtests.services.ui.command.Command;
 
 public class Click implements Command {
+
     private String selector;
 
     public Click(String selector) {

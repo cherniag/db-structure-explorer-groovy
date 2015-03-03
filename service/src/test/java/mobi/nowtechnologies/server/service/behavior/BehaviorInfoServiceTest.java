@@ -11,15 +11,13 @@ import mobi.nowtechnologies.server.persistence.domain.referral.ReferralState;
 import mobi.nowtechnologies.server.persistence.repository.ReferralRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserReferralsSnapshotRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
+import org.junit.*;
+import org.mockito.*;
 import static org.mockito.Mockito.*;
 
 public class BehaviorInfoServiceTest {
+
     @Mock
     UserReferralsSnapshotRepository userReferralsSnapshotRepository;
     @Mock

@@ -4,6 +4,7 @@ import mobi.nowtechnologies.server.shared.dto.social.SocialInfoType;
 import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 
 public class FacebookUserDetailsDto extends UserDetailsDto {
+
     private SocialInfoType socialInfoType;
     private String facebookId;
 

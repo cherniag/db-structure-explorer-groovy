@@ -2,7 +2,10 @@ package mobi.nowtechnologies.server.normalizer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author Anton Zemliankin
@@ -14,7 +17,7 @@ public class PropertiesProcessor {
     private Map<String, Properties> bundle;
     private String mainPropertyPath;
 
-    public PropertiesProcessor(BundlesResolver bundlesResolver){
+    public PropertiesProcessor(BundlesResolver bundlesResolver) {
         this.bundlesResolver = bundlesResolver;
     }
 
@@ -24,19 +27,20 @@ public class PropertiesProcessor {
         Set<String> propertiesIntersection = null;
 
         //find common properties in bundle
-        for(String propertyName : bundle.keySet()){
-            if(!propertyName.equalsIgnoreCase(mainPropertyPath)){
+        for (String propertyName : bundle.keySet()) {
+            if (!propertyName.equalsIgnoreCase(mainPropertyPath)) {
                 Set<String> propertyValues = bundle.get(propertyName).stringPropertyNames();
-                if(propertiesIntersection == null){
+                if (propertiesIntersection == null) {
                     propertiesIntersection = propertyValues;
-                } else {
+                }
+                else {
                     propertiesIntersection.retainAll(propertyValues);
                 }
             }
         }
 
         //find equal properties in common properties
-        if(propertiesIntersection != null) {
+        if (propertiesIntersection != null) {
             for (String propertyKey : propertiesIntersection) {
                 boolean allEquals = true;
                 String value = null;
@@ -46,14 +50,15 @@ public class PropertiesProcessor {
 
                         String bundlePropertyValue = bundle.get(propertyName).getProperty(propertyKey);
 
-                        if(bundlePropertyValue.startsWith("ENC(") && bundlePropertyValue.endsWith(")")){ //do not transfer encrypted properties
+                        if (bundlePropertyValue.startsWith("ENC(") && bundlePropertyValue.endsWith(")")) { //do not transfer encrypted properties
                             allEquals = false;
                             break;
                         }
 
                         if (value == null) {
                             value = bundlePropertyValue;
-                        } else if (!value.equals(bundlePropertyValue)) {
+                        }
+                        else if (!value.equals(bundlePropertyValue)) {
                             allEquals = false;
                             break;
                         }
@@ -73,11 +78,12 @@ public class PropertiesProcessor {
     private void extractCommonValueToDefaultProperty(String propertyKey, String propertyValue) throws IOException {
         for (String propertyName : bundle.keySet()) {
             if (propertyName.equalsIgnoreCase(mainPropertyPath)) {
-                if(bundle.get(mainPropertyPath).containsKey(propertyKey) && !propertyValue.equals(bundle.get(mainPropertyPath).getProperty(propertyKey))){
+                if (bundle.get(mainPropertyPath).containsKey(propertyKey) && !propertyValue.equals(bundle.get(mainPropertyPath).getProperty(propertyKey))) {
                     System.out.println("Rewrite default property " + propertyKey + ". Old value [" + bundle.get(mainPropertyPath).getProperty(propertyKey) + "]. New value [" + propertyValue + "]");
                 }
                 bundle.get(mainPropertyPath).setProperty(propertyKey, propertyValue);
-            } else {
+            }
+            else {
                 bundle.get(propertyName).remove(propertyKey);
                 System.out.println("Property " + propertyKey + " has been removed from " + propertyName);
             }
@@ -91,8 +97,8 @@ public class PropertiesProcessor {
 
         for (String propertyName : bundle.keySet()) {
             if (!propertyName.equalsIgnoreCase(mainPropertyPath)) {
-                for(String propertyKey : bundle.get(propertyName).stringPropertyNames()){
-                    if(mainProperties.containsKey(propertyKey) && bundle.get(propertyName).getProperty(propertyKey).equals(mainProperties.getProperty(propertyKey))){
+                for (String propertyKey : bundle.get(propertyName).stringPropertyNames()) {
+                    if (mainProperties.containsKey(propertyKey) && bundle.get(propertyName).getProperty(propertyKey).equals(mainProperties.getProperty(propertyKey))) {
                         bundle.get(propertyName).remove(propertyKey);
                         System.out.println("Property " + propertyKey + " has been removed from " + propertyName);
                     }
@@ -121,20 +127,21 @@ public class PropertiesProcessor {
     public void extractCommonValuesFromTestEnvironments(String[] prodEnvironments) throws IOException {
         System.out.println("..................Start extracting common values from test environments..................");
 
-        for(String commonPropertyKey : bundle.get(mainPropertyPath).stringPropertyNames()){
+        for (String commonPropertyKey : bundle.get(mainPropertyPath).stringPropertyNames()) {
             String prodValue = bundle.get(mainPropertyPath).getProperty(commonPropertyKey);
             String testValue = getTestEnvironmentsSameValue(commonPropertyKey, prodEnvironments);
 
-            if(testValue != null){
+            if (testValue != null) {
                 bundle.get(mainPropertyPath).setProperty(commonPropertyKey, testValue);
                 System.out.println("Property " + commonPropertyKey + " has been updated in " + mainPropertyPath);
 
-                for(String propertyPath : bundle.keySet()){
-                    if(!propertyPath.equalsIgnoreCase(mainPropertyPath)) {
+                for (String propertyPath : bundle.keySet()) {
+                    if (!propertyPath.equalsIgnoreCase(mainPropertyPath)) {
                         if (isProdPath(propertyPath, prodEnvironments) && !prodValue.equals(testValue)) {
                             bundle.get(propertyPath).setProperty(commonPropertyKey, prodValue);
                             System.out.println("Property " + commonPropertyKey + " has been returned back to " + propertyPath);
-                        } else {
+                        }
+                        else {
                             bundle.get(propertyPath).remove(commonPropertyKey);
                             System.out.println("Property " + commonPropertyKey + " has been removed from " + propertyPath);
                         }
@@ -148,9 +155,10 @@ public class PropertiesProcessor {
     }
 
     private boolean isProdPath(String propertyPath, String[] prodEnvironments) {
-        for(String prodEnvironment : prodEnvironments){
-            if(propertyPath.startsWith(prodEnvironment + File.separator))
+        for (String prodEnvironment : prodEnvironments) {
+            if (propertyPath.startsWith(prodEnvironment + File.separator)) {
                 return true;
+            }
         }
         return false;
     }
@@ -160,12 +168,12 @@ public class PropertiesProcessor {
         int testEnvironmentsCount = 0;
         int testEnvironmentsHasProperty = 0;
 
-        for(String propertyPath : bundle.keySet()){
-            if(!isProdPath(propertyPath, prodEnvironments) && bundle.get(propertyPath).containsKey(propertyKey) && !propertyPath.equalsIgnoreCase(mainPropertyPath)){
+        for (String propertyPath : bundle.keySet()) {
+            if (!isProdPath(propertyPath, prodEnvironments) && bundle.get(propertyPath).containsKey(propertyKey) && !propertyPath.equalsIgnoreCase(mainPropertyPath)) {
                 testEnvironmentsCount++;
                 String bundlePropertyValue = bundle.get(propertyPath).getProperty(propertyKey);
 
-                if((bundlePropertyValue.startsWith("ENC(") && bundlePropertyValue.endsWith(")"))){ //do not transfer encrypted properties
+                if ((bundlePropertyValue.startsWith("ENC(") && bundlePropertyValue.endsWith(")"))) { //do not transfer encrypted properties
                     value = null;
                     break;
                 }
@@ -173,25 +181,30 @@ public class PropertiesProcessor {
                 if (value == null) {
                     value = bundlePropertyValue;
                     testEnvironmentsHasProperty++;
-                } else if (!value.equals(bundlePropertyValue)) {
+                }
+                else if (!value.equals(bundlePropertyValue)) {
                     value = null;
                     break;
-                }else{
+                }
+                else {
                     testEnvironmentsHasProperty++;
                 }
             }
         }
 
-        return testEnvironmentsCount==testEnvironmentsHasProperty ? value : null;
+        return testEnvironmentsCount == testEnvironmentsHasProperty ?
+               value :
+               null;
     }
 
     public void synchronizeBundles() throws IOException {
         System.out.println("...........................Start synchronizing property files...........................");
 
-        for(String propertyPath : bundle.keySet()){
-            if(bundlesResolver.synchronizeBundle(propertyPath, bundle.get(propertyPath))){
+        for (String propertyPath : bundle.keySet()) {
+            if (bundlesResolver.synchronizeBundle(propertyPath, bundle.get(propertyPath))) {
                 System.out.println("Property file " + propertyPath + " has been successfully synchronized.");
-            }else{
+            }
+            else {
                 throw new IllegalStateException("ERROR: Failed to synchronize " + propertyPath);
             }
         }
@@ -204,32 +217,33 @@ public class PropertiesProcessor {
         Set<String> warningProperties = new HashSet<String>();
 
         //find common properties in bundle
-        for(String propertyName : bundle.keySet()){
-            if(!propertyName.equalsIgnoreCase(mainPropertyPath)){
+        for (String propertyName : bundle.keySet()) {
+            if (!propertyName.equalsIgnoreCase(mainPropertyPath)) {
                 Set<String> propertyValues = bundle.get(propertyName).stringPropertyNames();
                 warningProperties.addAll(propertyValues);
-                if(propertiesIntersection == null){
+                if (propertiesIntersection == null) {
                     propertiesIntersection = propertyValues;
-                } else {
+                }
+                else {
                     propertiesIntersection.retainAll(propertyValues);
                 }
             }
         }
 
-        if(propertiesIntersection != null){
+        if (propertiesIntersection != null) {
             warningProperties.removeAll(propertiesIntersection);
         }
 
         System.out.println("....................................... WARNINGS: .......................................");
-            for(String propertyKey : warningProperties){
-                for(String propertyName : bundle.keySet()){
-                    if(!propertyName.equalsIgnoreCase(mainPropertyPath)){
-                        if(!bundle.get(propertyName).containsKey(propertyKey)){
-                            System.out.println("Property " + propertyKey + " does not exist in " + propertyName);
-                        }
+        for (String propertyKey : warningProperties) {
+            for (String propertyName : bundle.keySet()) {
+                if (!propertyName.equalsIgnoreCase(mainPropertyPath)) {
+                    if (!bundle.get(propertyName).containsKey(propertyKey)) {
+                        System.out.println("Property " + propertyKey + " does not exist in " + propertyName);
                     }
                 }
             }
+        }
         System.out.println(".........................................................................................\n");
     }
 

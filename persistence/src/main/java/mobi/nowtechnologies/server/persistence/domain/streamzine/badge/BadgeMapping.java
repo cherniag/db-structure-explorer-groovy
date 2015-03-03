@@ -2,21 +2,34 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.badge;
 
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import org.apache.commons.lang3.BooleanUtils;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
-import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+
 import java.util.Date;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+import org.springframework.util.Assert;
 
 @Entity
 @Table(
-        name = "sz_badge_mapping",
-        uniqueConstraints = @UniqueConstraint(name = "sz_badge_mapping_uk_c_res_fs", columnNames = {"community_id", "resolution_id", "filename_alias_id", "original_alias_id"}))
+    name = "sz_badge_mapping",
+    uniqueConstraints = @UniqueConstraint(name = "sz_badge_mapping_uk_c_res_fs", columnNames = {"community_id", "resolution_id", "filename_alias_id", "original_alias_id"}))
 public class BadgeMapping {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -73,16 +86,16 @@ public class BadgeMapping {
         return community;
     }
 
-    public void setFilenameAlias(FilenameAlias filenameAlias) {
-        this.filenameAlias = filenameAlias;
-    }
-
     public FilenameAlias getOriginalFilenameAlias() {
         return originalFilenameAlias;
     }
 
     public FilenameAlias getFilenameAlias() {
         return filenameAlias;
+    }
+
+    public void setFilenameAlias(FilenameAlias filenameAlias) {
+        this.filenameAlias = filenameAlias;
     }
 
     public Resolution getResolution() {
@@ -96,12 +109,12 @@ public class BadgeMapping {
     @Override
     public String toString() {
         return "BadgeMapping{" +
-                "id=" + id +
-                ", community=" + community.getRewriteUrlParameter() +
-                ", resolution=" + resolution +
-                ", hidden=" + BooleanUtils.isTrue(hidden) +
-                ", uploaded=" + uploaded +
-                '}';
+               "id=" + id +
+               ", community=" + community.getRewriteUrlParameter() +
+               ", resolution=" + resolution +
+               ", hidden=" + BooleanUtils.isTrue(hidden) +
+               ", uploaded=" + uploaded +
+               '}';
     }
 
     public void hide() {

@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.NONE)
 public class StreamzimeResponse {
+
     @XmlElement(name = "update")
     private StreamzineUpdateDto value;
 

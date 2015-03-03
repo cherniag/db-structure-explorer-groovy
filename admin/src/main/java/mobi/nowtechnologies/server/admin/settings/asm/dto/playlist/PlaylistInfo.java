@@ -1,15 +1,17 @@
 package mobi.nowtechnologies.server.admin.settings.asm.dto.playlist;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 @JsonTypeName("value")
 @XmlAccessorType(XmlAccessType.NONE)
 public class PlaylistInfo {
+
     @JsonProperty(value = "action")
     private String action;
 

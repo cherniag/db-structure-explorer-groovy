@@ -9,7 +9,9 @@ public class SpringContext implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
     public static Object getBean(String beanName) {
-        return applicationContext != null ? applicationContext.getBean(beanName) : null;
+        return applicationContext != null ?
+               applicationContext.getBean(beanName) :
+               null;
     }
 
     public static ApplicationContext getApplicationContext() {

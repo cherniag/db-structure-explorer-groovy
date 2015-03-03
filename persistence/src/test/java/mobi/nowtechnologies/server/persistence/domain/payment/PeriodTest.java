@@ -1,25 +1,33 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
 import mobi.nowtechnologies.server.shared.Utils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import static java.lang.Math.max;
 import static mobi.nowtechnologies.server.shared.Utils.WEEK_SECONDS;
 import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
-import static mobi.nowtechnologies.server.shared.enums.DurationUnit.*;
-import static org.hamcrest.core.Is.is;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
+import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+
+import static java.lang.Math.max;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import static org.joda.time.DateTimeFieldType.dayOfMonth;
 import static org.joda.time.DateTimeZone.UTC;
 import static org.joda.time.Period.days;
 import static org.joda.time.Period.months;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.powermock.api.mockito.PowerMockito.*;
+
+import org.junit.*;
+import org.junit.runner.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import static org.hamcrest.core.Is.is;
+
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Utils.class, Period.class, DateTime.class})
@@ -41,7 +49,7 @@ public class PeriodTest {
         int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(nextSeconds);
 
         //then
-        assertThat(newNextSubPaymentSeconds, is(2*WEEK_SECONDS));
+        assertThat(newNextSubPaymentSeconds, is(2 * WEEK_SECONDS));
     }
 
     @Test
@@ -51,14 +59,14 @@ public class PeriodTest {
         int oldNextSubPaymentSeconds = 0;
 
         mockStatic(Utils.class);
-        when(Utils.getEpochSeconds()).thenReturn(2*WEEK_SECONDS);
+        when(Utils.getEpochSeconds()).thenReturn(2 * WEEK_SECONDS);
 
         //when
         int nextSeconds = max(getEpochSeconds(), oldNextSubPaymentSeconds);
         int newNextSubPaymentSeconds = period.toNextSubPaymentSeconds(nextSeconds);
 
         //then
-        assertThat(newNextSubPaymentSeconds, is(3*WEEK_SECONDS));
+        assertThat(newNextSubPaymentSeconds, is(3 * WEEK_SECONDS));
     }
 
     @Test
@@ -87,7 +95,7 @@ public class PeriodTest {
         DateTime expectedDateTimeMock = mock(DateTime.class);
         when(dateTimePlusDurationMonthsMock.plus(days(1))).thenReturn(expectedDateTimeMock);
         int expectedNewNextSubPaymentSeconds = 1;
-        long expectedNewNextSubPaymentMillis = expectedNewNextSubPaymentSeconds*1000L;
+        long expectedNewNextSubPaymentMillis = expectedNewNextSubPaymentSeconds * 1000L;
         when(expectedDateTimeMock.getMillis()).thenReturn(expectedNewNextSubPaymentMillis);
 
         when(Utils.millisToIntSeconds(expectedNewNextSubPaymentMillis)).thenReturn(expectedNewNextSubPaymentSeconds);
@@ -126,7 +134,7 @@ public class PeriodTest {
         DateTime expectedDateTimeMock = mock(DateTime.class);
         when(dateTimePlusDurationMonthsMock.plus(days(1))).thenReturn(expectedDateTimeMock);
         int expectedNewNextSubPaymentSeconds = 1;
-        long expectedNewNextSubPaymentMillis = expectedNewNextSubPaymentSeconds*1000L;
+        long expectedNewNextSubPaymentMillis = expectedNewNextSubPaymentSeconds * 1000L;
         when(expectedDateTimeMock.getMillis()).thenReturn(expectedNewNextSubPaymentMillis);
 
         when(Utils.millisToIntSeconds(expectedNewNextSubPaymentMillis)).thenReturn(expectedNewNextSubPaymentSeconds);

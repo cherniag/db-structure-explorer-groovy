@@ -5,74 +5,78 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
 import mobi.nowtechnologies.server.shared.dto.ItemDto;
 import mobi.nowtechnologies.server.shared.dto.web.ContentOfferItemDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Titov Mykhaylo (titov)
  * @author Alexander Kolpakov (akolpakov)
- * 
  */
 public class ItemAsm {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ItemAsm.class);
 
-	public static List<ItemDto> toItemDtos(List<Item> items) {
-		LOGGER.debug("input parameters items: [{}]", items);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemAsm.class);
 
-		List<ItemDto> itemDtos = new LinkedList<ItemDto>();
-		
-		if(items == null)
-			return itemDtos;
+    public static List<ItemDto> toItemDtos(List<Item> items) {
+        LOGGER.debug("input parameters items: [{}]", items);
 
-		for (Item Item : items) {
-			itemDtos.add(toItemDto(Item));
-		}
+        List<ItemDto> itemDtos = new LinkedList<ItemDto>();
 
-		LOGGER.debug("Output parameter [{}]", itemDtos);
-		return itemDtos;
-	}
+        if (items == null) {
+            return itemDtos;
+        }
 
-	public static ItemDto toItemDto(Item item) {
+        for (Item Item : items) {
+            itemDtos.add(toItemDto(Item));
+        }
 
-		ItemDto itemDto = new ItemDto();
+        LOGGER.debug("Output parameter [{}]", itemDtos);
+        return itemDtos;
+    }
 
-		itemDto.setId(item.getI());
-		itemDto.setTitle(item.getTitle());
-		itemDto.setPrice(item.getPrice());
-		itemDto.setTypeId(item.getTypeId());
+    public static ItemDto toItemDto(Item item) {
 
-		LOGGER.debug("Output parameter ItemDto=[{}]", itemDto);
-		return itemDto;
-	}
+        ItemDto itemDto = new ItemDto();
 
-	public static List<ContentOfferItemDto> toContentOfferItemDto(List<Item> items) {
-		LOGGER.debug("input parameters items: [{}]", items);
+        itemDto.setId(item.getI());
+        itemDto.setTitle(item.getTitle());
+        itemDto.setPrice(item.getPrice());
+        itemDto.setTypeId(item.getTypeId());
 
-		List<ContentOfferItemDto> contentOfferItemDtos = new LinkedList<ContentOfferItemDto>();
-		for (Item item : items) {
-			contentOfferItemDtos.add(toContentOfferItemDto(item));
-		}
+        LOGGER.debug("Output parameter ItemDto=[{}]", itemDto);
+        return itemDto;
+    }
 
-		LOGGER.debug("Output parameter [{}]", contentOfferItemDtos);
-		return contentOfferItemDtos;
-	}
+    public static List<ContentOfferItemDto> toContentOfferItemDto(List<Item> items) {
+        LOGGER.debug("input parameters items: [{}]", items);
 
-	public static ContentOfferItemDto toContentOfferItemDto(Item item) {
-		LOGGER.debug("input parameters item: [{}]", item);
+        List<ContentOfferItemDto> contentOfferItemDtos = new LinkedList<ContentOfferItemDto>();
+        for (Item item : items) {
+            contentOfferItemDtos.add(toContentOfferItemDto(item));
+        }
 
-		ContentOfferItemDto contentOfferItemDto = new ContentOfferItemDto();
-		contentOfferItemDto.setTitle(item.getTitle());
-		if (item instanceof Media) {
-			final Media media = (Media) item;
-			contentOfferItemDto.setCoverFileName(media.getImageFileSmall().getFilename());
-			contentOfferItemDto.setAuthorName(media.getArtist().getName());
-		} else
-			throw new ServiceException("Unknown type [" + item.getClass() + "] of item [" + item + "]");
+        LOGGER.debug("Output parameter [{}]", contentOfferItemDtos);
+        return contentOfferItemDtos;
+    }
 
-		LOGGER.debug("Output parameter [{}]", contentOfferItemDto);
-		return contentOfferItemDto;
-	}
+    public static ContentOfferItemDto toContentOfferItemDto(Item item) {
+        LOGGER.debug("input parameters item: [{}]", item);
+
+        ContentOfferItemDto contentOfferItemDto = new ContentOfferItemDto();
+        contentOfferItemDto.setTitle(item.getTitle());
+        if (item instanceof Media) {
+            final Media media = (Media) item;
+            contentOfferItemDto.setCoverFileName(media.getImageFileSmall().getFilename());
+            contentOfferItemDto.setAuthorName(media.getArtist().getName());
+        }
+        else {
+            throw new ServiceException("Unknown type [" + item.getClass() + "] of item [" + item + "]");
+        }
+
+        LOGGER.debug("Output parameter [{}]", contentOfferItemDto);
+        return contentOfferItemDto;
+    }
 }

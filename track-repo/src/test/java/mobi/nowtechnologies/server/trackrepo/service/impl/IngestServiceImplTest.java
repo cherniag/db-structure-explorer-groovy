@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
 import mobi.nowtechnologies.server.trackrepo.domain.Territory;
 import mobi.nowtechnologies.server.trackrepo.domain.Track;
@@ -9,27 +8,31 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestSessionClosedException;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.junit.*;
+import org.junit.runner.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
+import junit.framework.Assert;
+
 /**
- * User: Alexsandr_Kolpakov
- * Date: 7/17/13
- * Time: 12:25 PM
+ * User: Alexsandr_Kolpakov Date: 7/17/13 Time: 12:25 PM
  */
 @RunWith(PowerMockRunner.class)
 public class IngestServiceImplTest {
+
     private IngestServiceImpl fixture;
 
     @Before

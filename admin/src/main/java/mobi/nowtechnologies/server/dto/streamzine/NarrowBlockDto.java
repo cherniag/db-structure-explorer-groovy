@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 public class NarrowBlockDto extends BlockDto {
+
     private OrdinalBlockDto first;
     private OrdinalBlockDto second;
 
@@ -28,8 +29,8 @@ public class NarrowBlockDto extends BlockDto {
     @Override
     public String toString() {
         return "NarrowBlockDto{" +
-                "first=" + first +
-                ", second=" + second +
-                '}';
+               "first=" + first +
+               ", second=" + second +
+               '}';
     }
 }

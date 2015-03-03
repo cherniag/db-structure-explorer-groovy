@@ -5,18 +5,18 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.JsonHelper;
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/2/2014
+ * Author: Gennadii Cherniaiev Date: 7/2/2014
  */
 @Service
 public class PhoneNumberHttpService extends AbstractHttpService {
 
-    public PhoneActivationDto phoneNumber(UserDeviceData deviceData, String phoneNumber, String userName, String userToken, RequestFormat format){
+    public PhoneActivationDto phoneNumber(UserDeviceData deviceData, String phoneNumber, String userName, String userToken, RequestFormat format) {
         final UserDataCreator.TimestampTokenData token = createUserToken(userToken);
 
         String uri = getUri(deviceData, "PHONE_NUMBER", format);

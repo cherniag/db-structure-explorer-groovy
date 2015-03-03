@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.service.behavior;
 
-import com.google.common.collect.Iterables;
 import mobi.nowtechnologies.server.assembler.streamzine.DeepLinkUrlFactory;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.User;
@@ -8,23 +7,29 @@ import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehavior;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBehavior;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableSet;
+
+import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.*;
-
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChartBehaviorServiceTest {
+
     @Mock
     private User user;
     @Mock

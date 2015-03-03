@@ -3,10 +3,10 @@ package mobi.nowtechnologies.server.persistence.domain;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class BadgeMappingFactory {
+
     public static BadgeMapping general(String fileName) {
         FilenameAlias alias = mock(FilenameAlias.class);
         when(alias.getFileName()).thenReturn(fileName);

@@ -4,18 +4,22 @@ import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.CommunityService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.shared.dto.web.UserDeviceRegDetailsDto;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.mock.web.MockHttpServletRequest;
+
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
-import static junit.framework.Assert.*;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.springframework.mock.web.MockHttpServletRequest;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
 public class UserDeviceRegDetailsDtoValidatorTest {

@@ -57,12 +57,7 @@ public class DuplicatedMediaAcrossNearestChartsDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("trackId", trackId)
-                .append("chartId", chartId)
-                .append("chartName", chartName)
-                .append("publishTimeMillis", publishTimeMillis)
-                .append("position", position)
-                .toString();
+        return new ToStringBuilder(this).append("trackId", trackId).append("chartId", chartId).append("chartName", chartName).append("publishTimeMillis", publishTimeMillis)
+                                        .append("position", position).toString();
     }
 }

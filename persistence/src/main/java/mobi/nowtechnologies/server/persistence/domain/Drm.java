@@ -1,115 +1,122 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 @Entity
-@Table(name="tb_drm")
-@XmlRootElement(name="item")
+@Table(name = "tb_drm")
+@XmlRootElement(name = "item")
 public class Drm implements Serializable {
-	@Id
-	@GeneratedValue(strategy= IDENTITY)
-	private int i;
 
-	@Column(name="drmType", insertable=false, updatable=false)
-	private byte drmTypeId;
-	
-	@ManyToOne
-	@JoinColumn(name = "drmType")
-	private DrmType drmType;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private int i;
 
-	private byte drmValue;
+    @Column(name = "drmType", insertable = false, updatable = false)
+    private byte drmTypeId;
 
-	@ManyToOne
-	@JoinColumn(name = "media")
-	private Media media;
-	
-	@Column(name="media", insertable=false, updatable=false)
-	private int mediaId;
+    @ManyToOne
+    @JoinColumn(name = "drmType")
+    private DrmType drmType;
 
-	private int timestamp;
+    private byte drmValue;
 
-	@Column(name="user", insertable=false, updatable=false)
-	private int userId;
-	
-	@ManyToOne
-	@JoinColumn(name="user")
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "media")
+    private Media media;
+
+    @Column(name = "media", insertable = false, updatable = false)
+    private int mediaId;
+
+    private int timestamp;
+
+    @Column(name = "user", insertable = false, updatable = false)
+    private int userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user")
+    private User user;
 
     @XmlTransient
-	public int getI() {
-		return this.i;
-	}
+    public int getI() {
+        return this.i;
+    }
 
-	public void setI(int i) {
-		this.i = i;
-	}
-	
-	public byte getDrmTypeId() {
-		return drmTypeId;
-	}
+    public void setI(int i) {
+        this.i = i;
+    }
 
-	@XmlTransient
-	public DrmType getDrmType() {
-		return this.drmType;
-	}
+    public byte getDrmTypeId() {
+        return drmTypeId;
+    }
 
-	public void setDrmType(DrmType drmType) {
-		this.drmType = drmType;
-		drmTypeId=drmType.getI();
-	}
+    @XmlTransient
+    public DrmType getDrmType() {
+        return this.drmType;
+    }
 
-	@XmlElement(name="drmValue")
-	public byte getDrmValue() {
-		return this.drmValue;
-	}
+    public void setDrmType(DrmType drmType) {
+        this.drmType = drmType;
+        drmTypeId = drmType.getI();
+    }
 
-	public void setDrmValue(byte drmValue) {
-		this.drmValue = drmValue;
-	}
+    @XmlElement(name = "drmValue")
+    public byte getDrmValue() {
+        return this.drmValue;
+    }
 
-	@XmlElement(name="mediaUID")
-	public Media getMedia() {
-		return this.media;
-	}
-	
-	public int getMediaId() {
-		return mediaId;
-	}
+    public void setDrmValue(byte drmValue) {
+        this.drmValue = drmValue;
+    }
 
-	public void setMedia(Media media) {
-		this.media = media;
-		mediaId = media.getI();
-	}
+    @XmlElement(name = "mediaUID")
+    public Media getMedia() {
+        return this.media;
+    }
 
-	@XmlTransient
-	public int getTimestamp() {
-		return this.timestamp;
-	}
+    public void setMedia(Media media) {
+        this.media = media;
+        mediaId = media.getI();
+    }
 
-	public void setTimestamp(int timestamp) {
-		this.timestamp = timestamp;
-	}
+    public int getMediaId() {
+        return mediaId;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    @XmlTransient
+    public int getTimestamp() {
+        return this.timestamp;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-		userId = user.getId();
-	}
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public int getUserId() {
-		return userId;
-	}
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        userId = user.getId();
+    }
+
+    public int getUserId() {
+        return userId;
+    }
 
     public Drm withDrmType(DrmType drmType) {
         setDrmType(drmType);
@@ -118,14 +125,8 @@ public class Drm implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("drmTypeId", drmTypeId)
-                .append("drmValue", drmValue)
-                .append("mediaId", mediaId)
-                .append("timestamp", timestamp)
-                .append("userId", userId)
-                .toString();
+        return new ToStringBuilder(this).append("i", i).append("drmTypeId", drmTypeId).append("drmValue", drmValue).append("mediaId", mediaId).append("timestamp", timestamp).append("userId", userId)
+                                        .toString();
     }
 
 }

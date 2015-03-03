@@ -4,12 +4,14 @@ import mobi.nowtechnologies.server.job.executor.PendingPaymentExecutor;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
 import mobi.nowtechnologies.server.service.payment.PendingPaymentService;
 import mobi.nowtechnologies.server.shared.log.LogUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CreatePendingPaymentJob {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CreatePendingPaymentJob.class);
 
     private PendingPaymentService pendingPaymentService;
@@ -26,9 +28,11 @@ public class CreatePendingPaymentJob {
                 executor.execute(pendingPayment);
             }
             LOGGER.info("[DONE] Pending Payment job finished with {} pending payments added to queue", createPendingPayments.size());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Error while running Pending Payment job", e);
-        } finally {
+        }
+        finally {
             LogUtils.removeClassNameMDC();
         }
     }

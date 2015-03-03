@@ -3,32 +3,32 @@ package mobi.nowtechnologies.server.persistence.dao;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.MediaLog;
 import mobi.nowtechnologies.server.persistence.repository.AbstractRepositoryIT;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
  * @version $Revision: 1.0 $
  */
 public class MediaLogDaoIT extends AbstractRepositoryIT {
+
     @Autowired
     private MediaLogDao mediaLogDao;
 
     @Autowired
     private EntityDao entityDao;
 
-    /**                                                       M
-     * Run the List<MediaLogShallow> findPurchasedTracksByUserId(int) method test.
+    /**
+     * M Run the List<MediaLogShallow> findPurchasedTracksByUserId(int) method test.
      *
      * @throws Exception
-     *
      */
     @Test
-    public void testFindPurchasedTracksByUserId()
-            throws Exception {
+    public void testFindPurchasedTracksByUserId() throws Exception {
         int userId = 91;
 
         List<MediaLog> result = mediaLogDao.findPurchasedTracksByUserId(userId);
@@ -40,11 +40,9 @@ public class MediaLogDaoIT extends AbstractRepositoryIT {
      * Run the void logMediaEvent(int,int,byte) method test.
      *
      * @throws Exception
-     *
      */
     @Test
-    public void testLogMediaEvent()
-            throws Exception {
+    public void testLogMediaEvent() throws Exception {
         int userId = 1;
         Media media = new Media();
         byte mediaLogType = (byte) 1;
@@ -54,8 +52,7 @@ public class MediaLogDaoIT extends AbstractRepositoryIT {
     }
 
     @Test(expected = java.lang.IllegalArgumentException.class)
-    public void testLogMediaEventWrongMediaId()
-            throws Exception {
+    public void testLogMediaEventWrongMediaId() throws Exception {
 
         int userId = 1;
         Media media = null;
@@ -69,11 +66,9 @@ public class MediaLogDaoIT extends AbstractRepositoryIT {
      * Run the void logMediaEvent(int,int,byte) method test.
      *
      * @throws Exception
-     *
      */
     @Test(expected = java.lang.IllegalArgumentException.class)
-    public void testLogMediaEventWrongMediaLogType()
-            throws Exception {
+    public void testLogMediaEventWrongMediaLogType() throws Exception {
         int userId = 1;
         Media media = new Media();
         media.setI(1);

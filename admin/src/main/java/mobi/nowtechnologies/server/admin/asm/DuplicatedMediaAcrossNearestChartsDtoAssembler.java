@@ -6,7 +6,6 @@ import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import static java.util.Collections.sort;
 
 // @author Titov Mykhaylo (titov) on 13.11.2014.
@@ -19,8 +18,8 @@ public class DuplicatedMediaAcrossNearestChartsDtoAssembler {
         }
     };
 
-    public List<DuplicatedMediaAcrossNearestChartsDto> getDuplicatedMediaAcrossNearestChartsDtos(List<ChartDetail> chartDetails){
-        List<DuplicatedMediaAcrossNearestChartsDto> duplicatedMediaAcrossNearestChartsDtos= new ArrayList<DuplicatedMediaAcrossNearestChartsDto>(chartDetails.size());
+    public List<DuplicatedMediaAcrossNearestChartsDto> getDuplicatedMediaAcrossNearestChartsDtos(List<ChartDetail> chartDetails) {
+        List<DuplicatedMediaAcrossNearestChartsDto> duplicatedMediaAcrossNearestChartsDtos = new ArrayList<DuplicatedMediaAcrossNearestChartsDto>(chartDetails.size());
         for (ChartDetail chartDetail : chartDetails) {
             duplicatedMediaAcrossNearestChartsDtos.add(getDuplicatedMediaAcrossNearestChartsDto(chartDetail));
         }

@@ -1,12 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.social.email;
 
-import com.google.common.collect.Sets;
-import cucumber.api.Transform;
-import cucumber.api.java.After;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.MQAppClientDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
@@ -25,14 +18,9 @@ import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.UserStatus;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +28,26 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Sets;
+import cucumber.api.Transform;
+import cucumber.api.java.After;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import static org.junit.Assert.*;
 
 @Component
 public class EmailSuccessRegistrationFeature {
+
     @Resource
     private UserDbService userDbService;
     @Resource
@@ -63,9 +67,7 @@ public class EmailSuccessRegistrationFeature {
     private Runner runner;
 
     @Given("^First time user with device using (\\w+) format for (.+) and (.+) and (.+) available$")
-    public void firstTimeUserUsingJsonAndXmlFormats(RequestFormat format,
-                                                    @Transform(DictionaryTransformer.class) Word versions,
-                                                    @Transform(DictionaryTransformer.class) Word communities,
+    public void firstTimeUserUsingJsonAndXmlFormats(RequestFormat format, @Transform(DictionaryTransformer.class) Word versions, @Transform(DictionaryTransformer.class) Word communities,
                                                     @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         currentUserDevices = userDeviceDataService.table(versions.list(), communities.set(), devices.set(), Sets.newHashSet(format));
         runner = runnerService.create(currentUserDevices);
@@ -133,9 +135,7 @@ public class EmailSuccessRegistrationFeature {
                 assertFalse(activationEmail.isActivated());
 
                 // email text contains correct parameters to sign in by email: id and token
-                Pair<String, String> idTokenPair = extractIdAndTokenFromTheEmailText(
-                        findSentEmailText(activationEmail)
-                );
+                Pair<String, String> idTokenPair = extractIdAndTokenFromTheEmailText(findSentEmailText(activationEmail));
 
                 assertEquals(activationEmail.getId().toString(), idTokenPair.getLeft());
                 assertEquals(activationEmail.getToken(), idTokenPair.getRight());

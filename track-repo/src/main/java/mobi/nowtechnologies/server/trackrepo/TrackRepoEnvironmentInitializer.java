@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.trackrepo;
 
 import org.apache.commons.lang3.SystemUtils;
+
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
@@ -11,7 +12,9 @@ public class TrackRepoEnvironmentInitializer implements ApplicationContextInitia
 
     @Override
     public void initialize(ConfigurableWebApplicationContext applicationContext) {
-        String filesExtension = SystemUtils.IS_OS_WINDOWS ? "bat" : "sh";
+        String filesExtension = SystemUtils.IS_OS_WINDOWS ?
+                                "bat" :
+                                "sh";
         System.setProperty("scriptsExtension", filesExtension);
     }
 }

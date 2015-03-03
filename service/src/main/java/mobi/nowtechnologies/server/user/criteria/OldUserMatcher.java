@@ -3,8 +3,7 @@ package mobi.nowtechnologies.server.user.criteria;
 import mobi.nowtechnologies.server.persistence.domain.User;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/15/2014
+ * Author: Gennadii Cherniaiev Date: 4/15/2014
  */
 public class OldUserMatcher implements Matcher<User> {
 

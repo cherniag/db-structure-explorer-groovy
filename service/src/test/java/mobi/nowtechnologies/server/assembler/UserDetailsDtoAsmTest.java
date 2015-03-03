@@ -12,17 +12,16 @@ import mobi.nowtechnologies.server.shared.dto.social.UserDetailsDto;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.text.SimpleDateFormat;
 
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
+import static org.mockito.Mockito.*;
+
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserDetailsDtoAsmTest {

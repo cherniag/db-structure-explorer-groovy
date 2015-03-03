@@ -1,132 +1,132 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 
-import javax.persistence.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author Titov Mykhaylo (titov)
  */
 @MappedSuperclass
 public abstract class UserDeviceDetails {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "i")
-	private int id;
 
-	@Column(name = "userUID", insertable = false, updatable = false)
-	private int userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "i")
+    private int id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "userUID")
-	private User user;
+    @Column(name = "userUID", insertable = false, updatable = false)
+    private int userId;
 
-	private String token;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userUID")
+    private User user;
 
-	@Column(name = "usergroup", insertable = false, updatable = false)
-	private int userGroupId;
+    private String token;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "usergroup")
-	private UserGroup userGroup;
+    @Column(name = "usergroup", insertable = false, updatable = false)
+    private int userGroupId;
 
-	@Column(name = "nbUpdates")
-	private int nbUpdates;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usergroup")
+    private UserGroup userGroup;
 
-	private int status;
-	
-	@Column(name = "last_push_of_content_update_millis")
-	private long lastPushOfContentUpdateMillis;
+    @Column(name = "nbUpdates")
+    private int nbUpdates;
 
-	public User getUser() {
-		return user;
-	}
+    private int status;
 
-	public void setUser(User user) {
-		userId = user.getId();
-		this.user = user;
-	}
+    @Column(name = "last_push_of_content_update_millis")
+    private long lastPushOfContentUpdateMillis;
 
-	public String getToken() {
-		return token;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+    public void setUser(User user) {
+        userId = user.getId();
+        this.user = user;
+    }
 
-	public UserGroup getUserGroup() {
-		return userGroup;
-	}
+    public String getToken() {
+        return token;
+    }
 
-	public void setUserGroup(UserGroup userGroup) {
-		this.userGroupId = userGroup.getId();
-		this.userGroup = userGroup;
-	}
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-	public int getNbUpdates() {
-		return nbUpdates;
-	}
+    public UserGroup getUserGroup() {
+        return userGroup;
+    }
 
-	public void setNbUpdates(int nbUpdates) {
-		this.nbUpdates = nbUpdates;
-	}
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroupId = userGroup.getId();
+        this.userGroup = userGroup;
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    public int getNbUpdates() {
+        return nbUpdates;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public void setNbUpdates(int nbUpdates) {
+        this.nbUpdates = nbUpdates;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public int getUserId() {
-		return userId;
-	}
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
-	public int getUserGroupId() {
-		return userGroupId;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public long getLastPushOfContentUpdateMillis() {
-		return lastPushOfContentUpdateMillis;
-	}
+    public int getUserId() {
+        return userId;
+    }
 
-	public void setLastPushOfContentUpdateMillis(long lastPushOfContentUpdateMillis) {
-		this.lastPushOfContentUpdateMillis = lastPushOfContentUpdateMillis;
-	}
+    public int getUserGroupId() {
+        return userGroupId;
+    }
 
-	public UserDeviceDetails withUser(User user){
+    public long getLastPushOfContentUpdateMillis() {
+        return lastPushOfContentUpdateMillis;
+    }
+
+    public void setLastPushOfContentUpdateMillis(long lastPushOfContentUpdateMillis) {
+        this.lastPushOfContentUpdateMillis = lastPushOfContentUpdateMillis;
+    }
+
+    public UserDeviceDetails withUser(User user) {
         setUser(user);
         return this;
     }
 
-    public UserDeviceDetails withToken(String token){
+    public UserDeviceDetails withToken(String token) {
         setToken(token);
         return this;
     }
 
-    public UserDeviceDetails withUserGroup(UserGroup userGroup){
+    public UserDeviceDetails withUserGroup(UserGroup userGroup) {
         setUserGroup(userGroup);
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("userId", userId)
-                .append("id", id)
-                .append("token", token)
-                .append("userGroupId", userGroupId)
-                .append("nbUpdates", nbUpdates)
-                .append("status", status)
-                .append("lastPushOfContentUpdateMillis", lastPushOfContentUpdateMillis)
-                .toString();
+        return new ToStringBuilder(this).append("userId", userId).append("id", id).append("token", token).append("userGroupId", userGroupId).append("nbUpdates", nbUpdates).append("status", status)
+                                        .append("lastPushOfContentUpdateMillis", lastPushOfContentUpdateMillis).toString();
     }
 }

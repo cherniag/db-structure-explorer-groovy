@@ -1,13 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.streamzine;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import cucumber.api.Transform;
-import cucumber.api.java.After;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.list.ListValues;
@@ -33,30 +25,47 @@ import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Update;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.DeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.AccessPolicy;
-import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.Permission;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
+import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import cucumber.api.Transform;
+import cucumber.api.java.After;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.When;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Component
 public class GetStreamzineFeature extends AbstractStreamzineFeature {
+
     private Map<UserDeviceData, StreamzineUpdateDto> okResponses = new HashMap<UserDeviceData, StreamzineUpdateDto>();
 
     private Map<UserDeviceData, Update> updates = new HashMap<UserDeviceData, Update>();
@@ -69,9 +78,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     // Given and After
     //
     @Given("^First time user with device using (.+) format for (.+) and (.+) and for (.+) available$")
-    public void firstTimeUserUsingFormat(RequestFormat requestFormat,
-                                         @Transform(DictionaryTransformer.class) Word versions,
-                                         @Transform(DictionaryTransformer.class) Word communities,
+    public void firstTimeUserUsingFormat(RequestFormat requestFormat, @Transform(DictionaryTransformer.class) Word versions, @Transform(DictionaryTransformer.class) Word communities,
                                          @Transform(DictionaryTransformer.class) Word devices) throws Throwable {
         apiVersions = ApiVersions.from(versions.list());
         currentUserDevices = super.initUserData(Sets.newHashSet(requestFormat), versions, communities, devices);
@@ -98,23 +105,17 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     }
 
     @And("^(.+) block (.+) with (.+) access policy, with '(.+)' title and '(.+)' subtitle which contains (.+), (.+) opened '(.+)' in (.+)")
-    public void block0(ShapeType shapeType,
-                       @Transform(IncludedTransformer.class) Boolean included,
-                       @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
-                       @Transform(NullableStringTransformer.class) NullableString title,
-                       @Transform(NullableStringTransformer.class) NullableString subTitle,
-                       ContentType contentType,
-                       LinkLocationType linkLocationType,
-                       String url,
-                       Opener opener) {
-        Assert.isTrue(ContentType.PROMOTIONAL == contentType, "Only " + ContentType.PROMOTIONAL  + " allowed for this test method");
+    public void block0(ShapeType shapeType, @Transform(IncludedTransformer.class) Boolean included, @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
+                       @Transform(NullableStringTransformer.class) NullableString title, @Transform(NullableStringTransformer.class) NullableString subTitle, ContentType contentType,
+                       LinkLocationType linkLocationType, String url, Opener opener) {
+        Assert.isTrue(ContentType.PROMOTIONAL == contentType, "Only " + ContentType.PROMOTIONAL + " allowed for this test method");
 
         for (UserDeviceData data : currentUserDevices) {
             NotificationDeeplinkInfo deeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, url, opener);
             Block block = new Block(positionGenerator.nextPosition(data), shapeType, deeplinkInfo);
             block.setTitle(title.value());
             block.setSubTitle(subTitle.value());
-            if(included) {
+            if (included) {
                 block.include();
             }
             block.setAccessPolicy(accessPolicy);
@@ -124,16 +125,10 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     }
 
     @And("^(.+) block (.+) with (.+) access policy, with '(.+)' title and '(.+)' subtitle which contains (.+), (.+) with '(.+)' page and '(.+)' action")
-    public void block1(ShapeType shapeType,
-                       @Transform(IncludedTransformer.class) Boolean included,
-                       @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
-                       @Transform(NullableStringTransformer.class) NullableString title,
-                       @Transform(NullableStringTransformer.class) NullableString subTitle,
-                       ContentType contentType,
-                       LinkLocationType linkLocationType,
-                       String page,
-                       @Transform(NullableStringTransformer.class) NullableString action) {
-        Assert.isTrue(ContentType.PROMOTIONAL == contentType, "Only " + ContentType.PROMOTIONAL  + " allowed for this test method");
+    public void block1(ShapeType shapeType, @Transform(IncludedTransformer.class) Boolean included, @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
+                       @Transform(NullableStringTransformer.class) NullableString title, @Transform(NullableStringTransformer.class) NullableString subTitle, ContentType contentType,
+                       LinkLocationType linkLocationType, String page, @Transform(NullableStringTransformer.class) NullableString action) {
+        Assert.isTrue(ContentType.PROMOTIONAL == contentType, "Only " + ContentType.PROMOTIONAL + " allowed for this test method");
 
         for (UserDeviceData data : currentUserDevices) {
             NotificationDeeplinkInfo deeplinkInfo = new NotificationDeeplinkInfo(linkLocationType, page);
@@ -143,7 +138,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             block.setTitle(title.value());
             block.setSubTitle(subTitle.value());
             block.setAccessPolicy(accessPolicy);
-            if(included) {
+            if (included) {
                 block.include();
             }
 
@@ -152,15 +147,9 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     }
 
     @And("^(.+) block (.+) with (.+) access policy, with '(.+)' title and '(.+)' subtitle which contains (.+), (.+) with '(.+)' isrc and (\\d+) id")
-    public void block2(ShapeType shapeType,
-                       @Transform(IncludedTransformer.class) Boolean included,
-                       @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
-                       @Transform(NullableStringTransformer.class) NullableString title,
-                       @Transform(NullableStringTransformer.class) NullableString subTitle,
-                       ContentType contentType,
-                       MusicType musicType,
-                       String isrc,
-                       long trackId) {
+    public void block2(ShapeType shapeType, @Transform(IncludedTransformer.class) Boolean included, @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
+                       @Transform(NullableStringTransformer.class) NullableString title, @Transform(NullableStringTransformer.class) NullableString subTitle, ContentType contentType,
+                       MusicType musicType, String isrc, long trackId) {
         Assert.isTrue(ContentType.MUSIC == contentType && MusicType.TRACK == musicType);
 
         Media media = dbMediaService.findByTrackIdAndIsrc(trackId, isrc);
@@ -172,7 +161,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             block.setTitle(title.value());
             block.setSubTitle(subTitle.value());
             block.setAccessPolicy(accessPolicy);
-            if(included) {
+            if (included) {
                 block.include();
             }
 
@@ -182,37 +171,32 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
 
     @And("^(.+) block (.+) with (.+) access policy, with '(.+)' title and '(.+)' subtitle which contains (.+), (.+) with (.+) ids$")
     @Transactional(value = "applicationTestsTransactionManager", readOnly = true)
-    public void block3(ShapeType shapeType,
-                       @Transform(IncludedTransformer.class) Boolean included,
-                       @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
-                       @Transform(NullableStringTransformer.class) NullableString title,
-                       @Transform(NullableStringTransformer.class) NullableString subTitle,
-                       ContentType contentType,
-                       MusicType musicType,
-                       @Transform(ListValuesTransformer.class) ListValues listValues) {
+    public void block3(ShapeType shapeType, @Transform(IncludedTransformer.class) Boolean included, @Transform(AccessPolicyTransformer.class) AccessPolicy accessPolicy,
+                       @Transform(NullableStringTransformer.class) NullableString title, @Transform(NullableStringTransformer.class) NullableString subTitle, ContentType contentType,
+                       MusicType musicType, @Transform(ListValuesTransformer.class) ListValues listValues) {
         Assert.isTrue(ContentType.MUSIC == contentType);
 
         for (UserDeviceData data : currentUserDevices) {
-            if(MusicType.PLAYLIST == musicType) {
+            if (MusicType.PLAYLIST == musicType) {
                 Chart chart = chartRepository.findOne(listValues.ints().get(0));
                 DeeplinkInfo deeplinkInfo = new MusicPlayListDeeplinkInfo(chart.getI(), PlayerType.MINI_PLAYER_ONLY);
                 Block block = new Block(positionGenerator.nextPosition(data), shapeType, deeplinkInfo);
                 block.setTitle(title.value());
                 block.setSubTitle(subTitle.value());
                 block.setAccessPolicy(accessPolicy);
-                if(included) {
+                if (included) {
                     block.include();
                 }
                 updates.get(data).addBlock(block);
             }
 
-            if(MusicType.MANUAL_COMPILATION == musicType) {
+            if (MusicType.MANUAL_COMPILATION == musicType) {
                 DeeplinkInfo deeplinkInfo = new ManualCompilationDeeplinkInfo(toMedias(listValues.ints()));
                 Block block = new Block(positionGenerator.nextPosition(data), shapeType, deeplinkInfo);
                 block.setTitle(title.value());
                 block.setSubTitle(subTitle.value());
                 block.setAccessPolicy(accessPolicy);
-                if(included) {
+                if (included) {
                     block.include();
                 }
                 updates.get(data).addBlock(block);
@@ -230,27 +214,18 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             UserDataCreator.TimestampTokenData token = userDataCreator.createUserToken(state.getLastAccountCheckResponse().userToken);
 
 
-            if(data.getFormat() == RequestFormat.JSON) {
-                ResponseEntity<StreamzimeResponse> response = deviceSet.getStreamzine(
-                        data.getCommunityUrl(),
-                        data,
-                        token.getTimestampToken(),
-                        token.getTimestamp(),
-                        validResolution,
-                        state.getLastFacebookInfo().getUserName(),
-                        StreamzimeResponse.class, apiVersions);
+            if (data.getFormat() == RequestFormat.JSON) {
+                ResponseEntity<StreamzimeResponse> response = deviceSet
+                    .getStreamzine(data.getCommunityUrl(), data, token.getTimestampToken(), token.getTimestamp(), validResolution, state.getLastFacebookInfo().getUserName(), StreamzimeResponse.class,
+                                   apiVersions);
 
                 okResponses.put(data, response.getBody().getResponse().get().getValue());
-            } else {
+            }
+            else {
                 // XML:
-                ResponseEntity<mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.xml.StreamzimeResponse> response = deviceSet.getStreamzine(
-                        data.getCommunityUrl(),
-                        data,
-                        token.getTimestampToken(),
-                        token.getTimestamp(),
-                        validResolution,
-                        state.getLastFacebookInfo().getUserName(),
-                        mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.xml.StreamzimeResponse.class, apiVersions);
+                ResponseEntity<mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.xml.StreamzimeResponse> response = deviceSet
+                    .getStreamzine(data.getCommunityUrl(), data, token.getTimestampToken(), token.getTimestamp(), validResolution, state.getLastFacebookInfo().getUserName(),
+                                   mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.xml.StreamzimeResponse.class, apiVersions);
 
                 okResponses.put(data, response.getBody().getValue());
             }
@@ -258,20 +233,13 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     }
 
     @And("^block on (\\d) position is (.+), (.+), \\[(.+)\\] with (.+) permission granted to (.+)$")
-    public void checkResultWithPermissions(int position,
-                             ShapeType shape,
-                             DeeplinkType deeplinkType,
-                             String deeplinkValue,
-                             Permission permission,
-                             @Transform(ListValuesTransformer.class) ListValues grantedToTypes) {
+    public void checkResultWithPermissions(int position, ShapeType shape, DeeplinkType deeplinkType, String deeplinkValue, Permission permission,
+                                           @Transform(ListValuesTransformer.class) ListValues grantedToTypes) {
         doCheckResult(position, shape, deeplinkType, ListValues.from(deeplinkValue), permission, grantedToTypes.enums(GrantedToType.class));
     }
 
     @And("^block on (\\d) position is (.+), (.+), \\[(.+)\\] with no permissions$")
-    public void checkResultWithNoPermissions(int position,
-                                           ShapeType shape,
-                                           DeeplinkType deeplinkType,
-                                           @Transform(ListValuesTransformer.class) ListValues deeplinkValue) {
+    public void checkResultWithNoPermissions(int position, ShapeType shape, DeeplinkType deeplinkType, @Transform(ListValuesTransformer.class) ListValues deeplinkValue) {
         doCheckResult(position, shape, deeplinkType, deeplinkValue, null, null);
     }
 
@@ -279,9 +247,10 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     public void checkTitlesRules(int position, @Transform(NullableStringTransformer.class) NullableString title) {
         for (UserDeviceData data : currentUserDevices) {
             Pair<VisualBlock, ContentItemDto> pair = okResponses.get(data).get(position - 1);
-            if(title.isNull()) {
+            if (title.isNull()) {
                 assertNull(pair.getValue().getTitle());
-            } else {
+            }
+            else {
                 assertEquals(getErrorMessage(data), title.value(), pair.getValue().getTitle());
             }
         }
@@ -291,9 +260,10 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
     public void checkTitlesAndSubtitleRules(int position, @Transform(NullableStringTransformer.class) NullableString subTitle) {
         for (UserDeviceData data : currentUserDevices) {
             Pair<VisualBlock, ContentItemDto> pair = okResponses.get(data).get(position - 1);
-            if(subTitle.isNull()) {
+            if (subTitle.isNull()) {
                 assertNull(pair.getValue().getSubTitle());
-            } else {
+            }
+            else {
                 assertEquals(getErrorMessage(data), subTitle.value(), pair.getValue().getSubTitle());
             }
         }
@@ -305,7 +275,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             // shape type:
             assertEquals(getErrorMessage(data), shape, pair.getKey().getShapeType());
             // permissions:
-            if(permission != null) {
+            if (permission != null) {
                 assertEquals(getErrorMessage(data), permission, pair.getKey().getPolicyDto().getPermission());
                 Collections.sort(grantedToTypes);
                 Collections.sort(pair.getKey().getPolicyDto().getGrantedTo());
@@ -314,9 +284,11 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             // deep link type:
             assertEquals(getErrorMessage(data), deeplinkType, pair.getValue().getLinkType());
             // deep link value(s):
-            if(deeplinkType == DeeplinkType.DEEPLINK) {
-                assertTrue(getErrorMessage(data) + ", values: " + deeplinkValue.strings() + ", value: " + pair.getValue().getLinkValue().getValue(), deeplinkValue.strings().contains(pair.getValue().getLinkValue().getValue()));
-            } else {
+            if (deeplinkType == DeeplinkType.DEEPLINK) {
+                assertTrue(getErrorMessage(data) + ", values: " + deeplinkValue.strings() + ", value: " + pair.getValue().getLinkValue().getValue(),
+                           deeplinkValue.strings().contains(pair.getValue().getLinkValue().getValue()));
+            }
+            else {
                 assertEquals(getErrorMessage(data), deeplinkValue.ints(), pair.getValue().getLinkValue().getValues());
             }
         }

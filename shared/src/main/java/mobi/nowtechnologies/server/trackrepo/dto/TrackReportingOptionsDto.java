@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.server.trackrepo.dto;
 
 import mobi.nowtechnologies.server.trackrepo.enums.ReportingType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.validation.constraints.NotNull;
+
 import java.util.Set;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 // @author Titov Mykhaylo (titov) on 07.11.2014.
@@ -43,27 +44,23 @@ public class TrackReportingOptionsDto {
         this.negativeTags = negativeTags;
     }
 
-    public TrackReportingOptionsDto withTrackId(Long trackId){
+    public TrackReportingOptionsDto withTrackId(Long trackId) {
         this.trackId = trackId;
         return this;
     }
 
-    public TrackReportingOptionsDto withReportingType(ReportingType reportingType){
+    public TrackReportingOptionsDto withReportingType(ReportingType reportingType) {
         this.reportingType = reportingType;
         return this;
     }
 
-    public TrackReportingOptionsDto withNegativeTags(Set<String> negativeTags){
+    public TrackReportingOptionsDto withNegativeTags(Set<String> negativeTags) {
         this.negativeTags = negativeTags;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-                .append("trackId", trackId)
-                .append("reportingType", reportingType)
-                .append("negativeTags", negativeTags)
-                .toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("trackId", trackId).append("reportingType", reportingType).append("negativeTags", negativeTags).toString();
     }
 }

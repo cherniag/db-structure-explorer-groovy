@@ -9,20 +9,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoginLogoutController {
-	
-	
-	
-	@RequestMapping(value="/signin.html", method=RequestMethod.GET)
-	public ModelAndView getLogin(HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView("signin");
-		if (null!=request.getParameter("error")) {
-			modelAndView.addObject("errors", "");
-		}
-		return modelAndView;
-	}
-	
-	@RequestMapping(value="/signout", method=RequestMethod.GET)
-	public ModelAndView getLogout(HttpServletRequest request) {
-		return new ModelAndView("signin");
-	}
+
+
+    @RequestMapping(value = "/signin.html", method = RequestMethod.GET)
+    public ModelAndView getLogin(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("signin");
+        if (null != request.getParameter("error")) {
+            modelAndView.addObject("errors", "");
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/signout", method = RequestMethod.GET)
+    public ModelAndView getLogout(HttpServletRequest request) {
+        return new ModelAndView("signin");
+    }
 }

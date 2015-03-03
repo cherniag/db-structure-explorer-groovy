@@ -1,11 +1,5 @@
 package mobi.nowtechnologies.applicationtests.features.news;
 
-import cucumber.api.Transform;
-import cucumber.api.java.After;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import mobi.nowtechnologies.applicationtests.features.common.client.PartnerDeviceSet;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.DictionaryTransformer;
 import mobi.nowtechnologies.applicationtests.features.common.transformers.dictionary.Word;
@@ -28,22 +22,31 @@ import mobi.nowtechnologies.server.persistence.repository.MessageRepository;
 import mobi.nowtechnologies.server.shared.dto.NewsDetailDto;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.assertEquals;
+import cucumber.api.Transform;
+import cucumber.api.java.After;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+
+import org.springframework.stereotype.Component;
+
+import static org.junit.Assert.*;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 10/10/2014
+ * Author: Gennadii Cherniaiev Date: 10/10/2014
  */
 @Component
 public class GetNewsFeature {
+
     @Resource
     private PartnerDeviceSet partnerDeviceSet;
 
@@ -71,15 +74,13 @@ public class GetNewsFeature {
     private Runner runner;
 
     @Given("^Activated via OTAC user with (.+) using (.+) format for (.+) and (\\w+) community$")
-    public void given(@Transform(DictionaryTransformer.class) Word deviceTypes,
-                      @Transform(DictionaryTransformer.class) Word formats,
-                      @Transform(DictionaryTransformer.class) Word versions,
-                      String community){
+    public void given(@Transform(DictionaryTransformer.class) Word deviceTypes, @Transform(DictionaryTransformer.class) Word formats, @Transform(DictionaryTransformer.class) Word versions,
+                      String community) {
         this.messageRepository.deleteAll();
         this.allVersions = ApiVersions.from(versions.list());
 
         // already activated if not empty
-        if(!userDeviceDatas.isEmpty()) {
+        if (!userDeviceDatas.isEmpty()) {
             return;
         }
 
@@ -101,15 +102,13 @@ public class GetNewsFeature {
     }
 
     @After
-    public void after(){
+    public void after() {
         newsResponses.clear();
         messageRepository.deleteAll();
     }
 
     @When("^News message with type '(.+)', title '(.+)' and text '(.+)' exists in database$")
-    public void whenNewsMessageExists(MessageType messageType,
-                                      @Transform(NullableStringTransformer.class) NullableString title,
-                                      @Transform(NullableStringTransformer.class) NullableString body){
+    public void whenNewsMessageExists(MessageType messageType, @Transform(NullableStringTransformer.class) NullableString title, @Transform(NullableStringTransformer.class) NullableString body) {
         Community community = communityRepository.findByRewriteUrlParameter(this.community);
         Message message = new Message();
         message.setPublishTimeMillis(publishTimeMillis);
@@ -147,46 +146,38 @@ public class GetNewsFeature {
     }
 
     @And("^news message should have the same publish time$")
-    public void andNewsMessagesShouldHaveTheSamePublishTime(){
+    public void andNewsMessagesShouldHaveTheSamePublishTime() {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 
-            assertEquals(getErrorMessage(userDeviceData),
-                    publishTimeMillis,
-                    news[0].getTimestampMilis());
+            assertEquals(getErrorMessage(userDeviceData), publishTimeMillis, news[0].getTimestampMilis());
         }
     }
 
     @And("^news message should have message type '(.+)'$")
-    public void andNewsMessagesShouldHaveMessageType(MessageType messageType){
+    public void andNewsMessagesShouldHaveMessageType(MessageType messageType) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 
-            assertEquals(getErrorMessage(userDeviceData),
-                    messageType,
-                    news[0].getMessageType());
+            assertEquals(getErrorMessage(userDeviceData), messageType, news[0].getMessageType());
         }
     }
 
     @And("^news message should have detail '(.+)'$")
-    public void andNewsMessagesShouldHaveBody(String detail){
+    public void andNewsMessagesShouldHaveBody(String detail) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 
-            assertEquals(getErrorMessage(userDeviceData),
-                    detail,
-                    news[0].getDetail());
+            assertEquals(getErrorMessage(userDeviceData), detail, news[0].getDetail());
         }
     }
 
     @And("^news message should have body '(.+)'$")
-    public void andNewsMessagesShouldHaveDetail(String body){
+    public void andNewsMessagesShouldHaveDetail(String body) {
         for (UserDeviceData userDeviceData : userDeviceDatas) {
             NewsDetailDto[] news = newsResponses.get(userDeviceData);
 
-            assertEquals(getErrorMessage(userDeviceData),
-                    body,
-                    news[0].getBody());
+            assertEquals(getErrorMessage(userDeviceData), body, news[0].getBody());
         }
     }
 

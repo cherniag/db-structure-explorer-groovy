@@ -2,27 +2,26 @@ package mobi.nowtechnologies.server.service;
 
 import mobi.nowtechnologies.server.persistence.domain.Genre;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.junit.*;
+import org.junit.runner.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
- * The class <code>EntityServiceTest</code> contains tests for the class
- * <code>{@link EntityService}</code>.
+ * The class <code>EntityServiceTest</code> contains tests for the class <code>{@link EntityService}</code>.
  *
  * @author Titov Mykhaylo (titov)
  * @version $Revision: 1.0 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml", "/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml", "/META-INF/shared.xml"})
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class EntityServiceIT {
@@ -43,8 +42,7 @@ public class EntityServiceIT {
         String fieldName = "name";
         Object fieldValue = "Default";
 
-        Object result = entityService.findByProperty(entityClass, fieldName,
-                fieldValue);
+        Object result = entityService.findByProperty(entityClass, fieldName, fieldValue);
         assertNotNull(result);
     }
 
@@ -59,8 +57,7 @@ public class EntityServiceIT {
         String fieldName = "";
         Object fieldValue = new Object();
 
-        Object result = entityService.findByProperty(entityClass, fieldName,
-                fieldValue);
+        Object result = entityService.findByProperty(entityClass, fieldName, fieldValue);
         assertNotNull(result);
     }
 
@@ -75,8 +72,7 @@ public class EntityServiceIT {
         String fieldName = null;
         Object fieldValue = new Object();
 
-        Object result = entityService.findByProperty(entityClass, fieldName,
-                fieldValue);
+        Object result = entityService.findByProperty(entityClass, fieldName, fieldValue);
 
         assertNotNull(result);
     }

@@ -4,13 +4,13 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceUserData;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.DeviceUserDataRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml","/META-INF/shared.xml"})
+@ContextConfiguration(locations = {"classpath:/META-INF/service-test.xml", "classpath:/META-INF/dao-test.xml", "/META-INF/shared.xml"})
 public class DeviceUserDataServiceIT {
 
     @Resource

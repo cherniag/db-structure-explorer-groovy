@@ -1,17 +1,19 @@
 package mobi.nowtechnologies.server.shared.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.shared.enums.ChartType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 @XmlRootElement(name = "playlist")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PlaylistDto {
+
     private Integer id;
     private String playlistTitle;
     private String subtitle;
@@ -31,16 +33,16 @@ public class PlaylistDto {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public ChartType getType() {
         return type;
     }
 
     public void setType(ChartType type) {
         this.type = type;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getPlaylistTitle() {
@@ -118,18 +120,8 @@ public class PlaylistDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("playlistTitle", playlistTitle)
-                .append("subtitle", subtitle)
-                .append("image", image)
-                .append("imageTitle", imageTitle)
-                .append("description", description)
-                .append("position", position)
-                .append("switchable", switchable)
-                .append("type", type)
-                .append("locked", locked)
-                .append("badgeIcon", badgeIcon)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("playlistTitle", playlistTitle).append("subtitle", subtitle).append("image", image).append("imageTitle", imageTitle)
+                                        .append("description", description).append("position", position).append("switchable", switchable).append("type", type).append("locked", locked)
+                                        .append("badgeIcon", badgeIcon).toString();
     }
 }
