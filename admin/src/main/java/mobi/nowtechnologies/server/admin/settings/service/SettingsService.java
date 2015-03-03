@@ -9,21 +9,29 @@ import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import mobi.nowtechnologies.server.persistence.domain.behavior.*;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.CommunityConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ContentUserStatusBehavior;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
-import org.apache.commons.lang3.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
 public class SettingsService {
+
     private CommunityRepository communityRepository;
     private ChartUserStatusBehaviorRepository chartUserStatusBehaviorRepository;
     private CommunityConfigRepository communityConfigRepository;
@@ -36,7 +44,7 @@ public class SettingsService {
 
         CommunityConfig communityConfig = communityConfigRepository.findByCommunity(c);
 
-        if(communityConfig == null) {
+        if (communityConfig == null) {
             return null;
         }
 
@@ -88,7 +96,7 @@ public class SettingsService {
     }
 
     @Transactional
-    public void switchConfigType(String communityUrl, BehaviorConfigType newBehaviorConfigType){
+    public void switchConfigType(String communityUrl, BehaviorConfigType newBehaviorConfigType) {
         Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
         Assert.notNull(c);
         CommunityConfig communityConfig = communityConfigRepository.findByCommunity(c);

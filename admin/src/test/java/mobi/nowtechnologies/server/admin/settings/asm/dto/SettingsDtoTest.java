@@ -5,11 +5,11 @@ import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.*;
 import static org.junit.Assert.*;
 
 public class SettingsDtoTest {

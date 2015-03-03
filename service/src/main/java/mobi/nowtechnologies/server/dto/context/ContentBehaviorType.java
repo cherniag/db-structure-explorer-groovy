@@ -1,8 +1,5 @@
 package mobi.nowtechnologies.server.dto.context;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by zam on 12/15/2014.
  */
@@ -16,10 +13,12 @@ public enum ContentBehaviorType {
     }
 
     public static ContentBehaviorType valueOf(boolean isOff) {
-        return isOff ? DISABLED : ENABLED;
+        return isOff ?
+               DISABLED :
+               ENABLED;
     }
 
-    public boolean isOff(){
+    public boolean isOff() {
         return isOff;
     }
 }
