@@ -1,15 +1,16 @@
-import java.io.IOException;
-import java.util.Properties;
-
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 
-import org.junit.experimental.theories.*;
-import org.junit.runner.*;
-import static org.junit.Assert.*;
+import java.io.IOException;
+import java.util.Properties;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 // @author Titov Mykhaylo (titov) on 06.01.2015.
 @RunWith(Theories.class)

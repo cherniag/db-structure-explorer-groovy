@@ -289,6 +289,10 @@ public class User implements Serializable {
         setTariff(_3G);
     }
 
+    public boolean isSubscribedUserByPaymentType(String paymentType){
+        return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated() && getCurrentPaymentDetails().getPaymentType().equals(paymentType);
+    }
+
     public boolean isPremium(Date time) {
         final boolean isIos = DeviceType.IOS.equals(getDeviceType().getName());
 
@@ -1539,11 +1543,11 @@ public class User implements Serializable {
                           .add("potentialPromotionId", potentialPromotionId).add("pin", pin).add("code", code).add("operator", operator).add("mobile", mobile)
                           .add("conformStoredToken", conformStoredToken).add("lastDeviceLogin", lastDeviceLogin).add("lastWebLogin", lastWebLogin).add("firstUserLoginMillis", firstUserLoginMillis)
                           .add("firstDeviceLoginMillis", firstDeviceLoginMillis).add("lastBefore48SmsMillis", lastBefore48SmsMillis).add("device", device).add("deviceModel", deviceModel)
-                          .add("deviceTypeId", deviceTypeId).add("newStoredToken", newStoredToken).add("tempToken", tempToken).add("postcode", postcode).add("address1", address1)
-                          .add("address2", country).add("city", city).add("title", title).add("displayName ", displayName).add("firstName", firstName).add("lastName", lastName)
-                          .add("ipAddress", ipAddress).add("canContact", canContact).add("deviceString", deviceString).add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
-                          .add("freeTrialExpiredMillis", freeTrialExpiredMillis).add("activationStatus", activationStatus).add("segment", segment).add("provider", provider).add("tariff", tariff)
-                          .add("contractChannel", contractChannel).add("lastPromoId", getLastPromoId()).add("contract", contract).add("hasPromo", hasPromo)
+                .add("deviceTypeId", deviceTypeId).add("newStoredToken", newStoredToken).add("tempToken", tempToken).add("postcode", postcode).add("address1", address1)
+                .add("address2", country).add("city", city).add("title", title).add("displayName ", displayName).add("firstName", firstName).add("lastName", lastName)
+                .add("ipAddress", ipAddress).add("canContact", canContact).add("deviceString", deviceString).add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                .add("freeTrialExpiredMillis", freeTrialExpiredMillis).add("activationStatus", activationStatus).add("segment", segment).add("provider", provider).add("tariff", tariff)
+                .add("contractChannel", contractChannel).add("lastPromoId", getLastPromoId()).add("contract", contract).add("hasPromo", hasPromo)
                           .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
     }
 

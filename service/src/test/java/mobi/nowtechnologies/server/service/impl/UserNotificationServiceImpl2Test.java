@@ -1,10 +1,6 @@
 package mobi.nowtechnologies.server.service.impl;
 
-import mobi.nowtechnologies.server.persistence.domain.Community;
-import mobi.nowtechnologies.server.persistence.domain.DeviceType;
-import mobi.nowtechnologies.server.persistence.domain.User;
-import mobi.nowtechnologies.server.persistence.domain.UserGroup;
-import mobi.nowtechnologies.server.persistence.domain.UserStatus;
+import mobi.nowtechnologies.server.persistence.domain.*;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.payment.PendingPayment;
@@ -17,33 +13,24 @@ import mobi.nowtechnologies.server.shared.enums.ProviderType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
 import mobi.nowtechnologies.server.shared.message.CommunityResourceBundleMessageSourceImpl;
-import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.ANDROID;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.BLACKBERRY;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.IOS;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.J2ME;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.NONE;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.SYMBIAN;
-import static mobi.nowtechnologies.server.persistence.domain.DeviceType.WINDOWS_PHONE;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_O2;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.O2;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-
-import org.junit.*;
-import org.junit.runner.*;
-import org.mockito.*;
+import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
+import static mobi.nowtechnologies.server.persistence.domain.DeviceType.*;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
-
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Testing to see if we have messages for all users - the idea is to have all user types from app and to see messages sent to migservice
@@ -91,7 +78,7 @@ public class UserNotificationServiceImpl2Test {
         Mockito.when(migResponse.getHttpStatus()).thenReturn(200);
         Mockito.when(migResponse.getMessage()).thenReturn("000=[GEN] OK ");
         Mockito.when(migResponse.isSuccessful()).thenReturn(true);
-        doReturn(migHttpService).when(userNotificationService).getSMSProvider(anyString());
+        doReturn(migHttpService).when(smsServiceFacade).getSMSProvider(anyString());
         Mockito.when(migHttpService.send(anyString(), anyString(), anyString())).thenReturn(migResponse);
 
         audioOnlyUsers = new ArrayList<User>();
@@ -123,16 +110,6 @@ public class UserNotificationServiceImpl2Test {
         }
     }
 
-    @Test
-    public void testForNonVideo_sendUnsubscribePotentialSMS() throws Exception {
-        int times = 1;
-        for (User u : audioOnlyUsers) {
-            userNotificationService.sendUnsubscribePotentialSMS(u);
-            if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) {
-                verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-            }
-        }
-    }
 
     @Test
     public void testForNonVideo_sendLowBalanceWarning() throws Exception {
@@ -143,31 +120,6 @@ public class UserNotificationServiceImpl2Test {
             }
             userNotificationService.sendLowBalanceWarning(u);
             verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-        }
-    }
-
-    @Test
-    public void testForNonVideo_sendPaymentFailSMS() throws Exception {
-        int times = 1;
-        for (User u : audioOnlyUsers) {
-            userNotificationService.sendPaymentFailSMS(createPendingPayment(u));
-            if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) {
-                verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-            }
-        }
-    }
-
-    @Test
-    public void testForNonVideo_sendActivationPinSMS() throws Exception {
-        int times = 0;
-        for (User u : audioOnlyUsers) {
-            userNotificationService.sendActivationPinSMS(u);
-
-            if (VF_NZ_COMMUNITY_REWRITE_URL.equals(u.getUserGroup().getCommunity().getRewriteUrlParameter())) {
-                times++;
-            }
-
-            verify(migHttpService, times(times)).send(anyString(), anyString(), anyString());
         }
     }
 
@@ -185,36 +137,6 @@ public class UserNotificationServiceImpl2Test {
         int times = 1;
         for (User u : videoUsers) {
             userNotificationService.sendUnsubscribeAfterSMS(u);
-            verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-        }
-    }
-
-    @Test
-    public void testForVideo_sendUnsubscribePotentialSMS() throws Exception {
-        int times = 1;
-        for (User u : videoUsers) {
-            userNotificationService.sendUnsubscribePotentialSMS(u);
-            verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-        }
-    }
-
-    @Test
-    public void testForVideo_sendLowBalanceWarning() throws Exception {
-        int times = 1;
-        for (User u : videoUsers) {
-            if (!u.isO2PAYGConsumer()) {
-                continue;
-            }
-            userNotificationService.sendLowBalanceWarning(u);
-            verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
-        }
-    }
-
-    @Test
-    public void testForVideo_sendPaymentFailSMS() throws Exception {
-        int times = 1;
-        for (User u : videoUsers) {
-            userNotificationService.sendPaymentFailSMS(createPendingPayment(u));
             verify(migHttpService, times(times++)).send(anyString(), anyString(), anyString());
         }
     }

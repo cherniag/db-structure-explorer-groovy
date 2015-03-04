@@ -47,9 +47,6 @@ import org.slf4j.LoggerFactory;
     query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentPolicy.class);
-
     public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
 
@@ -478,9 +475,5 @@ public class PaymentPolicy {
                                         .append("subMerchantId", subMerchantId).append("contentDescription", contentDescription).append("tariff", tariff).append("mediaType", mediaType)
                                         .append("advancedPaymentSeconds", advancedPaymentSeconds).append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds).append("isDefault", isDefault)
                                         .append("online", online).toString();
-    }
-
-    public static enum Fields {
-        communityId
     }
 }
