@@ -5,10 +5,14 @@
 
 <script src="${requestScope.assetsPathWithoutCommunity}scripts/utils.js"></script>
 
-<div class="root-container">
+<div class="page-container">
     <c:if test="${reassigned}">
         <c:set var="key" value="reassigned" />
     </c:if>
+
+    <div class="vf-nav-header">
+        <span onclick="goBack()"><s:message code="button.back.title" /></span>
+    </div>
 
     <div class="message">
         <s:message code='enter.pin.header' arguments='${phone}'/>

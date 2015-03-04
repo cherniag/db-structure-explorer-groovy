@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s"%>
 
-<div class="root-container">
+<div class="page-container">
     <script>
         var enterPhoneNumber = function() {
             window.location = "phone/${endpoint}?phone=" + $('#phone').val();
@@ -25,6 +25,10 @@
             });
         });
     </script>
+
+    <div class="vf-nav-header">
+        <span onclick="goBack()"><s:message code="button.back.title" /></span>
+    </div>
 
     <div class="message">
         <s:message code="enter.phone.header" />
