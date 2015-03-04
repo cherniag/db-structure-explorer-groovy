@@ -161,6 +161,7 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="supportedNumbers">
             <set>
                 <value>${vf.nz.smpp.service.source.address.unsubscribe}</value>
+                <value>${vf.nz.smpp.service.source.address.unsubscribe.for.mtvnz}</value>
                 <value>${vf.nz.smpp.service.source.address.billing.6gbp}</value>
                 <value>${vf.nz.smpp.service.source.address.billing.1_5gbp}</value>
             </set>
