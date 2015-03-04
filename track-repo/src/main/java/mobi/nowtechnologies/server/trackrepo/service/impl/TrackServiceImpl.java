@@ -1,13 +1,6 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
 
-import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
-import com.brightcove.proserve.mediaapi.wrapper.WriteApi;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
-import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.*;
-import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
-import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.service.CloudFileService;
 import mobi.nowtechnologies.server.trackrepo.SearchTrackCriteria;
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -22,6 +15,33 @@ import mobi.nowtechnologies.server.trackrepo.service.TrackService;
 import mobi.nowtechnologies.server.trackrepo.utils.BitRate;
 import mobi.nowtechnologies.server.trackrepo.utils.EncodeManager;
 import mobi.nowtechnologies.server.trackrepo.utils.ExternalCommand;
+
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
+
+import com.brightcove.proserve.mediaapi.wrapper.ReadApi;
+import com.brightcove.proserve.mediaapi.wrapper.WriteApi;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.Video;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.EconomicsEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.GeoFilterCodeEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.ItemStateEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.TranscodeEncodeToEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.UploadStatusEnum;
+import com.brightcove.proserve.mediaapi.wrapper.apiobjects.enums.VideoFieldEnum;
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.BrightcoveException;
+import com.brightcove.proserve.mediaapi.wrapper.exceptions.MediaApiException;
+import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
@@ -29,6 +49,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -37,20 +58,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 // @author Alexander Kolpakov (akolpakov)
 public class TrackServiceImpl implements TrackService {
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(TrackServiceImpl.class);
     private static final java.util.logging.Logger BRIGHTCOVE_LOGGER = java.util.logging.Logger.getLogger("BrightcoveLog");
-
+    protected TrackRepository trackRepository;
     private CloudFileService cloudFileService;
-
     private Resource encodeScript;
     private Resource itunesScript;
     private Resource publishDir;
@@ -58,18 +72,13 @@ public class TrackServiceImpl implements TrackService {
     private Resource workDir;
     private Resource classpath;
     private Resource privateKey;
-
     private String srcPullContainer;
     private String destPullContainer;
-
     private String brightcoveWriteToken;
     private String brightcoveReadToken;
     private Boolean brightcoveGeoFiltering;
     private String sevenDigitalApiUrl;
     private String sevenDigitalApiKey;
-
-    protected TrackRepository trackRepository;
-
     private WriteApi brightcoveWriteService;
     private ReadApi brightcoveReadService;
     private RestTemplate restTemplate;
@@ -81,20 +90,27 @@ public class TrackServiceImpl implements TrackService {
     }
 
     public void init() throws Exception {
-        if (encodeScript == null || !encodeScript.exists())
+        if (encodeScript == null || !encodeScript.exists()) {
             throw new IllegalArgumentException("There is no resource under the following context property trackRepo.encode.script");
-        if (itunesScript == null || !itunesScript.exists())
+        }
+        if (itunesScript == null || !itunesScript.exists()) {
             throw new IllegalArgumentException("There is no resource under the following context property trackRepo.itunes.script");
-        if (privateKey == null || !privateKey.exists())
+        }
+        if (privateKey == null || !privateKey.exists()) {
             throw new IllegalArgumentException("There is no resource under the following context property trackRepo.encode.privkey");
-        if (publishDir == null || !publishDir.exists())
+        }
+        if (publishDir == null || !publishDir.exists()) {
             throw new IllegalArgumentException("There is no folder under the following context property trackRepo.pull.publish");
-        if (neroHome == null || !neroHome.exists())
+        }
+        if (neroHome == null || !neroHome.exists()) {
             throw new IllegalArgumentException("There is no folder under the following context  property trackRepo.encode.nero.home");
-        if (workDir == null || !workDir.exists())
+        }
+        if (workDir == null || !workDir.exists()) {
             throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.workdir");
-        if (classpath == null || !classpath.exists())
+        }
+        if (classpath == null || !classpath.exists()) {
             throw new IllegalArgumentException("There is no folder under the following context property trackRepo.encode.classpath");
+        }
 
         brightcoveWriteService = new WriteApi(BRIGHTCOVE_LOGGER);
         brightcoveReadService = new ReadApi(BRIGHTCOVE_LOGGER);
@@ -107,28 +123,34 @@ public class TrackServiceImpl implements TrackService {
         Track track = trackRepository.findOneWithCollections(trackId);
 
         LOGGER.debug("Found track : {}", track);
-        if (track == null)
+        if (track == null) {
             return null;
+        }
 
         try {
             track.setStatus(TrackStatus.ENCODING);
             track.setPublishDate(null);
             trackRepository.save(track);
 
-            licensed = licensed == null ? Boolean.FALSE : licensed;
+            licensed = licensed == null ?
+                       Boolean.FALSE :
+                       licensed;
 
             encodeManager.encode(track, isHighRate, licensed);
 
             track.setItunesUrl(getITunesUrl(track.getArtist(), track.getTitle()));
             track.setAmazonUrl(getAmazonUrl(track.getIsrc()));
             track.setStatus(TrackStatus.ENCODED);
-            track.setResolution(isHighRate != null && isHighRate ? AudioResolution.RATE_96 : AudioResolution.RATE_48);
+            track.setResolution(isHighRate != null && isHighRate ?
+                                AudioResolution.RATE_96 :
+                                AudioResolution.RATE_48);
             track.setLicensed(licensed);
             trackRepository.save(track);
 
             LOGGER.info("Track {} is encoded", trackId);
             return track;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Cannot encode track {} files or create zip package: {}", trackId, e.getMessage(), e);
 
             track.setStatus(TrackStatus.NONE);
@@ -141,14 +163,15 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public Track pull(Long trackId) {
-        LOGGER.debug("input pull(trackId): [{}]", new Object[]{trackId});
+        LOGGER.debug("input pull(trackId): [{}]", new Object[] {trackId});
 
         Track track = trackRepository.findOneWithCollections(trackId);
 
         LOGGER.debug("Found track in db: {}", track);
 
-        if (track == null || (track.getStatus() != TrackStatus.ENCODED && track.getStatus() != TrackStatus.PUBLISHED))
+        if (track == null || (track.getStatus() != TrackStatus.ENCODED && track.getStatus() != TrackStatus.PUBLISHED)) {
             return track;
+        }
 
         TrackStatus oldStatus = track.getStatus();
 
@@ -159,7 +182,8 @@ public class TrackServiceImpl implements TrackService {
             pull(track);
 
             track.setStatus(TrackStatus.PUBLISHED);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Exception while pulling track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             track.setStatus(oldStatus);
         }
@@ -191,12 +215,13 @@ public class TrackServiceImpl implements TrackService {
 
             track.setPublishDate(new Date());
             trackRepository.save(track);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Cannot pull encoded track {} : {}", track.getUniqueTrackId(), e.getMessage(), e);
             throw new RuntimeException("Cannot pull encoded track.");
         }
 
-        LOGGER.info("End of pull process: [{}]", new Object[]{track.getUniqueTrackId()});
+        LOGGER.info("End of pull process: [{}]", new Object[] {track.getUniqueTrackId()});
         return track;
     }
 
@@ -221,38 +246,40 @@ public class TrackServiceImpl implements TrackService {
     @Override
     @Transactional(readOnly = true)
     public Page<Track> find(String query, Pageable page) {
-        LOGGER.debug("input find(query, page): [{}]", new Object[]{query});
+        LOGGER.debug("input find(query, page): [{}]", new Object[] {query});
 
         Page<Track> pagelist = new PageImpl<Track>(Collections.<Track>emptyList(), page, 0L);
         try {
             if (query != null && !query.isEmpty()) {
                 pagelist = trackRepository.find("%" + query + "%", page);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Cannot find tracks.", e);
             throw new RuntimeException("Cannot find tracks.");
         }
 
-        LOGGER.debug("output find(query, page): [{}]", new Object[]{pagelist});
+        LOGGER.debug("output find(query, page): [{}]", new Object[] {pagelist});
         return pagelist;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<Track> find(SearchTrackCriteria searchTrackCriteria, Pageable pageable) {
-        LOGGER.debug("input find(searchTrackDto, page): [{}]", new Object[]{searchTrackCriteria});
+        LOGGER.debug("input find(searchTrackDto, page): [{}]", new Object[] {searchTrackCriteria});
 
         Page<Track> page = new PageImpl<Track>(Collections.<Track>emptyList(), pageable, 0L);
         try {
             if (searchTrackCriteria != null) {
                 page = trackRepository.find(searchTrackCriteria, pageable);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Cannot find tracks.", e);
             throw new RuntimeException("Cannot find tracks.");
         }
 
-        LOGGER.debug("output find(searchTrackDto, page): [{}]", new Object[]{page});
+        LOGGER.debug("output find(searchTrackDto, page): [{}]", new Object[] {page});
         return page;
     }
 
@@ -278,7 +305,8 @@ public class TrackServiceImpl implements TrackService {
                 try {
                     LOGGER.debug("Trying to move file {} to {}", file, newDestSubDir);
                     FileUtils.moveFileToDirectory(file, newDestSubDir, true);
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     LOGGER.error("Could not move file {} to {} : {}", file, newDestSubDir, e.getMessage(), e);
                 }
             }
@@ -291,8 +319,9 @@ public class TrackServiceImpl implements TrackService {
 
         LOGGER.info("Video file is : {}", videoFile);
 
-        if (videoFile == null)
+        if (videoFile == null) {
             return null;
+        }
 
         Video video = new Video();
 
@@ -305,7 +334,9 @@ public class TrackServiceImpl implements TrackService {
 
         // ---- Required fields ----
         video.setName(track.getTitle());
-        video.setShortDescription(track.getArtist() + (track.getAlbum() != null ? "/" + track.getAlbum() : ""));
+        video.setShortDescription(track.getArtist() + (track.getAlbum() != null ?
+                                                       "/" + track.getAlbum() :
+                                                       ""));
 
         // ---- Optional fields ----
         video.setAccountId(null);
@@ -327,7 +358,9 @@ public class TrackServiceImpl implements TrackService {
             video.setGeoFiltered(true);
             List<GeoFilterCodeEnum> geoFilteredCountries = new ArrayList<GeoFilterCodeEnum>();
             for (Territory territory : track.getTerritories()) {
-                GeoFilterCodeEnum code = Territory.WWW_TERRITORY.equalsIgnoreCase(territory.getCode()) ? GeoFilterCodeEnum.GB : GeoFilterCodeEnum.valueOf(territory.getCode());
+                GeoFilterCodeEnum code = Territory.WWW_TERRITORY.equalsIgnoreCase(territory.getCode()) ?
+                                         GeoFilterCodeEnum.GB :
+                                         GeoFilterCodeEnum.valueOf(territory.getCode());
                 geoFilteredCountries.add(code);
             }
             video.setGeoFilteredCountries(geoFilteredCountries);
@@ -342,16 +375,20 @@ public class TrackServiceImpl implements TrackService {
 
         Long videoId = null;
         try {
-            videoId = brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
-            LOGGER.info("Create video with referenceId=[{}] and id=[{}]", new Object[]{video.getReferenceId(), videoId});
-        } catch (MediaApiException e) {
+            videoId =
+                brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
+            LOGGER.info("Create video with referenceId=[{}] and id=[{}]", new Object[] {video.getReferenceId(), videoId});
+        }
+        catch (MediaApiException e) {
             String error = e.getResponseMessage();
             if (error.equals("Reference ID " + video.getReferenceId() + " is already in use")) {
                 brightcoveWriteService.DeleteVideo(brightcoveWriteToken, video.getId(), video.getReferenceId(), true, true);
                 LOGGER.info("This video is not new. Video with referenceId=[{}] has been deleted", video.getReferenceId());
-                videoId = brightcoveWriteService.CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
+                videoId = brightcoveWriteService
+                    .CreateVideo(brightcoveWriteToken, video, videoFile.getPath(), TranscodeEncodeToEnum.MP4, createMultipleRenditions, preserveSourceRendition, h264NoProcessing);
                 LOGGER.info("This video is new. Video with referenceId=[{}] doesn't exist", video.getReferenceId());
-            } else {
+            }
+            else {
                 throw e;
             }
         }
@@ -364,7 +401,8 @@ public class TrackServiceImpl implements TrackService {
                 status = brightcoveWriteService.GetUploadStatus(brightcoveWriteToken, videoId, video.getReferenceId());
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
@@ -381,7 +419,8 @@ public class TrackServiceImpl implements TrackService {
         command.setCommand(itunesScript);
         try {
             return command.executeCommand(artist, title);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("ERROR", e);
             return null;
         }
@@ -403,13 +442,15 @@ public class TrackServiceImpl implements TrackService {
 
             if (StringUtils.isBlank(trackId)) {
                 trackId = "";
-            } else {
+            }
+            else {
                 trackId = "#t" + trackId;
             }
 
             return "https://m.7digital.com/GB/releases/" + releaseId + trackId + "?partner=3734";
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
             LOGGER.error("GET_AMAZON_URL error_msg[{}] for isrc=" + isrc, e);
             return null;

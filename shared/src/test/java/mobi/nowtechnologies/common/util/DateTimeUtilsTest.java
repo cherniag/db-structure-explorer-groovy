@@ -1,12 +1,10 @@
 package mobi.nowtechnologies.common.util;
 
-import org.junit.Test;
-
 import java.text.DateFormat;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class DateTimeUtilsTest {
 

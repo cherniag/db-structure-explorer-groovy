@@ -1,4 +1,3 @@
-
 package uk.co.o2.soa.subscriberdata;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,11 +8,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * The returned profile
- * 
+ * <p/>
  * <p>Java class for getSubscriberProfileResponse complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="getSubscriberProfileResponse">
  *   &lt;complexContent>
@@ -25,13 +24,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubscriberProfileResponse", propOrder = {
-    "subscriberProfile"
-})
+@XmlType(name = "getSubscriberProfileResponse", propOrder = {"subscriberProfile"})
 public class GetSubscriberProfileResponse {
 
     @XmlElement(required = true)
@@ -39,11 +34,8 @@ public class GetSubscriberProfileResponse {
 
     /**
      * Gets the value of the subscriberProfile property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SubscriberProfileType }
-     *     
+     *
+     * @return possible object is {@link SubscriberProfileType }
      */
     public SubscriberProfileType getSubscriberProfile() {
         return subscriberProfile;
@@ -51,11 +43,8 @@ public class GetSubscriberProfileResponse {
 
     /**
      * Sets the value of the subscriberProfile property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SubscriberProfileType }
-     *     
+     *
+     * @param value allowed object is {@link SubscriberProfileType }
      */
     public void setSubscriberProfile(SubscriberProfileType value) {
         this.subscriberProfile = value;

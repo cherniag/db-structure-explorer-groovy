@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.admin.settings.service;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlist.PlaylistInfo;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.PlaylistTypeInfoDto;
@@ -8,21 +7,31 @@ import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.TracksInf
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
-import mobi.nowtechnologies.server.persistence.domain.behavior.*;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ChartUserStatusBehavior;
+import mobi.nowtechnologies.server.persistence.domain.behavior.CommunityConfig;
+import mobi.nowtechnologies.server.persistence.domain.behavior.ContentUserStatusBehavior;
 import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.BehaviorConfigRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStatusBehaviorRepository;
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
-import org.apache.commons.lang3.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
 public class SettingsService {
+
     private CommunityRepository communityRepository;
     private ChartUserStatusBehaviorRepository chartUserStatusBehaviorRepository;
     private CommunityConfigRepository communityConfigRepository;
@@ -35,18 +44,20 @@ public class SettingsService {
 
         CommunityConfig communityConfig = communityConfigRepository.findByCommunity(c);
 
-        if(communityConfig == null) {
+        if (communityConfig == null) {
+            return null;
+        }
+
+        BehaviorConfig freemiumBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), BehaviorConfigType.FREEMIUM);
+
+        if (freemiumBehaviorConfig == null) {
             return null;
         }
 
         SettingsDto dto = new SettingsDto();
         dto.setEnabled(!communityConfig.getBehaviorConfig().getType().isDefault());
-
-        final BehaviorConfig freemiumBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), BehaviorConfigType.FREEMIUM);
-
         dto.getReferralDto().setRequired(freemiumBehaviorConfig.getRequiredReferrals());
         dto.getReferralDto().getDurationInfoDto().fromDuration(freemiumBehaviorConfig.getReferralsDuration());
-
 
         for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
             final ChartBehavior chartBehavior = freemiumBehaviorConfig.getChartBehavior(chartBehaviorType);
@@ -174,7 +185,9 @@ public class SettingsService {
     // internals
     //
     private BehaviorConfigType decideType(SettingsDto dto) {
-        return (dto.isEnabled()) ? BehaviorConfigType.FREEMIUM : BehaviorConfigType.DEFAULT;
+        return (dto.isEnabled()) ?
+               BehaviorConfigType.FREEMIUM :
+               BehaviorConfigType.DEFAULT;
     }
 
     private Logger logger() {

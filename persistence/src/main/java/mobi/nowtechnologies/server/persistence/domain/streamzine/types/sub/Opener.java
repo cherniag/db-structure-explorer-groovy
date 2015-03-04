@@ -8,12 +8,12 @@ public enum Opener {
 
     private String queryParamValue;
 
-    public String getQueryParamValue() {
-        return queryParamValue;
-    }
-
     Opener(String queryParamValue) {
         this.queryParamValue = queryParamValue;
+    }
+
+    public String getQueryParamValue() {
+        return queryParamValue;
     }
 
 }

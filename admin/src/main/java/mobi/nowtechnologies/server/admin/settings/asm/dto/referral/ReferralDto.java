@@ -1,15 +1,17 @@
 package mobi.nowtechnologies.server.admin.settings.asm.dto.referral;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.duration.DurationInfoDto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 @JsonTypeName("referral")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ReferralDto {
+
     @JsonProperty(value = "required")
     private int required;
 
@@ -27,7 +29,6 @@ public class ReferralDto {
     public void setRequired(int required) {
         this.required = required;
     }
-
 
 
 }

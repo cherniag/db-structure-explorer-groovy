@@ -7,6 +7,7 @@ import mobi.nowtechnologies.applicationtests.services.http.common.UserInResponse
  * Created by kots on 9/11/2014.
  */
 public class DataWrapper {
+
     private Error errorMessage;
     private UserInResponse user;
 
@@ -29,8 +30,8 @@ public class DataWrapper {
     @Override
     public String toString() {
         return "DataWrapper{" +
-                "errorMessage=" + errorMessage +
-                ", user=" + user +
-                '}';
+               "errorMessage=" + errorMessage +
+               ", user=" + user +
+               '}';
     }
 }

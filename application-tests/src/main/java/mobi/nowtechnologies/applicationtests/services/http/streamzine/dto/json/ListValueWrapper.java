@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.json;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import java.util.List;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ListValueWrapperDeserializer.class)
 public class ListValueWrapper {
+
     String value;
     List<Integer> values;
 

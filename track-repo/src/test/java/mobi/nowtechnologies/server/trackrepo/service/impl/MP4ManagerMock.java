@@ -1,12 +1,17 @@
 package mobi.nowtechnologies.server.trackrepo.service.impl;
 
-import com.google.common.io.Files;
 import mobi.nowtechnologies.server.trackrepo.uits.IMP4Manager;
 import mobi.nowtechnologies.server.trackrepo.uits.UitsParameters;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 
 /**
  * Created by Oleg Artomov on 7/1/2014.
@@ -27,7 +32,8 @@ public class MP4ManagerMock implements IMP4Manager {
             Files.copy(new File(inputFile), new File(encodedFile));
             Files.copy(new File(inputFile), new File(audioFile));
             Files.copy(new File(inputFile), new File(headerFile));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.error("ERROR", e);
         }
         return 0;

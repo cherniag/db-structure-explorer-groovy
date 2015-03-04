@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class BadgesDtoAsm {
+
     public Map<Long, Map<Long, BadgeMappingDto>> convert(Map<Resolution, Map<Long, BadgeMapping>> matrix) {
         Map<Long, Map<Long, BadgeMappingDto>> dtos = new HashMap<Long, Map<Long, BadgeMappingDto>>();
 

@@ -4,15 +4,17 @@ import mobi.nowtechnologies.server.dto.DuplicatedMediaAcrossNearestChartsDto;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.Media;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.List;
-
 import static java.util.Arrays.asList;
+
+import org.junit.*;
+import org.junit.runner.*;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+
+import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class DuplicatedMediaAcrossNearestChartsDtoAssemblerTest {
@@ -36,7 +38,8 @@ public class DuplicatedMediaAcrossNearestChartsDtoAssemblerTest {
         List<ChartDetail> chartDetails = asList(chartDetail3, chartDetail1, chartDetail4, chartDetail2, chartDetail5);
 
         //when
-        List<DuplicatedMediaAcrossNearestChartsDto> trackIdDuplicatedMediaAcrossNearestChartsDtos = duplicatedMediaAcrossNearestChartsDtoAssembler.getDuplicatedMediaAcrossNearestChartsDtos(chartDetails);
+        List<DuplicatedMediaAcrossNearestChartsDto> trackIdDuplicatedMediaAcrossNearestChartsDtos =
+            duplicatedMediaAcrossNearestChartsDtoAssembler.getDuplicatedMediaAcrossNearestChartsDtos(chartDetails);
 
         //then
         assertThat(trackIdDuplicatedMediaAcrossNearestChartsDtos.size(), is(5));

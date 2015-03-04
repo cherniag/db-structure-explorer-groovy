@@ -3,48 +3,41 @@ package mobi.nowtechnologies.server.service.impl;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.UserService;
-import mobi.nowtechnologies.server.service.VFOtacValidationService;
-import mobi.nowtechnologies.server.service.exception.ServiceException;
-import mobi.nowtechnologies.server.shared.enums.ProviderType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import static mobi.nowtechnologies.server.service.VFOtacValidationService.TEST_OTAC_NON_VF;
+import static mobi.nowtechnologies.server.service.VFOtacValidationService.TEST_OTAC_VF;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
+import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import static org.hamcrest.CoreMatchers.is;
+
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.Assert.assertNull;
-import static mobi.nowtechnologies.server.service.VFOtacValidationService.*;
-import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.NON_VF;
-import static mobi.nowtechnologies.server.shared.enums.ProviderType.VF;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.isNotNull;
-import static org.mockito.Matchers.notNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 /**
- * User: Titov Mykhaylo (titov)
- * 30.09.13 17:41
+ * User: Titov Mykhaylo (titov) 30.09.13 17:41
  */
 @RunWith(PowerMockRunner.class)
 public class VFOtacValidationServiceImplTest {
 
-    private VFOtacValidationServiceImpl vfOtacValidationServiceImplFixture;
-
     @Mock
     public UserService userServiceMock;
+    private VFOtacValidationServiceImpl vfOtacValidationServiceImplFixture;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         vfOtacValidationServiceImplFixture = new VFOtacValidationServiceImpl();
         vfOtacValidationServiceImplFixture.setUserService(userServiceMock);
     }
 
     @Test
-    public void shouldValidateAsPromotedNonVFDevice() throws Exception{
+    public void shouldValidateAsPromotedNonVFDevice() throws Exception {
         //given
         String otac = TEST_OTAC_NON_VF;
         String phoneNumber = "phoneNumber";
@@ -64,7 +57,7 @@ public class VFOtacValidationServiceImplTest {
     }
 
     @Test
-    public void shouldValidateAsPromotedVFDevice() throws Exception{
+    public void shouldValidateAsPromotedVFDevice() throws Exception {
         //given
         String otac = TEST_OTAC_VF;
         String phoneNumber = "phoneNumber";
@@ -84,7 +77,7 @@ public class VFOtacValidationServiceImplTest {
     }
 
     @Test
-    public void shouldValidateAsPromotedVFDeviceWithNotTestedOtac() throws Exception{
+    public void shouldValidateAsPromotedVFDeviceWithNotTestedOtac() throws Exception {
         //given
         String otac = "";
         String phoneNumber = "phoneNumber";
@@ -104,7 +97,7 @@ public class VFOtacValidationServiceImplTest {
     }
 
     @Test
-    public void shouldValidateAsNotPromotedVFDevice() throws Exception{
+    public void shouldValidateAsNotPromotedVFDevice() throws Exception {
         //given
         String otac = TEST_OTAC_NON_VF;
         String phoneNumber = "phoneNumber";

@@ -1,7 +1,6 @@
 package mobi.nowtechnologies.server.user.rules;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-
 import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 public class NoOpValidationDelegate implements ValidationDelegate {
@@ -19,8 +18,6 @@ public class NoOpValidationDelegate implements ValidationDelegate {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-                .append("validity", validity)
-                .toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("validity", validity).toString();
     }
 }

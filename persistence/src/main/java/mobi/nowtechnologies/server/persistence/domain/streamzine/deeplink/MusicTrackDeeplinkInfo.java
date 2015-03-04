@@ -3,15 +3,21 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
-import org.springframework.util.Assert;
 
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import static javax.persistence.FetchType.EAGER;
+
+import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "sz_deeplink_music_track")
-public class MusicTrackDeeplinkInfo extends DeeplinkInfo implements PlayableItemDeepLink{
+public class MusicTrackDeeplinkInfo extends DeeplinkInfo implements PlayableItemDeepLink {
 
     @OneToOne(fetch = EAGER)
     @JoinColumn(name = "media_id")

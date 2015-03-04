@@ -1,11 +1,13 @@
 package mobi.nowtechnologies.server.dto.streamzine.badge;
 
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Min;
 
+import org.hibernate.validator.constraints.Length;
+
 public class BadgeInfoDto {
+
     private String file;
 
     @Length(min = 0, max = FilenameAlias.NAME_ALIAS_MAX_LENGTH)
@@ -52,10 +54,10 @@ public class BadgeInfoDto {
     @Override
     public String toString() {
         return "BadgeInfoDto{" +
-                "file='" + file + '\'' +
-                ", title='" + title + '\'' +
-                ", width=" + width +
-                ", height=" + height +
-                '}';
+               "file='" + file + '\'' +
+               ", title='" + title + '\'' +
+               ", width=" + width +
+               ", height=" + height +
+               '}';
     }
 }

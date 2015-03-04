@@ -4,55 +4,54 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public abstract class CommonDto {
 
-	@NotEmpty
-	private String communityName;
-	
-	private String ipAddress;
-	
-	@NotEmpty
-	private String apiVersion;
+    @NotEmpty
+    private String communityName;
 
-	@NotEmpty
-	private String appVersion;
+    private String ipAddress;
 
-	public String getCommunityName() {
-		return communityName;
-	}
+    @NotEmpty
+    private String apiVersion;
 
-	public void setCommunityName(String communityName) {
-		this.communityName = communityName;
-	}
+    @NotEmpty
+    private String appVersion;
 
-	public String getIpAddress() {
-		return ipAddress;
-	}
+    public String getCommunityName() {
+        return communityName;
+    }
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
+    }
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
-	public String getAppVersion() {
-		return appVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	public void setAppVersion(String appVersion) {
-		this.appVersion = appVersion;
-	}
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 
-	@Override
-	public String toString() {
-		return "apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", communityName=" + communityName + ", ipAddress=" + ipAddress;
-	}
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    @Override
+    public String toString() {
+        return "apiVersion=" + apiVersion + ", appVersion=" + appVersion + ", communityName=" + communityName + ", ipAddress=" + ipAddress;
+    }
 }

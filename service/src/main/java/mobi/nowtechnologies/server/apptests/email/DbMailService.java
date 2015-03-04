@@ -3,14 +3,17 @@ package mobi.nowtechnologies.server.apptests.email;
 import mobi.nowtechnologies.server.persistence.apptests.domain.Email;
 import mobi.nowtechnologies.server.service.MailService;
 import mobi.nowtechnologies.server.service.MailTemplateProcessor;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Transactional;
+
 public class DbMailService extends MailService {
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -28,6 +31,6 @@ public class DbMailService extends MailService {
 
     @Transactional
     public void sendMessage(String from, String to, String subject, String body, Map<String, String> model) {
-        sendMessage(from, new String[]{to}, subject, body, model);
+        sendMessage(from, new String[] {to}, subject, body, model);
     }
 }

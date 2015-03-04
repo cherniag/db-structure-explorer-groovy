@@ -1,15 +1,15 @@
-
 package uk.co.o2.soa.subscriberservice;
 
-import uk.co.o2.soa.utils.SubscriberPortDecorator;
-
-import java.net.URL;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
+
+import java.net.URL;
+import java.util.logging.Logger;
+
+import uk.co.o2.soa.utils.SubscriberPortDecorator;
 
 
 @WebServiceClient(name = "SubscriberService", targetNamespace = "http://soa.o2.co.uk/subscriberservice_2")
@@ -22,7 +22,7 @@ public class SubscriberService extends Service {
         super(wsdlLocation, serviceName);
     }
 
-    public SubscriberService(URL wsdl){
+    public SubscriberService(URL wsdl) {
         super(wsdl, new QName("http://soa.o2.co.uk/subscriberservice_2", "SubscriberService"));
     }
 
@@ -31,7 +31,7 @@ public class SubscriberService extends Service {
         return super.getPort(new QName("http://soa.o2.co.uk/subscriberservice_2", "SubscriberPort"), SubscriberPort.class);
     }
 
-    public SubscriberPortDecorator getSubscriberPortDecorator(){
+    public SubscriberPortDecorator getSubscriberPortDecorator() {
         return new SubscriberPortDecorator(getSubscriberPort());
     }
 

@@ -10,6 +10,7 @@ import mobi.nowtechnologies.server.persistence.domain.User;
  * Created by zam on 1/16/2015.
  */
 public interface ITunesPaymentDetails {
+
     User getUser();
 
     String getOriginalTransactionId();

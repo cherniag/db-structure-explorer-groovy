@@ -6,12 +6,18 @@ import mobi.nowtechnologies.server.admin.settings.service.SettingsService;
 import mobi.nowtechnologies.server.dto.streamzine.ChartListItemDto;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.*;
-
 public class SettingsAsm {
+
     private MessageSource messageSource;
     private SettingsService settingsService;
 
@@ -26,7 +32,7 @@ public class SettingsAsm {
     public SettingsDto createDto(String communityRewriteUrl, List<ChartListItemDto> chartListItemDtos, Set<String> pages, Set<String> actions) {
         SettingsDto dto = settingsService.export(communityRewriteUrl);
 
-        if(dto == null) {
+        if (dto == null) {
             return null;
         }
 

@@ -1,36 +1,34 @@
 package mobi.nowtechnologies.server.httpinvoker;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import javax.annotation.Resource;
+
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.Resource;
-import java.util.Map;
+import org.junit.*;
+import org.junit.runner.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextHierarchy({
-        @ContextConfiguration(locations = {
-                "classpath:transport-root-test.xml"}),
-        @ContextConfiguration(locations = {
-                "classpath:transport-servlet-test.xml"})})
+@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
 @WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class ActivateVideoAudioFreeTrialInvokerIT {
+
     @Autowired
     private ApplicationContext applicationContext;
     @Resource
@@ -52,7 +50,7 @@ public class ActivateVideoAudioFreeTrialInvokerIT {
         HttpHeaders httpHeaders = createXmlHttpHeaders();
         HttpEntity<String> request = new HttpEntity<String>(httpHeaders);
 
-        Map<String,String> urlsMap = urlsProducer.produceUrls(resource, videoAudioFreeTrialUrlStrategy);
+        Map<String, String> urlsMap = urlsProducer.produceUrls(resource, videoAudioFreeTrialUrlStrategy);
         for (Map.Entry<String, String> url : urlsMap.entrySet()) {
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url.getValue());
             builder.host(target);
@@ -65,7 +63,8 @@ public class ActivateVideoAudioFreeTrialInvokerIT {
             try {
                 response = restTemplate.postForEntity(endpoint, request, String.class);
                 reporter.report(url.getKey(), response);
-            } catch (HttpServerErrorException e) {
+            }
+            catch (HttpServerErrorException e) {
                 reporter.reportError(url.getKey(), e);
             }
         }

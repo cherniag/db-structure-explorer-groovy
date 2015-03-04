@@ -13,12 +13,8 @@ import static org.springframework.util.Assert.notNull;
 @Entity
 @Table(name = "sz_deeplink_promotional")
 public class NotificationDeeplinkInfo extends InformationDeeplinkInfo {
-    protected NotificationDeeplinkInfo() {
-    }
 
-    @Override
-    protected InformationDeeplinkInfo getInstance() {
-        return new NotificationDeeplinkInfo();
+    protected NotificationDeeplinkInfo() {
     }
 
     public NotificationDeeplinkInfo(LinkLocationType type, String url) {
@@ -30,6 +26,11 @@ public class NotificationDeeplinkInfo extends InformationDeeplinkInfo {
         super(type, ContentType.PROMOTIONAL, url, opener);
         isTrue(type.equals(LinkLocationType.EXTERNAL_AD));
         notNull(opener);
+    }
+
+    @Override
+    protected InformationDeeplinkInfo getInstance() {
+        return new NotificationDeeplinkInfo();
     }
 
 

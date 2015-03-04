@@ -5,21 +5,24 @@ import mobi.nowtechnologies.server.persistence.domain.social.GooglePlusUserInfo;
 import mobi.nowtechnologies.server.service.social.core.AbstractOAuth2ApiBindingCustomizer;
 import mobi.nowtechnologies.server.service.social.core.OAuth2ForbiddenException;
 import mobi.nowtechnologies.server.shared.enums.Gender;
+
+import javax.annotation.Resource;
+
+import java.util.Date;
+import java.util.Map;
+import static java.lang.Boolean.TRUE;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.Map;
-
-import static java.lang.Boolean.TRUE;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class GooglePlusService {
+
     public static final String GOOGLE_PLUS_URL = "https://plus.google.com/";
 
     @Resource
@@ -38,7 +41,8 @@ public class GooglePlusService {
             Person personFromGooglePlus = googleTemplate.plusOperations().getGoogleProfile();
             validateProfile(googlePlusUserId, personFromGooglePlus);
             return convertForUser(personFromGooglePlus);
-        } catch (RestClientException se) {
+        }
+        catch (RestClientException se) {
             logger.error("ERROR", se);
             throw OAuth2ForbiddenException.invalidGooglePlusToken();
         }

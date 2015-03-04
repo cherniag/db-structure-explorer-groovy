@@ -27,7 +27,7 @@ public enum TitlesMappingRules {
 
     private static TitlesMappingRules find(ShapeType shapeType) {
         for (TitlesMappingRules titlesMappingRule : values()) {
-            if(titlesMappingRule.shapeType == shapeType) {
+            if (titlesMappingRule.shapeType == shapeType) {
                 return titlesMappingRule;
             }
         }
@@ -49,9 +49,9 @@ public enum TitlesMappingRules {
     @Override
     public String toString() {
         return "TitlesMappingRules{" +
-                "shapeType=" + shapeType +
-                ", has title=" + title +
-                ", has subTitle=" + subTitle +
-                '}';
+               "shapeType=" + shapeType +
+               ", has title=" + title +
+               ", has subTitle=" + subTitle +
+               '}';
     }
 }

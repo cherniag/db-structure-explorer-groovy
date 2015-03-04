@@ -9,16 +9,16 @@ public enum RecognizedPage {
 
     private String name;
 
+    RecognizedPage(String name) {
+        this.name = name;
+    }
+
     public static RecognizedPage recognize(String name) {
-        for (RecognizedPage page: values()) {
+        for (RecognizedPage page : values()) {
             if (page.name.equals(name)) {
                 return page;
             }
         }
         return null;
-    }
-
-    RecognizedPage(String name) {
-        this.name = name;
     }
 }

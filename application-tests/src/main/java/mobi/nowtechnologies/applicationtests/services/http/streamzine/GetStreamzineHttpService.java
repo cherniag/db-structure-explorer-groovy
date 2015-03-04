@@ -3,25 +3,33 @@ package mobi.nowtechnologies.applicationtests.services.http.streamzine;
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import org.springframework.http.*;
+
+import java.util.Arrays;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-
 @Service
 public class GetStreamzineHttpService extends AbstractHttpService {
 
-    public <T> ResponseEntity<T> getStreamzine(String communityUrl, UserDeviceData deviceData, PhoneState state, String timestampToken, String timestamp, String resolution, String userName, Class<T> type) {
+    public <T> ResponseEntity<T> getStreamzine(String communityUrl, UserDeviceData deviceData, PhoneState state, String timestampToken, String timestamp, String resolution, String userName,
+                                               Class<T> type) {
         return doSend(communityUrl, deviceData, state, timestampToken, timestamp, resolution, userName, type, HttpMethod.GET);
     }
 
-    public <T> ResponseEntity<T> postStreamzine(String communityUrl, UserDeviceData deviceData, PhoneState state, String timestampToken, String timestamp, String resolution, String userName, Class<T> type) {
+    public <T> ResponseEntity<T> postStreamzine(String communityUrl, UserDeviceData deviceData, PhoneState state, String timestampToken, String timestamp, String resolution, String userName,
+                                                Class<T> type) {
         return doSend(communityUrl, deviceData, state, timestampToken, timestamp, resolution, userName, type, HttpMethod.POST);
     }
 
-    private <T> ResponseEntity<T> doSend(String communityUrl, UserDeviceData deviceData, PhoneState state, String timestampToken, String timestamp, String resolution, String userName, Class<T> type, HttpMethod method) {
+    private <T> ResponseEntity<T> doSend(String communityUrl, UserDeviceData deviceData, PhoneState state, String timestampToken, String timestamp, String resolution, String userName, Class<T> type,
+                                         HttpMethod method) {
         String uri = getUri(communityUrl, deviceData, "GET_STREAMZINE", deviceData.getFormat());
 
         UriComponentsBuilder builder = createBuilderWithParameters(state, uri, resolution, timestampToken, timestamp, userName);

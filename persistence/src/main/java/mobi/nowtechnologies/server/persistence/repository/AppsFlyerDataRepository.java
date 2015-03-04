@@ -1,14 +1,13 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
 import mobi.nowtechnologies.server.persistence.domain.AppsFlyerData;
-import mobi.nowtechnologies.server.persistence.domain.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 11/10/2014
+ * Author: Gennadii Cherniaiev Date: 11/10/2014
  */
 
 public interface AppsFlyerDataRepository extends JpaRepository<AppsFlyerData, Long> {

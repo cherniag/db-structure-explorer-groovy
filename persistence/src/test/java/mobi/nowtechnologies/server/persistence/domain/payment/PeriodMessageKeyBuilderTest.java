@@ -1,12 +1,13 @@
 package mobi.nowtechnologies.server.persistence.domain.payment;
 
-import org.junit.Test;
-
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.DAYS;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.MONTHS;
 import static mobi.nowtechnologies.server.shared.enums.DurationUnit.WEEKS;
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 public class PeriodMessageKeyBuilderTest {
 

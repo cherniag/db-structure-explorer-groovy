@@ -16,22 +16,24 @@ import mobi.nowtechnologies.server.persistence.repository.CommunityRepository;
 import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserStatusRepository;
+
+import javax.annotation.Resource;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Service
 public class SubscriptionService {
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource(name = "mno.RestTemplate")
     RestTemplate restTemplate;
@@ -55,6 +57,7 @@ public class SubscriptionService {
     RepeatService repeatService;
     @Resource
     PhoneNumberCreator phoneNumberCreator;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     //
     // API
@@ -81,7 +84,7 @@ public class SubscriptionService {
         assertTrue(afterPayment.getNextSubPayment() > currentUser.getNextSubPayment());
     }
 
-    public void limitAccess(User user, Date now){
+    public void limitAccess(User user, Date now) {
         final long millis = now.getTime();
         final int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(millis);
 

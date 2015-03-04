@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PositionGenerator {
+
     private ConcurrentHashMap<UserDeviceData, AtomicInteger> values = new ConcurrentHashMap<UserDeviceData, AtomicInteger>();
 
     public void init(Collection<UserDeviceData> datas) {

@@ -1,16 +1,16 @@
 package mobi.nowtechnologies.server.security.impl.spring.method.annotation;
 
 import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.runners.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -57,7 +57,8 @@ public class AuthenticatedUserMethodArgumentResolverTest {
             // noinspection unchecked
             when(methodParameter.getParameterType()).thenReturn(AUTHENTICATED_USER_CLASS);
             argumentResolver.handleMissingValue("missing", methodParameter);
-        } catch (MissingServletRequestParameterException e) {
+        }
+        catch (MissingServletRequestParameterException e) {
             assertEquals(AuthenticatedUser.class.getSimpleName(), e.getParameterType());
             assertEquals("missing", e.getParameterName());
 
@@ -89,7 +90,9 @@ public class AuthenticatedUserMethodArgumentResolverTest {
         assertTrue(expected == resolver2spy.supportsParameter(methodParameter));
 
         verify(methodParameter, times(1)).hasParameterAnnotation(AUTHENTICATED_USER_CLASS);
-        verify(methodParameter, times(expected ? 1 : 0)).getParameterType();
+        verify(methodParameter, times(expected ?
+                                      1 :
+                                      0)).getParameterType();
 
         verifyNoMoreInteractions(resolver, methodParameter);
     }

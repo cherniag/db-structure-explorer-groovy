@@ -3,15 +3,22 @@ package mobi.nowtechnologies.server.job;
 
 import mobi.nowtechnologies.server.persistence.apptests.domain.JobTriggerRequest;
 import mobi.nowtechnologies.server.persistence.apptests.repository.JobTriggerRequestRepository;
-import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.Date;
 import java.util.List;
 
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.StatefulJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.scheduling.quartz.QuartzJobBean;
+
 public class AppTestManageJobsBean extends QuartzJobBean implements StatefulJob {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
@@ -20,7 +27,8 @@ public class AppTestManageJobsBean extends QuartzJobBean implements StatefulJob 
         final Scheduler scheduler = context.getScheduler();
         try {
             process(jobTriggerRequestRepository, scheduler);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
@@ -32,7 +40,8 @@ public class AppTestManageJobsBean extends QuartzJobBean implements StatefulJob 
             logger.debug("processing request {}", request);
             try {
                 scheduler.triggerJob(request.getJobName(), request.getJobGroupName());
-            } catch (SchedulerException e) {
+            }
+            catch (SchedulerException e) {
                 logger.error("Failed to process: {}", request, e);
             }
             jobTriggerRequestService.delete(request);

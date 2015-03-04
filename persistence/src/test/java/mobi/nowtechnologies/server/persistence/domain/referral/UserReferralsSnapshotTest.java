@@ -2,13 +2,13 @@ package mobi.nowtechnologies.server.persistence.domain.referral;
 
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Test;
 
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+
+import org.junit.*;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 public class UserReferralsSnapshotTest {
 
@@ -102,15 +102,9 @@ public class UserReferralsSnapshotTest {
         final Date plusOneDayAndOneMillisecond = DateUtils.addMilliseconds(plusOneDay, 1);
         final Date infinity = null;
 
-        assertTrue(
-                userReferralsSnapshot.includes(plusHalfDay, plusOneDay)
-        );
-        assertFalse(
-                userReferralsSnapshot.includes(plusHalfDay, plusOneDayAndOneMillisecond)
-        );
-        assertFalse(
-                userReferralsSnapshot.includes(plusHalfDay, infinity)
-        );
+        assertTrue(userReferralsSnapshot.includes(plusHalfDay, plusOneDay));
+        assertFalse(userReferralsSnapshot.includes(plusHalfDay, plusOneDayAndOneMillisecond));
+        assertFalse(userReferralsSnapshot.includes(plusHalfDay, infinity));
     }
 
     @Test
@@ -131,15 +125,9 @@ public class UserReferralsSnapshotTest {
         final Date plusOneDayAndOneMillisecond = DateUtils.addMilliseconds(plusOneDay, 1);
         final Date infinity = null;
 
-        assertTrue(
-                userReferralsSnapshot.includes(plusHalfDay, plusOneDay)
-        );
-        assertTrue(
-                userReferralsSnapshot.includes(plusHalfDay, plusOneDayAndOneMillisecond)
-        );
-        assertTrue(
-                userReferralsSnapshot.includes(plusHalfDay, infinity)
-        );
+        assertTrue(userReferralsSnapshot.includes(plusHalfDay, plusOneDay));
+        assertTrue(userReferralsSnapshot.includes(plusHalfDay, plusOneDayAndOneMillisecond));
+        assertTrue(userReferralsSnapshot.includes(plusHalfDay, infinity));
     }
 
     @Test
@@ -157,9 +145,7 @@ public class UserReferralsSnapshotTest {
         final Date now = new Date();
         final Date plusHalfDay = DateUtils.addHours(now, 12);
 
-        assertTrue(
-                userReferralsSnapshot.isActual(plusHalfDay)
-        );
+        assertTrue(userReferralsSnapshot.isActual(plusHalfDay));
     }
 
     @Test
@@ -179,11 +165,7 @@ public class UserReferralsSnapshotTest {
         final Date plusOneDay = DateUtils.addHours(now, 24);
         final Date plusOneDayAndOneMillisecond = DateUtils.addMilliseconds(plusOneDay, 1);
 
-        assertTrue(
-                userReferralsSnapshot.isActual(plusHalfDay)
-        );
-        assertFalse(
-                userReferralsSnapshot.isActual(plusOneDayAndOneMillisecond)
-        );
+        assertTrue(userReferralsSnapshot.isActual(plusHalfDay));
+        assertFalse(userReferralsSnapshot.isActual(plusOneDayAndOneMillisecond));
     }
 }

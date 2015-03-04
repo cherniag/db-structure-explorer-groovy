@@ -1,7 +1,11 @@
 package mobi.nowtechnologies.server.dto.streamzine.error;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
@@ -9,10 +13,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 public class ErrorDtoAsm {
+
     private MessageSource messageSource;
 
     public void setMessageSource(MessageSource messageSource) {

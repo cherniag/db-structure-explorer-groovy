@@ -3,7 +3,20 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.visual;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Block;
 import mobi.nowtechnologies.server.persistence.domain.user.GrantedToType;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +24,7 @@ import java.util.Set;
 @Entity
 @Table(name = "sz_block_access_policy")
 public class AccessPolicy {
+
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
@@ -73,20 +87,30 @@ public class AccessPolicy {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         AccessPolicy that = (AccessPolicy) o;
 
-        if (permission != that.permission) return false;
-        if (!grantedToTypes.equals(that.grantedToTypes)) return false;
+        if (permission != that.permission) {
+            return false;
+        }
+        if (!grantedToTypes.equals(that.grantedToTypes)) {
+            return false;
+        }
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = permission != null ? permission.hashCode() : 0;
+        int result = permission != null ?
+                     permission.hashCode() :
+                     0;
         result = 31 * result + grantedToTypes.hashCode();
         return result;
     }
@@ -94,9 +118,9 @@ public class AccessPolicy {
     @Override
     public String toString() {
         return "AccessPolicy{" +
-                "grantedToTypes=" + grantedToTypes +
-                ", permission=" + permission +
-                ", id=" + id +
-                '}';
+               "grantedToTypes=" + grantedToTypes +
+               ", permission=" + permission +
+               ", id=" + id +
+               '}';
     }
 }

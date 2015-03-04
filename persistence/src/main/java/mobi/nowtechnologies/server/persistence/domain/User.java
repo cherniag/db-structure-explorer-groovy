@@ -1,6 +1,5 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import com.google.common.base.MoreObjects;
 import mobi.nowtechnologies.server.persistence.dao.DeviceTypeDao;
 import mobi.nowtechnologies.server.persistence.dao.UserStatusDao;
 import mobi.nowtechnologies.server.persistence.domain.enums.PaymentPolicyType;
@@ -8,20 +7,17 @@ import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
 import mobi.nowtechnologies.server.persistence.domain.social.SocialInfo;
 import mobi.nowtechnologies.server.shared.dto.web.AccountDto;
-import mobi.nowtechnologies.server.shared.enums.*;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.MediaType;
+import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
+import mobi.nowtechnologies.server.shared.enums.PaymentType;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.SubscriptionDirection;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
+import mobi.nowtechnologies.server.shared.enums.UserType;
 import static mobi.nowtechnologies.server.persistence.domain.Community.O2_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.persistence.domain.UserStatus.LIMITED;
@@ -29,7 +25,10 @@ import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDeta
 import static mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails.O2_PSMS_TYPE;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNotNull;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
-import static mobi.nowtechnologies.server.shared.Utils.*;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochMillis;
+import static mobi.nowtechnologies.server.shared.Utils.getEpochSeconds;
+import static mobi.nowtechnologies.server.shared.Utils.getTimeOfMovingToLimitedStatus;
+import static mobi.nowtechnologies.server.shared.Utils.truncatedToSeconds;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYG;
 import static mobi.nowtechnologies.server.shared.enums.Contract.PAYM;
 import static mobi.nowtechnologies.server.shared.enums.MediaType.AUDIO;
@@ -41,283 +40,230 @@ import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.DOW
 import static mobi.nowtechnologies.server.shared.enums.SubscriptionDirection.UPGRADE;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._3G;
 import static mobi.nowtechnologies.server.shared.enums.Tariff._4G;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PersistenceException;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Entity
 @Table(name = "tb_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"deviceUID", "userGroup"}), @UniqueConstraint(columnNames = {"userName", "userGroup"})})
-@NamedQueries({
-        @NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"),
-        @NamedQuery(name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL, query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.id from UserGroup userGroup where userGroup.communityId=(select community.id from Community community where community.rewriteUrlParameter=?2))"),
-        @NamedQuery(name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")
-})
+@NamedQueries(
+    {@NamedQuery(name = User.NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN, query = "select count(user) from User user where user.deviceUID=? and user.userGroupId=? and token=?"), @NamedQuery(
+        name = User.NQ_GET_USER_BY_EMAIL_COMMUNITY_URL,
+        query = "select u from User u where u.userName = ?1 and u.userGroupId=(select userGroup.id from UserGroup userGroup where userGroup.communityId=(select community.id from Community community" +
+                " where community.rewriteUrlParameter=?2))"), @NamedQuery(
+        name = User.NQ_FIND_USER_BY_ID, query = "select u from User u where u.id = ?1")})
 public class User implements Serializable {
-    private static final long serialVersionUID = 4414398062970887453L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
 
     public static final String NQ_GET_USERS_FOR_RETRY_PAYMENT = "getUsersForRetryPayment";
     public static final String NQ_GET_USER_BY_EMAIL_COMMUNITY_URL = "getUserByEmailAndCommunityURL";
     public static final String NQ_GET_USER_COUNT_BY_DEVICE_UID_GROUP_STOREDTOKEN = "getUserCountByDeviceUID_UserGroup_StoredToken";
     public static final String NQ_FIND_USER_BY_ID = "findUserById";
-
     public static final String NONE = "NONE";
-
-    public boolean isSubscribedUserByPaymentType(String paymentType){
-        return getCurrentPaymentDetails() != null && getCurrentPaymentDetails().isActivated() && getCurrentPaymentDetails().getPaymentType().equals(paymentType);
-    }
-
-    public static enum Fields {
-        userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
-    }
-
+    private static final long serialVersionUID = 4414398062970887453L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "i")
     private int id;
-
     @Column(name = "uuid")
     private String uuid;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_promo", columnDefinition = "INT default NULL")
     private PromoCode lastPromo;
-
     @Column(name = "contract_channel")
     @Enumerated(EnumType.STRING)
     private ContractChannel contractChannel;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "tariff", columnDefinition = "char(255)", nullable = false)
     private Tariff tariff;
-
     @Column(name = "address1", columnDefinition = "char(50)")
     private String address1;
-
     @Column(name = "address2", columnDefinition = "char(50)")
     private String address2;
-
     private boolean canContact;
-
     @Column(name = "city", columnDefinition = "char(20)")
     private String city;
-
     @Column(name = "code", columnDefinition = "char(40)")
     private String code;
-
     @Column(name = "country", columnDefinition = "smallint(5) unsigned")
     private int country;
-
     @Column(name = "device", columnDefinition = "char(40)")
     private String device;
-
     // TODO: no longer need . This field should be deleted in next releases.
     @Column(name = "deviceString", columnDefinition = "char(100)")
     private String deviceString;
-
     @Column(name = "deviceType", insertable = false, updatable = false)
     private byte deviceTypeId;
-
     private String deviceModel;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "deviceType")
     private DeviceType deviceType;
-
     @Column(name = "displayName", columnDefinition = "char(25)")
     private String displayName;
-
     @Column(name = "firstName", columnDefinition = "char(40)")
     private String firstName;
-
     private Long freeTrialExpiredMillis;
-
     @Column(name = "ipAddress", columnDefinition = "char(40)")
     private String ipAddress;
-
     private int lastDeviceLogin;
-
     @Column(name = "lastName", columnDefinition = "char(40)")
     private String lastName;
-
     private int lastPaymentTx;
-
     private int lastWebLogin;
-
     @Column(name = "mobile", columnDefinition = "char(15)")
     private String mobile;
-
     private int nextSubPayment;
-
     @Column(name = "postcode", columnDefinition = "char(15)")
     private String postcode;
-
     @Column(name = "sessionID", columnDefinition = "char(40)")
     private String sessionID;
-
     @Column(name = "status", insertable = false, updatable = false)
     private byte userStatusId;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "status")
     private UserStatus status;
-
     private int subBalance;
-
     @Column(name = "tempToken", columnDefinition = "char(40)")
     private String tempToken;
-
     @Column(name = "title", columnDefinition = "char(10)")
     private String title;
-
     @Column(name = "token", columnDefinition = "char(40)")
     private String token;
-
     @Column(name = "userGroup", insertable = false, updatable = false)
     private Integer userGroupId;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userGroup", nullable = false)
     private UserGroup userGroup;
-
     @Column(name = "userName", columnDefinition = "char(40)")
     private String userName;
-
     private UserType userType;
-
     private int operator;
-
     private String pin;
-
     @Enumerated(EnumType.STRING)
     private mobi.nowtechnologies.server.shared.enums.PaymentType paymentType;
-
     @Column(name = "activation_status")
     @Enumerated(EnumType.STRING)
     private ActivationStatus activationStatus;
-
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(255)")
     private ProviderType provider;
-
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(255)")
     private Contract contract;
-
     private int numPsmsRetries;
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")
     private List<PaymentDetails> paymentDetailsList;
-
     @OneToOne
     @JoinColumn(name = "currentPaymentDetailsId", nullable = true, insertable = false, updatable = true)
     private PaymentDetails currentPaymentDetails;
-
     @Column(name = "currentPaymentDetailsId", nullable = true, insertable = false, updatable = false)
     private Long currentPaymentDetailsId;
-
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "potentialPromotion_i", nullable = true)
     private Promotion potentialPromotion;
-
     @Column(name = "potentialPromotion_i", insertable = false, updatable = false)
     private Integer potentialPromotionId;
-
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "potentialPromoCodePromotion_i", nullable = true)
     private Promotion potentialPromoCodePromotion;
-
     @Column(name = "potentialPromoCodePromotion_i", insertable = false, updatable = false)
     private Integer potentialPromoCodePromotionId;
-
     @Transient
     @XmlTransient
     private String newStoredToken;
-
     @Transient
     @XmlTransient
     private String conformStoredToken;
-
     private int paymentStatus;
-
     private long lastSuccessfulPaymentTimeMillis;
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Drm> drms;
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<SocialInfo> socialInfo = new HashSet<SocialInfo>();
-
     private String facebookId;
-
     @Column(nullable = true)
     private String deviceUID;
-
     private Long firstDeviceLoginMillis;
-
     private Long firstUserLoginMillis;
-
     private long lastSuccesfullPaymentSmsSendingTimestampMillis;
-
     @Column(precision = 12, scale = 2, nullable = false)
     private BigDecimal amountOfMoneyToUserNotification;
-
     @Column(nullable = true)
     private Long freeTrialStartedTimestampMillis;
-
     @Lob
     @Column(name = "base64_encoded_app_store_receipt")
     private String base64EncodedAppStoreReceipt;
-
     @Column(name = "app_store_original_transaction_id")
     private String appStoreOriginalTransactionId;
-
     @Column(name = "last_subscribed_payment_system")
     private String lastSubscribedPaymentSystem;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "segment", columnDefinition = "char(255)")
     private SegmentType segment;
-
     @Column(name = "last_before48_sms_millis", columnDefinition = "BIGINT default 0")
     private long lastBefore48SmsMillis;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_charts",
-            joinColumns =
-            @JoinColumn(name = "user_id", referencedColumnName = "i"),
-            inverseJoinColumns =
-            @JoinColumn(name = "chart_id", referencedColumnName = "i")
-    )
+               joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "i"),
+               inverseJoinColumns = @JoinColumn(name = "chart_id", referencedColumnName = "i"))
     private List<Chart> selectedCharts = new ArrayList<Chart>();
-
     @Column(name = "video_free_trial_has_been_activated", columnDefinition = "boolean default false")
     private boolean videoFreeTrialHasBeenActivated;
-
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_successful_payment_details_id", nullable = true)
     private PaymentDetails lastSuccessfulPaymentDetails;
-
     @Column(name = "idfa", nullable = true)
     private String idfa;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
     private List<UserIPhoneDetails> userIPhoneDetailsList;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId", cascade = CascadeType.REMOVE)
     private List<UserAndroidDetails> userAndroidDetailsList;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserLog> userLogs;
-
     @Transient
     private User oldUser;
-
     @Transient
     private boolean isAutoOptInEnabled = true;
-
     @Transient
     private boolean hasPromo = false;
-
     @Transient
     private boolean isPromotionApplied;
 
@@ -415,8 +361,7 @@ public class User implements Serializable {
     }
 
     public boolean isInvalidPaymentPolicy() {
-        return isNull(currentPaymentDetails) || isPaymentPolicyInvalidByProvider()
-                || isPaymentPolicyInvalidBySegment();
+        return isNull(currentPaymentDetails) || isPaymentPolicyInvalidByProvider() || isPaymentPolicyInvalidBySegment();
     }
 
     private boolean isPaymentPolicyInvalidBySegment() {
@@ -474,12 +419,12 @@ public class User implements Serializable {
         return isO2User() && !isO2Consumer();
     }
 
-    public boolean isTempUserName(){
+    public boolean isTempUserName() {
         return getUserName().equalsIgnoreCase(getDeviceUID());
     }
 
     public boolean isActivatedUserName() {
-        if (provider != null){
+        if (provider != null) {
             switch (provider) {
                 case FACEBOOK:
                     return !isEmpty(getUserName());
@@ -495,8 +440,12 @@ public class User implements Serializable {
     }
 
     public String getCommunityRewriteUrl() {
-        Community community = getUserGroup() != null ? getUserGroup().getCommunity() : null;
-        String communityRewriteUrl = community != null ? community.getRewriteUrlParameter() : null;
+        Community community = getUserGroup() != null ?
+                              getUserGroup().getCommunity() :
+                              null;
+        String communityRewriteUrl = community != null ?
+                                     community.getRewriteUrlParameter() :
+                                     null;
         return communityRewriteUrl;
     }
 
@@ -504,28 +453,30 @@ public class User implements Serializable {
         return selectedCharts;
     }
 
-    public boolean hasPhoneNumber(){
+    public void setSelectedCharts(List<Chart> selectedCharts) {
+        this.selectedCharts = selectedCharts;
+    }
+
+    public boolean hasPhoneNumber() {
         return !isEmpty(getMobile());
     }
 
     public void addPaymentDetails(PaymentDetails paymentDetails) {
         if (null != paymentDetails) {
             this.paymentDetailsList.add(paymentDetails);
-            if (paymentDetails.getOwner() != this)
+            if (paymentDetails.getOwner() != this) {
                 paymentDetails.setOwner(this);
+            }
         }
     }
 
     public PaymentDetails getPendingPaymentDetails() {
         for (PaymentDetails pd : paymentDetailsList) {
-            if (PaymentDetailsStatus.PENDING.equals(pd.getLastPaymentStatus()))
+            if (PaymentDetailsStatus.PENDING.equals(pd.getLastPaymentStatus())) {
                 return pd;
+            }
         }
         return null;
-    }
-
-    public void setSelectedCharts(List<Chart> selectedCharts) {
-        this.selectedCharts = selectedCharts;
     }
 
     public int getId() {
@@ -540,16 +491,16 @@ public class User implements Serializable {
         return this.address1;
     }
 
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
+
     public String getFacebookId() {
         return facebookId;
     }
 
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
-    }
-
-    public void setAddress1(String address1) {
-        this.address1 = address1;
     }
 
     public String getAddress2() {
@@ -614,8 +565,9 @@ public class User implements Serializable {
 
     public void setDeviceType(DeviceType deviceType) {
         this.deviceType = deviceType;
-        if (deviceType != null)
+        if (deviceType != null) {
             deviceTypeId = deviceType.getI();
+        }
     }
 
     public byte getDeviceTypeId() {
@@ -650,16 +602,16 @@ public class User implements Serializable {
         return this.lastDeviceLogin;
     }
 
+    public void setLastDeviceLogin(int lastDeviceLogin) {
+        this.lastDeviceLogin = lastDeviceLogin;
+    }
+
     public String getNewStoredToken() {
         return newStoredToken;
     }
 
     public void setNewStoredToken(String newStoredToken) {
         this.newStoredToken = newStoredToken;
-    }
-
-    public void setLastDeviceLogin(int lastDeviceLogin) {
-        this.lastDeviceLogin = lastDeviceLogin;
     }
 
     public String getLastName() {
@@ -698,12 +650,12 @@ public class User implements Serializable {
         return this.nextSubPayment;
     }
 
-    public Date getNextSubPaymentAsDate() {
-        return new Date((long) this.nextSubPayment * 1000L);
-    }
-
     public void setNextSubPayment(int nextSubPayment) {
         this.nextSubPayment = nextSubPayment;
+    }
+
+    public Date getNextSubPaymentAsDate() {
+        return new Date((long) this.nextSubPayment * 1000L);
     }
 
     public String getPostcode() {
@@ -732,8 +684,9 @@ public class User implements Serializable {
 
     public void setStatus(UserStatus userStatus) {
         this.status = userStatus;
-        if (userStatus != null)
+        if (userStatus != null) {
             userStatusId = userStatus.getI();
+        }
     }
 
     public String getTempToken() {
@@ -766,8 +719,9 @@ public class User implements Serializable {
 
     public void setUserGroup(UserGroup userGroup) {
         this.userGroup = userGroup;
-        if (userGroup != null)
+        if (userGroup != null) {
             userGroupId = userGroup.getId();
+        }
     }
 
     public Integer getUserGroupId() {
@@ -804,8 +758,9 @@ public class User implements Serializable {
 
     public void setCurrentPaymentDetails(PaymentDetails currentPaymentDetails) {
         this.currentPaymentDetails = currentPaymentDetails;
-        if (currentPaymentDetails != null)
+        if (currentPaymentDetails != null) {
             currentPaymentDetailsId = currentPaymentDetails.getI();
+        }
     }
 
     public Long getCurrentPaymentDetailsId() {
@@ -841,7 +796,9 @@ public class User implements Serializable {
     }
 
     public String getPaymentType() {
-        return paymentType != null ? paymentType.toString() : null;
+        return paymentType != null ?
+               paymentType.toString() :
+               null;
     }
 
     public void setPaymentType(String paymentType) {
@@ -849,22 +806,22 @@ public class User implements Serializable {
     }
 
     public User withDisplayName(String displayName) {
-        this.displayName=displayName;
+        this.displayName = displayName;
         return this;
     }
 
     public User withTitle(String title) {
-        this.title=title;
+        this.title = title;
         return this;
     }
 
     public User withFirstName(String firstName) {
-        this.firstName=firstName;
+        this.firstName = firstName;
         return this;
     }
 
     public User withLastName(String lastName) {
-        this.lastName=lastName;
+        this.lastName = lastName;
         return this;
     }
 
@@ -977,12 +934,12 @@ public class User implements Serializable {
         this.lastSuccessfulPaymentTimeMillis = lastSuccessfulPaymentTimeMillis;
     }
 
-    public void setDrms(List<Drm> drms) {
-        this.drms = drms;
-    }
-
     public List<Drm> getDrms() {
         return drms;
+    }
+
+    public void setDrms(List<Drm> drms) {
+        this.drms = drms;
     }
 
     public int getSubBalance() {
@@ -997,22 +954,23 @@ public class User implements Serializable {
         return potentialPromotion;
     }
 
+    public void setPotentialPromotion(Promotion potentialPromotion) {
+        this.potentialPromotion = potentialPromotion;
+        if (potentialPromotion != null) {
+            potentialPromotionId = potentialPromotion.getI();
+        }
+    }
+
     public Integer getPotentialPromotionId() {
         return potentialPromotionId;
     }
 
-    public void setPotentialPromotion(Promotion potentialPromotion) {
-        this.potentialPromotion = potentialPromotion;
-        if (potentialPromotion != null)
-            potentialPromotionId = potentialPromotion.getI();
+    public String getDeviceUID() {
+        return deviceUID;
     }
 
     public void setDeviceUID(String deviceUID) {
         this.deviceUID = deviceUID;
-    }
-
-    public String getDeviceUID() {
-        return deviceUID;
     }
 
     public String getDeviceModel() {
@@ -1029,8 +987,9 @@ public class User implements Serializable {
 
     public void setPotentialPromoCodePromotion(Promotion potentialPromoCodePromotion) {
         this.potentialPromoCodePromotion = potentialPromoCodePromotion;
-        if (potentialPromoCodePromotion != null)
+        if (potentialPromoCodePromotion != null) {
             potentialPromoCodePromotionId = potentialPromoCodePromotion.getI();
+        }
     }
 
     public AccountDto toAccountDto() {
@@ -1042,20 +1001,25 @@ public class User implements Serializable {
         PaymentDetails currentPaymentDetails = getCurrentPaymentDetails();
 
         AccountDto.Subscription subscription;
-        if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails == null)
+        if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails == null) {
             subscription = AccountDto.Subscription.freeTrialSubscription;
-        else if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails != null && currentPaymentDetails.isActivated())
+        }
+        else if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails != null && currentPaymentDetails.isActivated()) {
             subscription = AccountDto.Subscription.subscribedSubscription;
-        else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || status.equals(UserStatusDao.getLimitedUserStatus()))
+        }
+        else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || status.equals(UserStatusDao.getLimitedUserStatus())) {
             subscription = AccountDto.Subscription.unsubscribedSubscription;
-        else
+        }
+        else {
             throw new PersistenceException("Couldn't recognize the user subscription");
+        }
 
         accountDto.setSubscription(subscription);
 
         accountDto.setTimeOfMovingToLimitedStatus(getTimeOfMovingToLimitedStatus(nextSubPayment, subBalance) * 1000L);
-        if (potentialPromotion != null)
+        if (potentialPromotion != null) {
             accountDto.setPotentialPromotion(String.valueOf(potentialPromotion.getI()));
+        }
         LOGGER.debug("Output parameter accountDto=[{}]", accountDto);
         return accountDto;
     }
@@ -1096,12 +1060,12 @@ public class User implements Serializable {
         return freeTrialExpiredMillis;
     }
 
-    public Date getFreeTrialExpiredAsDate() {
-        return new Date(freeTrialExpiredMillis);
-    }
-
     public void setFreeTrialExpiredMillis(Long freeTrialExpiredMillis) {
         this.freeTrialExpiredMillis = freeTrialExpiredMillis;
+    }
+
+    public Date getFreeTrialExpiredAsDate() {
+        return new Date(freeTrialExpiredMillis);
     }
 
     public void setFreeTrialExpired(Date freeTrialExpiredMillis) {
@@ -1174,7 +1138,9 @@ public class User implements Serializable {
     }
 
     private Integer getLastPromoId() {
-        if (isNotNull(lastPromo)) return lastPromo.getId();
+        if (isNotNull(lastPromo)) {
+            return lastPromo.getId();
+        }
         return null;
     }
 
@@ -1183,15 +1149,12 @@ public class User implements Serializable {
     }
 
     public boolean wasSubscribed() {
-        return !isEmpty(getLastSubscribedPaymentSystem())
-                || getCurrentPaymentDetails() != null;
+        return !isEmpty(getLastSubscribedPaymentSystem()) || getCurrentPaymentDetails() != null;
     }
 
     public boolean isLimited() {
-        return this.status != null && LIMITED.equals(this.status.getName())
-                || (new DateTime(getNextSubPaymentAsDate()).isBeforeNow()
-                && getLastSubscribedPaymentSystem() != null
-                && !hasActivePaymentDetails());
+        return this.status != null && LIMITED.equals(this.status.getName()) ||
+               (new DateTime(getNextSubPaymentAsDate()).isBeforeNow() && getLastSubscribedPaymentSystem() != null && !hasActivePaymentDetails());
     }
 
     public boolean isSubscribedStatus() {
@@ -1202,8 +1165,9 @@ public class User implements Serializable {
         Community community = this.userGroup.getCommunity();
         String communityUrl = checkNotNull(community.getRewriteUrlParameter());
 
-        if (!O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(communityUrl))
+        if (!O2_COMMUNITY_REWRITE_URL.equalsIgnoreCase(communityUrl)) {
             return true;
+        }
 
         return false;
     }
@@ -1243,12 +1207,12 @@ public class User implements Serializable {
         this.contract = contract;
     }
 
-    public void setSegment(SegmentType segment) {
-        this.segment = segment;
-    }
-
     public SegmentType getSegment() {
         return segment;
+    }
+
+    public void setSegment(SegmentType segment) {
+        this.segment = segment;
     }
 
     public User withNextSubPayment(Date time) {
@@ -1270,20 +1234,23 @@ public class User implements Serializable {
         Chart sameTypeChart = null;
         if (getSelectedCharts() != null && getSelectedCharts().size() > 0) {
             for (Chart chart : getSelectedCharts()) {
-                if (chart.getI().equals(chartDetail.getChart().getI()))
+                if (chart.getI().equals(chartDetail.getChart().getI())) {
                     return true;
-                else if (chart.getType() == chartDetail.getChart().getType())
+                }
+                else if (chart.getType() == chartDetail.getChart().getType()) {
                     sameTypeChart = chart;
+                }
 
             }
         }
 
-        return sameTypeChart == null && chartDetail.getDefaultChart() != null ? chartDetail.getDefaultChart() : false;
+        return sameTypeChart == null && chartDetail.getDefaultChart() != null ?
+               chartDetail.getDefaultChart() :
+               false;
     }
 
     public boolean isExpiring() {
-        return isSubscribedStatus() && new DateTime(getNextSubPaymentAsDate()).isAfterNow()
-                && !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
+        return isSubscribedStatus() && new DateTime(getNextSubPaymentAsDate()).isAfterNow() && !hasActivePaymentDetails() && getLastPaymentStatus() != PaymentDetailsStatus.ERROR && wasSubscribed();
     }
 
     public boolean has4GVideoAudioSubscription() {
@@ -1342,19 +1309,21 @@ public class User implements Serializable {
         return videoFreeTrialHasBeenActivated;
     }
 
+    public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
+        this.videoFreeTrialHasBeenActivated = videoFreeTrialHasBeenActivated;
+    }
+
     public boolean isO2PAYMConsumer() {
         return isO2Consumer() && PAYM.equals(contract);
     }
 
     public boolean hasAllDetails() {
-        if (ProviderType.O2.equals(provider) || ProviderType.NON_O2.equals(provider))
+        if (ProviderType.O2.equals(provider) || ProviderType.NON_O2.equals(provider)) {
             return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
-        else
+        }
+        else {
             return this.provider != null;
-    }
-
-    public void setVideoFreeTrialHasBeenActivated(boolean videoFreeTrialHasBeenActivated) {
-        this.videoFreeTrialHasBeenActivated = videoFreeTrialHasBeenActivated;
+        }
     }
 
     public PaymentDetails getLastSuccessfulPaymentDetails() {
@@ -1377,32 +1346,33 @@ public class User implements Serializable {
 
         PaymentDetails currentDetails = getCurrentPaymentDetails();
         PaymentDetails successfulDetails = getLastSuccessfulPaymentDetails();
-        if (isNull(currentDetails) || isNull(successfulDetails)) return null;
+        if (isNull(currentDetails) || isNull(successfulDetails)) {
+            return null;
+        }
 
         String currentPaymentDetailsPaymentType = currentPaymentDetails.getPaymentType();
 
         String successfulDetailsPaymentType = successfulDetails.getPaymentType();
-        if (!(currentPaymentDetailsPaymentType.equals(O2_PSMS_TYPE) && successfulDetailsPaymentType.equals(O2_PSMS_TYPE)))
+        if (!(currentPaymentDetailsPaymentType.equals(O2_PSMS_TYPE) && successfulDetailsPaymentType.equals(O2_PSMS_TYPE))) {
             return null;
+        }
 
         PaymentPolicy currentPolicy = currentDetails.getPaymentPolicy();
         PaymentPolicy successPolicy = successfulDetails.getPaymentPolicy();
-        if (isNull(currentPolicy) || isNull(successPolicy)) return null;
+        if (isNull(currentPolicy) || isNull(successPolicy)) {
+            return null;
+        }
 
         boolean activeCPD = currentDetails.isActivated();
 
         MediaType lastSuccessMediaType = successPolicy.getMediaType();
         MediaType currentMediaType = currentPolicy.getMediaType();
-        if (activeCPD
-                && currentMediaType == VIDEO_AND_AUDIO
-                && lastSuccessMediaType == AUDIO
-                && !isOnVideoAudioFreeTrial()
-                && is4G()) return UPGRADE;
-        if (activeCPD
-                && currentMediaType == AUDIO
-                && lastSuccessMediaType == VIDEO_AND_AUDIO
-                && !isOnVideoAudioFreeTrial()
-                && is4G()) return DOWNGRADE;
+        if (activeCPD && currentMediaType == VIDEO_AND_AUDIO && lastSuccessMediaType == AUDIO && !isOnVideoAudioFreeTrial() && is4G()) {
+            return UPGRADE;
+        }
+        if (activeCPD && currentMediaType == AUDIO && lastSuccessMediaType == VIDEO_AND_AUDIO && !isOnVideoAudioFreeTrial() && is4G()) {
+            return DOWNGRADE;
+        }
         return null;
     }
 
@@ -1438,7 +1408,7 @@ public class User implements Serializable {
         return null;
     }
 
-    public boolean hasLimitedStatus(){
+    public boolean hasLimitedStatus() {
         return status.getName().equals(LIMITED);
     }
 
@@ -1460,11 +1430,13 @@ public class User implements Serializable {
     }
 
     private Integer getOldUserId() {
-        if (isNull(oldUser)) return null;
+        if (isNull(oldUser)) {
+            return null;
+        }
         return oldUser.getId();
     }
 
-    public User withId(Integer id){
+    public User withId(Integer id) {
         this.id = id;
         return this;
     }
@@ -1490,27 +1462,27 @@ public class User implements Serializable {
     }
 
     public User withSubBalance(byte subBalance) {
-        this.subBalance=subBalance;
+        this.subBalance = subBalance;
         return this;
     }
 
     public User withLastDeviceLogin(int lastDeviceLogin) {
-        this.lastDeviceLogin=lastDeviceLogin;
+        this.lastDeviceLogin = lastDeviceLogin;
         return this;
     }
 
     public User withToken(String token) {
-        this.token=token;
+        this.token = token;
         return this;
     }
 
     public User withUserStatus(UserStatus userStatus) {
-        this.status=userStatus;
+        this.status = userStatus;
         return this;
     }
 
     public User withDevice(String device) {
-        this.device=device;
+        this.device = device;
         return this;
     }
 
@@ -1538,101 +1510,44 @@ public class User implements Serializable {
     public Community getCommunity() {
         return userGroup.getCommunity();
     }
+
     public Integer getCommunityId() {
         return getCommunity().getId();
     }
 
-    public String shortInfo(){
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("id", id)
-                .append("userName", userName)
-                .append("deviceUID", deviceUID)
-                .append("mobile", mobile)
-                .append("uuid", uuid)
-                .append("deviceTypeId", deviceTypeId)
-                .append("activationStatus", activationStatus)
-                .append("userGroupId", userGroupId)
-                .append("userStatusId", userStatusId)
-                .append("nextSubPayment", nextSubPayment)
-                .append("currentPaymentDetailsId", currentPaymentDetailsId)
-                .append("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
-                .append("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
-                .append("lastDeviceLogin", lastDeviceLogin)
-                .append("lastPromoId", getLastPromoId())
-                .append("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
-                .append("freeTrialExpiredMillis", freeTrialExpiredMillis)
-                .append("segment", segment)
-                .append("provider", provider)
-                .append("tariff", tariff)
-                .append("contractChannel", contractChannel)
-                .append("contract", contract)
-                .toString();
+    public String shortInfo() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", id).append("userName", userName).append("deviceUID", deviceUID).append("mobile", mobile).append("uuid", uuid)
+                                                                          .append("deviceTypeId", deviceTypeId).append("activationStatus", activationStatus).append("userGroupId", userGroupId)
+                                                                          .append("userStatusId", userStatusId).append("nextSubPayment", nextSubPayment)
+                                                                          .append("currentPaymentDetailsId", currentPaymentDetailsId)
+                                                                          .append("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
+                                                                          .append("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem).append("lastDeviceLogin", lastDeviceLogin)
+                                                                          .append("lastPromoId", getLastPromoId()).append("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                                                                          .append("freeTrialExpiredMillis", freeTrialExpiredMillis).append("segment", segment).append("provider", provider)
+                                                                          .append("tariff", tariff).append("contractChannel", contractChannel).append("contract", contract).toString();
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("old_user_id", getOldUserId())
-                .add("userName", userName)
-                .add("uuid", uuid)
-                .add("facebookId", facebookId)
-                .add("deviceUID", deviceUID)
-                .add("subBalance", subBalance)
-                .add("userGroupId", userGroupId)
-                .add("userStatusId", userStatusId)
-                .add("nextSubPayment", nextSubPayment)
-                .add("isFreeTrial", isOnFreeTrial())
-                .add("currentPaymentDetailsId", currentPaymentDetailsId)
-                .add("lastPaymentTx", lastPaymentTx)
-                .add("token", token)
-                .add("paymentStatus", paymentStatus)
-                .add("paymentType", paymentType)
-                .add("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt)
-                .add("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
-                .add("numPsmsRetries", numPsmsRetries)
-                .add("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
-                .add("amountOfMoneyToUserNotification ", amountOfMoneyToUserNotification)
-                .add("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
-                .add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis)
-                .add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
-                .add("potentialPromotionId", potentialPromotionId)
-                .add("pin", pin)
-                .add("code", code)
-                .add("operator", operator)
-                .add("mobile", mobile)
-                .add("conformStoredToken", conformStoredToken)
-                .add("lastDeviceLogin", lastDeviceLogin)
-                .add("lastWebLogin", lastWebLogin)
-                .add("firstUserLoginMillis", firstUserLoginMillis)
-                .add("firstDeviceLoginMillis", firstDeviceLoginMillis)
-                .add("lastBefore48SmsMillis", lastBefore48SmsMillis)
-                .add("device", device)
-                .add("deviceModel", deviceModel)
-                .add("deviceTypeId", deviceTypeId)
-                .add("newStoredToken", newStoredToken)
-                .add("tempToken", tempToken)
-                .add("postcode", postcode)
-                .add("address1", address1)
-                .add("address2", country)
-                .add("city", city)
-                .add("title", title)
-                .add("displayName ", displayName)
-                .add("firstName", firstName)
-                .add("lastName", lastName)
-                .add("ipAddress", ipAddress)
-                .add("canContact", canContact)
-                .add("deviceString", deviceString)
-                .add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
-                .add("freeTrialExpiredMillis", freeTrialExpiredMillis)
-                .add("activationStatus", activationStatus)
-                .add("segment", segment)
-                .add("provider", provider)
-                .add("tariff", tariff)
-                .add("contractChannel", contractChannel)
-                .add("lastPromoId", getLastPromoId())
-                .add("contract", contract)
-                .add("hasPromo", hasPromo)
-                .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
+        return MoreObjects.toStringHelper(this).add("id", id).add("old_user_id", getOldUserId()).add("userName", userName).add("uuid", uuid).add("facebookId", facebookId).add("deviceUID", deviceUID)
+                          .add("subBalance", subBalance).add("userGroupId", userGroupId).add("userStatusId", userStatusId).add("nextSubPayment", nextSubPayment).add("isFreeTrial", isOnFreeTrial())
+                          .add("currentPaymentDetailsId", currentPaymentDetailsId).add("lastPaymentTx", lastPaymentTx).add("token", token).add("paymentStatus", paymentStatus)
+                          .add("paymentType", paymentType).add("base64EncodedAppStoreReceipt", base64EncodedAppStoreReceipt).add("appStoreOriginalTransactionId", appStoreOriginalTransactionId)
+                          .add("numPsmsRetries", numPsmsRetries).add("lastSuccessfulPaymentTimeMillis", lastSuccessfulPaymentTimeMillis)
+                          .add("amountOfMoneyToUserNotification ", amountOfMoneyToUserNotification).add("lastSubscribedPaymentSystem", lastSubscribedPaymentSystem)
+                          .add("lastSuccesfullPaymentSmsSendingTimestampMillis", lastSuccesfullPaymentSmsSendingTimestampMillis).add("potentialPromoCodePromotionId", potentialPromoCodePromotionId)
+                          .add("potentialPromotionId", potentialPromotionId).add("pin", pin).add("code", code).add("operator", operator).add("mobile", mobile)
+                          .add("conformStoredToken", conformStoredToken).add("lastDeviceLogin", lastDeviceLogin).add("lastWebLogin", lastWebLogin).add("firstUserLoginMillis", firstUserLoginMillis)
+                          .add("firstDeviceLoginMillis", firstDeviceLoginMillis).add("lastBefore48SmsMillis", lastBefore48SmsMillis).add("device", device).add("deviceModel", deviceModel)
+                          .add("deviceTypeId", deviceTypeId).add("newStoredToken", newStoredToken).add("tempToken", tempToken).add("postcode", postcode).add("address1", address1)
+                          .add("address2", country).add("city", city).add("title", title).add("displayName ", displayName).add("firstName", firstName).add("lastName", lastName)
+                          .add("ipAddress", ipAddress).add("canContact", canContact).add("deviceString", deviceString).add("freeTrialStartedTimestampMillis", freeTrialStartedTimestampMillis)
+                          .add("freeTrialExpiredMillis", freeTrialExpiredMillis).add("activationStatus", activationStatus).add("segment", segment).add("provider", provider).add("tariff", tariff)
+                          .add("contractChannel", contractChannel).add("lastPromoId", getLastPromoId()).add("contract", contract).add("hasPromo", hasPromo)
+                          .add("isAutoOptInEnabled", isAutoOptInEnabled).toString();
+    }
+
+    public static enum Fields {
+        userName, mobile, operator, id, paymentStatus, paymentType, facebookId;
     }
 }

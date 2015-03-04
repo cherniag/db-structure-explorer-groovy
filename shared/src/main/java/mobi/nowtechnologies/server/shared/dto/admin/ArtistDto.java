@@ -2,53 +2,52 @@ package mobi.nowtechnologies.server.shared.dto.admin;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
 public class ArtistDto {
-	
-	private int id;
 
-	private String info;
+    private int id;
 
-	private String name;
-	
-	private String realName;
+    private String info;
 
-	public int getId() {
-		return id;
-	}
+    private String name;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    private String realName;
 
-	public String getInfo() {
-		return info;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setInfo(String info) {
-		this.info = info;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getInfo() {
+        return info;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setInfo(String info) {
+        this.info = info;
+    }
 
-	public String getRealName() {
-		return realName;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setRealName(String realName) {
-		this.realName = realName;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return "ArtistDto [id=" + id + ", info=" + info + ", name=" + name + ", realName=" + realName + "]";
-	}
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    @Override
+    public String toString() {
+        return "ArtistDto [id=" + id + ", info=" + info + ", name=" + name + ", realName=" + realName + "]";
+    }
 
 }

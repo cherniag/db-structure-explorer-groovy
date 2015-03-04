@@ -127,19 +127,19 @@ public class TerritoryDto {
     @Override
     public String toString() {
         return "TerritoryDto{" +
-                "code='" + code + '\'' +
-                ", distributor='" + distributor + '\'' +
-                ", currency='" + currency + '\'' +
-                ", price=" + price +
-                ", priceCode='" + priceCode + '\'' +
-                ", startDate=" + startDate +
-                ", reportingId='" + reportingId + '\'' +
-                ", dealReference='" + dealReference + '\'' +
-                ", label='" + label + '\'' +
-                ", publisher='" + publisher + '\'' +
-                ", deleted=" + deleted +
-                ", deleteDate=" + deleteDate +
-                ", createDate=" + createDate +
-                "} " + super.toString();
+               "code='" + code + '\'' +
+               ", distributor='" + distributor + '\'' +
+               ", currency='" + currency + '\'' +
+               ", price=" + price +
+               ", priceCode='" + priceCode + '\'' +
+               ", startDate=" + startDate +
+               ", reportingId='" + reportingId + '\'' +
+               ", dealReference='" + dealReference + '\'' +
+               ", label='" + label + '\'' +
+               ", publisher='" + publisher + '\'' +
+               ", deleted=" + deleted +
+               ", deleteDate=" + deleteDate +
+               ", createDate=" + createDate +
+               "} " + super.toString();
     }
 }

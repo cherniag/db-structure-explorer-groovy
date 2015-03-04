@@ -2,13 +2,12 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
-import org.junit.Assert;
-import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.*;
+import static org.mockito.Mockito.*;
 
 public class NewsStoryDeeplinkInfoTest {
+
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorForImproperType() throws Exception {
         Message message = createNotNewsMessage();

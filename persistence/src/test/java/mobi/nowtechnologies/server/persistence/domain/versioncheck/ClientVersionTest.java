@@ -1,10 +1,10 @@
 package mobi.nowtechnologies.server.persistence.domain.versioncheck;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class ClientVersionTest {
+
     @Test
     public void testFromWhenThreeDigits() throws Exception {
         // given

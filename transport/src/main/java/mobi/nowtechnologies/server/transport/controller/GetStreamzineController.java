@@ -11,16 +11,21 @@ import mobi.nowtechnologies.server.service.streamzine.StreamzineNotAvailable;
 import mobi.nowtechnologies.server.service.streamzine.StreamzineUpdateService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
-import org.springframework.beans.ConversionNotSupportedException;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Date;
 
+import org.springframework.beans.ConversionNotSupportedException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -28,6 +33,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class GetStreamzineController extends CommonController {
+
     @Resource(name = "streamzineUpdateService")
     private StreamzineUpdateService streamzineUpdateService;
 
@@ -40,21 +46,12 @@ public class GetStreamzineController extends CommonController {
     }
 
     @RequestMapping(method = GET,
-            value = {
-                    "**/{community}/{apiVersion:6.8}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.7}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.6}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.5}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.4}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.3}/GET_STREAMZINE"
-            })
-    public Response getUpdateWithCache(@PathVariable("community") String community,
-                                       @RequestParam("USER_NAME") String userName,
-                                       @RequestParam("USER_TOKEN") String userToken,
-                                       @RequestParam("TIMESTAMP") String timestamp,
-                                       @RequestParam("WIDTHXHEIGHT") Resolution resolution,
-                                       @RequestParam(required = false, value = "DEVICE_UID") String deviceUID,
-                                       HttpServletResponse response) throws Exception {
+                    value = {"**/{community}/{apiVersion:6.9}/GET_STREAMZINE", "**/{community}/{apiVersion:6.8}/GET_STREAMZINE", "**/{community}/{apiVersion:6.7}/GET_STREAMZINE",
+                        "**/{community}/{apiVersion:6.6}/GET_STREAMZINE", "**/{community}/{apiVersion:6.5}/GET_STREAMZINE", "**/{community}/{apiVersion:6.4}/GET_STREAMZINE",
+                        "**/{community}/{apiVersion:6.3}/GET_STREAMZINE"})
+    public Response getUpdateWithCache(@PathVariable("community") String community, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
+                                       @RequestParam("TIMESTAMP") String timestamp, @RequestParam("WIDTHXHEIGHT") Resolution resolution,
+                                       @RequestParam(required = false, value = "DEVICE_UID") String deviceUID, HttpServletResponse response) throws Exception {
         Response update = getResponse(community, userName, userToken, timestamp, resolution, deviceUID, true);
 
         setMandatoryLastModifiedHeader(response);
@@ -64,16 +61,10 @@ public class GetStreamzineController extends CommonController {
 
 
     @RequestMapping(method = POST,
-            value = {
-                    "**/{community}/{apiVersion:6.2}/GET_STREAMZINE",
-                    "**/{community}/{apiVersion:6.1}/GET_STREAMZINE"
-            })
-    public Response getUpdate(@PathVariable("community") String community,
-                              @RequestParam("USER_NAME") String userName,
-                              @RequestParam("USER_TOKEN") String userToken,
-                              @RequestParam("TIMESTAMP") String timestamp,
-                              @RequestParam("WIDTHXHEIGHT") Resolution resolution,
-                              @RequestParam(required = false, value = "DEVICE_UID") String deviceUID) throws Exception {
+                    value = {"**/{community}/{apiVersion:6.2}/GET_STREAMZINE", "**/{community}/{apiVersion:6.1}/GET_STREAMZINE"})
+    public Response getUpdate(@PathVariable("community") String community, @RequestParam("USER_NAME") String userName, @RequestParam("USER_TOKEN") String userToken,
+                              @RequestParam("TIMESTAMP") String timestamp, @RequestParam("WIDTHXHEIGHT") Resolution resolution, @RequestParam(required = false, value = "DEVICE_UID") String deviceUID)
+        throws Exception {
         return getResponse(community, userName, userToken, timestamp, resolution, deviceUID, false);
     }
 
@@ -97,11 +88,13 @@ public class GetStreamzineController extends CommonController {
 
             LOGGER.debug("StreamzineUpdateDto: [{}]", dto);
 
-            return new Response(new Object[]{dto});
-        } catch (Exception e) {
+            return new Response(new Object[] {dto});
+        }
+        catch (Exception e) {
             ex = e;
             throw e;
-        } finally {
+        }
+        finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("GET_STREAMZINE  finished");
         }

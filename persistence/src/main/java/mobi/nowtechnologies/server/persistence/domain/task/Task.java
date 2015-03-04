@@ -6,16 +6,30 @@ package mobi.nowtechnologies.server.persistence.domain.task;
  */
 
 import mobi.nowtechnologies.server.persistence.domain.enums.TaskStatus;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
 import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "tb_tasks")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "taskType", length = 50, discriminatorType = DiscriminatorType.STRING)
 public abstract class Task implements Serializable {
+
     private static final long serialVersionUID = 5704319982970830025L;
 
     @Id
@@ -36,12 +50,7 @@ public abstract class Task implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("taskStatus", taskStatus)
-                .append("executionTimestamp", executionTimestamp)
-                .append("creationTimestamp", creationTimestamp)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("taskStatus", taskStatus).append("executionTimestamp", executionTimestamp).append("creationTimestamp", creationTimestamp).toString();
     }
 
     public Long getId() {

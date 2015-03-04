@@ -1,12 +1,13 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
+import mobi.nowtechnologies.server.service.o2.O2TariffService;
+
+import javax.xml.bind.JAXBElement;
+
 import java.math.BigInteger;
 
-import mobi.nowtechnologies.server.service.o2.O2TariffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import uk.co.o2.soa.coredata_1.AccountType;
 import uk.co.o2.soa.manageorderdata_2.GetOrderList2;
 import uk.co.o2.soa.manageorderdata_2.GetOrderList2Response;
@@ -20,7 +21,7 @@ import uk.co.o2.soa.manageprepaytariffdata_2.GetTariff1Response;
 import uk.co.o2.soa.subscriberdata_2.GetSubscriberProfile;
 import uk.co.o2.soa.subscriberdata_2.GetSubscriberProfileResponse;
 
-import javax.xml.bind.JAXBElement;
+import org.springframework.stereotype.Component;
 
 /**
  * lach : 17/07/2013 : 11:29
@@ -38,14 +39,14 @@ public class O2TariffServiceImpl implements O2TariffService {
     private String manageOrderEndpoint;
 
     @Override
-     public GetContractResponse getManagePostpayContract(String phoneNumber) {
+    public GetContractResponse getManagePostpayContract(String phoneNumber) {
         GetContract getContract = new GetContract();
         AccountType accountType = new AccountType();
         accountType.setMsisdn(phoneNumber);
         getContract.setCustomerId(accountType);
 
         uk.co.o2.soa.managepostpaytariffdata_2.ObjectFactory objectFactory = new uk.co.o2.soa.managepostpaytariffdata_2.ObjectFactory();
-        JAXBElement<GetContract> wrappedContract =  objectFactory.createGetContract(getContract);
+        JAXBElement<GetContract> wrappedContract = objectFactory.createGetContract(getContract);
 
         return webServiceGateway.sendAndReceive(managePostpayTariffEndpoint, wrappedContract);
     }
@@ -78,35 +79,35 @@ public class O2TariffServiceImpl implements O2TariffService {
         return webServiceGateway.sendAndReceive(managePostpayBoltonEndpoint, wrappedBoltons);
     }
 
-    
+
     @Override
     public GetSubscriberProfileResponse getSubscriberProfile(String phoneNumber) {
-    	GetSubscriberProfile request= new GetSubscriberProfile();
-    	
-    	request.setSubscriberID(phoneNumber);
+        GetSubscriberProfile request = new GetSubscriberProfile();
+
+        request.setSubscriberID(phoneNumber);
 
         JAXBElement<GetSubscriberProfile> wrappedRequest = new uk.co.o2.soa.subscriberdata_2.ObjectFactory().createGetSubscriberProfile(request);
 
         return webServiceGateway.sendAndReceive(subscriberEndpoint, wrappedRequest);
     }
- 
-    
+
+
     @Override
     public GetOrderList2Response getOrderList(String phoneNumber) {
-    	GetOrderList2 input = new GetOrderList2();
+        GetOrderList2 input = new GetOrderList2();
 
-    	input.setMsisdn(phoneNumber);
-    	input.setOrdersSelectionCriteria(new OrdersSelectionCriteriaType());
-    	input.getOrdersSelectionCriteria().setStartOrderNumber(BigInteger.valueOf(1));
-    	input.getOrdersSelectionCriteria().setNumOrdersRequired(BigInteger.valueOf(30));
-    	
+        input.setMsisdn(phoneNumber);
+        input.setOrdersSelectionCriteria(new OrdersSelectionCriteriaType());
+        input.getOrdersSelectionCriteria().setStartOrderNumber(BigInteger.valueOf(1));
+        input.getOrdersSelectionCriteria().setNumOrdersRequired(BigInteger.valueOf(30));
+
         uk.co.o2.soa.manageorderdata_2.ObjectFactory objectFactory = new uk.co.o2.soa.manageorderdata_2.ObjectFactory();
         JAXBElement<GetOrderList2> wrappedInput = objectFactory.createGetOrderList2(input);
 
         return webServiceGateway.sendAndReceive(manageOrderEndpoint, wrappedInput);
     }
-    
-    
+
+
     public void setWebServiceGateway(WebServiceGateway webServiceGateway) {
         this.webServiceGateway = webServiceGateway;
     }
@@ -123,12 +124,12 @@ public class O2TariffServiceImpl implements O2TariffService {
         this.managePrepayTariffEndpoint = managePrepayTariffEndpoint;
     }
 
-	public void setSubscriberEndpoint(String subscriberEndpoint) {
-		this.subscriberEndpoint = subscriberEndpoint;
-	}
+    public void setSubscriberEndpoint(String subscriberEndpoint) {
+        this.subscriberEndpoint = subscriberEndpoint;
+    }
 
-	public void setManageOrderEndpoint(String manageOrderEndpoint) {
-		this.manageOrderEndpoint = manageOrderEndpoint;
-	}
-    
+    public void setManageOrderEndpoint(String manageOrderEndpoint) {
+        this.manageOrderEndpoint = manageOrderEndpoint;
+    }
+
 }

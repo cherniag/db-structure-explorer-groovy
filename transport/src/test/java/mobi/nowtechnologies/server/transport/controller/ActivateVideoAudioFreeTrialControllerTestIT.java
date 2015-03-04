@@ -9,15 +9,16 @@ import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.enums.MediaType;
 import mobi.nowtechnologies.server.shared.enums.SegmentType;
 import mobi.nowtechnologies.server.shared.enums.Tariff;
-import org.junit.After;
-import org.junit.Test;
 
 import javax.annotation.Resource;
 
+import org.junit.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT{
+public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControllerTestIT {
 
     @Resource(name = "promotionRepository")
     protected PromotionRepository promotionRepository;
@@ -47,19 +48,12 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         prepare(user);
 
         mockMvc.perform(
-                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
+            post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
+                                                                                                   .param("DEVICE_UID", deviceUid)).andExpect(status().isOk())
+               .andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
 
-        mockMvc.perform(
-                post("/"+communityUrl+"/"+apiVersion+"/ACC_CHECK.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-        ).andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
+        mockMvc.perform(post("/" + communityUrl + "/" + apiVersion + "/ACC_CHECK.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp))
+               .andExpect(status().isOk()).andExpect(jsonPath("response.data[0].user.canPlayVideo").value(true));
 
     }
 
@@ -74,13 +68,9 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isInternalServerError()).andExpect(xpath("/response/errorMessage/errorCode").number(5001d));
+        mockMvc.perform(post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
+                                                                                                          .param("DEVICE_UID", deviceUid)).andExpect(status().isInternalServerError())
+               .andExpect(xpath("/response/errorMessage/errorCode").number(5001d));
 
     }
 
@@ -95,12 +85,9 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
         mockMvc.perform(
-                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isInternalServerError()).andExpect(jsonPath("response.data[0].errorMessage.errorCode").value(5001));
+            post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL.json").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
+                                                                                                   .param("DEVICE_UID", deviceUid)).andExpect(status().isInternalServerError())
+               .andExpect(jsonPath("response.data[0].errorMessage.errorCode").value(5001));
     }
 
     @Test
@@ -113,13 +100,8 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
+                                                                                                          .param("DEVICE_UID", deviceUid)).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -131,12 +113,8 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isInternalServerError());
+        mockMvc.perform(post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUid))
+               .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -148,12 +126,8 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL").param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp).param("DEVICE_UID", deviceUid))
+               .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -166,13 +140,8 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
         String deviceUid = "";
         String userToken = Utils.createTimestampToken(storedToken, timestamp);
 
-        mockMvc.perform(
-                post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL")
-                        .param("USER_NAME", userName)
-                        .param("USER_TOKEN", userToken)
-                        .param("TIMESTAMP", timestamp)
-                        .param("DEVICE_UID", deviceUid)
-        ).andExpect(status().isNotFound());
+        mockMvc.perform(post("/h/" + communityUrl + "/" + apiVersion + "/ACTIVATE_VIDEO_AUDIO_FREE_TRIAL").param("USER_NAME", userName).param("USER_TOKEN", userToken).param("TIMESTAMP", timestamp)
+                                                                                                          .param("DEVICE_UID", deviceUid)).andExpect(status().isNotFound());
     }
 
     @After
@@ -187,7 +156,7 @@ public class ActivateVideoAudioFreeTrialControllerTestIT extends AbstractControl
     }
 
     private void prepare(User user) {
-        int now = (int)(System.currentTimeMillis()/1000);
+        int now = (int) (System.currentTimeMillis() / 1000);
         promotion = new Promotion();
         promotion.setEndDate(now + 10000000);
         promotion.setStartDate(now - 10000000);

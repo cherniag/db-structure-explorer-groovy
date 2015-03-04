@@ -1,51 +1,35 @@
 package mobi.nowtechnologies.server.trackrepo.ingest;
 
 import mobi.nowtechnologies.server.trackrepo.ingest.sony.SonyDDEXParser;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import static java.io.File.separator;
 
-import static java.io.File.*;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static org.mockito.Matchers.*;
+import org.springframework.core.io.ClassPathResource;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
 /**
- * User: sanya
- * Date: 7/9/13
- * Time: 1:31 PM
+ * User: sanya Date: 7/9/13 Time: 1:31 PM
  */
 @RunWith(PowerMockRunner.class)
 public class DDEXParserTest {
 
     private DDEXParser ddexParserFixture;
-
-    private class LoadXmlArgumentMatcher extends ArgumentMatcher<File>{
-        private String dropName;
-        private String folderName;
-        private String fileName;
-
-        private LoadXmlArgumentMatcher(String dropName, String folderName, String fileName) {
-            this.dropName = dropName;
-            this.folderName = folderName;
-            this.fileName = fileName;
-        }
-
-        @Override
-        public boolean matches(Object o) {
-            return ((File) o).getAbsolutePath().equals(dropName + separator + folderName + separator + fileName);
-        }
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -58,38 +42,41 @@ public class DDEXParserTest {
 
         Map<String, DropTrack> result = ddexParserFixture.loadXml(xmlFile);
 
-        for (String key : result.keySet()){
-           if(key.startsWith("USAT21001777A10302B0001239466Eclass mobi.nowtechnologies.server.trackrepo.ingest.warner.SonyDDEXParser"))
-              assertEquals(true, result.get(key).explicit);
+        for (String key : result.keySet()) {
+            if (key.startsWith("USAT21001777A10302B0001239466Eclass mobi.nowtechnologies.server.trackrepo.ingest.warner.SonyDDEXParser")) {
+                assertEquals(true, result.get(key).explicit);
+            }
         }
     }
 
     @Test
-    public void testGetDrops_NotAuto_Successful(){
+    public void testGetDrops_NotAuto_Successful() {
         List<DropData> result = ddexParserFixture.getDrops(false);
 
         assertNotNull(result);
         assertEquals(3, result.size());
 
         DropData dropActual = null;
-        for(DropData drop : result){
-            if(drop.name.endsWith("20130625123358187"))
+        for (DropData drop : result) {
+            if (drop.name.endsWith("20130625123358187")) {
                 dropActual = drop;
+            }
         }
         assertNotNull(dropActual);
     }
 
     @Test
-    public void testGetDrops_Auto_Successful(){
+    public void testGetDrops_Auto_Successful() {
         List<DropData> result = ddexParserFixture.getDrops(true);
 
         assertNotNull(result);
         assertEquals(2, result.size());
 
         DropData dropActual = null;
-        for(DropData drop : result){
-            if(drop.name.endsWith("20130625123358187"))
+        for (DropData drop : result) {
+            if (drop.name.endsWith("20130625123358187")) {
                 dropActual = drop;
+            }
         }
         assertNotNull(dropActual);
     }
@@ -100,7 +87,7 @@ public class DDEXParserTest {
 
         final DropData drop = new DropData();
         drop.date = new Date();
-        drop.name=dropFolder.getAbsolutePath();
+        drop.name = dropFolder.getAbsolutePath();
 
         Map<String, DropTrack> dropTracks1 = new HashMap<String, DropTrack>();
         dropTracks1.put("isrc1", new DropTrack());
@@ -125,6 +112,24 @@ public class DDEXParserTest {
         verify(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0001406903U", "A10301A0001406903U.xml")));
         verify(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A0001640650S", "A10301A0001640650S.xml")));
         verify(ddexParserFixture).loadXml(argThat(new LoadXmlArgumentMatcher(drop.name, "A10301A00012459223", "A10301A00012459223.xml")));
+    }
+
+    private class LoadXmlArgumentMatcher extends ArgumentMatcher<File> {
+
+        private String dropName;
+        private String folderName;
+        private String fileName;
+
+        private LoadXmlArgumentMatcher(String dropName, String folderName, String fileName) {
+            this.dropName = dropName;
+            this.folderName = folderName;
+            this.fileName = fileName;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            return ((File) o).getAbsolutePath().equals(dropName + separator + folderName + separator + fileName);
+        }
     }
 
 }

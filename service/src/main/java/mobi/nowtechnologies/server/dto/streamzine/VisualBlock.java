@@ -1,17 +1,19 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 public class VisualBlock {
+
     @XmlElement(name = "ref")
     @JsonProperty(value = "ref")
     private String ref;
@@ -46,11 +48,7 @@ public class VisualBlock {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("ref", ref)
-                .append("shapeType", shapeType)
-                .append("policyDto", policyDto)
-                .toString();
+        return new ToStringBuilder(this).append("ref", ref).append("shapeType", shapeType).append("policyDto", policyDto).toString();
     }
 }
 

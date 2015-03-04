@@ -5,12 +5,12 @@ import mobi.nowtechnologies.server.security.bind.annotation.AuthenticatedUser;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.transport.context.dto.ContextDto;
 import mobi.nowtechnologies.server.transport.controller.core.CommonController;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
@@ -18,19 +18,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  */
 @Controller
 public class ContextController extends CommonController {
+
     @Resource
     ContextDtoAsm contextDtoAsm;
 
     @RequestMapping(method = GET,
-            value = {
-                    "**/{community}/{apiVersion:6\\.8}/CONTEXT"
-            })
+                    value = {"**/{community}/{apiVersion:6\\.9}/CONTEXT", "**/{community}/{apiVersion:6\\.8}/CONTEXT"})
     public ModelAndView getContext(@AuthenticatedUser User user) throws Exception {
         return getContext(user, true);
     }
 
     @RequestMapping(method = GET,
-            value = {"**/{community}/{apiVersion:6\\.7}/CONTEXT"})
+                    value = {"**/{community}/{apiVersion:6\\.7}/CONTEXT"})
     public ModelAndView getContextNoFreemiumSupport(@AuthenticatedUser User user) throws Exception {
         return getContext(user, false);
     }
@@ -44,10 +43,12 @@ public class ContextController extends CommonController {
             ContextDto contextDto = contextDtoAsm.assemble(user, needToLookAtActivationDate);
 
             return createModelAndView(contextDto);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             ex = e;
             throw e;
-        } finally {
+        }
+        finally {
             logProfileData(null, getCurrentCommunityUri(), null, null, user, ex);
             LOGGER.info("command processing finished");
         }

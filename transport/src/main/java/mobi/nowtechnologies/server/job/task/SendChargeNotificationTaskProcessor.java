@@ -7,8 +7,7 @@ import mobi.nowtechnologies.server.service.UserNotificationService;
 import java.io.UnsupportedEncodingException;
 
 /**
- * User: gch
- * Date: 12/19/13
+ * User: gch Date: 12/19/13
  */
 public class SendChargeNotificationTaskProcessor extends AbstractTaskProcessor<SendChargeNotificationTask> {
 
@@ -19,11 +18,17 @@ public class SendChargeNotificationTaskProcessor extends AbstractTaskProcessor<S
         LOGGER.info("About to start processing {} by {}", task, this);
         try {
             userNotificationService.sendChargeNotificationReminder(task.getUser());
-        } catch (UnsupportedEncodingException e) {
+        }
+        catch (UnsupportedEncodingException e) {
             LOGGER.error(e.getMessage(), e);
-        } finally {
-            Community community = task.getUser().getUserGroup() != null ? task.getUser().getUserGroup().getCommunity() : null;
-            String communityRewriteUrl = community != null ? community.getRewriteUrlParameter() : null;
+        }
+        finally {
+            Community community = task.getUser().getUserGroup() != null ?
+                                  task.getUser().getUserGroup().getCommunity() :
+                                  null;
+            String communityRewriteUrl = community != null ?
+                                         community.getRewriteUrlParameter() :
+                                         null;
             reScheduleTask(communityRewriteUrl, task);
         }
         LOGGER.info("Processing {} by {} done", task, this);

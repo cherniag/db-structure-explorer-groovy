@@ -1,14 +1,14 @@
 package mobi.nowtechnologies.server.normalizer.test;
 
 import mobi.nowtechnologies.server.normalizer.PropertiesNormalizer;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.io.FileUtils;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Anton Zemliankin

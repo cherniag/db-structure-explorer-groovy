@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller.googleplus;
 
 public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplateCustomizerImpl {
+
     private String imageUrl;
     private String gender;
     private String birthday;
@@ -13,10 +14,8 @@ public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplate
     private String displayName;
     private String homePage;
 
-    public GooglePlusTemplateCustomizerImpl(String googlePlusEmail, String googlePlusUserId, String firstName,
-                                            String lastName, String profileUrl, String accessToken,
-                                            String gender, String birthday, String primaryLocation,
-                                            String displayName, String homePage) {
+    public GooglePlusTemplateCustomizerImpl(String googlePlusEmail, String googlePlusUserId, String firstName, String lastName, String profileUrl, String accessToken, String gender, String birthday,
+                                            String primaryLocation, String displayName, String homePage) {
         super(accessToken);
         this.googlePlusUserId = googlePlusUserId;
         this.googlePlusEmail = googlePlusEmail;
@@ -37,8 +36,7 @@ public class GooglePlusTemplateCustomizerImpl extends AbstractGooglePlusTemplate
 
     @Override
     protected String renderGooglePlusResponse(String body) {
-        return String.format(body,
-                displayName, firstName, lastName,  homePage, gender, profileUrl, primaryLocation, birthday, googlePlusUserId, googlePlusEmail);
+        return String.format(body, displayName, firstName, lastName, homePage, gender, profileUrl, primaryLocation, birthday, googlePlusUserId, googlePlusEmail);
     }
 
 }

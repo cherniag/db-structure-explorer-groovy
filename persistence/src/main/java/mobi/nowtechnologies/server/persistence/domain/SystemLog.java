@@ -1,58 +1,62 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 @Entity
-@Table(name="tb_systemLog")
+@Table(name = "tb_systemLog")
 public class SystemLog implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int i;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name="entry",columnDefinition="text")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int i;
+
+    @Column(name = "entry", columnDefinition = "text")
     @Lob()
-	private String entry;
+    private String entry;
 
-	private int timestamp;
+    private int timestamp;
 
     public SystemLog() {
     }
 
-	public int getI() {
-		return this.i;
-	}
+    public int getI() {
+        return this.i;
+    }
 
-	public void setI(int i) {
-		this.i = i;
-	}
+    public void setI(int i) {
+        this.i = i;
+    }
 
-	public String getEntry() {
-		return this.entry;
-	}
+    public String getEntry() {
+        return this.entry;
+    }
 
-	public void setEntry(String entry) {
-		this.entry = entry;
-	}
+    public void setEntry(String entry) {
+        this.entry = entry;
+    }
 
-	public int getTimestamp() {
-		return this.timestamp;
-	}
+    public int getTimestamp() {
+        return this.timestamp;
+    }
 
-	public void setTimestamp(int timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("i", i)
-                .append("entry", entry)
-                .append("timestamp", timestamp)
-                .toString();
+        return new ToStringBuilder(this).append("i", i).append("entry", entry).append("timestamp", timestamp).toString();
     }
 }

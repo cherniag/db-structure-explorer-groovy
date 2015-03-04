@@ -1,22 +1,24 @@
 package mobi.nowtechnologies.server.persistence.repository;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.FilenameAlias;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.BadgeMapping;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.badge.Resolution;
-import org.junit.Test;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import com.google.common.collect.Lists;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class BadgeMappingRepositoryIT extends AbstractRepositoryIT {
+
     @Resource
     BadgeMappingRepository badgeMappingRepository;
     @Resource
@@ -236,9 +238,10 @@ public class BadgeMappingRepositoryIT extends AbstractRepositoryIT {
         List<BadgeMapping> generals = new ArrayList<BadgeMapping>();
         List<BadgeMapping> specific = new ArrayList<BadgeMapping>();
         for (BadgeMapping badgeMapping : found) {
-            if(badgeMapping.getResolution() == null) {
+            if (badgeMapping.getResolution() == null) {
                 generals.add(badgeMapping);
-            } else {
+            }
+            else {
                 specific.add(badgeMapping);
             }
         }

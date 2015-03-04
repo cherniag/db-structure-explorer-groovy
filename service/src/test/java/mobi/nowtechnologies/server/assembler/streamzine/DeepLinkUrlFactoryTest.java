@@ -1,38 +1,41 @@
-
 package mobi.nowtechnologies.server.assembler.streamzine;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Media;
 import mobi.nowtechnologies.server.persistence.domain.Message;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
-import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.*;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.InformationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.ManualCompilationDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicPlayListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.MusicTrackDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsListDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NewsStoryDeeplinkInfo;
+import mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink.NotificationDeeplinkInfo;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.LinkLocationType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.MusicType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.NewsType;
 import mobi.nowtechnologies.server.shared.enums.MessageType;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
 
 import java.util.Date;
 import java.util.List;
 
-import static mobi.nowtechnologies.server.persistence.domain.streamzine.types.sub.Opener.BROWSER;
+import com.google.common.collect.Lists;
+
+import org.junit.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 3/21/14
+ * Author: Gennadii Cherniaiev Date: 3/21/14
  */
 public class DeepLinkUrlFactoryTest {
+
     @Mock
     private DeepLinkInfoService deepLinkInfoService;
 
@@ -80,7 +83,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, createCommunity("hl_uk"), false);
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl-uk://page/account?action=subscribe"));
+        assertThat((String) o, is("hl-uk://page/account?action=subscribe"));
     }
 
     @Test
@@ -92,7 +95,7 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(informationDeeplinkInfo, createCommunity("o2"), false);
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("o2://web/aHR0cDovL2JlYXIucnU=?open=externally"));
+        assertThat((String) o, is("o2://web/aHR0cDovL2JlYXIucnU=?open=externally"));
     }
 
     @Test
@@ -107,13 +110,13 @@ public class DeepLinkUrlFactoryTest {
         Object o = deepLinkUrlFactory.create(musicTrackDeeplinkInfo, createCommunity("hl_uk"), false);
 
         assertThat(o, instanceOf(String.class));
-        assertThat((String)o, is("hl-uk://content/track?id=TRACK-10_null"));
+        assertThat((String) o, is("hl-uk://content/track?id=TRACK-10_null"));
     }
 
     @Test
     public void checkCreateLinkValueForMusicPlayList() throws Exception {
         //prepare data
-        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(666, PlayerType.REGULAR_PLAYER_ONLY);
+        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo = new MusicPlayListDeeplinkInfo(666, PlayerType.REGULAR_PLAYER_ONLY);
 
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 
@@ -125,7 +128,7 @@ public class DeepLinkUrlFactoryTest {
     @Test
     public void checkCreateLinkValueForMusicPlayListAfter62() throws Exception {
         //prepare data
-        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo =  new MusicPlayListDeeplinkInfo(666, PlayerType.REGULAR_PLAYER_ONLY);
+        MusicPlayListDeeplinkInfo musicPlayListDeeplinkInfo = new MusicPlayListDeeplinkInfo(666, PlayerType.REGULAR_PLAYER_ONLY);
 
         when(deepLinkInfoService.getSubType(musicPlayListDeeplinkInfo)).thenReturn((Enum) MusicType.PLAYLIST);
 

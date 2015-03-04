@@ -1,11 +1,12 @@
 package mobi.nowtechnologies.applicationtests.services.http.googleplus;
 
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
-import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+
 import java.util.Calendar;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class GooglePlusUserInfoGenerator {
@@ -21,15 +22,11 @@ public class GooglePlusUserInfoGenerator {
     private AppTestGooglePlusTokenService appTestGooglePlusTokenService;
 
     public String createAccessToken(String email, String userName, String googlePlusUserId) {
-        return appTestGooglePlusTokenService.build(googlePlusUserId,
-                email,
-                getDate(), userName, GIVEN_NAME, FAMILY_NAME, IMAGE_URL, MALE, LOCATION, URL);
+        return appTestGooglePlusTokenService.build(googlePlusUserId, email, getDate(), userName, GIVEN_NAME, FAMILY_NAME, IMAGE_URL, MALE, LOCATION, URL);
     }
 
     public String createAccessTokenWithAuthError(String email, String userName, String googlePlusUserId) {
-        return appTestGooglePlusTokenService.buildTokenWithTokenError(googlePlusUserId,
-                email,
-                getDate(), userName, GIVEN_NAME, FAMILY_NAME, IMAGE_URL, MALE, LOCATION, URL);
+        return appTestGooglePlusTokenService.buildTokenWithTokenError(googlePlusUserId, email, getDate(), userName, GIVEN_NAME, FAMILY_NAME, IMAGE_URL, MALE, LOCATION, URL);
     }
 
     private long getDate() {

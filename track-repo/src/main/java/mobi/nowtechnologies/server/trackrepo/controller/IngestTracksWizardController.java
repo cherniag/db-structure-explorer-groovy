@@ -15,33 +15,41 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IngestTracksWizardController extends AbstractCommonController {
 
-	private IngestService ingestService;
+    private IngestService ingestService;
 
-	public void setIngestService(IngestService ingestService) {
-		this.ingestService = ingestService;
-	}
+    public void setIngestService(IngestService ingestService) {
+        this.ingestService = ingestService;
+    }
 
     @RequestMapping(value = "/drops", method = RequestMethod.GET)
-    public @ResponseBody IngestWizardDataDto getDrops(@RequestParam(value="ingestors", required=false) String[] ingestors) throws Exception {
-    	return new IngestWizardDataDtoMapper(ingestService.getDrops(ingestors));
-	}
-    
+    public
+    @ResponseBody
+    IngestWizardDataDto getDrops(@RequestParam(value = "ingestors", required = false) String[] ingestors) throws Exception {
+        return new IngestWizardDataDtoMapper(ingestService.getDrops(ingestors));
+    }
+
     @RequestMapping(value = "/drops/select", method = RequestMethod.POST)
-	public @ResponseBody IngestWizardDataDto selectDrops(@RequestBody IngestWizardDataDto dto) throws Exception {
-		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
-		return new IngestWizardDataDtoMapper(ingestService.selectDrops(data));
-	}
+    public
+    @ResponseBody
+    IngestWizardDataDto selectDrops(@RequestBody IngestWizardDataDto dto) throws Exception {
+        IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
+        return new IngestWizardDataDtoMapper(ingestService.selectDrops(data));
+    }
 
     @RequestMapping(value = "/drops/tracks/select", method = RequestMethod.POST)
-	public @ResponseBody IngestWizardDataDto selectDropTracks(@RequestBody IngestWizardDataDto dto) throws Exception {
-		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
-		return new IngestWizardDataDtoMapper(ingestService.selectDropTracks(data));
-	}
-    
+    public
+    @ResponseBody
+    IngestWizardDataDto selectDropTracks(@RequestBody IngestWizardDataDto dto) throws Exception {
+        IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
+        return new IngestWizardDataDtoMapper(ingestService.selectDropTracks(data));
+    }
+
 
     @RequestMapping(value = "/drops/commit", method = RequestMethod.POST)
-	public @ResponseBody Boolean commitDrops(@RequestBody IngestWizardDataDto dto) throws Exception {
-		IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
-		return ingestService.commitDrops(data);
-	}
+    public
+    @ResponseBody
+    Boolean commitDrops(@RequestBody IngestWizardDataDto dto) throws Exception {
+        IngestWizardData data = IngestWizardDataDtoMapper.map(dto);
+        return ingestService.commitDrops(data);
+    }
 }

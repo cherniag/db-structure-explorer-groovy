@@ -2,19 +2,20 @@ package mobi.nowtechnologies.server.admin.controller;
 
 import mobi.nowtechnologies.server.shared.dto.PageListDto;
 import mobi.nowtechnologies.server.trackrepo.dto.TrackDto;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.ui.ModelMap;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.springframework.ui.ModelMap;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+
+import org.junit.*;
+import org.springframework.test.web.servlet.ResultActions;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 public class TrackRepoControllerIT extends AbstractAdminITTest {
 
@@ -22,11 +23,7 @@ public class TrackRepoControllerIT extends AbstractAdminITTest {
     @Ignore
     public void verifyThatTrackCanBeFetchedByGenre() throws Exception {
         String genre_1 = "genre_1";
-        ResultActions resultActions = mockMvc.perform(
-                get("/tracks/list")
-                        .param("genre", genre_1)
-                        .param("page.page", "1")
-        ).andExpect(status().isOk());
+        ResultActions resultActions = mockMvc.perform(get("/tracks/list").param("genre", genre_1).param("page.page", "1")).andExpect(status().isOk());
 
         List<TrackDto> list = getTrackDtoList(resultActions);
         assertEquals(1, list.size());
@@ -38,11 +35,7 @@ public class TrackRepoControllerIT extends AbstractAdminITTest {
     @Ignore
     public void verifyThatTrackCanBeFetchedByAlbumName() throws Exception {
         String album_1 = "album_1";
-        ResultActions resultActions = mockMvc.perform(
-                get("/tracks/list")
-                        .param("album", album_1)
-                        .param("page.page", "1")
-        ).andExpect(status().isOk());
+        ResultActions resultActions = mockMvc.perform(get("/tracks/list").param("album", album_1).param("page.page", "1")).andExpect(status().isOk());
 
         List<TrackDto> list = getTrackDtoList(resultActions);
         assertEquals(1, list.size());
@@ -53,13 +46,7 @@ public class TrackRepoControllerIT extends AbstractAdminITTest {
     @Test
     @Ignore
     public void verifyThatTrackCanBeFetchedByIngestor() throws Exception {
-        ResultActions resultActions = mockMvc.perform(
-                get("/tracks/list")
-                        .param("ingestor", "ingestor_1")
-                        .param("page.page", "1")
-        )
-                .andExpect(status().isOk())
-                .andExpect(view().name("tracks/tracks"));
+        ResultActions resultActions = mockMvc.perform(get("/tracks/list").param("ingestor", "ingestor_1").param("page.page", "1")).andExpect(status().isOk()).andExpect(view().name("tracks/tracks"));
         List<TrackDto> list = getTrackDtoList(resultActions);
 
         assertEquals(1, list.size());

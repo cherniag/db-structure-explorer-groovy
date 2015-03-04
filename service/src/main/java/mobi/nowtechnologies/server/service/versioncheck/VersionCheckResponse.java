@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.service.versioncheck;
 import mobi.nowtechnologies.server.persistence.domain.versioncheck.VersionCheckStatus;
 
 public class VersionCheckResponse {
+
     private String messageKey;
 
     private VersionCheckStatus status;

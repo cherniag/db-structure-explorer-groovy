@@ -5,31 +5,33 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.*;
+import org.junit.runner.*;
+
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.*;
-
-import static mobi.nowtechnologies.server.trackrepo.ingest.universal.UniversalParserTest.TerritoryMatcher.hasTerritoryWithCountry;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 
+import org.powermock.modules.junit4.PowerMockRunner;
+
 /**
- * User: sanya
- * Date: 7/10/13
- * Time: 9:25 AM
+ * User: sanya Date: 7/10/13 Time: 9:25 AM
  */
 @RunWith(PowerMockRunner.class)
 public class UniversalParserTest {
+
     private UniversalParser fixture;
 
     @Before
@@ -290,12 +292,12 @@ public class UniversalParserTest {
         List<DropTerritory> dropTrackTerritories = dropTrack.getTerritories();
         assertThat(dropTrackTerritories, notNullValue());
         assertThat(dropTrackTerritories, hasSize(2));
-        assertThat(dropTrackTerritories, hasTerritoryWithCountry("GB"));
-        assertThat(dropTrackTerritories, hasTerritoryWithCountry("NZ"));
+        assertThat(dropTrackTerritories, UniversalParserTest.TerritoryMatcher.hasTerritoryWithCountry("GB"));
+        assertThat(dropTrackTerritories, UniversalParserTest.TerritoryMatcher.hasTerritoryWithCountry("NZ"));
     }
 
     @Test
-    public void shouldParseAlbum(){
+    public void shouldParseAlbum() {
         //given
         String code = "05037128167051";
         String drop = "3000007191631";
@@ -318,6 +320,11 @@ public class UniversalParserTest {
             this.country = country;
         }
 
+        @Factory
+        public static Matcher<Collection<DropTerritory>> hasTerritoryWithCountry(String country) {
+            return new TerritoryMatcher(country);
+        }
+
         @Override
         public void describeTo(Description description) {
             description.appendText("Drop territories does not contain country");
@@ -326,7 +333,7 @@ public class UniversalParserTest {
         @Override
         protected boolean matchesSafely(Collection<DropTerritory> dropTerritory) {
             for (DropTerritory territory : dropTerritory) {
-                if (matchStrings(country, territory.country)){
+                if (matchStrings(country, territory.country)) {
                     return true;
                 }
             }
@@ -334,15 +341,10 @@ public class UniversalParserTest {
         }
 
         private boolean matchStrings(String country, String territoryCountry) {
-            if (country == territoryCountry){
+            if (country == territoryCountry) {
                 return true;
             }
             return country != null && country.equals(territoryCountry);
-        }
-
-        @Factory
-        public static <T> Matcher<Collection<DropTerritory>> hasTerritoryWithCountry(String country) {
-            return new TerritoryMatcher(country);
         }
 
     }

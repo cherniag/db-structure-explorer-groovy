@@ -1,20 +1,22 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.*;
-
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 11/10/2014
+ * Author: Gennadii Cherniaiev Date: 11/10/2014
  */
 @Entity
 @Table(name = "apps_flyer_data",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id"})
-)
+       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id"}))
 public class AppsFlyerData {
 
     @Id
@@ -55,10 +57,6 @@ public class AppsFlyerData {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, SHORT_PREFIX_STYLE)
-                .append("id", id)
-                .append("userId", userId)
-                .append("appsFlyerUid", appsFlyerUid)
-                .toString();
+        return new ToStringBuilder(this, SHORT_PREFIX_STYLE).append("id", id).append("userId", userId).append("appsFlyerUid", appsFlyerUid).toString();
     }
 }

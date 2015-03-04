@@ -4,46 +4,34 @@ import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.exception.ServiceException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
+import org.junit.*;
+import org.junit.rules.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.runners.*;
+import org.mockito.stubbing.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceMergeTest {
 
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private AccountLogService accountLogService;
-
-    @Mock
-    private UserDeviceDetailsService userDeviceDetailsService;
-
-    @Mock
-    private DeviceUserDataService deviceUserDataService;
-
-    @Mock
-    private AppsFlyerDataService appsFlyerDataService;
-
-    @InjectMocks
-    private UserService userService;
-
-    private ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private AccountLogService accountLogService;
+    @Mock
+    private UrbanAirshipTokenService urbanAirshipTokenService;
+    @Mock
+    private DeviceUserDataService deviceUserDataService;
+    @Mock
+    private AppsFlyerDataService appsFlyerDataService;
+    @InjectMocks
+    private UserService userService;
+    private ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
 
     @Before
     public void setUp() throws Exception {
@@ -69,7 +57,7 @@ public class UserServiceMergeTest {
 
         userService.mergeUser(oldUser, tempUser);
 
-        verify(userDeviceDetailsService).removeUserDeviceDetails(tempUser);
+        verify(urbanAirshipTokenService).mergeToken(tempUser, oldUser);
         verify(deviceUserDataService).removeDeviceUserData(oldUser);
         verify(deviceUserDataService).removeDeviceUserData(tempUser);
         verify(userRepository).deleteUser(987);

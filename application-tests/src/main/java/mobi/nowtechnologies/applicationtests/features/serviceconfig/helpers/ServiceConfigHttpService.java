@@ -2,15 +2,21 @@ package mobi.nowtechnologies.applicationtests.features.serviceconfig.helpers;
 
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
-import org.springframework.http.*;
+
+import java.util.Arrays;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-
 @Service
 public class ServiceConfigHttpService extends AbstractHttpService {
+
     public ResponseEntity<String> serviceConfigUserAgent(UserDeviceData deviceData, String header) {
         return doSend(deviceData, "User-Agent", header);
     }
@@ -35,7 +41,7 @@ public class ServiceConfigHttpService extends AbstractHttpService {
     private HttpEntity<MultiValueMap> createHttpEntity(String headerName, String headerValue) {
         HttpHeaders headers = new HttpHeaders();
 
-        if(headerValue != null) {
+        if (headerValue != null) {
             headers.add(headerName, headerValue);
         }
 

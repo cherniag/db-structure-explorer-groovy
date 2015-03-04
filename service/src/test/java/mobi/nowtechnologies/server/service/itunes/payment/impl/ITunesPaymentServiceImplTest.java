@@ -6,8 +6,19 @@ package mobi.nowtechnologies.server.service.itunes.payment.impl;
 
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.TimeService;
-import mobi.nowtechnologies.server.persistence.domain.*;
-import mobi.nowtechnologies.server.persistence.domain.payment.*;
+import mobi.nowtechnologies.server.persistence.domain.Community;
+import mobi.nowtechnologies.server.persistence.domain.CommunityFactory;
+import mobi.nowtechnologies.server.persistence.domain.PaymentPolicyFactory;
+import mobi.nowtechnologies.server.persistence.domain.User;
+import mobi.nowtechnologies.server.persistence.domain.UserFactory;
+import mobi.nowtechnologies.server.persistence.domain.UserGroup;
+import mobi.nowtechnologies.server.persistence.domain.UserGroupFactory;
+import mobi.nowtechnologies.server.persistence.domain.payment.ITunesPaymentLock;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetailsType;
+import mobi.nowtechnologies.server.persistence.domain.payment.PaymentPolicy;
+import mobi.nowtechnologies.server.persistence.domain.payment.Period;
+import mobi.nowtechnologies.server.persistence.domain.payment.SubmittedPayment;
 import mobi.nowtechnologies.server.persistence.repository.ITunesPaymentLockRepository;
 import mobi.nowtechnologies.server.service.PaymentPolicyService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
@@ -16,25 +27,23 @@ import mobi.nowtechnologies.server.service.payment.SubmittedPaymentService;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
+
+import org.junit.*;
+import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class ITunesPaymentServiceImplTest {
+
     @Mock
     ApplicationEventPublisher applicationEventPublisher;
     @Mock
@@ -48,6 +57,23 @@ public class ITunesPaymentServiceImplTest {
 
     @InjectMocks
     ITunesPaymentServiceImpl iTunesPaymentService;
+
+    private static void validatePayment(final String base64EncodedAppStoreReceipt, final String originalTransactionId, final long expiresDate, final String appStoreOriginalTransactionId,
+                                        final User user, final BigDecimal paymentPolicySubCost, final String currencyISO, final long paymentTimestamp, final PaymentDetailsType paymentType,
+                                        SubmittedPayment passedSubmittedPayment) {
+
+        assertEquals(PaymentDetailsStatus.SUCCESSFUL, passedSubmittedPayment.getStatus());
+        assertEquals(user, passedSubmittedPayment.getUser());
+        assertEquals(paymentTimestamp, passedSubmittedPayment.getTimestamp());
+        assertEquals(paymentPolicySubCost, passedSubmittedPayment.getAmount());
+        assertEquals(originalTransactionId, passedSubmittedPayment.getExternalTxId());
+        assertEquals(paymentType, passedSubmittedPayment.getType());
+        assertEquals(currencyISO, passedSubmittedPayment.getCurrencyISO());
+        assertEquals((int) (expiresDate / 1000), passedSubmittedPayment.getNextSubPayment());
+        assertEquals(appStoreOriginalTransactionId, passedSubmittedPayment.getAppStoreOriginalTransactionId());
+        assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, passedSubmittedPayment.getPaymentSystem());
+        assertEquals(base64EncodedAppStoreReceipt, passedSubmittedPayment.getBase64EncodedAppStoreReceipt());
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -80,19 +106,16 @@ public class ITunesPaymentServiceImplTest {
 
         when(paymentPolicyService.findByCommunityAndAppStoreProductId(user.getCommunity(), iTunesResult.getProductId())).thenReturn(paymentPolicy);
         when(timeService.now()).thenReturn(new Date(Long.MAX_VALUE));
-        doAnswer(new ITunesPaymentLockAnswer(
-                user.getId(), DateTimeUtils.millisToIntSeconds(iTunesResult.getExpireTime()))).
-                when(iTunesPaymentLockRepository).saveAndFlush(any(ITunesPaymentLock.class));
-        doAnswer(new SubmittedPaymentServiceAnswer(
-                receipt, timeService.now().getTime(), paymentPolicy.getCurrencyISO(),
-                user.getAppStoreOriginalTransactionId(), paymentType, paymentPolicy.getSubcost(), user,
-                iTunesResult.getOriginalTransactionId(), iTunesResult.getExpireTime())).
-                when(submittedPaymentService).save(any(SubmittedPayment.class));
-        doAnswer(new PaymentEventAnswer(
-                iTunesResult.getExpireTime(), timeService.now().getTime(), user, receipt,
-                user.getAppStoreOriginalTransactionId(), paymentPolicy.getCurrencyISO(),
-                iTunesResult.getOriginalTransactionId(), paymentType, paymentPolicy.getSubcost())).
-                when(applicationEventPublisher).publishEvent(any(PaymentEvent.class));
+        doAnswer(new ITunesPaymentLockAnswer(user.getId(), DateTimeUtils.millisToIntSeconds(iTunesResult.getExpireTime()))).
+                                                                                                                               when(iTunesPaymentLockRepository)
+                                                                                                                           .saveAndFlush(any(ITunesPaymentLock.class));
+        doAnswer(
+            new SubmittedPaymentServiceAnswer(receipt, timeService.now().getTime(), paymentPolicy.getCurrencyISO(), user.getAppStoreOriginalTransactionId(), paymentType, paymentPolicy.getSubcost(),
+                                              user, iTunesResult.getOriginalTransactionId(), iTunesResult.getExpireTime())).
+                                                                                                                               when(submittedPaymentService).save(any(SubmittedPayment.class));
+        doAnswer(new PaymentEventAnswer(iTunesResult.getExpireTime(), timeService.now().getTime(), user, receipt, user.getAppStoreOriginalTransactionId(), paymentPolicy.getCurrencyISO(),
+                                        iTunesResult.getOriginalTransactionId(), paymentType, paymentPolicy.getSubcost())).
+                                                                                                                              when(applicationEventPublisher).publishEvent(any(PaymentEvent.class));
 
         iTunesPaymentService.createSubmittedPayment(user, receipt, iTunesResult, iTunesPaymentService);
 
@@ -101,12 +124,7 @@ public class ITunesPaymentServiceImplTest {
         verify(timeService, times(3)).now();
         verify(submittedPaymentService, times(1)).save(any(SubmittedPayment.class));
         verify(applicationEventPublisher, times(1)).publishEvent(any(PaymentEvent.class));
-        verifyNoMoreInteractions(
-                iTunesPaymentLockRepository,
-                paymentPolicyService,
-                timeService,
-                submittedPaymentService,
-                applicationEventPublisher);
+        verifyNoMoreInteractions(iTunesPaymentLockRepository, paymentPolicyService, timeService, submittedPaymentService, applicationEventPublisher);
     }
 
     @Test
@@ -122,12 +140,7 @@ public class ITunesPaymentServiceImplTest {
 
         verify(iTunesPaymentLockRepository, times(1)).saveAndFlush(any(ITunesPaymentLock.class));
         verify(user, never()).setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-        verifyNoMoreInteractions(
-                iTunesPaymentLockRepository,
-                paymentPolicyService,
-                timeService,
-                submittedPaymentService,
-                applicationEventPublisher);
+        verifyNoMoreInteractions(iTunesPaymentLockRepository, paymentPolicyService, timeService, submittedPaymentService, applicationEventPublisher);
     }
 
     @Test
@@ -162,12 +175,7 @@ public class ITunesPaymentServiceImplTest {
         verify(iTunesPaymentLockRepository, times(1)).saveAndFlush(any(ITunesPaymentLock.class));
         verify(paymentPolicyService, times(1)).findByCommunityAndAppStoreProductId(user.getCommunity(), iTunesResult.getProductId());
         verify(user, never()).setBase64EncodedAppStoreReceipt(base64EncodedAppStoreReceipt);
-        verifyNoMoreInteractions(
-                iTunesPaymentLockRepository,
-                paymentPolicyService,
-                timeService,
-                submittedPaymentService,
-                applicationEventPublisher);
+        verifyNoMoreInteractions(iTunesPaymentLockRepository, paymentPolicyService, timeService, submittedPaymentService, applicationEventPublisher);
     }
 
     @Test
@@ -178,7 +186,7 @@ public class ITunesPaymentServiceImplTest {
         SubmittedPayment submittedPayment = mock(SubmittedPayment.class);
 
         PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
-        when(submittedPayment.getNextSubPayment()).thenReturn((int)(new Date().getTime() / 1000 + 10000));
+        when(submittedPayment.getNextSubPayment()).thenReturn((int) (new Date().getTime() / 1000 + 10000));
         when(submittedPayment.getPaymentPolicy()).thenReturn(paymentPolicy);
         when(submittedPaymentService.getLatest(user)).thenReturn(submittedPayment);
         when(timeService.now()).thenReturn(new Date());
@@ -196,10 +204,10 @@ public class ITunesPaymentServiceImplTest {
         SubmittedPayment submittedPayment = mock(SubmittedPayment.class);
 
         PaymentPolicy paymentPolicy = mock(PaymentPolicy.class);
-        when(submittedPayment.getNextSubPayment()).thenReturn((int)(new Date().getTime() / 1000 - 10000));
+        when(submittedPayment.getNextSubPayment()).thenReturn((int) (new Date().getTime() / 1000 - 10000));
         when(submittedPayment.getPaymentPolicy()).thenReturn(paymentPolicy);
         when(submittedPaymentService.getLatest(user)).thenReturn(submittedPayment);
-        when(timeService.nowSeconds()).thenReturn((int) (new Date().getTime()/1000) );
+        when(timeService.nowSeconds()).thenReturn((int) (new Date().getTime() / 1000));
 
         PaymentPolicy actual = iTunesPaymentService.getCurrentSubscribedPaymentPolicy(user);
 
@@ -220,23 +228,8 @@ public class ITunesPaymentServiceImplTest {
         return user;
     }
 
-    private static void validatePayment(final String base64EncodedAppStoreReceipt, final String originalTransactionId, final long expiresDate, final String appStoreOriginalTransactionId, final User user,
-                                        final BigDecimal paymentPolicySubCost, final String currencyISO, final long paymentTimestamp, final PaymentDetailsType paymentType, SubmittedPayment passedSubmittedPayment) {
-
-        assertEquals(PaymentDetailsStatus.SUCCESSFUL, passedSubmittedPayment.getStatus());
-        assertEquals(user, passedSubmittedPayment.getUser());
-        assertEquals(paymentTimestamp, passedSubmittedPayment.getTimestamp());
-        assertEquals(paymentPolicySubCost, passedSubmittedPayment.getAmount());
-        assertEquals(originalTransactionId, passedSubmittedPayment.getExternalTxId());
-        assertEquals(paymentType, passedSubmittedPayment.getType());
-        assertEquals(currencyISO, passedSubmittedPayment.getCurrencyISO());
-        assertEquals((int) (expiresDate / 1000), passedSubmittedPayment.getNextSubPayment());
-        assertEquals(appStoreOriginalTransactionId, passedSubmittedPayment.getAppStoreOriginalTransactionId());
-        assertEquals(PaymentDetails.ITUNES_SUBSCRIPTION, passedSubmittedPayment.getPaymentSystem());
-        assertEquals(base64EncodedAppStoreReceipt, passedSubmittedPayment.getBase64EncodedAppStoreReceipt());
-    }
-
     private final class PaymentEventAnswer implements Answer<Void> {
+
         private final long expiresDate;
         private final long paymentTimestamp;
         private final User user;
@@ -266,13 +259,15 @@ public class ITunesPaymentServiceImplTest {
 
             SubmittedPayment passedSubmittedPayment = (SubmittedPayment) passedPaymentEvent.getPayment();
 
-            validatePayment(base64EncodedAppStoreReceipt, originalTransactionId, expiresDate, appStoreOriginalTransactionId, user, paymentPolicySubCost, currencyISO, paymentTimestamp, paymentType, passedSubmittedPayment);
+            validatePayment(base64EncodedAppStoreReceipt, originalTransactionId, expiresDate, appStoreOriginalTransactionId, user, paymentPolicySubCost, currencyISO, paymentTimestamp, paymentType,
+                            passedSubmittedPayment);
 
             return null;
         }
     }
 
     private final class SubmittedPaymentServiceAnswer implements Answer<SubmittedPayment> {
+
         private final String base64EncodedAppStoreReceipt;
         private final long paymentTimestamp;
         private final String currencyISO;
@@ -300,13 +295,15 @@ public class ITunesPaymentServiceImplTest {
         public SubmittedPayment answer(InvocationOnMock invocation) throws Throwable {
             SubmittedPayment passedSubmittedPayment = (SubmittedPayment) invocation.getArguments()[0];
 
-            validatePayment(base64EncodedAppStoreReceipt, originalTransactionId, expiresDate, appStoreOriginalTransactionId, user, paymentPolicySubCost, currencyISO, paymentTimestamp, paymentType, passedSubmittedPayment);
+            validatePayment(base64EncodedAppStoreReceipt, originalTransactionId, expiresDate, appStoreOriginalTransactionId, user, paymentPolicySubCost, currencyISO, paymentTimestamp, paymentType,
+                            passedSubmittedPayment);
 
             return passedSubmittedPayment;
         }
     }
 
     private final class ITunesPaymentLockAnswer implements Answer<ITunesPaymentLock> {
+
         private int userId;
         private int nextSubPaymentSeconds;
 

@@ -16,6 +16,6 @@ public interface O2TariffService {
     GetTariff1Response getManagePrepayTariff(String phoneNumber);
 
     GetSubscriberProfileResponse getSubscriberProfile(String phoneNumber);
-    
+
     GetOrderList2Response getOrderList(String phoneNumber);
 }

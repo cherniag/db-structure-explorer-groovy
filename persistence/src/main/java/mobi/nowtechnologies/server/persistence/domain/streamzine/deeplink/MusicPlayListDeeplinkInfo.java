@@ -3,13 +3,17 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.deeplink;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.PlayerType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.types.ContentType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "sz_deeplink_music_list")
-public class MusicPlayListDeeplinkInfo extends DeeplinkInfo implements PlayableItemDeepLink{
+public class MusicPlayListDeeplinkInfo extends DeeplinkInfo implements PlayableItemDeepLink {
 
-    @Column(name="chart_id")
+    @Column(name = "chart_id")
     private Integer chartId;
 
     @Column(name = "player_type", nullable = false)

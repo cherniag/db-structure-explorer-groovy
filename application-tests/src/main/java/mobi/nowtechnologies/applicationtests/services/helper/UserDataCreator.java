@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.applicationtests.services.helper;
 
 import mobi.nowtechnologies.server.shared.Utils;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.UUID;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class UserDataCreator {
@@ -28,6 +29,7 @@ public class UserDataCreator {
     }
 
     public static class TimestampTokenData {
+
         private String timestamp;
         private String timestampToken;
 

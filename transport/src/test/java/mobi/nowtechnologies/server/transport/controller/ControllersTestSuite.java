@@ -1,22 +1,11 @@
 package mobi.nowtechnologies.server.transport.controller;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.runner.*;
+import org.junit.runners.*;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses(
-{
-        AccCheckControllerTestIT.class,
-        ActivateVideoAudioFreeTrialControllerTestIT.class,
-        ApplyInitPromoControllerTestIT.class,
-        AutoOptInControllerTestIT.class,
-        CommonControllerTestIT.class,
-        GetChartControllerTestIT.class,
-        GetFileControllerTestIT.class,
-        PhoneNumberControllerTestIT.class,
-        GetNewsControllerTestIT.class,
-        SignUpDeviceControllerTestIT.class,
-        VersionControllerTestIT.class
-})
-public class ControllersTestSuite {
-}
+    {AccCheckControllerTestIT.class, ActivateVideoAudioFreeTrialControllerTestIT.class, ApplyInitPromoControllerTestIT.class, AutoOptInControllerTestIT.class, CommonControllerTestIT.class,
+        GetChartControllerTestIT.class, GetFileControllerTestIT.class, PhoneNumberControllerTestIT.class, GetNewsControllerTestIT.class, SignUpDeviceControllerTestIT.class, VersionControllerTestIT
+        .class})
+public class ControllersTestSuite {}

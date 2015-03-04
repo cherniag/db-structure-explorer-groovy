@@ -1,10 +1,19 @@
 package mobi.nowtechnologies.server.service.impl;
 
+import mobi.nowtechnologies.server.service.CloudFileService;
+import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Map;
+
 import com.google.common.io.Closeables;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
-import mobi.nowtechnologies.server.service.CloudFileService;
-import mobi.nowtechnologies.server.service.exception.ExternalServiceException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
@@ -13,12 +22,9 @@ import org.apache.http.HttpException;
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author Titov Mykhaylo (titov)
@@ -58,10 +64,12 @@ public class CloudFileServiceImpl implements CloudFileService {
         boolean isLogged;
         try {
             isLogged = filesClient.login();
-        } catch (IllegalStateException e) {
+        }
+        catch (IllegalStateException e) {
             LOGGER.error("Exception on login on cloud : {}", e.getMessage(), e);
             isLogged = true;// On java.lang.IllegalStateException: Invalid use of SingleClientConnManager: connection still allocated.
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Exception on login on cloud : {}", e.getMessage(), e);
             throw new ExternalServiceException("cloudFile.service.externalError.couldnotlogin", "Couldn't login");
         }
@@ -81,7 +89,8 @@ public class CloudFileServiceImpl implements CloudFileService {
             login();
             try {
                 filesClient.deleteObject(containerName, fileName);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.error("Exception while deleteFile on cloud {}: {}", fileName, e.getMessage(), e);
                 throw new ExternalServiceException("cloudFile.service.externalError.couldnotdelete", "Coudn't delete file");
             }
@@ -89,7 +98,7 @@ public class CloudFileServiceImpl implements CloudFileService {
     }
 
     @Override
-    public InputStream getInputStream(String destinationContainer, String fileName) throws  FilesNotFoundException{
+    public InputStream getInputStream(String destinationContainer, String fileName) throws FilesNotFoundException {
         LOGGER.info("get InputStream for file file in container [] by fileName", destinationContainer, fileName);
         Assert.hasText(fileName);
         login();
@@ -133,7 +142,8 @@ public class CloudFileServiceImpl implements CloudFileService {
         if (file != null && !file.isEmpty()) {
             try {
                 uploadFromStream(file.getInputStream(), fileName, metadata);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 LOGGER.error("Exception while uploadFile on cloud {}: {}", fileName, e.getMessage(), e);
                 throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
             }
@@ -146,17 +156,21 @@ public class CloudFileServiceImpl implements CloudFileService {
     public void uploadFromStream(InputStream stream, String fileName, Map metadata) {
         Assert.notNull(stream);
 
-        Map map = MapUtils.isEmpty(metadata) ? Collections.EMPTY_MAP : metadata;
+        Map map = MapUtils.isEmpty(metadata) ?
+                  Collections.EMPTY_MAP :
+                  metadata;
         LOGGER.info("Updating file on cloud with name {} and data {}", fileName, map);
 
         login();
         try {
             filesClient.storeStreamedObject(containerName, stream, "application/octet-stream", fileName, map);
             LOGGER.info("Done updating file on cloud. File was successfully uploaded");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Exception while uploadFromStream on cloud {}: {}", fileName, e.getMessage(), e);
             throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
-        } finally {
+        }
+        finally {
             Closeables.closeQuietly(stream);
         }
     }
@@ -172,10 +186,12 @@ public class CloudFileServiceImpl implements CloudFileService {
             InputStream inputStream = filesClient.getObjectAsStream(containerName, fileName);
 
             Streams.copy(inputStream, stream, false);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Exception while downloadToStream {}: {}", fileName, e.getMessage(), e);
             throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(stream);
         }
     }
@@ -192,7 +208,8 @@ public class CloudFileServiceImpl implements CloudFileService {
                 filesClient.copyObject(srcContainerName, srcFileName, targetContainerName, targetFileName);
                 LOGGER.info("File {} has been copied", srcFileName);
                 return true;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
@@ -214,7 +231,8 @@ public class CloudFileServiceImpl implements CloudFileService {
                 filesClient.storeStreamedObject(containerName, file.getInputStream(), "application/octet-stream", fileName, Collections.EMPTY_MAP);
                 uploaded = true;
                 LOGGER.info("Done updating file on cloud. File was successfully uploaded {}", uploaded);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOGGER.error("Exception while uploadFile on cloud {}: {}", fileName, e.getMessage(), e);
                 throw new ExternalServiceException("cloudFile.service.externalError.couldnotsavefile", "Coudn't save file");
             }
@@ -235,9 +253,11 @@ public class CloudFileServiceImpl implements CloudFileService {
             filesClient.storeStreamedObject(destinationContainer, fileInputStream, contentType, fileName, Collections.<String, String>emptyMap());
             LOGGER.info("File {} has been uploaded", file.getAbsolutePath());
             return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Exception while uploadFile with contentType on cloud {}: {}", fileName, e.getMessage(), e);
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(fileInputStream);
         }
 
@@ -247,6 +267,10 @@ public class CloudFileServiceImpl implements CloudFileService {
     @Override
     public String getFilesURL() {
         return filesURL;
+    }
+
+    public void setFilesURL(String filesURL) {
+        this.filesURL = filesURL;
     }
 
     public HttpClient getHttpClient() {
@@ -287,10 +311,6 @@ public class CloudFileServiceImpl implements CloudFileService {
 
     public void setContainerName(String containerName) {
         this.containerName = containerName;
-    }
-
-    public void setFilesURL(String filesURL) {
-        this.filesURL = filesURL;
     }
 
     public void setFilesClient(FilesClient filesClient) {

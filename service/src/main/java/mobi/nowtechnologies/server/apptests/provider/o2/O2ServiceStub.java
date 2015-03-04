@@ -3,11 +3,14 @@ package mobi.nowtechnologies.server.apptests.provider.o2;
 import mobi.nowtechnologies.server.dto.ProviderUserDetails;
 import mobi.nowtechnologies.server.service.o2.O2Service;
 import mobi.nowtechnologies.server.service.o2.impl.O2SubscriberData;
-import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 7/3/2014
+ * Author: Gennadii Cherniaiev Date: 7/3/2014
  */
 public class O2ServiceStub implements O2Service {
 
@@ -43,9 +46,7 @@ public class O2ServiceStub implements O2Service {
     @Override
     public ProviderUserDetails getProviderUserDetails(String serverO2Url, String token) {
         String[] parts = token.split("#");
-        ProviderUserDetails providerUserDetails = new ProviderUserDetails()
-                .withContract(parts[0])
-                .withOperator(parts[1]);
+        ProviderUserDetails providerUserDetails = new ProviderUserDetails().withContract(parts[0]).withOperator(parts[1]);
         return providerUserDetails;
     }
 

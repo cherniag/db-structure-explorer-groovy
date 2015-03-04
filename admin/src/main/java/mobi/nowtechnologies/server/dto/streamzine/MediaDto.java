@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
 import mobi.nowtechnologies.server.shared.dto.admin.ArtistDto;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class MediaDto {
@@ -44,12 +45,12 @@ public class MediaDto {
         this.artistDto = artistDto;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public String getFileName() {
         return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getTitle() {
@@ -62,13 +63,6 @@ public class MediaDto {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("isrc", isrc)
-                .append("trackId", trackId)
-                .append("artistDto", artistDto)
-                .append("fileName", fileName)
-                .append("title", title)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("isrc", isrc).append("trackId", trackId).append("artistDto", artistDto).append("fileName", fileName).append("title", title).toString();
     }
 }

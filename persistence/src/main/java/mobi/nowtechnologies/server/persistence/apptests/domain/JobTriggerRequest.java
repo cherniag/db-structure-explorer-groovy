@@ -1,13 +1,17 @@
 package mobi.nowtechnologies.server.persistence.apptests.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
- * Author: Gennadii Cherniaiev
- * Date: 8/28/2014
+ * Author: Gennadii Cherniaiev Date: 8/28/2014
  */
 @Entity
 @Table(name = "fat_job_trigger_request")
@@ -54,11 +58,6 @@ public class JobTriggerRequest {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("jobName", jobName)
-                .append("jobGroupName", jobGroupName)
-                .append("executeTimestamp", executeTimestamp)
-                .toString();
+        return new ToStringBuilder(this).append("id", id).append("jobName", jobName).append("jobGroupName", jobGroupName).append("executeTimestamp", executeTimestamp).toString();
     }
 }

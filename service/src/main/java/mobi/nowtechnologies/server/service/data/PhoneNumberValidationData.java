@@ -1,11 +1,10 @@
 package mobi.nowtechnologies.server.service.data;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/2/13
- * Time: 3:12 PM
+ * User: Alexsandr_Kolpakov Date: 10/2/13 Time: 3:12 PM
  */
 public class PhoneNumberValidationData {
+
     private String phoneNumber;
     private String pin;
 

@@ -1,136 +1,128 @@
 package mobi.nowtechnologies.server.shared.dto.admin;
 
 import mobi.nowtechnologies.server.shared.enums.PaymentDetailsStatus;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Date;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 /**
  * @author Titov Mykhaylo (titov)
  */
 public class PaymentDetailsDto {
-	
-	private Long id;
 
-	private int madeRetries;
+    private Long id;
 
-	private int retriesOnError;
+    private int madeRetries;
 
-	private PaymentDetailsStatus lastPaymentStatus;
+    private int retriesOnError;
 
-	private String descriptionError;
+    private PaymentDetailsStatus lastPaymentStatus;
 
-	private Date creationTimestamp;
+    private String descriptionError;
 
-	private Date disableTimestamp;
+    private Date creationTimestamp;
 
-	private Object paymentPolicy;
+    private Date disableTimestamp;
 
-	private boolean activated;
+    private Object paymentPolicy;
 
-	private Object promotionPaymentPolicyDto;
+    private boolean activated;
 
-	private UserDto userDto;
+    private Object promotionPaymentPolicyDto;
 
-	public Long getId() {
-		return id;
-	}
+    private UserDto userDto;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public int getMadeRetries() {
-		return madeRetries;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setMadeRetries(int madeRetries) {
-		this.madeRetries = madeRetries;
-	}
+    public int getMadeRetries() {
+        return madeRetries;
+    }
 
-	public int getRetriesOnError() {
-		return retriesOnError;
-	}
+    public void setMadeRetries(int madeRetries) {
+        this.madeRetries = madeRetries;
+    }
 
-	public void setRetriesOnError(int retriesOnError) {
-		this.retriesOnError = retriesOnError;
-	}
+    public int getRetriesOnError() {
+        return retriesOnError;
+    }
 
-	public PaymentDetailsStatus getLastPaymentStatus() {
-		return lastPaymentStatus;
-	}
+    public void setRetriesOnError(int retriesOnError) {
+        this.retriesOnError = retriesOnError;
+    }
 
-	public void setLastPaymentStatus(PaymentDetailsStatus lastPaymentStatus) {
-		this.lastPaymentStatus = lastPaymentStatus;
-	}
+    public PaymentDetailsStatus getLastPaymentStatus() {
+        return lastPaymentStatus;
+    }
 
-	public String getDescriptionError() {
-		return descriptionError;
-	}
+    public void setLastPaymentStatus(PaymentDetailsStatus lastPaymentStatus) {
+        this.lastPaymentStatus = lastPaymentStatus;
+    }
 
-	public void setDescriptionError(String descriptionError) {
-		this.descriptionError = descriptionError;
-	}
+    public String getDescriptionError() {
+        return descriptionError;
+    }
 
-	public Date getCreationTimestamp() {
-		return creationTimestamp;
-	}
+    public void setDescriptionError(String descriptionError) {
+        this.descriptionError = descriptionError;
+    }
 
-	public void setCreationTimestamp(Date creationTimestamp) {
-		this.creationTimestamp = creationTimestamp;
-	}
+    public Date getCreationTimestamp() {
+        return creationTimestamp;
+    }
 
-	public Date getDisableTimestamp() {
-		return disableTimestamp;
-	}
+    public void setCreationTimestamp(Date creationTimestamp) {
+        this.creationTimestamp = creationTimestamp;
+    }
 
-	public void setDisableTimestamp(Date disableTimestamp) {
-		this.disableTimestamp = disableTimestamp;
-	}
+    public Date getDisableTimestamp() {
+        return disableTimestamp;
+    }
 
-	public Object getPaymentPolicy() {
-		return paymentPolicy;
-	}
+    public void setDisableTimestamp(Date disableTimestamp) {
+        this.disableTimestamp = disableTimestamp;
+    }
 
-	public boolean isActivated() {
-		return activated;
-	}
+    public Object getPaymentPolicy() {
+        return paymentPolicy;
+    }
 
-	public void setActivated(boolean activated) {
-		this.activated = activated;
-	}
+    public boolean isActivated() {
+        return activated;
+    }
 
-	public Object getPromotionPaymentPolicyDto() {
-		return promotionPaymentPolicyDto;
-	}
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 
-	public void setPromotionPaymentPolicyDto(Object promotionPaymentPolicyDto) {
-		this.promotionPaymentPolicyDto = promotionPaymentPolicyDto;
-	}
+    public Object getPromotionPaymentPolicyDto() {
+        return promotionPaymentPolicyDto;
+    }
 
-	public UserDto getUserDto() {
-		return userDto;
-	}
+    public void setPromotionPaymentPolicyDto(Object promotionPaymentPolicyDto) {
+        this.promotionPaymentPolicyDto = promotionPaymentPolicyDto;
+    }
 
-	public void setUserDto(UserDto userDto) {
-		this.userDto = userDto;
-	}
+    public UserDto getUserDto() {
+        return userDto;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append("id", id)
-				.append("madeRetries", madeRetries)
-				.append("retriesOnError", retriesOnError)
-				.append("lastPaymentStatus", lastPaymentStatus)
-				.append("descriptionError", descriptionError)
-				.append("creationTimestamp", creationTimestamp)
-				.append("disableTimestamp", disableTimestamp)
-				.append("paymentPolicy", paymentPolicy)
-				.append("activated", activated)
-				.append("promotionPaymentPolicyDto", promotionPaymentPolicyDto)
-				.append("userDto", userDto)
-				.toString();
-	}
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("madeRetries", madeRetries).append("retriesOnError", retriesOnError).append("lastPaymentStatus", lastPaymentStatus)
+                                        .append("descriptionError", descriptionError).append("creationTimestamp", creationTimestamp).append("disableTimestamp", disableTimestamp)
+                                        .append("paymentPolicy", paymentPolicy).append("activated", activated).append("promotionPaymentPolicyDto", promotionPaymentPolicyDto).append("userDto", userDto)
+                                        .toString();
+    }
 }

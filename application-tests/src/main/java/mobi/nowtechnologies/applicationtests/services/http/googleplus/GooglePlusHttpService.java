@@ -5,45 +5,43 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.helper.UserDataCreator;
 import mobi.nowtechnologies.applicationtests.services.http.AbstractHttpService;
 import mobi.nowtechnologies.applicationtests.services.http.domain.google_plus.GooglePlusResponse;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Arrays;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
 @Service
 public class GooglePlusHttpService extends AbstractHttpService {
+
     public GooglePlusResponse login(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName, String userToken) {
         return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken).getBody();
     }
 
-    public ResponseEntity<GooglePlusResponse> loginWithoutWithExpectedError(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName, String userToken) {
+    public ResponseEntity<GooglePlusResponse> loginWithoutWithExpectedError(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId,
+                                                                            String userName, String userToken) {
         return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken);
     }
 
-    public ResponseEntity<GooglePlusResponse> loginWithoutAccessToken(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName, String userToken) {
+    public ResponseEntity<GooglePlusResponse> loginWithoutAccessToken(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName,
+                                                                      String userToken) {
         return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken, true);
     }
 
-    private ResponseEntity<GooglePlusResponse> doLogin(UserDeviceData deviceData,
-                                                       String deviceUID,
-                                                       RequestFormat format,
-                                                       String accessToken,
-                                                       String googlePlusUserId,
-                                                       String userName, String userToken) {
+    private ResponseEntity<GooglePlusResponse> doLogin(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName,
+                                                       String userToken) {
         return doLogin(deviceData, deviceUID, format, accessToken, googlePlusUserId, userName, userToken, false);
     }
 
-    private ResponseEntity<GooglePlusResponse> doLogin(UserDeviceData deviceData,
-                                                       String deviceUID,
-                                                       RequestFormat format,
-                                                       String accessToken,
-                                                       String googlePlusUserId,
-                                                       String userName,
-                                                       String userToken,
-                                                       boolean omitAccessToken) {
+    private ResponseEntity<GooglePlusResponse> doLogin(UserDeviceData deviceData, String deviceUID, RequestFormat format, String accessToken, String googlePlusUserId, String userName,
+                                                       String userToken, boolean omitAccessToken) {
         UserDataCreator.TimestampTokenData googlePlusUserToken = userDataCreator.createUserToken(userToken);
 
         String uri = getUri(deviceData, "SIGN_IN_GOOGLE_PLUS", format);

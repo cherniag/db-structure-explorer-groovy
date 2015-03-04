@@ -3,132 +3,133 @@ package mobi.nowtechnologies.server.web.subscription;
 import java.util.Date;
 
 public class SubscriptionState implements java.io.Serializable {
-	private static final long serialVersionUID = 1L;
 
-	private boolean paySubscription;
-	private boolean freeTrial;
+    private static final long serialVersionUID = 1L;
 
-	private boolean unlimitedFreeTrialFor4G;
-	private boolean freeTrialAudioOnly;
-	private boolean freeTrialOptedIn;
+    private boolean paySubscription;
+    private boolean freeTrial;
 
-	private boolean eligibleForVideo;
+    private boolean unlimitedFreeTrialFor4G;
+    private boolean freeTrialAudioOnly;
+    private boolean freeTrialOptedIn;
 
-	private boolean subscribedToVideo;
-	private Date nextBillingDate;
-	private Integer daysToNextBillingDate;
-	private boolean upgradingToVideo;
-	private boolean downgradingToAudioOnly;
-	
-	private boolean expiringSubscription;
-	private boolean pendingPayment;
+    private boolean eligibleForVideo;
 
-	public boolean isPreviewMode() {
-		return !(isFreeTrial() || isPaySubscription());
-	}
+    private boolean subscribedToVideo;
+    private Date nextBillingDate;
+    private Integer daysToNextBillingDate;
+    private boolean upgradingToVideo;
+    private boolean downgradingToAudioOnly;
 
-	public boolean isPaySubscription() {
-		return paySubscription;
-	}
+    private boolean expiringSubscription;
+    private boolean pendingPayment;
 
-	public void setPaySubscription(boolean paySubscription) {
-		this.paySubscription = paySubscription;
-	}
+    public boolean isPreviewMode() {
+        return !(isFreeTrial() || isPaySubscription());
+    }
 
-	public boolean isFreeTrial() {
-		return freeTrial;
-	}
+    public boolean isPaySubscription() {
+        return paySubscription;
+    }
 
-	public void setFreeTrial(boolean freeTrial) {
-		this.freeTrial = freeTrial;
-	}
+    public void setPaySubscription(boolean paySubscription) {
+        this.paySubscription = paySubscription;
+    }
 
-	public boolean isUnlimitedFreeTrialFor4G() {
-		return unlimitedFreeTrialFor4G;
-	}
+    public boolean isFreeTrial() {
+        return freeTrial;
+    }
 
-	public void setUnlimitedFreeTrialFor4G(boolean unlimitedFreeTrialFor4G) {
-		this.unlimitedFreeTrialFor4G = unlimitedFreeTrialFor4G;
-	}
+    public void setFreeTrial(boolean freeTrial) {
+        this.freeTrial = freeTrial;
+    }
 
-	public boolean isFreeTrialAudioOnly() {
-		return freeTrialAudioOnly;
-	}
+    public boolean isUnlimitedFreeTrialFor4G() {
+        return unlimitedFreeTrialFor4G;
+    }
 
-	public void setFreeTrialAudioOnly(boolean freeTrialAudioOnly) {
-		this.freeTrialAudioOnly = freeTrialAudioOnly;
-	}
+    public void setUnlimitedFreeTrialFor4G(boolean unlimitedFreeTrialFor4G) {
+        this.unlimitedFreeTrialFor4G = unlimitedFreeTrialFor4G;
+    }
 
-	public boolean isEligibleForVideo() {
-		return eligibleForVideo;
-	}
+    public boolean isFreeTrialAudioOnly() {
+        return freeTrialAudioOnly;
+    }
 
-	public void setEligibleForVideo(boolean eligibleForVideo) {
-		this.eligibleForVideo = eligibleForVideo;
-	}
+    public void setFreeTrialAudioOnly(boolean freeTrialAudioOnly) {
+        this.freeTrialAudioOnly = freeTrialAudioOnly;
+    }
 
-	public boolean isSubscribedToVideo() {
-		return subscribedToVideo;
-	}
+    public boolean isEligibleForVideo() {
+        return eligibleForVideo;
+    }
 
-	public void setSubscribedToVideo(boolean subscribedToVideo) {
-		this.subscribedToVideo = subscribedToVideo;
-	}
+    public void setEligibleForVideo(boolean eligibleForVideo) {
+        this.eligibleForVideo = eligibleForVideo;
+    }
 
-	public Date getNextBillingDate() {
-		return nextBillingDate;
-	}
+    public boolean isSubscribedToVideo() {
+        return subscribedToVideo;
+    }
 
-	public void setNextBillingDate(Date nextBillingDate) {
-		this.nextBillingDate = nextBillingDate;
-	}
+    public void setSubscribedToVideo(boolean subscribedToVideo) {
+        this.subscribedToVideo = subscribedToVideo;
+    }
 
-	public boolean isUpgradingToVideo() {
-		return upgradingToVideo;
-	}
+    public Date getNextBillingDate() {
+        return nextBillingDate;
+    }
 
-	public void setUpgradingToVideo(boolean upgradingToVideo) {
-		this.upgradingToVideo = upgradingToVideo;
-	}
+    public void setNextBillingDate(Date nextBillingDate) {
+        this.nextBillingDate = nextBillingDate;
+    }
 
-	public boolean isExpiringSubscription() {
-		return expiringSubscription;
-	}
+    public boolean isUpgradingToVideo() {
+        return upgradingToVideo;
+    }
 
-	public void setExpiringSubscription(boolean expiringSubscription) {
-		this.expiringSubscription = expiringSubscription;
-	}
+    public void setUpgradingToVideo(boolean upgradingToVideo) {
+        this.upgradingToVideo = upgradingToVideo;
+    }
 
-	public Integer getDaysToNextBillingDate() {
-		return daysToNextBillingDate;
-	}
+    public boolean isExpiringSubscription() {
+        return expiringSubscription;
+    }
 
-	public void setDaysToNextBillingDate(Integer daysToNextBillingDate) {
-		this.daysToNextBillingDate = daysToNextBillingDate;
-	}
+    public void setExpiringSubscription(boolean expiringSubscription) {
+        this.expiringSubscription = expiringSubscription;
+    }
 
-	public boolean isFreeTrialOptedIn() {
-		return freeTrialOptedIn;
-	}
+    public Integer getDaysToNextBillingDate() {
+        return daysToNextBillingDate;
+    }
 
-	public void setFreeTrialOptedIn(boolean freeTrialOptedIn) {
-		this.freeTrialOptedIn = freeTrialOptedIn;
-	}
+    public void setDaysToNextBillingDate(Integer daysToNextBillingDate) {
+        this.daysToNextBillingDate = daysToNextBillingDate;
+    }
 
-	public boolean isDowngradingToAudioOnly() {
-		return downgradingToAudioOnly;
-	}
+    public boolean isFreeTrialOptedIn() {
+        return freeTrialOptedIn;
+    }
 
-	public void setDowngradingToAudioOnly(boolean downgradingToAudioOnly) {
-		this.downgradingToAudioOnly = downgradingToAudioOnly;
-	}
+    public void setFreeTrialOptedIn(boolean freeTrialOptedIn) {
+        this.freeTrialOptedIn = freeTrialOptedIn;
+    }
 
-	public void setPendingPayment(boolean pendingPayment) {
-		this.pendingPayment = pendingPayment;
-	}
-	
-	public boolean hasPendingPayment() {
-		return this.pendingPayment;
-	}
+    public boolean isDowngradingToAudioOnly() {
+        return downgradingToAudioOnly;
+    }
+
+    public void setDowngradingToAudioOnly(boolean downgradingToAudioOnly) {
+        this.downgradingToAudioOnly = downgradingToAudioOnly;
+    }
+
+    public void setPendingPayment(boolean pendingPayment) {
+        this.pendingPayment = pendingPayment;
+    }
+
+    public boolean hasPendingPayment() {
+        return this.pendingPayment;
+    }
 
 }

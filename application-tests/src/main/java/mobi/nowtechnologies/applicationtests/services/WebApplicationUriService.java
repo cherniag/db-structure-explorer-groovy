@@ -2,16 +2,18 @@ package mobi.nowtechnologies.applicationtests.services;
 
 import mobi.nowtechnologies.applicationtests.services.device.PhoneState;
 import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceData;
+
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
-import java.util.Map;
-
 @Component
 public class WebApplicationUriService {
+
     @Value("${environment.url}")
     private String environmentUrl;
 

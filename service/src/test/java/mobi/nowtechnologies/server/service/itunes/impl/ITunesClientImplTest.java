@@ -9,14 +9,10 @@ import mobi.nowtechnologies.server.service.itunes.ITunesResponseParser;
 import mobi.nowtechnologies.server.service.itunes.ITunesResult;
 import mobi.nowtechnologies.server.shared.service.BasicResponse;
 import mobi.nowtechnologies.server.shared.service.PostService;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import org.junit.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ITunesClientImplTest {

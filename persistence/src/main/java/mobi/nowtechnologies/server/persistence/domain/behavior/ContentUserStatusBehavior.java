@@ -2,7 +2,15 @@ package mobi.nowtechnologies.server.persistence.domain.behavior;
 
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import java.io.Serializable;
 
 /**
@@ -11,6 +19,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "content_user_status_behavior")
 public class ContentUserStatusBehavior implements Serializable {
+
     @Id
     private long id;
 
@@ -32,20 +41,20 @@ public class ContentUserStatusBehavior implements Serializable {
     protected ContentUserStatusBehavior() {
     }
 
-    public void setFavoritesOff(boolean favoritesOff) {
-        this.favoritesOff = favoritesOff;
+    public boolean isAddsOff() {
+        return addsOff;
     }
 
     public void setAddsOff(boolean addsOff) {
         this.addsOff = addsOff;
     }
 
-    public boolean isAddsOff() {
-        return addsOff;
-    }
-
     public boolean isFavoritesOff() {
         return favoritesOff;
+    }
+
+    public void setFavoritesOff(boolean favoritesOff) {
+        this.favoritesOff = favoritesOff;
     }
 
     public UserStatusType getUserStatusType() {
@@ -55,10 +64,10 @@ public class ContentUserStatusBehavior implements Serializable {
     @Override
     public String toString() {
         return "ContentUserStatusBehavior{" +
-                "addsOff=" + addsOff +
-                ", behaviorConfig=" + behaviorConfig +
-                ", favoritesOff=" + favoritesOff +
-                ", userStatusType=" + userStatusType +
-                '}';
+               "addsOff=" + addsOff +
+               ", behaviorConfig=" + behaviorConfig +
+               ", favoritesOff=" + favoritesOff +
+               ", userStatusType=" + userStatusType +
+               '}';
     }
 }

@@ -11,8 +11,7 @@ public class MailTemplateProcessor {
 
 
     /**
-     * Method searches for sequences framed by %-sign and replaces
-     * them with values from model map.
+     * Method searches for sequences framed by %-sign and replaces them with values from model map.
      *
      * @param templateString - a string with framed sequences
      * @param model          - a map with key - values
@@ -37,7 +36,8 @@ public class MailTemplateProcessor {
             if (model.containsKey(key)) {
                 String value = model.get(key);
                 output.append(value);
-            } else {
+            }
+            else {
                 output.append(token);
             }
 

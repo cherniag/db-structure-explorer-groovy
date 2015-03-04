@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 11/21/2014
+ * Author: Gennadii Cherniaiev Date: 11/21/2014
  */
 public enum ReferralState {
     PENDING, // ->

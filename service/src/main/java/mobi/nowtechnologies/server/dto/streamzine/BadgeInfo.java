@@ -1,15 +1,16 @@
 package mobi.nowtechnologies.server.dto.streamzine;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 public class BadgeInfo {
+
     @XmlElement(name = "image")
     @JsonProperty(value = "image")
     private String image;

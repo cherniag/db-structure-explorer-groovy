@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ChartUserStatusBehaviors {
+
     private List<ChartUserStatusBehavior> chartUserStatusBehaviors = new ArrayList<ChartUserStatusBehavior>();
 
     private ChartUserStatusBehaviors() {
@@ -26,7 +27,7 @@ public class ChartUserStatusBehaviors {
         for (ChartUserStatusBehavior chartUserStatusBehavior : chartUserStatusBehaviors) {
             final int chartId = chartUserStatusBehavior.getChartId();
 
-            if(!ordered.containsKey(chartId)) {
+            if (!ordered.containsKey(chartId)) {
                 ordered.put(chartId, new HashMap<UserStatusType, ChartUserStatusBehavior>());
             }
 

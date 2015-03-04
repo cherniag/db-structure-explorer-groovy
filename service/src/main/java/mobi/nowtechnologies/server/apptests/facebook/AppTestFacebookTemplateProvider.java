@@ -1,13 +1,19 @@
 package mobi.nowtechnologies.server.apptests.facebook;
 
 import mobi.nowtechnologies.server.service.social.facebook.FacebookTemplateProvider;
-import org.springframework.social.MissingAuthorizationException;
-import org.springframework.social.facebook.api.*;
-import org.springframework.social.facebook.api.impl.FacebookTemplate;
 
 import javax.annotation.Resource;
 
+import org.springframework.social.MissingAuthorizationException;
+import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.ImageType;
+import org.springframework.social.facebook.api.PagedList;
+import org.springframework.social.facebook.api.Reference;
+import org.springframework.social.facebook.api.UserOperations;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
+
 public class AppTestFacebookTemplateProvider implements FacebookTemplateProvider {
+
     @Resource
     private AppTestFacebookTokenService appTestFacebookTokenService;
 
@@ -21,7 +27,7 @@ public class AppTestFacebookTemplateProvider implements FacebookTemplateProvider
                 return new UserOperations() {
                     @Override
                     public FacebookProfile getUserProfile() {
-                        if(facebookProfile instanceof FailureFacebookProfile) {
+                        if (facebookProfile instanceof FailureFacebookProfile) {
                             throw new MissingAuthorizationException("provider id");
                         }
                         return facebookProfile;

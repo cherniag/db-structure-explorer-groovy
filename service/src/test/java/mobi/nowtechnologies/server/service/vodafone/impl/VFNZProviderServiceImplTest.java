@@ -1,39 +1,36 @@
 package mobi.nowtechnologies.server.service.vodafone.impl;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.service.DeviceService;
 import mobi.nowtechnologies.server.service.data.PhoneNumberValidationData;
 import mobi.nowtechnologies.server.service.validator.NZCellNumberValidator;
 import mobi.nowtechnologies.server.shared.Processor;
 import mobi.nowtechnologies.server.shared.Utils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import junit.framework.Assert;
+
 /**
- * Created with IntelliJ IDEA.
- * User: Alexsandr_Kolpakov
- * Date: 10/2/13
- * Time: 3:47 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: Alexsandr_Kolpakov Date: 10/2/13 Time: 3:47 PM To change this template use File | Settings | File Templates.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Utils.class})
+@PrepareForTest({Utils.class})
 public class VFNZProviderServiceImplTest {
+
     private VFNZProviderServiceImpl fixture;
 
     @Mock
@@ -47,11 +44,11 @@ public class VFNZProviderServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-          fixture = new VFNZProviderServiceImpl();
-          fixture.setPhoneValidator(mockNzCellNumberValidator);
-          fixture.setGatewayService(gatewayService);
-          fixture.setDeviceService(mockDeviceService);
-          fixture.setProviderNumber("5803");
+        fixture = new VFNZProviderServiceImpl();
+        fixture.setPhoneValidator(mockNzCellNumberValidator);
+        fixture.setGatewayService(gatewayService);
+        fixture.setDeviceService(mockDeviceService);
+        fixture.setProviderNumber("5803");
     }
 
     @Test
@@ -59,7 +56,7 @@ public class VFNZProviderServiceImplTest {
         String phoneNumber = "2111111111";
 
         Mockito.when(mockNzCellNumberValidator.validateAndNormalize(eq(phoneNumber))).thenReturn("+642111111111");
-        Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String)null))).thenReturn(false);
+        Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null))).thenReturn(false);
         PowerMockito.mockStatic(Utils.class);
 
         Mockito.when(Utils.generateRandom4DigitsPIN()).thenReturn("1000");
@@ -80,7 +77,7 @@ public class VFNZProviderServiceImplTest {
         String phoneNumber = "2111111111";
 
         Mockito.when(mockNzCellNumberValidator.validateAndNormalize(eq(phoneNumber))).thenReturn("+642111111111");
-        Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String)null))).thenReturn(true);
+        Mockito.when(mockDeviceService.isPromotedDevicePhone(any(Community.class), eq(phoneNumber), eq((String) null))).thenReturn(true);
         PowerMockito.mockStatic(Utils.class);
 
         Mockito.when(Utils.generateRandom4DigitsPIN()).thenReturn("1000");
@@ -102,7 +99,7 @@ public class VFNZProviderServiceImplTest {
         final Processor processor = spy(new Processor() {
             @Override
             public void process(Object data) {
-                VFNZSubscriberData subscriberData = (VFNZSubscriberData)data;
+                VFNZSubscriberData subscriberData = (VFNZSubscriberData) data;
                 Assert.assertEquals(null, subscriberData.getProvider());
                 Assert.assertEquals(phoneNumber, subscriberData.getPhoneNumber());
                 fixture.LOGGER.info("process msg");

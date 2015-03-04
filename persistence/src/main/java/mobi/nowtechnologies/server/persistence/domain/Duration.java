@@ -1,12 +1,14 @@
 package mobi.nowtechnologies.server.persistence.domain;
 
-import com.google.common.base.Preconditions;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+
 import java.io.Serializable;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Created by zam on 12/9/2014.
@@ -14,6 +16,7 @@ import java.io.Serializable;
 // TODO: consider with Period
 @Embeddable
 public class Duration implements Serializable {
+
     private int amount;
 
     @Enumerated(EnumType.STRING)
@@ -52,18 +55,26 @@ public class Duration implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Duration)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Duration)) {
+            return false;
+        }
 
         Duration duration = (Duration) o;
 
         // both are not a period
-        if(!duration.containsPeriod() && !containsPeriod()) {
+        if (!duration.containsPeriod() && !containsPeriod()) {
             return true;
         }
 
-        if (amount != duration.amount) return false;
-        if (unit != duration.unit) return false;
+        if (amount != duration.amount) {
+            return false;
+        }
+        if (unit != duration.unit) {
+            return false;
+        }
 
         return true;
     }
@@ -71,15 +82,17 @@ public class Duration implements Serializable {
     @Override
     public int hashCode() {
         int result = amount;
-        result = 31 * result + (unit != null ? unit.hashCode() : 0);
+        result = 31 * result + (unit != null ?
+                                unit.hashCode() :
+                                0);
         return result;
     }
 
     @Override
     public String toString() {
         return "Duration{" +
-                "amount=" + amount +
-                ", unit=" + unit +
-                '}';
+               "amount=" + amount +
+               ", unit=" + unit +
+               '}';
     }
 }

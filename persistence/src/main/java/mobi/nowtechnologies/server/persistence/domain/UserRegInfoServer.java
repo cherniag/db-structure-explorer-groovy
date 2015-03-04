@@ -7,5 +7,5 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Titov Mykhaylo (titov)
  */
-@XmlRootElement(name="userRegInfo")
-public class UserRegInfoServer extends UserRegInfo { }
+@XmlRootElement(name = "userRegInfo")
+public class UserRegInfoServer extends UserRegInfo {}

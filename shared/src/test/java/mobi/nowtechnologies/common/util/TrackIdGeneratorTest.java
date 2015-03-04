@@ -1,7 +1,8 @@
 package mobi.nowtechnologies.common.util;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Test;
+
+import org.junit.*;
 
 import static junit.framework.Assert.assertEquals;
 

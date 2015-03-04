@@ -3,20 +3,21 @@ package mobi.nowtechnologies.server.service.sms;
 import com.sentaca.spring.smpp.BindConfiguration;
 import com.sentaca.spring.smpp.mo.MessageReceiver;
 import com.sentaca.spring.smpp.monitoring.SMPPMonitoringAgent;
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+
+import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import junit.framework.Assert;
+
 /**
- * User: Alexsandr_Kolpakov
- * Date: 10/22/13
- * Time: 10:37 AM
+ * User: Alexsandr_Kolpakov Date: 10/22/13 Time: 10:37 AM
  */
 @RunWith(PowerMockRunner.class)
 public class SMPPGatewayTest {
+
     private SMPPGateway fixture;
 
     @Mock

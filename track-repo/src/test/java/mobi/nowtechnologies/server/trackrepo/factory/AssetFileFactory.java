@@ -1,6 +1,7 @@
 /**
  *
  */
+
 package mobi.nowtechnologies.server.trackrepo.factory;
 
 import mobi.nowtechnologies.server.trackrepo.domain.AssetFile;
@@ -12,6 +13,7 @@ import java.io.File;
  * @author Alexander Kolpakov (akolpakov)
  */
 public class AssetFileFactory {
+
     private File fileDir;
 
     public AssetFile anyAssetFile() {

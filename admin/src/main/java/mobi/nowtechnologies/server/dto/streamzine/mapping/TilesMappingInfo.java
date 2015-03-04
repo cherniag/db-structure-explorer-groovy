@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine.mapping;
 
 public class TilesMappingInfo {
+
     private boolean title;
     private boolean subTitle;
 

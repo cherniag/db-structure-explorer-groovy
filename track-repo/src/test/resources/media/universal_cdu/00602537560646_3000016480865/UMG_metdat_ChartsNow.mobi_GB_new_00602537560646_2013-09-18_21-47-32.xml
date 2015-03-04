@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<product xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.digiplug.com/dsc/umgistd-1_4_5" upc="00602537560646">
+<product xmlns="http://www.digiplug.com/dsc/umgistd-1_4_5" upc="00602537560646">
     <type>new</type>
     <territory>GB</territory>
     <prd_title>Jamaïque</prd_title>

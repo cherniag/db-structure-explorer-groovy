@@ -1,8 +1,13 @@
 package mobi.nowtechnologies.server.persistence.domain.versioncheck;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Created by Oleg Artomov on 9/11/2014.
@@ -16,10 +21,10 @@ public class VersionMessage {
     @Column(name = "id")
     private Long id;
 
-    @Column(name="message_key",columnDefinition="char(100)", nullable = false)
+    @Column(name = "message_key", columnDefinition = "char(100)", nullable = false)
     private String messageKey;
 
-    @Column(name="url",columnDefinition="char(2000)")
+    @Column(name = "url", columnDefinition = "char(2000)")
     private String url;
 
     protected VersionMessage() {

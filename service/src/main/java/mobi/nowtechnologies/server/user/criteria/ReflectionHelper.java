@@ -3,8 +3,7 @@ package mobi.nowtechnologies.server.user.criteria;
 import java.lang.reflect.Field;
 
 /**
- * Author: Gennadii Cherniaiev
- * Date: 4/10/2014
+ * Author: Gennadii Cherniaiev Date: 4/10/2014
  */
 public class ReflectionHelper {
 

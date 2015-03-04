@@ -2,15 +2,23 @@ package mobi.nowtechnologies.server.persistence.domain.streamzine.badge;
 
 import mobi.nowtechnologies.server.persistence.domain.DeviceType;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.Dimensions;
-import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.springframework.util.Assert;
 
 @Entity
 @Table(
-        name = "sz_resolution",
-        uniqueConstraints = @UniqueConstraint(name = "sz_resolution_dev_w_h", columnNames = {"device_type", "width", "height"}))
+    name = "sz_resolution",
+    uniqueConstraints = @UniqueConstraint(name = "sz_resolution_dev_w_h", columnNames = {"device_type", "width", "height"}))
 public class Resolution {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -71,14 +79,24 @@ public class Resolution {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Resolution that = (Resolution) o;
 
-        if (height != that.height) return false;
-        if (width != that.width) return false;
-        if (!deviceType.equals(that.deviceType)) return false;
+        if (height != that.height) {
+            return false;
+        }
+        if (width != that.width) {
+            return false;
+        }
+        if (!deviceType.equals(that.deviceType)) {
+            return false;
+        }
 
         return true;
     }

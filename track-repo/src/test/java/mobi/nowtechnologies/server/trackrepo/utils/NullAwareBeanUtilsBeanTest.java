@@ -1,23 +1,21 @@
 package mobi.nowtechnologies.server.trackrepo.utils;
 
-import junit.framework.Assert;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropsData;
 import mobi.nowtechnologies.server.trackrepo.ingest.IngestWizardData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.*;
+import org.junit.runner.*;
+
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import junit.framework.Assert;
+
 /**
- * Created with IntelliJ IDEA.
- * User: Alexsandr_Kolpakov
- * Date: 7/16/13
- * Time: 3:50 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: Alexsandr_Kolpakov Date: 7/16/13 Time: 3:50 PM To change this template use File | Settings | File Templates.
  */
 @RunWith(PowerMockRunner.class)
 public class NullAwareBeanUtilsBeanTest {

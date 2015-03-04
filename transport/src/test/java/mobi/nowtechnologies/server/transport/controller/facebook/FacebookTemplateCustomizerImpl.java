@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.transport.controller.facebook;
 
 public class FacebookTemplateCustomizerImpl extends AbstractFacebookTemplateCustomizerImpl {
+
     private String facebookUserId;
     private String facebookEmail;
     private String firstName;

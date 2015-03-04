@@ -2,12 +2,13 @@ package mobi.nowtechnologies.server.service.configuration;
 
 import mobi.nowtechnologies.server.user.rules.RuleServiceSupport;
 import mobi.nowtechnologies.server.user.rules.TriggerType;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-public class ConfigurationAwareService<T extends TriggerType, Value> implements InitializingBean{
+public class ConfigurationAwareService<T extends TriggerType, Value> implements InitializingBean {
 
-    private Configuration<T, Value,? extends RuleBuilder<?, Value> > configuration;
+    private Configuration<T, Value, ? extends RuleBuilder<?, Value>> configuration;
     private RuleServiceSupport<T> ruleServiceSupport;
 
     @Override
@@ -21,17 +22,17 @@ public class ConfigurationAwareService<T extends TriggerType, Value> implements 
         return ruleServiceSupport;
     }
 
-    public Configuration<T, Value,?  extends  RuleBuilder<?, Value> > getConfiguration() {
+    //TODO: get rid of this, introduced for test purpose
+    protected void setRuleServiceSupport(RuleServiceSupport ruleServiceSupport) {
+        this.ruleServiceSupport = ruleServiceSupport;
+    }
+
+    public Configuration<T, Value, ? extends RuleBuilder<?, Value>> getConfiguration() {
         return configuration;
     }
 
     public void setConfiguration(Configuration<T, Value, ? extends RuleBuilder<?, Value>> configuration) {
         this.configuration = configuration;
-    }
-
-    //TODO: get rid of this, introduced for test purpose
-    protected void setRuleServiceSupport(RuleServiceSupport ruleServiceSupport) {
-        this.ruleServiceSupport = ruleServiceSupport;
     }
 
 }

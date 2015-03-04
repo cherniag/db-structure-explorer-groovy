@@ -1,17 +1,21 @@
 package mobi.nowtechnologies.server.shared.web.mapping;
 
-import org.springframework.web.servlet.mvc.condition.*;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
+import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
+import org.springframework.web.servlet.mvc.condition.ParamsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
+import org.springframework.web.servlet.mvc.condition.RequestConditionHolder;
+import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
- * User: Alexsandr_Kolpakov
- * Date: 12/10/13
- * Time: 11:02 AM
+ * User: Alexsandr_Kolpakov Date: 12/10/13 Time: 11:02 AM
  */
-public class RESTRequestMappingHandlerMapping extends RequestMappingHandlerMapping{
+public class RESTRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
 
     @Override
     protected RequestMappingInfo getMatchingMapping(RequestMappingInfo info, HttpServletRequest request) {

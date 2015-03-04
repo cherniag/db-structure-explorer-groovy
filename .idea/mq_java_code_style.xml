@@ -1,0 +1,251 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<!--
+  Checkstyle configuration that checks the sun coding conventions from:
+
+    - the Java Language Specification at
+      http://java.sun.com/docs/books/jls/second_edition/html/index.html
+
+    - the Sun Code Conventions at http://java.sun.com/docs/codeconv/
+
+    - the Javadoc guidelines at
+      http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
+
+    - the JDK Api documentation http://java.sun.com/j2se/docs/api/index.html
+
+    - some best practices
+
+  Checkstyle is very configurable. Be sure to read the documentation at
+  http://checkstyle.sf.net (or in your downloaded distribution).
+
+  Most Checks are configurable, be sure to consult the documentation.
+
+  To completely disable a check, just comment it out or delete it from the file.
+
+  Finally, it is worth reading the documentation.
+
+-->
+
+<module name="Checker">
+
+    <!-- Checks that a package.html file exists for each package.     -->
+    <!-- See http://checkstyle.sf.net/config_javadoc.html#PackageHtml -->
+    <!-- <module name="PackageHtml"/> -->  <!-- Commented out by Musicqubed.com -->
+
+    <!-- Checks whether files end with a new line.                        -->
+    <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
+    <module name="NewlineAtEndOfFile"/>
+
+    <!-- Checks that property files contain the same keys.         -->
+    <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
+    <!-- <module name="Translation"/> -->  <!-- Commented out by Musicqubed.com -->
+    
+    <!-- Following interprets the header file as regular expressions. -->
+    <module name="RegexpHeader">
+      <!-- Property added by Musicqubed.com -->
+      <!-- note that this property is in-line'ed in order to make the IDEA jetstyle plugin work  -->
+      <!-- since it wasn't possible to set a property in the plugin to point it at a header file -->
+      <property name="header" value="/*\n * Copyright 20\d\d Musicqubed.com. All Rights Reserved.\n */\n"/>
+    </module>
+    
+    <module name="FileLength"/>
+
+    <module name="FileTabCharacter "/>
+    <module name="TreeWalker">
+
+        <!-- Checks for Javadoc comments.                     -->
+        <!-- See http://checkstyle.sf.net/config_javadoc.html -->
+<!--        <module name="JavadocMethod">
+          <property name="excludeScope" value="private"/>  &lt;!&ndash; Property added by Musicqubed.com &ndash;&gt;
+        </module>
+        <module name="JavadocType"/>
+        <module name="JavadocVariable">
+          <property name="excludeScope" value="private"/>  &lt;!&ndash; Property added by Musicqubed.com &ndash;&gt;
+        </module>
+        <module name="JavadocStyle">
+          <property name="checkFirstSentence" value="false"/>  &lt;!&ndash; Property added by Musicqubed.com &ndash;&gt;
+        </module>
+        -->
+
+        <!-- Checks for Naming Conventions.                  -->
+        <!-- See http://checkstyle.sf.net/config_naming.html -->
+
+    <module name="ConstantName" >
+	<property name="format" value="^[A-Z][_A-Z0-9]*(_[A-Z0-9]+)*$"/>
+	</module>
+
+    <module name="LocalFinalVariableName" >
+	 <property name="format" value="^[a-z][_a-zA-Z0-9]*$"/>
+	</module>
+
+        <module name="LocalVariableName" >
+	 <property name="format" value="^[a-z][_a-zA-Z0-9]*$"/>
+	</module>
+
+        <module name="StaticVariableName" >
+	<property name="format" value="^[a-zA-Z][_a-zA-Z0-9]*$"/>
+	</module>
+
+ 	<module name="ParameterName" >
+	<property name="format" value="^[a-z][_a-zA-Z0-9]*$"/>
+	</module>
+
+
+        <module name="MemberName" >
+	<property name="format" value="^([a-z]|_NAE)[_a-zA-Z0-9]*$"/>
+	</module>
+
+        <module name="MethodName" >
+	<property name="format" value="^[a-z][_a-zA-Z0-9]*$"/>
+	</module>
+
+        <module name="PackageName"/>
+
+
+        <module name="TypeName" >
+	<property name="format" value="^[A-Z][_a-zA-Z0-9]*$"/>
+	</module>
+
+
+
+        <!-- Checks for Headers                                -->
+        <!-- See http://checkstyle.sf.net/config_header.html   -->
+        <!-- <module name="Header">                            -->
+            <!-- The follow property value demonstrates the ability     -->
+            <!-- to have access to ANT properties. In this case it uses -->
+            <!-- the ${basedir} property to allow Checkstyle to be run  -->
+            <!-- from any directory within a project. See property      -->
+            <!-- expansion,                                             -->
+            <!-- http://checkstyle.sf.net/config.html#properties        -->
+            <!-- <property                                              -->
+            <!--     name="headerFile"                                  -->
+            <!--     value="${basedir}/java.header"/>                   -->
+        <!-- </module> -->
+
+        
+
+        <!-- Checks for imports                              -->
+        <!-- See http://checkstyle.sf.net/config_import.html -->
+        <module name="AvoidStarImport">
+          <property name="excludes" value="java.io,java.net,java.util"/>  <!-- Property added by Musicqubed.com -->
+        </module>
+        <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+
+
+        <!-- Checks for Size Violations.                    -->
+        <!-- See http://checkstyle.sf.net/config_sizes.html -->
+        
+        <module name="LineLength">
+            <property name="max" value="200"/>  <!-- Property added by Musicqubed.com -->
+        </module>
+        <module name="MethodLength"/>
+        <module name="ParameterNumber"/>
+
+
+        <!-- Checks for whitespace                               -->
+        <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+        <module name="EmptyForIteratorPad"/>
+        <module name="MethodParamPad"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="OperatorWrap">
+          <property name="option" value="eol"/>  <!-- Property added by Musicqubed.com -->
+        </module>
+        <module name="ParenPad"/>
+        <module name="TypecastParenPad"/>
+
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround">
+            <property name="tokens"
+                      value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN, TYPE_EXTENSION_AND, WILDCARD_TYPE" />
+        </module>
+
+
+        <!-- Modifier Checks                                    -->
+        <!-- See http://checkstyle.sf.net/config_modifiers.html -->
+        <module name="ModifierOrder"/>
+        <module name="RedundantModifier"/>
+
+
+        <!-- Checks for blocks. You know, those {}'s         -->
+        <!-- See http://checkstyle.sf.net/config_blocks.html -->
+        <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock">
+           <property name="option" value="text"/>
+  	    </module>
+
+        <module name="LeftCurly"/>
+        <module name="NeedBraces"/>
+        <module name="RightCurly">
+          <property name="option" value="alone"/>  <!-- Property added by Musicqubed.com -->
+        </module>
+
+
+        <!-- Checks for common coding problems               -->
+        <!-- See http://checkstyle.sf.net/config_coding.html -->
+        <!-- <module name="AvoidInlineConditionals"/> -->  <!-- Commented out by Musicqubed.com -->
+        <!-- <module name="DoubleCheckedLocking"/>  -->  <!-- Commented out by Musicqubed.com -->
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
+        <module name="HiddenField">
+          <property name="tokens" value="VARIABLE_DEF"/>  <!-- Property added by Musicqubed.com -->
+        </module>
+        <module name="IllegalInstantiation"/>
+        <module name="InnerAssignment"/>
+        <!--
+		<module name="MagicNumber"/>
+	    -->
+        <module name="MissingSwitchDefault"/>
+        <!-- <module name="RedundantThrows"/> -->
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+
+        <!-- Checks for class design                         -->
+        <!-- See http://checkstyle.sf.net/config_design.html -->
+        <!-- <module name="DesignForExtension"/> -->  <!-- Commented out by Musicqubed.com -->
+        <module name="FinalClass"/>
+        <module name="HideUtilityClassConstructor"/>
+<!--
+        <module name="InterfaceIsType"/>
+-->
+        <!-- <module name="VisibilityModifier"/> -->  <!-- Commented out by Musicqubed.com -->
+
+
+        <!-- Miscellaneous other checks.                   -->
+        <!-- See http://checkstyle.sf.net/config_misc.html -->
+        <module name="ArrayTypeStyle"/>
+        <!-- <module name="FinalParameters"/> -->  <!-- Commented out by Musicqubed.com -->
+        
+        <module name="Regexp">
+	    <property name="format" value="[ \t]+$"/>
+	    <property name="illegalPattern" value="true"/>
+	    <property name="message" value="Line has trailing spaces."/>
+	</module>
+
+        <module name="TodoComment">
+          <property name="format" value="FIXME|TODO"/>  <!-- Property added by Musicqubed.com -->
+        </module>
+        <module name="UpperEll"/>
+
+        <!-- The following additional checks are added by Musicqubed.com on top of Sun's Java spec checks listed above -->
+        <module name="UnnecessaryParentheses"/>
+        <module name="CyclomaticComplexity">
+            <property name="max" value="15"/>
+        </module>
+
+        <module name="JavaNCSS">
+			<property name="methodMaximum" value="100"/>
+		</module>
+        <module name="DefaultComesLast"/>
+        <module name="DeclarationOrder"/>
+        <module name="Indentation"/>
+        <!-- module name="ImportOrder"/> -->
+
+    </module>
+
+</module>

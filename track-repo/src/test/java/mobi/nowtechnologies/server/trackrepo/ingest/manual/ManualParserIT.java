@@ -5,26 +5,25 @@ import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTerritory;
 import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.IMAGE;
+import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.VIDEO;
+import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.INTERNAL_REPORTED;
+import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.NOT_REPORTED;
+import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.REPORTED_BY_TAGS;
 
 import java.util.List;
 import java.util.Map;
 
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.IMAGE;
-import static mobi.nowtechnologies.server.trackrepo.domain.AssetFile.FileType.VIDEO;
-import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.REPORTED_BY_TAGS;
-import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.NOT_REPORTED;
-import static mobi.nowtechnologies.server.trackrepo.enums.ReportingType.INTERNAL_REPORTED;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.springframework.core.io.ClassPathResource;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
- * User: Alexsandr_Kolpakov
- * Date: 7/22/13
+ * User: Alexsandr_Kolpakov Date: 7/22/13
  */
 public class ManualParserIT {
+
     private ManualParser manualParserFixture;
 
     @Before

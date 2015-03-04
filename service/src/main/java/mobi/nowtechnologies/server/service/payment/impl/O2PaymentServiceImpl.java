@@ -11,41 +11,42 @@ import mobi.nowtechnologies.server.shared.Utils;
 
 /**
  * @author Titov Mykhaylo (titov)
- *
  */
-public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaymentDetails>{
-	
-	private O2ProviderService o2ClientService;
+public class O2PaymentServiceImpl extends BasicPSMSPaymentServiceImpl<O2PSMSPaymentDetails> {
+
+    private O2ProviderService o2ClientService;
 
     protected O2PaymentServiceImpl() {
         super(O2PSMSPaymentDetails.class);
     }
 
     public void setO2ClientService(O2ProviderService o2ClientService) {
-		this.o2ClientService = o2ClientService;
-	}
+        this.o2ClientService = o2ClientService;
+    }
 
-	@Override
-	public PaymentSystemResponse getExpiredResponse() {
-		return O2Response.failO2Response("O2 pending payment has been expired");
-	}
+    @Override
+    public PaymentSystemResponse getExpiredResponse() {
+        return O2Response.failO2Response("O2 pending payment has been expired");
+    }
 
     @Override
     protected PaymentSystemResponse makePayment(PendingPayment pendingPayment, String message) {
         final User user = pendingPayment.getUser();
-        final O2PSMSPaymentDetails paymentDetails = (O2PSMSPaymentDetails)pendingPayment.getPaymentDetails();
+        final O2PSMSPaymentDetails paymentDetails = (O2PSMSPaymentDetails) pendingPayment.getPaymentDetails();
         final PaymentPolicy paymentPolicy = paymentDetails.getPaymentPolicy();
 
         String internalTxId = Utils.getBigRandomInt().toString();
-        O2Response response = o2ClientService.makePremiumSMSRequest(user.getId(), internalTxId, pendingPayment.getAmount(), paymentDetails.getPhoneNumber(), message,
-                paymentPolicy.getContentCategory(), paymentPolicy.getContentType(), paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), message != null);
+        O2Response response = o2ClientService
+            .makePremiumSMSRequest(user.getId(), internalTxId, pendingPayment.getAmount(), paymentDetails.getPhoneNumber(), message, paymentPolicy.getContentCategory(), paymentPolicy.getContentType(),
+                                   paymentPolicy.getContentDescription(), paymentPolicy.getSubMerchantId(), message != null);
 
         pendingPayment.setInternalTxId(internalTxId);
 
         final String externalTxId = response.getExternalTxId();
-        if (externalTxId!=null){
+        if (externalTxId != null) {
             pendingPayment.setExternalTxId(externalTxId);
-        }else{
+        }
+        else {
             pendingPayment.setExternalTxId("");
         }
 

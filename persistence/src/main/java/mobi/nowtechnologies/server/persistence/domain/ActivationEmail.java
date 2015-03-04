@@ -2,20 +2,26 @@ package mobi.nowtechnologies.server.persistence.domain;
 
 import mobi.nowtechnologies.server.shared.Utils;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 
 @Entity
 @Table(name = "activation_emails",
-        uniqueConstraints = {@UniqueConstraint(name = "activation_emails_email_deviceUID_token",
-                columnNames = {"email", "deviceUID", "token"})})
+       uniqueConstraints = {@UniqueConstraint(name = "activation_emails_email_deviceUID_token",
+                                              columnNames = {"email", "deviceUID", "token"})})
 public class ActivationEmail {
 
     public static final String ID = "mid";
     public static final String TOKEN = "token";
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "email", nullable = false)

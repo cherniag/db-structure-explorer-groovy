@@ -1,18 +1,20 @@
 package mobi.nowtechnologies.server.admin.controller.itunes;
 
-import com.google.common.base.Joiner;
 import mobi.nowtechnologies.server.service.util.BaseValidator;
 import mobi.nowtechnologies.server.shared.Utils;
 import mobi.nowtechnologies.server.shared.dto.admin.ChartItemDto;
 import mobi.nowtechnologies.server.shared.util.URLValidation;
 import mobi.nowtechnologies.server.trackrepo.enums.FileType;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.google.common.base.Joiner;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import org.springframework.validation.Errors;
 
 /**
  * Created by Oleg Artomov on 9/22/2014.
@@ -33,7 +35,7 @@ public class ITunesValidator extends BaseValidator {
             }
         }
         if (CollectionUtils.isNotEmpty(positions)) {
-            errors.reject("chartItems.page.itunesLink.invalidPositions", new Object[]{Joiner.on(",").join(positions)}, null);
+            errors.reject("chartItems.page.itunesLink.invalidPositions", new Object[] {Joiner.on(",").join(positions)}, null);
         }
         return true;
     }
@@ -45,10 +47,10 @@ public class ITunesValidator extends BaseValidator {
         if (APPCAST.equalsIgnoreCase(item.getChannel())) {
             return true;
         }
-        if (contains(item.getMediaDto().getArtistDto().getName(), APPCAST)){
+        if (contains(item.getMediaDto().getArtistDto().getName(), APPCAST)) {
             return true;
         }
-        if (contains(item.getMediaDto().getTitle(), APPCAST)){
+        if (contains(item.getMediaDto().getTitle(), APPCAST)) {
             return true;
         }
         if (MQ_LABEL_NAME.equalsIgnoreCase(item.getMediaDto().getLabel())) {

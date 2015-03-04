@@ -1,16 +1,19 @@
 package mobi.nowtechnologies.server.transport.context.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import mobi.nowtechnologies.common.util.DateTimeUtils;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
-import org.springframework.util.Assert;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.springframework.util.Assert;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class DurationDto {
+
     @XmlElement(name = "number")
     @JsonProperty(value = "number")
     private int number;

@@ -7,16 +7,15 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "tb_useriPhoneDetails")
-@NamedQueries( {
-	@NamedQuery(name = UserIPhoneDetails.NQ_GET_USER_IPHONE_DETAILS_BY_USER_ID, query = "SELECT userIPhoneDetails FROM UserIPhoneDetails userIPhoneDetails WHERE userIPhoneDetails.userId=?") 
-})
-public class UserIPhoneDetails extends UserDeviceDetails{
+@NamedQueries(
+    {@NamedQuery(name = UserIPhoneDetails.NQ_GET_USER_IPHONE_DETAILS_BY_USER_ID, query = "SELECT userIPhoneDetails FROM UserIPhoneDetails userIPhoneDetails WHERE userIPhoneDetails.userId=?")})
+public class UserIPhoneDetails extends UserDeviceDetails {
 
-	public static final String NQ_GET_USER_IPHONE_DETAILS_BY_USER_ID = "NQ_GET_USER_IPHONE_DETAILS_BY_USER_ID";
-	
-	@Override
-	public String toString() {
-		return "UserIPhoneDetails [" + super.toString() + "]";
-	}
+    public static final String NQ_GET_USER_IPHONE_DETAILS_BY_USER_ID = "NQ_GET_USER_IPHONE_DETAILS_BY_USER_ID";
+
+    @Override
+    public String toString() {
+        return "UserIPhoneDetails [" + super.toString() + "]";
+    }
 
 }

@@ -5,18 +5,18 @@ import mobi.nowtechnologies.server.service.exception.ActivationStatusException;
 import mobi.nowtechnologies.server.service.exception.InvalidPhoneNumberException;
 import mobi.nowtechnologies.server.service.exception.LimitPhoneNumberValidationException;
 import mobi.nowtechnologies.server.transport.controller.AbstractControllerTestIT;
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.log4j.Logger;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
  * Created by Oleg Artomov on 6/20/2014.
  */
 public class ExceptionHandlingControllerIT extends AbstractControllerTestIT {
+
     private InMemoryEventAppender inMemoryEventAppender = new InMemoryEventAppender();
 
     @After
@@ -53,7 +53,6 @@ public class ExceptionHandlingControllerIT extends AbstractControllerTestIT {
         assertEquals(expectedForWarn, inMemoryEventAppender.countOfWarnWithStackTraceForLogger(loggerClass));
         assertEquals(totalCountWithStackTrace, inMemoryEventAppender.totalCountOfMessagesWithStackTraceForException(throwableClass));
     }
-
 
 
 }

@@ -1,5 +1,10 @@
 package mobi.nowtechnologies.server.trackrepo.ingest.emi;
 
+import mobi.nowtechnologies.server.trackrepo.ingest.DDEXParser;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
+import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,16 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mobi.nowtechnologies.server.trackrepo.ingest.DDEXParser;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropAssetFile;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropData;
-import mobi.nowtechnologies.server.trackrepo.ingest.DropTrack;
-
 import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EmiParser extends DDEXParser {
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(EmiParser.class);
 
     public EmiParser(String root) throws FileNotFoundException {
@@ -36,7 +37,8 @@ public class EmiParser extends DDEXParser {
                 tracks.putAll(result);
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Ingest failed " + e.getMessage());
         }
         return tracks;
@@ -53,11 +55,11 @@ public class EmiParser extends DDEXParser {
     public List<DropData> getDrops(File folder, boolean auto) {
 
         List<DropData> result = new ArrayList<DropData>();
-        if(!folder.exists()){
-			LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
-			return result;
-		}
-        
+        if (!folder.exists()) {
+            LOGGER.warn("Skipping drops scanning: folder [{}] does not exists!", folder.getAbsolutePath());
+            return result;
+        }
+
         File[] content = folder.listFiles();
         boolean deliveryComplete = false;
         boolean processed = false;
@@ -66,17 +68,21 @@ public class EmiParser extends DDEXParser {
                 if (isDirectory(file)) {
                     LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                     result.addAll(getDrops(file, auto));
-                } else if (INGEST_ACK.equals(file.getName())) {
+                }
+                else if (INGEST_ACK.equals(file.getName())) {
                     processed = true;
-                } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+                }
+                else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                     processed = true;
-                } else {
+                }
+                else {
                     File xml = getXmlFile(folder);
                     if (xml != null && xml.exists()) {
                         deliveryComplete = true;
                     }
                 }
-            } catch (Exception e1) {
+            }
+            catch (Exception e1) {
                 LOGGER.error("Ingest failed " + e1.getMessage());
             }
 
@@ -114,25 +120,26 @@ public class EmiParser extends DDEXParser {
             }
         }
         LOGGER.info("getIds -> ID = {}", id);
-        
+
         track.productCode = id;
         track.physicalProductId = id;
         track.productId = id;
-        
+
     }
-    
+
     /**
-     * Callback method for customization id parsing in hierarchy of EMI like parsers - override and customize. 
+     * Callback method for customization id parsing in hierarchy of EMI like parsers - override and customize.
+     *
      * @param proprietaryId
      * @return
      */
-    protected String parseProprietaryId(String proprietaryId){
-    	return proprietaryId;
+    protected String parseProprietaryId(String proprietaryId) {
+        return proprietaryId;
     }
 
     public void setUpc(DropTrack track, String upc) {
-    	LOGGER.info("setUpc -> upc = {}", upc);
-    	if (upc != null) {
+        LOGGER.info("setUpc -> upc = {}", upc);
+        if (upc != null) {
             track.productCode = upc;
         }
     }

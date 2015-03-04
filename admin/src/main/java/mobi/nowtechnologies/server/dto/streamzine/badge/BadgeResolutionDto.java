@@ -1,10 +1,11 @@
 package mobi.nowtechnologies.server.dto.streamzine.badge;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.Min;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BadgeResolutionDto {
+
     @JsonProperty(value = "alias")
     private long aliasId;
 
@@ -46,10 +47,10 @@ public class BadgeResolutionDto {
     @Override
     public String toString() {
         return "BadgeResolutionDto{" +
-                "aliasId=" + aliasId +
-                ", resolutionId=" + resolutionId +
-                ", width=" + width +
-                ", height=" + height +
-                '}';
+               "aliasId=" + aliasId +
+               ", resolutionId=" + resolutionId +
+               ", width=" + width +
+               ", height=" + height +
+               '}';
     }
 }

@@ -1,7 +1,5 @@
 package mobi.nowtechnologies.server.admin.settings.asm.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlist.PlaylistInfo;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.MetaInfo;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.PlaylistTypeInfoDto;
@@ -13,11 +11,22 @@ import mobi.nowtechnologies.server.shared.enums.DurationUnit;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("settings")
 @XmlAccessorType(XmlAccessType.NONE)
 public class SettingsDto {
+
     @JsonProperty(value = "enabled")
     private boolean enabled = true;
 
@@ -81,7 +90,7 @@ public class SettingsDto {
     }
 
     public Map<UserStatusType, PlaylistInfo> getPlaylistInfo(int chartId) {
-        if(!playlistSettings.containsKey(chartId)) {
+        if (!playlistSettings.containsKey(chartId)) {
             playlistSettings.put(chartId, createUserStatusTypePlaylistInfo());
         }
         return playlistSettings.get(chartId);

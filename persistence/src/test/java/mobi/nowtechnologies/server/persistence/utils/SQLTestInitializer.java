@@ -3,22 +3,34 @@ package mobi.nowtechnologies.server.persistence.utils;
 import mobi.nowtechnologies.server.persistence.domain.Chart;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
 import mobi.nowtechnologies.server.persistence.domain.payment.PaymentDetails;
-import mobi.nowtechnologies.server.persistence.repository.*;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository;
+import mobi.nowtechnologies.server.persistence.repository.ActivationEmailRepository;
+import mobi.nowtechnologies.server.persistence.repository.AppsFlyerDataRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartDetailRepository;
+import mobi.nowtechnologies.server.persistence.repository.ChartRepository;
+import mobi.nowtechnologies.server.persistence.repository.DrmRepository;
+import mobi.nowtechnologies.server.persistence.repository.PaymentDetailsRepository;
+import mobi.nowtechnologies.server.persistence.repository.ReactivationUserInfoRepository;
+import mobi.nowtechnologies.server.persistence.repository.StreamzineUpdateRepository;
+import mobi.nowtechnologies.server.persistence.repository.SubmittedPaymentRepository;
+import mobi.nowtechnologies.server.persistence.repository.UrbanAirshipTokenRepository;
+import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 
 import javax.annotation.Resource;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
- * User: Alexsandr_Kolpakov
- * Date: 12/20/13
- * Time: 3:36 PM
+ * User: Alexsandr_Kolpakov Date: 12/20/13 Time: 3:36 PM
  */
 //@TODO Remove it ASAP
 public class SQLTestInitializer {
+
     public SQLUtils sqlUtils;
     protected UserRepository userRepository;
     protected DrmRepository drmRepository;
@@ -43,6 +55,9 @@ public class SQLTestInitializer {
 
     @Resource
     private AppsFlyerDataRepository appsFlyerDataRepository;
+
+    @Resource
+    private UrbanAirshipTokenRepository urbanAirshipTokenRepository;
 
     public void setChartDetailRepository(ChartDetailRepository chartDetailRepository) {
         this.chartDetailRepository = chartDetailRepository;
@@ -70,8 +85,8 @@ public class SQLTestInitializer {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void prepareDynamicTestData(String... scripts) throws Exception{
-        if(userRepository.count() != 0){
+    public void prepareDynamicTestData(String... scripts) throws Exception {
+        if (userRepository.count() != 0) {
             cleanDynamicTestData();
         }
 
@@ -79,10 +94,10 @@ public class SQLTestInitializer {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void cleanDynamicTestData(){
+    public void cleanDynamicTestData() {
         List<PaymentDetails> paymentDetails = paymentDetailsRepository.findAll();
-        for(PaymentDetails paymentDetail : paymentDetails){
-            if(paymentDetail.getOwner() != null){
+        for (PaymentDetails paymentDetail : paymentDetails) {
+            if (paymentDetail.getOwner() != null) {
                 paymentDetail.getOwner().setCurrentPaymentDetails(null);
                 paymentDetailsRepository.delete(paymentDetail);
             }
@@ -93,13 +108,16 @@ public class SQLTestInitializer {
         for (ChartDetail chartDetail : chartDetails) {
             Chart chart = chartDetail.getChart();
             Integer chartId = chart.getI();
-            if(chartId > 10){
+            if (chartId > 10) {
                 chartDetailRepository.delete(chartDetail);
-                if (chartId!=16) charts.add(chart);
+                if (chartId != 16) {
+                    charts.add(chart);
+                }
             }
         }
         chartRepository.delete(charts);
 
+        urbanAirshipTokenRepository.deleteAll();
         appsFlyerDataRepository.deleteAll();
         drmRepository.deleteAll();
         accountLogRepository.deleteAll();

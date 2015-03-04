@@ -1,24 +1,28 @@
 package mobi.nowtechnologies.server.service.o2.impl;
 
-import com.google.common.collect.Lists;
 import mobi.nowtechnologies.server.persistence.domain.User;
 import mobi.nowtechnologies.server.service.data.BasicUserDetailsUpdater;
-import mobi.nowtechnologies.server.shared.enums.*;
+import mobi.nowtechnologies.server.shared.enums.Contract;
+import mobi.nowtechnologies.server.shared.enums.ContractChannel;
+import mobi.nowtechnologies.server.shared.enums.ProviderType;
+import mobi.nowtechnologies.server.shared.enums.SegmentType;
+import mobi.nowtechnologies.server.shared.enums.Tariff;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 /**
- * updates user with O2 subscriber information
- * (segment/contract/provider/4G/directChannel)
+ * updates user with O2 subscriber information (segment/contract/provider/4G/directChannel)
  */
 public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberData> {
 
     private static final O2SubscriberData DEFAULT_SUBSCRIBER_DATA = new O2SubscriberData().
-                                                                        withTariff4G(false).
-                                                                        withProviderO2(true).
-                                                                        withContractPostPayOrPrePay(true).
-                                                                        withBusinessOrConsumerSegment(false).
-                                                                        withDirectOrIndirect4GChannel(false);
+                                                                                              withTariff4G(false).
+                                                                                              withProviderO2(true).
+                                                                                              withContractPostPayOrPrePay(true).
+                                                                                              withBusinessOrConsumerSegment(false).
+                                                                                              withDirectOrIndirect4GChannel(false);
 
     /**
      * Updates given user
@@ -31,15 +35,25 @@ public class O2UserDetailsUpdater extends BasicUserDetailsUpdater<O2SubscriberDa
             data = DEFAULT_SUBSCRIBER_DATA;
         }
 
-        user.setProvider(data.isProviderO2() ? ProviderType.O2 : ProviderType.NON_O2);
-        user.setSegment(data.isBusinessOrConsumerSegment() ? SegmentType.BUSINESS : SegmentType.CONSUMER);
-        user.setContract(data.isContractPostPay() ? Contract.PAYM : Contract.PAYG);
-        user.setTariff(data.isTariff4G() ? Tariff._4G : Tariff._3G);
-        user.setContractChannel(data.isDirect4GChannel() ? ContractChannel.DIRECT : ContractChannel.INDIRECT);
+        user.setProvider(data.isProviderO2() ?
+                         ProviderType.O2 :
+                         ProviderType.NON_O2);
+        user.setSegment(data.isBusinessOrConsumerSegment() ?
+                        SegmentType.BUSINESS :
+                        SegmentType.CONSUMER);
+        user.setContract(data.isContractPostPay() ?
+                         Contract.PAYM :
+                         Contract.PAYG);
+        user.setTariff(data.isTariff4G() ?
+                       Tariff._4G :
+                       Tariff._3G);
+        user.setContractChannel(data.isDirect4GChannel() ?
+                                ContractChannel.DIRECT :
+                                ContractChannel.INDIRECT);
         return user;
     }
 
-    public O2SubscriberData getDefaultSubscriberData(){
+    public O2SubscriberData getDefaultSubscriberData() {
         return DEFAULT_SUBSCRIBER_DATA;
     }
 

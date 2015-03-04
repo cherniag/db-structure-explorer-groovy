@@ -1,6 +1,7 @@
 package mobi.nowtechnologies.server.dto.streamzine.error;
 
 public class ErrorDto implements Comparable<ErrorDto> {
+
     private String key;
     private String message;
 
@@ -34,12 +35,18 @@ public class ErrorDto implements Comparable<ErrorDto> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ErrorDto errorDto = (ErrorDto) o;
 
-        if (!key.equals(errorDto.key)) return false;
+        if (!key.equals(errorDto.key)) {
+            return false;
+        }
 
         return true;
     }

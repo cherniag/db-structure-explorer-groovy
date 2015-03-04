@@ -3,6 +3,7 @@ package mobi.nowtechnologies.server.dto.streamzine;
 import mobi.nowtechnologies.server.persistence.domain.streamzine.visual.ShapeType;
 
 public abstract class BlockDto {
+
     private boolean included;
     private ShapeType shapeType;
 
@@ -26,12 +27,18 @@ public abstract class BlockDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         BlockDto blockDto = (BlockDto) o;
 
-        if (getPosition() != blockDto.getPosition()) return false;
+        if (getPosition() != blockDto.getPosition()) {
+            return false;
+        }
 
         return true;
     }

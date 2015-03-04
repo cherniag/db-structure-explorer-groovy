@@ -63,7 +63,7 @@
     </appender>
 
     <logger name="org.springframework">
-        <level value="DEBUG"></level>
+        <level value="INFO"></level>
         <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.apache.commons">
@@ -75,15 +75,15 @@
         <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.hibernate.SQL">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.hibernate.type">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="persistence-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="org.hibernate.annotations.common.Version">
-        <level value="TRACE"></level>
+        <level value="INFO"></level>
         <appender-ref ref="business-logic-track-repo-RollingFileAppender"/>
     </logger>
     <logger name="mobi.nowtechnologies.server.service">

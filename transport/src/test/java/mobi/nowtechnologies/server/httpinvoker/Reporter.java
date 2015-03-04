@@ -1,18 +1,20 @@
 package mobi.nowtechnologies.server.httpinvoker;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpServerErrorException;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
+
 public class Reporter {
+
     private File dir;
 
     public void setDir(Resource dir) throws IOException {
