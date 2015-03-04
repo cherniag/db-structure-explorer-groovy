@@ -42,13 +42,15 @@ public class PinController extends CommonController {
 
         ModelAndView modelAndView = new ModelAndView("pin/check");
 
+        boolean resent = true;
         try {
             pinService.sendPinToUser(user, phone);
         } catch (MaxGenerationReachedException maxGenerationReached) {
             modelAndView.addObject("maxAttemptsReached", true);
+            resent = false;
         }
         modelAndView.addObject("phone", phone);
-        modelAndView.addObject("resent", true);
+        modelAndView.addObject("resent", resent);
         return modelAndView;
     }
 

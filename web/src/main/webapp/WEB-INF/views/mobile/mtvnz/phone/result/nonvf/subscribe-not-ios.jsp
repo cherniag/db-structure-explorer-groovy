@@ -3,7 +3,9 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<div class="root-container">
+<div class="page-container">
+    <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_close_72.png" class="go-premium-button-target go-premium-button-close" onclick="returnToApp();" />
+
     <div class="center-container">
         <img src="${requestScope.assetsPathAccordingToCommunity}imgs/icon_error.png" class="error-logo" />
     </div>
