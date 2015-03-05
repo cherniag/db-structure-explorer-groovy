@@ -1,3 +1,4 @@
+import org.junit.Ignore;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertThat;
 
 // @author Titov Mykhaylo (titov) on 06.01.2015.
 @RunWith(Theories.class)
+@Ignore
 public class AppPropertyPlaceholderConfigurerIT {
 
     @DataPoints

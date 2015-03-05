@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "tb_paymentPolicy")
@@ -47,12 +45,9 @@ import org.slf4j.LoggerFactory;
     query = "select paymentPolicy from PaymentPolicy paymentPolicy where paymentPolicy.community=?1 and paymentPolicy.availableInStore=?2")})
 @Access(AccessType.FIELD)
 public class PaymentPolicy {
+
     public static final String GET_OPERATORS_LIST = "GET_OPERATORS_LIST";
     public static final String GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE = "GET_BY_COMMUNITY_AND_AVAILABLE_IN_STORE";
-
-    public static enum Fields {
-        communityId
-    }
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -113,6 +108,14 @@ public class PaymentPolicy {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_policy_type")
     private PaymentPolicyType paymentPolicyType;
+
+    public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
+        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
+        for (PaymentPolicy paymentPolicy : paymentPolicies) {
+            offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
+        }
+        return offerPaymentPolicyDtos;
+    }
 
     public Integer getId() {
         return id;
@@ -216,14 +219,6 @@ public class PaymentPolicy {
         offerPaymentPolicyDto.setPaymentType(paymentType);
 
         return offerPaymentPolicyDto;
-    }
-
-    public static List<OfferPaymentPolicyDto> toOfferPaymentPolicyDtos(List<PaymentPolicy> paymentPolicies) {
-        List<OfferPaymentPolicyDto> offerPaymentPolicyDtos = new ArrayList<OfferPaymentPolicyDto>();
-        for (PaymentPolicy paymentPolicy : paymentPolicies) {
-            offerPaymentPolicyDtos.add(paymentPolicy.toOfferPaymentPolicyDto());
-        }
-        return offerPaymentPolicyDtos;
     }
 
     public SegmentType getSegment() {
@@ -475,5 +470,9 @@ public class PaymentPolicy {
                                         .append("subMerchantId", subMerchantId).append("contentDescription", contentDescription).append("tariff", tariff).append("mediaType", mediaType)
                                         .append("advancedPaymentSeconds", advancedPaymentSeconds).append("afterNextSubPaymentSeconds", afterNextSubPaymentSeconds).append("isDefault", isDefault)
                                         .append("online", online).toString();
+    }
+
+    public static enum Fields {
+        communityId
     }
 }
