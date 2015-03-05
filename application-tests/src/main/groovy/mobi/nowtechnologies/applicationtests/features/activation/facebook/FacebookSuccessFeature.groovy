@@ -17,7 +17,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
 import mobi.nowtechnologies.server.persistence.repository.PromotionRepository
 import mobi.nowtechnologies.server.persistence.repository.social.FacebookUserInfoRepository
@@ -140,16 +140,19 @@ class FacebookSuccessFeature {
     def "userDetails filed contains correct facebook details"() {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
-            def facebookInfo = phoneState.lastFacebookInfo.userDetails
-            def facebookProfile = composer.parseToken(phoneState.facebookAccessToken)
+            def expected = composer.parseToken(phoneState.facebookAccessToken)
+            assertEquals(phoneState.facebookUserId, expected.id)
 
-            assertEquals(dateFormat.parse(facebookInfo.birthDay), dateFormat.parse(facebookProfile.getBirthday()))
-            assertEquals(facebookInfo.email, phoneState.email)
-            assertEquals(facebookInfo.userName, facebookProfile.username)
-            assertEquals(facebookInfo.firstName, facebookProfile.firstName)
-            assertEquals(facebookInfo.surname, facebookProfile.lastName)
-            assertEquals(facebookInfo.gender.toLowerCase(), facebookProfile.gender)
-            assertEquals(facebookInfo.location, FacebookUserInfoGenerator.CITY)
+            def actual = phoneState.lastFacebookInfo.userDetails
+
+            assertEquals(expected.id, actual.userName)
+            assertEquals(expected.id, actual.facebookId)
+            assertEquals(dateFormat.parse(expected.getBirthday()), dateFormat.parse(actual.birthDay))
+            assertEquals(expected.firstName, actual.firstName)
+            assertEquals(expected.lastName, actual.surname)
+            assertEquals(expected.gender, actual.gender.toLowerCase())
+            assertEquals(FacebookUserInfoGenerator.CITY, actual.location)
+            assertEquals(phoneState.email, actual.email)
         }
     }
 
@@ -197,17 +200,21 @@ class FacebookSuccessFeature {
     def "In database user has facebook details the same as specified in facebook account"() {
         runner.parallel {
             def phoneState = deviceSet.getPhoneState(it)
+            def expected = composer.parseToken(phoneState.facebookAccessToken)
+            assertEquals(phoneState.facebookUserId, expected.id)
+
             def user = userDbService.findUser(phoneState, it)
-            def facebookUserInfo = fbDetailsRepository.findByUser(user)
-            def facebookProfile = composer.parseToken(phoneState.facebookAccessToken)
-            assertEquals(facebookUserInfo.getEmail(), phoneState.getEmail())
-            assertEquals(facebookUserInfo.getFirstName(), FacebookUserInfoGenerator.FIRST_NAME)
-            assertEquals(facebookUserInfo.getBirthday().getTime(), dateFormat.parse(facebookProfile.getBirthday()).getTime())
-            assertEquals(facebookUserInfo.getSurname(), FacebookUserInfoGenerator.SURNAME)
-            assertEquals(facebookUserInfo.getCity(), FacebookUserInfoGenerator.CITY)
-            assertEquals(facebookUserInfo.getCountry(), FacebookUserInfoGenerator.COUNTRY)
-            assertEquals(facebookUserInfo.getFacebookId(), phoneState.getFacebookUserId())
-            assertEquals(facebookUserInfo.getUserName(), phoneState.getEmail())
+            def actual = fbDetailsRepository.findByUser(user)
+
+            assertEquals(expected.id, actual.getFacebookId())
+            assertEquals(expected.id, actual.getUserName())
+
+            assertEquals(phoneState.getEmail(), actual.getEmail())
+            assertEquals(FacebookUserInfoGenerator.FIRST_NAME, actual.getFirstName())
+            assertEquals(dateFormat.parse(expected.getBirthday()).getTime(), actual.getBirthday().getTime())
+            assertEquals(FacebookUserInfoGenerator.SURNAME, actual.getSurname())
+            assertEquals(FacebookUserInfoGenerator.CITY, actual.getCity())
+            assertEquals(FacebookUserInfoGenerator.COUNTRY, actual.getCountry())
         }
     }
 

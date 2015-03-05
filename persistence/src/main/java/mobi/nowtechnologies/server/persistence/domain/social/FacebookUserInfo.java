@@ -20,8 +20,6 @@ import java.util.Date;
 @Table(name = "facebook_user_info")
 public class FacebookUserInfo extends SocialInfo {
 
-    private static final long serialVersionUID = 2546198857668889092L;
-
     @Column(name = "email", columnDefinition = "char(100)", nullable = false)
     private String email;
 
@@ -54,6 +52,12 @@ public class FacebookUserInfo extends SocialInfo {
 
     @Column(name = "date_of_birth")
     private Date birthday;
+
+    @Column(name = "age_range_min")
+    private Integer ageRangeMin;
+
+    @Column(name = "age_range_max")
+    private Integer ageRangeMax;
 
     public Date getBirthday() {
         return birthday;
@@ -145,5 +149,21 @@ public class FacebookUserInfo extends SocialInfo {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public Integer getAgeRangeMin() {
+        return ageRangeMin;
+    }
+
+    public void setAgeRangeMin(Integer ageRangeMin) {
+        this.ageRangeMin = ageRangeMin;
+    }
+
+    public Integer getAgeRangeMax() {
+        return ageRangeMax;
+    }
+
+    public void setAgeRangeMax(Integer ageRangeMax) {
+        this.ageRangeMax = ageRangeMax;
     }
 }

@@ -1,4 +1,4 @@
-package mobi.nowtechnologies.server.apptests.facebook;
+package mobi.nowtechnologies.server.service.social.facebook.impl.mock;
 
 import java.util.Locale;
 
