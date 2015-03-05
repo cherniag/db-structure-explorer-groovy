@@ -1,5 +1,7 @@
 package mobi.nowtechnologies.server.transport.context.dto;
 
+import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;

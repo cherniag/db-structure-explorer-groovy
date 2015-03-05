@@ -17,6 +17,8 @@ import mobi.nowtechnologies.server.persistence.repository.behavior.ChartUserStat
 import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConfigRepository;
 import mobi.nowtechnologies.server.service.behavior.BehaviorInfoService;
 import mobi.nowtechnologies.server.shared.enums.DurationUnit;
+import static mobi.nowtechnologies.server.dto.context.ContentBehaviorType.DISABLED;
+import static mobi.nowtechnologies.server.dto.context.ContentBehaviorType.ENABLED;
 
 import org.junit.*;
 import org.mockito.*;
@@ -88,9 +90,7 @@ public class SettingsServiceTest {
         //
         // when
         //
-        SettingsDto dto = new SettingsDto();
-        // enabled
-        dto.setEnabled(false);
+        SettingsDto dto = new SettingsDto(BehaviorConfigType.FREEMIUM);
         // referrals
         dto.getReferralDto().setRequired(1);
         dto.getReferralDto().getDurationInfoDto().fromDuration(Duration.forPeriod(2, DurationUnit.WEEKS));
@@ -114,12 +114,12 @@ public class SettingsServiceTest {
         dto.getPlaylistTypeSettings().get(ChartBehaviorType.SHUFFLED).getMaxTracks().setNumber(16);
         dto.getPlaylistTypeSettings().get(ChartBehaviorType.SHUFFLED).getMaxTracks().getDurationInfoDto().fromDuration(Duration.forPeriod(17, DurationUnit.MONTHS));
 
-        dto.getFavourites().put(UserStatusType.FREE_TRIAL, true);
-        dto.getFavourites().put(UserStatusType.LIMITED, true);
-        dto.getFavourites().put(UserStatusType.SUBSCRIBED, true);
-        dto.getAds().put(UserStatusType.FREE_TRIAL, false);
-        dto.getAds().put(UserStatusType.LIMITED, false);
-        dto.getAds().put(UserStatusType.SUBSCRIBED, false);
+        dto.getFavourites().put(UserStatusType.FREE_TRIAL, DISABLED);
+        dto.getFavourites().put(UserStatusType.LIMITED, DISABLED);
+        dto.getFavourites().put(UserStatusType.SUBSCRIBED, DISABLED);
+        dto.getAds().put(UserStatusType.FREE_TRIAL, ENABLED);
+        dto.getAds().put(UserStatusType.LIMITED, ENABLED);
+        dto.getAds().put(UserStatusType.SUBSCRIBED, ENABLED);
 
         createEmptyPlaceholdersForChartId(90, dto);
         for (UserStatusType userStatusType : UserStatusType.values()) {

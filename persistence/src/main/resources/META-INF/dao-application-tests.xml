@@ -18,6 +18,7 @@ http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
 
     <utils:properties id="jpaProperties">
         <prop key="hibernate.show_sql">false</prop>
+        <prop key="hibernate.generate_statistics">true</prop>
     </utils:properties>
 
     <jpa:repositories base-package="mobi.nowtechnologies.server.persistence.apptests.repository"
@@ -38,4 +39,22 @@ http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
         <property name="driverClassName" value="${application.tests.jdbc.driverClassName}" />
         <property name="url" value="${application.tests.jdbc.url}" />
     </bean>
+
+    <alias name="persistence.EntityManagerFactory" alias="entityManagerFactory"/>
+
+    <bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true" />
+        <property name="sessionFactory" value="#{entityManagerFactory.sessionFactory}" />
+    </bean>
+
+    <bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="beans">
+            <map>
+                <entry key="Hibernate:type=statistics">
+                    <ref local="hibernateStatisticsMBean" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
 </beans>

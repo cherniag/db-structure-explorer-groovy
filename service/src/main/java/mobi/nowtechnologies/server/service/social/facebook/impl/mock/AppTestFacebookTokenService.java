@@ -1,10 +1,12 @@
-package mobi.nowtechnologies.server.apptests.facebook;
+package mobi.nowtechnologies.server.service.social.facebook.impl.mock;
 
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.service.social.facebook.FacebookClient;
 
-import java.text.DateFormat;
-import java.util.Locale;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 
+import org.springframework.social.MissingAuthorizationException;
 import org.springframework.social.facebook.api.FacebookProfile;
 
 public class AppTestFacebookTokenService {
@@ -63,7 +65,7 @@ public class AppTestFacebookTokenService {
         if (split.length == 11) {
             // reassign the id to simulate the wrong ID
             if (split[10].equals(ERROR_ID_MARKER)) {
-                SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile("_broken_different_id_", split[1], "", split[2], split[3], split[8]);
+                SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile("_broken_different_id_", split[6], "", split[2], split[3], split[8]);
                 profile.addOtherInfo(split[1], split[7], split[4], split[9]);
                 return profile;
             }
@@ -71,21 +73,21 @@ public class AppTestFacebookTokenService {
             // create a different type of FacebookProfile to let Template Provider know that
             // it should throw the expected Exception (org.springframework.social.MissingAuthorizationException)
             if (split[10].equals(ERROR_TOKEN_MARKER)) {
-                return new FailureFacebookProfile(split[0], split[6], "", split[2], split[3], split[8]);
+                throw new MissingAuthorizationException("provider id");
             }
 
             throw new IllegalArgumentException();
         }
         else {
             // no error markers:
-            SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile(split[0], split[1], "", split[2], split[3], split[8]);
+            SuccessfulFacebookProfile profile = new SuccessfulFacebookProfile(split[0], split[6], "", split[2], split[3], split[8]);
             profile.addOtherInfo(split[1], split[7], split[4], split[9]);
             return profile;
         }
     }
 
-    private DateFormat getDateFormat() {
-        return DateFormat.getDateInstance(DateFormat.SHORT, Locale.ENGLISH);
+    private Format getDateFormat() {
+        return new SimpleDateFormat(FacebookClient.DATE_FORMAT);
     }
 
 }

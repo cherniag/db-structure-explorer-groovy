@@ -156,7 +156,9 @@ public class AccCheckController extends CommonController {
                 }
             }
 
-            if (isNotBlank(pushNotificationToken)) {
+            // SRV-628. We are not storing a token if it's a string literal with '(null)' value.
+            // Some IOS clients send this value because of bugs in them.
+            if (isNotBlank(pushNotificationToken) && !pushNotificationToken.equals("(null)")) {
                 urbanAirshipTokenService.saveToken(user, pushNotificationToken);
             }
 

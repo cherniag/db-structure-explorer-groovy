@@ -5,6 +5,7 @@ import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
 import mobi.nowtechnologies.server.admin.settings.service.SettingsService;
 import mobi.nowtechnologies.server.dto.streamzine.ChartListItemDto;
 import mobi.nowtechnologies.server.persistence.domain.ChartDetail;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
 import mobi.nowtechnologies.server.service.ChartService;
 import mobi.nowtechnologies.server.service.streamzine.MobileApplicationPagesService;
 import mobi.nowtechnologies.server.service.streamzine.asm.StreamzineAdminMediaAsm;
@@ -62,7 +63,7 @@ public class SettingsController {
         Set<String> actions = mobileApplicationPagesService.getActions();
         SettingsDto dto = settingsAsm.createDto(communityRewriteUrl, chartListItemDtos, pages, actions);
 
-        logger().info("Getting {} for community id {}", dto, communityRewriteUrl);
+        logger().info("Getting {} for community {}", dto, communityRewriteUrl);
 
         return dto;
     }
@@ -71,9 +72,18 @@ public class SettingsController {
     public
     @ResponseBody
     void save(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl, @RequestBody SettingsDto toSave) {
-        logger().info("Saving {} for community id {}", toSave, communityRewriteUrl);
+        logger().info("Saving {} for community {}", toSave, communityRewriteUrl);
 
         settingsService.makeImport(communityRewriteUrl, toSave);
+    }
+
+    @RequestMapping(value = "/settings/switch", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    void switchConfigType(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl, @RequestBody BehaviorConfigType newBehaviorConfigType) {
+        logger().info("Switch to {} for community {}", newBehaviorConfigType, communityRewriteUrl);
+
+        settingsService.switchConfigType(communityRewriteUrl, newBehaviorConfigType);
     }
 
     private Logger logger() {

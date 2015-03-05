@@ -61,7 +61,7 @@ public class SigninFacebookController extends CommonController {
         try {
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Started for accessToken[{}] in community[{}] ", facebookAccessToken, community);
             user = checkUser(userName, userToken, timestamp, deviceUID, false, ActivationStatus.REGISTERED);
-            FacebookUserInfo userInfo = facebookService.getAndValidateFacebookProfile(facebookAccessToken, facebookUserId);
+            FacebookUserInfo userInfo = facebookService.getFacebookUserInfo(facebookAccessToken, facebookUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
             return buildModelAndView(accCheckService.processAccCheck(mergeResult, true, withOneTimeSubscriptionFlag));
         }

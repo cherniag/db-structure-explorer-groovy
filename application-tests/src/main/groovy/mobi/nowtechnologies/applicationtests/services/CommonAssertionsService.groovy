@@ -7,7 +7,7 @@ import mobi.nowtechnologies.applicationtests.services.device.domain.UserDeviceDa
 import mobi.nowtechnologies.applicationtests.services.http.facebook.FacebookUserInfoGenerator
 import mobi.nowtechnologies.applicationtests.services.runner.Runner
 import mobi.nowtechnologies.applicationtests.services.runner.RunnerService
-import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService
 import mobi.nowtechnologies.server.persistence.domain.User
 import mobi.nowtechnologies.server.persistence.repository.AccountLogRepository
@@ -210,7 +210,7 @@ class CommonAssertionsService {
             assertEquals(facebookUserInfo.getSurname(), FacebookUserInfoGenerator.SURNAME)
             assertEquals(facebookUserInfo.getCity(), FacebookUserInfoGenerator.CITY)
             assertEquals(facebookUserInfo.getFacebookId(), phoneState.getFacebookUserId())
-            assertEquals(facebookUserInfo.getUserName(), phoneState.getEmail())
+            assertEquals(facebookUserInfo.getUserName(), phoneState.getFacebookUserId())
         }
     }
 

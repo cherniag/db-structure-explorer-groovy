@@ -6,6 +6,9 @@ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.spri
 
 	<import resource="service.xml" />
 
+	<bean id="service.appTestFacebookTokenService" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService" />
+	<bean id="service.facebookOperationsAdaptor" class="mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookOperationsAdaptor" />
+
     <bean id="service.VersionService" class="mobi.nowtechnologies.server.service.VersionService">
         <property name="manifest" value="classpath:TEST-MANIFEST.MF" />
     </bean>

@@ -9,6 +9,7 @@ import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenSer
 import mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;

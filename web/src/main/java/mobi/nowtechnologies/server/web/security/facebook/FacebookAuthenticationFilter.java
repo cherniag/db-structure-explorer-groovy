@@ -35,6 +35,7 @@ import org.springframework.web.util.WebUtils;
 /**
  * @author Titov Mykhaylo (titov)
  */
+@Deprecated
 public class FacebookAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     public static final String REGISTRATION = "registration";

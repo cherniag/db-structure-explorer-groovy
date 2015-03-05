@@ -36,7 +36,21 @@ if(Settings == undefined) {
                     // rendering
                     render(options.renderTo);
 
-                    $('#enableOrDisableFreemiumId').text((model.enabled)?'Disable Freemium':'Enable Freemium').click(enableOrDisableFreemium);
+                    for(var i = 0; i < model.behaviorConfigTypes.length ; i++){
+                        var configType = model.behaviorConfigTypes[i];
+
+                        $('#switchConfigTypeBlock').append('<button class="btn" type="submit" id="switchTo' + configType + '"></button>');
+                        var switchButton = $('#switchTo' + configType);
+                        switchButton.text(configType);
+
+                        if(configType == model.behaviorConfigType){
+                            switchButton.addClass("btn-success");
+                        } else {
+                            switchButton.addClass("btn-default");
+                            switchButton.click(getSwitchToConfigTypeHandler(switchButton, configType));
+                        }
+                    }
+
                     $('#saveId').click(save);
 
                     // editing
@@ -61,10 +75,33 @@ if(Settings == undefined) {
         // Internals
         //
 
-        function enableOrDisableFreemium() {
-            model.enabled = !model.enabled;
-            $('#enableOrDisableFreemiumId').text('Please wait...')
-            save();
+        function getSwitchToConfigTypeHandler(button, behaviorConfigType){
+            return function(){ switchToConfigType(button, behaviorConfigType); }
+        }
+
+        function switchToConfigType(button, behaviorConfigType) {
+            button.text('Please wait...');
+
+            if(progress) return;
+            progress = true;
+
+            $.ajax({
+                url : opts.switchUrl,
+                dataType: 'json',
+                data: JSON.stringify(behaviorConfigType),
+                contentType: 'application/json',
+                type: "POST",
+                success : function(data, textStatus, status) {
+                    alert('Switched successfully. Page will be reloaded');
+                    progress = false;
+                    location.reload(true)
+                },
+                error: function(qXHR) {
+                    progress = false;
+                    alert('Failed to switch: please refresh the page and try again');
+                }
+            });
+
         }
 
         function save() {
@@ -120,7 +157,7 @@ if(Settings == undefined) {
                         {
                             userStatusTitle: model.i18n[favourite],
                             userStatus: favourite,
-                            enabled: favourites.favourite
+                            contentBehaviorType: favourites.favourite
                         }
                     );
                 }
@@ -138,7 +175,7 @@ if(Settings == undefined) {
                         {
                             userStatusTitle: model.i18n[ad],
                             userStatus: ad,
-                            enabled: ads.ad
+                            contentBehaviorType: ads.ad
                         }
                     );
                 }

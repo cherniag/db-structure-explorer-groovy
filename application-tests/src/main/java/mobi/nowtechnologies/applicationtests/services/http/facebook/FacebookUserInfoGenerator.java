@@ -1,7 +1,7 @@
 package mobi.nowtechnologies.applicationtests.services.http.facebook;
 
-import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.persistence.domain.social.FacebookUserInfo;
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.shared.enums.Gender;
 
 import javax.annotation.Resource;
