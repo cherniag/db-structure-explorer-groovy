@@ -1,9 +1,11 @@
 package mobi.nowtechnologies.server.admin.settings.service;
 
+import mobi.nowtechnologies.server.admin.settings.asm.BehaviorConfigTypeRules;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlist.PlaylistInfo;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.PlaylistTypeInfoDto;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.TracksInfoDto;
+import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
 import mobi.nowtechnologies.server.persistence.domain.Community;
 import mobi.nowtechnologies.server.persistence.domain.Duration;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
@@ -22,8 +24,6 @@ import mobi.nowtechnologies.server.persistence.repository.behavior.CommunityConf
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,19 +48,17 @@ public class SettingsService {
             return null;
         }
 
-        BehaviorConfig freemiumBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), BehaviorConfigType.FREEMIUM);
+        final BehaviorConfigType behaviorConfigType = communityConfig.getBehaviorConfig().getType();
+        SettingsDto dto = new SettingsDto(behaviorConfigType);
 
-        if (freemiumBehaviorConfig == null) {
-            return null;
-        }
+        final BehaviorConfig currentBehaviorConfig = communityConfig.getBehaviorConfig();
 
-        SettingsDto dto = new SettingsDto();
-        dto.setEnabled(!communityConfig.getBehaviorConfig().getType().isDefault());
-        dto.getReferralDto().setRequired(freemiumBehaviorConfig.getRequiredReferrals());
-        dto.getReferralDto().getDurationInfoDto().fromDuration(freemiumBehaviorConfig.getReferralsDuration());
+        dto.getReferralDto().setRequired(currentBehaviorConfig.getRequiredReferrals());
+        dto.getReferralDto().getDurationInfoDto().fromDuration(currentBehaviorConfig.getReferralsDuration());
 
-        for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
-            final ChartBehavior chartBehavior = freemiumBehaviorConfig.getChartBehavior(chartBehaviorType);
+
+        for (ChartBehaviorType chartBehaviorType : BehaviorConfigTypeRules.allowedChartBehaviorTypes(behaviorConfigType)) {
+            final ChartBehavior chartBehavior = currentBehaviorConfig.getChartBehavior(chartBehaviorType);
 
             PlaylistTypeInfoDto playlistTypeInfoDto = dto.getPlaylistTypeSettings().get(chartBehaviorType);
             playlistTypeInfoDto.setPlayTrackSeconds(chartBehavior.getPlayTracksSeconds());
@@ -72,27 +70,42 @@ public class SettingsService {
         }
 
 
-        for (UserStatusType userStatusType : UserStatusType.values()) {
-            final ContentUserStatusBehavior contentUserStatusBehavior = freemiumBehaviorConfig.getContentUserStatusBehavior(userStatusType);
+        List<UserStatusType> allowedUserStatusTypes = BehaviorConfigTypeRules.allowedUserStatusTypes(behaviorConfigType);
 
-            dto.getAds().put(userStatusType, contentUserStatusBehavior.isAddsOff());
-            dto.getFavourites().put(userStatusType, contentUserStatusBehavior.isFavoritesOff());
+        for (UserStatusType userStatusType : UserStatusType.values()) {
+            final ContentUserStatusBehavior contentUserStatusBehavior = currentBehaviorConfig.getContentUserStatusBehavior(userStatusType);
+
+            dto.getAds().put(userStatusType, ContentBehaviorType.valueOf(contentUserStatusBehavior.isAddsOff()));
+            dto.getFavourites().put(userStatusType, ContentBehaviorType.valueOf(contentUserStatusBehavior.isFavoritesOff()));
         }
 
-        List<ChartUserStatusBehavior> behaviors = chartUserStatusBehaviorRepository.findByBehaviorConfig(freemiumBehaviorConfig, Lists.newArrayList(UserStatusType.values()));
+        List<ChartUserStatusBehavior> behaviors = chartUserStatusBehaviorRepository.findByBehaviorConfig(currentBehaviorConfig, allowedUserStatusTypes);
 
         for (ChartUserStatusBehavior behavior : behaviors) {
             final int chartId = behavior.getChartId();
 
             Map<UserStatusType, PlaylistInfo> integerPlaylistInfoMap = dto.getPlaylistInfo(chartId);
 
-            for (UserStatusType userStatusType : UserStatusType.values()) {
-                ChartUserStatusBehavior chartBehaviorForStatus = chartUserStatusBehaviorRepository.findByChartIdBehaviorConfigAndStatus(chartId, freemiumBehaviorConfig, userStatusType);
+            for (UserStatusType userStatusType : allowedUserStatusTypes) {
+                ChartUserStatusBehavior chartBehaviorForStatus = chartUserStatusBehaviorRepository.findByChartIdBehaviorConfigAndStatus(chartId, currentBehaviorConfig, userStatusType);
                 integerPlaylistInfoMap.get(userStatusType).setAction(chartBehaviorForStatus.getAction());
                 integerPlaylistInfoMap.get(userStatusType).setChartBehaviorType(chartBehaviorForStatus.getChartBehavior().getType());
             }
         }
         return dto;
+    }
+
+    @Transactional
+    public void switchConfigType(String communityUrl, BehaviorConfigType newBehaviorConfigType) {
+        Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
+        Assert.notNull(c);
+        CommunityConfig communityConfig = communityConfigRepository.findByCommunity(c);
+
+        if (communityConfig.requiresBehaviorConfigChange(newBehaviorConfigType)) {
+            BehaviorConfig newBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), newBehaviorConfigType);
+            communityConfig.setBehaviorConfig(newBehaviorConfig);
+            logger().info("User switched for {} community to new behavior config type {}", communityUrl, newBehaviorConfigType);
+        }
     }
 
 
@@ -103,31 +116,20 @@ public class SettingsService {
         Community c = communityRepository.findByRewriteUrlParameter(communityUrl);
         Assert.notNull(c);
 
-        CommunityConfig communityConfig = communityConfigRepository.findByCommunity(c);
-
-        // Look at enabled/disabled
-        final BehaviorConfigType newBehaviorConfigType = decideType(dto);
-
-        if (communityConfig.requiresBehaviorConfigChange(newBehaviorConfigType)) {
-            BehaviorConfig newBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), newBehaviorConfigType);
-            communityConfig.setBehaviorConfig(newBehaviorConfig);
-            logger().info("User switched for {} community to new behavior config type {}", communityUrl, newBehaviorConfigType);
-        }
-
-        // Now update Freemium behavior config
-        BehaviorConfig freemiumBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), BehaviorConfigType.FREEMIUM);
+        // Update current behavior config
+        BehaviorConfig currentBehaviorConfig = behaviorConfigRepository.findByCommunityIdAndBehaviorConfigType(c.getId(), dto.getBehaviorConfigType());
 
         Duration referralDuration = dto.getReferralDto().getDurationInfoDto().toDuration();
         int requiredAmount = dto.getReferralDto().getRequired();
-        freemiumBehaviorConfig.updateReferralsInfo(requiredAmount, referralDuration);
+        currentBehaviorConfig.updateReferralsInfo(requiredAmount, referralDuration);
 
-        for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
+        for (ChartBehaviorType chartBehaviorType : BehaviorConfigTypeRules.allowedChartBehaviorTypes(currentBehaviorConfig.getType())) {
             int playSeconds = dto.getPlaylistTypeSettings().get(chartBehaviorType).getPlayTrackSeconds();
             boolean offline = dto.getPlaylistTypeSettings().get(chartBehaviorType).isOffline();
             TracksInfoDto maxTracks = dto.getPlaylistTypeSettings().get(chartBehaviorType).getMaxTracks();
             TracksInfoDto skipTracks = dto.getPlaylistTypeSettings().get(chartBehaviorType).getSkipTracks();
 
-            ChartBehavior chartBehavior = freemiumBehaviorConfig.getChartBehavior(chartBehaviorType);
+            ChartBehavior chartBehavior = currentBehaviorConfig.getChartBehavior(chartBehaviorType);
             chartBehavior.setOffline(offline);
             if (chartBehaviorType.isTracksPlayDurationSupported()) {
                 chartBehavior.setPlayTracksSeconds(playSeconds);
@@ -139,12 +141,12 @@ public class SettingsService {
         }
 
         for (UserStatusType userStatusType : UserStatusType.values()) {
-            Boolean ads = dto.getAds().get(userStatusType);
-            Boolean fav = dto.getFavourites().get(userStatusType);
+            ContentBehaviorType ads = dto.getAds().get(userStatusType);
+            ContentBehaviorType fav = dto.getFavourites().get(userStatusType);
 
-            ContentUserStatusBehavior contentUserStatusBehavior = freemiumBehaviorConfig.getContentUserStatusBehavior(userStatusType);
-            contentUserStatusBehavior.setAddsOff(BooleanUtils.toBoolean(ads));
-            contentUserStatusBehavior.setFavoritesOff(BooleanUtils.toBoolean(fav));
+            ContentUserStatusBehavior contentUserStatusBehavior = currentBehaviorConfig.getContentUserStatusBehavior(userStatusType);
+            contentUserStatusBehavior.setAddsOff(ads.isOff());
+            contentUserStatusBehavior.setFavoritesOff(fav.isOff());
         }
 
         for (Map.Entry<Integer, Map<UserStatusType, PlaylistInfo>> chartToInfoMappingEntry : dto.getPlaylistSettings().entrySet()) {
@@ -153,9 +155,9 @@ public class SettingsService {
             for (Map.Entry<UserStatusType, PlaylistInfo> userStatusTypePlaylistInfoEntry : chartToInfoMappingEntry.getValue().entrySet()) {
                 UserStatusType userStatusType = userStatusTypePlaylistInfoEntry.getKey();
                 final PlaylistInfo playlistInfo = userStatusTypePlaylistInfoEntry.getValue();
-                final ChartBehavior selectedChartBehavior = freemiumBehaviorConfig.getChartBehavior(playlistInfo.getChartBehaviorType());
+                final ChartBehavior selectedChartBehavior = currentBehaviorConfig.getChartBehavior(playlistInfo.getChartBehaviorType());
 
-                ChartUserStatusBehavior chartUserStatusBehavior = chartUserStatusBehaviorRepository.findByChartIdBehaviorConfigAndStatus(chartId, freemiumBehaviorConfig, userStatusType);
+                ChartUserStatusBehavior chartUserStatusBehavior = chartUserStatusBehaviorRepository.findByChartIdBehaviorConfigAndStatus(chartId, currentBehaviorConfig, userStatusType);
                 chartUserStatusBehavior.setChartBehavior(selectedChartBehavior);
                 chartUserStatusBehavior.setAction(playlistInfo.getAction());
             }
@@ -184,12 +186,6 @@ public class SettingsService {
     //
     // internals
     //
-    private BehaviorConfigType decideType(SettingsDto dto) {
-        return (dto.isEnabled()) ?
-               BehaviorConfigType.FREEMIUM :
-               BehaviorConfigType.DEFAULT;
-    }
-
     private Logger logger() {
         return LoggerFactory.getLogger(getClass());
     }

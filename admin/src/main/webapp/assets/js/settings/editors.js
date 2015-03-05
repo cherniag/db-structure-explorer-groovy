@@ -162,7 +162,7 @@ if(Editors == undefined) {
     };
 
     //
-    // Dictionary
+    // Dictionary Optional
     //
     var DictionaryEditor = function(model, dataAttributePairs) {
         var selectedValue;
@@ -194,6 +194,59 @@ if(Editors == undefined) {
             } else {
                 selectedValue = tagValue;
             }
+            body.empty().append(getBodyView(body));
+        }
+
+        function getBodyView(body) {
+            var view = $('<div class="editor-dictionary"></div>');
+            const dd = model[dataAttributePairs['data-dictionary-path']];
+
+            for(var i=0; i<dd.length;i++) {
+                var tagValue = dd[i];
+                var tagElement = $('<span class="editor-tag"></span>').text(tagValue);
+                assignClickHandler(tagElement, body, tagValue);
+                tagElement.addClass((selectedValue==tagValue) ? 'editor-tag-selected' : 'editor-tag');
+                tagElement.appendTo(view);
+            }
+            return view;
+        }
+
+        function assignClickHandler(tagElement, body, tagValue) {
+            tagElement.click(function(){rememberSelectedAndReRender(tagValue, body)});
+        }
+
+        //
+        // API
+        //
+        this.render = function() {
+            return template.render();
+        }
+    };
+
+    //
+    // Dictionary Strict
+    //
+    var DictionaryStrictEditor = function(model, dataAttributePairs) {
+        var selectedValue;
+
+        var template = new TemplateEditor(model, dataAttributePairs, {
+            display: function(modelBranch) {
+                return modelBranch;
+            },
+            view: function(modelBranch, body) {
+                selectedValue = modelBranch;
+                return getBodyView(body);
+            },
+            getValue: function() {
+                return selectedValue;
+            }
+        });
+
+        //
+        // Internals
+        //
+        function rememberSelectedAndReRender(tagValue, body) {
+            selectedValue = tagValue;
             body.empty().append(getBodyView(body));
         }
 
@@ -341,6 +394,7 @@ if(Editors == undefined) {
             doAdd('digit', DigitEditor);
             doAdd('duration', DurationEditor);
             doAdd('dictionary', DictionaryEditor);
+            doAdd('dictionaryStrict', DictionaryStrictEditor);
         }
 
         function doAdd(key, editor) {

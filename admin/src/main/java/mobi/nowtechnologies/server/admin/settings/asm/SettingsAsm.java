@@ -3,10 +3,13 @@ package mobi.nowtechnologies.server.admin.settings.asm;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.SettingsDto;
 import mobi.nowtechnologies.server.admin.settings.asm.dto.playlisttype.MetaInfo;
 import mobi.nowtechnologies.server.admin.settings.service.SettingsService;
+import mobi.nowtechnologies.server.dto.context.ContentBehaviorType;
 import mobi.nowtechnologies.server.dto.streamzine.ChartListItemDto;
 import mobi.nowtechnologies.server.persistence.domain.UserStatusType;
+import mobi.nowtechnologies.server.persistence.domain.behavior.BehaviorConfigType;
 import mobi.nowtechnologies.server.persistence.domain.behavior.ChartBehaviorType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,16 +41,17 @@ public class SettingsAsm {
 
         // add some dictionary data
         dto.setPages(pages);
-        dto.setMetaInfo(createMetaInfo());
+        dto.setMetaInfo(createMetaInfo(dto.getBehaviorConfigType()));
         dto.setActions(actions);
+        dto.setContentBehaviorTypes(Arrays.asList(ContentBehaviorType.values()));
         dto.addPlaylistInfo(chartListItemDtos);
         dto.addLocalizationInfo(getLocalizationData());
         return dto;
     }
 
-    private Map<ChartBehaviorType, MetaInfo> createMetaInfo() {
+    private Map<ChartBehaviorType, MetaInfo> createMetaInfo(BehaviorConfigType behaviorConfigType) {
         Map<ChartBehaviorType, MetaInfo> map = new HashMap<ChartBehaviorType, MetaInfo>();
-        for (ChartBehaviorType chartBehaviorType : ChartBehaviorType.values()) {
+        for (ChartBehaviorType chartBehaviorType : BehaviorConfigTypeRules.allowedChartBehaviorTypes(behaviorConfigType)) {
             MetaInfo info = new MetaInfo();
             info.setTracksInfoSupported(chartBehaviorType.isTracksInfoSupported());
             info.setTracksPlayDurationSupported(chartBehaviorType.isTracksPlayDurationSupported());
