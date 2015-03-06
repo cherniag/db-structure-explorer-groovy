@@ -13,7 +13,7 @@
     </span>
     <div class="go-premium-text-message-wrapper go-premium-text-message-wrapper-device error-description">
         <span class="go-premium-text-message go-premium-text-message-device">
-            <s:message code="paypal.error.text" />
+            <s:message code="paypal.error.text" /> <s:message code="feedback.email" />
         </span>
         <br/>
     </div>
