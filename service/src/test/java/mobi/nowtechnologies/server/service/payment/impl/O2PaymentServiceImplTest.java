@@ -33,6 +33,7 @@ import mobi.nowtechnologies.server.service.RefundService;
 import mobi.nowtechnologies.server.service.UserService;
 import mobi.nowtechnologies.server.service.event.PaymentEvent;
 import mobi.nowtechnologies.server.service.o2.impl.O2ProviderService;
+import mobi.nowtechnologies.server.service.payment.PaymentEventNotifier;
 import mobi.nowtechnologies.server.service.payment.http.MigHttpService;
 import mobi.nowtechnologies.server.service.payment.response.O2Response;
 import mobi.nowtechnologies.server.shared.Utils;
@@ -76,21 +77,14 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 public class O2PaymentServiceImplTest {
 
     private UserService userServiceMock;
-    private UserRepository mockUserRepository;
-    private UserDao mockUserDao;
     private EntityService mockEntityService;
-    private AccountLogService mockAccountLogService;
     private CommunityResourceBundleMessageSource mockCommunityResourceBundleMessageSource;
-    private MigHttpService mockMigHttpService;
     private PaymentDetailsService mockPaymentDetailsService;
-    private CommunityService mockCommunityService;
-    private CountryService mockCountryService;
     private O2ProviderService mockO2ClientService;
-    private DeviceService mockDeviceService;
     private O2PaymentServiceImpl o2PaymentServiceImplSpy;
     private ApplicationEventPublisher mockApplicationEventPublisher;
     private PaymentDetailsRepository mockPaymentDetailsRepository;
-    private RefundService refundServiceMock;
+    private PaymentEventNotifier paymentEventNotifier;
 
     @Before
     public void setUp() throws Exception {
@@ -98,20 +92,12 @@ public class O2PaymentServiceImplTest {
 
         userServiceMock = mock(UserService.class);
 
-        mockCountryService = mock(CountryService.class);
         mockCommunityResourceBundleMessageSource = mock(CommunityResourceBundleMessageSource.class);
-        mockUserRepository = mock(UserRepository.class);
         mockPaymentDetailsService = mock(PaymentDetailsService.class);
-        mockUserDao = mock(UserDao.class);
         mockEntityService = mock(EntityService.class);
-        mockCommunityService = mock(CommunityService.class);
-        mockDeviceService = mock(DeviceService.class);
-        mockMigHttpService = mock(MigHttpService.class);
-        mockAccountLogService = mock(AccountLogService.class);
         mockO2ClientService = mock(O2ProviderService.class);
-        mockUserRepository = mock(UserRepository.class);
         mockPaymentDetailsRepository = mock(PaymentDetailsRepository.class);
-        refundServiceMock = PowerMockito.mock(RefundService.class);
+        paymentEventNotifier = mock(PaymentEventNotifier.class);
 
         mockStatic(UserStatusDao.class);
 
@@ -124,6 +110,7 @@ public class O2PaymentServiceImplTest {
         o2PaymentServiceImplSpy.setEntityService(mockEntityService);
         o2PaymentServiceImplSpy.setPaymentDetailsRepository(mockPaymentDetailsRepository);
         o2PaymentServiceImplSpy.setPaymentDetailsService(mockPaymentDetailsService);
+        o2PaymentServiceImplSpy.setPaymentEventNotifier(paymentEventNotifier);
     }
 
     @Test

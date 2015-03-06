@@ -5,4 +5,5 @@ package mobi.nowtechnologies.server.service.sms;
  */
 public interface SMSResponse {
     boolean isSuccessful();
+    String getDescriptionError();
 }

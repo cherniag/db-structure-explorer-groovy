@@ -35,6 +35,20 @@ public class NZSubscriberInfoRepositoryIT extends AbstractRepositoryIT {
         assertEquals("67890", subscriberInfo.getMsisdn());
     }
 
+    @Test
+    public void findSubscriberInfoByUserId() throws Exception {
+        NZSubscriberInfo subscriberInfo1 = getNzSubscriberInfo("12345");
+        subscriberInfo1.setUserId(10);
+        subscriberInfoRepository.save(subscriberInfo1);
+
+        NZSubscriberInfo subscriberInfo2 = getNzSubscriberInfo("67890");
+        subscriberInfo2.setUserId(20);
+        subscriberInfoRepository.save(subscriberInfo2);
+
+        NZSubscriberInfo infoByUserId = subscriberInfoRepository.findSubscriberInfoByUserId(10);
+        assertEquals("12345", infoByUserId.getMsisdn());
+    }
+
     @After
     public void tearDown() throws Exception {
         subscriberInfoRepository.deleteAll();

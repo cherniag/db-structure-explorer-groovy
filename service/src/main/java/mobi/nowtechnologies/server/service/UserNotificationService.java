@@ -27,11 +27,11 @@ public interface UserNotificationService {
 
     Future<Boolean> sendLowBalanceWarning(User user) throws UnsupportedEncodingException;
 
-    Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) throws UnsupportedEncodingException;
-
     Future<Boolean> send4GDowngradeSMS(User user, String smsType) throws UnsupportedEncodingException;
 
     Future<Boolean> sendActivationPinSMS(User user) throws UnsupportedEncodingException;
 
-    boolean sendPaymentFailSMS(PaymentDetails paymentDetails) throws UnsupportedEncodingException;
+    Future<Boolean> sendPaymentFailSMS(PaymentDetails paymentDetails);
+
+    boolean sendSMSByKey(User user, String phoneNumber, String messageKey) throws UnsupportedEncodingException;
 }

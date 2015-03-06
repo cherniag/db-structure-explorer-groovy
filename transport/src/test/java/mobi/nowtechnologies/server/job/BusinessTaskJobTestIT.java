@@ -12,6 +12,7 @@ import mobi.nowtechnologies.server.persistence.repository.TaskRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserGroupRepository;
 import mobi.nowtechnologies.server.persistence.repository.UserRepository;
 import mobi.nowtechnologies.server.service.sms.SMPPServiceImpl;
+import mobi.nowtechnologies.server.service.sms.SMSResponse;
 import mobi.nowtechnologies.server.service.vodafone.impl.VFNZSMSGatewayServiceImpl;
 import mobi.nowtechnologies.server.shared.enums.ActivationStatus;
 import mobi.nowtechnologies.server.shared.enums.ProviderType;
@@ -44,14 +45,14 @@ import static org.hamcrest.Matchers.is;
  * User: gch Date: 12/20/13
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml", "classpath:jobs-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
+@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
 @WebAppConfiguration
 @TransactionConfiguration(transactionManager = "persistence.TransactionManager", defaultRollback = true)
 @Transactional
 public class BusinessTaskJobTestIT {
 
     @Resource
-    private BusinessTaskJob businessTaskJob;
+    private BusinessTaskJob sendChargeNotificationJob;
 
     @Resource
     private TaskRepository taskRepository;
@@ -66,11 +67,14 @@ public class BusinessTaskJobTestIT {
     private UserGroupRepository userGroupRepository;
 
     private SMPPServiceImpl smppService;
+    private User user;
 
     @Before
     public void setUp() throws Exception {
         smppService = mock(SMPPServiceImpl.class);
-        when(smppService.sendMessage(any(MTMessage.class))).thenReturn(true);
+        SMSResponse smsResponse = mock(SMSResponse.class);
+        when(smsResponse.isSuccessful()).thenReturn(true);
+        when(smppService.sendMessage(any(MTMessage.class))).thenReturn(smsResponse);
         smsGatewayService.setSmppService(smppService);
         taskRepository.deleteAll();
     }
@@ -79,7 +83,7 @@ public class BusinessTaskJobTestIT {
     public void checkSendChargeNotificationTaskExecution() throws Exception {
         long now = System.currentTimeMillis();
         UserGroup userGroup = userGroupRepository.findOne(8);
-        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setId(0);
         user.setUserName("+64598720352");
         user.setUserGroup(userGroup);
@@ -90,8 +94,7 @@ public class BusinessTaskJobTestIT {
         sendChargeNotificationTask.setCreationTimestamp(now - 2000L);
         sendChargeNotificationTask.setExecutionTimestamp(now);
         sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
-        businessTaskJob.execute();
-        TimeUnit.SECONDS.sleep(3);
+        sendChargeNotificationJob.execute();
         Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());
         assertThat(saved.getExecutionTimestamp(), is(now + 2000L));
         verify(smppService).sendMessage(argThat(getMTMMessageMatcherMatcher("You are charged for 28 days continuously", user.getMobile())));
@@ -100,9 +103,9 @@ public class BusinessTaskJobTestIT {
     @Test
     public void checkSendChargeNotificationTaskInFutureShouldNotBeSend() throws Exception {
         long now = System.currentTimeMillis();
-        UserGroup userGroup = UserGroupFactory.createUserGroup();
+        UserGroup userGroup = userGroupRepository.findOne(8);
         userGroup.setId(8);
-        User user = UserFactory.createUser(ActivationStatus.ACTIVATED);
+        user = UserFactory.createUser(ActivationStatus.ACTIVATED);
         user.setId(0);
         user.setUserName("+6459336695");
         user.setUserGroup(userGroup);
@@ -113,8 +116,7 @@ public class BusinessTaskJobTestIT {
         sendChargeNotificationTask.setCreationTimestamp(now - 2000L);
         sendChargeNotificationTask.setExecutionTimestamp(now + 3000L);
         sendChargeNotificationTask = (SendChargeNotificationTask) taskRepository.save(sendChargeNotificationTask);
-        businessTaskJob.execute();
-        TimeUnit.SECONDS.sleep(3);
+        sendChargeNotificationJob.execute();
         Task saved = (Task) taskRepository.findOne(sendChargeNotificationTask.getId());
         assertThat(saved.getExecutionTimestamp(), is(now + 3000L));
         verify(smppService, never()).sendMessage(argThat(getMTMMessageMatcherMatcher("You are charged for 28 days continuously", user.getMobile())));

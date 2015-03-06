@@ -38,11 +38,9 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob {
             init(context.getMergedJobDataMap());
             LOGGER.info("[START] Send SMS job started for [{}] community users", communityUrl);
             execute();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-        finally {
+        } finally {
             LOGGER.info("[FINISH] Send SMS job finished for [{}] community users", communityUrl);
             LogUtils.removeGlobalMDC();
         }
@@ -62,13 +60,15 @@ public class SendSMSQuartzJobBean extends QuartzJobBean implements StatefulJob {
 
         for (PaymentDetails paymentDetail : paymentDetails) {
             try {
-                userNotificationService.sendPaymentFailSMS(paymentDetail);
-            }
-            catch (UnsupportedEncodingException e) {
+                if(paymentDetail.isCurrentAttemptFailed()){
+                    userNotificationService.sendPaymentFailSMS(paymentDetail);
+                } else {
+                    LOGGER.info("The payment fail sms wasn't sent cause current attempt isn't failed");
+                }
+            } catch (Exception e) {
                 LogUtils.putClassNameMDC(this.getClass());
                 LOGGER.error(e.getMessage(), e);
-            }
-            finally {
+            } finally {
                 LogUtils.putClassNameMDC(this.getClass());
             }
         }

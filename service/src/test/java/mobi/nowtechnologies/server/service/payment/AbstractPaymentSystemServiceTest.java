@@ -41,26 +41,27 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {PaymentEvent.class, Utils.class, SubmittedPayment.class})
 public class AbstractPaymentSystemServiceTest {
-
-    private EntityService mockEntityService;
-    private UserService mockUserService;
+    @Mock
+	private EntityService mockEntityService;
+    @Mock
+	private UserService mockUserService;
+    @Mock
+	private PaymentDetailsRepository mockPaymentDetailsRepository;
+    @Mock
+	private ApplicationEventPublisher mockApplicationEventPublisher;
+    @Mock
+    private PaymentEventNotifier paymentEventNotifier;
     private AbstractPaymentSystemService mockAbstractPaymentSystemService;
-    private PaymentDetailsRepository mockPaymentDetailsRepository;
-    private ApplicationEventPublisher mockApplicationEventPublisher;
 
-    @Before
+	@Before
     public void setUp() throws Exception {
-        mockEntityService = Mockito.mock(EntityService.class);
-        mockUserService = Mockito.mock(UserService.class);
-        mockPaymentDetailsRepository = Mockito.mock(PaymentDetailsRepository.class);
-        mockApplicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
+		mockAbstractPaymentSystemService = Mockito.mock(AbstractPaymentSystemService.class, Mockito.CALLS_REAL_METHODS);
 
-        mockAbstractPaymentSystemService = Mockito.mock(AbstractPaymentSystemService.class, Mockito.CALLS_REAL_METHODS);
-
-        mockAbstractPaymentSystemService.setEntityService(mockEntityService);
-        mockAbstractPaymentSystemService.setUserService(mockUserService);
-        mockAbstractPaymentSystemService.setPaymentDetailsRepository(mockPaymentDetailsRepository);
-        mockAbstractPaymentSystemService.setApplicationEventPublisher(mockApplicationEventPublisher);
+		mockAbstractPaymentSystemService.setEntityService(mockEntityService);
+		mockAbstractPaymentSystemService.setUserService(mockUserService);
+		mockAbstractPaymentSystemService.setPaymentDetailsRepository(mockPaymentDetailsRepository);
+		mockAbstractPaymentSystemService.setApplicationEventPublisher(mockApplicationEventPublisher);
+        mockAbstractPaymentSystemService.setPaymentEventNotifier(paymentEventNotifier);
     }
 
     @Test
@@ -248,7 +249,7 @@ public class AbstractPaymentSystemServiceTest {
         assertNotNull(actualSubmittedPayment);
         assertEquals(submittedPayment, actualSubmittedPayment);
         assertEquals(ERROR, actualSubmittedPayment.getStatus());
-        assertEquals("", actualSubmittedPayment.getExternalTxId());
+        assertEquals(null, actualSubmittedPayment.getExternalTxId());
 
         assertEquals(ERROR, paymentDetails.getLastPaymentStatus());
         assertEquals(1, paymentDetails.getMadeRetries());
@@ -317,7 +318,7 @@ public class AbstractPaymentSystemServiceTest {
         assertNotNull(actualSubmittedPayment);
         assertEquals(submittedPayment, actualSubmittedPayment);
         assertEquals(ERROR, actualSubmittedPayment.getStatus());
-        assertEquals("", actualSubmittedPayment.getExternalTxId());
+        assertEquals(null, actualSubmittedPayment.getExternalTxId());
         assertEquals(descriptionError, actualSubmittedPayment.getDescriptionError());
 
         assertEquals(ERROR, paymentDetails.getLastPaymentStatus());

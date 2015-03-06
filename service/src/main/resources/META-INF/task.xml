@@ -5,7 +5,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="task.Scheduler" class="mobi.nowtechnologies.server.service.util.Scheduler">
+    <bean id="task.Scheduler" class="mobi.nowtechnologies.server.service.util.IntervalScheduler">
         <property name="messageSource" ref="serviceMessageSource" />
     </bean>
 
@@ -13,5 +13,6 @@
         <property name="taskRepository" ref="taskRepository" />
         <property name="scheduler" ref="task.Scheduler" />
         <property name="messageSource" ref="serviceMessageSource" />
+        <property name="timeService" ref="timeService"/>
     </bean>
 </beans>

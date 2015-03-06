@@ -32,7 +32,7 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
 
     protected SMSResponse send(MTMessage messageObject) {
         LOGGER.debug("start sending sms [{}], [{}], [{}]", new Object[] {messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent()});
-        boolean result = false;
+        SMSResponse result;
         try {
             result = smppService.sendMessage(messageObject);
         }
@@ -41,18 +41,8 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
             throw new ServiceException(e.getMessage());
         }
 
-        SMSResponse response = generateResponse(result);
-        LOGGER.info("Sms was sent successfully ({}) from [{}] to [{}] with message [{}]", response.isSuccessful(), messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
-        return response;
-    }
-
-    private SMSResponse generateResponse(final boolean result){
-        return new SMSResponse() {
-            @Override
-            public boolean isSuccessful() {
-                return result;
-            }
-        };
+        LOGGER.info("Sms was sent result:{} from [{}] to [{}] with message [{}]", result, messageObject.getOriginatingAddress(), messageObject.getDestinationAddress(), messageObject.getContent());
+        return result;
     }
 
     public void setSmppService(SMPPServiceImpl smppService) {

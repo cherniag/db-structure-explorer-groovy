@@ -40,6 +40,7 @@ import org.springframework.core.task.TaskRejectedException;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -51,7 +52,7 @@ import static org.mockito.Mockito.*;
  * Author: Gennadii Cherniaiev Date: 4/17/2014
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml", "classpath:jobs-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
+@ContextHierarchy({@ContextConfiguration(locations = {"classpath:transport-root-test.xml"}), @ContextConfiguration(locations = {"classpath:transport-servlet-test.xml"})})
 public class CreateRetryPaymentJobHandleExceptionIT {
 
     private static final String UNKNOWN_EXCEPTION = "Unknown exception";
@@ -183,7 +184,7 @@ public class CreateRetryPaymentJobHandleExceptionIT {
     }
 
     private void mockUserNotificationService() throws UnsupportedEncodingException {
-        when(userNotificationServiceMocked.sendPaymentFailSMS(any(PaymentDetails.class))).thenReturn(true);
+        when(userNotificationServiceMocked.sendPaymentFailSMS(any(PaymentDetails.class))).thenReturn(new AsyncResult<>(true));
         smsNotification.setUserNotificationService(userNotificationServiceMocked);
     }
 

@@ -34,7 +34,7 @@ public class SMSNotification {
         this.userService = userService;
     }
 
-    @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
+    /*@Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.SagePayPaymentServiceImpl.startPayment(..))")
     protected void startCreditCardPayment() {
     }
 
@@ -52,12 +52,12 @@ public class SMSNotification {
 
     @Pointcut("execution(* mobi.nowtechnologies.server.service.payment.impl.MigPaymentServiceImpl.startPayment(..))")
     protected void startMigPayment() {
-    }
+    }*/
 
     /**
      * Sending sms after any payment system has spent all retries with failure
      */
-    @Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
+    /*@Around("startCreditCardPayment()  || startPayPalPayment() || startO2PSMSPayment() || startMigPayment() || startVFPSMSPayment()")
     public Object startPayment(ProceedingJoinPoint joinPoint) throws Throwable {
         PendingPayment pendingPayment = (PendingPayment) joinPoint.getArgs()[0];
         LOGGER.info("start payment: {}", pendingPayment);
@@ -65,7 +65,7 @@ public class SMSNotification {
         userNotificationService.sendPaymentFailSMS(pendingPayment);
         LOGGER.info("finish payment {}", pendingPayment);
         return object;
-    }
+    }*/
 
     /**
      * Sending sms after user was set to limited status

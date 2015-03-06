@@ -151,6 +151,11 @@ public class PhoneNumberControllerTestIT extends AbstractControllerTestIT {
                     public boolean isSuccessful() {
                         return true;
                     }
+
+                    @Override
+                    public String getDescriptionError() {
+                        return null;
+                    }
                 };
             }
         }).when(vfGatewayServiceSpy).send(eq("+642102247311"), anyString(), eq("4003"));

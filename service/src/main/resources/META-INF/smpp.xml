@@ -40,6 +40,7 @@
     <bean id="vf_nz.service.SMPPProcessorContainer" class="mobi.nowtechnologies.server.service.sms.SMSMessageProcessorContainer">
         <property name="messageProcessors">
             <list>
+                <ref bean="mtvnzPaymentSMSMessageProcessor"/>
                 <ref bean="vf_nz.service.VFNZUnsubscribeProccessor"/>
                 <ref bean="vf_nz.service.UserDetailsUpdater"/>
                 <ref bean="service.vfPaymentService"/>

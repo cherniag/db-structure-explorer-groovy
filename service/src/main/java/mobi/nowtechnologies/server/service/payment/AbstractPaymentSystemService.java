@@ -27,22 +27,23 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 public abstract class AbstractPaymentSystemService implements PaymentSystemService, ApplicationEventPublisherAware {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPaymentSystemService.class);
-
-    protected EntityService entityService;
-    protected PaymentDetailsService paymentDetailsService;
-    protected UserService userService;
-    private int retriesOnError;
-    private long expireMillis;
-    private ApplicationEventPublisher applicationEventPublisher;
-    private PaymentDetailsRepository paymentDetailsRepository;
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response) {
-        LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
-        SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPaymentSystemService.class);
+	
+	protected EntityService entityService;
+	private int retriesOnError;
+	private long expireMillis;
+	private ApplicationEventPublisher applicationEventPublisher;
+	protected PaymentDetailsService paymentDetailsService;
+	private PaymentDetailsRepository paymentDetailsRepository;
+	protected UserService userService;
+    private PaymentEventNotifier paymentEventNotifier;
+	
+	@Transactional(propagation=Propagation.REQUIRED)
+	@Override
+	public SubmittedPayment commitPayment(PendingPayment pendingPayment, PaymentSystemResponse response){
+		LOGGER.info("Starting commit process for pending payment tx:{} ...", pendingPayment.getInternalTxId());
+		SubmittedPayment submittedPayment = SubmittedPayment.valueOf(pendingPayment);
 
         PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
 
@@ -69,23 +70,19 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
             paymentDetails.setErrorCode(null);
         }
 
-        if (isNull(submittedPayment.getExternalTxId())) {
-            submittedPayment.setExternalTxId("");
-        }
-
-        // Store submitted payment
-        submittedPayment.setStatus(status);
+		// Store submitted payment
+		submittedPayment.setStatus(status);
         submittedPayment = entityService.updateEntity(submittedPayment);
         LOGGER.info("Submitted payment with id {} has been created", submittedPayment.getI());
 
         paymentDetails.setLastPaymentStatus(status);
         entityService.updateEntity(paymentDetails);
 
-        // Send sync-event about committed payment
-        if (submittedPayment.getStatus().equals(SUCCESSFUL)) {
-            applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
-        }
-        else {
+		// Send sync-event about committed payment
+		if (submittedPayment.getStatus().equals(SUCCESSFUL)) {
+			applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
+        } else {
+            paymentEventNotifier.onError(paymentDetails);
             checkPaymentDetailsAndUnSubscribe(response, pendingPayment);
         }
 
@@ -102,6 +99,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
 
         if (paymentDetails.shouldBeUnSubscribed()) {
             userService.unsubscribeUser(paymentDetails.getOwner(), response.getDescriptionError());
+            paymentEventNotifier.onUnsubscribe(paymentDetails.getOwner());
         }
     }
 
@@ -140,27 +138,36 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
         this.expireMillis = expireMillis;
     }
 
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+	/**
+	 * @deprecated Use {@link #paymentDetailsService}
+	 */
+	@Deprecated
+	public PaymentDetailsRepository getPaymentDetailsRepository() {
+		return paymentDetailsRepository;
+	}
+	
+	public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
+		this.paymentDetailsService = paymentDetailsService;
+	}
+	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+    public PaymentEventNotifier getPaymentEventNotifier() {
+        return paymentEventNotifier;
     }
 
-    /**
-     * @deprecated Use {@link #paymentDetailsService}
-     */
-    @Deprecated
-    public PaymentDetailsRepository getPaymentDetailsRepository() {
-        return paymentDetailsRepository;
+    public void setPaymentEventNotifier(PaymentEventNotifier paymentEventNotifier) {
+        this.paymentEventNotifier = paymentEventNotifier;
     }
 
     public void setPaymentDetailsRepository(PaymentDetailsRepository paymentDetailsRepository) {
         this.paymentDetailsRepository = paymentDetailsRepository;
     }
 
-    public void setPaymentDetailsService(PaymentDetailsService paymentDetailsService) {
-        this.paymentDetailsService = paymentDetailsService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

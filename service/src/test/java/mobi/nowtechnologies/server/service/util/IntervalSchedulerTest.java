@@ -26,8 +26,8 @@ import static org.hamcrest.Matchers.is;
  * User: gch Date: 12/18/13
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SchedulerTest {
-
+public class IntervalSchedulerTest {
+    
     public static final String SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE = "sendchargenotificationtask.schedule.period.in.millis";
     public static final String COMMUNITY_WITH_EXISTING_PROPERTY = "vf_nz";
     public static final String COMMUNITY_WITH_WRONG_PROPERTY = "o2";
@@ -36,7 +36,7 @@ public class SchedulerTest {
     private CommunityResourceBundleMessageSource messageSource;
 
     @InjectMocks
-    private Scheduler scheduler;
+    private IntervalScheduler scheduler;
 
     @Before
     public void setUp() throws Exception {
@@ -51,7 +51,7 @@ public class SchedulerTest {
         Task task = new SendChargeNotificationTask();
         long creationTimestamp = System.currentTimeMillis();
         task.setCreationTimestamp(creationTimestamp);
-        scheduler.scheduleTask(COMMUNITY_WITH_EXISTING_PROPERTY, task);
+        scheduler.scheduleTask(task, COMMUNITY_WITH_EXISTING_PROPERTY);
         assertThat(task.getExecutionTimestamp(), is(creationTimestamp + 1000L));
         verify(messageSource, times(1)).getMessage(eq(COMMUNITY_WITH_EXISTING_PROPERTY), eq(SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE), any(Object[].class), any(Locale.class));
     }
@@ -61,29 +61,30 @@ public class SchedulerTest {
         Task task = new SendChargeNotificationTask();
         long creationTimestamp = System.currentTimeMillis();
         task.setCreationTimestamp(creationTimestamp);
-        scheduler.scheduleTask(null, task);
+        scheduler.scheduleTask(task, null);
         assertThat(task.getExecutionTimestamp(), is(creationTimestamp + 5000L));
         verify(messageSource, times(1)).getMessage(isNull(String.class), eq(SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE), any(Object[].class), any(Locale.class));
     }
 
-    @Test(expected = ServiceException.class)
-    public void checkScheduleTaskForWrongScheduleProperty() {
+    @Test(expected = NumberFormatException.class)
+    public void checkScheduleTaskForWrongScheduleProperty(){
         Task task = new SendChargeNotificationTask();
-        scheduler.scheduleTask(COMMUNITY_WITH_WRONG_PROPERTY, task);
+        scheduler.scheduleTask(task, COMMUNITY_WITH_WRONG_PROPERTY);
         verify(messageSource, times(1)).getMessage(eq(COMMUNITY_WITH_WRONG_PROPERTY), eq(SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE), any(Object[].class), any(Locale.class));
     }
 
-    @Test(expected = ServiceException.class)
-    public void checkScheduleTaskForNullScheduleProperty() {
+    @Test(expected = NumberFormatException.class)
+    public void checkScheduleTaskForNullScheduleProperty(){
         Task task = new SendChargeNotificationTask();
-        scheduler.scheduleTask(COMMUNITY_WITH_NULL_PROPERTY, task);
+        scheduler.scheduleTask(task, COMMUNITY_WITH_NULL_PROPERTY);
         verify(messageSource, times(1)).getMessage(eq(COMMUNITY_WITH_NULL_PROPERTY), eq(SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE), any(Object[].class), any(Locale.class));
     }
 
     @Test
     public void checkScheduleTaskForExistingCommunityWithoutCreationTimeStamp() {
         Task task = new SendChargeNotificationTask();
-        scheduler.scheduleTask(COMMUNITY_WITH_EXISTING_PROPERTY, task);
+        task.setCreationTimestamp(System.currentTimeMillis());
+        scheduler.scheduleTask(task, COMMUNITY_WITH_EXISTING_PROPERTY);
         assertThat(task.getExecutionTimestamp(), not(is(0L)));
         assertThat(task.getExecutionTimestamp(), greaterThan(System.currentTimeMillis()));
         verify(messageSource, times(1)).getMessage(eq(COMMUNITY_WITH_EXISTING_PROPERTY), eq(SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE), any(Object[].class), any(Locale.class));
@@ -95,15 +96,15 @@ public class SchedulerTest {
         long now = System.currentTimeMillis();
         task.setCreationTimestamp(now - 5000L);
         task.setExecutionTimestamp(now);
-        scheduler.reScheduleTask(COMMUNITY_WITH_EXISTING_PROPERTY, task);
+        scheduler.scheduleTask(task, COMMUNITY_WITH_EXISTING_PROPERTY);
         assertThat(task.getExecutionTimestamp(), is(now + 1000L));
         verify(messageSource, times(1)).getMessage(eq(COMMUNITY_WITH_EXISTING_PROPERTY), eq(SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE), any(Object[].class), any(Locale.class));
     }
 
-    @Test(expected = ServiceException.class)
-    public void checkReScheduleTaskForWrongScheduleProperty() {
+    @Test(expected = NumberFormatException.class)
+    public void checkReScheduleTaskForWrongScheduleProperty(){
         Task task = TaskFactory.createSendChargeNotificationTask();
-        scheduler.scheduleTask(COMMUNITY_WITH_WRONG_PROPERTY, task);
+        scheduler.scheduleTask(task, COMMUNITY_WITH_WRONG_PROPERTY);
         verify(messageSource, times(1)).getMessage(eq(COMMUNITY_WITH_WRONG_PROPERTY), eq(SEND_CHARGE_NOTIFICATION_TASK_SCHEDULE), any(Object[].class), any(Locale.class));
     }
 }

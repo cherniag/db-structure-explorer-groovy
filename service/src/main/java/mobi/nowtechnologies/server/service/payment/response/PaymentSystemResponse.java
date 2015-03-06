@@ -28,6 +28,9 @@ public abstract class PaymentSystemResponse {
         }
     }
 
+    public PaymentSystemResponse() {
+    }
+
     public PaymentSystemResponse(boolean isFuture) {
         this.isFuture = isFuture;
     }

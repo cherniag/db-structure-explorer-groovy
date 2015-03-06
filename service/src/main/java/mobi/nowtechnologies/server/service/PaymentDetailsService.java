@@ -62,6 +62,16 @@ public class PaymentDetailsService {
     private PaymentDetailsRepository paymentDetailsRepository;
     private UserRepository userRepository;
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void setErrorStatus(PaymentDetails paymentDetails, String descriptionError, String errorCode){
+        LOGGER.debug("Set error status for {}, descriptionError: {}, errorCode: {}", paymentDetails, descriptionError, errorCode);
+        paymentDetails.setDescriptionError(descriptionError);
+        paymentDetails.setDescriptionError(errorCode);
+        paymentDetails.setLastPaymentStatus(PaymentDetailsStatus.ERROR);
+
+        paymentDetailsRepository.saveAndFlush(paymentDetails);
+    }
+
     public void setPaymentDetailsDao(PaymentDetailsDao paymentDetailsDao) {
         this.paymentDetailsDao = paymentDetailsDao;
     }

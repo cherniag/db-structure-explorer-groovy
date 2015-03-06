@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -36,7 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static mobi.nowtechnologies.server.persistence.domain.Community.VF_NZ_COMMUNITY_REWRITE_URL;
 import static mobi.nowtechnologies.server.shared.ObjectUtils.isNull;
 import static mobi.nowtechnologies.server.shared.Utils.preFormatCurrency;
 
@@ -402,36 +400,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
 
     @Async
     @Override
-    public Future<Boolean> sendPaymentFailSMS(PendingPayment pendingPayment) {
-        try {
-            LOGGER.info("Start send payment fail SMS: {}", pendingPayment);
-            PaymentDetails paymentDetails = pendingPayment.getPaymentDetails();
-            User user = pendingPayment.getUser();
-
-            final UserGroup userGroup = user.getUserGroup();
-            final Community community = userGroup.getCommunity();
-
-            LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
-
-            if (!VF_NZ_COMMUNITY_REWRITE_URL.equals(community.getRewriteUrlParameter())) {
-                return new AsyncResult<Boolean>(sendPaymentFailSMS(paymentDetails));
-            }
-            else {
-                LOGGER.info("The payment fail sms for vf_nz community user wasn't sent cause it should be send between 8am and 8 pm by separate job");
-            }
-        }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        finally {
-            LogUtils.removeGlobalMDC();
-        }
-        return new AsyncResult<Boolean>(Boolean.FALSE);
-    }
-
-    @Override
-    @Transactional
-    public boolean sendPaymentFailSMS(PaymentDetails paymentDetails) {
+    public Future<Boolean> sendPaymentFailSMS(PaymentDetails paymentDetails) {
         try {
             LOGGER.debug("input parameters paymentDetails: [{}]", paymentDetails);
 
@@ -443,30 +412,24 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             LogUtils.putGlobalMDC(user.getId(), user.getMobile(), user.getUserName(), community.getName(), "", this.getClass(), "");
             boolean wasSmsSentSuccessfully = false;
 
-            if (paymentDetails.isCurrentAttemptFailed()) {
-                int attempt = paymentDetails.getMadeAttempts();
+            int attempt = paymentDetails.getMadeAttempts();
 
-                if (!rejectDevice(user, "sms.notification.paymentFail.at." + attempt + "attempt.not.for.device.type")) {
-                    String shortCode = paymentDetails.getPaymentPolicy().getShortCode();
-                    wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[] {paymentsUrl, shortCode});
+            if (!rejectDevice(user, "sms.notification.paymentFail.at." + attempt + "attempt.not.for.device.type")) {
+                String shortCode = paymentDetails.getPaymentPolicy().getShortCode();
+                wasSmsSentSuccessfully = sendSMSWithUrl(user, "sms.paymentFail.at." + attempt + "attempt.text", new String[]{paymentsUrl, shortCode});
 
-                    if (wasSmsSentSuccessfully) {
-                        LOGGER.info("The payment fail sms was sent successfully");
-                        paymentDetailsService.update(paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis()));
-                    }
-                    else {
-                        LOGGER.info("The payment fail sms wasn't sent");
-                    }
+                if (wasSmsSentSuccessfully) {
+                    LOGGER.info("The payment fail sms was sent successfully");
+                    paymentDetailsService.update(paymentDetails.withLastFailedPaymentNotificationMillis(Utils.getEpochMillis()));
+                } else {
+                    LOGGER.info("The payment fail sms wasn't sent for paymentDetails {}", paymentDetails);
                 }
-                else {
-                    LOGGER.info("The payment fail sms wasn't sent cause rejecting");
-                }
+            } else {
+                LOGGER.info("The payment fail sms wasn't sent cause rejecting");
             }
-            else {
-                LOGGER.info("The payment fail sms wasn't sent cause current attempt isn't failed");
-            }
+
             LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
-            return wasSmsSentSuccessfully;
+            return new AsyncResult<>(wasSmsSentSuccessfully);
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -474,7 +437,7 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         finally {
             LogUtils.removeGlobalMDC();
         }
-        return false;
+        return new AsyncResult<>(false);
     }
 
 
@@ -571,6 +534,35 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         }
     }
 
+    @Override
+    public boolean sendSMSByKey(User user, String phoneNumber, String messageKey) throws UnsupportedEncodingException {
+        LOGGER.info("Send SMS by key, user id:{}, phoneNumber:{}, messageKey:{}", user.getId(), phoneNumber, messageKey);
+
+        String communityUrl = user.getCommunityRewriteUrl();
+        String rejectByDeviceTypeCode = "sms.notification.not.for.device.type";
+        if (rejectDevice(user, rejectByDeviceTypeCode)) {
+            LOGGER.warn("The sms wasn't sent cause rejecting, device: {}, code: {}", user.getDeviceTypeIdString(), rejectByDeviceTypeCode);
+            return false;
+        }
+
+        if (deviceService.isPromotedDevicePhone(user.getCommunity(), phoneNumber, null)) {
+            LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", phoneNumber, communityUrl);
+            return false;
+        }
+
+        String message = getMessage(user, user.getCommunity(), messageKey, null);
+
+        if (StringUtils.isBlank(message)) {
+            LOGGER.warn("The sms wasn't sent cause empty sms text message, community: {}, messageKey: {}", communityUrl, messageKey);
+            return false;
+        }
+
+        String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
+        SMSResponse smsResponse = smsServiceFacade.getSMSProvider(communityUrl).send(phoneNumber, message, title);
+        LOGGER.info("Sms response: {}", smsResponse);
+        return smsResponse.isSuccessful();
+    }
+
     public boolean sendSMSWithUrl(User user, String msgCode, String[] msgArgs) throws UnsupportedEncodingException {
         LOGGER.debug("input parameters user, msgCode, msgArgs: [{}], [{}]", user, msgCode, msgArgs);
 
@@ -581,8 +573,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
         final UserGroup userGroup = user.getUserGroup();
         Community community = userGroup.getCommunity();
         String communityUrl = community.getRewriteUrlParameter();
-
-        boolean wasSmsSentSuccessfully = false;
 
         if (!rejectDevice(user, "sms.notification.not.for.device.type")) {
             if (!deviceService.isPromotedDevicePhone(community, user.getMobile(), null)) {
@@ -613,31 +603,26 @@ public class UserNotificationServiceImpl implements UserNotificationService {
                     if (!StringUtils.isBlank(message)) {
                         String title = messageSource.getMessage(communityUrl, "sms.title", null, null);
                         SMSResponse smsResponse = smsServiceFacade.getSMSProvider(communityUrl).send(user.getMobile(), message, title);
-                        if (smsResponse.isSuccessful()) {
-                            wasSmsSentSuccessfully = true;
-                        }
-                        else {
-                            LOGGER.error("The sms wasn't sent cause unexpected MIG response [{}]", smsResponse);
-                        }
-                    }
-                    else {
+                        LOGGER.info("SmsResponse=[{}]", smsResponse);
+                        return smsResponse.isSuccessful();
+                    } else {
                         LOGGER.info("The sms wasn't sent cause empty sms text message");
                     }
-                }
+                } 
                 else {
                     LOGGER.info("The sms wasn't sent cause unsupported communityUrl [{}]", communityUrl);
                 }
-            }
+            } 
             else {
-                LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[] {user.getMobile(), communityUrl});
+                LOGGER.info("The sms wasn't sent cause promoted phoneNumber [{}] for communityUrl [{}]", new Object[]{user.getMobile(), communityUrl});
             }
+           
         }
         else {
             LOGGER.info("The sms wasn't sent cause rejecting");
         }
 
-        LOGGER.debug("Output parameter wasSmsSentSuccessfully=[{}]", wasSmsSentSuccessfully);
-        return wasSmsSentSuccessfully;
+        return false;
     }
 
     public boolean rejectDevice(User user, String code) {

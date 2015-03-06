@@ -176,6 +176,21 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         <property name="messageParser" ref="vf_nz.service.SubsriberDataParser" />
     </bean>
 
+    <bean id="mtvnzPaymentSMSMessageProcessor" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentSMSMessageProcessor">
+        <property name="mtvnzPaymentSystemService" ref="mtvnzPaymentSystemService"/>
+        <property name="nzSubscriberInfoRepository" ref="NZSubscriberInfoRepository"/>
+        <property name="pendingPaymentService" ref="service.PendingPaymentService"/>
+        <property name="paymentShortCodes">
+            <set>
+                <value>${mtv.nz.payment.short.code.1}</value>
+                <value>${mtv.nz.payment.short.code.4}</value>
+            </set>
+        </property>
+        <property name="mtvnzPaymentResponseParser" ref="mtvnzPaymentResponseParser"/>
+    </bean>
+
+    <bean id="mtvnzPaymentResponseParser" class="mobi.nowtechnologies.server.service.payment.MTVNZPaymentResponseParser"/>
+
 	<bean id="service.PaymentDetailsService" class="mobi.nowtechnologies.server.service.PaymentDetailsService">
         <property name="paymentPolicyRepository" ref="paymentPolicyRepository"/>
         <property name="paymentPolicyDao" ref="persistence.PaymentPolicyDao"/>

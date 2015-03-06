@@ -95,7 +95,7 @@ public class VFPaymentServiceImpl extends BasicPSMSPaymentServiceImpl<VFPSMSPaym
 
             PendingPayment pendingPayment = getPendingPayment(user.getId(), VF_PSMS_TYPE);
             if (pendingPayment != null) {
-                getThis().commitPayment(pendingPayment, data);
+                super.commitPayment(pendingPayment, data);
             }
         }
     }
