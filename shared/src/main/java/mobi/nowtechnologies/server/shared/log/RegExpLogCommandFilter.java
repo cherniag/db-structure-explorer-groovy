@@ -39,8 +39,7 @@ public class RegExpLogCommandFilter extends Filter {
 
         if (matcher.matches()) {
             decision = onMatch;
-        }
-        else {
+        } else {
             decision = onMismatch;
         }
 

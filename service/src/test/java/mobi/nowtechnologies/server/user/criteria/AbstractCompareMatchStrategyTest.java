@@ -29,8 +29,7 @@ public abstract class AbstractCompareMatchStrategyTest<T extends Number & Compar
     public void testMatching() throws Exception {
         try {
             assertThat(description, matchStrategy.match(first), is(matchResult));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (exceptionClass == null) {
                 fail("Unexpected exception " + e.getClass());
             }

@@ -90,8 +90,7 @@ public class ChartBehaviorService {
     private String calcLockedAction(int chartId, User user, ChartUserStatusBehavior behavior) {
         if (behavior.getAction() == null) {
             return null;
-        }
-        else {
+        } else {
             return deepLinkUrlFactory.createForChart(user.getCommunity(), chartId, behavior.getAction());
         }
     }

@@ -61,40 +61,30 @@ public class DeviceTypeDao {
 
             if (deviceTypeName.equals(IOS)) {
                 iOSDeviceType = deviceType;
-            }
-            else if (deviceTypeName.equals(NONE)) {
+            } else if (deviceTypeName.equals(NONE)) {
                 noneDeviceType = deviceType;
-            }
-            else if (deviceTypeName.equals(ANDROID)) {
+            } else if (deviceTypeName.equals(ANDROID)) {
                 androidDeviceType = deviceType;
-            }
-            else if (deviceTypeName.equals(J2ME)) {
+            } else if (deviceTypeName.equals(J2ME)) {
                 j2meDeviceType = deviceType;
-            }
-            else if (deviceTypeName.equals(BLACKBERRY)) {
+            } else if (deviceTypeName.equals(BLACKBERRY)) {
                 blackberryDeviceType = deviceType;
-            }
-            else if (deviceTypeName.equals(SYMBIAN)) {
+            } else if (deviceTypeName.equals(SYMBIAN)) {
                 symbianDeviceType = deviceType;
             }
         }
 
         if (iOSDeviceType == null) {
             throw new PersistenceException("Coldn't find [" + IOS + "] device type in the database");
-        }
-        else if (noneDeviceType == null) {
+        } else if (noneDeviceType == null) {
             throw new PersistenceException("Coldn't find [" + NONE + "] device type in the database");
-        }
-        else if (androidDeviceType == null) {
+        } else if (androidDeviceType == null) {
             throw new PersistenceException("Coldn't find [" + ANDROID + "] device type in the database");
-        }
-        else if (j2meDeviceType == null) {
+        } else if (j2meDeviceType == null) {
             throw new PersistenceException("Coldn't find [" + J2ME + "] device type in the database");
-        }
-        else if (blackberryDeviceType == null) {
+        } else if (blackberryDeviceType == null) {
             throw new PersistenceException("Coldn't find [" + BLACKBERRY + "] device type in the database");
-        }
-        else if (symbianDeviceType == null) {
+        } else if (symbianDeviceType == null) {
             throw new PersistenceException("Coldn't find [" + SYMBIAN + "] device type in the database");
         }
 
@@ -126,8 +116,7 @@ public class DeviceTypeDao {
             if (-1 == deviceTypeId) {
                 throw new Exception("Unknown device type");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             deviceSet.setStatus(DeviceSet.Status.FAIL);
 

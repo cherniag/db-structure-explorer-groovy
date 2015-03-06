@@ -42,8 +42,7 @@ public class Runner {
         for (List<UserDeviceData> p : partitions) {
             try {
                 service.invokeAll(createTasks(p, toInvoke));
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -61,8 +60,7 @@ public class Runner {
         for (List<UserDeviceData> p : partitions) {
             try {
                 service.invokeAll(createTasks(p, toInvoke));
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }

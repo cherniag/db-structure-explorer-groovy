@@ -27,8 +27,7 @@ public class PendingPaymentAsm {
         final List<PendingPaymentDto> pendingPaymentDtos;
         if (pendingPayments.isEmpty()) {
             pendingPaymentDtos = Collections.<PendingPaymentDto>emptyList();
-        }
-        else {
+        } else {
             pendingPaymentDtos = new ArrayList<PendingPaymentDto>(pendingPayments.size());
             for (PendingPayment pendingPayment : pendingPayments) {
                 pendingPaymentDtos.add(toPendingPaymentDto(pendingPayment));

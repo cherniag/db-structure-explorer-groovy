@@ -106,8 +106,7 @@ public class PaymentDetailsRepositoryIT extends AbstractRepositoryIT {
         for (PaymentDetails pd : user.getPaymentDetailsList()) {
             if ("2345-2345-2345-23452-2345".equals(((PayPalPaymentDetails) pd).getBillingAgreementTxId())) {
                 assertEquals(false, pd.isActivated());
-            }
-            else {
+            } else {
                 assertEquals(true, pd.isActivated());
             }
         }

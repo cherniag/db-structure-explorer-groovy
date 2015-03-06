@@ -68,8 +68,7 @@ public class ProfileLoggingAspect {
                 LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseMessage);
                 THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.error("Can't log request ", ex);
         }
     }
@@ -88,8 +87,7 @@ public class ProfileLoggingAspect {
         try {
             beforeExecutionTimeNano = System.nanoTime();
             args = joinPoint.getArgs();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -97,12 +95,10 @@ public class ProfileLoggingAspect {
             postServiceResponseObject = joinPoint.proceed();
 
             return postServiceResponseObject;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throwable = t;
             throw t;
-        }
-        finally {
+        } finally {
             profilePostService(args, beforeExecutionTimeNano, postServiceResponseObject, throwable);
         }
     }
@@ -117,8 +113,7 @@ public class ProfileLoggingAspect {
         try {
             beforeExecutionTimeNano = System.nanoTime();
             args = joinPoint.getArgs();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -126,12 +121,10 @@ public class ProfileLoggingAspect {
             responseObject = joinPoint.proceed();
 
             return responseObject;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throwable = t;
             throw t;
-        }
-        finally {
+        } finally {
             profileWebServiceGateway(args, beforeExecutionTimeNano, responseObject, throwable);
         }
     }
@@ -146,8 +139,7 @@ public class ProfileLoggingAspect {
         try {
             beforeExecutionTimeNano = System.nanoTime();
             args = joinPoint.getArgs();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -155,12 +147,10 @@ public class ProfileLoggingAspect {
             responseObject = joinPoint.proceed();
 
             return responseObject;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throwable = t;
             throw t;
-        }
-        finally {
+        } finally {
             profileRestTemplate(args, beforeExecutionTimeNano, responseObject, throwable);
         }
     }
@@ -188,8 +178,7 @@ public class ProfileLoggingAspect {
 
                 commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, null, body);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -206,8 +195,7 @@ public class ProfileLoggingAspect {
 
                 commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, null, body);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
@@ -221,8 +209,7 @@ public class ProfileLoggingAspect {
                 String body;
                 if (args.length == 2) {
                     body = (String) args[1];
-                }
-                else {
+                } else {
                     nameValuePairs = (List<NameValuePair>) args[1];
                     body = (String) args[2];
                 }
@@ -231,8 +218,7 @@ public class ProfileLoggingAspect {
                     Matcher matcher = RECEIPT_DATA_PATTERN.matcher(body);
                     if (matcher.find()) {
                         body = matcher.group(0);
-                    }
-                    else {
+                    } else {
                         body = "seccurity params";
                     }
                 }
@@ -245,8 +231,7 @@ public class ProfileLoggingAspect {
                         if (!StringUtils.isBlank(logNamesStringForNameValuePairFromConfig)) {
                             actualLogNameListForNameValuePair = Arrays.asList(logNamesStringForNameValuePairFromConfig.split(","));
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         LOGGER.error(e.getMessage(), e);
                     }
 
@@ -262,8 +247,7 @@ public class ProfileLoggingAspect {
 
                 commonProfileLogic(beforeExecutionTimeNano, responseObject, throwable, url, nameValuePairs, body);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
@@ -283,8 +267,7 @@ public class ProfileLoggingAspect {
             LogUtils.set3rdParyRequestProfileMDC(executionDurationMillis, errorMessage, result, url, nameValuePairs, body, responseObject);
 
             THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
-        }
-        finally {
+        } finally {
             LogUtils.remove3rdParyRequestProfileMDCWithoutSpecific();
         }
 

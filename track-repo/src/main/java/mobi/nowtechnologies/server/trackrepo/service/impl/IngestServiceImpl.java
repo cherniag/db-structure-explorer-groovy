@@ -209,8 +209,7 @@ public class IngestServiceImpl implements IngestService {
                     }
                     track = new Track();
                     track.setIngestionDate(new Date());
-                }
-                else {
+                } else {
                     track.setIngestionUpdateDate(new Date());
                 }
                 track.setTitle(value.title);
@@ -249,8 +248,7 @@ public class IngestServiceImpl implements IngestService {
                 }
 
                 trackRepository.save(track);
-            }
-            else if (value.type == Type.DELETE) {
+            } else if (value.type == Type.DELETE) {
                 LOGGER.info("DELETE " + value.productId);
                 Track track = trackRepository.findByProductCode((String) value.productId);
                 if (track != null) {
@@ -315,8 +313,7 @@ public class IngestServiceImpl implements IngestService {
                     dataTrack.productCode = track.getProductCode();
                     data.getData().add(dataTrack);
                     command.setSize(command.getSize() + 1);
-                }
-                else {
+                } else {
                     command.setSize(command.getSize() + 1);
                     LOGGER.info("Checking Track in cn [ISRC:{}, productCode:{}, ingestor: {}]", value.isrc, value.productCode, drop.getIngestor());
                     Track track = trackRepository.findByKey(value.isrc, value.productCode, parserFactory.getName(drop.getIngestor()));
@@ -330,8 +327,7 @@ public class IngestServiceImpl implements IngestService {
                             continue; // Skip empty insert
                         }
                         dataTrack.exists = false;
-                    }
-                    else {
+                    } else {
                         dataTrack.exists = true;
                     }
 
@@ -374,8 +370,7 @@ public class IngestServiceImpl implements IngestService {
             }
 
             ingestDataBuffer.put(suid, data);
-        }
-        else {
+        } else {
             IngestWizardData suData = removeAfterGet ?
                                       ingestDataBuffer.remove(data.getSuid()) :
                                       ingestDataBuffer.get(data.getSuid());
@@ -413,8 +408,7 @@ public class IngestServiceImpl implements IngestService {
             if (result) {
                 if (territoryCodes.length() > 0) {
                     territoryCodes.append(", ");
-                }
-                else {
+                } else {
                     releaseDate = territoryData.startdate;
                     label = territoryData.label;
                 }
@@ -597,8 +591,7 @@ public class IngestServiceImpl implements IngestService {
 
             Transport.send(message);
             LOGGER.info("E-mail was successfully send to Takedown@musicqubed.com");
-        }
-        catch (MessagingException e) {
+        } catch (MessagingException e) {
             LOGGER.info("Mail sending failed: " + e.getMessage());
             LOGGER.info("Cause: " + e.getCause());
         }

@@ -72,11 +72,9 @@ public class UniversalParser extends IParser {
                     Element product = document.getRootElement();
 
                     addProductMetadata(code, fulfillmentFiles, product, resultDropTracksWithMetadata);
-                }
-                catch (IOException io) {
+                } catch (IOException io) {
                     LOGGER.error(io.getMessage());
-                }
-                catch (JDOMException jdomex) {
+                } catch (JDOMException jdomex) {
                     LOGGER.error(jdomex.getMessage());
                 }
             }
@@ -200,8 +198,7 @@ public class UniversalParser extends IParser {
             if (releaseDate != null) {
                 startDate = dateFormat.parse(releaseDate);
             }
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             LOGGER.warn(e.getMessage(), e);
         }
 
@@ -225,8 +222,7 @@ public class UniversalParser extends IParser {
         for (Element artistElement : artists) {
             if (firstArtist) {
                 firstArtist = false;
-            }
-            else {
+            } else {
                 artist += ", ";
             }
             artist += artistElement.getText();
@@ -252,15 +248,12 @@ public class UniversalParser extends IParser {
                 for (Element product : products) {
                     result.putAll(parseProduct(drop.name, product));
                 }
-            }
-            catch (IOException io) {
+            } catch (IOException io) {
                 LOGGER.error(io.getMessage());
-            }
-            catch (JDOMException jdomex) {
+            } catch (JDOMException jdomex) {
                 LOGGER.error(jdomex.getMessage());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -331,21 +324,17 @@ public class UniversalParser extends IParser {
             if (!isExcerpt) {
                 return AssetFile.FileType.DOWNLOAD;
             }
-        }
-        else if ("mp4".equalsIgnoreCase(fileType)) {
+        } else if ("mp4".equalsIgnoreCase(fileType)) {
             if ("Video".equals(assetType) && "Video".equals(assetSubType)) {
                 if (!isExcerpt) {
                     return AssetFile.FileType.VIDEO;
                 }
-            }
-            else if (!isExcerpt) {
+            } else if (!isExcerpt) {
                 return AssetFile.FileType.MOBILE;
-            }
-            else {
+            } else {
                 return AssetFile.FileType.PREVIEW;
             }
-        }
-        else if ("jpg".equalsIgnoreCase(fileType) && "Images".equals(assetType) && "Cover Art".equals(assetSubType)) {
+        } else if ("jpg".equalsIgnoreCase(fileType) && "Images".equals(assetType) && "Cover Art".equals(assetSubType)) {
             return AssetFile.FileType.IMAGE;
         }
 
@@ -362,16 +351,14 @@ public class UniversalParser extends IParser {
             File commitFile = new File(root + "/Delivery_Messages/" + drop.name + ".ack");
             try {
                 commitFile.createNewFile();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         File commitFile = new File(root + "/Delivery_Messages/auto_" + drop.name + ".ack");
         try {
             commitFile.createNewFile();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -400,8 +387,7 @@ public class UniversalParser extends IParser {
                         LOGGER.info("The drop was found: [{}]", drop.name);
                         result.add(drop);
                     }
-                }
-                else {
+                } else {
                     File ack = new File(root + "/Delivery_Messages/auto_" + order + ".ack");
                     if (!ack.exists() && !ackManual.exists()) {
                         DropData drop = new DropData();

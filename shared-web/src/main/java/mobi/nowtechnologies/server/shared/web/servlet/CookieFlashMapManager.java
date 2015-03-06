@@ -46,12 +46,10 @@ public class CookieFlashMapManager extends AbstractFlashMapManager {
         try {
             JsonParser parser = this.objectMapper.getJsonFactory().createJsonParser(cookieFlashMap.getValue());
             return parser.readValueAs(List.class);
-        }
-        catch (JsonParseException e) {
+        } catch (JsonParseException e) {
             LOGGER.error(e.getMessage(), e);
             return null;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
@@ -67,8 +65,7 @@ public class CookieFlashMapManager extends AbstractFlashMapManager {
 
             Cookie cookieFlashMap = new Cookie(FLASH_MAPS_COOKIE_ATTRIBUTE, stream.toString());
             response.addCookie(cookieFlashMap);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

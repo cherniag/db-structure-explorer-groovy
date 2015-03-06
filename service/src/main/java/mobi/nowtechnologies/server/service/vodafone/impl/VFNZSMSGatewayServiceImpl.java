@@ -36,8 +36,7 @@ public class VFNZSMSGatewayServiceImpl implements SMSGatewayService<SMSResponse>
         boolean result = false;
         try {
             result = smppService.sendMessage(messageObject);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceException(e.getMessage());
         }

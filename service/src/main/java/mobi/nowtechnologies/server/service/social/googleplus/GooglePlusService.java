@@ -41,8 +41,7 @@ public class GooglePlusService {
             Person personFromGooglePlus = googleTemplate.plusOperations().getGoogleProfile();
             validateProfile(googlePlusUserId, personFromGooglePlus);
             return convertForUser(personFromGooglePlus);
-        }
-        catch (RestClientException se) {
+        } catch (RestClientException se) {
             logger.error("ERROR", se);
             throw OAuth2ForbiddenException.invalidGooglePlusToken();
         }

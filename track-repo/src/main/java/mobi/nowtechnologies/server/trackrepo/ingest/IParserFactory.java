@@ -47,41 +47,29 @@ public class IParserFactory {
     public IParser getParser(Ingestors name) throws FileNotFoundException {
         if (SONY == name) {
             return new SonyParser(sonyRoot);
-        }
-        else if (WARNER_OLD == name) {
+        } else if (WARNER_OLD == name) {
             return new WarnerParser(warnerOldRoot);
-        }
-        else if (UNIVERSAL == name) {
+        } else if (UNIVERSAL == name) {
             return new UniversalParser(universalRoot);
-        }
-        else if (FUGA == name) {
+        } else if (FUGA == name) {
             return new FugaParser(fugaRoot);
-        }
-        else if (EMI == name) {
+        } else if (EMI == name) {
             return new EmiParser(emiRoot);
-        }
-        else if (EMI_UMG == name) {
+        } else if (EMI_UMG == name) {
             return new EmiUmgParser(emiUmgRoot);
-        }
-        else if (IODA == name) {
+        } else if (IODA == name) {
             return new IodaParser(iodaRoot);
-        }
-        else if (CI == name) {
+        } else if (CI == name) {
             return new CiParser(ciRoot);
-        }
-        else if (MANUAL == name) {
+        } else if (MANUAL == name) {
             return new ManualParser(manualRoot);
-        }
-        else if (WARNER == name) {
+        } else if (WARNER == name) {
             return new WarnerParserV34(warnerRoot);
-        }
-        else if (SONY_DDEX == name) {
+        } else if (SONY_DDEX == name) {
             return new SonyDDEXParser(sonyDDEXRoot);
-        }
-        else if (ABSOLUTE == name) {
+        } else if (ABSOLUTE == name) {
             return new AbsoluteParser(absoluteRoot);
-        }
-        else if (MOS == name) {
+        } else if (MOS == name) {
             final String root = mosRoot;
             return new SonyDDEXParser(root);
         }
@@ -92,8 +80,7 @@ public class IParserFactory {
     public String getName(Ingestors name) {
         if (SONY_DDEX == name) {
             return SONY.name();
-        }
-        else if (WARNER_OLD == name) {
+        } else if (WARNER_OLD == name) {
             return WARNER.name();
         }
         return name.name();

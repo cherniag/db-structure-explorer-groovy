@@ -65,8 +65,7 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
                                                       .addStartDate(YYYY_MM_DD.parse(getStartDate(releaseReference))).addTakeDown(getTakeDown(releaseReference)));
             }
             return res;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
@@ -230,12 +229,10 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
                 "]");
             if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(userDefinedValue))) {
                 fileType = DOWNLOAD;
-            }
-            else {
+            } else {
                 fileType = MOBILE;
             }
-        }
-        else {
+        } else {
             fileType = PREVIEW;
         }
         return fileType;
@@ -280,14 +277,11 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
         for (File file : content) {
             if (isDirectory(file)) {
                 result.addAll(getDrops(file, auto));
-            }
-            else if (DELIVERY_COMPLETE.equals(file.getName())) {
+            } else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }
@@ -338,14 +332,11 @@ public class AbsoluteParserCleanerVersion extends DDEXParser {
                                        .addLabel(label).addYear(year).addIsrc(isrc).addPhysicalProductId(isrc).addInfo(null).addExplicit(getExplicit(isrc)).addProductId(isrc)
                                        .addTerritories(territories).addFiles(files).addAlbum(album).addXml(getXml(isrc)));
             }
-        }
-        catch (JDOMException e) {
+        } catch (JDOMException e) {
             LOGGER.error(e.getMessage());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage());
-        }
-        catch (SaxonApiException e) {
+        } catch (SaxonApiException e) {
             LOGGER.error(e.getMessage());
         }
         return res;

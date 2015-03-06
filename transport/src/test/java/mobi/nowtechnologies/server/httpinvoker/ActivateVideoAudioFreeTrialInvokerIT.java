@@ -63,8 +63,7 @@ public class ActivateVideoAudioFreeTrialInvokerIT {
             try {
                 response = restTemplate.postForEntity(endpoint, request, String.class);
                 reporter.report(url.getKey(), response);
-            }
-            catch (HttpServerErrorException e) {
+            } catch (HttpServerErrorException e) {
                 reporter.reportError(url.getKey(), e);
             }
         }

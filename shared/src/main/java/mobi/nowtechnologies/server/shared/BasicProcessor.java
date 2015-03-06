@@ -17,15 +17,13 @@ public abstract class BasicProcessor<OUT> implements Processor<OUT> {
             result = messageParser != null ?
                      (OUT) messageParser.parse(data) :
                      (OUT) data;
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             result = (OUT) data;
         }
 
         try {
             process(result);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             LOGGER.warn("Data " + data + " can't be processed by " + this.getClass(), e);
         }
     }

@@ -43,12 +43,10 @@ public class ContextController extends CommonController {
             ContextDto contextDto = contextDtoAsm.assemble(user, needToLookAtActivationDate);
 
             return createModelAndView(contextDto);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(null, getCurrentCommunityUri(), null, null, user, ex);
             LOGGER.info("command processing finished");
         }

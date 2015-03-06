@@ -28,8 +28,7 @@ public class ChartDetailsAsm {
         List<ChartItemDto> chartItemDtos;
         if (list.isEmpty()) {
             chartItemDtos = EMPTY_LIST;
-        }
-        else {
+        } else {
             chartItemDtos = new LinkedList<ChartItemDto>();
 
             for (ChartDetail chartDetail : list) {
@@ -70,8 +69,7 @@ public class ChartDetailsAsm {
         List<ChartItemDto> chartItemDtos;
         if (medias.isEmpty()) {
             chartItemDtos = EMPTY_LIST;
-        }
-        else {
+        } else {
             chartItemDtos = new LinkedList<ChartItemDto>();
 
             for (Media media : medias) {

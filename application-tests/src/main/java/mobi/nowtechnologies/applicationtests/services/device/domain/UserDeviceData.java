@@ -99,23 +99,19 @@ public class UserDeviceData implements Comparable<UserDeviceData> {
         final int apiVersionCompareResult = apiVersion.compareTo(o.apiVersion);
         if (apiVersionCompareResult != 0) {
             return apiVersionCompareResult;
-        }
-        else {
+        } else {
             final int communityCompareResult = community.compareTo(o.community);
             if (communityCompareResult != 0) {
                 return communityCompareResult;
-            }
-            else {
+            } else {
                 final int deviceTypeCompareResult = deviceType.compareTo(o.deviceType);
                 if (deviceTypeCompareResult != 0) {
                     return deviceTypeCompareResult;
-                }
-                else {
+                } else {
                     final int formatCompareResult = format.compareTo(o.format);
                     if (formatCompareResult != 0) {
                         return formatCompareResult;
-                    }
-                    else {
+                    } else {
                         return maskNull(qualifier).compareTo(maskNull(o.qualifier));
                     }
                 }

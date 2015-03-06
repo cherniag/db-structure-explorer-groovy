@@ -23,8 +23,7 @@ public class DeviceUserDataService {
             deleteInCasesMergeUserOrTempRow(token);
 
             deviceUserDataRepository.save(new DeviceUserData(user, token));
-        }
-        else if (!found.getXtifyToken().equals(token)) {
+        } else if (!found.getXtifyToken().equals(token)) {
             LOGGER.info("Update data [{}] with new token [{}]", found, token);
             deleteInCasesMergeUserOrTempRow(token);
 

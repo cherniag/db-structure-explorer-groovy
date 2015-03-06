@@ -86,8 +86,7 @@ public class AbsoluteParser extends DDEXParser {
         try {
             prepareXPath(file);
             return super.loadXml(file);
-        }
-        catch (SaxonApiException e) {
+        } catch (SaxonApiException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return Collections.<String, DropTrack>emptyMap();
@@ -108,14 +107,11 @@ public class AbsoluteParser extends DDEXParser {
             if (isDirectory(file)) {
                 LOGGER.info("Scanning directory [{}]", file.getAbsolutePath());
                 result.addAll(getDrops(file, auto));
-            }
-            else if (DELIVERY_COMPLETE.equals(file.getName())) {
+            } else if (DELIVERY_COMPLETE.equals(file.getName())) {
                 deliveryComplete = true;
-            }
-            else if (INGEST_ACK.equals(file.getName())) {
+            } else if (INGEST_ACK.equals(file.getName())) {
                 processed = true;
-            }
-            else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
+            } else if (auto && AUTO_INGEST_ACK.equals(file.getName())) {
                 processed = true;
             }
         }
@@ -167,8 +163,7 @@ public class AbsoluteParser extends DDEXParser {
         String isrc = release.getChild("ReleaseId").getChildText("ISRC");
         try {
             track.physicalProductId = getProprietaryId(isrc);
-        }
-        catch (SaxonApiException e) {
+        } catch (SaxonApiException e) {
             LOGGER.error(e.getMessage());
         }
 
@@ -206,8 +201,7 @@ public class AbsoluteParser extends DDEXParser {
                 }
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Ingest failed: [{}]", e.getMessage(), e);
         }
         return tracks;
@@ -228,12 +222,10 @@ public class AbsoluteParser extends DDEXParser {
             if (isNull(audioCodecType) || audioCodecType.equals("MP3") || (audioCodecType.equals("UserDefined") && "MP3".equals(getUserDefinedValue(techDetail))) ||
                 (audioCodecType.equals("UserDefined") && "wav".equals(getUserDefinedValue(techDetail)))) {
                 fileType = DOWNLOAD;
-            }
-            else {
+            } else {
                 fileType = MOBILE;
             }
-        }
-        else {
+        } else {
             fileType = PREVIEW;
         }
         return fileType;

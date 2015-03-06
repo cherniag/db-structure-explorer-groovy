@@ -47,8 +47,7 @@ public abstract class AbstractGooglePlusTemplateCustomizerImpl implements Abstra
         try {
             File file = new ClassPathResource(fileName).getFile();
             return Files.toString(file, Charsets.UTF_8);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

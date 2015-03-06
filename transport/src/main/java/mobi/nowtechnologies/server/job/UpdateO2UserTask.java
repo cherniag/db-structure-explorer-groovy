@@ -36,13 +36,11 @@ public class UpdateO2UserTask {
         try {
             putGlobalMDC(u.getId(), u.getMobile(), u.getUserName(), u.getUserGroup().getCommunity().getRewriteUrlParameter(), "", UpdateO2UserTask.class, "");
             updateUser(u);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             error = t;
             LOG.error("Can't update user id=[{}] phone=[{}] error=[{}]", u.getId(), u.getMobile(), t, t);
             makeUserLog(u, UserLogStatus.FAIL, getStackTrace(t));
-        }
-        finally {
+        } finally {
             long executionDurationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - beforeExecutionTimeNano);
             String result = "OK";
             if (error != null) {
@@ -59,8 +57,7 @@ public class UpdateO2UserTask {
         if (userService.isPromotedDevice(u.getMobile(), u.getUserGroup().getCommunity())) {
             o2SubscriberData = o2UserDetailsUpdater.getDefaultSubscriberData();
             LOG.info("[promoted device] default subscriber data for [{}]", u.getMobile());
-        }
-        else {
+        } else {
             o2SubscriberData = o2Service.getSubscriberData(u.getMobile());
         }
         LOG.debug("subscriber data: [{}] ", o2SubscriberData);
@@ -70,8 +67,7 @@ public class UpdateO2UserTask {
         Collection<String> changes = o2UserDetailsUpdater.getDifferences(o2SubscriberData, u);
         if (changes.isEmpty()) {
             LOG.debug("no changes for user:[{}] mobile:[{}]", u.getId(), u.getMobile());
-        }
-        else {
+        } else {
             LOG.info("updating user:[{}] mobile:[{}] changes:[{}]", u.getId(), u.getMobile(), changes);
             userService.o2SubscriberDataChanged(u, o2SubscriberData);
             LOG.info("user o2 details updated:[{}] mobile:[{}] changes:[{}]", u.getId(), u.getMobile(), changes);
@@ -88,8 +84,7 @@ public class UpdateO2UserTask {
 
         if (UserLogStatus.SUCCESS == status) {
             LOG.info("User[{}] segment[{}] updated in [{}]ms.", u.getMobile(), u.getSegment(), executionDurationMillis);
-        }
-        else {
+        } else {
             LOG.error("Error on update user[{}]. [{}]. {} in [{}]ms", u.getMobile(), userLog, description, executionDurationMillis);
         }
     }

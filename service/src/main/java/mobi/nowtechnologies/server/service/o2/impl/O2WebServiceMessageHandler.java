@@ -42,8 +42,7 @@ public class O2WebServiceMessageHandler implements WebServiceMessageCallback {
 
             // add soaConsumerTransactionID header element
             soapHeader.addChildElement(soaConsumerTransactionIDQName).addTextNode(soaConsumerTransactionID);
-        }
-        catch (SOAPException e) {
+        } catch (SOAPException e) {
             LOGGER.error(e.getMessage(), e);
             throw new IOException(e.getMessage());
         }

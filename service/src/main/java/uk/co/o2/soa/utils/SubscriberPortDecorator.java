@@ -64,16 +64,13 @@ public class SubscriberPortDecorator implements SubscriberPort {
             retainFrom = CharMatcher.DIGIT.retainFrom(subscriberID);
             subscriberProfileType = port.getSubscriberProfile(retainFrom);
             return subscriberProfileType;
-        }
-        catch (GetSubscriberProfileFault gSPF) {
+        } catch (GetSubscriberProfileFault gSPF) {
             throwable = gSPF;
             throw gSPF;
-        }
-        catch (RuntimeException re) {
+        } catch (RuntimeException re) {
             throwable = re;
             throw re;
-        }
-        finally {
+        } finally {
             try {
                 if (ProfileLoggingAspect.THIRD_PARTY_REQUESTS_PROFILE_LOGGER.isDebugEnabled()) {
                     String errorMessage = null;
@@ -88,8 +85,7 @@ public class SubscriberPortDecorator implements SubscriberPort {
 
                     ProfileLoggingAspect.THIRD_PARTY_REQUESTS_PROFILE_LOGGER.debug("THIRD_PARTY_REQUESTS_PROFILE_LOGGER values in the MDC");
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }

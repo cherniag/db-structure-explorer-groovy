@@ -90,8 +90,7 @@ public class TracksController extends CommonController {
             }
 
             outputStream.flush();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Exception while closing outputstream on downloading of the file");
             throw new ServiceException("error.download.file", "Can't download puchased file");
         }

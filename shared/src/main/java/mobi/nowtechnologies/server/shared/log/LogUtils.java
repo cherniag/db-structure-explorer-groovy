@@ -78,8 +78,7 @@ public class LogUtils {
             }
             MDC.remove(LOG_REMOTE_ADDR);
             removeStartTimeNanoMDC();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
@@ -113,8 +112,7 @@ public class LogUtils {
                 MDC.remove(LOG_COMMUNITY);
             }
             removeClassNameMDC();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
@@ -134,20 +132,17 @@ public class LogUtils {
     public static void put3rdParyRequestProfileSpecificMDC(String userName, String userMobile, Object userId) {
         if (userName != null) {
             MDC.put(T_PR_USER_NAME, userName);
-        }
-        else {
+        } else {
             MDC.put(T_PR_USER_NAME, "n/a");
         }
         if (userMobile != null) {
             MDC.put(T_PR_USER_MOBILE, userMobile);
-        }
-        else {
+        } else {
             MDC.put(T_PR_USER_MOBILE, "n/a");
         }
         if (userId != null) {
             MDC.put(T_PR_USER_ID, userId);
-        }
-        else {
+        } else {
             MDC.put(T_PR_USER_ID, "n/a");
         }
     }
@@ -193,44 +188,37 @@ public class LogUtils {
     public static void set3rdParyRequestProfileMDC(Object executionDurationMillis, Object errorMessage, Object result, Object url, Object nameValuePairs, Object body, Object responseMessage) {
         if (executionDurationMillis != null) {
             MDC.put(T_PR_EXECUTION_DURATION_MILLIS, executionDurationMillis);
-        }
-        else {
+        } else {
             MDC.put(T_PR_EXECUTION_DURATION_MILLIS, "n/a");
         }
         if (errorMessage != null) {
             MDC.put(T_PR_ERROR_MESSAGE, errorMessage);
-        }
-        else {
+        } else {
             MDC.put(T_PR_ERROR_MESSAGE, "n/a");
         }
         if (result != null) {
             MDC.put(T_PR_RESULT, result);
-        }
-        else {
+        } else {
             MDC.put(T_PR_RESULT, "n/a");
         }
         if (url != null) {
             MDC.put(T_PR_URL, url);
-        }
-        else {
+        } else {
             MDC.put(T_PR_URL, "n/a");
         }
         if (nameValuePairs != null) {
             MDC.put(T_PR_NAME_VALUE_PAIRS, nameValuePairs);
-        }
-        else {
+        } else {
             MDC.put(T_PR_NAME_VALUE_PAIRS, "n/a");
         }
         if (body != null) {
             MDC.put(T_PR_BODY, body);
-        }
-        else {
+        } else {
             MDC.put(T_PR_BODY, "n/a");
         }
         if (responseMessage != null) {
             MDC.put(T_PR_RESPONSE, responseMessage);
-        }
-        else {
+        } else {
             MDC.put(T_PR_RESPONSE, "n/a");
         }
 
@@ -248,8 +236,7 @@ public class LogUtils {
             if (MDC.get(T_PR_USER_ID) != null) {
                 MDC.remove(T_PR_USER_ID);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -288,8 +275,7 @@ public class LogUtils {
             if (MDC.get(T_PR_RESPONSE) != null) {
                 MDC.remove(T_PR_RESPONSE);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

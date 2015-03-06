@@ -55,8 +55,7 @@ public class PartnerDeviceSet extends ClientDevicesSet {
 
             state.accountCheck = response;
             state.activationResponse = response;
-        }
-        else {
+        } else {
             AccountCheckDto response = applyInitPromoHttpService.applyInitPromo(state.getLastAccountCheckResponse(), userDeviceData, otac, userDeviceData.getFormat());
             state.accountCheck = response;
             state.activationResponse = response;

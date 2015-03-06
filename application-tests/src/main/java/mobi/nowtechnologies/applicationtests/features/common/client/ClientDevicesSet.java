@@ -74,8 +74,7 @@ public abstract class ClientDevicesSet {
     public ResponseEntity<String> serviceConfig(UserDeviceData userDeviceData, String header, ApiVersions apiVersions) {
         if (apiVersions.above("6.8").contains(userDeviceData.getApiVersion())) {
             return serviceConfigHttpService.serviceConfigXUserAgent(userDeviceData, header);
-        }
-        else {
+        } else {
             return serviceConfigHttpService.serviceConfigUserAgent(userDeviceData, header);
         }
     }
@@ -116,8 +115,7 @@ public abstract class ClientDevicesSet {
             state.email = userDataCreator.generateEmail();
             state.deviceUID = deviceUID;
             states.put(deviceData, state);
-        }
-        else if (overrideDeviceUID) {
+        } else if (overrideDeviceUID) {
             state.deviceUID = deviceUID;
         }
 
@@ -152,18 +150,15 @@ public abstract class ClientDevicesSet {
             if (needToSendGet) {
                 ResponseEntity<JsonNewsResponse> entity = newsHttpService.getNews(deviceData, state, JsonNewsResponse.class);
                 return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
-            }
-            else {
+            } else {
                 ResponseEntity<JsonNewsResponse> entity = newsHttpService.postNews(deviceData, state, JsonNewsResponse.class);
                 return entity.getBody().getResponse().get().getValue().getNewsDetailDtos();
             }
-        }
-        else {
+        } else {
             if (needToSendGet) {
                 ResponseEntity<XmlNewsResponse> entity = newsHttpService.getNews(deviceData, state, XmlNewsResponse.class);
                 return entity.getBody().getNews().getNewsDetailDtos();
-            }
-            else {
+            } else {
                 ResponseEntity<XmlNewsResponse> entity = newsHttpService.postNews(deviceData, state, XmlNewsResponse.class);
                 return entity.getBody().getNews().getNewsDetailDtos();
             }

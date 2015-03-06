@@ -992,14 +992,11 @@ public class User implements Serializable {
         AccountDto.Subscription subscription;
         if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails == null) {
             subscription = AccountDto.Subscription.freeTrialSubscription;
-        }
-        else if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails != null && currentPaymentDetails.isActivated()) {
+        } else if (status.equals(UserStatusDao.getSubscribedUserStatus()) && currentPaymentDetails != null && currentPaymentDetails.isActivated()) {
             subscription = AccountDto.Subscription.subscribedSubscription;
-        }
-        else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || status.equals(UserStatusDao.getLimitedUserStatus())) {
+        } else if ((currentPaymentDetails != null && !currentPaymentDetails.isActivated()) || status.equals(UserStatusDao.getLimitedUserStatus())) {
             subscription = AccountDto.Subscription.unsubscribedSubscription;
-        }
-        else {
+        } else {
             throw new PersistenceException("Couldn't recognize the user subscription");
         }
 
@@ -1227,8 +1224,7 @@ public class User implements Serializable {
             for (Chart chart : getSelectedCharts()) {
                 if (chart.getI().equals(chartDetail.getChart().getI())) {
                     return true;
-                }
-                else if (chart.getType() == chartDetail.getChart().getType()) {
+                } else if (chart.getType() == chartDetail.getChart().getType()) {
                     sameTypeChart = chart;
                 }
 
@@ -1311,8 +1307,7 @@ public class User implements Serializable {
     public boolean hasAllDetails() {
         if (ProviderType.O2.equals(provider) || ProviderType.NON_O2.equals(provider)) {
             return this.contract != null && this.contractChannel != null && this.segment != null && this.tariff != null;
-        }
-        else {
+        } else {
             return this.provider != null;
         }
     }

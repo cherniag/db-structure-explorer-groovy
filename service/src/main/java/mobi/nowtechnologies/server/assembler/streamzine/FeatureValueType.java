@@ -30,8 +30,7 @@ public enum FeatureValueType {
             }
 
             throw new IllegalArgumentException("Could not decide for type: " + i.getLinkType());
-        }
-        else {
+        } else {
             return CONTENT;
         }
     }

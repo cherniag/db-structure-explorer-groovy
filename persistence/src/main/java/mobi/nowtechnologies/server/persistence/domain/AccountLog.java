@@ -143,8 +143,7 @@ public class AccountLog implements Serializable {
         this.media = media;
         if (media != null) {
             relatedMediaUID = media.getI();
-        }
-        else {
+        } else {
             relatedMediaUID = null;
         }
     }
@@ -157,8 +156,7 @@ public class AccountLog implements Serializable {
         this.submittedPayment = submittedPayment;
         if (submittedPayment != null) {
             this.relatedPaymentUID = submittedPayment.getI();
-        }
-        else {
+        } else {
             relatedPaymentUID = null;
         }
     }
@@ -179,8 +177,7 @@ public class AccountLog implements Serializable {
         this.offer = offer;
         if (offer != null) {
             offerId = offer.getId();
-        }
-        else {
+        } else {
             offerId = null;
         }
     }

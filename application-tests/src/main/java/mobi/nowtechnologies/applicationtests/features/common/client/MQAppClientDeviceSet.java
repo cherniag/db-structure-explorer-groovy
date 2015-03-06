@@ -401,8 +401,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         // get or post?
         if (apiVersions.bellow("6.3").contains(deviceData.getApiVersion())) {
             return getStreamzineHttpService.postStreamzine(community, deviceData, state, timestampToken, timestamp, resolution, userName, type);
-        }
-        else {
+        } else {
             return getStreamzineHttpService.getStreamzine(community, deviceData, state, timestampToken, timestamp, resolution, userName, type);
         }
     }
@@ -413,8 +412,7 @@ public class MQAppClientDeviceSet extends ClientDevicesSet {
         // get or post?
         if (apiVersions.bellow("6.3").contains(deviceData.getApiVersion())) {
             return getStreamzineHttpService.postStreamzine(deviceData.getCommunityUrl(), deviceData, state, timestampToken, timestamp, resolution, userName, StandardResponse.class);
-        }
-        else {
+        } else {
             return getStreamzineHttpService.getStreamzine(deviceData.getCommunityUrl(), deviceData, state, timestampToken, timestamp, resolution, userName, StandardResponse.class);
         }
     }

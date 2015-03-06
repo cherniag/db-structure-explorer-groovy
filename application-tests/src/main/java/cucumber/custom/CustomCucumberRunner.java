@@ -49,8 +49,7 @@ public class CustomCucumberRunner extends Cucumber {
                 logger.info("Result [{}]", result);
             }
             return file.getAbsolutePath();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

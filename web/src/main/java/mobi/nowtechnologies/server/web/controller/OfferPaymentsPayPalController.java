@@ -89,8 +89,7 @@ public class OfferPaymentsPayPalController extends CommonController {
         final String message = messageSource.getMessage(exception.getErrorCodeForMessageLocalization(), null, locale);
         if (exception instanceof ExternalServiceException) {
             modelAndView.addObject("external_error", message);
-        }
-        else {
+        } else {
             modelAndView.addObject("internal_error", message);
         }
         modelAndView.addObject(REQUEST_PARAM_PAYPAL, FAIL);

@@ -48,8 +48,7 @@ public abstract class AbstractMessageController extends AbstractCommonController
                 FilterDto selectedfilterDto = null;
                 if (element instanceof FilterDto) {
                     selectedfilterDto = (FilterDto) element;
-                }
-                else if (element instanceof String) {
+                } else if (element instanceof String) {
                     Set<FilterDto> allMessageFilterDtos = populateAllMessageFilterDtos();
                     for (FilterDto filterDto : allMessageFilterDtos) {
                         if (filterDto.getName().equals(element)) {
@@ -82,8 +81,7 @@ public abstract class AbstractMessageController extends AbstractCommonController
     protected Date validateSelectedPublishDate(String selectedPublishDate) {
         try {
             return new SimpleDateFormat(URL_DATE_FORMAT).parse(selectedPublishDate);
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceException("messages.pages.invalidSelectedPublishDateFormat", "Invalid selectedPublishDate format. It muse be in " + URL_DATE_FORMAT + " format");
         }

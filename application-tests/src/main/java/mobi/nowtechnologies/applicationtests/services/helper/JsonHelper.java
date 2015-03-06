@@ -39,8 +39,7 @@ import org.springframework.stereotype.Component;
         try {
             String objectJson = extractObjectJsonByPath(response, path);
             return objectMapper.readValue(objectJson, type);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -145,8 +145,7 @@ public class VersionCheckServiceIT {
 
         if (StringUtils.isEmpty(url)) {
             assertTrue(StringUtils.isEmpty(response.getUri()));
-        }
-        else {
+        } else {
             assertEquals(url, response.getUri());
         }
     }

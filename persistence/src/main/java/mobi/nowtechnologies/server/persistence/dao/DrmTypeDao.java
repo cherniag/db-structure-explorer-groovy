@@ -20,11 +20,9 @@ public class DrmTypeDao {
         for (DrmType drmType : drmTypes) {
             if (drmType.getName().equals(PLAYS)) {
                 PLAYS_DRM_TYPE = drmType;
-            }
-            else if (drmType.getName().equals(TIME)) {
+            } else if (drmType.getName().equals(TIME)) {
                 TIME_DRM_TYPE = drmType;
-            }
-            else if (drmType.getName().equals(PURCHASED)) {
+            } else if (drmType.getName().equals(PURCHASED)) {
                 PURCHASED_DRM_TYPE = drmType;
             }
         }

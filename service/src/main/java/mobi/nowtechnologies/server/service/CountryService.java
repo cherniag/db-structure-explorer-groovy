@@ -41,8 +41,7 @@ public class CountryService {
         Country country = getCountryMapFullNameAsKey().get(countryFullName);
         if (country == null) {
             throw new ServiceException("Couldn't find country with countryFullName=" + countryFullName);
-        }
-        else {
+        } else {
             return country.getI();
         }
     }

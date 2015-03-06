@@ -44,8 +44,7 @@ public class PlaylistController extends CommonController {
         User user = userService.findById(getUserId());
         if (user.isLimited()) {
             return new ModelAndView(VIEW_PLAYLIST_PREVIEW);
-        }
-        else {
+        } else {
             return new ModelAndView(VIEW_PLAYLIST).
                                                       addObject("playlistType", playlistType).
                                                       addObject("userID", getUserId());

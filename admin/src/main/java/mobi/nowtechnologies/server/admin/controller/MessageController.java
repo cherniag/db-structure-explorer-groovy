@@ -71,8 +71,7 @@ public class MessageController extends AbstractMessageController {
         ModelAndView modelAndView;
         if (bindingResult.hasErrors()) {
             modelAndView = new ModelAndView("message/add");
-        }
-        else {
+        } else {
 
             String communityURL = RequestUtils.getCommunityURL();
 
@@ -91,8 +90,7 @@ public class MessageController extends AbstractMessageController {
         ModelAndView modelAndView;
         if (bindingResult.hasErrors()) {
             modelAndView = new ModelAndView("message/add");
-        }
-        else {
+        } else {
 
             String communityURL = RequestUtils.getCommunityURL();
 
@@ -103,8 +101,7 @@ public class MessageController extends AbstractMessageController {
                 modelAndView.getModelMap().put(MessageDto.MESSAGE_DTO, messageDto);
                 bindingResult.addError(new ObjectError(MessageDto.MESSAGE_DTO, new String[] {"message.edit.error.couldNotFindMessage"}, null,
                                                        "Couldn't find this message in the DB. To save it as new item click 'Save changes' button."));
-            }
-            else {
+            } else {
                 modelAndView = new ModelAndView("redirect:/messages");
             }
         }
@@ -122,8 +119,7 @@ public class MessageController extends AbstractMessageController {
         if (messageDto != null) {
             modelAndView = new ModelAndView("message/edit");
             modelAndView.getModelMap().put(MessageDto.MESSAGE_DTO, messageDto);
-        }
-        else {
+        } else {
             modelAndView = new ModelAndView("redirect:/messages");
         }
 

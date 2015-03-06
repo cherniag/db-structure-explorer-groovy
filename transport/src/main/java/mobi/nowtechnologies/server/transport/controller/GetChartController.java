@@ -136,12 +136,10 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
@@ -167,12 +165,10 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
@@ -199,12 +195,10 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, false);
 
             return buildModelAndView(accountCheck, chartDto);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
@@ -229,12 +223,10 @@ public class GetChartController extends CommonController {
             AccountCheckDTO accountCheck = accCheckService.processAccCheck(user, false, false, withOneTimePayment);
 
             return buildModelAndView(accountCheck, chartDto);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             logProfileData(deviceUID, community, null, null, user, ex);
             LOGGER.info("command processing finished");
         }
@@ -255,8 +247,7 @@ public class GetChartController extends CommonController {
             if (removeChartTypes.contains(chartType)) {
                 removedPlaylistIds.add(playlistDtos[i].getId());
                 playlistDtos[i] = null;
-            }
-            else {
+            } else {
                 playlistMap.put(playlistDtos[i].getId(), playlistDtos[i]);
             }
         }
@@ -266,8 +257,7 @@ public class GetChartController extends CommonController {
         for (int i = 0; i < tracks.length; i++) {
             if (removedPlaylistIds.contains(tracks[i].getPlaylistId())) {
                 tracks[i] = null;
-            }
-            else if (tracks[i].getChannel() != null && intVersion < 37) {
+            } else if (tracks[i].getChannel() != null && intVersion < 37) {
                 tracks[i] = new BonusChartDetailDto(tracks[i]);
             }
 

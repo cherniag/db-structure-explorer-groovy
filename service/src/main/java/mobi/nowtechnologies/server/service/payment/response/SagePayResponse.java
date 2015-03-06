@@ -35,20 +35,17 @@ public class SagePayResponse extends PaymentSystemResponse {
             String status = properties.getProperty(MessageResponseParam.Status.toString());
             if (httpStatus != HttpStatus.SC_OK) {
                 descriptionError = message;
-            }
-            else if (!MessageResponseStatus.OK.toString().equals(status)) {
+            } else if (!MessageResponseStatus.OK.toString().equals(status)) {
                 isSuccessful = false;
                 String errorMessage = properties.getProperty(MessageResponseParam.StatusDetail.toString());
                 descriptionError = StringUtils.hasText(errorMessage) ?
                                    errorMessage :
                                    message;
-            }
-            else {
+            } else {
                 isSuccessful = true;
                 sagePaySuccessful = true;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Unable to parse response from SagePay server {}", message, e);
             descriptionError = "Unable to get response from external payment system. Please try again.";
         }

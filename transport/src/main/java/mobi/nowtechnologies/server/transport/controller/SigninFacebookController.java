@@ -64,18 +64,15 @@ public class SigninFacebookController extends CommonController {
             FacebookUserInfo userInfo = facebookService.getFacebookUserInfo(facebookAccessToken, facebookUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByFacebook(user, userInfo, disableReactivation);
             return buildModelAndView(accCheckService.processAccCheck(mergeResult, true, withOneTimeSubscriptionFlag));
-        }
-        catch (UserCredentialsException ce) {
+        } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK can not find deviceUID[{}] in community[{}]", deviceUID, community);
             throw ce;
-        }
-        catch (RuntimeException re) {
+        } catch (RuntimeException re) {
             ex = re;
             LOGGER.error("APPLY_INIT_PROMO_FACEBOOK error [{}] for facebookAccessToken[{}] in community[{}]", re.getMessage(), facebookAccessToken, community);
             throw re;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, null, null, user, ex);
             LOGGER.info("APPLY_INIT_PROMO_FACEBOOK Finished for facebookAccessToken[{}] in community[{}]", facebookAccessToken, community);
         }

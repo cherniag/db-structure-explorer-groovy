@@ -192,12 +192,10 @@ public class TrackRepoServiceImplTest {
             track.setId(testcase.getInput());
             if (expectedTrack != null) {
                 track = fixture.encode(track);
-            }
-            else {
+            } else {
                 try {
                     track = fixture.encode(track);
-                }
-                catch (ServiceException e) {
+                } catch (ServiceException e) {
                     track = null;
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -262,12 +260,10 @@ public class TrackRepoServiceImplTest {
                 verify(artistRepository, times(j)).getByName(any(String.class));
                 //verify(artistRepository, times(j)).getByRealName(any(String.class), any(Pageable.class));
                 verify(artistRepository, times(j)).save(any(Artist.class));
-            }
-            else {
+            } else {
                 try {
                     track = fixture.pull(track);
-                }
-                catch (ServiceException e) {
+                } catch (ServiceException e) {
                     track = null;
                     LOGGER.error(e.getMessage(), e);
                 }

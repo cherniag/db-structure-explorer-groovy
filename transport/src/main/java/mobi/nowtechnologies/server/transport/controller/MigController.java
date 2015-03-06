@@ -64,12 +64,10 @@ public class MigController extends CommonController {
                 user = submittedPayment.getUser();
             }
             return "000";
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             LOGGER.error("error processing DRListener command", e);
-        }
-        finally {
+        } finally {
             logProfileData(null, null, null, null, user, ex);
             LOGGER.info("[DONE] invoking DRListener command");
         }
@@ -91,16 +89,13 @@ public class MigController extends CommonController {
                 if (paymentDetails != null && !hasNoSuchActivatedPaymentDetails && paymentDetails.get(0) != null) {
                     user = paymentDetails.get(0).getOwner();
                 }
-            }
-            else {
+            } else {
                 throw new IllegalStateException("action [" + action + "] not supported");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             LOGGER.error("error processing MOLISTENER command", e);
-        }
-        finally {
+        } finally {
             if (hasNoSuchActivatedPaymentDetails) {
                 ex = new Exception("No such activated payment details");
             }

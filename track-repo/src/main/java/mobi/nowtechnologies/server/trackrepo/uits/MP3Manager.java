@@ -55,8 +55,7 @@ public class MP3Manager {
             }
 
             return 1;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("IO error, message: {}", e.getMessage(), e);
         }
         return 0;
@@ -217,8 +216,7 @@ public class MP3Manager {
             if (buffer[index] == 'T' && buffer[index + 1] == 'A' && buffer[index + 2] == 'G') {
                 id3v1TagCount++;
                 index -= 128;
-            }
-            else {
+            } else {
                 done = true;
             }
         }
@@ -234,18 +232,15 @@ public class MP3Manager {
 
         if (frameHeader.stereoFlag == 1) {
             aIndex = 32 + 4;
-        }
-        else {
+        } else {
             aIndex = 17 + 4;
         }
 
         if (audioBuffer[aIndex] == 'X' && audioBuffer[aIndex + 1] == 'i' && audioBuffer[aIndex + 2] == 'n' && audioBuffer[aIndex + 3] == 'g') {
             return true;
-        }
-        else if (audioBuffer[aIndex] == 'I' && audioBuffer[aIndex + 1] == 'n' && audioBuffer[aIndex + 2] == 'f' && audioBuffer[aIndex + 3] == 'o') {
+        } else if (audioBuffer[aIndex] == 'I' && audioBuffer[aIndex + 1] == 'n' && audioBuffer[aIndex + 2] == 'f' && audioBuffer[aIndex + 3] == 'o') {
             return true;
-        }
-        else if (audioBuffer[aIndex] == 'V' && audioBuffer[aIndex + 1] == 'B' && audioBuffer[aIndex + 2] == 'R' && audioBuffer[aIndex + 3] == 'I') {
+        } else if (audioBuffer[aIndex] == 'V' && audioBuffer[aIndex + 1] == 'B' && audioBuffer[aIndex + 2] == 'R' && audioBuffer[aIndex + 3] == 'I') {
             return true;
         }
 
@@ -288,8 +283,7 @@ public class MP3Manager {
                 logger.warn("WARNING: MP3 file contains an extended header");
             }
 
-        }
-        else if (logger.isDebugEnabled()) {
+        } else if (logger.isDebugEnabled()) {
             logger.debug("File does not start with ID3 tag : {} {}", Integer.toHexString(0xff & buffer[0]), Integer.toHexString(0xff & buffer[1]));
         }
 
@@ -311,8 +305,7 @@ public class MP3Manager {
         byteBuffer = (byte) ((header[1] >> 3) & 0x03);
         if (byteBuffer == 3) {
             frameHeader.mpeg1Flag = 1;
-        }
-        else {
+        } else {
             frameHeader.mpeg1Flag = 0;
         }
 
@@ -337,8 +330,7 @@ public class MP3Manager {
         if ((int) byteBuffer < 3) {
             // not a mono file
             frameHeader.stereoFlag = 1;
-        }
-        else {
+        } else {
             frameHeader.stereoFlag = 0;
         }
 

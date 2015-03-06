@@ -39,8 +39,7 @@ public class AuthenticatingInterceptorTest {
 
         try {
             authenticatingInterceptor.preHandle(request, response, handler);
-        }
-        catch (MissingServletRequestParameterException e) {
+        } catch (MissingServletRequestParameterException e) {
             verify(request, times(1)).getParameter(AuthenticatedUser.USER_NAME);
             verify(request, times(1)).getParameter(AuthenticatedUser.USER_TOKEN);
 
@@ -56,8 +55,7 @@ public class AuthenticatingInterceptorTest {
 
         try {
             authenticatingInterceptor.preHandle(request, response, handler);
-        }
-        catch (MissingServletRequestParameterException e) {
+        } catch (MissingServletRequestParameterException e) {
             verify(request, times(1)).getParameter(AuthenticatedUser.USER_NAME);
 
             verifyNoMoreInteractions(authenticationService, request, response, handler);

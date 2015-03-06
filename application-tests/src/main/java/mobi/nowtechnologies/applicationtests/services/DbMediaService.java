@@ -23,8 +23,7 @@ public class DbMediaService {
         List resultList = query.getResultList();
         if (resultList.isEmpty()) {
             return null;
-        }
-        else {
+        } else {
             return (Media) query.getResultList().get(0);
         }
     }
@@ -35,8 +34,7 @@ public class DbMediaService {
         List resultList = query.getResultList();
         if (resultList.isEmpty()) {
             return null;
-        }
-        else {
+        } else {
             return (Media) query.getResultList().get(0);
         }
     }

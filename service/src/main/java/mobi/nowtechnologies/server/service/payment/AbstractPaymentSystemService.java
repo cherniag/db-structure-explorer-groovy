@@ -54,14 +54,12 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
             paymentDetails.setDescriptionError(response.getDescriptionError());
             paymentDetails.setErrorCode(response.getErrorCode());
             paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
-        }
-        else if (response.isSuccessful()) {
+        } else if (response.isSuccessful()) {
             status = SUCCESSFUL;
             paymentDetails.setDescriptionError(null);
             paymentDetails.setErrorCode(null);
             paymentDetails.incrementMadeAttemptsAccordingToMadeRetries();
-        }
-        else {
+        } else {
             status = ERROR;
             final String descriptionError = "Unexpected http status code [" + httpStatus + "] so the madeRetries won't be incremented";
             submittedPayment.setDescriptionError(descriptionError);
@@ -84,8 +82,7 @@ public abstract class AbstractPaymentSystemService implements PaymentSystemServi
         // Send sync-event about committed payment
         if (submittedPayment.getStatus().equals(SUCCESSFUL)) {
             applicationEventPublisher.publishEvent(new PaymentEvent(submittedPayment));
-        }
-        else {
+        } else {
             checkPaymentDetailsAndUnSubscribe(response, pendingPayment);
         }
 

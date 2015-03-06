@@ -98,8 +98,7 @@ public class ReloadableMessageSourceIT {
             //then
             try {
                 assertEquals("oldPropertyName=" + oldPropertyName + " for " + Arrays.toString(baseNames), oldMessage, newMessage);
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 logger.error(String.format("%s, %s, %s, %s, %s", Arrays.toString(baseNames), oldPropertyName, oldMessage, newMessage, community));
                 throw e;
             }

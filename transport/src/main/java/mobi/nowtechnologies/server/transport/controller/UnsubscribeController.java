@@ -53,8 +53,7 @@ public class UnsubscribeController extends CommonController {
         try {
             PHONE_NUMBER_XPATHEXPRESSION = xPath.compile("//member[name='MSISDN' or name='*MSISDN*' or key='MSISDN' or key='*MSISDN*']/value");
             OPERATOR_XPATHEXPRESSION = xPath.compile("//member[name='NETWORK' or name='*NETWORK*' or key='NETWORK' or key='*NETWORK*']/value");
-        }
-        catch (XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
@@ -107,8 +106,7 @@ public class UnsubscribeController extends CommonController {
             if (paymentDetailsList.isEmpty()) {
                 hasNoSuchActivatedPaymentDetails = true;
                 message = messageSource.getMessage(community, "unsubscribe.mrs.message.payment.details.not.found", null, null);
-            }
-            else {
+            } else {
                 final PaymentDetails paymentDetails = paymentDetailsList.get(0);
                 if (paymentDetails != null) {
                     user = paymentDetails.getOwner();
@@ -118,12 +116,10 @@ public class UnsubscribeController extends CommonController {
 
             LOGGER.info("Output parameter message=[{}]", message);
             return message;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ex = e;
             throw e;
-        }
-        finally {
+        } finally {
             if (hasNoSuchActivatedPaymentDetails) {
                 ex = new Exception("No such activated payment details");
             }
@@ -139,8 +135,7 @@ public class UnsubscribeController extends CommonController {
         final String errorCodeForMessageLocalization = serviceException.getErrorCodeForMessageLocalization();
         if (NO_PAYMENT_DETAILS_FOUND_MESSAGE_CODE.equals(errorCodeForMessageLocalization)) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
-        }
-        else if (UNSUBSCRIBE_MRS_UNPARSABLEXML_PHONE.equals(errorCodeForMessageLocalization) || UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR.equals(errorCodeForMessageLocalization)) {
+        } else if (UNSUBSCRIBE_MRS_UNPARSABLEXML_PHONE.equals(errorCodeForMessageLocalization) || UNSUBSCRIBE_MRS_UNPARSABLEXML_OPERATOR.equals(errorCodeForMessageLocalization)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         }
 

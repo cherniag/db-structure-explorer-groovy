@@ -113,8 +113,7 @@ public class BadgesService {
         if (needToRemovePrevious) {
             try {
                 cloudFileService.deleteFile(found.getFilenameAlias().getFileName());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 logger().warn("Could not delete file assigned to {}", found.getFilenameAlias(), e);
             }
         }
@@ -125,8 +124,7 @@ public class BadgesService {
         cloudFileImagesService.uploadImageWithGivenName(bytes, specificAlias.getFileName());
         if (found.getFilenameAlias() == null) {
             found.setFilenameAlias(specificAlias);
-        }
-        else {
+        } else {
             found.getFilenameAlias().updateFrom(specificAlias);
         }
     }
@@ -204,8 +202,7 @@ public class BadgesService {
             if (alias != null) {
                 cloudFileService.deleteFile(filenameAlias.getFileName());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger().warn("Did not succeeded to remove the cloud file: {} on cloud: {}", filenameAlias.getFileName(), cloudFileService.getFilesURL());
         }
     }
@@ -241,8 +238,7 @@ public class BadgesService {
         Resolution inDatabase = resolutionRepository.find(resolution.getDeviceType(), resolution.getWidth(), resolution.getHeight());
         if (inDatabase == null) {
             return badgeMappingRepository.findByCommunityAndFilenameId(community, badgeId);
-        }
-        else {
+        } else {
             return badgeMappingRepository.findByCommunityResolutionAndFilenameId(community, inDatabase, badgeId);
         }
     }
@@ -255,8 +251,7 @@ public class BadgesService {
             // specified the the size and server resized the image
             if (filenameAlias != null && filenameAlias.getFileName() != null) {
                 return filenameAlias.getFileName();
-            }
-            else {
+            } else {
                 return mappings.get(1).getFilenameAlias().getFileName();
             }
         }

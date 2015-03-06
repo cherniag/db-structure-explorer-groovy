@@ -77,8 +77,7 @@ public class Utils {
                 md5 = "0" + md5;
             }
             return md5;
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             return null;
         }
     }
@@ -181,8 +180,7 @@ public class Utils {
 
         if (nextSubPayment >= getEpochSeconds()) {
             result = nextSubPayment;
-        }
-        else {
+        } else {
             result = getNextSubPaymentAccoringToPaymentPolicy(getEpochSeconds());
         }
 
@@ -276,8 +274,7 @@ public class Utils {
 
         if (matcher.matches()) {
             majorVersionNumber = Integer.valueOf(matcher.group(1));
-        }
-        else {
+        } else {
             throw new RuntimeException("Couldn't get major version number for [" + version + "] version");
         }
 
@@ -290,8 +287,7 @@ public class Utils {
 
         if (matcher.matches()) {
             versionNumber = new BigDecimal(matcher.group(1) + "." + matcher.group(2).replaceAll("\\.", ""));
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Couldn't get version number for [" + version + "] version");
         }
 
@@ -334,8 +330,7 @@ public class Utils {
         if (!StringUtils.isEmpty(url)) {
             try {
                 return new URLCodec().decode(url);
-            }
-            catch (DecoderException e) {
+            } catch (DecoderException e) {
                 return url;
             }
         }

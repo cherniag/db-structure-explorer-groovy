@@ -59,18 +59,15 @@ public class SigninGooglePlusController extends CommonController {
             GooglePlusUserInfo googlePlusUserInfo = googlePlusService.getAndValidateProfile(accessToken, googlePlusUserId);
             MergeResult mergeResult = userPromoService.applyInitPromoByGooglePlus(user, googlePlusUserInfo, disableReactivation);
             return buildModelAndView(accCheckService.processAccCheck(mergeResult, true, withOneTimePayment));
-        }
-        catch (UserCredentialsException ce) {
+        } catch (UserCredentialsException ce) {
             ex = ce;
             LOGGER.error("APPLY_INIT_PROMO_GOOGLE_PLUS can not find deviceUID[{}] in community[{}]", deviceUID, community);
             throw ce;
-        }
-        catch (RuntimeException re) {
+        } catch (RuntimeException re) {
             ex = re;
             LOGGER.error("APPLY_INIT_PROMO_GOOGLE_PLUS error [{}] for accessToken[{}] in community[{}]", re.getMessage(), accessToken, community);
             throw re;
-        }
-        finally {
+        } finally {
             logProfileData(null, community, null, null, user, ex);
             LOGGER.info("APPLY_INIT_PROMO_GOOGLE_PLUS Finished for accessToken[{}] in community[{}]", accessToken, community);
         }

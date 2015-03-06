@@ -30,11 +30,9 @@ public class WeeklyUpdateService {
             LogUtils.putClassNameMDC(this.getClass());
             LOGGER.info("Job start");
             process();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-        finally {
+        } finally {
             LOGGER.info("Job finish");
             LogUtils.removeClassNameMDC();
         }
@@ -50,11 +48,9 @@ public class WeeklyUpdateService {
 
                 userService.saveWeeklyPayment(user);
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-            }
-            finally {
+            } finally {
                 MDC.remove(LogUtils.LOG_USER_NAME);
                 MDC.remove(LogUtils.LOG_USER_ID);
             }

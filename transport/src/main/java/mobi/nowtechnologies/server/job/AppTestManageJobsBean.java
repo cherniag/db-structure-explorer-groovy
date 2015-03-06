@@ -27,8 +27,7 @@ public class AppTestManageJobsBean extends QuartzJobBean implements StatefulJob 
         final Scheduler scheduler = context.getScheduler();
         try {
             process(jobTriggerRequestRepository, scheduler);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
@@ -40,8 +39,7 @@ public class AppTestManageJobsBean extends QuartzJobBean implements StatefulJob 
             logger.debug("processing request {}", request);
             try {
                 scheduler.triggerJob(request.getJobName(), request.getJobGroupName());
-            }
-            catch (SchedulerException e) {
+            } catch (SchedulerException e) {
                 logger.error("Failed to process: {}", request, e);
             }
             jobTriggerRequestService.delete(request);

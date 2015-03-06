@@ -377,8 +377,7 @@ public class SonyDDEXParserTest extends ParserTest {
         String updateIndicator = getUpdateIndicator();
         if ("UpdateMessage".equals(updateIndicator)) {
             return UPDATE;
-        }
-        else {
+        } else {
             return INSERT;
         }
     }

@@ -180,12 +180,10 @@ public class TrackRepoServiceImpl implements TrackRepoService {
             track.setAmazonUrl(config.getAmazonUrl());
             track.setAreArtistUrls(config.getAreArtistUrls());
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceException("tracks.pull.error", "Couldn't pull track");
-        }
-        finally {
+        } finally {
             if (config != null && config.getId() != null) {
                 pullingTrackSet.remove(config.getId());
             }
@@ -233,8 +231,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
             if (track.getLicensed() == null || !track.getLicensed()) {
                 media.setAudioFile(media.getAudioPreviewFile());
                 media.setHeaderFile(media.getHeaderPreviewFile());
-            }
-            else {
+            } else {
                 media.setAudioFile(createMediaFile(track.getFile(FileType.MOBILE_AUDIO, track.getResolution())));
                 media.setHeaderFile(createMediaFile(track.getFile(FileType.MOBILE_HEADER, track.getResolution())));
             }
@@ -282,8 +279,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
     private String getiTunesURL(TrackDto sourceTrackDto) {
         if (System.currentTimeMillis() >= iTunesLinkFormatCutoverTimeMillis) {
             return sourceTrackDto.getItunesUrl();
-        }
-        else {
+        } else {
             return "http://clkuk.tradedoubler.com/click?p=23708%26a=1997010%26url=" + (sourceTrackDto.getItunesUrl() != null ?
                                                                                        sourceTrackDto.getItunesUrl().replace("&", "%26") :
                                                                                        "") + "%26partnerId=2003";
@@ -342,8 +338,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
             track.setPublishArtist(track.getArtist());
             track.setPublishTitle(track.getTitle());
             track.setInfo(getArtistInfo(track.getArtist()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception encoding track {}: {}", config, e.getMessage(), e);
             throw new ExternalServiceException("tracks.encode.error", "Couldn't encode track");
         }
@@ -399,8 +394,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
         List<Artist> artists = artistRepository.getByNames(artistName, one);
         if (artists == null || artists.size() == 0) {
             return "";
-        }
-        else {
+        } else {
             Artist artist = artists.get(0);
             return artist.getInfo() != null ?
                    artist.getInfo() :
@@ -419,8 +413,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
 
             if (pullingTrackSet.contains(track.getId())) {
                 track.setStatus(TrackStatus.PUBLISHING);
-            }
-            else if (track.getStatus() == TrackStatus.ENCODED || track.getStatus() == TrackStatus.PUBLISHED) {
+            } else if (track.getStatus() == TrackStatus.ENCODED || track.getStatus() == TrackStatus.PUBLISHED) {
                 map.put(track.getIsrc(), track);
             }
 
@@ -453,8 +446,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
                                     track.setItunesUrl(url);
                                 }
                             }
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             LOGGER.warn("Can't get iTunes URL from media for original value: " + media.getiTunesUrl(), e);
                         }
                     }
@@ -491,8 +483,7 @@ public class TrackRepoServiceImpl implements TrackRepoService {
                 track.setPublishTitle(track.getTitle());
                 track.setInfo(getArtistInfo(track.getArtist()));
                 successes.add(track);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error("Encoding track failed! [TrackId=" + track.getId() + "] Title=[" + track.getTitle() + "]", e);
                 fails.add(track);
             }

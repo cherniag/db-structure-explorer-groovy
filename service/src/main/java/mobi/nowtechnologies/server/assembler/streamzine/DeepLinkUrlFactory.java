@@ -79,8 +79,7 @@ public class DeepLinkUrlFactory {
 
             if (LinkLocationType.EXTERNAL_AD == info.getLinkType()) {
                 return Base64.encodeBase64String(info.getUrl().getBytes(), false);
-            }
-            else {
+            } else {
                 return info.getUrl();
             }
         }

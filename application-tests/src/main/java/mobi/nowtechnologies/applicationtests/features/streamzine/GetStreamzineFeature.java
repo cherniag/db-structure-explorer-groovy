@@ -220,8 +220,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
                                    apiVersions);
 
                 okResponses.put(data, response.getBody().getResponse().get().getValue());
-            }
-            else {
+            } else {
                 // XML:
                 ResponseEntity<mobi.nowtechnologies.applicationtests.services.http.streamzine.dto.xml.StreamzimeResponse> response = deviceSet
                     .getStreamzine(data.getCommunityUrl(), data, token.getTimestampToken(), token.getTimestamp(), validResolution, state.getLastFacebookInfo().getUserName(),
@@ -249,8 +248,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             Pair<VisualBlock, ContentItemDto> pair = okResponses.get(data).get(position - 1);
             if (title.isNull()) {
                 assertNull(pair.getValue().getTitle());
-            }
-            else {
+            } else {
                 assertEquals(getErrorMessage(data), title.value(), pair.getValue().getTitle());
             }
         }
@@ -262,8 +260,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             Pair<VisualBlock, ContentItemDto> pair = okResponses.get(data).get(position - 1);
             if (subTitle.isNull()) {
                 assertNull(pair.getValue().getSubTitle());
-            }
-            else {
+            } else {
                 assertEquals(getErrorMessage(data), subTitle.value(), pair.getValue().getSubTitle());
             }
         }
@@ -287,8 +284,7 @@ public class GetStreamzineFeature extends AbstractStreamzineFeature {
             if (deeplinkType == DeeplinkType.DEEPLINK) {
                 assertTrue(getErrorMessage(data) + ", values: " + deeplinkValue.strings() + ", value: " + pair.getValue().getLinkValue().getValue(),
                            deeplinkValue.strings().contains(pair.getValue().getLinkValue().getValue()));
-            }
-            else {
+            } else {
                 assertEquals(getErrorMessage(data), deeplinkValue.ints(), pair.getValue().getLinkValue().getValues());
             }
         }

@@ -29,8 +29,7 @@ public class AppsFlyerDataService {
         if (found == null) {
             found = new AppsFlyerData(user.getId(), appsFlyerUid);
             appsFlyerDataRepository.save(found);
-        }
-        else {
+        } else {
             found.setAppsFlyerUid(appsFlyerUid);
         }
     }
@@ -54,8 +53,7 @@ public class AppsFlyerDataService {
         if (toData == null) {
             toData = new AppsFlyerData(toUser.getId(), fromData.getAppsFlyerUid());
             appsFlyerDataRepository.save(toData);
-        }
-        else {
+        } else {
             toData.setAppsFlyerUid(fromData.getAppsFlyerUid());
         }
         logger.info("Saving result data [{}]", toData);

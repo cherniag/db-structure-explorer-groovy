@@ -64,8 +64,7 @@ public class AccountCheckDTOAsm {
                 case NONE:
                     return PaymentStatus.NULL;
             }
-        }
-        else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
+        } else if (PAYPAL_TYPE.equals(paymentDetails.getPaymentType())) {
             switch (paymentDetails.getLastPaymentStatus()) {
                 case AWAITING:
                     return PaymentStatus.AWAITING_PAY_PAL;
@@ -77,8 +76,7 @@ public class AccountCheckDTOAsm {
                 case NONE:
                     return PaymentStatus.NULL;
             }
-        }
-        else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
+        } else if (MIG_SMS_TYPE.equals(paymentDetails.getPaymentType())) {
             switch (paymentDetails.getLastPaymentStatus()) {
                 case AWAITING:
                     return PaymentStatus.AWAITING_PSMS;
@@ -90,8 +88,7 @@ public class AccountCheckDTOAsm {
             }
             if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && !paymentDetails.isActivated()) {
                 return PaymentStatus.PIN_PENDING;
-            }
-            else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
+            } else if (paymentDetails.getLastPaymentStatus().equals(PaymentDetailsStatus.NONE) && paymentDetails.isActivated()) {
                 return PaymentStatus.NULL;
             }
         }
@@ -194,8 +191,7 @@ public class AccountCheckDTOAsm {
         if (withOneTimePayment) {
             if (hasPaidByPaymentDetails) {
                 accountCheckDTO.oneTimePayment = user.hasOneTimeSubscription();
-            }
-            else if (hasITunesSubscription) {
+            } else if (hasITunesSubscription) {
                 accountCheckDTO.oneTimePayment = iTunesPaymentService.hasOneTimeSubscription(user);
             }
         }

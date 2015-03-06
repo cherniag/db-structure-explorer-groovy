@@ -43,8 +43,7 @@ public class MobileApplicationPagesService {
                 return Collections.emptySet();
             }
             return toSet(value);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

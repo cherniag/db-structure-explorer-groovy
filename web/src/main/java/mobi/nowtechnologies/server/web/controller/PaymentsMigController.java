@@ -102,8 +102,7 @@ public class PaymentsMigController extends CommonController {
         try {
             paymentDetailsService.commitMigPaymentDetails(dto.getPin(), getSecurityContextDetails().getUserId());
             modelAndView.addObject("result", "successful");
-        }
-        catch (ServiceException e) {
+        } catch (ServiceException e) {
             modelAndView.addObject("result", FAIL);
         }
 
@@ -132,8 +131,7 @@ public class PaymentsMigController extends CommonController {
         final String message = messageSource.getMessage(serviceException.getErrorCodeForMessageLocalization(), null, locale);
         if (serviceException instanceof ExternalServiceException) {
             modelAndView.addObject("external_error", message);
-        }
-        else {
+        } else {
             modelAndView.addObject("internal_error", message);
         }
 

@@ -84,8 +84,7 @@ public class NewsController extends AbstractMessageController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(URL_DATE_FORMAT);
         if (newsItemDtos.isEmpty()) {
             return simpleDateFormat.format(selectedPublishDate);
-        }
-        else {
+        } else {
             return simpleDateFormat.format(newsItemDtos.get(0).getPublishTime());
         }
     }
@@ -180,8 +179,7 @@ public class NewsController extends AbstractMessageController {
             newsItemDto.setPublishTime(selectedPublishDate);
             messageService.saveNews(newsItemDto, RequestUtils.getCommunityURL());
             modelAndView = new ModelAndView("redirect:/news/" + new SimpleDateFormat(URL_DATE_FORMAT).format(selectedPublishDate));
-        }
-        else {
+        } else {
             newsItemDto.setPublishTime(selectedPublishDate);
             modelAndView = new ModelAndView("news/add");
             modelAndView.addObject(NewsItemDto.NEWS_ITEM_DTO, newsItemDto);
@@ -232,8 +230,7 @@ public class NewsController extends AbstractMessageController {
             String communityURL = RequestUtils.getCommunityURL();
             messageService.updateNews(newsItemDto, communityURL);
             modelAndView = new ModelAndView("redirect:/news/" + new SimpleDateFormat(URL_DATE_FORMAT).format(selectedPublishDate));
-        }
-        else {
+        } else {
             NewsItemDto oldNewsItemDto = messageService.getNewsById(messageId);
             newsItemDto.setImageFileName(oldNewsItemDto.getImageFileName());
             newsItemDto.setPublishTime(selectedPublishDate);
