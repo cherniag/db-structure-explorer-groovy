@@ -1,19 +1,29 @@
 package mobi.nowtechnologies.applicationtests.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import mobi.nowtechnologies.applicationtests.services.util.LoggingResponseErrorHandler;
 import mobi.nowtechnologies.server.apptests.email.MailModelSerializer;
-import mobi.nowtechnologies.server.apptests.facebook.AppTestFacebookTokenService;
 import mobi.nowtechnologies.server.apptests.googleplus.AppTestGooglePlusTokenService;
 import mobi.nowtechnologies.server.apptests.provider.o2.O2PhoneExtensionsService;
+import mobi.nowtechnologies.server.service.social.facebook.impl.mock.AppTestFacebookTokenService;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
+import java.util.Properties;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -25,10 +35,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
-
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Properties;
 
 @Configuration
 @ComponentScan(
