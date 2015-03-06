@@ -1,4 +1,3 @@
-
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head th:include="tpl::head" />
@@ -13,12 +12,9 @@
               method="post"
               accept-charset="UTF-8"
               class="well"
-              th:with="canGoNext=(${action == '/drops/select'} and ${!#lists.isEmpty(ingestWizardDataDto.drops)}) or (${action == '/drops/tracks/select'} and ${ingestWizardDataDto.hasAnySelected()}) or ${action == '/drops/commit'}">
+              th:with="canGoNext=(${action == '/drops/tracks/select'} and ${ingestWizardDataDto.hasAnySelected()}) or ${action == '/drops/commit'}">
             <input type="hidden" th:field="*{suid}" />
             <div class="newsListWide" style="width: 100%">
-                <div th:if="${action == '/drops/select'} and ${#lists.isEmpty(ingestWizardDataDto.drops)}"  th:text="#{tracks.ingest.page.dropList.noDrops}" class="well_center white largeText">
-                    No Drops
-                </div>
                 <div th:if="${action == '/drops/tracks/select'} and ${!ingestWizardDataDto.hasAnySelected()}"  th:text="#{tracks.ingest.page.dropList.noSelectedDrops}" class="well_center white largeText">
                     No Selected Drops
                 </div>
@@ -30,23 +26,15 @@
                         <div th:if="${action != '/drops/commit'}" class="select_drop">
                             <input type="checkbox" id="selectAll" />
                         </div>
-                        <div class="ingestor_drop" th:if="${action == '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.drop.ingestor}">Ingestor</div>
-                        <div class="name_drop" th:if="${action == '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.drop.name}">Name</div>
-                        <div class="date_drop" th:if="${action == '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.drop.date}">Date</div>
-                        <div class="product_id_track" th:if="${action != '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.track.productId}">Product ID</div>
-                        <div class="action_track" th:if="${action != '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.track.action}">Action</div>
-                        <div class="artist_track" th:if="${action != '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.track.artist}">Artist</div>
-                        <div class="title_track" th:if="${action != '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.track.title}">Title</div>
-                        <div class="isrc_track" th:if="${action != '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.track.isrc}">ISRC</div>
-                        <div class="existing_track" th:if="${action != '/drops/select'}" th:text="#{tracks.ingest.page.dropList.head.track.existing}">Existing</div>
+                        <div class="product_id_track" th:text="#{tracks.ingest.page.dropList.head.track.productId}">Product ID</div>
+                        <div class="action_track" th:text="#{tracks.ingest.page.dropList.head.track.action}">Action</div>
+                        <div class="artist_track" th:text="#{tracks.ingest.page.dropList.head.track.artist}">Artist</div>
+                        <div class="title_track" th:text="#{tracks.ingest.page.dropList.head.track.title}">Title</div>
+                        <div class="isrc_track" th:text="#{tracks.ingest.page.dropList.head.track.isrc}">ISRC</div>
+                        <div class="existing_track" th:text="#{tracks.ingest.page.dropList.head.track.existing}">Existing</div>
                     </li>
-                    <li th:if="(${action == '/drops/tracks/select'} and ${dropDto.selected}) or ${action != '/drops/tracks/select'}" th:class="${action == '/drops/select'} ? 'drops' : (${action != '/drops/commit'} ? 'subtitle' : 'none') " th:each="dropDto, it: ${ingestWizardDataDto.drops}">
-                        <div th:if="${action == '/drops/select'}" class="select_drop">
-                            <input type="checkbox" th:field="*{drops[__${it.index}__].selected}" />
-                        </div>
-                        <div class="ingestor_drop" th:if="${action == '/drops/select'}" th:text="${dropDto.ingestor}">Ingestor</div>
+                    <li th:if="(${action == '/drops/tracks/select'} and ${dropDto.selected}) or ${action != '/drops/tracks/select'}" th:class="${action != '/drops/commit'} ? 'subtitle' : 'none'" th:each="dropDto, it: ${ingestWizardDataDto.drops}">
                         <div class="name_drop" th:text="${dropDto.name}">Name</div>
-                        <div class="date_drop" th:if="${action == '/drops/select'}" th:text="${#dates.format(dropDto.date, '__#{tracks.datetime.format}__')}">Date</div>
                         <li th:if="${action == '/drops/tracks/select' and trackDto.ingest == true} or ${action == '/drops/commit' and trackDto.ingest == false}" class="drops" th:each="trackDto, it2: ${dropDto.tracks}">
                             <div th:if="${action != '/drops/commit'}" class="select_drop">
                                 <input type="checkbox" th:field="*{drops[__${it.index}__].tracks[__${it2.index}__].ingest}" />

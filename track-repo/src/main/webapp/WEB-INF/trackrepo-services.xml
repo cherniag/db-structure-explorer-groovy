@@ -54,10 +54,15 @@
         <property name="mosRoot" value="${trackRepo.ingest.mos.root}" />
 	</bean>
 
-    <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl">
+    <bean id="trackRepo.IngestService" class="mobi.nowtechnologies.server.trackrepo.service.impl.IngestServiceImpl" destroy-method="destroy">
 		<property name="trackRepository" ref="trackRepository" />
 		<property name="ingestionLogRepository" ref="ingestionLogRepository" />
 		<property name="parserFactory" ref="trackRepo.ParserFactory" />
+		<property name="executorService">
+			<bean class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
+				<constructor-arg value="#{T(mobi.nowtechnologies.server.trackrepo.ingest.Ingestors).values().length}" />
+			</bean>
+		</property>
 	</bean>
 	
     <bean name="trackRepo.ResourceFileDtoBuilder" class="mobi.nowtechnologies.server.trackrepo.dto.builder.ResourceFileDtoBuilder" init-method="init">

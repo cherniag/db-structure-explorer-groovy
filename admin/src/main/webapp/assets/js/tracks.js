@@ -535,3 +535,62 @@ function formatStartDate(startDate){
     return curr_date+"/"+curr_month+"/"+curr_year;
 
 }
+
+Drops = {
+
+    loadDrops : function(){
+        $('.loadingList').modal({keyboard:false});
+
+        $.ajax({
+            url: "/jadmin/drops/list",
+            type: "get",
+            dataType: "json",
+            data: {
+                ingestors : $('#ingestors').val()
+            },
+            timeout: 3600000*48, //48 hours
+            success: function (data, textStatus, jqXHR) {
+                if(jqXHR.status == 200 && data != null){
+                    if(data.drops && data.drops.length){
+                        Drops.showPage();
+                        Drops.insertDropsRows(data.drops);
+                        initSelectAll();
+                    }
+                    Drops.updateSuid(data.suid);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + " : " + errorThrown);
+            },
+            complete: function(jqXHR, textStatus){
+                $('.loadingList').modal('hide');
+            }
+        });
+    },
+
+    insertDropsRows : function(dropsJson){
+        for(var i = 0; i < dropsJson.length; i++){
+            $('#tracksTable').append(
+                '<li class="drops">' +
+                '<div class="select_drop">' +
+                    '<input type="checkbox" id="drops'+i+'.selected1" name="drops['+i+'].selected" value="true" ' + (dropsJson[i].selected ? 'checked="checked"' : '') + '/>' +
+                    '<input type="hidden" name="_drops['+i+'].selected" value="on">' +
+                '</div>' +
+                '<div class="ingestor_drop">' + dropsJson[i].ingestor + '</div>' +
+                '<div class="name_drop">' + dropsJson[i].name + '</div>' +
+                '<div class="date_drop">' + new Date(dropsJson[i].date).format('dd/MM/yyyy HH:mm:ss') + '</div>' +
+                '</li>'
+            );
+        }
+    },
+
+    updateSuid : function(suid){
+        $('#suid').val(suid);
+    },
+
+    showPage : function(){
+        $('#emptyText').hide();
+        $('#tracksTable').show();
+        $('#nextBtn').show();
+    }
+};

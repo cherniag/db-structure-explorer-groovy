@@ -1,0 +1,45 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="tpl::head" />
+
+<body onload="Drops.loadDrops();">
+    <div th:substituteby="tpl::navbar"></div>
+    <div class="container">
+        <h1 class="head" th:text="#{tracks.ingest.page.title}">Ingest Drops To Track Repository</h1>
+        <input id="ingestors" type="hidden" th:value="${ingestors}" />
+        <form id="ingestWizardDataDto" name="ingestWizardDataDto" action="#" th:action="@{/drops/select}" method="post" accept-charset="UTF-8" class="well">
+            <input type="hidden" id="suid" name="suid" />
+            <div class="newsListWide" style="width: 100%">
+                <div id="emptyText" th:text="#{tracks.ingest.page.dropList.noDrops}" class="well_center white largeText">No Drops</div>
+                <ul class="table" id="tracksTable" style="display: none;">
+                    <li class="title">
+                        <div class="select_drop"><input type="checkbox" id="selectAll" /></div>
+                        <div class="ingestor_drop" th:text="#{tracks.ingest.page.dropList.head.drop.ingestor}">Ingestor</div>
+                        <div class="name_drop" th:text="#{tracks.ingest.page.dropList.head.drop.name}">Name</div>
+                        <div class="date_drop" th:text="#{tracks.ingest.page.dropList.head.drop.date}">Date</div>
+                    </li>
+                </ul>
+                <br/>
+            </div>
+
+            <div class="form-actions">
+                <button id="nextBtn" th:text="#{tracks.ingest.page.form.next}" class="btn btn-primary" type="submit" style="display: none;">Next</button>
+                <a th:text="#{tracks.ingest.page.form.cancel}" class="btn btn-primary" th:href="@{/tracks/list}">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="loadingList modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="progress progress-striped active">
+                        <div class="bar" style="width: 100%;"></div>
+                    </div>
+                    <p th:text="#{tracks.ingest.page.loading}">Loading drops...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
