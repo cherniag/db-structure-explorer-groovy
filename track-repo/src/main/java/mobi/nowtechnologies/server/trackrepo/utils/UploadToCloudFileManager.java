@@ -19,13 +19,11 @@ public class UploadToCloudFileManager {
     private Map<String, String> fileExtensionToContentTypeMap;
     private String defaultContentType;
 
-    public void uploadFilesToCloud(Track track, List<String> filesToPrivate, List<String> filesToData) {
+    public void uploadFilesToCloud(Track track, List<File> filesToPrivate, List<File> filesToData) {
         LOGGER.info("Uploading files to private container : [{}], to data container : [{}] for track {}", filesToPrivate, filesToData, track.getUniqueTrackId());
-        for (String fileName : filesToPrivate) {
-
-            File file = new File(fileName);
+        for (File file : filesToPrivate) {
             if (file.exists()) {
-                String contentType = getContentTypeByExtensioin(fileName);
+                String contentType = getContentTypeByExtension(file.getName());
                 cloudService.uploadFile(file, track.getId() + "_" + file.getName(), contentType, privateContainerName);
             }
             else {
@@ -33,11 +31,9 @@ public class UploadToCloudFileManager {
             }
         }
 
-        for (String fileName : filesToData) {
-
-            File file = new File(fileName);
+        for (File file : filesToData) {
             if (file.exists()) {
-                String contentType = getContentTypeByExtensioin(fileName);
+                String contentType = getContentTypeByExtension(file.getName());
                 cloudService.uploadFile(file, file.getName(), contentType, dataContainerName);
             }
             else {
@@ -47,7 +43,7 @@ public class UploadToCloudFileManager {
         LOGGER.info("Uploading done");
     }
 
-    private String getContentTypeByExtensioin(String fileName) {
+    private String getContentTypeByExtension(String fileName) {
 
         for (Map.Entry<String, String> entry : fileExtensionToContentTypeMap.entrySet()) {
             if (fileName.toLowerCase().endsWith(entry.getKey().toLowerCase())) {

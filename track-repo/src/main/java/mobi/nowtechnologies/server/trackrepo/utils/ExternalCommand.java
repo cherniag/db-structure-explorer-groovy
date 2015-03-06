@@ -16,7 +16,7 @@ public class ExternalCommand {
 
     public String executeCommand(String... params) throws IOException, InterruptedException {
 
-        LOGGER.debug("ExternalCommand.executeCommand start running : {} with params: {}", command.getFilename(), Arrays.toString(params));
+        LOGGER.debug("start running : {} with params: {}", command.getFilename(), Arrays.toString(params));
 
         ExternalCommandThread thread = new ExternalCommandThread();
         appendCodeDependsFromOS(thread);
@@ -26,9 +26,8 @@ public class ExternalCommand {
 
         thread.run();
 
-
         if (thread.getExitCode() == 0) {
-            LOGGER.debug("ExternalCommand.executeCommand successful finihed: " + command.getFilename());
+            LOGGER.debug("successful finished: ", command.getFilename());
             return thread.getOutBuffer();
         }
         else {
