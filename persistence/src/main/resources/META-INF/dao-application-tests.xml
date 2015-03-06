@@ -42,13 +42,13 @@ http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
 
     <alias name="persistence.EntityManagerFactory" alias="entityManagerFactory"/>
 
-    <!--
     <bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
         <property name="statisticsEnabled" value="true" />
         <property name="sessionFactory" value="#{entityManagerFactory.sessionFactory}" />
     </bean>
 
     <bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="registrationPolicy" value="IGNORE_EXISTING" />
         <property name="beans">
             <map>
                 <entry key="Hibernate:type=statistics">
@@ -57,6 +57,5 @@ http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
             </map>
         </property>
     </bean>
-    -->
 
 </beans>

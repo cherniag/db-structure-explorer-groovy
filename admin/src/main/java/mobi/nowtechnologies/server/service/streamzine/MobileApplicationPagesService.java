@@ -1,14 +1,16 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+
+import com.google.common.base.Splitter;
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 public class MobileApplicationPagesService {
 
@@ -34,9 +36,8 @@ public class MobileApplicationPagesService {
             return Collections.emptySet();
         }
 
-        try (FileReader fileReader = new FileReader(file)) {
-            Properties properties = new Properties();
-            properties.load(fileReader);
+        try {
+            Properties properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(file));
             String value = properties.getProperty(communityUrl);
             if (value == null || value.isEmpty()) {
                 return Collections.emptySet();
@@ -49,7 +50,6 @@ public class MobileApplicationPagesService {
     }
 
     private Set<String> toSet(String value) {
-        List<String> strings = Arrays.asList(value.split(VALUES_DELIMITER));
-        return new TreeSet<>(strings);
+        return new TreeSet<>(Splitter.on(VALUES_DELIMITER).omitEmptyStrings().trimResults().splitToList(value));
     }
 }
