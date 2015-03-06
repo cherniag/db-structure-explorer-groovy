@@ -254,6 +254,7 @@ public class UpdateValidator extends BaseValidator {
     }
 
     private void validatePromotional(OrdinalBlockDto blockDto, Errors errors) {
+        final String communityRewriteUrl = cookieUtil.get(CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME);
         final String key = blockDto.provideKeyString();
         final String value = blockDto.provideValueString();
 
@@ -262,7 +263,7 @@ public class UpdateValidator extends BaseValidator {
         if (linkLocationType == LinkLocationType.INTERNAL_AD) {
             ApplicationPageData applicationPageData = new ApplicationPageData(value);
 
-            final Set<String> pages = mobileApplicationPagesService.getPages();
+            final Set<String> pages = mobileApplicationPagesService.getPages(communityRewriteUrl);
             if (!pages.contains(applicationPageData.getUrl())) {
                 Object[] args = {value, pages.toString()};
                 rejectValue("streamzine.error.unknown.appurl", args, errors);
@@ -270,7 +271,7 @@ public class UpdateValidator extends BaseValidator {
             }
 
             if (!applicationPageData.getAction().isEmpty()) {
-                final Set<String> actions = mobileApplicationPagesService.getActions();
+                final Set<String> actions = mobileApplicationPagesService.getActions(communityRewriteUrl);
                 if (!actions.contains(applicationPageData.getAction())) {
                     Object[] args = {value, pages.toString()};
                     rejectValue("streamzine.error.unknown.appaction", args, errors);

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.google.common.io.Closeables;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
+import com.rackspacecloud.client.cloudfiles.FilesException;
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.fileupload.util.Streams;
@@ -208,6 +209,10 @@ public class CloudFileServiceImpl implements CloudFileService {
                 filesClient.copyObject(srcContainerName, srcFileName, targetContainerName, targetFileName);
                 LOGGER.info("File {} has been copied", srcFileName);
                 return true;
+            }
+            catch (FilesException fe) {
+                LOGGER.error("Can't copy file [{}] from source container [{}] as [{}] file to target container [{}]. Some http error occurred with {} http status code.", srcFileName, srcContainerName,
+                             targetFileName, targetContainerName, fe.getHttpStatusCode(), fe);
             }
             catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);

@@ -43,9 +43,11 @@ public class IngestWizardDataDto {
     }
 
     public boolean hasAnySelected() {
-        for (DropDto drop : drops) {
-            if (drop.getSelected() != null && drop.getSelected()) {
-                return true;
+        if (drops != null) {
+            for (DropDto drop : drops) {
+                if (drop.getSelected() != null && drop.getSelected()) {
+                    return true;
+                }
             }
         }
         return false;

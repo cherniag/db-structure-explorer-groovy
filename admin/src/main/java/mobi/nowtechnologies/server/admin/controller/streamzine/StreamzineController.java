@@ -138,13 +138,13 @@ public class StreamzineController {
     }
 
     @RequestMapping(value = "/streamzine/pages/list", method = RequestMethod.GET)
-    public ModelAndView getPages() {
-        return new ModelAndView().addObject("pages", mobileApplicationPagesService.getPages());
+    public ModelAndView getPages(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl) {
+        return new ModelAndView().addObject("pages", mobileApplicationPagesService.getPages(communityRewriteUrl));
     }
 
     @RequestMapping(value = "/streamzine/actions/list", method = RequestMethod.GET)
-    public ModelAndView getActions() {
-        return new ModelAndView().addObject("actions", mobileApplicationPagesService.getActions());
+    public ModelAndView getActions(@CookieValue(value = CommunityResolverFilter.DEFAULT_COMMUNITY_COOKIE_NAME) String communityRewriteUrl) {
+        return new ModelAndView().addObject("actions", mobileApplicationPagesService.getActions(communityRewriteUrl));
     }
 
     @RequestMapping(value = "/streamzine/upload/image", method = RequestMethod.POST)

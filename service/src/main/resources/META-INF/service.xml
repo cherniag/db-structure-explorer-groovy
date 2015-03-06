@@ -405,7 +405,6 @@ http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <bean id="service.cloudHttpClient" class="org.apache.http.impl.client.DefaultHttpClient">
        <constructor-arg index="0" ref="service.cloudHttpConnectionManager"/>
-       <constructor-arg index="1"><null/></constructor-arg>
     </bean>
 
 

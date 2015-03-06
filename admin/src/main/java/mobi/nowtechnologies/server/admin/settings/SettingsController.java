@@ -59,8 +59,8 @@ public class SettingsController {
         List<ChartDetail> chartDetails = chartService.getChartsByCommunityAndPublishTime(communityRewriteUrl, new Date());
         List<ChartListItemDto> chartListItemDtos = streamzineAdminMediaAsm.toChartListItemDtos(chartDetails);
 
-        Set<String> pages = mobileApplicationPagesService.getPages();
-        Set<String> actions = mobileApplicationPagesService.getActions();
+        Set<String> pages = mobileApplicationPagesService.getPages(communityRewriteUrl);
+        Set<String> actions = mobileApplicationPagesService.getActions(communityRewriteUrl);
         SettingsDto dto = settingsAsm.createDto(communityRewriteUrl, chartListItemDtos, pages, actions);
 
         logger().info("Getting {} for community {}", dto, communityRewriteUrl);

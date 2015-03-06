@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -64,6 +65,7 @@ public class TrackRepoController extends AbstractCommonController {
     public static final String TRACK_REPO_FILES_URL = "trackRepoFilesURL";
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackRepoController.class);
     private static final int DEFAULT_EXECUTOR_TIMEOUT = 60000;
+    private static final String INGESTORS_ATTR = "ingestors";
 
     @Resource(name = "service.communityService")
     private CommunityService communityService;
@@ -241,16 +243,20 @@ public class TrackRepoController extends AbstractCommonController {
     }
 
     @RequestMapping(value = "/drops", method = GET)
-    public ModelAndView getDrops(@RequestParam(value = "ingestors", required = false) String[] ingestors) {
-        LOGGER.debug("input getDrops({}) request", Arrays.toString(ingestors));
-
-        IngestWizardDataDto data = trackRepoService.getDrops(ingestors);
-
-        ModelAndView modelAndView = new ModelAndView("tracks/drops");
-        modelAndView.addObject(INGEST_WIZARD_DATA_DTO, data);
-        modelAndView.addObject(ACTION, "/drops/select");
-        LOGGER.debug("output getDrops({})", data);
+    public ModelAndView getDrops(@RequestParam(value = INGESTORS_ATTR, required = false) String[] ingestors) {
+        ModelAndView modelAndView = new ModelAndView("tracks/dropsList");
+        modelAndView.addObject(INGESTORS_ATTR, StringUtils.join(ingestors, ","));
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/drops/list", method = GET)
+    public
+    @ResponseBody
+    IngestWizardDataDto getDropsList(@RequestParam(value = INGESTORS_ATTR, required = false) String[] ingestors) {
+        LOGGER.debug("input getDrops({}) request", Arrays.toString(ingestors));
+        IngestWizardDataDto data = trackRepoService.getDrops(ingestors);
+        LOGGER.debug("output getDrops({})", data);
+        return data;
     }
 
     @RequestMapping(value = "/drops/select", method = POST)

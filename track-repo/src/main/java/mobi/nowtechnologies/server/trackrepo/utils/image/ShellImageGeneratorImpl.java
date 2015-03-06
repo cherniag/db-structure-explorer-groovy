@@ -16,21 +16,21 @@ import org.springframework.core.io.Resource;
 public class ShellImageGeneratorImpl implements ImageGenerator {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ShellImageGeneratorImpl.class);
-    private Resource imagesDir;
     private List<ThumbnailType> thumbnails;
     private ExternalCommand commandResizeImage;
     private ExternalCommand commandCoverPreviewImage;
     private Resource convertPath;
     private Resource compositePath;
 
-    public List<String> generateThumbnails(String sourceFilePath, String trackId, boolean isVideo) throws IOException, InterruptedException {
+    @Override
+    public List<File> generateThumbnails(File dir, String sourceFilePath, String trackId, boolean isVideo) throws IOException, InterruptedException {
 
         LOGGER.debug("generateThumbnails started for {} in {}", trackId, sourceFilePath);
 
-        List<String> result = new ArrayList<String>(thumbnails.size());
+        List<File> result = new ArrayList<>(thumbnails.size());
 
         for (ThumbnailType thumbnailType : thumbnails) {
-            result.add(generateImage(sourceFilePath, trackId, thumbnailType, isVideo));
+            result.add(generateImage(dir, sourceFilePath, trackId, thumbnailType, isVideo));
         }
 
         LOGGER.debug("generateThumbnails successfully finished");
@@ -38,19 +38,20 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
         return result;
     }
 
-    public List<String> generateThumbnailsWithWatermark(String sourceFilePath, String trackId, boolean isVideo) throws IOException, InterruptedException {
+    @Override
+    public List<File> generateThumbnailsWithWatermark(File dir, String sourceFilePath, String trackId, boolean isVideo) throws IOException, InterruptedException {
 
         LOGGER.debug("generate Thumbnails With Watermark started for {} in {}", trackId, sourceFilePath);
 
-        List<String> result = new ArrayList<String>(thumbnails.size());
+        List<File> result = new ArrayList<>(thumbnails.size());
 
         for (ThumbnailType thumbnailType : thumbnails) {
 
-            String resultFileName = generateImage(sourceFilePath, trackId, thumbnailType, isVideo);
+            File resultFile = generateImage(dir, sourceFilePath, trackId, thumbnailType, isVideo);
             if (!isVideo) {
-                coverPreviewImage(resultFileName, thumbnailType);
+                coverPreviewImage(resultFile.getAbsolutePath(), thumbnailType);
             }
-            result.add(resultFileName);
+            result.add(resultFile);
         }
 
         LOGGER.debug("ShellImageGeneratorImpl.generateThumbnailsWithWatermark successfuly finished");
@@ -58,18 +59,18 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
         return result;
     }
 
-    protected String generateImage(String sourceFilePath, String trackId, ThumbnailType thumbnailType, boolean isVideo) throws IOException, InterruptedException {
+    protected File generateImage(File dir, String sourceFilePath, String trackId, ThumbnailType thumbnailType, boolean isVideo) throws IOException, InterruptedException {
 
         LOGGER.info("Generate image {} for {} in {}, isVideo {}", thumbnailType, trackId, sourceFilePath, isVideo);
 
         if (StringUtils.isBlank(sourceFilePath)) {
-            throw new RuntimeException("Image Generation: source file path is null or emmpty");
+            throw new RuntimeException("Image Generation: source file path is null or empty");
         }
         if (StringUtils.isBlank(trackId)) {
             throw new RuntimeException("Image Generation: Track id is null or empty");
         }
 
-        String resultFilePath = imagesDir.getFile().getAbsolutePath() + File.separator + trackId + thumbnailType.getFileNameTail() + "." + thumbnailType.getFileExtension();
+        String resultFilePath = dir.getAbsolutePath() + File.separator + trackId + thumbnailType.getFileNameTail() + "." + thumbnailType.getFileExtension();
 
         int imageSize = isVideo ?
                         thumbnailType.getImageSizeForVideo() :
@@ -78,7 +79,7 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
         commandResizeImage.executeCommand(convertPath.getFile().getAbsolutePath(), sourceFilePath, "" + imageSize, "" + imageSize, thumbnailType.getAdditionalParams() == null ?
                                                                                                                                    "" :
                                                                                                                                    thumbnailType.getAdditionalParams(), resultFilePath);
-        return resultFilePath;
+        return new File(resultFilePath);
     }
 
     protected void coverPreviewImage(String fileName, ThumbnailType type) throws IOException, InterruptedException {
@@ -91,10 +92,6 @@ public class ShellImageGeneratorImpl implements ImageGenerator {
         }
 
         commandCoverPreviewImage.executeCommand(compositePath.getFile().getAbsolutePath(), type.getCoverFilePath().getFile().getAbsolutePath(), fileName, fileName);
-    }
-
-    public void setImagesDir(Resource imagesDir) {
-        this.imagesDir = imagesDir;
     }
 
     public void setThumbnails(List<ThumbnailType> thumbnails) {

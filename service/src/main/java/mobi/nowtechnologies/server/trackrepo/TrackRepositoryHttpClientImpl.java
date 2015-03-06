@@ -52,6 +52,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -512,12 +514,16 @@ public class TrackRepositoryHttpClientImpl implements TrackRepositoryClient {
 
     static class HttpClientFactory {
 
+        private static final int DEFAULT_SOCKET_TIMEOUT = 0;
+
         public static HttpClient getHttpClient() {
             SchemeRegistry schreg = new SchemeRegistry();
             schreg.register(new Scheme("http", 8080, PlainSocketFactory.getSocketFactory()));
             schreg.register(new Scheme("https", 443, PlainSocketFactory.getSocketFactory()));
             ClientConnectionManager conman = new ThreadSafeClientConnManager(schreg);
             HttpClient client = new DefaultHttpClient(conman);
+            HttpParams httpParams = client.getParams();
+            HttpConnectionParams.setSoTimeout(httpParams, DEFAULT_SOCKET_TIMEOUT);
             return client;
         }
     }
