@@ -1,17 +1,18 @@
 package mobi.nowtechnologies.server.service.streamzine;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
+import java.util.TreeSet;
 
 public class MobileApplicationPagesService {
 
+    private static final String VALUES_DELIMITER = ",";
     private File pages;
     private File actions;
 
@@ -20,25 +21,35 @@ public class MobileApplicationPagesService {
         this.actions = actions;
     }
 
-    public Set<String> getActions() {
-        return getValues(actions);
+    public Set<String> getActions(String communityUrl) {
+        return getValues(actions, communityUrl);
     }
 
-    public Set<String> getPages() {
-        return getValues(pages);
+    public Set<String> getPages(String communityUrl) {
+        return getValues(pages, communityUrl);
     }
 
-    private Set<String> getValues(File file) {
-        if (file == null || file.isDirectory() || !file.exists()) {
+    private Set<String> getValues(File file, String communityUrl) {
+        if (file == null || file.isDirectory() || !file.exists() || communityUrl == null) {
             return Collections.emptySet();
         }
 
-        try {
-            List<String> lines = Files.readLines(file, Charsets.UTF_8);
-            return Sets.newTreeSet(lines);
+        try (FileReader fileReader = new FileReader(file)) {
+            Properties properties = new Properties();
+            properties.load(fileReader);
+            String value = properties.getProperty(communityUrl);
+            if (value == null || value.isEmpty()) {
+                return Collections.emptySet();
+            }
+            return toSet(value);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Set<String> toSet(String value) {
+        List<String> strings = Arrays.asList(value.split(VALUES_DELIMITER));
+        return new TreeSet<>(strings);
     }
 }
